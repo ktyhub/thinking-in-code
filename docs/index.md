@@ -1,4 +1,4 @@
-# Welcome to Thinking in code
+# Welcome to Thinking In Code
 
 
 Knowledge 、Thinking , You want to know
