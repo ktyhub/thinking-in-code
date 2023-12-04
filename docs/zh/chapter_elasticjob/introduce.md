@@ -76,7 +76,15 @@ Elastic-Job 的各个产品使用统一的作业 API，开发者仅需要一次�
 
 具体流程如下图所示：
 
- ![](/img/chapter_elasticjob/1-0.png)
+```mermaid
+graph TB
+    A[开始]  --> B[初始化注册中心]
+    B --> C[初始化作业配置]
+    C --> D[初始化作业调度器]
+    D --> E[启动作业调度器]
+    E --> F[触发作业]
+    F --> G[结束]
+```
 图2.1 ElasticJob作业初始化过程
 
 
