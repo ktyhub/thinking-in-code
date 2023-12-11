@@ -106,47 +106,48 @@ public class JavaSimpleJob implements SimpleJob {
 
 ```Java
 public class JobDemo {
- public static void main(String[] args) {
-    //注册中心地址
-  String serverList = "127.0.0.1:2181";
-    //调度作业注册中心命名空间名字
-  String namespace = "elastic-job-lite-demo";
-    //作业执行的cron表达式
-  String cron = "* * * * * ?";
-    //作业进行分片执行的分片总数
-  int shardingTotalCount = 3;
-    //分片项参数
-  String shardingItemParameters = "0=Beijing,1=Shanghai,2=Guangzhou";
+    public static void main(String[] args) {
+        //注册中心地址
+        String serverList = "127.0.0.1:2181";
+        //调度作业注册中心命名空间名字
+        String namespace = "elastic-job-lite-demo";
+        //作业执行的cron表达式
+        String cron = "* * * * * ?";
+        //作业进行分片执行的分片总数
+        int shardingTotalCount = 3;
+        //分片项参数
+        String shardingItemParameters = "0=Beijing,1=Shanghai,2=Guangzhou";
 
-  //Zookeeper初始化
-  //创建zookeeper配置对象
-  ZookeeperConfiguration zookeeperConfiguration = new ZookeeperConfiguration(serverList, namespace);
-  //创建协调注册中心对象
-  CoordinatorRegistryCenter zookeeperRegistryCenter = new ZookeeperRegistryCenter(zookeeperConfiguration);
-  //初始化注册中心
-  zookeeperRegistryCenter.init();
+        //Zookeeper初始化
+        //创建zookeeper配置对象
+        ZookeeperConfiguration zookeeperConfiguration = new ZookeeperConfiguration(serverList, namespace);
+        //创建协调注册中心对象
+        CoordinatorRegistryCenter zookeeperRegistryCenter = new ZookeeperRegistryCenter(zookeeperConfiguration);
+        //初始化注册中心
+        zookeeperRegistryCenter.init();
 
-  //作业初始化
-  //这里是定义JOB的名字
-  String jobName = "JavaSimpleJob";
-  //创建作业核心配置的建造者builder类型
-  JobCoreConfiguration.Builder javaCoreConfigurationBuilder =
-  JobCoreConfiguration.newBuilder(jobName, cron, shardingTotalCount);
-  //根据builder构建核心配置
-  JobCoreConfiguration jobCoreConfiguration =    javaCoreConfigurationBuilder.shardingItemParameters(shardingItemParameters).build();
+        //作业初始化
+        //这里是定义JOB的名字
+        String jobName = "JavaSimpleJob";
+        //创建作业核心配置的建造者builder类型
+        JobCoreConfiguration.Builder javaCoreConfigurationBuilder =
+                JobCoreConfiguration.newBuilder(jobName, cron, shardingTotalCount);
+        //根据builder构建核心配置
+        JobCoreConfiguration jobCoreConfiguration = javaCoreConfigurationBuilder.shardingItemParameters(shardingItemParameters).build();
 
-  //getCanonicalName 返回包名+类名字，这里是作业执行类的信息
-  String canonicalName = JavaSimpleJob.class.getCanonicalName();
-  //根据核心配置和作业执行类创建作业类型配置
-  JobTypeConfiguration jobTypeConfiguration = new SimpleJobConfiguration(jobCoreConfiguration, canonicalName);
+        //getCanonicalName 返回包名+类名字，这里是作业执行类的信息
+        String canonicalName = JavaSimpleJob.class.getCanonicalName();
+        //根据核心配置和作业执行类创建作业类型配置
+        JobTypeConfiguration jobTypeConfiguration = new SimpleJobConfiguration(jobCoreConfiguration, canonicalName);
 
-  //根据作业类型配置初始化轻量级作业配置
-  LiteJobConfiguration liteJobConfiguration = LiteJobConfiguration.newBuilder(jobTypeConfiguration).build();
+        //根据作业类型配置初始化轻量级作业配置
+        LiteJobConfiguration liteJobConfiguration = LiteJobConfiguration.newBuilder(jobTypeConfiguration).build();
 
-  //作业调度器初始化
-  JobScheduler jobScheduler = new JobScheduler(zookeeperRegistryCenter,liteJobConfiguration);
-  jobScheduler.init();
- }
+        //作业调度器初始化
+        JobScheduler jobScheduler = new JobScheduler(zookeeperRegistryCenter, liteJobConfiguration);
+        jobScheduler.init();
+    }
+}
 ```
 
 首先确保zookeeper服务已经启动，然后直接运行main方法即可。
@@ -210,5 +211,6 @@ public class JobDemo {
 
 - 官方网站：
   - [http://shardingsphere.apache.org/elasticjob/](http://shardingsphere.apache.org/elasticjob)
+
 
  
