@@ -1,7 +1,7 @@
 #  Elastic-Job2.1.5源码-分布式弹性调度系统的简介
 
 
-# 1 简介
+# 简介
 
 Elastic-Job是由当当网基于Quartz 二次开发之后的分布式调度解决方案，是一个分布式调度解决方案，由 2 个相互独立的子项目 ElasticJob-Lite 和 ElasticJob-Cloud 组成。
 
@@ -10,7 +10,7 @@ Elastic-Job是由当当网基于Quartz 二次开发之后的分布式调度解�
 
 Elastic-Job 的各个产品使用统一的作业 API，开发者仅需要一次开发，即可随意部署。Elastic-Job开发在停滞数年后，2020年，Elastic-Job 携首个 Apache 版本 3.0.0-alpha 回归！2020年6月，经过Apache ShardingSphere社区投票，接纳Elastic-Job为其子项目。目前ElasticJob的四个子项目已经正式迁入Apache仓库。并更名为shardingsphere-elasticjob。对于功能强大的分布式调度系统elastic-job很多优秀的分布式设计思想值得学习，接下来本系列文章会针对Elastic-Job版本2.1.5的核心源码与原理进行分析讲解。
 
-## 1.2 分布式弹性调度系统特征
+## 分布式弹性调度系统特征
 
 （1） 弹性调度
 
@@ -51,10 +51,9 @@ Elastic-Job 的各个产品使用统一的作业 API，开发者仅需要一次�
 - 注册中心管理。
 - 作业编排管理。
 
+ 
 
-# 2 Elastic-Job的使用
-
-## 2.1 使用Java代码创建第一个调度例子
+## 使用Java代码创建第一个调度例子
 
 （1）导入Maven包
 
@@ -152,7 +151,7 @@ public class JobDemo {
 
 首先确保zookeeper服务已经启动，然后直接运行main方法即可。
 
-## 2.2 使用Spring配置一个作业
+## 使用Spring配置一个作业
 
 （1）导入Maven包
 

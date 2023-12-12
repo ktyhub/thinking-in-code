@@ -1,10 +1,10 @@
-# 3  注册中心的设计原理
+#  注册中心的设计原理
 
-# 3.1 调度系统使用Zookeeper做什么
+# 调度系统使用Zookeeper做什么
 
 ZooKeeper 是 Apache 软件基金会的一个软件项目，它是一个针对大型分布式系统的可靠协调系统，为大型分布式计算提供开源的分布式配置服务、同步服务和命名注册。调度系统使用Zookeeper进行分布式环境下作业配置信息注册，监听更新，使用Zookeeper实现分布式锁进行主节点选举，使用临时节点实现作业实例上下线等操作。
 
-## 3.2 调度系统注册中心设计
+##  调度系统注册中心设计
 
 在上篇文章中通过Java启动作业调度的Demo我们可以看到Zookeeper初始化过程有如下操作：
 
@@ -42,7 +42,7 @@ graph TB
 
 - 异常类型：这里提供了一个自定义异常类型RegException来表示注册中心相关的异常，RegExceptionHandler注册中心异常处理类处理注册中心相关的异常信息。
 
-## 3.3 Zookeeper配置详解
+## Zookeeper配置详解
 
 Zookeepeer客户端配置信息主要使用ZookeeperConfiguration类型封装主要配置信息如下：
 
@@ -57,7 +57,7 @@ Zookeepeer客户端配置信息主要使用ZookeeperConfiguration类型封装主
 | connectionTimeoutMilliseconds | int          | 连接超时时间. 单位毫秒.                                      |
 | digest                        | String       | 连接Zookeeper的权限令牌. 缺省为不需要权限验证.               |
 
-## 3.4 ZookeeperRegistryCenter原理解析
+## ZookeeperRegistryCenter原理解析
 
 ZookeeperRegistryCenter是实现了协调注册中心的实现类用于和Zookeeper分布式协调组件进行交互的建模,接下来我们先看下他的类继承关系：
 
@@ -95,7 +95,7 @@ class ZookeeperRegistryCenter{
 - CuratorFramework类型的client，Curator是Netflix公司开发的强大的Zookeeper客户端工具,CuratorFramework框架是ZooKeeper Client更高的抽象API，这里可以了解下ZooKeeperRegistryCenter底层的实现原理,针对Zookeeper的操作主要是基于CuratorFramework来实现对Zookeeper的操作的，CuratorFramework具有哪些特征呢：更清晰的API: 简化了ZooKeeper原生的方法, 事件等, 提供流式fluent的接口，提供Recipes实现 : 选举，共享锁， 路径cache， 分布式队列，分布式优先队列等。
 - slf4j包下的Logger类型的log对象，主要用来标准化打印日志。
 
-3.5 注册中心常用操作方法
+注册中心常用操作方法
 
 注册中心设计中相关的父接口一共有两个类型：
 
