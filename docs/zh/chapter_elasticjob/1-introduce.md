@@ -1,4 +1,4 @@
-#  Elastic-Job2.1.5源码-分布式弹性调度系统的简介
+#   **分布式弹性调度系统的简介**
 
 # 简介
 
@@ -7,9 +7,15 @@ Elastic-Job是由当当网基于Quartz 二次开发之后的分布式调度解�
 - **ElasticJob-Lite：** 定位为轻量级无中心化解决方案，使用jar的形式提供分布式任务的协调服务。
 - **ElasticJob-Cloud：** 使用 Mesos 的解决方案，额外提供资源治理、应用分发以及进程隔离等服务。
 
-Elastic-Job 的各个产品使用统一的作业 API，开发者仅需要一次开发，即可随意部署。Elastic-Job开发在停滞数年后，2020年，Elastic-Job 携首个 Apache 版本 3.0.0-alpha 回归！2020年6月，经过Apache ShardingSphere社区投票，接纳Elastic-Job为其子项目。目前ElasticJob的四个子项目已经正式迁入Apache仓库。并更名为shardingsphere-elasticjob。对于功能强大的分布式调度系统elastic-job很多优秀的分布式设计思想值得学习，接下来本系列文章会针对Elastic-Job版本2.1.5的核心源码与原理进行分析讲解。
+Elastic-Job 的各个产品使用统一的作业 API，开发者仅需要一次开发，即可随意部署。
 
-## 分布式弹性调度系统特征
+Elastic-Job开发在**停滞数年后**，2020年，Elastic-Job 携首个 **Apache** 版本 3.0.0-alpha 回归！2020年6月，经过**Apache ShardingSphere社区**投票，接纳Elastic-Job为其子项目。
+
+目前ElasticJob的四个子项目已经正式迁入Apache仓库。并更名为Shardingsphere-Elasticjob。
+
+对于功能强大的分布式调度系统Elastic-Job很多优秀的分布式设计思想值得学习，接下来本系列文章会针对Elastic-Job版本2.1.5的核心源码与原理进行分析讲解。
+
+## **分布式弹性调度系统特征**
 
 ![](/img/chapter_elasticjob/1-1.png)
 **（1） 弹性调度**
@@ -87,7 +93,7 @@ graph TB
 图2.1 ElasticJob作业初始化过程
 
 
-### 示例代码
+### **示例代码**
 
 - 实现一个简单定时任务
 
@@ -151,9 +157,9 @@ public class JobDemo {
 
 首先确保zookeeper服务已经启动，然后直接运行main方法即可。
 
-## 使用Spring配置一个作业
+## **使用Spring配置一个作业**
 
-### 导入Maven包
+### **导入Maven包**
 
 ```xml
 <dependency>
@@ -163,7 +169,7 @@ public class JobDemo {
 </dependency>
 ```
 
-### 配置Spring文件
+### **配置Spring文件**
 
 - 配置注册中心对象
 
