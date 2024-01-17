@@ -1,6 +1,6 @@
-# 基于Zookeeper的分布式锁实现 选举 作业主节点**
+# **基于Zookeeper的分布式锁实现 选举 作业主节点**
 
-## Elastic-Job 既然去中心化为什么要选举主节点？
+## **Elastic-Job 既然去中心化为什么要选举主节点？**
 
 Elastic-Job 定位为轻量级，去中心化，其任务调度由各自的机器驱动，各台机器之间通过Zookeeper去协调，Elastic-Job 为每个任务都创建一个JobScheduler作业调度对象,而在JobScheduler对象的初始化中会为每个Job选举一个主节点，记住这里不是为整个进程的所有作业创建一个全局的主节点，而是每个调度作业都会有一个主节点。
 
@@ -18,7 +18,7 @@ Elastic-Job 定位为轻量级，去中心化，其任务调度由各自的机�
 
 
 
-## 分布式锁选主的的执行过程：
+## **分布式锁选主的的执行过程：**
 
 ①　第1个客户端创建临时顺序节点。
 
@@ -38,7 +38,7 @@ Elastic-Job 定位为轻量级，去中心化，其任务调度由各自的机�
 
 
 
-![图片](https://img-blog.csdnimg.cn/img_convert/2b0d6289cc73983b99508f0dbe626d2b.png)
+![图片](/img/chapter_elasticjob/10-dis-lock.png)
 
 
 
@@ -46,7 +46,7 @@ Elastic-Job 定位为轻量级，去中心化，其任务调度由各自的机�
 
 
 
-## 避免羊群效应（ herd effect）
+## **避免羊群效应（ herd effect）**
 
 把锁请求者按照后缀数字进行排队，后缀数字小的锁请求者先获取锁。如果所有的锁请求者都watch锁持有者，当代表锁请求者的znode 被删除以后，所有的锁请求者都会通知到，但是只有一个锁请求者能拿到锁。这就是羊群效应。为了避免羊群效应，每个锁请求者watch 它前面的锁请求者。每次锁被释放，只会有一个锁请求者会被通知到。这样做还让锁的分配具有公平性，锁定的分配遵循先到先得的原则。
 
@@ -96,7 +96,7 @@ public void executeInLeader(final String latchNode, final LeaderExecutionCallbac
 }
 ```
 
-*try(){}catch(Exception){} ,try()是jdk1.7的语法糖针对具有关闭属性的资源可以不用手动调用关闭方法。*
+`try(){}catch(Exception){}` ,try()是jdk1.7的语法糖针对具有关闭属性的资源可以不用手动调用关闭方法。
 
 
 
@@ -178,7 +178,7 @@ jobInstanceId = IpUtils.getIp() + DELIMITER + ManagementFactory.getRuntimeMXBean
 
 将整个选主过程梳理之后，由此我们明白了整个选主过程如下图：
 
-![图片](https://img-blog.csdnimg.cn/img_convert/1bbc89f3cfef87ec34d0c45ed417c27e.png)
+![图片](/img/chapter_elasticjob/10-2-lock-2.png)
 
 
 
