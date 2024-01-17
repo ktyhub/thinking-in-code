@@ -68,7 +68,7 @@
 
 具体配置对应 **DataflowJobConfiguration**
 
-在DataflowJobConfiguration中属性**streamingProcess**为是否流式处理数据配置.如果流式处理数据为true，则**fetchData**不返回空结果将持续执行作业，如果非流式处理数据即配置为false，则处理数据完成后作业结束.后面我们会通过介绍DataflowJobExecutor来详细介绍调用实现。
+在DataflowJobConfiguration中属性 **streamingProcess** 为是否流式处理数据配置.如果流式处理数据为true，则 **fetchData** 不返回空结果将持续执行作业，如果非流式处理数据即配置为false，则处理数据完成后作业结束.后面我们会通过介绍DataflowJobExecutor来详细介绍调用实现。
 
 |   方法名|   	描述|   
 |--|--|
