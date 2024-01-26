@@ -1,8 +1,10 @@
 
 
-# 10-使用配置信息启动运行入口
-在 QuorumPeerMain类型中前面我看了解了刚刚启动时候的配置加载,日志清理工具开启,接下来我们先回顾一下:
+#  **使用配置信息启动运行入口**
+在 QuorumPeerMain类型中前面我看了解了刚刚启动时候的配置加载,
+日志清理工具开启,接下来我们先回顾一下:
 
+## **initializeAndRun**
 ```java
 protected void initializeAndRun(String[] args) throws ConfigException, IOException, AdminServerException {
 		//配置加载前面看过
@@ -46,11 +48,13 @@ if (args.length == 1 && config.isDistributed()) {
 
 
 上面主要做了初始化操作，接下来就是启动过程
-- 1:如果存在配置参数并且也存在server参数则程序将使用配置来启动。
-- 2:如果不存在配置参数则以独立程序模式来启动
+- 如果存在配置参数并且也存在server参数则程序将 **使用配置来启动** 。
+- 如果不存在配置参数则以 **独立程序模式** 来启动
 
+## **runFromConfig**
 使用配置启动过程runFromConfig我们先来review一下代码做了什么：
 
+ 
 QuorumPeerMain类型的使用配置信息启动运行入口
 ```java
 public void runFromConfig(QuorumPeerConfig config) throws IOException, AdminServerException {
@@ -161,15 +165,14 @@ public void runFromConfig(QuorumPeerConfig config) throws IOException, AdminServ
 ```
 
 说下目前遇到的runFromConfig主流程主要如下:
-- log4jMBean启动
-- 监控指标启动
-- 连接信息配置
-- QuorumPeer节点对象创建
+- **log4jMBean** 启动
+- **监控指标** 启动
+- **连接信息** 配置
+- QuorumPeer 节点对象创建
 - QuorumPeer节点配置初始化
 - QuorumPeer节点启动
 - QuorumPeer节点加入集群
-
-后续我们针对这个流程详细细说,可以继续关注后续博客
+ 
 
 
 

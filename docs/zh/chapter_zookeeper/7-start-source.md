@@ -1,23 +1,24 @@
+#  **服务器启动流程入个门**
+##  **程序入口**
+默认情况下我们会执行命令    `bin/zkServer.sh start`
+启动zookeeper服务端程序，打开zkServer.sh可以看到有这样配置主类:
 
-
-# 7-服务器启动流程入个门
-## 7.1 程序入口
-默认情况下我们会执行命令bin/zkServer.sh start
-启动zookeeper服务端程序，打开zkServer.sh可以看到有这样配置主类
-```java
+```properties
 ZOOMAIN="org.apache.zookeeper.server.quorum.QuorumPeerMain"
 ```
 和启动命令
 
-```java
+```bash
 nohup "$JAVA" "-Dzookeeper.log.dir=${ZOO_LOG_DIR}" "-Dzookeeper.root.logger=${ZOO_LOG4J_PROP}" \
 -cp "$CLASSPATH" $JVMFLAGS $ZOOMAIN "$ZOOCFG" > "$_ZOO_DAEMON_OUT" 2>&1 < /dev/null &
 ```
 
 
 
+### **启动类为QuorumPeerMain**
 系统默认的启动类为QuorumPeerMain
 启动方法如下：
+
 ```java
 public static void main(String[] args) {
     QuorumPeerMain main = new QuorumPeerMain();
@@ -54,6 +55,7 @@ public static void main(String[] args) {
 }
 ```
 
+### **initializeAndRun**
 程序启动后进行初始化和运行如果出现异常则非正常终止进程，如果程序执行完毕则正常终止程序。
 ```java
 protected void initializeAndRun(String[] args) throws ConfigException, IOException, AdminServerException {
