@@ -1,8 +1,10 @@
 
-# 9-日志清理定时任务的启动
-## 9.1 简介
-前面我们说了程序刚刚启动时候会去加载配置信息,配置信息加载完毕之后将会启动一个清理日志的工具(这个工具非常有用) 接下来详细看下:
+#  **日志清理定时任务的启动**
+##  **简介**
+前面我们说了程序刚刚启动时候会去加载配置信息,
+配置信息加载完毕之后将会启动一个 **清理日志的工具(这个工具非常有用)** 接下来详细看下:
 
+## **initializeAndRun**
 QuorumPeerMain的初始化和启动方法initializeAndRun如下
 ```java
 protected void initializeAndRun(String[] args) throws ConfigException, IOException, AdminServerException {
@@ -30,11 +32,15 @@ protected void initializeAndRun(String[] args) throws ConfigException, IOExcepti
 ```
 
 
-DatadirCleanupManager日志清理工具，如果配置文件中配置了**autopurge.purgeInterval**参数，单位是小时，当填写一个1或更大的整数，则开启，默认是0，或者配置了负数则表示不开启自动清理功能。
-**autopurge.snapRetainCount** 这个参数和上面的参数搭配使用，这个参数指定了需要保留的文件数目。默认是保留3个。
+DatadirCleanupManager日志清理工具,相关配置如下：
+- **autopurge.purgeInterval** 参数，单位是小时，当填写一个1或更大的整数，则开启，默认是0，或者配置了负数则表示不开启自动清理功能。
+- **autopurge.snapRetainCount** 这个参数和上面的参数搭配使用，这个参数指定了需要保留的文件数目。默认是保留3个。
 
 这里start方法中使用了Java的Timer来启动的定时任务来清理
-在使用zookeeper过程中，我们知道，会有dataDir和dataLogDir两个目录，分别用于snapshot和事务日志的输出（默认情况下只有dataDir目录，snapshot和事务日志都保存在这个目录中，正常运行过程中，ZK会不断地把快照数据和事务日志输出到这两个目录，并且如果没有人为操作的话，ZK自己是不会清理这些文件的，需要管理员来清理，具体清理方法主要调用PurgeTxnLog类的purge方法
+在使用Zookeeper过程中，，会有 **dataDir** 和 **dataLogDir** 两个目录，分别用于 **snapshot** 和 **事务日志** 的输出
+（默认情况下只有dataDir目录，snapshot和事务日志都保存在这个目录中，正常运行过程中，ZK会不断地把快照数据和事务日志输出到这两个目录，并且如果没有人为操作的话，ZK自己是不会清理这些文件的，需要管理员来清理，具体清理方法主要调用PurgeTxnLog类的purge方法
+
+### **DatadirCleanupManager**
 
 清理工具启动代码如下：
 
@@ -98,6 +104,7 @@ public void start() {
 
 这个方法主要进行参数校验，然后创建清理任务PurgeTask开启定时器以一定间隔时间来执行PurgeTask中的定时任务，定时任务在执行的时候会触发定时任务的run方法接下来我们来看下PurgeTask任务清理数据的具体业务。
 
+### **PurgeTxnLog.purge**
 ```java
 @Override
 public void run() {
@@ -129,9 +136,15 @@ public static void purge(File dataDir, File snapDir, int num) throws IOException
 }
 ```
 
-创建事物快照日志文件对象FileTxnSnapLog，然后根据参数获取获取到需要保留的文件数量，然后根据保留的文件数量计算出保留文件中最小的那个zxid，然后根据最小的zxid找到需要保留的事物日志文件列表(事物日志当前最小的那个id之前的1个不能清理在zookeeper事物日志中可能发生滚动日志之前的文件也是会记录到最新的数据)，然后过滤所有事物日志文件过滤出来需要删除的事物日志文件，在过滤所有的快照文件找到所有需要删除的快照文件，最后循环删除需要删除的事物日志和快照文件，接下来我们继续看源码：
+创建事物快照日志文件对象FileTxnSnapLog，然后根据参数获取获取到需要保留的文件数量，
+然后根据保留的文件数量计算出保留文件中最小的那个zxid，
+然后根据最小的zxid找到需要保留的事物日志文件列表
+(事物日志当前最小的那个id之前的1个不能清理在zookeeper事物日志中可能发生滚动日志之前的文件也是会记录到最新的数据)，
+然后过滤所有事物日志文件过滤出来需要删除的事物日志文件，
+在过滤所有的快照文件找到所有需要删除的快照文件，最后循环删除需要删除的事物日志和快照文件，接下来我们继续看源码：
 
 
+### **findNValidSnapshots**
 findNValidSnapshots 返回n个合法的snapshot文件
 
 ```java
@@ -170,7 +183,9 @@ static void purgeOlderSnapshots(FileTxnSnapLog txnLog, File snapShot) {
     final long leastZxidToBeRetain = Util.getZxidFromName(snapShot.getName(), PREFIX_SNAPSHOT);
 ```
 
-//下面的英文保留一下，在处理事物日志和快照的时候，事物日志不能直接删除掉所有比需要保留最小zxid更小的日志文件，因为比需要保留最小zxid快照文件的事物日志可能存在于当前最小需要保留zxid的前一个文件中，也就是说事物日志要比快快照日志多保留一个，这个于日志写入时的滚动机制有关
+下面的英文保留一下，在处理事物日志和快照的时候，事物日志不能直接删除掉所有比需要保留最小zxid更小的日志文件
+，因为比需要保留最小zxid快照文件的事物日志可能存在于当前最小需要保留zxid的前一个文件中，
+也就是说事物日志要比快快照日志多保留一个，这个于日志写入时的滚动机制有关
 
 
 ```java
@@ -251,7 +266,6 @@ static void purgeOlderSnapshots(FileTxnSnapLog txnLog, File snapShot) {
     }
 
 }
- 
 ```
 
 
