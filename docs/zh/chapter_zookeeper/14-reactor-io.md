@@ -1594,11 +1594,13 @@ NettyServerCnxnFactory使用netty进行网络IO,但是其使用netty3.*版本,�
 
 注:上述区别是将netty4.*版本与NIOServerCnxnFactory的对比,由于ZooKeeper使用netty3.*
 ,因此其NettyServerCnxnFactory中存在一些无用代码,比如处理粘包拆包的代码
-从上述的比较中可以看出使用netty处理网络IO比基于Java NIO自己编码方便太多了,netty大法好~~
-总结
+从上述的比较中可以看出使用netty处理网络IO比基于Java NIO自己编码方便太多了
+
+### **总结**
 总结下线程通信所用的三个队列:
-- SelectorThread.acceptedQueue:accept thread和selector thread通信
-- SelectorThread.updateQueue:worker thread和selector thread通信
-- NIOServerCnxn.outgoingBuffers:worker thread和请求处理线程通信
+
+- **SelectorThread.acceptedQueue:accept** thread和selector thread通信
+- **SelectorThread.updateQueue:worker** thread和selector thread通信
+- **NIOServerCnxn.outgoingBuffers:worker** thread和请求处理线程通信
 
 
