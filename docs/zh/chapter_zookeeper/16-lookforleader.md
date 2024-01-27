@@ -1,7 +1,7 @@
 
 
-# 16-QuorumPeer主循环
-## 16.1 主循环简介
+#  **QuorumPeer主循环**
+##   **主循环简介**
 QuorumPeer 类型是ZookeeperThread的子类型是一个线程类型,在QuorumPeer 中通过super.start()方法启动线程
 在线程中根据集群的状态来决定是否需要参与投票,加入集群	
 这里先贴一下线程运行的完整代码:
@@ -183,24 +183,29 @@ setCurrentVote为当前投票结果
 
 集群节点状态 QuorumPeer#ServerState 枚举
 	
-// 寻找leader状态。当服务器处于该状态时，它会认为当- 前集群中没有leader，因此需要进入leader选举状态。
-   - LOOKING,
-    // 跟随者状态。表明当前服务器角色是 follower。
-  - FOLLOWING,  
-    // 领导者状态。表明当前服务器角色是 leader。
-  - LEADING,
-    // 观察者状态。表明当前服务器角色是 observer。
- -  OBSERVING
 
-## 16.2 LOOKING状态逻辑
+  
+| 状态        | 说明                                                          |
+|-----------|-------------------------------------------------------------|
+| LOOKING   | 寻找leader状态。当服务器处于该状态时，它会认为当- 前集群中没有leader，因此需要进入leader选举状态。 |
+| FOLLOWING | 跟随者状态。表明当前服务器角色是 follower                                   |
+| LEADING   | 领导者状态。表明当前服务器角色是 leader                                     |   
+| OBSERVING | 观察者状态。表明当前服务器角色是 observer。                                  |   
+
+##  **LOOKING状态逻辑**
 当处于LOOKING状态时我们看下核心逻辑:
-startLeaderElection();
+
+`startLeaderElection();`
+
 开始选举我们前面了解过在启动QuorumPeer之前就执行过一次创建选举算法和启动选举交互线程
 再继续看发起投票代码:
-setCurrentVote(makeLEStrategy().lookForLeader());
+
+`setCurrentVote(makeLEStrategy().lookForLeader());`
+
 获取投票策略makeLEStrategy这个就是我们前面创建的FastLeaderElection对象
 接下来看下lookForLeader选主过程:
 选主投票原文:
+
 https://www.cnblogs.com/wuzhenzhao/p/9983231.html
 
 ```java
@@ -486,10 +491,10 @@ protected boolean termPredicate(HashMap<Long, Vote> votes,Vote vote) {
     }
 ```
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/7d1172eb607146f89c8a0427e1c36524.png)
-![在这里插入图片描述](https://img-blog.csdnimg.cn/6b3a0bf5a98f410885e222159a49b914.png)
+![16-lookleader-1.png](/img/chapter_zookeeper/16-lookleader-1.png)
+![16-lookleader-2.png](/img/chapter_zookeeper/16-lookleader-2.png)
 
-## 16.3 OBSERVING状态逻辑
+##   **OBSERVING状态逻辑**
 
 ```java
 case OBSERVING:
@@ -515,7 +520,7 @@ case OBSERVING:
 ```
 
 首先创建调用makeObserver方法Observer对象
-setObserver(makeObserver(logFactory));
+`setObserver(makeObserver(logFactory));`
 
 
 观察者是不参与原子广播协议的对等点。 相反，他们会被领导者告知成功的提案。 因此，观察者自然地充当发布提案流的中继点，并可以减轻追随者的一些连接负载。 观察员可以提交提案，但不投票接受。 有关此功能的讨论，请参阅 ZOOKEEPER-368。
@@ -586,7 +591,7 @@ void observeLeader() throws Exception {
 ```
 
 
-## 16.4 FOLLOWING状态逻辑
+##   ****FOLLOWING状态逻辑****
 选主完成following切换到following状态
 
 ```java

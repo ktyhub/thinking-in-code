@@ -2,8 +2,8 @@
 
 
 
-# 15-选举算法的准备等待选举
-## 15.1 简介		
+#  **选举算法的准备等待选举**
+##  **简介**		
 先来回顾下QuorumPeer的启动方法：
 
 ```java
@@ -32,7 +32,7 @@ public synchronized void start() {
 }
 ```
 
-## 15.2 开始选举源码
+##  **开始选举源码**
 启动时候从磁盘加载数据到内存，然后开启服务端的网络处理服务，然后开启一个管理端，接下来就进入比较重要的一个章节，选举功能
 
 ```java
@@ -59,15 +59,16 @@ public synchronized void startLeaderElection() {
 }
 ```
 	
-ZK节点状态角色
+**ZK节点状态角色**
 ZK集群单节点状态（每个节点有且只有一个状态），ZK的定位一定需要一个leader节点处于lading状态。
+ 
 - looking：寻找leader状态，当前集群没有leader，进入leader选举流程。
 - following：跟随者状态，接受leading节点同步和指挥。
 - leading：领导者状态。
 -  observing：观察者状态，表名当前服务器是observer。
 
 
-## 15.3 创建选举算法
+##  **创建选举算法**
 QuorumPeer的createElectionAlgorithm方法
 ```java
 protected Election createElectionAlgorithm(int electionAlgorithm) {
@@ -109,35 +110,42 @@ protected Election createElectionAlgorithm(int electionAlgorithm) {
 ```
 
 electionType 的值是哪里来的呢 其实是来源配置文件中electionAlg属性默认值为3.使用何种选举方式，目前只支持3在老的版本中也是支持其他选项的（0，1，2，3），
-- “0”表示使用原生的UDP（LeaderElection），
-- “1”表示使用非授权UDP，
-- “2”表示授权UDP，
-- “3”基于TCP的快速选举（FastLeaderElection）
+ 
+- “0”表示使用 **原生的UDP**（LeaderElection），
+- “1”表示使用 **非授权UDP** 
+- “2”表示 **授权UDP** 
+- “3”基于 **TCP的快速选举（FastLeaderElection）**
 
 。目前保留“3”，其他方式将在未来版本不予支持，参QuorumPear.createElectionAlgorithm（int alg）
  
 
 
 
-## 15.4 选举之前的初始化
+##  **选举之前的初始化**
 先来看选举之前的初始化
 创建QuorumCnxManager对象：
-QuorumCnxManager(qcm) 实现领导选举中的网络连接管理功能。它为每一对节点维护唯一的一个连接，在两个节点都启动申请连接时，只有sid大的一方才会申请连接成功。qcm对每个节点维护一个消息发送队列。
+**QuorumCnxManager(qcm)** 实现领导选举中的网络连接管理功能。它为每一对节点维护唯一的一个连接，在两个节点都启动申请连接时，只有sid大的一方才会申请连接成功。qcm对每个节点维护一个消息发送队列。
 Qcm主要成员变量：
--   public final ArrayBlockingQueue<Message> recvQueue; //本节点的消息接收队列
-- final ConcurrentHashMap<Long, SendWorker> senderWorkerMap;//对每一个远程节点都会定义一个SendWorker
-- ConcurrentHashMap<Long, ArrayBlockingQueue<ByteBuffer>> queueSendMap;//每个远程节点都会定义一个消息发型队列
-- Qcm主要三个内类（线程）：
-	- Listener 网络监听线程
-	- SendWorker 消息发送线程（每个远程节点都会有一个）
-	- RecvWorker 消息接受线程
+-  `public final ArrayBlockingQueue<Message> recvQueue;` //本节点的消息接收队列
+- `final ConcurrentHashMap<Long, SendWorker> senderWorkerMap;`//对每一个远程节点都会定义一个SendWorker
+- `ConcurrentHashMap<Long, ArrayBlockingQueue<ByteBuffer>> queueSendMap;`//每个远程节点都会定义一个消息发型队列
+- `Qcm`主要三个内类（线程）：
+	- `Listener` 网络监听线程
+	- `SendWorker` 消息发送线程（每个远程节点都会有一个）
+	- `RecvWorker` 消息接受线程
 
 
-这个类实现了使用TCP进行leader选举的连接管理器。它为每对服务器维护一个连接。棘手的部分是确保每对正确运行并可以通过网络通信的服务器只有一个连接。
+这个类实现了使用TCP进行 **leader选举的连接管理器** 。
+ 
+它为每对服务器维护一个连接。棘手的部分是确保每对正确运行并可以通过网络通信的服务器只有一个连接。
+
 如果两个服务器试图同时启动一个连接，那么连接管理器将使用一种非常简单的打破连接机制，根据双方的IP地址来决定要删除哪个连接。
-对于每个对等点，管理器维护一个要发送的消息队列。如果与任何特定对等点的连接断开，则发送方线程将消息放回到列表中。由于此实现目前使用队列实现来维护要发送给另一个对等体的消息，因此我们将消息添加到队列的尾部，从而更改消息的顺序。虽然这对领导选举来说不是问题，但在点对点通信时可能会出现问题。不过，这还有待证实。
-对象初始化代码如下：
 
+对于每个对等点，管理器维护一个要发送的消息队列。
+
+如果与任何特定对等点的连接断开，则发送方线程将消息放回到列表中。由于此实现目前使用队列实现来维护要发送给另一个对等体的消息，因此我们将消息添加到队列的尾部，从而更改消息的顺序。虽然这对领导选举来说不是问题，但在点对点通信时可能会出现问题。不过，这还有待证实。
+对象初始化代码如下：
+### createCnxnManager方法
 ```java
 public QuorumCnxManager createCnxnManager() {
     int timeout = quorumCnxnTimeoutMs > 0 ? quorumCnxnTimeoutMs : this.tickTime * this.syncLimit;
@@ -193,17 +201,18 @@ public QuorumCnxManager(QuorumPeer self, final long mySid, Map<Long, QuorumPeer.
 
 
 先来了解下各个参数的含义：
-- QuorumPeer self ：当前server管理仲裁协议的QuorumPeer类型
-- long mySid: 为当前server配置的id在myid文件中
-- Map<Long, QuorumPeer.QuorumServer> view, 需要投票的服务器列表在配置zookeeper配置文件中可以配置服务器列表（可以配置每个服务器对应的投票权重）
-- QuorumAuthServer authServer：初始化QuorumPeer对象时候创建的仲裁服务器的认证服务，用于认证客户端的连接
-- QuorumAuthLearner authLearner：仲裁学习者认证服务
-- int socketTimeout ：使用quorumCnxnTimeoutMs的JVM参数配置：（Java系统属性：饲养员quorumCnxnTimeoutMs）设置为领导人选举通知的连接读取超时值。仅适用于使用electionAlg 3 的情况。笔记默认值为 -1，然后将使用 syncLimit * tickTime 作为超时。
 
-- boolean listenOnAllIPs: 配置来源于配置中间中的quorumListenOnAllIPs是否监听两个仲裁端口（广播和选举）的所有ip，这个配置默认为false，监听多个IP会创建多个ServerSocket对象进行绑定，如果为false如果zookeeper配置了istio sidecar ，在选举阶段就会报- connection refused（Connection refused）错误，这主要是因为 zookeeper 在server之间通信默认是监听 pod IP 地址，而istio要求监听0.0.0.0，因此需要设置- quorumListenOnAllIPs=true。
-具体问题可以参考：https://istio.io/latest/faq/applications/
-- int quorumCnxnThreadsSize：connectionexecutor线程池中允许用于初始化仲裁服务器连接的最大线程数。默认配置为20，可以在配置文件中进行配置
-- quorumSaslAuthEnabled ：是否开启sasl认证
+| 参数 | 含义 |
+|----|----|
+| QuorumPeer self   |  当前server管理仲裁协议的QuorumPeer类型  |
+| long mySid   |   为当前server配置的id在myid文件中 |
+|  Map<Long, QuorumPeer.QuorumServer> view  |需要投票的服务器列表在配置zookeeper配置文件中可以配置服务器列表（可以配置每个服务器对应的投票权重）    |
+|QuorumAuthServer authServer|初始化QuorumPeer对象时候创建的仲裁服务器的认证服务，用于认证客户端的连接|
+| QuorumAuthLearner authLearner|仲裁学习者认证服务|
+| int socketTimeout |使用quorumCnxnTimeoutMs的JVM参数配置：（Java系统属性：饲养员quorumCnxnTimeoutMs）设置为领导人选举通知的连接读取超时值。仅适用于使用electionAlg 3 的情况。笔记默认值为 -1，然后将使用 syncLimit * tickTime 作为超时。|
+|boolean listenOnAllIPs| 配置来源于配置中间中的quorumListenOnAllIPs是否监听两个仲裁端口（广播和选举）的所有ip，这个配置默认为false，监听多个IP会创建多个ServerSocket对象进行绑定，如果为false如果zookeeper配置了istio sidecar ，在选举阶段就会报- connection refused（Connection refused）错误，这主要是因为 zookeeper 在server之间通信默认是监听 pod IP 地址，而istio要求监听0.0.0.0，因此需要设置- quorumListenOnAllIPs=true。具体问题可以参考：https://istio.io/latest/faq/applications/|
+|int quorumCnxnThreadsSize|connectionexecutor线程池中允许用于初始化仲裁服务器连接的最大线程数。默认配置为20，可以在配置文件中进行配置|
+| quorumSaslAuthEnabled |是否开启sasl认证|
 
 
 构造器的初始化主要看一下initializeConnectionExecutor创建连接线程池
@@ -221,9 +230,8 @@ if (oldQcm != null) {
 }
 ```
 
-## 15.5 QuorumCnxManager的网络监听线程Listener
+##   **QuorumCnxManager的网络监听线程Listener**
 Listener内部线程的run方法如下用于启动监听端口，监听其他server的连接与数据传输
-
 
 启动之前的监听器
 
@@ -281,8 +289,8 @@ public void run() {
 }
 ```
 
-//开启服务端口监听等待客户端连接, 大的sid连接小的sid的服务逻辑如下:
-- 如果建立连接的客户端的sid小于当前实例的sid则断开与当前客户端的连接转而充当客户端- 连接当前更大sid的服务
+开启服务端口监听等待客户端连接, 大的sid连接小的sid的服务逻辑如下:
+- 如果建立连接的客户端的sid小于当前实例的sid则断开与当前客户端的连接转而充当客户端- **连接当前更大sid的服务**
 - 如果建立连接的客户端的sid大于当前实例的sid则正常连接开启发送和接收的子线程SendWorker和RecvWorker
 - 发送线程循环从发送队列中拉取消息进行发送(queueSendMap
 中sid对应的发送队列)
@@ -524,7 +532,7 @@ rivate void handleConnection(Socket sock, DataInputStream din) throws IOExceptio
 }
 ```
 
-## 15.6 SendWorker网络层发送数据:
+##  **SendWorker网络层发送数据:**
 如何发送数据我们主要看下核心的实现就可以了主要逻辑代码如下:
 
 ```java
@@ -571,21 +579,23 @@ synchronized void send(ByteBuffer b) throws IOException {
 }
 ```
 
-//这里来了解下ByteBuffer的get方法:
-相对批量获取方法。
-此方法将此缓冲区中的字节传输到给定的目标数组中。 如果缓冲区中剩余的字节数少于满足请求所需的字节数，即如果 length > remaining()，则不会传输任何字节并抛出 BufferUnderflowException。
-否则，此方法将此缓冲区中的 length 个字节复制到给定数组中，从该缓冲区的当前位置和数组中的给定偏移量开始。 然后这个缓冲区的位置按长度递增。
-换句话说，以 src.get(dst, off, len) 形式调用此方法与循环具有完全相同的效果
+ ### **ByteBuffer的get方法**
 
- 
+相对批量获取方法, 此方法将此缓冲区中的字节传输到给定的目标数组中。 
+
+如果缓冲区中剩余的字节数少于满足请求所需的字节数，即如果 `length > remaining()`，则不会传输任何字节并抛出 BufferUnderflowException。
+否则，此方法将此缓冲区中的 length 个字节复制到给定数组中，从该缓冲区的当前位置和数组中的给定偏移量开始。 然后这个缓冲区的位置按长度递增。
+换句话说，以 `src.get(dst, off, len) `形式调用此方法与循环具有完全相同的效果
+
+ ```java
   for (int i = off; i < off + len; i++)
       dst[i] = src.get():
-
+```
  
 除了它首先检查此缓冲区中是否有足够的字节并且它可能更有效率。
 
 
-## 15.7 RecvWorker网络层接收数据:
+##  **RecvWorker网络层接收数据:**
 接收来自远程服务器节点的数据,接下来我们看下接收到的数据是如何进行处理的
 
 ```java
@@ -617,7 +627,7 @@ public void addToRecvQueue(final Message msg) {
 }
 ```
 
-## 15.8 选举算法的创建与启动
+##   **选举算法的创建与启动**
 回到QuorumPeer中的createElectionAlgorithm方法来看
 
 ```java
@@ -641,10 +651,16 @@ case 3:
 ```
 
 选举连接管理器启动完毕之后则开始创建QuorumCnxManager 然后启动选举策略
-先来看下FastLeaderElection对象的创建涉及到哪些内容
+
+
+### **FastLeaderElection构造器**
+先来看下FastLeaderElection对象的创建涉及到哪些内容:
+
 - 创建发送队列sendqueue 
 - 创建接收队列recvqueue 
 - 创建Messenger类型对象
+
+
 创建Messenger类型对象做了什么内容呢?
 - 创建用于发送消息的线程WorkerSender类型对象
 - 创建用于接收消息的线程WorkerReceiver类型对象
@@ -678,9 +694,8 @@ Messenger(QuorumCnxManager manager) {
 }
 ```
 
-启动选举算法:
+### **启动选举算法**
 
-  
 
 ```java
 FastLeaderElection fle = new FastLeaderElection(this, qcm);
@@ -731,7 +746,7 @@ void process(ToSend m) {
 }
 ```
 
-WorkerReceiver数据接收层
+### **WorkerReceiver数据接收层**
 WorkerReceiver类型主要作用是解析来自远端的消息,并对消息内容做处理
 
 ```java
