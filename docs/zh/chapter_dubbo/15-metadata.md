@@ -1,37 +1,24 @@
----
-title: "15-Dubbo的三大中心之元数据中心源码解析"
-linkTitle: "15-Dubbo的三大中心之元数据中心源码解析"
-date: 2022-08-15
-author: 宋小生
-tags: ["源码解析", "Java"]
-description: >
-    [Dubbo 3.0.8源码解析]  Dubbo 3 会需要一个元数据中心来维护RPC服务与应用的映射关系（即接口与应用的映射关系），因为如果采用了应用级别的服务发现和服务注册，在注册中心中将采用“应用 —— 实例列表”结构的数据组织形式，不再是以往的“接口 —— 实例列表”结构的数据组织形式，而以往用接口级别的服务注册和服务发现的应用服务在迁移到应用级别时，得不到接口与应用之间的对应关系，从而无法从注册中心得到实例列表信息，所以Dubbo为了兼容这种场景，在Provider端启动时，会往元数据中心存储接口与应用的映射关系。
----
+ #  **Dubbo的三大中心之元数据中心源码解析**
 
-
-
-
-# 15-Dubbo的三大中心之元数据中心源码解析
-
-## 15.1 简介
+##  **简介**
 关于元数据中心的概念对于大部分用户来说是比较陌生的,配置中心的话我们还好理解,对于元数据中心是什么,我们来看下我从官网拷贝过来的一段文字:
 
-元数据中心在2.7.x版本开始支持，随着应用级别的服务注册和服务发现在Dubbo中落地，**元数据中心也变的越来越重要**。在以下几种情况下会需要部署元数据中心：
+元数据中心在2.7.x版本开始支持，随着应用级别的服务注册和服务发现在Dubbo中落地，**元数据中心也变的越来越重要** 。在以下几种情况下会需要部署元数据中心：
 
-- 对于一个原先采用老版本Dubbo搭建的应用服务，在迁移到Dubbo 3时，Dubbo 3 会需要一个**元数据中心来维护RPC服务与应用的映射关系（即接口与应用的映射关系）**，因为如果采用了**应用级别的服务发现和服务注册**，在注册中心中将**采用“应用 —— 实例列表”结构**的数据组织形式，**不再是以往的“接口 —— 实例列表”结构的数据组织形式**，而以往用接口级别的服务注册和服务发现的应用服务在**迁移到应用级别**时，**得不到接口与应用之间的对应关系**，从而无法从注册中心得到实例列表信息，所以**Dubbo为了兼容这种场景，在Provider端启动时，会往元数据中心存储接口与应用的映射关系**。
-- 为了让**注册中心更加聚焦与地址的发现和推送能力**，**减轻注册中心的负担**，元数据中心承载了所有的服务元数据、大量接口/方法级别配置信息等，无论是接口粒度还是应用粒度的服务发现和注册，元数据中心都起到了重要的作用。
+- 对于一个原先采用老版本Dubbo搭建的应用服务，在迁移到Dubbo 3时，Dubbo 3 会需要一个 **元数据中心来维护RPC服务与应用的映射关系（即接口与应用的映射关系）** ，因为如果采用了 **应用级别的服务发现和服务注册** ，在注册中心中将**采用“应用 —— 实例列表”结构 ** 的数据组织形式，** 不再是以往的“接口 —— 实例列表”结构的数据组织形式** ，而以往用接口级别的服务注册和服务发现的应用服务在 **迁移到应用级别** 时，**得不到接口与应用之间的对应关系** ，从而无法从注册中心得到实例列表信息，所以 **Dubbo为了兼容这种场景，在Provider端启动时，会往元数据中心存储接口与应用的映射关系** 。
+- 为了让 **注册中心更加聚焦与地址的发现和推送能力** ，**减轻注册中心的负担** ，元数据中心承载了所有的服务元数据、大量接口/方法级别配置信息等，无论是接口粒度还是应用粒度的服务发现和注册，元数据中心都起到了重要的作用。
 - 
 如果有以上两种需求，都可以选择部署元数据中心，并通过Dubbo的配置来集成该元数据中心。
 
-**元数据中心并不依赖于注册中心和配置中心**，用户可以自由选择是否集成和部署元数据中心，如下图所示：
+**元数据中心并不依赖于注册中心和配置中心** ，用户可以自由选择是否集成和部署元数据中心，如下图所示：
 
-![/imgs/v3/concepts/centers-metadata.png](/imgs/v3/concepts/centers-metadata.png)
+![15-config.png](/img/chapter_dubbo/15-config.png
 
 
 该图中不配备配置中心，意味着可以不需要全局管理配置的能力。该图中不配备注册中心，意味着可能采用了Dubbo mesh的方案，也可能不需要进行服务注册，仅仅接收直连模式的服务调用。
 官网参考文章地址:
-- [部署架构（注册中心 配置中心 元数据中心](/zh-cn/docs/concepts/registry-configcenter-metadata/)
-- [元数据参考手册](/zh-cn/docs/references/metadata/)
+- [部署架构（注册中心 配置中心 元数据中心](https://dubbo.apache.org/zh/docs/v3.0/concepts/registry-configcenter-metadata/)
+- [元数据参考手册](https://dubbo.apache.org/zh/docs/references/metadata/)
 
 
 综上所述可以用几句话概括下:
@@ -75,8 +62,8 @@ description: >
 
 ```
 
-## 15.2 深入探究元数据中心的启动过程
- ### 15.2.1 启动元数据中心的代码全貌
+## **深入探究元数据中心的启动过程**
+ ###  **启动元数据中心的代码全貌**
  
 关于元数据中心我们看下 startMetadataCenter()方法来大致了解下整个流程
 
@@ -117,7 +104,7 @@ private void startMetadataCenter() {
 
 
 
-### 15.2.2 元数据中心未配置则使用注册中心配置
+###  **元数据中心未配置则使用注册中心配置**
 前面在说配置中心的时候有说过配置中心如果未配置会使用注册中心的地址等信息作为默认配置,这里元数据做了类似的操作:如代码:
 DefaultApplicationDeployer类型的 useRegistryAsMetadataCenterIfNecessary()方法
 
@@ -172,34 +159,34 @@ private void useRegistryAsMetadataCenterIfNecessary() {
 	-  选符合条件的注册中心 (筛选逻辑就是查看是否有对应协议的扩展支持)
 	- 注册中心配置RegistryConfig映射转换为元数据中心配置类型MetadataReportConfig  映射就是获取需要的配置
 	- 将元数据中心配置存储在配置缓存中方便后续使用
- 
- 元数据的配置可以参考官网:[元数据参考手册](/zh-cn/docs/references/metadata/)
- 
+
+元数据的配置可以参考官网:[元数据参考手册](https://dubbo.apache.org/zh/docs/v3.0/references/metadata/)
+
  这里主要看下可配置项有哪些 对应类型为MetadataReportConfig 在官网暂时未找到合适的文档,这里整理下属性列表方便后续配置说明查看:
  
-| 配置变量 | 类型 | 说明|
-|--|--|--|
-| id |  String|配置id
-|protocol|String|元数据协议|
-|address|String|元数据中心地址|
-|port|Integer|元数据中心端口|
-|username|String|元数据中心认证用户名|
-|password|String|元数据中心认证密码|
-|timeout|Integer|元数据中心的请求超时（毫秒）|
-|group|String|该组将元数据保存在中。它与注册表相同|
-|parameters|Map<String, String>|自定义参数|
-|retryTimes|Integer|重试次数|
-|retryPeriod|Integer|重试间隔|
-|cycleReport|Boolean|默认情况下， 是否每天重复存储完整的元数据|
-|syncReport|Boolean|Sync or Async report.
-|cluster|Boolean|需要群集支持，默认为false|
-|registry|String|注册表配置id|
-|file|String|元数据报告文件存储位置|
-|check|Boolean|连接到元数据中心时要应用的失败策略|
+| 配置变量        | 类型                  | 说明                    |
+|-------------|---------------------|-----------------------|
+| id          | String              | 配置id                  |
+| protocol    | String              | 元数据协议                 |
+| address     | String              | 元数据中心地址               |
+| port        | Integer             | 元数据中心端口               |
+| username    | String              | 元数据中心认证用户名            |
+| password    | String              | 元数据中心认证密码             |
+| timeout     | Integer             | 元数据中心的请求超时（毫秒）        |
+| group       | String              | 该组将元数据保存在中。它与注册表相同    |
+| parameters  | Map<String, String> | 自定义参数                 |
+| retryTimes  | Integer             | 重试次数                  |
+| retryPeriod | Integer             | 重试间隔                  |
+| cycleReport | Boolean             | 默认情况下， 是否每天重复存储完整的元数据 |
+| syncReport  | Boolean             | Sync or Async report. |
+| cluster     | Boolean             | 需要群集支持，默认为false       |
+| registry    | String              | 注册表配置id               |
+| file        | String              | 元数据报告文件存储位置           |
+| check       | Boolean             | 连接到元数据中心时要应用的失败策略     |
 
 
-### 15.2.3 元数据中心的初始化逻辑
-#### 15.2.3.1 元数据中心的初始化调用逻辑
+###  **元数据中心的初始化逻辑**
+####  **元数据中心的初始化调用逻辑**
 主要看这一行比较重要的逻辑:
 
 ```java
@@ -259,9 +246,9 @@ MetadataReportInstance中的初始化方法init
 - 一个是元数据对象的创建与初始化MetadataReport
 
 
-#### 15.2.3.2 元数据工厂对象MetadataReportFactory
-关于元数据工厂类型MetadataReportFactory,元数据工厂 用于**创建与管理元数据对象**, 相关类型如下:
-![在这里插入图片描述](/imgs/blog/source-blog/15-config.png)
+####  **元数据工厂对象MetadataReportFactory**
+关于元数据工厂类型MetadataReportFactory,元数据工厂 用于**创建与管理元数据对象** , 相关类型如下:
+![15-metadata-2](/img/chapter_dubbo/15-metadata-2)
 
 我们这里主要以为Zookeeper扩展的元数据工厂ZookeeperMetadataReportFactory类型为例子:
 实现类型逻辑不复杂,这里就直接贴代码看看:
@@ -298,7 +285,7 @@ public class ZookeeperMetadataReportFactory extends AbstractMetadataReportFactor
 如果我们想要实现一个元数据工厂扩展可以参考Zookeeper的这个方式
 
 
-#### 15.2.3.3 元数据操作对象MetadataReport的创建与初始化
+####  **元数据操作对象MetadataReport的创建与初始化**
 
 前面的从元数据工厂中获取元数据操作对象的逻辑处理代码如下:
 
@@ -309,7 +296,7 @@ public class ZookeeperMetadataReportFactory extends AbstractMetadataReportFactor
 
 关于元数据对象,用于元数据信息的增删改查等逻辑的操作与元数据信息的缓存
 
-![在这里插入图片描述](/imgs/blog/source-blog/15-config2.png)
+![15-metadata-3.png](/img/chapter_dubbo/15-metadata-3.png)
 
 我们这里还是以Zookeeper的实现ZookeeperMetadataReportFactory类型做为参考:
 
@@ -478,11 +465,11 @@ public ZookeeperMetadataReport(URL url, ZookeeperTransporter zookeeperTransporte
 
 
 
-#### 15.2.3.4 内存中元数据自动同步到Zookeeper和本地文件
+####  **内存中元数据自动同步到Zookeeper和本地文件**
 这里来总结下元数据操作的初始化逻辑:
 
 - 首次初始化清理历史元数据文件如:
-  Users/song/.dubbo/dubbo-metadata-dubbo-demo-api-provider-127.0.0.1-2181.cache
+  `Users/song/.dubbo/dubbo-metadata-dubbo-demo-api-provider-127.0.0.1-2181.cache`
 - 如果非首次进来则直接加载缓存在本地的缓存文件,赋值给properties成员变量
 - 初始化同步配置是否异步(默认为false), sync-report配置的值为同步配置还异步配置,true是同步配置,默认为false为异步配置
 - 初始化重试属性
@@ -599,7 +586,7 @@ ZookeeperMetadataReport的doStoreProviderMetadata举例:
 这里参数我们举个例子: 提供者的元数据内容如下:
 节点路径为:
 
-- /dubbo/metadata/link.elastic.dubbo.entity.DemoService/provider/dubbo-demo-api-provider
+- `/dubbo/metadata/link.elastic.dubbo.entity.DemoService/provider/dubbo-demo-api-provider`
 
 格式:
 - /dubbo/metadata前缀

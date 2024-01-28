@@ -1,7 +1,7 @@
 
 
-# 6 Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析
-##  6.1 普通扩展对象的加载与创建
+#  **Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析**
+##    **普通扩展对象的加载与创建**
 这里我们要分析的是ExtensionLoader类型的getExtension(String name)方法, 有了前面自适应扩展的铺垫,这里就更容易来看了getExtension是根据扩展名字获取具体扩展的通用方法,我们来根据某个类型来获取扩展的时候就是走的这里,比如在这个博客开头的介绍:
 
 -  ApplicationModel中获取配置管理器对象
@@ -11,9 +11,9 @@
        
 ```
 
-### 6.1.1 getExtension方法源码
+###   **getExtension方法源码**
 先来看下getExtension方法的源码,根据扩展名字查询扩展对象
-```cpp
+```java
 
 public T getExtension(String name) {
 		//这里并不能看到什么,只多传了个参数wrap为true调用另外一个重载的方法
@@ -83,12 +83,12 @@ public T getDefaultExtension() {
 创建扩展对象方法这个和自适应扩展的创建扩展类似
 createExtension:
 具体过程如下:
-- 加载扩展类型:getExtensionClasses()
-- 创建扩展对象:createExtensionInstance(clazz)
-- 注入自适应扩展: injectExtension(instance);
+- **加载扩展类型:** getExtensionClasses()
+- **创建扩展对象:** createExtensionInstance(clazz)
+- **注入自适应扩展:** injectExtension(instance);
 - wrap处理
 
-```cpp
+```java
 private T createExtension(String name, boolean wrap) {
 		//扩展的创建的第一步扫描所有jar中的扩展实现,这里扫描完之后获取对应扩展名字的扩展实现类型的Class对象
         Class<?> clazz = getExtensionClasses().get(name);
@@ -156,7 +156,7 @@ private T createExtension(String name, boolean wrap) {
 
 
 
-###  6.1.2 创建扩展对象
+###   **创建扩展对象**
 
 前面加载扩展类型在自适应扩展的时候已经说过了这里就不重复了,这里我们来看下
 扩展对象的创建过程:createExtensionInstance(clazz)
@@ -165,7 +165,7 @@ private T createExtension(String name, boolean wrap) {
  
 
 ExtensionLoader的createExtensionInstance方法
-```cpp
+```java
 private Object createExtensionInstance(Class<?> type) throws ReflectiveOperationException {
 		//在ExtensionLoader构造器中,有个initInstantiationStrategy()方法中new了一个初始化策略InstantiationStrategy类型对象 
         return instantiationStrategy.instantiate(type);
@@ -174,7 +174,7 @@ private Object createExtensionInstance(Class<?> type) throws ReflectiveOperation
 
  
 InstantiationStrategy的实例化对象方法instantiate
-```cpp
+```java
 public <T> T instantiate(Class<T> type) throws ReflectiveOperationException {
 
         // should not use default constructor directly, maybe also has another constructor matched scope model arguments
@@ -239,8 +239,8 @@ public <T> T instantiate(Class<T> type) throws ReflectiveOperationException {
 ```
 
 
-## 6.2 wrap机制
-### 6.2.1 Wrapper机制说明
+##  **wrap机制**
+###  **Wrapper机制说明**
 Dubbo通过Wrapper实现AOP的方法
 
 Wrapper机制，即扩展点自动包装。Wrapper 类同样实现了扩展点接口，但是 Wrapper 不是扩展点的真正实现。它的用途主要是用于从 ExtensionLoader 返回扩展点时，包装在真正的扩展点实现外。即从 ExtensionLoader 中返回的实际上是 Wrapper 类的实例，Wrapper 持有了实际的扩展点实现类。
@@ -259,7 +259,7 @@ Wrapper 类在定义时需要遵循如下规范。
  
 比如如下几个扩展类型
 
-```cpp
+```java
  class org.apache.dubbo.rpc.protocol.ProtocolListenerWrapper
  class org.apache.dubbo.qos.protocol.QosProtocolWrapper
  class org.apache.dubbo.rpc.protocol.ProtocolListenerWrapper
@@ -268,12 +268,12 @@ Wrapper 类在定义时需要遵循如下规范。
 
 
 回顾下Wrapper扩展类型的扫描于对象的创建
-### 6.2.2 Wrapper类型的扫描
+###  **Wrapper类型的扫描**
 **Wrapper类型的扫描代码如下:**
 
-来自4.5.2.3小节ExtensionLoader类型中的loadClass方法
+来自前面小节ExtensionLoader类型中的loadClass方法
 
-```cpp
+```java
  //扩展子类型是否存在这个注解@Adaptive
         if (clazz.isAnnotationPresent(Adaptive.class)) {
             cacheAdaptiveClass(clazz, overridden);
@@ -284,7 +284,7 @@ Wrapper 类在定义时需要遵循如下规范。
 ```
 
 isWrapperClass方法通过判断构造器类型是否为当前类型来判断是否为Wrapper类型
-```cpp
+```java
  private boolean isWrapperClass(Class<?> clazz) {
         try {
             clazz.getConstructor(type);
@@ -296,10 +296,10 @@ isWrapperClass方法通过判断构造器类型是否为当前类型来判断是
 ```
 
 
-### 6.2.3 Wrapper类型的创建
-这个可以看下4.6.1 getExtension方法源码的获取扩展对象时候查询扩展对象是否有对应的Wrapper类型的扩展为其创建Wrapper扩展对象,如下代码
+###   **Wrapper类型的创建**
+这个可以看下 getExtension方法源码的获取扩展对象时候查询扩展对象是否有对应的Wrapper类型的扩展为其创建Wrapper扩展对象,如下代码
 
-```cpp
+```java
 //Dubbo通过Wrapper实现AOP的方法
             if (wrap) {
             //这个可以参考下Dubbo扩展的加载

@@ -1,33 +1,34 @@
 
-# 13-Dubbo的三大中心之配置中心
-## 13.1 配置中心简介
+#  **Dubbo的三大中心之配置中心**
+##  **配置中心简介**
 百度了一段不错的文字来介绍配置中心，我看了下肯定比我写的好多了，那我就直接拷贝过来一起看：
 
-*对于传统的单体应用而言，常使用配置文件来管理所有配置，比如SpringBoot的application.yml文件，但是在微服务架构中全部手动修改的话很麻烦而且不易维护。微服务的配置管理一般有以下需求：*
-- ***集中配置管理**，一个微服务架构中可能有成百上千个微服务，所以集中配置管理是很重要的。*
-- ***不同环境不同配置**，比如数据源配置在不同环境（开发，生产，测试）中是不同的。*
-- ***运行期间可动态调整**。例如，可根据各个微服务的负载情况，动态调整数据源连接池大小等。*
-- ***配置修改后可自动更新**。如配置内容发生变化，微服务可以自动更新配置。*
+* 对于传统的单体应用而言，常使用配置文件来管理所有配置，比如SpringBoot的application.yml文件，但是在微服务架构中全部手动修改的话很麻烦而且不易维护。微服务的配置管理一般有以下需求：*
+-   **集中配置管理** 一个微服务架构中可能有成百上千个微服务，所以集中配置管理是很重要的。 
+-   **不同环境不同配置**  比如数据源配置在不同环境（开发，生产，测试）中是不同的。 
+-  **运行期间可动态调整**  例如，可根据各个微服务的负载情况，动态调整数据源连接池大小等。 
+-  **配置修改后可自动更新** 如配置内容发生变化，微服务可以自动更新配置。 
 
 综上所述对于微服务架构而言，一套统一的，通用的管理配置机制是不可缺少的主要组成部分。常见的做法就是通过配置服务器进行管理。
 
 不过对于来看这个文章的小伙伴应该大部分对配置中心都会比较了解，分布式配置中心实现简单一点就是借助Zookeeper来协助存储，变更推送，不过为了实现各种不同的业务需求，市面上已经有很多很可靠的配置中心可用了，比如我从其他地方拷贝过来的图（虽然不是最新的但是可以供大家参考下）：
 
-![在这里插入图片描述](/imgs/blog/source-blog/register.png)
+![13-config.png](/img/chapter_dubbo/13-config.png)
 
 每个配置中心都有自己的实现，如果对配置中心感兴趣的小伙伴可以自行去对应开源项目官网查看，我们这里来看Dubbo对配置中心的支持
 
-***多配置中心：** Dubbo支持多配置中心，来 **保证其中一个配置中心集群出现不可用时能够切换到另一个配置中心集群** ，保证能够正常从配置中心获取全局的配置、路由规则等信息。这也能够满足配置中心在部署上适应各类高可用的部署架构模式。-来自官网*
+ **多配置中心：** Dubbo支持多配置中心，来 **保证其中一个配置中心集群出现不可用时能够切换到另一个配置中心集群** ，保证能够正常从配置中心获取全局的配置、路由规则等信息。这也能够满足配置中心在部署上适应各类高可用的部署架构模式。-来自官网 
 
 做中间件可能考虑更多的的不仅仅是性能，还要过多的考虑高可用，高可用怎么做呢，其实就是失效转移，主备切换，降级，降级再降级这些理论的运用，多多考虑某一个服务挂了怎么办，Dubbo的多配置中心支持增加了复杂性，不过降低了服务不可用的风险，有一定的人手的公司还是值得做的。
 
 关于Dubbo的配置中心这里我来贴个官网的图:
-![在这里插入图片描述](/imgs/v3/concepts/centers-config.png)
-关于官网的介绍可以自行去官网看详细内容: [部署架构(注册中心、配置中心、元数据中心](/zh-cn/docs/concepts/registry-configcenter-metadata/)
+![13-dubbo-config.png](/img/chapter_dubbo/13-dubbo-config.png)
+关于官网的介绍可以自行去官网看详细内容: [部署架构(注册中心、配置中心、元数据中心](https://dubbo.apache.org/zh/docs/concepts/registry-configcenter-metadata/)
 
 
-## 13.2 启动配置中心
-在上一个博客中说到了[《12-全局视野来看Dubbo3.0.8的服务启动生命周期》](https://blog.elastic.link/2022/07/10/dubbo/12-quan-ju-shi-ye-lai-kan-dubbo3.0.8-de-fu-wu-qi-dong-sheng-ming-zhou-qi/)Dubbo应用的启动过程DefaultApplicationDeployer的initialize()方法的全生命周期，在初始化方法中通过调用startConfigCenter();方法来启动配置中心的加载。后面就来详细看下：
+##  **启动配置中心**
+在上一个博客中说到了[《12-全局视野来看Dubbo3.0.8的服务启动生命周期》](/zh/chapter_dubbo/12-start-life-cycle)Dubbo应用的启动过程DefaultApplicationDeployer的initialize()方法的全生命周期，
+在初始化方法中通过调用startConfigCenter();方法来启动配置中心的加载。后面就来详细看下：
 
 DefaultApplicationDeployer类型的startConfigCenter()代码如下：
 
@@ -99,7 +100,7 @@ private void startConfigCenter() {
     }
 ```
 
-### 13.2.1 配置管理器加载配置
+###  **配置管理器加载配置**
  
 前面我们看到了配置管理器会从系统属性中加载配置这里我们来详细看下，配置往往是我们使用者比较关注的内容，
 ```java
@@ -192,7 +193,7 @@ public <T extends AbstractConfig> List<T> loadConfigsOfTypeFromProps(Class<T> cl
     }
 ```
 
-## 13.2.2  默认使用注册中心地址为配置中心
+##  **默认使用注册中心地址为配置中心**
 出于兼容性目的，如果没有明确指定配置中心，并且registryConfig的UseAConfigCenter为null或true，请使用registry作为默认配置中心
 调用方法useRegistryAsConfigCenterIfNecessary()来处理逻辑
 我们来看下代码:
@@ -237,7 +238,7 @@ private void useRegistryAsConfigCenterIfNecessary() {
     }
 ```
 
-#### 13.2.2.1 如何判断当前注册中心是否可以为配置中心
+####   **如何判断当前注册中心是否可以为配置中心**
 isUsedRegistryAsConfigCenter
 
 ```java
@@ -282,7 +283,7 @@ zookeeper=org.apache.dubbo.configcenter.support.zookeeper.ZookeeperDynamicConfig
 
 
 
-#### 13.2.2.2 注册中心配置转配置中心配置
+####  **注册中心配置转配置中心配置**
 这个逻辑是registryAsConfigCenter方法,我来贴一下代码:
 
 ```java
@@ -334,7 +335,7 @@ private ConfigCenterConfig registryAsConfigCenter(RegistryConfig registryConfig)
 ```
 
 
-## 13.3 配置刷新逻辑
+##   **配置刷新逻辑**
 来自AbstractConfig类型的refresh()方法
 
 ```java
@@ -394,35 +395,35 @@ public void refresh() {
     }
 ```
 
-![在这里插入图片描述](/imgs/blog/source-blog/13-config-1.png)
+![13-config-2.png](/img/chapter_dubbo/13-config-2.png)
 
-![在这里插入图片描述](/imgs/blog/source-blog/13-config2.png)
-
-
+![13-config-3.png](/img/chapter_dubbo/13-config-3.png)
 
 
 
-## 13.4 配置中心配置大全
+
+
+##   **配置中心配置大全**
 ConfigCenterConfig类型
  下面配置信息来自官网
 dubbo:config-center 配置
 
 配置中心。对应的配置类：`org.apache.dubbo.config.ConfigCenterConfig`
 
-| 属性               | 对应URL参数            | 类型                | 是否必填 | 缺省值           | 描述                                                         | 兼容性 |
-| ------------------ | ---------------------- | ------------------- | -------- | ---------------- | ------------------------------------------------------------ | ------ |
-| protocol           | config.protocol        | string              | 可选     | zookeeper        | 使用哪个配置中心：apollo、zookeeper、nacos等。 以zookeeper为例 1. 指定protocol，则address可以简化为`127.0.0.1:2181`； 2. 不指定protocol，则address取值为`zookeeper://127.0.0.1:2181` | 2.7.0+ |
-| address            | config.address         | string              | 必填     |                  | 配置中心地址。 取值参见protocol说明                          | 2.7.0+ |
-| highest-priority   | config.highestPriority | boolean             | 可选     | true             | 来自配置中心的配置项具有最高优先级，即会覆盖本地配置项。     | 2.7.0+ |
-| namespace          | config.namespace       | string              | 可选     | dubbo            | 通常用于多租户隔离，实际含义视具体配置中心而不同。 如： zookeeper - 环境隔离，默认值`dubbo`； apollo - 区分不同领域的配置集合，默认使用`dubbo`和`application` | 2.7.0+ |
-| cluster            | config.cluster         | string              | 可选     |                  | 含义视所选定的配置中心而不同。 如Apollo中用来区分不同的配置集群 | 2.7.0+ |
-| group              | config.group           | string              | 可选     | dubbo            | 含义视所选定的配置中心而不同。 nacos - 隔离不同配置集 zookeeper - 隔离不同配置集 | 2.7.0+ |
-| check              | config.check           | boolean             | 可选     | true             | 当配置中心连接失败时，是否终止应用启动。                     | 2.7.0+ |
-| config-file        | config.configFile      | string              | 可选     | dubbo.properties | 全局级配置文件所映射到的key zookeeper - 默认路径/dubbo/config/dubbo/dubbo.properties apollo - dubbo namespace中的dubbo.properties键 | 2.7.0+ |
-| timeout            | config.timeout         | integer             |          | 3000ms           | 获取配置的超时时间                                           | 2.7.0+ |
-| username           |                        | string              |          |                  | 如果配置中心需要做校验，用户名 Apollo暂未启用                | 2.7.0+ |
-| password           |                        | string              |          |                  | 如果配置中心需要做校验，密码 Apollo暂未启用                  | 2.7.0+ |
-| parameters         |                        | Map<string, string> |          |                  | 扩展参数，用来支持不同配置中心的定制化配置参数               | 2.7.0+ |
-| include-spring-env |                        | boolean             | 可选     | false            | 使用Spring框架时支持，为true时，会自动从Spring Environment中读取配置。 默认依次读取 key为dubbo.properties的配置 key为dubbo.properties的PropertySource | 2.7.0+ |
+| 属性                 | 对应URL参数                | 类型                  | 是否必填 | 缺省值              | 描述                                                                                                                                                 | 兼容性    |
+|--------------------|------------------------|---------------------|------|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|--------|
+| protocol           | config.protocol        | string              | 可选   | zookeeper        | 使用哪个配置中心：apollo、zookeeper、nacos等。 以zookeeper为例 1. 指定protocol，则address可以简化为`127.0.0.1:2181`； 2. 不指定protocol，则address取值为`zookeeper://127.0.0.1:2181` | 2.7.0+ |
+| address            | config.address         | string              | 必填   |                  | 配置中心地址。 取值参见protocol说明                                                                                                                             | 2.7.0+ |
+| highest-priority   | config.highestPriority | boolean             | 可选   | true             | 来自配置中心的配置项具有最高优先级，即会覆盖本地配置项。                                                                                                                       | 2.7.0+ |
+| namespace          | config.namespace       | string              | 可选   | dubbo            | 通常用于多租户隔离，实际含义视具体配置中心而不同。 如： zookeeper - 环境隔离，默认值`dubbo`； apollo - 区分不同领域的配置集合，默认使用`dubbo`和`application`                                           | 2.7.0+ |
+| cluster            | config.cluster         | string              | 可选   |                  | 含义视所选定的配置中心而不同。 如Apollo中用来区分不同的配置集群                                                                                                                | 2.7.0+ |
+| group              | config.group           | string              | 可选   | dubbo            | 含义视所选定的配置中心而不同。 nacos - 隔离不同配置集 zookeeper - 隔离不同配置集                                                                                                | 2.7.0+ |
+| check              | config.check           | boolean             | 可选   | true             | 当配置中心连接失败时，是否终止应用启动。                                                                                                                               | 2.7.0+ |
+| config-file        | config.configFile      | string              | 可选   | dubbo.properties | 全局级配置文件所映射到的key zookeeper - 默认路径/dubbo/config/dubbo/dubbo.properties apollo - dubbo namespace中的dubbo.properties键                                   | 2.7.0+ |
+| timeout            | config.timeout         | integer             |      | 3000ms           | 获取配置的超时时间                                                                                                                                          | 2.7.0+ |
+| username           |                        | string              |      |                  | 如果配置中心需要做校验，用户名 Apollo暂未启用                                                                                                                         | 2.7.0+ |
+| password           |                        | string              |      |                  | 如果配置中心需要做校验，密码 Apollo暂未启用                                                                                                                          | 2.7.0+ |
+| parameters         |                        | Map<string, string> |      |                  | 扩展参数，用来支持不同配置中心的定制化配置参数                                                                                                                            | 2.7.0+ |
+| include-spring-env |                        | boolean             | 可选   | false            | 使用Spring框架时支持，为true时，会自动从Spring Environment中读取配置。 默认依次读取 key为dubbo.properties的配置 key为dubbo.properties的PropertySource                               | 2.7.0+ |
 
  

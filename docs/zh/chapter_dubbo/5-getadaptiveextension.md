@@ -1,13 +1,13 @@
 
-## 5 自适应扩展对象的创建getAdaptiveExtension方法
+##  **自适应扩展对象的创建getAdaptiveExtension方法**
 自适应扩展又称为动态扩展,可以在运行时生成扩展对象
 
-ExtensionLoader中的getAdaptiveExtension()方法,这个方法也是我们看到的第一个获取扩展对象的方法. ,这个方法可以帮助我们通过SPI机制从扩展文件中找到需要的扩展类型并创建它的对象,
-**自适应扩展:**如果对设计模式比较了解的可能会联想到**适配器模式**,自适应扩展其实就是适配器模式的思路,自适应扩展有两种策略:
+ExtensionLoader中的getAdaptiveExtension()方法,这个方法也是我们看到的第一个获取扩展对象的方法. ,
+这个方法可以帮助我们通过SPI机制从扩展文件中找到需要的扩展类型并创建它的对象,
+**自适应扩展:** 如果对设计模式比较了解的可能会联想到 **适配器模式** ,自适应扩展其实就是适配器模式的思路,自适应扩展有两种策略:
 
-- 一种是我们自己实现自适应扩展:然后使用@Adaptive修饰这个时候适配器的逻辑由我们自己实现,当扩展加载器去查找具体的扩展的时候可以通过找到我们这个对应的适配器扩展,然后适配器扩展帮忙去查询真正的扩展,这个比如我们下面要举的扩展注入器的例子,具体扩展通过扩展注入器适配器,注入器适配器来查询具体的注入器扩展实现来帮忙查找扩展。 
-
-- 还有一种方式是我们未实现这个自适应扩展,Dubbo在运行时通过字节码动态代理的方式在运行时生成一个适配器,使用这个适配器映射到具体的扩展. 第二种情况往往用在比如 Protocol、Cluster、LoadBalance 等。有时，有些拓展并不想在框架启动阶段被加载，而是希望在拓展方法被调用时，根据运行时参数进行加载。(如果还不了解可以考虑看下@Adaptive注解加载方法上面的时候扩展是如何加载的)
+- **一种是我们自己实现自适应扩展:** 然后使用@Adaptive修饰这个时候适配器的逻辑由我们自己实现,当扩展加载器去查找具体的扩展的时候可以通过找到我们这个对应的适配器扩展,然后适配器扩展帮忙去查询真正的扩展,这个比如我们下面要举的扩展注入器的例子,具体扩展通过扩展注入器适配器,注入器适配器来查询具体的注入器扩展实现来帮忙查找扩展。
+- **还有一种方式是我们未实现这个自适应扩展** ,Dubbo在运行时通过字节码动态代理的方式在运行时生成一个适配器,使用这个适配器映射到具体的扩展. 第二种情况往往用在比如 Protocol、Cluster、LoadBalance 等。有时，有些拓展并不想在框架启动阶段被加载，而是希望在拓展方法被调用时，根据运行时参数进行加载。(如果还不了解可以考虑看下@Adaptive注解加载方法上面的时候扩展是如何加载的)
 
 ```java
  public T getAdaptiveExtension() {
@@ -49,7 +49,7 @@ ExtensionLoader中的getAdaptiveExtension()方法,这个方法也是我们看到
 前面使用单例思想来调用创建自适应扩展对象的方法,下面就让我们深入探究下创建自适应扩展对象的整个过程createAdaptiveExtension();方法:
 
 
-## 5.1 创建扩展对象的生命周期方法-注意这个后续会详细解析这个声明周期方法的细节
+##  **创建扩展对象的生命周期方法-注意这个后续会详细解析这个声明周期方法的细节**
 
 createAdaptiveExtension()
 我们先来看ExtensionLoader类型中的createAdaptiveExtension();方法,这个方法包含了扩展对象创建初始化的整个生命周期,如下代码所示:
@@ -75,7 +75,7 @@ private T createAdaptiveExtension() {
     }
 ```
 
-## 5.2 SPI机制获取扩展对象实现类型getAdaptiveExtensionClass()
+##  **SPI机制获取扩展对象实现类型getAdaptiveExtensionClass()**
 这个方法可以帮助我们了解具体的Dubbo SPI机制 如果找到扩展类型的实现类,会寻找哪些文件,扩展文件的优先级又是什么,对我们自己写扩展方法很有帮助,接下来我们就来看下它的源码:
 
 ```java
@@ -92,7 +92,7 @@ private T createAdaptiveExtension() {
     }
 ```
 
-继续看获取扩展类型的方法**getExtensionClasses()**:
+继续看获取扩展类型的方法 **getExtensionClasses():**
 
 ```java
  private Map<String, Class<?>> getExtensionClasses() {
@@ -114,10 +114,10 @@ private T createAdaptiveExtension() {
     }
 ```
 
-### 5.2.1 使用不同的的策略加载加载不同目录下的扩展
-加载扩展类型的方法**loadExtensionClasses()**
+###  **使用不同的的策略加载加载不同目录下的扩展**
+加载扩展类型的方法 **loadExtensionClasses()**
 
-```cpp
+```java
   private Map<String, Class<?>> loadExtensionClasses() {
   		//检查扩展加载器是否被销毁
         checkDestroyed();
@@ -169,11 +169,11 @@ private T createAdaptiveExtension() {
 
 关于扩展策略的参数列表我这里列个表格方便大家来看
 
-|扩展类型|dir(目录)  |  extensionLoaderClassLoaderFirst(优先扩展类型的类加载器)|overridden(是否允许覆盖同名扩展)|includedPackages (明确包含的扩展包) | excludedPackages (明确排除的扩展包)|onlyExtensionClassLoaderPackages(限制应该从Dubbo的类加载器加载的类)| 
-|--|--|--|--|--|--|--|
-| DubboInternalLoadingStrategy | META-INF/dubbo/internal/ |false|false|null|null|[]|
-|DubboLoadingStrategy|META-INF/dubbo/|false|true|null|null|[]|
-|ServicesLoadingStrategy|META-INF/services/|false|true|null|null|[]|
+| 扩展类型                         | dir(目录)                  | extensionLoaderClassLoaderFirst(优先扩展类型的类加载器) | overridden(是否允许覆盖同名扩展) | includedPackages (明确包含的扩展包) | excludedPackages (明确排除的扩展包) | onlyExtensionClassLoaderPackages(限制应该从Dubbo的类加载器加载的类) | 
+|------------------------------|--------------------------|----------------------------------------------|------------------------|-----------------------------|-----------------------------|-------------------------------------------------------|
+| DubboInternalLoadingStrategy | META-INF/dubbo/internal/ | false                                        | false                  | null                        | null                        | []                                                    |
+| DubboLoadingStrategy         | META-INF/dubbo/          | false                                        | true                   | null                        | null                        | []                                                    |
+| ServicesLoadingStrategy      | META-INF/services/       | false                                        | true                   | null                        | null                        | []                                                    |
 
 
 ```java
@@ -236,11 +236,11 @@ private void loadDirectory(Map<String, Class<?>> extensionClasses, String dir, S
     }
 ```
 
-### 5.2.2 借助类加载器的getResources方法遍历所有文件进行扩展文件的查询
+###  **借助类加载器的getResources方法遍历所有文件进行扩展文件的查询**
 
 查找扩展类型对应的扩展文件的url方法:ClassLoaderResourceLoader类型的loadResources源码:
 
-```cpp
+```java
 public static Map<ClassLoader, Set<URL>> loadResources(String fileName, List<ClassLoader> classLoaders) {
 		//
         Map<ClassLoader, Set<URL>> resources = new ConcurrentHashMap<>();
@@ -265,7 +265,7 @@ public static Map<ClassLoader, Set<URL>> loadResources(String fileName, List<Cla
 
 
 加载具体类加载器中的资源文件的loadResources方法
-```cpp
+```java
 public static Set<URL> loadResources(String fileName, ClassLoader currentClassLoader) {
         Map<ClassLoader, Map<String, Set<URL>>> classLoaderCache;
         //第一次进来类加载器资源缓存是空的
@@ -319,7 +319,7 @@ public static Set<URL> loadResources(String fileName, ClassLoader currentClassLo
 ```
 
 
-### 5.2.3 使用找到的扩展资源url加载具体扩展类型到内存
+###  **使用找到的扩展资源url加载具体扩展类型到内存**
 
 ExtensionLoader类型中的loadFromClass方法 遍历url 开始加载扩展类型
 ```java
@@ -336,7 +336,7 @@ ExtensionLoader类型中的loadFromClass方法 遍历url 开始加载扩展类�
 ExtensionLoader类型中的loadResource方法 使用IO流读取扩展文件的内容
 读取内容之前我这里先贴一下我们参考的扩展注入类型的文件中的内容如下所示:
 
-```cpp
+```java
 adaptive=org.apache.dubbo.common.extension.inject.AdaptiveExtensionInjector
 spi=org.apache.dubbo.common.extension.inject.SpiExtensionInjector
 scopeBean=org.apache.dubbo.common.beans.ScopeBeanExtensionInjector
@@ -476,7 +476,7 @@ ExtensionLoader类型中cacheActivateClass
 Activate用于激活扩展类的。 这个扩展类型可以出现多个比如过滤器可以同一个扩展名字多个过滤器实现,所以不需要有override判断
 Activate 机制，即扩展类的激活机制。通过指定的条件来激活当前的扩展类。其是通过@Activate 注解实现的。
 
-```cpp
+```java
 private void cacheActivateClass(Class<?> clazz, String name) {
         Activate activate = clazz.getAnnotation(Activate.class);
         if (activate != null) {
@@ -495,7 +495,7 @@ private void cacheActivateClass(Class<?> clazz, String name) {
 ExtensionLoader类型中的saveInExtensionClass方法
   
   上面扩展对象加载了这么多最终的目的就是将这个扩展类型存放进结果集合extensionClasses中,扩展策略中提供的参数overridden是否允许覆盖扩展覆盖
-```cpp
+```java
 private void saveInExtensionClass(Map<String, Class<?>> extensionClasses, Class<?> clazz, String name, boolean overridden) {
         Class<?> c = extensionClasses.get(name);
         if (c == null || overridden) {
@@ -512,12 +512,12 @@ private void saveInExtensionClass(Map<String, Class<?>> extensionClasses, Class<
 ```
 
 
-## 5.3 自适应扩展代理对象的代码生成与编译
-### 5.3.1 自适应扩展对象的创建
+##  **自适应扩展代理对象的代码生成与编译**
+###   **自适应扩展对象的创建**
 
-Dubbo 的**自适应扩展机制**中如果 **自己生成了自适应扩展的代理类**
+Dubbo 的 **自适应扩展机制** 中如果 **自己生成了自适应扩展的代理类**
 
-Dubbo 的自适应扩展为了做什么：**在运行时动态调用扩展方法**。以及怎么做的：生成扩展代理类。比如: 代理类中根据 URL 获取扩展名，使用 SPI 加载扩展类，并调用同名方法，返回执行结果。
+Dubbo 的自适应扩展为了做什么：**在运行时动态调用扩展方法** 。以及怎么做的：生成扩展代理类。比如: 代理类中根据 URL 获取扩展名，使用 SPI 加载扩展类，并调用同名方法，返回执行结果。
 
 看了上一个章节,我们了解到了Dubbo是如何通过扫描目录来查询扩展实现类的这一次我们看下扩展类我们找到了之后,如果这个扩展类型未加上这个@Adaptive注解那么是如何创建这个类型的,接下来看createAdaptiveExtensionClass方法,这个方法是借助字节码工具来动态生成所需要的扩展类型的包装类型的代码,这个代码在编译时我们可能看不到,但是在Debug的时候,我们还是可以看到这个对象名字的,但是往往Debug的时候又进不到具体的代码位置,这里可以注意下
 
@@ -549,8 +549,8 @@ private Class<?> createAdaptiveExtensionClass() {
 
 
 
-## 5.4 为扩展对象的set方法注入自适应扩展对象
-在4.4.5小节中我们已经讲解了获取扩展类型实现类, 创建扩展对象
+##  **为扩展对象的set方法注入自适应扩展对象**
+在前面小节中我们已经讲解了获取扩展类型实现类, 创建扩展对象
       
 ```java
  T instance = (T) getAdaptiveExtensionClass().newInstance();
@@ -566,7 +566,7 @@ injectExtension(instance);
 ```
 
 ExtensionLoader类型的injectExtension方法具体代码如下:
-```cpp
+```java
 private T injectExtension(T instance) {
 		//如果注入器为空则直接返回当前对象
         if (injector == null) {
@@ -614,9 +614,9 @@ private T injectExtension(T instance) {
         return instance;
     }
 ```
-###  5.4.1 获取注入对象
+###   **获取注入对象**
 这里我们主要来看下如何通过注入器找到需要注入的那个对象 调用代码如下:
-```cpp
+```java
   Object object = injector.getInstance(pt, property);
 ```
   在前面看注入器扩展对象的获取的时候是会获取到ExtensionInjector扩展的一个自适应扩展注入器实现类型  AdaptiveExtensionInjector,这个地方对应的getInstance也是这个扩展里面的,我们来看下它的方法:
@@ -645,12 +645,12 @@ private T injectExtension(T instance) {
 
 接下来我们详细看下每种扩展注入器加载扩展对象的策略:
 
-###  5.4.2 域模型中的Bean扩展注入器ScopeBeanExtensionInjector
+###    **域模型中的Bean扩展注入器ScopeBeanExtensionInjector**
 
 ScopeBeanExtensionInjector的getInstance方法:
 每个域模型都会有个ScopeBeanFactory类型的对象用于存储共享对象,并且域模型之间按照层级子类型的Bean工厂可以从父域的Bean工厂中查询对象,
 
-```cpp
+```java
 @Override
     public <T> T getInstance(Class<T> type, String name) {
         return beanFactory.getBean(name, type);
@@ -659,7 +659,7 @@ ScopeBeanExtensionInjector的getInstance方法:
 
 ScopeBeanFactory的getBean方法
 先从当前域空间查询对象,如果找不到对应类型的扩展对象则从父域工厂查询扩展对象
-```cpp
+```java
 public <T> T getBean(String name, Class<T> type) {
 		//当前域下注册的扩展对象
         T bean = getBeanInternal(name, type);
@@ -673,7 +673,7 @@ public <T> T getBean(String name, Class<T> type) {
 
 ScopeBeanFactory的getBeanInternal方法
 从当前域下找注册的参数类型的对象
-```cpp
+```java
 private <T> T getBeanInternal(String name, Class<T> type) {
         checkDestroyed();
         // All classes are derived from java.lang.Object, cannot filter bean by it
@@ -718,11 +718,11 @@ private <T> T getBeanInternal(String name, Class<T> type) {
     }
 ```
 
-### 5.4.3 SPI扩展机制注入器SpiExtensionInjector
+###  **SPI扩展机制注入器SpiExtensionInjector**
 
 SPI是Dubbo自行实现的一套扩展机制,我们来看下它是如何查找扩展对象的
 
-```cpp
+```java
 @Override
     public <T> T getInstance(Class<T> type, String name) {
     	//如果是一个标准的被@SPI注解修饰的扩展接口则满足条件
@@ -743,11 +743,11 @@ SPI是Dubbo自行实现的一套扩展机制,我们来看下它是如何查找�
 
 
 
-### 5.4.4 Spring扩展注入器
+###  **Spring扩展注入器**
 SpringExtensionInjector
 
 Spring扩展注入器主要是用来从Spring容器中查询当前类型的Bean是否存在的,如下代码直接看代码吧
-```cpp
+```java
 @Override
     @SuppressWarnings("unchecked")
     public <T> T getInstance(Class<T> type, String name) {
@@ -773,7 +773,7 @@ Spring扩展注入器主要是用来从Spring容器中查询当前类型的Bean�
 ```
 
 
-```cpp
+```java
 private <T> T getOptionalBean(ListableBeanFactory beanFactory, String name, Class<T> type) {
 		//要搜索的扩展名字为空就根据类型搜索
         if (StringUtils.isEmpty(name)) {

@@ -175,8 +175,8 @@ ApplicationContextFactory DEFAULT = (webApplicationType) -> {
 
 - BeanDefinitionRegistry
 
-用于保存Bean定义的**注册表**的接口，例如RootBeanDefinition和ChildBeanDefinition实例。通常由内部使用AbstractBeanDefinition层次结构的BeanFactory实现。
-这是Spring的Bean工厂包中封装Bean定义注册的**唯一接口**。标准BeanFactory接口仅包括对完全配置的factory实例的访问。
+用于保存Bean定义的**注册表** 的接口，例如RootBeanDefinition和ChildBeanDefinition实例。通常由内部使用AbstractBeanDefinition层次结构的BeanFactory实现。
+这是Spring的Bean工厂包中封装Bean定义注册的**唯一接口** 。标准BeanFactory接口仅包括对完全配置的factory实例的访问。
 
 Spring的Bean定义读者希望开发者能够实现这个接口。Spring核心中的已知实现者是DefaultListableBeanFactory和GenericApplicationContext。
 
@@ -446,7 +446,7 @@ public AbstractAutowireCapableBeanFactory() {
 ```
 
 ignoreDependencyInterface 方法忽略自动关联的给定依赖关系接口。
-这通常**由应用程序上下文用于注册以其他方式解析的依赖项**，例如通过BeanFactoryAware的BeanFactory或通过ApplicationContextAware的ApplicationContext。 默认情况下，仅忽略BeanFactoryAware接口。要忽略其他类型，请为每个类型调用此方法
+这通常**由应用程序上下文用于注册以其他方式解析的依赖项** ，例如通过BeanFactoryAware的BeanFactory或通过ApplicationContextAware的ApplicationContext。 默认情况下，仅忽略BeanFactoryAware接口。要忽略其他类型，请为每个类型调用此方法
 
 - BeanNameAware 接口将由希望在bean工厂中知道其bean名称的bean实现。请注意，通常不建议对象依赖于其bean名称，因为这表示对外部配置的潜在脆弱依赖，以及对Spring API的不必要依赖。有关所有bean生命周期方法的列表，请参阅BeanFactory javadocs。
 

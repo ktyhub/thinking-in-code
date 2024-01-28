@@ -105,7 +105,7 @@ netty便是如此实现).
 
 但ZooKeeper并不是如此划分线程功能的,NIOServerCnxnFactory启动时会启动四类线程
 
-- **accept thread:** 该线程 **接收来自客户端的连接**,并将其分配给selector thread(启动一个线程)
+- **accept thread:** 该线程 **接收来自客户端的连接** ,并将其分配给selector thread(启动一个线程)
 - **selector thread:** 该线程 **执行select()** ,由于在处理大量连接时,select()会成为性能瓶颈,因此启动多个selector
   thread,使用系统属性zookeeper.nio.numSelectorThreads配置该类线程数,默认个数为 核心数/2‾‾‾‾‾‾‾‾√核心数/2(至少一个)
 - **worker thread:** 该线程执行 **基本的套接字读写**

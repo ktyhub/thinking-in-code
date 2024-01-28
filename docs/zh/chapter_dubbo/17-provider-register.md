@@ -1,24 +1,24 @@
 
-# 17-Dubbo服务提供者的双注册原理
-## 17.1 简介
-上个博客[《15-Dubbo的三大中心之元数据中心源码解析》](https://blog.elastic.link/2022/07/10/dubbo/15-dubbo-de-san-da-zhong-xin-zhi-yuan-shu-ju-zhong-xin-yuan-ma-jie-xi/)导出服务端的时候多次提到了元数据中心，注册信息的注册。
+#  **Dubbo服务提供者的双注册原理**
+##  **简介**
+上个博客[《15-Dubbo的三大中心之元数据中心源码解析》](/zh/chapter_dubbo/15-metadata)导出服务端的时候多次提到了元数据中心，注册信息的注册。
 Dubbo3出来时间不太长，对于现在的用户来说大部分使用的仍旧是Dubbo2.x，
-Dubbo3 比较有特色也是会直接使用到的功能就是**应用级服务发现**：
+Dubbo3 比较有特色也是会直接使用到的功能就是 **应用级服务发现** ：
 
 - 应用级服务发现 
 *从服务/接口粒度到应用粒度的升级，使得 Dubbo 在集群可伸缩性、连接异构微服务体系上更具优势。应用粒度能以更低的资源消耗支持超百万实例规模集群程； 实现与 Spring Cloud、Kubernetes Service 等异构微服务体系的互联互通。*
 
 对于直接使用Dubbo3的用户还好，可以仅仅开启应用级注册，但是对于Dubbo2.x的用户升级到Dubbo3的用户来说前期都是要开启双注册来慢慢迁移的，既注册传统的接口信息到注册中心，又注册应用信息到注册中心，同时注册应用与接口关系的元数据信息。
 关于双注册与服务迁移的过程的使用可以参考官网：
-[应用级地址发现迁移指南](/zh-cn/docs/migration/migration-service-discovery/)
+[应用级地址发现迁移指南](https://dubbo.apache.org/zh/docs/migration/migration-service-discovery/)
 
 关于官网提供者双注册的图我这里贴一下，方便了解：
-![在这里插入图片描述](/imgs/v3/migration/provider-registration.png)
+![17-provider-1.png](/img/chapter_dubbo/17-provider-1.png)
 
  
-##  17.2 双注册配置的读取
-### 17.2.1 注册中心地址作为元数据中心
-这个配置的解析过程在前面的博客介绍元数据中心的时候很详细的说了相关链接：[15-Dubbo的三大中心之元数据中心源码解析](https://blog.elastic.link/2022/07/10/dubbo/15-dubbo-de-san-da-zhong-xin-zhi-yuan-shu-ju-zhong-xin-yuan-ma-jie-xi/)
+##    **双注册配置的读取**
+###  **注册中心地址作为元数据中心**
+这个配置的解析过程在前面的博客介绍元数据中心的时候很详细的说了相关链接：[15-Dubbo的三大中心之元数据中心源码解析](/zh/chapter_dubbo/15-metadata)
 
 对应代码位于：DefaultApplicationDeployer类型的startMetadataCenter()方法
 
@@ -66,7 +66,7 @@ MetadataReportConfig 映射就是获取需要的配置。
 
 最后会把查询到的元数据中心配置存储在配置缓存中方便后续使用。
  
-### 17.2.2 双注册模式配置
+###  **双注册模式配置**
 双注册配置类型是这个
 
 ```java
@@ -78,7 +78,7 @@ dubbo.application.register-mode=all
 - instance 应用级注册
 - interface 接口级注册
 
-后面的代码如果想要看更详细的代码可以看博客[《16-模块发布器发布服务全过程》](https://blog.elastic.link/2022/07/10/dubbo/16-mo-kuai-fa-bu-qi-fa-bu-fu-wu-quan-guo-cheng/)
+后面的代码如果想要看更详细的代码可以看博客[《16-模块发布器发布服务全过程》](/zh/chapter_dubbo/16-module-deployer)中的双注册配置的解析
 关于这个配置的使用我们详细来看下，在Dubbo服务注册时候会先通过此配置查询需要注册服务地址，具体代码位于ServiceConfig的doExportUrls()方法中：
 
 ```java
@@ -176,8 +176,8 @@ service-discovery-registry://127.0.0.1:2181/org.apache.dubbo.registry.RegistrySe
 ```
 
 
-## 17.3 双注册服务数据的注册
-### 17.3.1 双注册代码逻辑调用简介
+##   **双注册服务数据的注册**
+###  **双注册代码逻辑调用简介**
 前面说了这个注册服务的配置地址会由Dubbo内部进行判断如果判断是all的话会自动将一个配置的注册地址转变为两个一个是传统的接口级注册，一个是应用级注册使用的配置地址
 
 然后我们先看注册中心，注册服务数据的源码
@@ -217,7 +217,7 @@ RegistryProtocol的export方法的注册中心注册数据代码如下：
 在上个博客中我们整体说了下服务注册时候的一个流程，关于数据向注册中心的注册细节这里可以详细看下
 
 
-### 17.3.2  注册中心领域对象的初始化
+###  **注册中心领域对象的初始化**
 前面的代码使用url来获取注册中心操作对象如下调用代码：
 
 ```java
@@ -252,7 +252,7 @@ service-discovery-registry://127.0.0.1:2181/org.apache.dubbo.registry.RegistrySe
 注册中心工厂对象与注册中心操作对象的获取与执行我们通过Debug来看比较麻烦，这里涉及到很多扩展机制动态生成的代码我们无法看到，这里我直接来贴一下比较关键的一些类型，以Zookeeper注册中心来举例子： 
 
    先来看下注册工厂相关的类型：
-![在这里插入图片描述](/imgs/blog/source-blog/17-register.png) 
+![在这里插入图片描述](/img/chapter_dubbo/17-register-factory.png) 
 - RegistryFactory 注册中心对象获取
 - AbstractRegistryFactory	 模板类型封装注册中心对象获取的基本逻辑，比如缓存和基本的逻辑判断
 - ServiceDiscoveryRegistryFactory 用于创建服务发现注册中心工厂对象 用于创建ServiceDiscoveryRegistry对象
@@ -263,7 +263,7 @@ service-discovery-registry://127.0.0.1:2181/org.apache.dubbo.registry.RegistrySe
 接下来看封装了注册中心操作逻辑的注册中心领域对象：
 
 
-![在这里插入图片描述](/imgs/blog/source-blog/17-register2.png)
+![在这里插入图片描述](/img/chapter_dubbo/17-register-factory-2.png)
  
  - Node 节点信息开放接口 比如节点 url的获取 ，销毁
  - RegistryService 注册服务接口，比如注册，订阅，查询等操作
