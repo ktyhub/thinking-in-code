@@ -84,7 +84,7 @@ public LiteJobConfiguration updateJobConfiguration(final LiteJobConfiguration li
 ### **持久化作业配置到Zookeeper**
 这里先检查本地作业实现类型与Zookeeper上是否一致 **如果不一致则抛出异常** ，防止本地修改了类型导致触发异常。
 
-然后判断 **配置信息不存在** 或者overwrite配置为true则将配置信息持久化到Zookeeper的config节点下。
+然后判断 **配置信息不存在 ** 或者overwrite配置为true则将配置信息持久化到Zookeeper的config节点下。
 
 在这里我们需要关注下 **overwrite** 配置信息
 

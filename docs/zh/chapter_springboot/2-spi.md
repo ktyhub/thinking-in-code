@@ -1,10 +1,10 @@
 # 2-SpringApplication的run方法启动应用程序源码初探
 ## 2.1 SpringApplication简介
 
-该类可**用于从Java主服务器引导**和**启动Spring应用程序方法**。默认情况下，类将执行以下**步骤**来启动应用程序：
+该类可**用于从Java主服务器引导**和**启动Spring应用程序方法** 。默认情况下，类将执行以下**步骤**来启动应用程序：
 -  **创建**一个适当的**ApplicationContext实例**（取决于您的类路径）。
 -  注册CommandLinePropertySource以将命令行参数传递给 Spring属性 。
--  **刷新应用程序上下文**，加载所有单例bean 。
+-  **刷新应用程序上下文** ，加载所有单例bean 。
 -  触发任何 CommandLineRunner Bean 。
 
 **如何使用SpringApplication类型呢：**
@@ -67,7 +67,7 @@ SpringApplication.run(DemoApplication.class, args);
 ```
 
 打开SpringApplication类型的的run方法的源码如下所示:
-这个方法是个**静态辅助方法**，为了**方便我们启动程序**提供的,帮助我们**转换下参数**,可用于使用默认设置从指定源运行SpringApplication。
+这个方法是个**静态辅助方法** ，为了**方便我们启动程序**提供的,帮助我们**转换下参数** ,可用于使用默认设置从指定源运行SpringApplication。
 
 ```java
  public static ConfigurableApplicationContext run(Class<?> primarySource, String... args) {
@@ -76,7 +76,7 @@ SpringApplication.run(DemoApplication.class, args);
 ```
 
 继续看SpringApplication类型中重载的run方法:
-这个方法也是个**静态辅助方法**，用于**帮助创建一个SpringApplication对象**来启动应用
+这个方法也是个**静态辅助方法** ，用于**帮助创建一个SpringApplication对象**来启动应用
 ```java
 public static ConfigurableApplicationContext run(Class<?>[] primarySources, String[] args) {
         return (new SpringApplication(primarySources)).run(args);
@@ -160,15 +160,15 @@ static WebApplicationType deduceFromClasspath() {
 ### 2.2.2 SpringBoot中的类SPI扩展配置文件扫描
 前面构造器中我们看到了这么一行代码,这个代码相对复杂一些,用于加载Spring扩展配置的
 
-```cpp
+```java
 getSpringFactoriesInstances(ApplicationContextInitializer.class)
 ```
-在Spring中也有一种类似与Java SPI的**加载机制**。它在**META-INF/spring.factories**文件中配置接口的实现类名称，然后在**程序中读取这些配置文件并实例化**。这种自定义的SPI机制**是Spring Boot Starter实现的基础**。
-在SpringBoot的自动装配过程中，最终会加载META-INF/spring.factories文件，而**加载的过程**是由**SpringFactoriesLoader加载**的。从**CLASSPATH下的每个Jar包中**搜寻**所有META-INF/spring.factories配置文件**，然后将解析properties文件，找到指定名称的配置后返回。需要注意的是，其实这里不仅仅是会去classpath路径下查找，会扫描所有路径下的Jar包，只不过这个文件只会在classpath下的jar包中。
+在Spring中也有一种类似与Java SPI的**加载机制** 。它在 **META-INF/spring.factories**文件中配置接口的实现类名称，然后在 **程序中读取这些配置文件并实例化** 。这种自定义的SPI机制**是Spring Boot Starter实现的基础** 。
+在SpringBoot的自动装配过程中，最终会加载META-INF/spring.factories文件，而**加载的过程**是由**SpringFactoriesLoader加载** 的。从**CLASSPATH下的每个Jar包中**搜寻**所有META-INF/spring.factories配置文件** ，然后将解析properties文件，找到指定名称的配置后返回。需要注意的是，其实这里不仅仅是会去classpath路径下查找，会扫描所有路径下的Jar包，只不过这个文件只会在classpath下的jar包中。
 
 根据Bootstrapper，ApplicationContextInitializer，ApplicationListener获取对应类型的工厂实现类并初始化给成员变量：
 
-```cpp
+```java
 //初始器注册表初始化 BootstrapRegistryInitializer
 this.bootstrapRegistryInitializers = new ArrayList<>(
 				getSpringFactoriesInstances(BootstrapRegistryInitializer.class));
@@ -194,7 +194,7 @@ ApplicationContext事件机制是观察者设计模式的实现，通过Applicat
 如果容器中有一个ApplicationListener Bean，每当ApplicationContext发布ApplicationEvent时，ApplicationListener Bean将自动被触发。这种事件机制都必须需要程序显示的触发。
 
 
-```cpp
+```java
 private <T> Collection<T> getSpringFactoriesInstances(Class<T> type) {
 		return getSpringFactoriesInstances(type, new Class<?>[] {});
 	}
@@ -202,7 +202,7 @@ private <T> Collection<T> getSpringFactoriesInstances(Class<T> type) {
 
 
 
-```cpp
+```java
 private <T> Collection<T> getSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes, Object... args) {
 		//获取类加载器,优先使用resourceLoader对象的类加载器,如果resourceLoader前面没有赋值则使用当前线程的类加载器
 		ClassLoader classLoader = getClassLoader();
@@ -223,7 +223,7 @@ private <T> Collection<T> getSpringFactoriesInstances(Class<T> type, Class<?>[] 
 SpringFactoriesLoader的loadFactoryNames
 
 
-```cpp
+```java
 public static List<String> loadFactoryNames(Class<?> factoryType, @Nullable ClassLoader classLoader) {
 		//如果类加载器为空则用当前类型SpringFactoriesLoader的类加载器
 		ClassLoader classLoaderToUse = classLoader;
@@ -238,7 +238,7 @@ public static List<String> loadFactoryNames(Class<?> factoryType, @Nullable Clas
 
 SpringFactoriesLoader的loadSpringFactories
 扫描所有的依赖文件
-```cpp
+```java
 private static Map<String, List<String>> loadSpringFactories(ClassLoader classLoader) {
 		//缓存中存在则直接返回
 		Map<String, List<String>> result = cache.get(classLoader);
@@ -283,7 +283,7 @@ private static Map<String, List<String>> loadSpringFactories(ClassLoader classLo
 
 
 spring-boot 子模块提供的META-INF/spring.factories工厂文件参考
-```cpp
+```java
 # Logging Systems
 org.springframework.boot.logging.LoggingSystemFactory=\
 org.springframework.boot.logging.logback.LogbackLoggingSystem.Factory,\
@@ -389,7 +389,7 @@ org.springframework.boot.orm.jpa.JpaDependsOnDatabaseInitializationDetector
 deduceMainApplicationClass
 这个代码非常有意思,通过我们的处理异常时候的异常堆栈类型来获取方法调用栈,然后遍历这个栈中元素,获取到方法名字如果存在main方法的则为main方法所在应用启动类,然后去加载这个类型
 
-```cpp
+```java
 private Class<?> deduceMainApplicationClass() {
 		try {
 			//是获取运行时堆栈信息
@@ -411,7 +411,7 @@ private Class<?> deduceMainApplicationClass() {
 
 根据刚刚的扩展类型这里我来列举下ApplicationContextInitializer类型的当前版本默认的所有扩展类型:
 
-```cpp
+```java
 //将委托给上下文中指定的其他初始值设定项的ApplicationContextInitializer。初始化器。类环境属性。
 org.springframework.boot.context.config.DelegatingApplicationContextInitializer
 
@@ -429,7 +429,7 @@ org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingL
 
 
 ApplicationListener类型的所有扩展如下:
-```cpp
+```java
 org.springframework.boot.env.EnvironmentPostProcessorApplicationListener
 org.springframework.boot.context.config.AnsiOutputApplicationListener
 org.springframework.boot.context.logging.LoggingApplicationListener
