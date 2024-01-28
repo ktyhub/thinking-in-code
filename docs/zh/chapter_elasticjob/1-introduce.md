@@ -9,7 +9,7 @@ Elastic-Job是由当当网基于Quartz 二次开发之后的分布式调度解�
 
 Elastic-Job 的各个产品使用统一的作业 API，开发者仅需要一次开发，即可随意部署。
 
-Elastic-Job开发在**停滞数年后**，2020年，Elastic-Job 携首个 **Apache** 版本 3.0.0-alpha 回归！2020年6月，经过**Apache ShardingSphere社区**投票，接纳Elastic-Job为其子项目。
+Elastic-Job开发在 **停滞数年后** ，2020年，Elastic-Job 携首个 **Apache** 版本 3.0.0-alpha 回归！2020年6月，经过**Apache ShardingSphere社区**投票，接纳Elastic-Job为其子项目。
 
 目前ElasticJob的四个子项目已经正式迁入Apache仓库。并更名为Shardingsphere-Elasticjob。
 

@@ -1,6 +1,6 @@
 
-# 14-Dubbo配置加载全解析
-## 14.1 回到启动器的初始化过程
+#  **Dubbo配置加载全解析**
+##   **回到启动器的初始化过程**
 在应用程序启动的时候会调用发布器的启动方法 ,然后调用初始化方法,在发布器DefaultApplicationDeployer中的初始化方法initialize() 如下:
 
 ```java
@@ -37,40 +37,44 @@
 
 
 初始化过程中会先启动配置中心配置信息处理,然后 调用加载初始化应用程序配置方法loadApplicationConfigs();进行配置加载
-关于配置的官方文档链接为 [配置概述](/zh-cn/docs/references/configuration/overview/)
+关于配置的官方文档链接为 [配置概述](https://dubbo.apache.org/zh/docs/references/configuration/overview/)
 
 Dubbo框架的配置项比较繁多，为了更好地管理各种配置，将其按照用途划分为不同的组件，最终所有配置项都会汇聚到URL中，传递给后续处理模块。
 
 **常用配置组件如下**：
 
-- application: Dubbo应用配置
-- registry: 注册中心
-- protocol: 服务提供者RPC协议
-- config-center: 配置中心
-- metadata-report: 元数据中心
-- service: 服务提供者配置
-- reference: 远程服务引用配置
-- provider: service的默认配置或分组配置
-- consumer: reference的默认配置或分组配置
-- module: 模块配置
-- monitor: 监控配置
-- metrics: 指标配置
-- ssl: SSL/TLS配置
+| 配置              | 说明                  |
+|-----------------|---------------------|
+| application     | Dubbo应用配置           |
+| registry        | 注册中心                |
+| protocol        | 服务提供者RPC协议          |
+| config-center   | 配置中心                |
+| metadata-report | 元数据中心               |
+| service         | 服务提供者配置             |
+| reference       | 远程服务引用配置            |
+| provider        | service的默认配置或分组配置   |
+| consumer        | reference的默认配置或分组配置 |
+| module          | 模块配置                |
+| monitor         | 监控配置                |
+| metrics         | 指标配置                |
+| ssl             | SSL/TLS配置           |
 
 配置还有几个比较重要的点:
 
 **配置来源**
 从Dubbo支持的配置来源说起，默认有6种配置来源：
 
-- JVM System Properties，JVM -D 参数
-- System environment，JVM进程的环境变量
-- Externalized Configuration，外部化配置，从配置中心读取
-- Application Configuration，应用的属性配置，从Spring应用的Environment中提取"dubbo"打头的属性集
-- API / XML /注解等编程接口采集的配置可以被理解成配置来源的一种，是直接面向用户编程的配置采集方式
-- 从classpath读取配置文件 dubbo.properties
+| 配置 | 说明 |
+|----|----|
+|  JVM System Properties  | JVM -D 参数   |
+|  System environment  |  JVM进程的环境变量  |
+|  Externalized Configuration  |  外部化配置，从配置中心读取  |
+|Application Configuration|应用的属性配置，从Spring应用的Environment中提取"dubbo"打头的属性集|
+| API / XML /注解等| 编程接口采集的配置可以被理解成配置来源的一种，是直接面向用户编程的配置采集方式|
+ |dubbo.properties|从classpath读取配置文件|
 
 **覆盖关系**
-下图展示了配置覆盖关系的优先级，从上到下优先级依次降低： ![在这里插入图片描述](/imgs/blog/configuration.jpg)
+下图展示了配置覆盖关系的优先级，从上到下优先级依次降低： ![14-1-configuration.png](/img/chapter_dubbo/14-1-configuration.png)
 
 **配置方式** 
 - Java API配置
@@ -82,12 +86,12 @@ Dubbo框架的配置项比较繁多，为了更好地管理各种配置，将其
 
 
 
-## 14.2 配置信息的初始化回顾
+##  **配置信息的初始化回顾**
 前面我们在讲ModuleModel对象的创建的时候ModuleModel模型中包含了一个成员变量为ModuleEnvironment 代表当前的模块环境和ModuleConfigManager配置管理器
 而ModuleModel模型对象的父模型对象ApplicationModel中包含了一个成员变量Environment环境和ConfigManager配置管理器.
 
 在回顾调用过程之前我们先看下模型,配置管理器和环境与配置之间的关系如下图:
-  ![在这里插入图片描述](/imgs/blog/source-blog/14-config.png)
+  ![14-2-configuration.png](/img/chapter_dubbo/14-2-configuration.png)
 
 
 
@@ -129,9 +133,9 @@ ExtensionLoader中的初始化方法如下:
     }
 ```
 
- ## 14.3 属性加载
+ ##  **属性加载**
  
- ###  14.3.1 Environment中属性的初始化方法
+ ###   **Environment中属性的初始化方法**
  
  这个初始化方法对应ModuleEnvironment的父类型Environment中的初始化方法如下:initialize()
 
@@ -157,25 +161,25 @@ ExtensionLoader中的初始化方法如下:
     }
 ```
 
- ### 14.4.2  属性变量说明
+ ###   **属性变量说明**
  前面我们已经基本上介绍了各个属性的含义下面用一个表格列举一下方便查看:
  
-|属性变量名  | 属性类型 |说明|
-|--|--|--|
-|propertiesConfiguration  | PropertiesConfiguration |dubbo.properties文件中的属性|
-|systemConfiguration  |SystemConfiguration  |JVM参数 启动进程时指定的 (-D)配置|
-|environmentConfiguration|EnvironmentConfiguration|环境变量中的配置|
-|externalConfiguration|InmemoryConfiguration|外部配置全局配置 例如配置中心中 config-center global/default config|
-|appExternalConfiguration|InmemoryConfiguration|外部的应用配置 例如配置中心中执行的当前应用的配置 config-center app config|
-appConfiguration|InmemoryConfiguration|来自应用中的配置例如:Spring Environment/PropertySources/application.properties|
-|globalConfiguration|CompositeConfiguration|前面6个配置属性放到一起就是这个|
-|globalConfigurationMaps| List<Map<String, String>>|最前面的6个属性转换为map放到一起就是这个可以理解为将全局配置globalConfiguration转换成了列表 这个列表顺序在这里是:SystemConfiguration -> EnvironmentConfiguration -> AppExternalConfiguration -> ExternalConfiguration  -> AppConfiguration -> AbstractConfig -> PropertiesConfiguration|
-|defaultDynamicGlobalConfiguration|CompositeConfiguration|这个也是一个组合配置将defaultDynamicConfiguration动态配置(来自配置中心的配置)和全局配置添加到了自己的配置列表中 列表顺序为defaultDynamicConfiguration -> globalConfiguration|
-|localMigrationRule|String|,用户在JVM参数或者环境变量中指定的dubbo.migration.file,如果用户未指定测尝试加载类路径下的dubbo-migration.yaml|
+| 属性变量名                             | 属性类型                      | 说明                                                                                                                                                                                                                                          |
+|-----------------------------------|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| propertiesConfiguration           | PropertiesConfiguration   | dubbo.properties文件中的属性                                                                                                                                                                                                                      |
+| systemConfiguration               | SystemConfiguration       | JVM参数 启动进程时指定的 (-D)配置                                                                                                                                                                                                                       |
+| environmentConfiguration          | EnvironmentConfiguration  | 环境变量中的配置                                                                                                                                                                                                                                    |
+| externalConfiguration             | InmemoryConfiguration     | 外部配置全局配置 例如配置中心中 config-center global/default config                                                                                                                                                                                        |
+| appExternalConfiguration          | InmemoryConfiguration     | 外部的应用配置 例如配置中心中执行的当前应用的配置 config-center app config                                                                                                                                                                                          |
+| appConfiguration                  | InmemoryConfiguration     | 来自应用中的配置例如:Spring Environment/PropertySources/application.properties                                                                                                                                                                        |
+| globalConfiguration               | CompositeConfiguration    | 前面6个配置属性放到一起就是这个                                                                                                                                                                                                                            |
+| globalConfigurationMaps           | List<Map<String, String>> | 最前面的6个属性转换为map放到一起就是这个可以理解为将全局配置globalConfiguration转换成了列表 这个列表顺序在这里是:SystemConfiguration -> EnvironmentConfiguration -> AppExternalConfiguration -> ExternalConfiguration  -> AppConfiguration -> AbstractConfig -> PropertiesConfiguration |
+| defaultDynamicGlobalConfiguration | CompositeConfiguration    | 这个也是一个组合配置将defaultDynamicConfiguration动态配置(来自配置中心的配置)和全局配置添加到了自己的配置列表中 列表顺序为defaultDynamicConfiguration -> globalConfiguration                                                                                                              |
+| localMigrationRule                | String                    | ,用户在JVM参数或者环境变量中指定的dubbo.migration.file,如果用户未指定测尝试加载类路径下的dubbo-migration.yaml                                                                                                                                                               |
 
 
 关于每个配置信息这里还是来了解下细节,方便大家了解原理.
-### 14.3.3 dubbo.properties配置文件加载解析原理
+###  **dubbo.properties配置文件加载解析原理**
 如前面所示:
 
 ```java
@@ -324,7 +328,7 @@ public static Properties loadProperties(Set<ClassLoader> classLoaders, String fi
 	-  url转InputStream 如 url.openStream() 然后使用Properties加载
 
 
-### 14.3.4 加载JVM参数的配置 
+###  **加载JVM参数的配置** 
 这里我们继续看SystemConfiguration配置的加载
 这个直接看下代码就可以了:
 
@@ -342,7 +346,7 @@ public static Properties loadProperties(Set<ClassLoader> classLoaders, String fi
     }
 }
 ```
-### 14.3.5 加载环境变量参数的配置
+###  **加载环境变量参数的配置**
 这里我们来看EnvironmentConfiguration,这里我们直接来看代码:
 
 ```java
@@ -363,7 +367,7 @@ public class EnvironmentConfiguration implements Configuration {
 }
 ```
 
-### 14.3.6 内存配置的封装:InmemoryConfiguration
+###  **内存配置的封装:InmemoryConfiguration**
 这里我们看下InmemoryConfiguration的设计,这个直接看代码吧内部使用了一个LinkedHashMap来存储配置
 
 ```java
@@ -422,13 +426,12 @@ public class InmemoryConfiguration implements Configuration {
 }
 ```
 
-### 14.3.7 Dubbo迁移新版本的配置文件加载dubbo-migration.yaml
+###   **Dubbo迁移新版本的配置文件加载dubbo-migration.yaml**
 
-关于配置迁移文件的用法可以看下这个Dubbo官方的[地址迁移规则说明](/zh-cn/docs/advanced/migration-invoker/)
+关于配置迁移文件的用法可以看下这个Dubbo官方的[地址迁移规则说明](https://dubbo.apache.org/zh/docs/v3.0/advanced/migration-invoker/)
 
 这个配置文件的文件名字为:dubbo-migration.yaml
-
-这个和14.3.4加载JVM参数配置的过程是相似的细节可以看14.3.4节
+ 
 
 ```java
   private void loadMigrationRule() {
@@ -451,7 +454,7 @@ public class InmemoryConfiguration implements Configuration {
 
 
 
-## 14.4 初始化加载应用配置
+##  **初始化加载应用配置**
 加载配置涉及到了配置优先级的处理,
 
 下面来看加载配置代码 loadApplicationConfigs()方法
