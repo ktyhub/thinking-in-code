@@ -1,9 +1,9 @@
  
 
-# 16-模块发布器发布服务全过程
-## 16.1 简介
+# **模块发布器发布服务全过程**
+##  **简介**
 Dubbo做为服务治理框架,比较核心的就是服务相关的概念,这里我先贴个找到的关于Dubbo工作原理的架构图:
- ![在这里插入图片描述](/imgs/blog/source-blog/16-deploy.png)
+ ![16-dubbo-1.png](/img/chapter_dubbo/16-dubbo-1.png)
  如果按完整服务启动与订阅的顺序我们可以归结为以下6点:
 - 导出服务(提供者)
 	-  服务提供方通过指定端口对外暴露服务 
@@ -25,7 +25,7 @@ Dubbo做为服务治理框架,比较核心的就是服务相关的概念,这里�
 回到主题,从以上的服务完整发布调用流程可以看到,所有的功能都是由导出服务(提供者)开始的,只有提供者先提供了服务才可以有真正的服务让消费者调用。
 
 
-之前的博客内容 链接:[<<12-全局视野来看Dubbo3.0.8的服务启动生命周期>>](https://blog.elastic.link/2022/07/10/dubbo/12-quan-ju-shi-ye-lai-kan-dubbo3.0.8-de-fu-wu-qi-dong-sheng-ming-zhou-qi/) 我们了解了 DefaultModuleDeployer模块器启动的流程,其中在start代码的模版方法中开始了导出服务的功能,这里我们来详细看下服务发布的全过程:
+之前的博客内容 链接:[<<12-全局视野来看Dubbo3.0.8的服务启动生命周期>>](/zh/chapter_dubbo/12-start-life-cycle) 我们了解了 DefaultModuleDeployer模块器启动的流程,其中在start代码的模版方法中开始了导出服务的功能,这里我们来详细看下服务发布的全过程:
 
 
 入口代码: DefaultModuleDeployer的发布服务方法
@@ -39,7 +39,7 @@ Dubbo做为服务治理框架,比较核心的就是服务相关的概念,这里�
 ```
 
 
-## 16.2 导出服务的入口
+##  **导出服务的入口**
 入口代码: DefaultModuleDeployer的发布服务方法
 
 ```java
@@ -97,7 +97,7 @@ exportServiceInternal方法:
 
 
 
-## 16.3 服务配置导出服务模板方法
+##  **服务配置导出服务模板方法**
 核心的服务导出代码是在服务配置中来做的ServiceConfig的 export() 方法
 ServiceConfig的 export() 方法代码如下:
 
@@ -140,7 +140,7 @@ ServiceConfig的 export() 方法代码如下:
     }
 ```
 
-### 16.3.1 服务配置导出服务前的初始化方法
+###   **服务配置导出服务前的初始化方法**
 ServiceConfig 导出服务之前的初始化方法init
 ```java
 public void init() {
@@ -162,7 +162,7 @@ public void init() {
 ```
 
 
-## 16.4 服务配置导出服务模板方法2
+##  **服务配置导出服务模板方法2**
 ServiceConfig 导出服务核心逻辑
 ```java
 protected synchronized void doExport() {
@@ -185,7 +185,7 @@ protected synchronized void doExport() {
     }
 ```
 
-### 16.4.1 导出服务的URL配置逻辑
+###  **导出服务的URL配置逻辑**
 
 ServiceConfig 导出URL核心逻辑
 ```java
@@ -244,7 +244,7 @@ ServiceConfig 导出URL核心逻辑
 
 
 
-### 16.4.2 应用级和接口级服务注册地址获取
+###  **应用级和接口级服务注册地址获取**
 这里主要看下注册中心的获取，这里涉及到服务的双注册配置
 
 ```java
@@ -349,7 +349,7 @@ service-discovery-registry://8.131.79.126:2181/org.apache.dubbo.registry.Registr
 
 
 
- ## 16.5 导出服务配置到本地和注册中心
+ ##  **导出服务配置到本地和注册中心**
  
 
 ```java
@@ -367,7 +367,7 @@ registry://127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=
 service-discovery-registry://8.131.79.126:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&dubbo=2.0.2&pid=10275&registry=zookeeper&release=3.0.8&timestamp=1653704425920
 ```
 
-### 16.5.1 导出服务配置的doExportUrlsFor1Protocol方法
+###   **导出服务配置的doExportUrlsFor1Protocol方法**
 ```java
     private void doExportUrlsFor1Protocol(ProtocolConfig protocolConfig, List<URL> registryURLs) {
        //生成协议配置具体可见下图中的元数据配置中的attachments
@@ -388,10 +388,10 @@ service-discovery-registry://8.131.79.126:2181/org.apache.dubbo.registry.Registr
 
 ```
 
- ![在这里插入图片描述](/imgs/blog/source-blog/16-deploy2.png)
+ ![16-dubbo-2.png](/img/chapter_dubbo/16-dubbo-2.png)
 
 
-### 16.5.2 导出服务配置模板方法
+###  **导出服务配置模板方法**
 继续看导出服务的模板方法，分为本地导出和注册中心导出
 //参数url为协议配置url可以参考：
 
@@ -424,7 +424,7 @@ private void exportUrl(URL url, List<URL> registryURLs) {
 ```
 
 
-## 16.6 导出服务到本地
+##  **导出服务到本地**
 本地调用使用了 injvm 协议，是一个伪协议，它不开启端口，不发起远程调用，只在 JVM 内直接关联，但执行 Dubbo 的 Filter 链。
 
 直接通过代码来看吧
@@ -443,7 +443,7 @@ private void exportUrl(URL url, List<URL> registryURLs) {
     }
 ```
 
-###  16.6.1 doExportUrl方法
+###    **doExportUrl方法**
 ```java
 private void doExportUrl(URL url, boolean withMetaData) {
 		//这里是由adaptor扩展类型处理过的 我们直接看默认的类型javassist 对应JavassistProxyFactory代理工厂 获取调用对象 （
@@ -456,7 +456,7 @@ private void doExportUrl(URL url, boolean withMetaData) {
     }
 ```
 
-### 16.6.2 JavassistProxyFactory类型的getInvoker方法
+###   **JavassistProxyFactory类型的getInvoker方法**
 
 ```java
 @Override
@@ -482,14 +482,14 @@ private void doExportUrl(URL url, boolean withMetaData) {
     }
 ```
 
-### 16.6.3 使用协议导出调用对象 export
+###  **使用协议导出调用对象 export**
 
 ```java
  Exporter<?> exporter = protocolSPI.export(invoker);
 ```
 这个使用了Adaptor扩展和Wrapper机制Debug起来不太方便这里贴一下调用堆栈![在这里插入图片描述](/imgs/blog/source-blog/16-deploy3.png)
 
-### 16.6.3.1 协议序列化机制ProtocolSerializationWrapper
+###  **协议序列化机制ProtocolSerializationWrapper**
 
 ```java
    @Override
@@ -501,7 +501,7 @@ private void doExportUrl(URL url, boolean withMetaData) {
 ```
 
 
-### 16.6.3.2 协议过滤器Wrapper ProtocolFilterWrapper
+###   **协议过滤器Wrapper ProtocolFilterWrapper**
 
 ```java
  @Override
@@ -559,10 +559,10 @@ private void doExportUrl(URL url, boolean withMetaData) {
     }
 ```
 
-![在这里插入图片描述](/imgs/blog/source-blog/16-deploy4.png)
+![16-wrapper.png](/img/chapter_dubbo/16-wrapper.png)
 
 
-### 16.6.3.3 协议监听器Wrapper ProtocolListenerWrapper
+###  **协议监听器Wrapper ProtocolListenerWrapper**
 
 ```java
  @Override
@@ -578,7 +578,7 @@ private void doExportUrl(URL url, boolean withMetaData) {
     }
 ```
 
-### 16.6.3.4 QOS的协议Wrapper QosProtocolWrapper
+###  **QOS的协议Wrapper QosProtocolWrapper**
 
 ```java
 @Override
@@ -592,7 +592,7 @@ private void doExportUrl(URL url, boolean withMetaData) {
     }
 ```
 
-### 16.6.3.5 InjvmProtocol 的导出方法
+###   **InjvmProtocol 的导出方法**
 
 ```java
   @Override
@@ -602,8 +602,8 @@ private void doExportUrl(URL url, boolean withMetaData) {
 
 ```
 
-## 16.7 导出服务到注册中心
- 16.5.2 导出服务配置模板方法 中我们看到了服务导出会导出到本地和远程，接下来就看下导出到远程的方法exportRemote
+## **导出服务到注册中心**
+ 前面 导出服务配置模板方法 中我们看到了服务导出会导出到本地和远程，接下来就看下导出到远程的方法exportRemote
  参数url:
  
 
@@ -676,8 +676,8 @@ private URL exportRemote(URL url, List<URL> registryURLs) {
 ```
 
 
-### 16.7.1   doExportUrl方法
-与 16.6.1 doExportUrl方法 导出本地协议是一样的逻辑 ，我们来看看点不同地方 
+###   **doExportUrl方法**
+与 前面doExportUrl方法 导出本地协议是一样的逻辑 ，我们来看看点不同地方 
 ```java
 private void doExportUrl(URL url, boolean withMetaData) {
         Invoker<?> invoker = proxyFactory.getInvoker(ref, (Class) interfaceClass, url);
@@ -727,7 +727,7 @@ private void doExportUrl(URL url, boolean withMetaData) {
 ```
 
 
-与 16.6.3.4 QOS的协议Wrapper QosProtocolWrapper 不同之处
+与前面 QOS的协议Wrapper QosProtocolWrapper 不同之处
 
  服务发现service-discovery-registry的导出UrlUtils.isRegistry(invoker.getUrl() 判断结果为true会走这个逻辑
  
@@ -819,7 +819,7 @@ QOS处理器为QosProcessHandler关于QosProcessHandler的细节这里先不说
 
 最后一个不同的地方调用链路走的这个 RegistryProtocol
 
-### 16.7.2 通过注册协议导出服务与注册服务的流程
+###  **通过注册协议导出服务与注册服务的流程**
 RegistryProtocol的导出方法：
 这个方法非常重要也是服务注册的核心代码，先概括下包含了哪些步骤
 - 覆盖配置
@@ -885,7 +885,7 @@ RegistryProtocol的导出方法：
     }
 ```
 
-## 16.8 doLocalExport本地导出协议开启端口
+##  **doLocalExport本地导出协议开启端口**
 前面已经看过了本地协议JVM协议的服务导出和注册中心配置的导出，这里可以直接看一些关键代码：
 
 ```java
@@ -943,7 +943,7 @@ RegistryProtocol的导出方法：
         return exporter;
     }
 ```
-### 开启服务端口
+### **开启服务端口**
 这里就到了RPC协议的TCP通信模块了，对应DubboProtocol 的    openServer(url);方法
 
 ```java
@@ -1017,7 +1017,7 @@ private ProtocolServer createServer(URL url) {
     }
 ```
 
-## 16.9 向注册中心注册服务register
+##  **向注册中心注册服务register**
  这个细节在下个博客中说涉及到Dubbo3的双注册
 
 

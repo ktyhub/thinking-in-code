@@ -27,7 +27,7 @@ public static void main(String[] args) throws SQLException {
 ```
 
 关于Connection连接对象，我们来看下官方对他的解释：
-**与特定数据库的连接（会话）**。在连接上下文中执行SQL语句并返回结果。
+**与特定数据库的连接（会话）** 。在连接上下文中执行SQL语句并返回结果。
 
 连接对象的数据库能够提供描述其表、支持的SQL语法、存储过程、此连接的功能等的信息。此信息是通过getMetaData方法获得的。
 

@@ -1,13 +1,13 @@
 
-# 7-Dubbo的SPI扩展机制之自动激活扩展Activate源码解析
-## 7.1 Activate扩展的说明
+#  **Dubbo的SPI扩展机制之自动激活扩展Activate源码解析**
+##  **Activate扩展的说明**
 此注解对于使用给定条件自动激活某些扩展非常有用，例如：@Activate可用于在有多个实现时加载某些筛选器扩展。
 - **group()** 指定组条件。框架SPI定义了有效的组值。
 - **value()** 指定URL条件中的参数键。
 
 SPI提供程序可以调用ExtensionLoader。getActivateExtension(URL、String、String)方法以查找具有给定条件的所有已激活扩展。
 
-比如后面我们会说到的**过滤器扩展对象**的获取,如下通过调用**getActivateExtension方法的**代码:
+比如后面我们会说到的 **过滤器扩展对象** 的获取,如下通过调用 **getActivateExtension方法的** 代码:
 
 ```java
  List<Filter> filters;
@@ -15,7 +15,7 @@ SPI提供程序可以调用ExtensionLoader。getActivateExtension(URL、String�
 ```
 
 
-## 7.2 获取自动激活扩展的源码
+##  **获取自动激活扩展的源码**
 
 前面我们看了激活扩展是通过调用getActivateExtension方法来获取对象的,那接下来就来看下这个方法做了什么操作:
 

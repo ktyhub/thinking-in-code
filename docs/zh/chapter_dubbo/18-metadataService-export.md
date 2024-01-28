@@ -255,8 +255,8 @@ metadata-type
 
 
 metadata 传递方式，是以 Provider 视角而言的，Consumer 侧配置无效，可选值有： 
-- remote - Provider 把 metadata 放到远端**注册中心**，Consumer 从**注册中心获取**。
--  local - Provider **把 metadata 放在本地**，**Consumer 从 Provider 处直接获取**  。
+- remote - Provider 把 metadata 放到远端**注册中心** ，Consumer 从**注册中心获取** 。
+-  local - Provider **把 metadata 放在本地** ，**Consumer 从 Provider 处直接获取**  。
 
 可以看到默认的local配置元数据信息的获取是由消费者从提供者拉的，那提供者怎么拉取对应服务的元数据信息那就要要用到这个博客说到的MetadataService服务，传递方式为remote的方式其实就要依赖注册中心了相对来说增加了注册中心的压力。
 

@@ -1,79 +1,51 @@
 
-# 3-框架,应用程序,模块领域模型Model对象的初始化
-在上一章中我们详细看了服务配置ServiceConfig类型的初始化，不过我们跳过了AbstractMethodConfig的构造器中创建模块模型对象的过程，那这一章我们就来看下模块模型对象的初始化过程:
+#  **框架,应用程序,模块领域模型Model对象的初始化**
+在上一章中我们详细看了服务配置ServiceConfig类型的初始化，
+不过我们跳过了AbstractMethodConfig的构造器中创建模块模型对象的过程，
+那这一章我们就来看下模块模型对象的初始化过程:
 
 ```java
 public AbstractMethodConfig() {
         super(ApplicationModel.defaultModel().getDefaultModule());
     }
 ```
-**那为什么会在Dubbo3的新版本中加入这个域模型呢**，主要有如下原因
+**那为什么会在Dubbo3的新版本中加入这个域模型呢** ，主要有如下原因
 之前dubbo都是只有一个作用域的，通过静态类 属性共享
 增加域模型是为了:
 1. 让Dubbo支持多应用的部署，这块一些大企业有诉求
 2. 从架构设计上，解决静态属性资源共享、清理的问题
 3. 分层模型将应用的管理和服务的管理分开
 
-可能比较抽象，可以具体点来看。Dubbo3中在启动时候需要启动配置中心、元数据中心，这个配置中心和元数据中心可以归应用模型来管理。Dubbo作为RPC框架又需要启动服务和引用服务，服务级别的管理就交给了这个模块模型来管理。分层次的管理方便我们理解和处理逻辑，父子级别的模型又方便了数据传递。
+可能比较抽象，可以具体点来看。
+Dubbo3中在启动时候需要启动配置中心、元数据中心，这个配置中心和元数据中心可以归应用模型来管理。
+Dubbo作为RPC框架又需要启动服务和引用服务，服务级别的管理就交给了这个模块模型来管理。
+分层次的管理方便我们理解和处理逻辑，父子级别的模型又方便了数据传递。
 
 了解过JVM类加载机制的同学应该就比较清楚JVM类加载过程中的数据访问模型。子类加载器先交给父类加载器查找，找不到再从子类加载器中查找。Dubbo的分层模型类似这样一种机制，这一章先来简单了解下，后面用到时候具体细说。
 
-## 	3.1 模型对象的关系
+## **模型对象的关系**
 为了不增加复杂性，我们这里仅仅列出模型对象类型类型之间的继承关系如下所示:
-![在这里插入图片描述](/imgs/blog/source-blog/3-model.png)
+![3-model.png](/img/chapter_dubbo/3-model.png)
 <center>图3.1 模型对象的继承关系</center>
 
 模型对象一共有4个，公共的属性和操作放在了域模型类型中，下面我们来详细说下这几个模型类型:
 
- - **ExtensionAccessor** 扩展的统一访问器
- 	- 用于获取扩展加载管理器ExtensionDirector对象
- 	- **获取扩展对象ExtensionLoader**
- 	- 根据扩展名字**获取具体扩展对象**
- 	- 获取自适应扩展对象
- 	- 获取默认扩展对象
- - **ScopeModel** 模型对象的公共抽象父类型
- 	- 	内部id用于表示模型树的层次结构
- 	-  公共模型名称，可以被用户设置
- 	-  描述信息
- 	- 类加载器管理
- 	- 父模型管理parent
- 	- 当前模型的所属域ExtensionScope有:**FRAMEWORK(框架)**，**APPLICATION(应用)**，**MODULE(模块)**，**SELF(自给自足**，为每个作用域创建一个实例，用于特殊的SPI扩展，如ExtensionInjector)
- 	- 具体的扩展加载程序管理器对象的管理:**ExtensionDirector**
- 	- 域Bean工厂管理，一个内部共享的Bean工厂**ScopeBeanFactory**
- 	- 等等
+| 类型 | 说明                                                                                                                                                                                                                                                                                                       |
+|----|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|  **ExtensionAccessor**   | - 扩展的统一访问器 - 用于获取扩展加载管理器ExtensionDirector对象 **获取扩展对象ExtensionLoader** 根据扩展名字 **获取具体扩展对象** - 获取自适应扩展对象- 获取默认扩展对象                                                                                                                                                                                          |
+|  **ScopeModel**  | 模型对象的公共抽象父类型  ，内部id用于表示模型树的层次结构  公共模型名称，可以被用户设置 描述信息 类加载器管理 父模型管理parent 当前模型的所属域ExtensionScope有: **FRAMEWORK(框架)** ，**APPLICATION(应用)** ，**MODULE(模块)** ，**SELF(自给自足** ，为每个作用域创建一个实例，用于特殊的SPI扩展，如ExtensionInjector) 具体的扩展加载程序管理器对象的管理: **ExtensionDirector** 域Bean工厂管理，一个内部共享的Bean工厂**ScopeBeanFactory** |
+| **FrameworkModel**   | dubbo框架模型，可与多个应用程序共享    	- FrameworkModel实例对象集合，allInstances ，所有ApplicationModel实例对象集合，applicationModels ，发布的ApplicationModel实例对象集合pubApplicationModels ，框架的服务存储库**FrameworkServiceRepository**类型对象(数据存储在内存中) ，内部的应用程序模型对象internalApplicationModel                                                       
+| **ApplicationModel** | 表示正在使用Dubbo的应用程序，并存储基本**元数据信息** ，以便在RPC调用过程中使用。 ApplicationModel包括许多关于**发布服务** 的ProviderModel和许多关于订阅服务的Consumer Model。                                                                                                                                                                                   
+|   **ModuleModel**  | 服务模块的模型」                                                                                                                                                                                                                                                                                                 |
 
- - **FrameworkModel** dubbo框架模型，可与多个应用程序共享
- 	- FrameworkModel实例对象集合，allInstances
- 	- 所有ApplicationModel实例对象集合，applicationModels
- 	- 发布的ApplicationModel实例对象集合pubApplicationModels
- 	- 框架的服务存储库**FrameworkServiceRepository**类型对象(数据存储在内存中)
- 	- 内部的应用程序模型对象internalApplicationModel
- - **ApplicationModel**  表示正在使用Dubbo的应用程序，并存储基本**元数据信息**，以便在RPC调用过程中使用。
-ApplicationModel包括许多关于**发布服务**的ProviderModel和许多关于订阅服务的Consumer Model。
-	- ExtensionLoader、DubboBootstrap和这个类目前被设计为单例或静态（本身完全静态或使用一些静态字段）。因此，从它们返回的实例属于流程范围。如果想在一个进程中支持多个dubbo服务器，可能需要重构这三个类。
-	- **所有ModuleModel实例**对象集合moduleModels
-	- **发布的ModuleModel实例**对象集合pubModuleModels
-	- **环境信息Environment实例**对象environment
-	- **配置管理ConfigManager实例**对象configManager
-	- **服务存储库ServiceRepository实例**对象serviceRepository
-	- **应用程序部署器ApplicationDeployer实例**对象deployer
-	- **所属框架FrameworkModel实例**对象frameworkModel
-	- **内部的模块模型ModuleModel实例**对象internalModule
-	- **默认的模块模型ModuleModel实例**对象defaultModule
-- **ModuleModel** 服务模块的模型
-  - **所属应用程序模型ApplicationModel实例**对象applicationModel
-  - **模块环境信息ModuleEnvironment实例**对象moduleEnvironment
-   - **模块服务存储库ModuleServiceRepository实例**对象serviceRepository
-  - **模块的服务配置管理ModuleConfigManager实例**对象moduleConfigManager
-  - **模块部署器ModuleDeployer实例**对象deployer用于导出和引用服务
+  
 
-
-了解了这几个模型对象的关系我们可以了解到这几个模型对象的管理层级从框架到应用程序，然后到模块的管理(FrameworkModel->ApplicationModel->ModuleModel)，他们主要用来针对框架，应用程序，模块的**存储**，**发布管理，**，**配置管理**
+了解了这几个模型对象的关系我们可以了解到这几个模型对象的管理层级从框架到应用程序，然后到模块的管理(FrameworkModel->ApplicationModel->ModuleModel)，他们主要用来针对框架，应用程序，模块的**存储** ，**发布管理，** ，**配置管理**
 
 看来Dubbo3 针对应用服务治理与运维这一块也是在努力尝试.
 
 
-### 3.1.1 AbstractMethodConfig 配置对象中获取模型对象的调用
+###   **AbstractMethodConfig 配置对象中获取模型对象的调用**
 
 模块模型(ModuleModel)参数对象的创建
 这个AbstractMethodConfig构造器在初始化的时候调调用了这么一行代码做为参数向父类型传递对象.
@@ -83,7 +55,7 @@ ApplicationModel.defaultModel().getDefaultModule()
 ```
 默认情况下使用ApplicationModel的静态方法获取默认的模型对象和默认的模块对象
 
-**ApplicationModel**(应用程序领域模型)类型中获取默认模型对象的方法:
+**ApplicationModel** (应用程序领域模型)类型中获取默认模型对象的方法:
 
 ```java
  public static ApplicationModel defaultModel() {
@@ -93,7 +65,7 @@ ApplicationModel.defaultModel().getDefaultModule()
 ```
 这里可以看到要想获取应用程序模型必须先通过框架领域模型来获取层级也是框架领域模型到应用程序领域模型
 
-### 3.1.2 使用双重校验锁获取框架模型对象
+###   **使用双重校验锁获取框架模型对象**
 FrameworkModel(框架模型)的默认模型获取工厂方法defaultModel()
 ```java
 	/**
@@ -119,7 +91,7 @@ FrameworkModel(框架模型)的默认模型获取工厂方法defaultModel()
     }
 ```
 
-### 3.1.3 刷新重置默认框架模型对象
+###  **刷新重置默认框架模型对象**
 FrameworkModel中的重置默认框架模型resetDefaultFrameworkModel
 ```java
   private static void resetDefaultFrameworkModel() {
@@ -148,7 +120,7 @@ FrameworkModel中的重置默认框架模型resetDefaultFrameworkModel
 
 
 上面单例做了很多的初始化操作，这里开始调用构造器来创建框架模型对象，如下代码:
-## 3.2  创建FrameworkModel对象
+##   **创建FrameworkModel对象**
  FrameworkModel()构造器
 ```java
 public FrameworkModel() {
@@ -176,7 +148,7 @@ public FrameworkModel() {
 
  ExtensionScope.FRAMEWORK
 
-### 3.2.1 初始化FrameworkModel
+###   **初始化FrameworkModel**
 FrameworkModel框架模型的初始化方法initialize()
 ```java
 @Override
@@ -211,7 +183,7 @@ FrameworkModel框架模型的初始化方法initialize()
 继续上面代码的调用链路，我们来看
 FrameworkModel的super.initialize();方法 调用父类型ScopeModel的initialize()方法
 
-### 3.2.2 初始化ScopeModel
+###  **初始化ScopeModel**
 ScopeModel类型的初始化方法initialize():
 ```java
 protected void initialize() {
@@ -240,7 +212,7 @@ protected void initialize() {
 ```
 
 
-### 3.2.3 初始类型定义构建器
+###   **初始类型定义构建器**
 
 TypeDefinitionBuilder的初始化类型构造器方法initBuilders
 
@@ -252,7 +224,7 @@ public static void initBuilders(FrameworkModel model) {
 ```
 
 
-####  3.2.3.1 服务存储仓库对象的创建
+####   **服务存储仓库对象的创建**
 FrameworkServiceRepository对象的初始化
 
 ```java
@@ -261,7 +233,7 @@ public FrameworkServiceRepository(FrameworkModel frameworkModel) {
     }
 ```
 
-### 3.2.4  域模型初始化器的获取与初始化回调
+###   **域模型初始化器的获取与初始化回调**
 域模型初始化器的获取与初始化(ScopeModelInitializer类型和initializeFrameworkModel方法)
 加载到的ScopeModelInitializer类型的SPI扩展实现
 
@@ -277,7 +249,7 @@ ExtensionLoader<ScopeModelInitializer> initializerExtensionLoader = this.getExte
 
 通过Debug查到域模型初始化器的SPI扩展类型有如下8个:
 
-![在这里插入图片描述](/imgs/blog/source-blog/3-initextent.png)
+![3-spi.png](/img/chapter_dubbo/3-spi.png)
 
 这里我随机找两个说一下吧:
 容错域模型初始化器:ClusterScopeModelInitializer的initializeFrameworkModel方法:
@@ -310,9 +282,10 @@ public class ConfigScopeModelInitializer implements ScopeModelInitializer {
     }
 ```
 
-### 3.2.5 将内部应用配置对象创建与添加至应用模型中
+###   **将内部应用配置对象创建与添加至应用模型中**
 创建ApplicationConfig对象让后将其添加至应用模型中
-内部应用程序模型，这里为应用配置管理器设置一个应用配置对象，将这个应用配置的模块名字配置名字设置为DUBBO_INTERNAL_APPLICATION，应用配置记录着我们常见的应用配置信息，如下面表格所示:
+内部应用程序模型，这里为应用配置管理器设置一个应用配置对象，将这个应用配置的模块名字配置名字设置为DUBBO_INTERNAL_APPLICATION，
+应用配置记录着我们常见的应用配置信息，如下面表格所示:
 ```java
  //获取ConfigManager类型对象，然后设置添加当前应用配置对象
    internalApplicationModel.getApplicationConfigManager().setApplication(
@@ -323,32 +296,34 @@ public class ConfigScopeModelInitializer implements ScopeModelInitializer {
    来自官网目前版本的配置解释:
    官网当前的配置描述知道到了元数据类型，后面我再补充几个
 
-| 属性 | 对应URL参数 |类型 | 是否必填	|缺省值	 | 作用	 | 描述|兼容性|
-|--|--|--|--|--|--|--|--|
-|  name|  	application	|  string|  	必填		|  |  服务治理	|  当前应用名称，用于注册中心计算应用间依赖关系，注意：消费者和提供者应用名不要一样，此参数不是匹配条件，你当前项目叫什么名字就填什么，和提供者消费者角色无关，比如：kylin应用调用了morgan应用的服务，则kylin项目配成kylin，morgan项目配成morgan，可能kylin也提供其它服务给别人使用，但kylin项目永远配成kylin，这样注册中心将显示kylin依赖于morgan	|  1.0.16以上版本|
-|  version|  	application.version	|  string|  	可选|  		|  服务治理	|  当前应用的版本|  	2.2.0以上版本|
-|  owner|  	owner|  	string	|  可选|  		|  服务治理|  	应用负责人，用于服务治理，请填写负责人公司邮箱前缀	|  2.0.5以上版本|
-|  organization	|  organization	|  string|  	可选|  |  		服务治理	|  组织名称(BU或部门)，用于注册中心区分服务来源，此配置项建议不要使用autoconfig，直接写死在配置中，比如china,intl,itu,crm,asc,dw,aliexpress等	|  2.0.0以上版本|
-|  architecture|  architecture|  string|  	可选	|  |  	服务治理|  	用于服务分层对应的架构。如，intl、china。不同的架构使用不同的分层。	|  2.0.7以上版本
-|  environment	|  environment|  	string|  	可选		|  |  服务治理|  	应用环境，如：develop/test/product，不同环境使用不同的缺省值，以及作为只用于开发测试功能的限制条件	|  2.0.0以上版本|  
-|  compiler|  	compiler|  	string	|  可选|  	javassist	|  性能优化|  	Java字节码编译器，用于动态类的生成，可选：jdk或javassist	|  2.1.0以上版本|  
-|  logger	|  logger|  	string	|  可选|  	slf4j	|  性能优化|  	日志输出方式，可选：slf4j,jcl,log4j,log4j2,jdk	|  2.2.0以上版本|  
-|  metadata-type	|  metadata-type	|  String	|  可选|  	local	|  服务治理	|  metadata 传递方式，是以 Provider 视角而言的，Consumer 侧配置无效，可选值有：remote - Provider 把 metadata 放到远端注册中心，Consumer 从注册中心获取local - Provider 把 metadata 放在本地，Consumer 从 Provider 处直接获取	|  2.7.6以上版本| 
+| 属性             | 对应URL参数               | 类型       | 是否必填	 | 缺省值	        | 作用	     | 描述                                                                                                                                                                                                     | 兼容性        |
+|----------------|-----------------------|----------|-------|-------------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
+| name           | 	application	         | string   | 	必填		 |             | 服务治理	   | 当前应用名称，用于注册中心计算应用间依赖关系，注意：消费者和提供者应用名不要一样，此参数不是匹配条件，你当前项目叫什么名字就填什么，和提供者消费者角色无关，比如：kylin应用调用了morgan应用的服务，则kylin项目配成kylin，morgan项目配成morgan，可能kylin也提供其它服务给别人使用，但kylin项目永远配成kylin，这样注册中心将显示kylin依赖于morgan	 | 1.0.16以上版本 |
+| version        | 	application.version	 | string   | 	可选   | 		          | 服务治理	   | 当前应用的版本                                                                                                                                                                                                | 	2.2.0以上版本 |
+| owner          | 	owner                | 	string	 | 可选    | 		          | 服务治理    | 	应用负责人，用于服务治理，请填写负责人公司邮箱前缀	                                                                                                                                                                            | 2.0.5以上版本  |
+| organization	  | organization	         | string   | 	可选   |             | 		服务治理	 | 组织名称(BU或部门)，用于注册中心区分服务来源，此配置项建议不要使用autoconfig，直接写死在配置中，比如china,intl,itu,crm,asc,dw,aliexpress等	                                                                                                        | 2.0.0以上版本  |
+| architecture   | architecture          | string   | 	可选	  |             | 	服务治理   | 	用于服务分层对应的架构。如，intl、china。不同的架构使用不同的分层。	                                                                                                                                                               | 2.0.7以上版本  |
+| environment	   | environment           | 	string  | 	可选		 |             | 服务治理    | 	应用环境，如：develop/test/product，不同环境使用不同的缺省值，以及作为只用于开发测试功能的限制条件	                                                                                                                                          | 2.0.0以上版本  |  
+| compiler       | 	compiler             | 	string	 | 可选    | 	javassist	 | 性能优化    | 	Java字节码编译器，用于动态类的生成，可选：jdk或javassist	                                                                                                                                                                 | 2.1.0以上版本  |  
+| logger	        | logger                | 	string	 | 可选    | 	slf4j	     | 性能优化    | 	日志输出方式，可选：slf4j,jcl,log4j,log4j2,jdk	                                                                                                                                                                 | 2.2.0以上版本  |  
+| metadata-type	 | metadata-type	        | String	  | 可选    | 	local	     | 服务治理	   | metadata 传递方式，是以 Provider 视角而言的，Consumer 侧配置无效，可选值有：remote - Provider 把 metadata 放到远端注册中心，Consumer 从注册中心获取local - Provider 把 metadata 放在本地，Consumer 从 Provider 处直接获取	                                  | 2.7.6以上版本  | 
 
 当前在Dubbo3.0.7中还有一些的配置我下面列举下:
-| 属性 | 对应URL参数 |类型 | 是否必填	|缺省值	 | 作用	 | 描述|兼容性|
-|--|--|--|--|--|--|--|--|
-|register-consumer| register-consumer|boolean|可选|false|服务治理|是否注册使用者实例，默认为false。||
-|register-mode|register-mode|string|可选|all|服务治理|将interface/instance/all 地址注册到注册中心，默认为all。|
-|enable-empty-protection|enable-empty-protection|boolean|可选|true|服务治理|在空地址通知上启用空保护，默认为true||
-|protocol|protocol|string|可选|dubbo|服务治理|此应用程序的首选协议（名称）||
+
+| 属性                      | 对应URL参数                 | 类型      | 是否必填	 | 缺省值	  | 作用	  | 描述                                        | 兼容性 |
+|-------------------------|-------------------------|---------|-------|-------|------|-------------------------------------------|-----|
+| register-consumer       | register-consumer       | boolean | 可选    | false | 服务治理 | 是否注册使用者实例，默认为false。                       |     |
+| register-mode           | register-mode           | string  | 可选    | all   | 服务治理 | 将interface/instance/all 地址注册到注册中心，默认为all。 |
+| enable-empty-protection | enable-empty-protection | boolean | 可选    | true  | 服务治理 | 在空地址通知上启用空保护，默认为true                      |     |
+| protocol                | protocol                | string  | 可选    | dubbo | 服务治理 | 此应用程序的首选协议（名称）                            |     |
 
 
 
 
-## 3.3 创建ApplicationModel对象
+##   **创建ApplicationModel对象**
 ApplicationModel对象的初始化调用
- 在前面 3.2.4 FrameworkModel框架模型的初始化方法initialize() 章节中，我们看到了代码ApplicationModel对象的初始化调用如下代码，这里我们来详细说一下:
+ 在前面 3.2.4 FrameworkModel框架模型的初始化方法initialize() 章节中，
+我们看到了代码ApplicationModel对象的初始化调用如下代码，这里我们来详细说一下:
 ```java
  internalApplicationModel = new ApplicationModel(this, true);
         internalApplicationModel.getApplicationConfigManager().setApplication(
@@ -357,9 +332,9 @@ ApplicationModel对象的初始化调用
    
 ```
 
-### 3.3.1 ApplicationModel的构造器
-ApplicationModel(FrameworkModel frameworkModel, boolean isInternal)
-刚刚3.2.9那个地方我们看到了使用代码**new ApplicationModel(this, true)** 来创建对象这里我们详细看下代码细节:
+###   **ApplicationModel的构造器**
+`ApplicationModel(FrameworkModel frameworkModel, boolean isInternal)`
+刚刚3.2.9那个地方我们看到了使用代码 **new ApplicationModel(this, true)** 来创建对象这里我们详细看下代码细节:
 
 
 ```java
@@ -380,7 +355,7 @@ public ApplicationModel(FrameworkModel frameworkModel, boolean isInternal) {
 ```
 
 
-#### 3.3.1.1 将ApplicationModel添加至FrameworkModel容器中
+####   **将ApplicationModel添加至FrameworkModel容器中**
 FrameworkModel的添加应用程序方法addApplication:
 
 ```java
@@ -444,7 +419,7 @@ private void resetDefaultAppModel() {
     }
 ```
 
-### 3.3.2 初始化ApplicationModel
+###   **初始化ApplicationModel**
 ApplicationModel的初始化initialize()方法
 在前面**3.2.10 ApplicationModel的构造器ApplicationModel(FrameworkModel frameworkModel, boolean isInternal)** 中的最后一行开始初始化应用模型我们还未详细说明下面可以来看下
 
@@ -476,7 +451,7 @@ ApplicationModel的初始化initialize()方法
     }
 ```
 
- ### 3.3.4 initApplicationExts()  初始化应用程序扩展方法
+ ###  **initApplicationExts()  初始化应用程序扩展方法**
 ```java
    private void initApplicationExts() {
    //这个扩展实现一共有两个可以看下面那个图扩展类型为ConfigManager和Environment
@@ -487,9 +462,9 @@ ApplicationModel的初始化initialize()方法
     }
 ```
 
-![在这里插入图片描述](/imgs/blog/source-blog/3-extension.png)
+![在这里插入图片描述](/img/chapter_dubbo/3-ext.png)
 
-#### 3.3.4.1 ConfigManager类型的initialize方法
+####  **ConfigManager类型的initialize方法**
 先简单说下ConfigManager的作用，无锁配置管理器（通过ConcurrentHashMap），用于快速读取操作。写入操作锁带有配置类型的子配置映射，用于安全检查和添加新配置。
 其实ConfigManager实现类中并没有这个初始化方法initialize，不过ConfigManager的父类型AbstractConfigManager中是有initialize方法的，如下所示:
 
@@ -533,7 +508,7 @@ AbstractConfigManager的初始化方法initialize
 ```
 
 
-#### 3.3.4.2 Environment类型的initialize方法
+####  **Environment类型的initialize方法**
 这是一个与环境配置有关系的类型，我们先来简单了解下它的初始化方法，后期再详细说明:
 
 Environment类型的initialize方法
@@ -640,9 +615,9 @@ Environment类型的initialize方法
     }
 ```
 
-​    
+   
 
-## 3.4 创建ModuleModel对象
+##   **创建ModuleModel对象**
 前面ApplicationModel对象初始化的时候创建了ModuleModel如下代码:
 
 ```java
@@ -679,7 +654,7 @@ public ModuleModel(ApplicationModel applicationModel, boolean isInternal) {
     }
 ```
 
-### 3.4.1 将模块模型添加至应用模型中
+###   **将模块模型添加至应用模型中**
 如上面代码所示调用如下代码将模块模型添加到应用模型中:
 
 ```java
@@ -710,7 +685,7 @@ void addModule(ModuleModel moduleModel, boolean isInternal) {
     }
 ```
 
-### 3.4.2 初始化模块模型
+###  **初始化模块模型**
 前面ModuleModel构造器中通过initialize()方法来进行初始化操作如下代码:
 
 ```java
@@ -736,7 +711,7 @@ void addModule(ModuleModel moduleModel, boolean isInternal) {
         }
     }
 ```
-#### 3.4.2.1 模块服务存储库的创建
+####  **模块服务存储库的创建**
 ModuleServiceRepository是模块模型中用来存储服务的通过如下代码调用
 
 ```java
@@ -784,7 +759,7 @@ public static FrameworkModel getFrameworkModel(ScopeModel scopeModel) {
     }
 ```
 
-#### 3.4.2.2 模块配置管理器对象的创建与初始化
+####   **模块配置管理器对象的创建与初始化**
 
 
 ```java
@@ -847,7 +822,7 @@ ModuleConfigManager类型的初始化方法代码如下:
     }
 ```
 
-#### 3.4.2.3 模块配置扩展的初始化
+####  **模块配置扩展的初始化**
 
 ```java
 initModuleExt();

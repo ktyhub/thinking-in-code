@@ -1,7 +1,7 @@
 
-# 12 全局视野来看Dubbo3的服务启动生命周期
-## 12.1 启动方法简介
-在说启动方法之前先把视野拉回第一章[《1-从一个服务提供者的Demo说起》](https://blog.elastic.link/2022/07/10/dubbo/1-cong-yi-ge-demo-shuo-qi/ )我们的Demo代码,下面只贴一下核心代码:
+#  **全局视野来看Dubbo3的服务启动生命周期**
+##  **启动方法简介**
+在说启动方法之前先把视野拉回第一章[《1-从一个服务提供者的Demo说起》](/zh/chapter_dubbo/1-learn-from-a-demo)我们的Demo代码,下面只贴一下核心代码:
 
 ```java
 public class Application {
@@ -33,7 +33,7 @@ public class Application {
 
 前面我们介绍了Dubbo启动器DubboBootstrap类型对象的创建,又介绍了为DubboBootstrap启动器初始化各种配置信息,这一个博客就开始到了分析启动方法的位置了,Dubbo启动器借助Deployer发布器来启动和发布服务,发布器的启动过程包含了启动配置中心,加载配置,启动元数据中心,启动服务等操作都是比较重要又比较复杂的过程,这里我们先来看下启动过程的生命周期来为后面的内容做好铺垫。
 
-## 12.2 启动器启动方法的调用逻辑start()
+##  **启动器启动方法的调用逻辑start()**
 这里我们就直接来看DubboBootstrap的start()方法:
 
 ```java
@@ -65,7 +65,7 @@ public DubboBootstrap start(boolean wait) {
 ```
 
 
-## 12.3 应用程序发布器DefaultApplicationDeployer的启动方法
+##  **应用程序发布器DefaultApplicationDeployer的启动方法**
 发布器是帮助我们发布服务和引用服务的,在Dubbo3中不论是服务提供者还是服务消费者如果想要启动服务都需要走这个启动方法的逻辑,所以务必重视
 
 我们直接来看DefaultApplicationDeployer的start()代码:
@@ -130,7 +130,7 @@ public DubboBootstrap start(boolean wait) {
 
 继续看后面的细节吧，代码胜千言。
 
-## 12.4 应用程序发布器对应用级别的初始化逻辑
+##  **应用程序发布器对应用级别的初始化逻辑**
 这个我们先来看DefaultApplicationDeployer的初始化方法initialize()：
 
 ```java
@@ -178,7 +178,7 @@ public DubboBootstrap start(boolean wait) {
 这个是个生命周期整体概览的方法，将具体逻辑拆分到各个子方法中，是代码重构的一种策略，上面注释也很清楚了就不细说了，上面每个方法在后面会有单独的博客来分析。
 
 
-## 12.5 应用下模块的启动（服务的发布与引用）
+##  **应用下模块的启动（服务的发布与引用）**
 
 我们回过头来详细看DefaultApplicationDeployer的doStart()代码:
 
@@ -211,7 +211,7 @@ private void startModules() {
 内部服务有个元数据服务Dubbo3中每个服务都可以对外提供服务的元数据信息，来简化服务配置，不论是内部服务还是外部服务调用的代码逻辑都是模块发布器ModuleDeployer的start()方法，接下来我们详细看下模块发布器的生命周期函数。
 
 
-## 12.6 模块发布器发布服务的过程 
+##  **模块发布器发布服务的过程** 
 
 前面我们说到了所有的服务都是经过模块发布器，ModuleDeployer的start()方法来启动的，那我们接下来就来看看这个模块发布器的启动方法。
 
@@ -285,9 +285,9 @@ ModuleDeployer的start()方法代码：
 
 
 
-## 12.7 发布器简介
+##  **发布器简介**
 前面主要说了应用和模块的发布器的启动和初始化，下面简单了解下它们的关系，如下所示
-![在这里插入图片描述](https://img-blog.csdnimg.cn/37e7c05796ab4b38aa7658377e16c0aa.png)
+![12-deployer.png](/img/chapter_dubbo/12-deployer.png)
 可以发布器主要包含 
 - 应用的发布器ApplicationDeployer用于初始化并启动应用程序实例
 - 模块发布器ModuleDeployer  模块（服务）的导出/引用服务

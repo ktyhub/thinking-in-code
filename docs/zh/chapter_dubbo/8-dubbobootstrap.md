@@ -1,7 +1,7 @@
 
-#  8-Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化
-## 8.1 启动器简介
-在说启动器之前先把视野拉回第一章[《1-从一个服务提供者的Demo说起》](https://blog.elastic.link/2022/07/10/dubbo/1-cong-yi-ge-demo-shuo-qi/ )我们的Demo代码,下面只贴一下核心代码:
+# **Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化**
+##  **启动器简介**
+在说启动器之前先把视野拉回第一章[《1-从一个服务提供者的Demo说起》](/zh/chapter_dubbo/1-learch-from-a-demo)我们的Demo代码,下面只贴一下核心代码:
 
 ```java
 public class Application {
@@ -28,7 +28,7 @@ public class Application {
 
 Dubbo3 往云原生的方向走自然要针对云原生应用的应用启动,应用运行,应用发布等信息做一些建模,这个DubboBootstrap就是用来启动Dubbo服务的.类似于Netty的Bootstrap类型和ServerBootstrap启动器
 
-## 8.2 双重校验锁的单例模式创建启动器对象的
+##  **双重校验锁的单例模式创建启动器对象的**
 Dubbo的bootstrap类为啥要用单例模式:
 
 通过调用静态方法getInstance()获取单例实例。之所以设计为单例，是因为Dubbo中的一些类（如ExtensionLoader）只为每个进程设计一个实例。
@@ -69,7 +69,7 @@ instanceMap设计为Map<ApplicationModel, DubboBootstrap>类型 Key,意味着可
     }
 ```
 
-## 8.3 DubboBootstrap的构造器代码
+##  **DubboBootstrap的构造器代码**
 
 构造器代码是逻辑比较复杂的地方,我们先来看下代码
 

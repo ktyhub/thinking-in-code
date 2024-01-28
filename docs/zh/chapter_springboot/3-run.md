@@ -267,7 +267,7 @@ public void starting(ConfigurableBootstrapContext bootstrapContext) {
 
 分为两步:
 
-- 先创建事件对象,**ApplicationStartingEvent类型对象**, 这里如果我们想要在程序启动之前进行一些逻辑处理也可以实现一个启动事件的监听器进行处理
+- 先创建事件对象,**ApplicationStartingEvent类型对象** , 这里如果我们想要在程序启动之前进行一些逻辑处理也可以实现一个启动事件的监听器进行处理
 - 然后借助SimpleApplicationEventMulticaster广播器对象进行广播事件multicastEvent,
 
 
