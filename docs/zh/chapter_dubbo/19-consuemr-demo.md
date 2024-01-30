@@ -125,6 +125,7 @@ public class ConsumerApplication {
 -  **配置信息**
 
 上面这个图就是Dubbo3的注册信息了,后面我们也会围绕细节来说明下,这里可以看下新增了:
+
 - `/dubbo/metadata` **元数据信息**
 -  `/dubbo/mapping` 服务和应用的 **映射信息** 
 -  `/dubbo/config` **注册中心配置** 

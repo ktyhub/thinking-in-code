@@ -1,4 +1,4 @@
- #  **Dubbo的三大中心之元数据中心源码解析**
+# **Dubbo的三大中心之元数据中心源码解析**
 
 ##  **简介**
 关于元数据中心的概念对于大部分用户来说是比较陌生的,配置中心的话我们还好理解,对于元数据中心是什么,我们来看下我从官网拷贝过来的一段文字:
@@ -12,7 +12,7 @@
 
 **元数据中心并不依赖于注册中心和配置中心** ，用户可以自由选择是否集成和部署元数据中心，如下图所示：
 
-![15-config.png](/img/chapter_dubbo/15-config.png
+![15-config.png](/img/chapter_dubbo/15-config.png)
 
 
 该图中不配备配置中心，意味着可以不需要全局管理配置的能力。该图中不配备注册中心，意味着可能采用了Dubbo mesh的方案，也可能不需要进行服务注册，仅仅接收直连模式的服务调用。
@@ -63,7 +63,7 @@
 ```
 
 ## **深入探究元数据中心的启动过程**
- ###  **启动元数据中心的代码全貌**
+###  **启动元数据中心的代码全貌**
  
 关于元数据中心我们看下 startMetadataCenter()方法来大致了解下整个流程
 
@@ -247,8 +247,8 @@ MetadataReportInstance中的初始化方法init
 
 
 ####  **元数据工厂对象MetadataReportFactory**
-关于元数据工厂类型MetadataReportFactory,元数据工厂 用于**创建与管理元数据对象** , 相关类型如下:
-![15-metadata-2](/img/chapter_dubbo/15-metadata-2)
+关于元数据工厂类型MetadataReportFactory,元数据工厂 用于 **创建与管理元数据对象** , 相关类型如下:
+![15-metadata-2](/img/chapter_dubbo/15-metadata-2.png)
 
 我们这里主要以为Zookeeper扩展的元数据工厂ZookeeperMetadataReportFactory类型为例子:
 实现类型逻辑不复杂,这里就直接贴代码看看:

@@ -672,7 +672,7 @@ ZookeeperServiceDiscovery的构造器
 关于Curator的官方文档可以看[curator官网](https://curator.apache.org/)
 
 关于Zookeeper上面注册服务应用级服务注册信息可以看如下图所示(后面会具体讲到数据注册时的调用）：
-![在这里插入图片描述](/imgs/chapter_dubbo/17-register-6.png)
+![在这里插入图片描述](/img/chapter_dubbo/17-register-6.png)
 我这个服务提供者注册的应用数据如下：
 
 ```json

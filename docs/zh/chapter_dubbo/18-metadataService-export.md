@@ -245,6 +245,7 @@ ExporterDeployListener类型的onModuleStarted方法如下：
 metadata-type
 
 metadata 传递方式，是以 Provider 视角而言的，Consumer 侧配置无效，可选值有： 
+ 
 - remote - Provider 把 metadata 放到远端 **注册中心** ，Consumer 从 **注册中心获取** 。
 -  local - Provider **把 metadata 放在本地** ，**Consumer 从 Provider 处直接获取**  。
 
@@ -620,7 +621,7 @@ public static org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstance> 
 
 ```
 
-在《18.5 应用级数据注册   registerServiceInstance() 》 小节中介绍了应用元数据信息的注册调用代码，其实后面还有个update的逻辑定期30秒同步元数据到元数据中心，这里就不详细介绍了。
+在前面《 应用级数据注册   registerServiceInstance() 》 小节中介绍了应用元数据信息的注册调用代码，其实后面还有个update的逻辑定期30秒同步元数据到元数据中心，这里就不详细介绍了。
 
 
  
