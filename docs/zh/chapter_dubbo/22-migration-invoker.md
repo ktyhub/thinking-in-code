@@ -13,7 +13,7 @@
 ![consumer-subscription.png](/img/chapter_dubbo/consumer-subscription.png)
 
 第三个图就是精确到消费者订阅的代码层的逻辑了，消费者服务间调用通过一个Invoker类型对象来进行对象，如下图所示消费者代理对象通过创建一个迁移容错的调用器对象来对应用级或者接口级订阅进行适配如下所示
-![migration-cluster-invoker.png](/img/chapter_dubbo/migration-cluster-invoker.png)
+![migration-cluster-invoker.png](/img/chapter_dubbo/22-3-migration-cluster-invoker.png)
 
 第二个图和第三个图是重点要关注的这一个文章的内容主要就是说这里的逻辑。
 
@@ -173,7 +173,8 @@ MigrationRuleHandler的refreshInvoker，注意默认情况下这个step参数为
 
 可以看到这个代码做了判断的逻辑分别对应了Dubbo3消费者迁移的一个状态逻辑：
 三种状态分别如下枚举类型：
-当前共存在三种状态，
+当前共存在三种状态：
+
 - FORCE_INTERFACE（强制接口级）
 - APPLICATION_FIRST（应用级优先）
 - FORCE_APPLICATION（强制应用级）

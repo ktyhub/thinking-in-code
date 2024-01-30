@@ -487,6 +487,6 @@ RegistryProtocol类型的interceptInvoker方法
 
 可以看到核心的逻辑集中在了这个位置MigrationRuleListener类型的onRefer方法，这个这里就不深入往下说了，后续会有个文章专门来看Dubbo2迁移Dubbo3时候处理的逻辑。
 
-Invoker对象的创建完成其实就代表了服务引用执行完成，不过这里核心的协议并没有来说
+Invoker对象的创建完成其实就代表了服务引用执行完成，不过这里核心的协议并没有来说。
 
  
