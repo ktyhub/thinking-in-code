@@ -1,16 +1,7 @@
----
-title: "18-Dubbo3元数据服务MetadataService的导出"
-linkTitle: "18-Dubbo3元数据服务MetadataService的导出"
-date: 2022-08-18
-author: 宋小生
-tags: ["源码解析", "Java"]
-description: >
-    [Dubbo 3.0.8源码解析] 使用者查询提供者的元数据信息，以列出接口和每个接口的配置，控制台（dubbo admin）查询特定进程的元数据，或聚合所有进程的数据。在Dubbo2.x的时候，所有的服务数据都是以接口的形式注册在注册中心。
----
+ 
+#  **Dubbo3元数据服务MetadataService的导出**
 
-# 18-Dubbo3元数据服务MetadataService的导出
-
-## 18.1 简介
+##  **简介**
 MetadataService
 此服务用于公开Dubbo进程内的元数据信息。典型用途包括：
 - 使用者查询提供者的元数据信息，以列出接口和每个接口的配置
@@ -18,16 +9,16 @@ MetadataService
 
 Dubbo3将部分数据抽象为元数据的形式来将数据存放在元数据中心，然后元数据由服务提供者提供给消费者而不是再由注册中心进行推送，如下图所示：
 
-![在这里插入图片描述](/imgs/blog/source-blog/18-metadata.png)
+![18-metadata.png](/img/chapter_dubbo/18-metadata.png)
  
-![在这里插入图片描述](/imgs/blog/source-blog/18-metadata3.png)
+![18-metadata2.png](/img/chapter_dubbo/18-metadata2.png)
 引入 MetadataService 元数据服务服务的好处
 • 由中心化推送转向点对点拉取（Consumer - Proroder）
 • 易于扩展更多的参数
 • 更多的数据量
 • 对外暴露更多的治理数据
 
-## 18.2 MetadataService的导出过程
+##  **MetadataService的导出过程**
 了解元数据的到处过程，这个就要继续前面博客往后的代码了前面博客说了一个服务发布之后的服务信息的双注册数据，这里继续看下导出服务之后的代码：
 先来简单回顾下模块发布的启动生命周期方法：
 
@@ -36,10 +27,10 @@ DefaultModuleDeployer类型的start方法：
 ```java
  @Override
     public synchronized Future start() throws IllegalStateException {
-       ...
+       //...
 
         try {
-           ...
+           //...
             onModuleStarting();
 
             // initialize
@@ -62,7 +53,7 @@ DefaultModuleDeployer类型的start方法：
             if (asyncExportingFutures.isEmpty() && asyncReferringFutures.isEmpty()) {
                 onModuleStarted();
             } else {
-       ....
+       //...
         return startFuture;
     }
 ```
@@ -84,7 +75,7 @@ referServices();
 
 接下来我们要看的是模块启动成功之后的方法 onModuleStarted();，在这个方法中会去发布服务元数据信息。
 
-## 18.3 模块启动成功时候的逻辑 onModuleStarted();
+##   **模块启动成功时候的逻辑 onModuleStarted();**
 
 这里我们直接先看代码再来分析下逻辑：
 
@@ -174,7 +165,7 @@ DefaultApplicationDeployer类型的notifyModuleChanged方法：
     }
 ```
 
-## 18.4 准备发布元数据信息和应用实例信息
+##  **准备发布元数据信息和应用实例信息**
 前面有个代码调用比较重要：
 
 ```java
@@ -205,7 +196,7 @@ DefaultApplicationDeployer类型的prepareApplicationInstance方法如下所示
 
 
 
-### 18.4.1 导出元数据服务方法exportMetadataService
+###  **导出元数据服务方法exportMetadataService**
  
  这里我们就先直接来贴一下代码：
  
@@ -249,20 +240,19 @@ ExporterDeployListener类型的onModuleStarted方法如下：
     }
 ```
 
-在前面的博客[<<Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig>>](https://blog.elastic.link/2022/07/10/dubbo/9-dubbo-qi-dong-qi-dubbobootstrap-tian-jia-ying-yong-cheng-xu-de-pei-zhi-xin-xi-applicationconfig/) 中有提到这个配置下面我再说下
+在前面的博客[<<Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig>>](/zh/chapter_dubbo/9-application-config) 中有提到这个配置下面我再说下
 
 metadata-type
 
-
 metadata 传递方式，是以 Provider 视角而言的，Consumer 侧配置无效，可选值有： 
-- remote - Provider 把 metadata 放到远端**注册中心** ，Consumer 从**注册中心获取** 。
+- remote - Provider 把 metadata 放到远端 **注册中心** ，Consumer 从 **注册中心获取** 。
 -  local - Provider **把 metadata 放在本地** ，**Consumer 从 Provider 处直接获取**  。
 
 可以看到默认的local配置元数据信息的获取是由消费者从提供者拉的，那提供者怎么拉取对应服务的元数据信息那就要要用到这个博客说到的MetadataService服务，传递方式为remote的方式其实就要依赖注册中心了相对来说增加了注册中心的压力。
 
 
 
-### 18.4.2 可配置元数据服务的导出ConfigurableMetadataServiceExporter的export
+###  **可配置元数据服务的导出ConfigurableMetadataServiceExporter的export**
 前面了解了导出服务的调用链路，这里详细看下ConfigurableMetadataServiceExporter的export过程源码如下所示：
 
 ```java
@@ -289,7 +279,7 @@ public synchronized ConfigurableMetadataServiceExporter export() {
 ```
 
 
-### 18.4.3 元数据服务配置对象的创建
+###  **元数据服务配置对象的创建**
 前面我们看到了构建元数据服务对象的代码调用ServiceConfig<MetadataService>，接下来我们详细看下构建源码如下所示：
 ConfigurableMetadataServiceExporter类型的buildServiceConfig构建元数据服务配置对象方法如下：
 
@@ -336,7 +326,7 @@ ConfigurableMetadataServiceExporter类型的buildServiceConfig构建元数据服
 
 在使用过程中可以知道上面这几个配置值
 
-## 18.5 应用级数据注册   registerServiceInstance()
+##  **应用级数据注册   registerServiceInstance()**
 在前面导出元数据服务之后也会调用一行代码来注册应用级数据来保证应用上线
 
 主要涉及到的代码为DefaultApplicationDeployer类型中的registerServiceInstance方法如下所示
@@ -374,7 +364,7 @@ ConfigurableMetadataServiceExporter类型的buildServiceConfig构建元数据服
 
 这个方法先将应用元数据注册到注册中心，然后开始开启定时器每隔30秒同步一次元数据向注册中心。
 
-### 18.5.1 服务实例元数据工具类注册服务发现的元数据信息
+###  **服务实例元数据工具类注册服务发现的元数据信息**
 前面通过调用类型ServiceInstanceMetadataUtils工具类的registerMetadataAndInstance方法来进行服务实例数据和元数据的注册这里我们详细看下代码如下所示：
 
 ```java
@@ -387,7 +377,7 @@ ConfigurableMetadataServiceExporter类型的buildServiceConfig构建元数据服
 ```
 
 
-### 18.5.2 AbstractServiceDiscovery中的服务发现数据注册的模版方法
+###  **AbstractServiceDiscovery中的服务发现数据注册的模版方法**
 
 AbstractServiceDiscovery类型的注册方法register()方法这个是一个模版方法，真正执行的注册逻辑封装在了doRegister方法中由扩展的服务发现子类来完成
 ```java
@@ -410,7 +400,7 @@ AbstractServiceDiscovery类型的注册方法register()方法这个是一个模�
     }
 ```
 
-### 18.5.3 应用级实例对象创建
+###  **应用级实例对象创建**
 可以看到在AbstractServiceDiscovery服务发现的第一步创建应用的实例信息等待下面注册到注册中心
 
 ```java
@@ -436,7 +426,7 @@ this.serviceInstance = createServiceInstance(this.metadataInfo);
 这个方法的主要目的就是将应用的元数据信息都封装到ServiceInstance类型中，不过额外提供了一个扩展性比较好的方法可以自定义元数据信息
 
 前面的metadataInfo对象的信息如下图所示：
-![在这里插入图片描述](/imgs/blog/source-blog/18-metadata2.png)
+![18-metadata3.png](/img/chapter_dubbo/18-metadata3.png)
 
 
 自定义元数据类型Dubbo官方提供了一个默认的实现类型为：ServiceInstanceMetadataCustomizer
@@ -467,7 +457,7 @@ healthy=true,
 
 
 
-### 18.5.4 应用级实例数据配置变更的的版本号获取
+###  **应用级实例数据配置变更的的版本号获取**
 前面创建元应用的实例信息后开始创建版本号来判断是否需要更新，对应AbstractServiceDiscovery类型的calOrUpdateInstanceRevision
 ```java
   protected boolean calOrUpdateInstanceRevision(ServiceInstance instance) {
@@ -490,7 +480,7 @@ healthy=true,
 
 
 
-#### 18.5.4.1 元数据版本号的计算与HASH校验 calAndGetRevision
+####  **元数据版本号的计算与HASH校验 calAndGetRevision**
 这个方法其实比较重要，决定了什么时候会更新元数据，Dubbo使用了一种Hash验证的方式将元数据转MD5值与之前的存在的版本号（也是元数据转MD5得到的） 如果数据发生了变更则MD5值会发生变化 以此来更新元数据，不过发生了MD5冲突的话就会导致配置不更新这个冲突的概率非常小。
 好了直接来看代码吧：
 MetadataInfo类型的calAndGetRevision方法：
@@ -526,15 +516,15 @@ public synchronized String calAndGetRevision() {
     }
 ```
 
-RevisionResolver类型的Md5运算计算版本号
+`RevisionResolver`类型的Md5运算计算版本号
 ```java
 md5Utils.getMd5(metadata);
 ```
 
 
 
-### 18.5.5 reportMetadata
-回到18.5.2 AbstractServiceDiscovery中的模版方法register，这里我们来看下reportMetadata方法，不过这个方法目前并不会走到，因为我们默认的配置元数据是local不会直接把应用的元数据注册在元数据中心
+###   **reportMetadata**
+  AbstractServiceDiscovery中的模版方法register，这里我们来看下reportMetadata方法，不过这个方法目前并不会走到，因为我们默认的配置元数据是local不会直接把应用的元数据注册在元数据中心
 
 ```java
   protected void reportMetadata(MetadataInfo metadataInfo) {
@@ -549,7 +539,7 @@ md5Utils.getMd5(metadata);
     }
 ```
 
-### 18.5.6 扩展的注册中心来注册应用级服务发现数据doRegister方法
+###  **扩展的注册中心来注册应用级服务发现数据doRegister方法**
 前面我们说了AbstractServiceDiscovery中的模版方法register，在register会调用一个doRegister方法来注册应用级数据，这个方法是需要扩展注册中心的服务发现来自行实现的，我们这里以官方实现的Zookeeper服务发现模型为例:
 
 ZookeeperServiceDiscovery中的doRegister方法
@@ -600,7 +590,7 @@ base path
 ```
 
 这个应用最终注册应用级服务数据如下：
-![在这里插入图片描述](/imgs/blog/source-blog/18-metadata4.png)
+![18-metadata4.png](/img/chapter_dubbo/18-metadata4.png)
 这里需要注意的是这个 应用的IP+端口的服务元数据信息是临时节点
 build方法内容对应着上图的JSON数据 可以看菜build方法封装的过程：
 

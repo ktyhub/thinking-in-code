@@ -1,7 +1,9 @@
 
-# 21-Dubbo3消费者引用服务入口 
-## 21.1 简介
-前面我们通过Demo说了一个服务引用配置的创建。另外也在前面的文章说了服务提供者的启动完整过程，不过在说服务提供者启动的过程中并未提到服务消费者是如何发现服务，如果调用服务的，这里先就不再说关于服务消费者启动的一个细节了，直接来看前面未提到的服务消费者是如何引用到服务提供者提供的服务的。
+#  **Dubbo3消费者引用服务入口** 
+##  **简介**
+前面我们通过Demo说了一个服务引用配置的创建。另外也在前面的文章说了服务提供者的启动完整过程，
+不过在说服务提供者启动的过程中并未提到服务消费者是如何发现服务，如果调用服务的，
+这里先就不再说关于服务消费者启动的一个细节了，直接来看前面未提到的服务消费者是如何引用到服务提供者提供的服务的。
 先来回顾下样例代码：
 
 ```java
@@ -39,9 +41,9 @@ public class ConsumerApplication {
 
 ```
 这段代码我们前面详细说了服务引用的配置ReferenceConfig和Dubbo启动器启动应用的过程DubboBootstrap，后面我们直接定位到消费者引用服务的代码位置来看。
-## 21.2 入口代码
+##  **入口代码**
 
-### 21.2.1 DefaultModuleDeployer的start方法
+###   **DefaultModuleDeployer的start方法**
 第一个要关注的就是模块发布器DefaultModuleDeployer的start方法，这个start方法包含了Dubbo应用启动的过程
 
 DefaultModuleDeployer的start方法
@@ -72,12 +74,14 @@ public synchronized Future start() throws IllegalStateException {
     }
 ```
 
-这个方法大部分代码已经省略，也不会详细去说了，感兴趣的可以看之前讲到的博客，这里主要来看引用服务方法referServices
+这个方法大部分代码已经省略，也不会详细去说了，感兴趣的可以看之前讲到的博客，这里主要来看引用服务方法 `referServices`
 
 
-### 21.2.2 DefaultModuleDeployer的referServices方法
+###  **DefaultModuleDeployer的referServices方法**
 
-下面就要来看消费者应用如何引用的服务的入口了，这个方法主要从大的方面做了一些服务引用生命周期的代码，看懂了这个方法我们就可以不依赖Dubbo负载的启动逻辑可以单独调用ReferenceConfigBase类型的对应方法来刷新，启动，销毁引用的服务了这里先来看下代码再详细介绍内容：
+下面就要来看消费者应用如何引用的服务的入口了，这个方法主要从大的方面做了一些服务引用生命周期的代码，
+看懂了这个方法我们就可以不依赖Dubbo负载的启动逻辑可以单独调用ReferenceConfigBase类型的对应方法来刷新，
+启动，销毁引用的服务了这里先来看下代码再详细介绍内容：
 
 
 DefaultModuleDeployer的referServices方法 
@@ -124,13 +128,13 @@ DefaultModuleDeployer的referServices方法
 
 如果出现了异常则执行referenceCache的destroy方法进行销毁引用配置。
 
-## 21.3 开始引用服务
-###  21.3.1 SimpleReferenceCache是什么？
+##  **开始引用服务**
+###   **SimpleReferenceCache是什么？**
 一个用于缓存引用ReferenceConfigBase的util工具类。
 ReferenceConfigBase是一个重对象，对于频繁创建ReferenceConfigBase的框架来说，有必要缓存这些对象。
 如果需要使用复杂的策略，可以实现并使用自己的ReferenceConfigBase缓存
 这个Cache是引用服务的开始如果我们想在代码中自定义一些服务引用的逻辑，可以直接创建SimpleReferenceCache类型对象然后调用其get方法进行引用服务。那这个缓存对象是和缓存与引用服务的可以继续往下看。
-### 21.3.2 引用服务之前的缓存处理逻辑？
+###   **引用服务之前的缓存处理逻辑？**
 关于逻辑的处理，看代码有时候比文字更清晰明了，这里可以直接来看 SimpleReferenceCache类型的get方法
 ```java
  @Override
@@ -176,8 +180,8 @@ key分别为引用类型和引用的服务的key，值是引用服务的基础�
 
 后面可以详细看下如果借助ReferenceConfigBase类型对象来进行具体类型的引用。
 
-## 21.4 初始化引用服务的过程
-### 21.4.1 初始化引用服务的调用入口
+##  **初始化引用服务的过程**
+###   **初始化引用服务的调用入口**
 引用服务的逻辑其实是相对复杂一点的，包含了服务发现，引用对象的创建等等，接下来就让我们详细看下:
 
 ReferenceConfig类型的get方法
@@ -205,12 +209,12 @@ ReferenceConfig类型的get方法
     }
 ```
 
-这里有一段代码是：getScopeModel().getDeployer().start();
+这里有一段代码是：`getScopeModel().getDeployer().start();`
 这个前面已经调用了模块发布器启动过了，这里有这么一行代码是有一定作用的，如果使用方直接调用了ReferenceConfigBase的get方法或者缓存对象SimpleReferenceCache类型的对象的get方法来引用服务端的时候就会造成很多配置没有初始化下面执行逻辑的时候出现问题，这个代码其实就是启动模块进行一些基础配置的初始化操作 比如元数据中心默认配置选择，注册中心默认配置选择这些都是比较重要的。
 
 另外可以看到的是这里使用了双重校验锁来保证单例对象的创建，发现Dubbo种大量的使用了双重校验锁的逻辑。
 
-### 21.4.2 初始化引用服务
+###  **初始化引用服务**
 
 这个就直接看代码了这，初始化过程相对复杂一点，我们一点点来看
 ReferenceConfig类型init()方法
@@ -278,8 +282,8 @@ protected synchronized void init() {
 ```
 
 
-## 21.5 ReferenceConfig创建服务引用代理对象的原理
-### 21.5.1 代理对象的创建过程
+##  **ReferenceConfig创建服务引用代理对象的原理**
+###  **代理对象的创建过程**
 这里就要继续看 ReferenceConfig类型的创建代理方法createProxy了
 直接贴一下源码：
 ```java
@@ -322,7 +326,7 @@ protected synchronized void init() {
     }
 ```
 
-### 21.5.2 创建远程引用，创建远程引用调用器
+###   **创建远程引用，创建远程引用调用器**
 
 
 ReferenceConfig类型的createInvokerForRemote方法
@@ -373,7 +377,7 @@ private void createInvokerForRemote() {
     }
 ```
 
-### 21.5.3 Invoker对象创建的全过程
+###  **Invoker对象创建的全过程**
 为了更好理解Protocol$Adaptie内部的引用执行过程这里我把Debug的链路截图了过来
 按照固定的顺序先执行AOP的逻辑再执行具体的逻辑:
 - Protocol$Adaptie的refer方法
@@ -384,7 +388,7 @@ private void createInvokerForRemote() {
 - RegistryProtocol 注册协议的refer方法 （会添加容错逻辑）
 - RegistryProtocol 注册协议的doRefer方法（调用方法创建Invoker对象）
 
-[](/imgs/blog/source-blog/21-createInvokerRemote.png)
+
 
 这里我们不再详细说这个引用链的具体过程直接定位到RegistryProtocol中创建Invoker类型的地方。
 先来看RegistryProtocol类型的refer方法，如下代码所示：
@@ -486,4 +490,3 @@ RegistryProtocol类型的interceptInvoker方法
 Invoker对象的创建完成其实就代表了服务引用执行完成，不过这里核心的协议并没有来说
 
  
-原文地址：[21-Dubbo3消费者引用服务入口](https://blog.elastic.link/2022/07/10/dubbo/21-dubbo-xiao-fei-zhe-yin-yong-fu-wu-de-ru-kou/)

@@ -145,7 +145,7 @@ private static List<URL> genCompatibleRegistries(ScopeModel scopeModel, List<URL
     }
 ```
 可以看到这里简化的配置比较容易理解了
--   双注册模式配置查询 对应参数为dubbo.application.register-mode ，默认值为all
+- 双注册模式配置查询 对应参数为dubbo.application.register-mode ，默认值为all
 - 如果用户配置了一个错误的注册模式配置则只走接口级配置 这里默认值为interface
 - 满足应用级注册就添加一个应用级注册的地址
 - 满足接口级注册配置就添加一个接口级注册地址
@@ -181,7 +181,7 @@ service-discovery-registry://127.0.0.1:2181/org.apache.dubbo.registry.RegistrySe
 前面说了这个注册服务的配置地址会由Dubbo内部进行判断如果判断是all的话会自动将一个配置的注册地址转变为两个一个是传统的接口级注册，一个是应用级注册使用的配置地址
 
 然后我们先看注册中心，注册服务数据的源码
-如果想要查看源码细节可以在RegistryProtocol类型的export(final Invoker<T> originInvoker) 方法的如下代码位置打断点：
+如果想要查看源码细节可以在`RegistryProtocol`类型的`export(final Invoker<T> originInvoker)` 方法的如下代码位置打断点：
 
 RegistryProtocol的export方法的注册中心注册数据代码如下：
 
@@ -265,6 +265,7 @@ service-discovery-registry://127.0.0.1:2181/org.apache.dubbo.registry.RegistrySe
 
 ![在这里插入图片描述](/img/chapter_dubbo/17-register-factory-2.png)
  
+
  - Node 节点信息开放接口 比如节点 url的获取 ，销毁
  - RegistryService 注册服务接口，比如注册，订阅，查询等操作
  - Registry 注册中心接口，是否服务发现查询，注册，取消注册方法
@@ -376,7 +377,7 @@ getRegistry方法优先走的逻辑是这里：AbstractRegistryFactory模板类�
 
 上面比较重要的逻辑是createRegistry这个
 整个调用过程我给大家看下Debug的详情，这里很多逻辑由扩展机制产生的这里直接看下逻辑调用栈，有几个需要关注的地方我圈了起来：
-![在这里插入图片描述](/imgs/blog/source-blog/17-register3.png)
+![在这里插入图片描述](/img/chapter_dubbo/17-servicediscovery-registry.png)
 我们继续看服务发现的注册中心工厂对象的获取，代码如下：
 ServiceDiscoveryRegistryFactory类型的createRegistry方法
 
@@ -398,12 +399,12 @@ ServiceDiscoveryRegistryFactory类型的createRegistry方法
 
 
 
-### 17.3.3 ServiceDiscoveryRegistry
+###   **ServiceDiscoveryRegistry**
 
 
 ServiceDiscoveryRegistry服务发现注册中心对象的初始化过程：
 
-#### 17.3.3.1 ServiceDiscoveryRegistry的构造器：
+####  **`ServiceDiscoveryRegistry`的构造器：**
 
 ```java
    public ServiceDiscoveryRegistry(URL registryURL, ApplicationModel applicationModel) {
@@ -438,7 +439,7 @@ private ServiceDiscovery getServiceDiscovery(URL registryURL) {
 ```
 ServiceDiscoveryFactory和ServiceDiscovery类型可以往后看
 
-#### 17.3.3.2 父类型FailbackRegistry的构造器
+####  **父类型FailbackRegistry的构造器**
 ```java
    public FailbackRegistry(URL url) {
         super(url);
@@ -451,7 +452,7 @@ ServiceDiscoveryFactory和ServiceDiscovery类型可以往后看
     }
 ```
 
-#### 17.3.3.3 AbstractRegistry的构造器
+####   **AbstractRegistry的构造器**
 参数url如下所示：
 ```java
 zookeeper://127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&dubbo=2.0.2&interface=org.apache.dubbo.registry.RegistryService&pid=39884&release=3.0.8
@@ -496,7 +497,7 @@ zookeeper://127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application
 ```
 
 
-### 17.3.4 将服务提供者数据转换到本地内存的元数据信息中
+###  **将服务提供者数据转换到本地内存的元数据信息中**
 在前面我们看到了RegistryProtocol中调用register来注册服务提供者的数据到注册的中心，接下来详细看下实现原理：
 下面参数为ServiceDiscoveryRegistry为情况下举例子：ServiceDiscoveryRegistry类型的register方法与ZookeeperRegister注册不一样传统的接口级注册在这个方法里面就将服务数据注册到注册中心了，服务发现的数据注册分为了两步，这里仅仅将数据封装到内存中如下：
 url例子为：
@@ -572,7 +573,7 @@ public synchronized void addService(URL url) {
     }
 ```
 
-### 17.3.5 接口级服务提供者配置的注册
+###  **接口级服务提供者配置的注册**
 前面我们通过服务发现的的url进行了举例子，其实在RegistryProtocol协议的export方法中还会注册接口级信息：
 例如如下关键代码：
 当registryUrl参数不是服务发现协议service-discovery-registry配置而是zookeeper如下时候获取到的扩展类型将是与Zookeeper相关的扩展对象
@@ -596,21 +597,21 @@ RegistryProtocol协议的export方法中接口级数据注册的核心代码如�
         }
 ```
 如上代码是获取Zookeeper操作对象和向Zookeeper中写入服务提供者信息的代码，关于与Zookeeper连接和注册数据本地缓存的代码可以看ZookeeperRegistry类型和它的几个父类型比如：CacheableFailbackRegistry类型，关于接口级数据的注册可以看register方法，这个就不详细说了，下面我贴一下接口级数据注册的Zookeeper信息可以了解下就行：
-![在这里插入图片描述](/imgs/blog/source-blog/17-register4.png)
+![在这里插入图片描述](/img/chapter_dubbo/17-register4.png)
 接口信息如下，上面我们需要注意的是这个 url配置为临时节点，当与Zookeeper断开连接或者Session超时的时候这个信息会被移除：
 ```java
 /dubbo/link.elastic.dubbo.entity.DemoService/providers/dubbo%3A%2F%2F192.168.1.9%3A20880%2Flink.elastic.dubbo.entity.DemoService%3Fanyhost%3Dtrue%26application%3Ddubbo-demo-api-provider%26background%3Dfalse%26deprecated%3Dfalse%26dubbo%3D2.0.2%26dynamic%3Dtrue%26generic%3Dfalse%26interface%3Dlink.elastic.dubbo.entity.DemoService%26methods%3DsayHello%2CsayHelloAsync%26pid%3D29386%26release%3D3.0.8%26service-name-mapping%3Dtrue%26side%3Dprovider%26timestamp%3D1655023329514
 ```
 
 
-## 17.4 应用级服务发现功能的实现ServiceDiscovery
+##  应用级服务发现功能的实现ServiceDiscovery
 
 在说这个实现之前我们先看看相关类型，这个服务发现相关的类型与注册中心相关的类型有点类似：
 
 服务发现工厂类型：
-![在这里插入图片描述](/imgs/blog/source-blog/17-register5.png)
+![在这里插入图片描述](/img/chapter_dubbo/17-discovery.png)
 服务发现类型：
-![在这里插入图片描述](/imgs/blog/source-blog/17-register6.png)
+![在这里插入图片描述](/img/chapter_dubbo/17-register5.png)
 
 刚刚在 ServiceDiscoveryRegistry中创建服务发现对象getServiceDiscovery方法看到了两个类型一个是服务发现工厂类型ServiceDiscoveryFactory，一个是服务发现类型ServiceDiscovery
 
@@ -624,7 +625,7 @@ private ServiceDiscovery getServiceDiscovery(URL registryURL) {
     }
 ```
  
- AbstractServiceDiscoveryFactory类型的getServiceDiscovery方法
+AbstractServiceDiscoveryFactory类型的getServiceDiscovery方法
 
 ```java
    @Override
@@ -647,7 +648,7 @@ createDiscovery方法对应ZookeeperServiceDiscoveryFactory类型中的createDis
     
 ```
 
-###  17.4.1 ZookeeperServiceDiscovery 
+###   **ZookeeperServiceDiscovery** 
 ZookeeperServiceDiscovery的构造器
 ```java
   public ZookeeperServiceDiscovery(ApplicationModel applicationModel, URL registryURL) {
@@ -671,10 +672,10 @@ ZookeeperServiceDiscovery的构造器
 关于Curator的官方文档可以看[curator官网](https://curator.apache.org/)
 
 关于Zookeeper上面注册服务应用级服务注册信息可以看如下图所示(后面会具体讲到数据注册时的调用）：
-![在这里插入图片描述](/imgs/blog/source-blog/17-register7.png)
+![在这里插入图片描述](/imgs/chapter_dubbo/17-register-6.png)
 我这个服务提供者注册的应用数据如下：
 
-```java
+```json
 {
   "name" : "dubbo-demo-api-provider",
   "id" : "192.168.1.9:20880",
@@ -702,7 +703,7 @@ ZookeeperServiceDiscovery的构造器
 
 如果感兴趣的话可以看更详细的curator服务发现文档[curator-x-discovery](https://curator.apache.org/docs/service-discovery/index.html)
 
-### 17.4.2 AbstractServiceDiscovery的构造器
+###  **AbstractServiceDiscovery的构造器**
 
 ```java
   public AbstractServiceDiscovery(ApplicationModel applicationModel, URL registryURL) {
@@ -738,16 +739,16 @@ ZookeeperServiceDiscovery的构造器
     }
 ```
 
-## 17.5 服务映射类型AbstractServiceNameMapping
+##  **服务映射类型AbstractServiceNameMapping**
 服务映射主要是通过服务名字来反查应用信息的应用名字如下图所示
-![在这里插入图片描述](/imgs/blog/source-blog/17-register8.png)
+![在这里插入图片描述](/img/chapter_dubbo/17-service-mapping.png)
 这里我们来看下服务映射相关的类型主要通过如下代码来获取扩展对象：
 
 ```java
 this.serviceNameMapping = (AbstractServiceNameMapping) ServiceNameMapping.getDefaultExtension(registryURL.getScopeModel());
 ```
 对应类型如下：
-![在这里插入图片描述](/imgs/blog/source-blog/17-register9.png)
+![在这里插入图片描述](/img/chapter_dubbo/17-register7.png)
 
 最终获取的扩展实现类型为：MetadataServiceNameMapping
 构造器如下：
@@ -772,8 +773,8 @@ this.serviceNameMapping = (AbstractServiceNameMapping) ServiceNameMapping.getDef
 
 ```
 
-## 17.4 双注册元数据信息发布到注册中心
-### 17.4.1 回顾简介
+##  **双注册元数据信息发布到注册中心**
+###  **回顾简介**
 前面注册数据的时候并没有把服务配置的元数据直接注册在注册中心而是需要在导出服务之后在ServiceConfig中来发布元数据，这个就需要我们回到ServiceConfig的exportUrl方法来看了如下所示：
 
 ```java
@@ -792,7 +793,7 @@ private void exportUrl(URL url, List<URL> registryURLs) {
     }
 ```
 
-### 17.4.2 元数据服务定义数据的发布
+###  **元数据服务定义数据的发布**
 
 在exportRemote之后单独调用发布元数据的方法来发布，通过调用元数据工具类来发布元数据信息接下来我们详细看下:
 MetadataUtils类型的publishServiceDefinition方法：
@@ -895,7 +896,7 @@ private void storeProviderMetadataTask(MetadataIdentifier providerMetadataIdenti
     }
 ```
 
-![在这里插入图片描述](/imgs/blog/source-blog/17-register10.png)
+![17-register8.png](/img/chapter_dubbo/17-register8.png)
 
 元数据信息如下：可以分为两类 应用元数据，服务元数据
 
