@@ -30,17 +30,17 @@ Dubbo作为RPC框架又需要启动服务和引用服务，服务级别的管理
 
 模型对象一共有4个，公共的属性和操作放在了域模型类型中，下面我们来详细说下这几个模型类型:
 
-| 类型 | 说明                                                                                                                                                                                                                                                                                                       |
-|----|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|  **ExtensionAccessor**   | - 扩展的统一访问器 - 用于获取扩展加载管理器ExtensionDirector对象 **获取扩展对象ExtensionLoader** 根据扩展名字 **获取具体扩展对象** - 获取自适应扩展对象- 获取默认扩展对象                                                                                                                                                                                          |
-|  **ScopeModel**  | 模型对象的公共抽象父类型  ，内部id用于表示模型树的层次结构  公共模型名称，可以被用户设置 描述信息 类加载器管理 父模型管理parent 当前模型的所属域ExtensionScope有: **FRAMEWORK(框架)** ，**APPLICATION(应用)** ，**MODULE(模块)** ，**SELF(自给自足** ，为每个作用域创建一个实例，用于特殊的SPI扩展，如ExtensionInjector) 具体的扩展加载程序管理器对象的管理: **ExtensionDirector** 域Bean工厂管理，一个内部共享的Bean工厂**ScopeBeanFactory** |
-| **FrameworkModel**   | dubbo框架模型，可与多个应用程序共享    	- FrameworkModel实例对象集合，allInstances ，所有ApplicationModel实例对象集合，applicationModels ，发布的ApplicationModel实例对象集合pubApplicationModels ，框架的服务存储库**FrameworkServiceRepository**类型对象(数据存储在内存中) ，内部的应用程序模型对象internalApplicationModel                                                       
-| **ApplicationModel** | 表示正在使用Dubbo的应用程序，并存储基本**元数据信息** ，以便在RPC调用过程中使用。 ApplicationModel包括许多关于**发布服务** 的ProviderModel和许多关于订阅服务的Consumer Model。                                                                                                                                                                                   
-|   **ModuleModel**  | 服务模块的模型」                                                                                                                                                                                                                                                                                                 |
+| 类型 | 说明                                                                                                                                                                                                                                                                                                        |
+|----|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|  **ExtensionAccessor**   | - 扩展的统一访问器 - 用于获取扩展加载管理器ExtensionDirector对象 **获取扩展对象ExtensionLoader** 根据扩展名字 **获取具体扩展对象** - 获取自适应扩展对象- 获取默认扩展对象                                                                                                                                                                                           |
+|  **ScopeModel**  | 模型对象的公共抽象父类型  ，内部id用于表示模型树的层次结构  公共模型名称，可以被用户设置 描述信息 类加载器管理 父模型管理parent 当前模型的所属域ExtensionScope有: **FRAMEWORK(框架)** ，**APPLICATION(应用)** ，**MODULE(模块)** ，**SELF(自给自足** ，为每个作用域创建一个实例，用于特殊的SPI扩展，如ExtensionInjector) 具体的扩展加载程序管理器对象的管理: **ExtensionDirector** 域Bean工厂管理，一个内部共享的Bean工厂 **ScopeBeanFactory** |
+| **FrameworkModel**   | dubbo框架模型，可与多个应用程序共享    	- FrameworkModel实例对象集合，allInstances ，所有ApplicationModel实例对象集合，applicationModels ，发布的ApplicationModel实例对象集合pubApplicationModels ，框架的服务存储库 **FrameworkServiceRepository** 类型对象(数据存储在内存中) ，内部的应用程序模型对象internalApplicationModel                                                        
+| **ApplicationModel** | 表示正在使用Dubbo的应用程序，并存储基本 **元数据信息** ，以便在RPC调用过程中使用。 ApplicationModel包括许多关于 **发布服务** 的ProviderModel和许多关于订阅服务的Consumer Model。                                                                                                                                                                                  
+|   **ModuleModel**  | 服务模块的模型」                                                                                                                                                                                                                                                                                                  |
 
   
 
-了解了这几个模型对象的关系我们可以了解到这几个模型对象的管理层级从框架到应用程序，然后到模块的管理(FrameworkModel->ApplicationModel->ModuleModel)，他们主要用来针对框架，应用程序，模块的**存储** ，**发布管理，** ，**配置管理**
+了解了这几个模型对象的关系我们可以了解到这几个模型对象的管理层级从框架到应用程序，然后到模块的管理(FrameworkModel->ApplicationModel->ModuleModel)，他们主要用来针对框架，应用程序，模块的 **存储** ，**发布管理，** ，**配置管理**
 
 看来Dubbo3 针对应用服务治理与运维这一块也是在努力尝试.
 
