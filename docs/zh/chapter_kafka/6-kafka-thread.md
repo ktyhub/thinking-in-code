@@ -1,6 +1,6 @@
 
-# 6- Kafka客户端的IO线程KafkaThread
-## 6.1 简介
+#  **Kafka客户端的IO线程KafkaThread**
+##   **简介**
 
 回到前面说的KafkaProducer的构造器的初始化在发送器执行之后将会执行创建KafkaThread和启动线程的代码如下代码：
 
@@ -26,7 +26,7 @@ log.debug("Kafka producer started");
 
 
 
-## 6.2 KafkaThread构造器
+##  **KafkaThread构造器**
 
 这个线程类型做的事情不多主要设置一下线程名字，然后将线程设置为守护线程如下代码所示：
 
@@ -50,7 +50,7 @@ private void configureThread(final String name, boolean daemon) {
 
 
 
-## 6.3 发送器Sender中执行线程的I/O主循环核心逻辑
+##  **发送器Sender中执行线程的I/O主循环核心逻辑**
 
 前面我们看到了 线程类型在初始化的时候传递了Sender对象来执行线程逻辑，Sender类型实现了Runnable接口，并重写了run方法，那接下来就来看Sender类型的run方法的线程逻辑吧，代码如下所示：
 
@@ -124,7 +124,7 @@ public void run() {
 
 
 
-## 6.4 发送器Sender中执行线程的消息发送逻辑
+## **发送器Sender中执行线程的消息发送逻辑**
 
 前面在一个无限循环中执行了发送消息的代码来进行消息的发送，消息是如何发送到kafka的我们可以继续看如下代码所示：
 
@@ -252,7 +252,7 @@ private long sendProducerData(long now) {
 
 
 
-## 6.5 批量请求发送方法sendProduceRequests
+##   **批量请求发送方法sendProduceRequests**
 
 直接来看代码
 
@@ -268,7 +268,7 @@ private void sendProduceRequests(Map<Integer, List<ProducerBatch>> collated, lon
 
 
 
-### 6.5.1 批量请求中的单个请求发送sendProduceRequest
+###  **批量请求中的单个请求发送sendProduceRequest**
 
 ```java
 private void sendProduceRequest(long now, int destination, short acks, int timeout, List<ProducerBatch> batches) {

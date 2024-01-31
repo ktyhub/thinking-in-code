@@ -1,17 +1,16 @@
-# 3-从一个Kafka的Demo说起
-## 3.1 简介
-为了在理论中可以更好的理解一些细节,我们通过一个Demo开始来详细看kafka的实现原理,首先我们要做的是本地启动一个kafka,关于启动kakfa可以看前面这个文章: [《1-Kaka知识点全解析》](https://blog.csdn.net/songjunyan/article/details/124723196)
-
+#  **从一个Kafka的Demo说起**
+##  **简介**
+为了在理论中可以更好的理解一些细节,我们通过一个Demo开始来详细看kafka的实现原理,首先我们要做的是本地启动一个kafka,
+关于启动kakfa可以看前面这个文章: [《1-Kaka知识点全解析》](/zh/chapter_kafka/1-introduce)
 
 启动完kafka之后我们就来编写一个生产者的示例代码,关于生产者的Demo来源于,kafka官方源码中的example模块,不过这里稍加改造,方便理解。
 
 这里先贴下生产者的Demo项目目录:
 
-![\[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-Z0sF0IZH-1653699614116)(/Users/song/Library/Application Support/typora-user-images/image-20220526074340859.png)\]](https://img-blog.csdnimg.cn/46e757a6248d48f5bee5063e503fd7f8.png)
+![3-1-demo.png](/zh/chapter_kafka/3-1-demo.png)
 
-
-## 3.2 Demo编写
-### 3.2.1 引入依赖配置日志
+##  **Demo编写**
+###  **引入依赖配置日志**
 首先引入依赖如下所示:
 
 ```xml
@@ -28,11 +27,7 @@
     <version>1.7.25</version>
 </dependency>
 ```
-
-
-
 然后我们来编写Demo源码,这里客户端都以Java为例子:
-
 
 为了打印方便我们将使用log4j的slf4j的日志实现将日志打印到控制台配置log4j.properties如下:
 
@@ -46,9 +41,7 @@ log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
 log4j.appender.stdout.layout.ConversionPattern=[%d{dd/MM/yy HH:mm:ss:SSS z}] %t %5p %c{2}: %m%n
 ```
 
-
-
-### 3.2.2 生产者例子
+###  **生产者例子**
 
 最后开始编写生产者Demo代码如下所示:
 
@@ -105,13 +98,7 @@ public class ProduceDemo {
 }
 ```
 
-
-
-
-
-
-
-### 3.2.3 消费者例子
+###  **消费者例子**
 关于消费者的Demo代码如下:
 
 ```java
@@ -160,11 +147,11 @@ public class ConsumerDemo {
 }
 ```
 
-### 3.2.4 观察节点与topic信息
+###  **观察节点与topic信息**
 
 点击运行按钮接下来我们观察Zookeeper上的节点就可以看到了当前节点的分区信息和节点信息
-![在这里插入图片描述](https://img-blog.csdnimg.cn/2d3f3d0c8f7a42e39e2c4a83617c683c.png)
+![3-2-topic.png](/zh/chapter_kafka/3-2-topic.png)
 
 也可以在kafka manager控制台看到topic1的存在
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/35183175002244dc9fa8ac4e7a763605.png)
+![3-3-kafka-console-topic.png](/zh/chapter_kafka/3-3-kafka-console-topic.png)
