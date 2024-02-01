@@ -1,7 +1,7 @@
 
-# 3 EventLoopGroup对象的初始化
+#   **EventLoopGroup对象的初始化**
 
-## 3.1 简介
+##   **简介**
 
 EventLoopGroup是特殊的EventExecutorGroup类型，提供了注册Channel方法和获取下一个可用的EventLoop对象
 
@@ -77,67 +77,67 @@ AbstractBootstrap类中的group方法如下：
 
 通过group方法我们可以看到在这里仅仅是将对象赋值给成员变量，参数不能为空也不能重复设置
 
-## 3.2 EventLoopGroup相关类型
+##  **EventLoopGroup相关类型**
 在了解详细内容之前可以先看下当前类型的类继承关系，这里需要一个完整的类型继承图
 
 
-ScheduledExecutorService，Iterable<EventExecutor>
+- ScheduledExecutorService，Iterable<EventExecutor>
 
 
-EventExecutorGroup
+- EventExecutorGroup
 
-EventLoopGroup
+- EventLoopGroup
 
-AbstractEventLoopGroup  MultithreadEventLoopGroup EventLoop
+- AbstractEventLoopGroup  MultithreadEventLoopGroup EventLoop
 
-## 3.2.1 EventLoopGroup子类型
+##  **EventLoopGroup子类型**
 在这里我们先详细说一下EventLoopGroup的作用和每个类型的作用后面会详细介绍每个方法的作用:
 
-|  类型 | 说明  |
-| ------  | -------  |
-|EventExecutorGroup|父类型：用于管理EventExecutor对象提供可用EventExecutor对象，和关闭EventExecutor类型对象的功能|
-|AbstractEventLoopGroup|实现EventLoopGroup接口的的抽象基类，目前未做具体扩展|
-|MultithreadEventLoopGroup|实现EventLoopGroup接口的的抽象基类，支持多线程，在同一时间用多个线程处理它们的任务|
-|EventLoop|处理所有的I/O操作通道，一个  EventLoop实例通常会处理多个 Channel实例，这通常取决于实现细节和内部结构。比如NioEventLoop，EpollEventLoop等|
+| 类型                        | 说明                                                                                           |
+|---------------------------|----------------------------------------------------------------------------------------------|
+| EventExecutorGroup        | 父类型：用于管理EventExecutor对象提供可用EventExecutor对象，和关闭EventExecutor类型对象的功能                           |
+| AbstractEventLoopGroup    | 实现EventLoopGroup接口的的抽象基类，目前未做具体扩展                                                            |
+| MultithreadEventLoopGroup | 实现EventLoopGroup接口的的抽象基类，支持多线程，在同一时间用多个线程处理它们的任务                                             |
+| EventLoop                 | 处理所有的I/O操作通道，一个  EventLoop实例通常会处理多个 Channel实例，这通常取决于实现细节和内部结构。比如NioEventLoop，EpollEventLoop等 |
 
 
 
-## 3.2.2 MultithreadEventLoopGroup 子类型
+##   **MultithreadEventLoopGroup 子类型**
 
 
 
-|  类型  | 说明  |
-|  ----  | ----  |
-|DefaultEventLoopGroup|MultithreadEventLoopGroup类型的子类，只重写了newChild方法用来创建DefaultEventLoop对象|
-|EpollEventLoopGroup|MultithreadEventLoopGroup类型的子类，基于Linux的epoll IO模型用于创建EpollEventLoop对象，具有更好的性能，只能用于Linux下|
-|NioEventLoopGroup|MultithreadEventLoopGroup类型的子类，用于创建NioEventLoop对象|
+| 类型                    | 说明                                                                                       |
+|-----------------------|------------------------------------------------------------------------------------------|
+| DefaultEventLoopGroup | MultithreadEventLoopGroup类型的子类，只重写了newChild方法用来创建DefaultEventLoop对象                      |
+| EpollEventLoopGroup   | MultithreadEventLoopGroup类型的子类，基于Linux的epoll IO模型用于创建EpollEventLoop对象，具有更好的性能，只能用于Linux下 |
+| NioEventLoopGroup     | MultithreadEventLoopGroup类型的子类，用于创建NioEventLoop对象                                        |
 
-## 3.2.3 EventLoop子类型
+##   **EventLoop子类型**
 
-|  类型  | 说明  |
-|  ----  | ----  |
-|SingleThreadEventLoop|EventLoop的实现，抽象基类，它在一个线程中执行所有提交的任务。|
-|EmbeddedEventLoop|Embeded开头的类型是Netty为单元测试而提供的|
+| 类型                    | 说明                                  |
+|-----------------------|-------------------------------------|
+| SingleThreadEventLoop | EventLoop的实现，抽象基类，它在一个线程中执行所有提交的任务。 |
+| EmbeddedEventLoop     | Embeded开头的类型是Netty为单元测试而提供的         |
 
-## 3.2.4  SingleThreadEventLoop子类型
+##   **SingleThreadEventLoop子类型**
 
-|  类型  | 说明  |
-|  ----  | ----  |
-|DefaultEventLoop|默认的EventLoop实现，从任务队列中取任务执行|
-|EpollEventLoop|基于Linux下的epoll IO模型实现的事件循环|
-|NioEventLoop|NIO事件循环实现，基于多路复用机制|
-|ThreadPerChannelEventLoop|OIO网络模型的事件循环实现，所以总的来说一个ThreadPerChannelEventLoop对应一个Channel|
+| 类型                        | 说明                                                          |
+|---------------------------|-------------------------------------------------------------|
+| DefaultEventLoop          | 默认的EventLoop实现，从任务队列中取任务执行                                  |
+| EpollEventLoop            | 基于Linux下的epoll IO模型实现的事件循环                                  |
+| NioEventLoop              | NIO事件循环实现，基于多路复用机制                                          |
+| ThreadPerChannelEventLoop | OIO网络模型的事件循环实现，所以总的来说一个ThreadPerChannelEventLoop对应一个Channel |
 
 综上所看EventLoopGroup所包含的类型主要有两大类一个是多线程的EventLoopGroup和单线程的EventLoop，多线程的EventLoopGroup用来创建EventLoop，而单线程的EventLoop用来处理IO事件
 
-### 3.2.5 EventLoopGroup类型提供的方法如下：
+###  **EventLoopGroup类型提供的方法如下：**
 
-|  类型  | 说明  |
-| ------  | -------  |
-|EventLoop next()|返回下一个可以使用的EventLoop对象|
-| ChannelFuture register(Channel channel)|用EventLoop注册一个Channel。一旦注册完成，返回的ChannelFuture将得到通知。|
-|ChannelFuture register(ChannelPromise promise)|使用ChannelFuture在EventLoop中注册一个Channel。一旦注册完成，传递的ChannelFuture将得到通知，也将被返回。Promise用于异步执行|
-| ChannelFuture register(Channel channel, ChannelPromise promise)|用这个EventLoop注册一个 Channel。一旦注册完成，传递的ChannelFuture将得到通知，也将被返回。这个方法已经过时了可以使用上个方法使用#register(ChannelPromise)}代替。|
+| 类型                                                              | 说明                                                                                                           |
+|-----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
+| EventLoop next()                                                | 返回下一个可以使用的EventLoop对象                                                                                        |
+| ChannelFuture register(Channel channel)                         | 用EventLoop注册一个Channel。一旦注册完成，返回的ChannelFuture将得到通知。                                                          |
+| ChannelFuture register(ChannelPromise promise)                  | 使用ChannelFuture在EventLoop中注册一个Channel。一旦注册完成，传递的ChannelFuture将得到通知，也将被返回。Promise用于异步执行                       |
+| ChannelFuture register(Channel channel, ChannelPromise promise) | 用这个EventLoop注册一个 Channel。一旦注册完成，传递的ChannelFuture将得到通知，也将被返回。这个方法已经过时了可以使用上个方法使用#register(ChannelPromise)}代替。 |
 
 
 
@@ -157,8 +157,8 @@ EventLoopGroup workerGroup = new NioEventLoopGroup();
 
 
 
-## 3.3 NioEventLoopGroup初始化过程
-### 3.3.1 NioEventLoopGroup构造器
+##  **NioEventLoopGroup初始化过程**
+###  **NioEventLoopGroup构造器**
 
 我们的示例代码使用到NioEventLoopGroup用来创建NioEventLoop对象，所以我们这里使用的网络模型也是NIO类型的多路复用机制，
 
@@ -218,7 +218,7 @@ super(nThreads, executor, selectorProvider, selectStrategyFactory, RejectedExecu
 在这里多了一个参数RejectedExecutionHandlers.reject()  任务执行拒绝策略，默认的拒绝策略无法添加任务则会抛出异常
 
 
-### 3.3.2 MultithreadEventLoopGroup构造器
+###  **MultithreadEventLoopGroup构造器**
 
 然后我们来看第一个父类MultithreadEventLoopGroup所对应的构造器
 

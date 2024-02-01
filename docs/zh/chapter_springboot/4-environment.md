@@ -1,6 +1,6 @@
-@[TOC](目录)
-# 4-配置信息加载全解析-(开发自己的配置中心必备功能)
-## 4.1 简介
+ 
+#  **配置信息加载全解析-(开发自己的配置中心必备功能)**
+##  **简介**
 
 上一个博客中说了配置环境信息ConfigurableEnvironment的准备 但是并没有说细节这里来详细说下Spring的环境配置信息,方便为后续配置信息熟悉做准备
 
@@ -54,7 +54,7 @@ private ConfigurableEnvironment prepareEnvironment(SpringApplicationRunListeners
 
 在详细说代码之前我们可以来看下Environment相关联的一些对象,这里只列举出来我们将要用到的,这里一共包含3个分类,环境,属性源,属性解析器, 在环境中使用属性解析器将配置文件转换为属性源,接下来可以看下对应的UML关系:
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/0dbac233d8c7426f90add562f7d1702b.png)
+![4-env.png](/img/chapter_springboot/4-env.png)
 
 
 
@@ -63,9 +63,9 @@ private ConfigurableEnvironment prepareEnvironment(SpringApplicationRunListeners
 
 
 
-## 4.2 创建一个ConfigurableEnvironment对象
+##   **创建一个ConfigurableEnvironment对象**
 
-### 4.2.1 ConfigurableEnvironment对象简介
+###  **ConfigurableEnvironment对象简介**
 
 大多数（如果不是所有）环境类型都要实现的配置接口。提供用于设置活动和默认配置文件以及操纵基础属性源的工具。允许客户端通过ConfigurablePropertyResolver superinterface设置和验证所需的属性、自定义转换服务等。
 
@@ -104,7 +104,7 @@ private ConfigurableEnvironment prepareEnvironment(SpringApplicationRunListeners
 
 
 
-### 4.2.2 ConfigurableEnvironment对象的创建
+###  **ConfigurableEnvironment对象的创建**
 
 
 
@@ -133,7 +133,6 @@ private ConfigurableEnvironment getOrCreateEnvironment() {
   提供ServletConfig、ServletContext和基于JNDI的PropertySource实例。有关详细信息，请参阅customizePropertySources方法文档。
 
 
-
 - ApplicationReactiveWebEnvironment
   由基于反应的web应用程序使用的环境实现。默认情况下，所有与web相关（基于反应的）ApplicationContext类都会初始化实例。
 
@@ -141,7 +140,7 @@ private ConfigurableEnvironment getOrCreateEnvironment() {
 
 这里我们以ApplicationEnvironment来进行说明:
 
-### 4.2.3 ApplicationEnvironment的构造器执行过程
+###  **ApplicationEnvironment的构造器执行过程**
 
 ApplicationEnvironment并没有明确声明构造器 只有一个默认的无参构造器,但是它的父类型AbstractEnvironment做了一些通用的逻辑处理我们来看下AbstractEnvironment的构造器如下代码:
 
@@ -243,7 +242,7 @@ public Map<String, Object> getSystemEnvironment() {
 
 
 
-## 4.3 广播environmentPrepared事件
+##  **广播environmentPrepared事件**
 
 关于事件监听器的实现前面已经说过了比较简单这里主要看看实现了哪些环境加载的事件
 

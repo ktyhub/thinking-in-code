@@ -1,4 +1,4 @@
-# 1-从一个Demo入手
+#  **从一个Demo入手**
 在研究源码之前我们还是本地启动一个示例代码,来通过这个示例代码的启动过程来进行源码的解析。
 
 SpringBoot使得创建独立的、生产级的、基于Spring的应用程序变得很容易，创建的项目可以直接启动。
@@ -17,7 +17,7 @@ Spring为所有开发提供一个非常快速和广泛可访问的入门体验�
 [点击进入](https://start.springboot.io/)
 
 进入网站后可以看到如下页面,填写上对应信息后,点击下面的**Generate**按钮生成项目:
-![在这里插入图片描述](https://img-blog.csdnimg.cn/65b26d7a50d34d288d1b6cea2752cc3e.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA5a6L5bCP55Sf55qE5Y2a5a6i,size_20,color_FFFFFF,t_70,g_se,x_16)
+![1-start.png](/img/chapter_springboot/1-start.png)   
 
 拿到项目之后,可以先看下我们的pom.xml引入了哪些最基本的依赖:
 父pom和一个核心的spring-boot-start依赖

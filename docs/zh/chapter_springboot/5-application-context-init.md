@@ -1,6 +1,6 @@
 
-# 5-SpringBoot容器的创建
-## 5.1 简介
+#  **SpringBoot容器的创建**
+##   **简介**
 
 回顾一下我们 前面介绍的SpringBoot应用程序SpringApplication对象的运行方法的生命周期:
 
@@ -77,7 +77,7 @@ public ConfigurableApplicationContext run(String... args) {
 接下来就要介绍核心的内容篇幅Spring容器的创建,Spring容器的类型在这里以ConfigurableApplicationContext类型来表示,很多人经常说Spring容器就是ApplicationContext, 为什么会这么说呢那就得看这个类型做了什么可以称为容器.
 
 
-## 5.2 创建ApplicationContext对象
+##  **创建ApplicationContext对象**
 这里我们继续看run方法的代码 这里先看创建上下文的具体过程;
 
 SpringApplication类型的createApplicationContext方法
@@ -91,7 +91,7 @@ protected ConfigurableApplicationContext createApplicationContext() {
    return this.applicationContextFactory.create(this.webApplicationType);
 }
 ```
-### 5.2.1 容器工厂创建容器对象
+###   **容器工厂创建容器对象**
 ApplicationContextFactory 的create方法的实现
 
 这种函数式编程在Java中我还是第一次见 将函数实现赋值给了一个变量这样方法也可以做为一个参数来传递了,也是Java函数编程的一个跨越吧,这个在Erlang中fun函数是一种基本的类型,有了这个实现钩子函数会比较方便
@@ -340,7 +340,7 @@ PathMatchingResourcePatternResolver是一个独立的实现，可在ApplicationC
 
 此接口还为类路径中的所有匹配资源建议一个新的资源前缀“classpath*：”。注意，在这种情况下，资源位置应该是没有占位符的路径（例如“/beans.xml”）；JAR文件或类路径中的不同目录可以包含多个同名文件。
 
-## 5.3 AnnotationConfigApplicationContext容器的初始化过程
+## **AnnotationConfigApplicationContext容器的初始化过程**
 
 接下来我们按类型继承关系中代码的实际执行顺序来看，先来看刚刚我们调用的构造器
 
@@ -410,7 +410,7 @@ ClassPathBeanDefinitionScanner：bean定义扫描器，用于检测类路径上�
 
 
 
-## 5.4 可容器化的Bean工厂DefaultListableBeanFactory初始化过程
+##  **可容器化的Bean工厂DefaultListableBeanFactory初始化过程**
 
 
 
@@ -446,7 +446,7 @@ public AbstractAutowireCapableBeanFactory() {
 ```
 
 ignoreDependencyInterface 方法忽略自动关联的给定依赖关系接口。
-这通常**由应用程序上下文用于注册以其他方式解析的依赖项** ，例如通过BeanFactoryAware的BeanFactory或通过ApplicationContextAware的ApplicationContext。 默认情况下，仅忽略BeanFactoryAware接口。要忽略其他类型，请为每个类型调用此方法
+这通常 **由应用程序上下文用于注册以其他方式解析的依赖项** ，例如通过BeanFactoryAware的BeanFactory或通过ApplicationContextAware的ApplicationContext。 默认情况下，仅忽略BeanFactoryAware接口。要忽略其他类型，请为每个类型调用此方法
 
 - BeanNameAware 接口将由希望在bean工厂中知道其bean名称的bean实现。请注意，通常不建议对象依赖于其bean名称，因为这表示对外部配置的潜在脆弱依赖，以及对Spring API的不必要依赖。有关所有bean生命周期方法的列表，请参阅BeanFactory javadocs。
 
@@ -464,13 +464,13 @@ ignoreDependencyInterface 方法忽略自动关联的给定依赖关系接口。
 
 NativeDetector.inNativeImage()这个代码是通过是否开启配置org.graalvm.nativeimage.imagecode来判断的
 
-​	// See https://github.com/oracle/graal/blob/master/sdk/src/org.graalvm.nativeimage/src/org/graalvm/nativeimage/ImageInfo.java
+See https://github.com/oracle/graal/blob/master/sdk/src/org.graalvm.nativeimage/src/org/graalvm/nativeimage/ImageInfo.java
 
 用于检测GraalVM本机图像环境的常见委托。
 需要使用-H:+InlineBeforeAlysis本机映像编译器标志，以便允许在生成时删除代码。
 
 GraalVM是一个共享运行时间的生态系统，无论是那些依赖于[JVM](https://so.csdn.net/so/search?q=JVM&spm=1001.2101.3001.7020)的语言（Java、Scala、Groovy、Kotlin）还是说其他的编程语言例如（JavaScript、Ruby、Python、R）有性能上的优势。另外，GraalVM能够通过一种前端的LLVM执行JVM上面的原生代码。GraalVM 1.0版本是基于JDK8的
-![在这里插入图片描述](https://img-blog.csdnimg.cn/df69aaea7d474221943ebb92286523ba.png)
+![5-graalvm.png](/img/chapter_springboot/5-graalvm.png)
 
 
 虚拟化层代表了GraalVM提供的编程语言。非宿主型语言（JavaScript、[Ruby](https://so.csdn.net/so/search?q=Ruby&spm=1001.2101.3001.7020)、R、Python、LLVM二进制码）能够和基于JVM的宿主型语言达到同样的一个运行时间，并且两者可以在同一个内存空间中来回传递数据进行互操作。
@@ -482,7 +482,7 @@ raalVM是由以下几个部分组成的：
 - Graal SDK：一组高效的APIs集合，用于嵌入式Graal语言以及配置本机镜像。
 - Oracle HotSpot Java Virtual Machine (JVM):针对那些基于JVM的语言或者支持非宿主编程语言提供的一个运行时环境。
 
-##  5.5 GraalVM特性
+##  **GraalVM特性**
 
 GraalVM能够：
 
