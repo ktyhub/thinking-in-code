@@ -1,6 +1,6 @@
-# 3-SpringApplication的run启动方法的全生命周期函数源码
+#  **SpringApplication的run启动方法的全生命周期函数源码**
 
-## 3.1 简介
+##  **简介**
 前面介绍了SpringBoot应用程序SpringApplication对象的创建创建过程,接下来我们就看下它的运行方法的生命周期:
 
 先直接贴代码,然后在代码上贴注释来看:
@@ -107,7 +107,7 @@ public ConfigurableApplicationContext run(String... args) {
 
 
 
-## 3.2 创建启动上下文对象
+##   **创建启动上下文对象**
 
 `DefaultBootstrapContext bootstrapContext = createBootstrapContext();`
 
@@ -126,7 +126,7 @@ private DefaultBootstrapContext createBootstrapContext() {
 
 
 
-## 3.3 配置无头属性
+##   **配置无头属性**
 
 configureHeadlessProperty();
 
@@ -141,7 +141,7 @@ private void configureHeadlessProperty() {
 
 
 
-## 3.4 启动运行监听器对象获取
+##  **启动运行监听器对象获取**
 
 ```java
 SpringApplicationRunListeners listeners = getRunListeners(args);
@@ -267,7 +267,7 @@ public void starting(ConfigurableBootstrapContext bootstrapContext) {
 
 分为两步:
 
-- 先创建事件对象,**ApplicationStartingEvent类型对象** , 这里如果我们想要在程序启动之前进行一些逻辑处理也可以实现一个启动事件的监听器进行处理
+- 先创建事件对象, **ApplicationStartingEvent类型对象** , 这里如果我们想要在程序启动之前进行一些逻辑处理也可以实现一个启动事件的监听器进行处理
 - 然后借助SimpleApplicationEventMulticaster广播器对象进行广播事件multicastEvent,
 
 
@@ -540,7 +540,7 @@ static ResolvableType resolveDeclaredEventType(Class<?> listenerType) {
 
 
 
-## 3.5 应用程序参数封装为ApplicationArguments类型对象
+##   **应用程序参数封装为ApplicationArguments类型对象**
 
 
 
@@ -551,10 +551,10 @@ static ResolvableType resolveDeclaredEventType(Class<?> listenerType) {
 ```java
 ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
 ```
-![在这里插入图片描述](https://img-blog.csdnimg.cn/525851c427384b25a6318196171b0049.png)
+![3-application-arguments.png](/img/chapter_springboot/3-application-arguments.png)
 
 
-## 3.6 配置环境信息ConfigurableEnvironment的准备
+##  **配置环境信息ConfigurableEnvironment的准备**
 
 这一步其实就是配置信息的准备过程,在上下文启动时候可能会需要一些基础的配置信息,这一步就是用来加载这些配置信息的
 
@@ -599,7 +599,7 @@ private ConfigurableEnvironment prepareEnvironment(SpringApplicationRunListeners
 
 
 
-## 3.7 配置忽略的BeanInfo
+##  **配置忽略的BeanInfo**
 configureIgnoreBeanInfo
 
 
@@ -617,7 +617,7 @@ Spring [`Introspector.IGNORE_ALL_BEANINFO`](https://docs.oracle.com/javase/8/doc
 
 [https://docs.spring.io/spring-framework/docs/5.0.0.RC3/javadoc-api/org/springframework/beans/CachedIntrospectionResults.html](https://docs.spring.io/spring-framework/docs/5.0.0.RC3/javadoc-api/org/springframework/beans/CachedIntrospectionResults.html)
 
-## 3.8 配置忽略的Bean和打印Banner
+## **配置忽略的Bean和打印Banner**
 
 
 

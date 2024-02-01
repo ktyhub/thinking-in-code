@@ -1,4 +1,4 @@
-## 6.1 简介
+##   **简介**
 
 前面两个构造器创建完成了之后才会创建注解AnnotationConfigApplicationContext的构造器
 
@@ -34,7 +34,7 @@ ClassPathBeanDefinitionScanner：bean定义扫描器，用于检测类路径上�
 
 继续看AnnotatedBeanDefinitionReader方法的执行逻辑
 
-## 6.2 AnnotatedBeanDefinitionReader的构造器
+##   **AnnotatedBeanDefinitionReader的构造器**
 
 参数为BeanDefinitionRegistry类型的构造器，这个参数实际上是AnnotationConfigApplicationContext类型对象
 
@@ -74,7 +74,7 @@ public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry, Environmen
 
 
 
-## 6.3 Conditional条件注解处理器
+##   **Conditional条件注解处理器**
 
 ConditionEvaluator
 
@@ -86,7 +86,7 @@ ConditionContextImpl
 
 
 
-## 6.4 注解配置工具类AnnotationConfigUtils的注册所后处理器
+##  **注解配置工具类AnnotationConfigUtils的注册所后处理器**
 
 在给定注册表中注册所有相关的批注后处理程序
 
