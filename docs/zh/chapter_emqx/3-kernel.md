@@ -106,7 +106,7 @@ start_link(Pool, Type, MFA) ->
     start_link(Pool, Type, emqx_vm:schedulers(), MFA).
 ```
 
-这里调度器使用erlang的**erlang:system_info(schedulers)**跟我系统中线程数量是一致的 mac用命令可以查到**sysctl -n machdep.cpu.thread_count;** 我查到是12  调度器对应逻辑CPU数量
+这里调度器使用erlang的 **erlang:system_info(schedulers)** 跟我系统中线程数量是一致的 mac用命令可以查到 **sysctl -n machdep.cpu.thread_count;** 我查到是12  调度器对应逻辑CPU数量
 
 又调用了如下重载函数
 
@@ -227,7 +227,7 @@ read_concurrency
 
 当并发读取操作比写入操作频繁得多时，或者当并发读取和写入出现较大的读写突发（即，许多读取不会被写入中断，并且许多写入不会被读取中断）时，您通常希望启用此选项）。
 
-当常见的访问模式是一些读操作与一些重复的写操作交错时，您通常 **不希望启用此选项。**在这种情况下，启用此选项会导致性能下降。
+当常见的访问模式是一些读操作与一些重复的写操作交错时，您通常 **不希望启用此选项。** 在这种情况下，启用此选项会导致性能下降。
 
 
 
@@ -249,28 +249,28 @@ EMQX 将指标分为了 Metrics 与 Stats 两种。Metrics 通常指那些只会
 
 ### 3.4.1 Stats
 
-| Name                       | Data Type | Description                |
-| -------------------------- | --------- | -------------------------- |
-| connections.count          | Integer   | 当前连接数量               |
-| connections.max            | Integer   | 连接数量的历史最大值       |
-| channels.count             | Integer   | 即 `sessions.count`        |
-| channels.max               | Integer   | 即 `session.max`           |
-| sessions.count             | Integer   | 当前会话数量               |
-| sessions.max               | Integer   | 会话数量的历史最大值       |
-| topics.count               | Integer   | 当前主题数量               |
-| topics.max                 | Integer   | 主题数量的历史最大值       |
-| suboptions.count           | Integer   | 即 `subscriptions.count`   |
-| suboptions.max             | Integer   | 即 `subscriptions.max`     |
-| subscribers.count          | Integer   | 当前订阅者数量             |
-| subscribers.max            | Integer   | 订阅者数量的历史最大值     |
-| subscriptions.count        | Integer   | 当前订阅数量，包含共享订阅 |
-| subscriptions.max          | Integer   | 订阅数量的历史最大值       |
-| subscriptions.shared.count | Integer   | 当前共享订阅数量           |
-| subscriptions.shared.max   | Integer   | 共享订阅数量的历史最大值   |
-| routes.count               | Integer   | 当前路由数量               |
-| routes.max                 | Integer   | 路由数量的历史最大值       |
-| retained.count             | Integer   | 当前保留消息数量           |
-| retained.max               | Integer   | 保留消息的历史最大值       |
+| Name                       | Data Type | Description             |
+|----------------------------|-----------|-------------------------|
+| connections.count          | Integer   | 当前连接数量                  |
+| connections.max            | Integer   | 连接数量的历史最大值              |
+| channels.count             | Integer   | 即 `sessions.count`      |
+| channels.max               | Integer   | 即 `session.max`         |
+| sessions.count             | Integer   | 当前会话数量                  |
+| sessions.max               | Integer   | 会话数量的历史最大值              |
+| topics.count               | Integer   | 当前主题数量                  |
+| topics.max                 | Integer   | 主题数量的历史最大值              |
+| suboptions.count           | Integer   | 即 `subscriptions.count` |
+| suboptions.max             | Integer   | 即 `subscriptions.max`   |
+| subscribers.count          | Integer   | 当前订阅者数量                 |
+| subscribers.max            | Integer   | 订阅者数量的历史最大值             |
+| subscriptions.count        | Integer   | 当前订阅数量，包含共享订阅           |
+| subscriptions.max          | Integer   | 订阅数量的历史最大值              |
+| subscriptions.shared.count | Integer   | 当前共享订阅数量                |
+| subscriptions.shared.max   | Integer   | 共享订阅数量的历史最大值            |
+| routes.count               | Integer   | 当前路由数量                  |
+| routes.max                 | Integer   | 路由数量的历史最大值              |
+| retained.count             | Integer   | 当前保留消息数量                |
+| retained.max               | Integer   | 保留消息的历史最大值              |
 
 
 
@@ -507,112 +507,112 @@ EMQX 将指标分为了 Metrics 与 Stats 两种。Metrics 通常指那些只会
 
 ####  3.5.1.1 字节
 
-| Name           | Data Type | Description  |
-| -------------- | --------- | ------------ |
-| bytes.received | Integer   | 接收字节数量 |
-| bytes.sent     | Integer   | 发送字节数量 |
+| Name           | Data Type | Description |
+|----------------|-----------|-------------|
+| bytes.received | Integer   | 接收字节数量      |
+| bytes.sent     | Integer   | 发送字节数量      |
 
 ####  3.5.1.2 报文
 
-| Name                         | Data Type | Description                                                  |
-| ---------------------------- | --------- | ------------------------------------------------------------ |
-| packets.received             | Integer   | 接收的报文数量                                               |
-| packets.sent                 | Integer   | 发送的报文数量                                               |
-| packets.connect.received     | Integer   | 接收的 CONNECT 报文数量                                      |
-| packets.connack.auth_error   | Integer   | 发送的原因码为 0x86 和 0x87 的 CONNACK 报文数量              |
+| Name                         | Data Type | Description                                                            |
+|------------------------------|-----------|------------------------------------------------------------------------|
+| packets.received             | Integer   | 接收的报文数量                                                                |
+| packets.sent                 | Integer   | 发送的报文数量                                                                |
+| packets.connect.received     | Integer   | 接收的 CONNECT 报文数量                                                       |
+| packets.connack.auth_error   | Integer   | 发送的原因码为 0x86 和 0x87 的 CONNACK 报文数量                                     |
 | packets.connack.error        | Integer   | 发送的原因码不为 0x00 的 CONNACK 报文数量，此指标的值大于等于 `packets.connack.auth_error` 的值 |
-| packets.connack.sent         | Integer   | 发送的 CONNACK 报文数量                                      |
-| packets.publish.received     | Integer   | 接收的 PUBLISH 报文数量                                      |
-| packets.publish.sent         | Integer   | 发送的 PUBLISH 报文数量                                      |
-| packets.publish.inuse        | Integer   | 接收的报文标识符已被占用的 PUBLISH 报文数量                  |
-| packets.publish.auth_error   | Integer   | 接收的未通过 ACL 检查的 PUBLISH 报文数量                     |
-| packets.publish.error        | Integer   | 接收的无法被发布的 PUBLISH 报文数量                          |
-| packets.publish.dropped      | Integer   | 超出接收限制而被丢弃的 PUBLISH 报文数量                      |
-| packets.puback.received      | Integer   | 接收的 PUBACK 报文数量                                       |
-| packets.puback.sent          | Integer   | 发送的 PUBACK 报文数量                                       |
-| packets.puback.inuse         | Integer   | 接收的报文标识符已被占用的 PUBACK 报文数量                   |
-| packets.puback.missed        | Integer   | 接收的未知报文标识符 PUBACK 报文数量                         |
-| packets.pubrec.received      | Integer   | 接收的 PUBREC 报文数量                                       |
-| packets.pubrec.sent          | Integer   | 发送的 PUBREC 报文数量                                       |
-| packets.pubrec.inuse         | Integer   | 接收的报文标识符已被占用的 PUBREC 报文数量                   |
-| packets.pubrec.missed        | Integer   | 接收的未知报文标识符 PUBREC 报文数量                         |
-| packets.pubrel.received      | Integer   | 接收的 PUBREL 报文数量                                       |
-| packets.pubrel.sent          | Integer   | 发送的 PUBREL 报文数量                                       |
-| packets.pubrel.missed        | Integer   | 接收的未知报文标识符 PUBREL 报文数量                         |
-| packets.pubcomp.received     | Integer   | 接收的 PUBCOMP 报文数量                                      |
-| packets.pubcomp.sent         | Integer   | 发送的 PUBCOMP 报文数量                                      |
-| packets.pubcomp.inuse        | Integer   | 接收的报文标识符已被占用的 PUBCOMP 报文数量                  |
-| packets.pubcomp.missed       | Integer   | 发送的 PUBCOMP 报文数量                                      |
-| packets.subscribe.received   | Integer   | 接收的 SUBSCRIBE 报文数量                                    |
-| packets.subscribe.error      | Integer   | 接收的订阅失败的 SUBSCRIBE 报文数量                          |
-| packets.subscribe.auth_error | Integer   | 接收的未通过 ACL 检查的 SUBACK 报文数量                      |
-| packets.suback.sent          | Integer   | 发送的 SUBACK 报文数量                                       |
-| packets.unsubscribe.received | Integer   | 接收的 UNSUBSCRIBE 报文数量                                  |
-| packets.unsubscribe.error    | Integer   | 接收的取消订阅失败的 UNSUBSCRIBE 报文数量                    |
-| packets.unsuback.sent        | Integer   | 发送的 UNSUBACK 报文数量                                     |
-| packets.pingreq.received     | Integer   | 接收的 PINGREQ 报文数量                                      |
-| packets.pingresp.sent        | Integer   | 发送的 PUBRESP 报文数量                                      |
-| packets.disconnect.received  | Integer   | 接收的 DISCONNECT 报文数量                                   |
-| packets.disconnect.sent      | Integer   | 发送的 DISCONNECT 报文数量                                   |
-| packets.auth.received        | Integer   | 接收的 AUTH 报文数量                                         |
-| packets.auth.sent            | Integer   | 发送的 AUTH 报文数量                                         |
+| packets.connack.sent         | Integer   | 发送的 CONNACK 报文数量                                                       |
+| packets.publish.received     | Integer   | 接收的 PUBLISH 报文数量                                                       |
+| packets.publish.sent         | Integer   | 发送的 PUBLISH 报文数量                                                       |
+| packets.publish.inuse        | Integer   | 接收的报文标识符已被占用的 PUBLISH 报文数量                                             |
+| packets.publish.auth_error   | Integer   | 接收的未通过 ACL 检查的 PUBLISH 报文数量                                            |
+| packets.publish.error        | Integer   | 接收的无法被发布的 PUBLISH 报文数量                                                 |
+| packets.publish.dropped      | Integer   | 超出接收限制而被丢弃的 PUBLISH 报文数量                                               |
+| packets.puback.received      | Integer   | 接收的 PUBACK 报文数量                                                        |
+| packets.puback.sent          | Integer   | 发送的 PUBACK 报文数量                                                        |
+| packets.puback.inuse         | Integer   | 接收的报文标识符已被占用的 PUBACK 报文数量                                              |
+| packets.puback.missed        | Integer   | 接收的未知报文标识符 PUBACK 报文数量                                                 |
+| packets.pubrec.received      | Integer   | 接收的 PUBREC 报文数量                                                        |
+| packets.pubrec.sent          | Integer   | 发送的 PUBREC 报文数量                                                        |
+| packets.pubrec.inuse         | Integer   | 接收的报文标识符已被占用的 PUBREC 报文数量                                              |
+| packets.pubrec.missed        | Integer   | 接收的未知报文标识符 PUBREC 报文数量                                                 |
+| packets.pubrel.received      | Integer   | 接收的 PUBREL 报文数量                                                        |
+| packets.pubrel.sent          | Integer   | 发送的 PUBREL 报文数量                                                        |
+| packets.pubrel.missed        | Integer   | 接收的未知报文标识符 PUBREL 报文数量                                                 |
+| packets.pubcomp.received     | Integer   | 接收的 PUBCOMP 报文数量                                                       |
+| packets.pubcomp.sent         | Integer   | 发送的 PUBCOMP 报文数量                                                       |
+| packets.pubcomp.inuse        | Integer   | 接收的报文标识符已被占用的 PUBCOMP 报文数量                                             |
+| packets.pubcomp.missed       | Integer   | 发送的 PUBCOMP 报文数量                                                       |
+| packets.subscribe.received   | Integer   | 接收的 SUBSCRIBE 报文数量                                                     |
+| packets.subscribe.error      | Integer   | 接收的订阅失败的 SUBSCRIBE 报文数量                                                |
+| packets.subscribe.auth_error | Integer   | 接收的未通过 ACL 检查的 SUBACK 报文数量                                             |
+| packets.suback.sent          | Integer   | 发送的 SUBACK 报文数量                                                        |
+| packets.unsubscribe.received | Integer   | 接收的 UNSUBSCRIBE 报文数量                                                   |
+| packets.unsubscribe.error    | Integer   | 接收的取消订阅失败的 UNSUBSCRIBE 报文数量                                            |
+| packets.unsuback.sent        | Integer   | 发送的 UNSUBACK 报文数量                                                      |
+| packets.pingreq.received     | Integer   | 接收的 PINGREQ 报文数量                                                       |
+| packets.pingresp.sent        | Integer   | 发送的 PUBRESP 报文数量                                                       |
+| packets.disconnect.received  | Integer   | 接收的 DISCONNECT 报文数量                                                    |
+| packets.disconnect.sent      | Integer   | 发送的 DISCONNECT 报文数量                                                    |
+| packets.auth.received        | Integer   | 接收的 AUTH 报文数量                                                          |
+| packets.auth.sent            | Integer   | 发送的 AUTH 报文数量                                                          |
 
 ####  3.5.1.3 消息 (PUBLISH 报文)
 
-| Name                            | Data Type | Description                                                  |
-| ------------------------------- | --------- | ------------------------------------------------------------ |
-| delivery.dropped.too_large      | Integer   | 发送时由于长度超过限制而被丢弃的消息数量                     |
-| delivery.dropped.queue_full     | Integer   | 发送时由于消息队列满而被丢弃的 QoS 不为 0 的消息数量         |
-| delivery.dropped.qos0_msg       | Integer   | 发送时由于消息队列满而被丢弃的 QoS 为 0 的消息数量           |
-| delivery.dropped.expired        | Integer   | 发送时由于消息过期而被丢弃的消息数量                         |
-| delivery.dropped.no_local       | Integer   | 发送时由于 `No Local` 订阅选项而被丢弃的消息数量             |
-| delivery.dropped                | Integer   | 发送时丢弃的消息总数                                         |
-| messages.delayed                | Integer   | EMQX 存储的延迟发布的消息数量                                |
-| messages.delivered              | Integer   | EMQX 内部转发到订阅进程的消息数量                            |
-| messages.dropped                | Integer   | EMQX 内部转发到订阅进程前丢弃的消息总数                      |
-| messages.dropped.expired        | Integer   | 接收时由于消息过期而被丢弃的消息数量                         |
-| messages.dropped.no_subscribers | Integer   | 由于没有订阅者而被丢弃的消息数量                             |
-| messages.forward                | Integer   | 向其他节点转发的消息数量                                     |
-| messages.publish                | Integer   | 除系统消息外发布的消息数量                                   |
-| messages.qos0.received          | Integer   | 接收来自客户端的 QoS 0 消息数量                              |
-| messages.qos2.received          | Integer   | 接收来自客户端的 QoS 1 消息数量                              |
-| messages.qos1.received          | Integer   | 接收来自客户端的 QoS 2 消息数量                              |
-| messages.qos0.sent              | Integer   | 发送给客户端的 QoS 0 消息数量                                |
-| messages.qos1.sent              | Integer   | 发送给客户端的 QoS 1 消息数量                                |
-| messages.qos2.sent              | Integer   | 发送给客户端的 QoS 2 消息数量                                |
+| Name                            | Data Type | Description                                                                                     |
+|---------------------------------|-----------|-------------------------------------------------------------------------------------------------|
+| delivery.dropped.too_large      | Integer   | 发送时由于长度超过限制而被丢弃的消息数量                                                                            |
+| delivery.dropped.queue_full     | Integer   | 发送时由于消息队列满而被丢弃的 QoS 不为 0 的消息数量                                                                  |
+| delivery.dropped.qos0_msg       | Integer   | 发送时由于消息队列满而被丢弃的 QoS 为 0 的消息数量                                                                   |
+| delivery.dropped.expired        | Integer   | 发送时由于消息过期而被丢弃的消息数量                                                                              |
+| delivery.dropped.no_local       | Integer   | 发送时由于 `No Local` 订阅选项而被丢弃的消息数量                                                                  |
+| delivery.dropped                | Integer   | 发送时丢弃的消息总数                                                                                      |
+| messages.delayed                | Integer   | EMQX 存储的延迟发布的消息数量                                                                               |
+| messages.delivered              | Integer   | EMQX 内部转发到订阅进程的消息数量                                                                             |
+| messages.dropped                | Integer   | EMQX 内部转发到订阅进程前丢弃的消息总数                                                                          |
+| messages.dropped.expired        | Integer   | 接收时由于消息过期而被丢弃的消息数量                                                                              |
+| messages.dropped.no_subscribers | Integer   | 由于没有订阅者而被丢弃的消息数量                                                                                |
+| messages.forward                | Integer   | 向其他节点转发的消息数量                                                                                    |
+| messages.publish                | Integer   | 除系统消息外发布的消息数量                                                                                   |
+| messages.qos0.received          | Integer   | 接收来自客户端的 QoS 0 消息数量                                                                             |
+| messages.qos2.received          | Integer   | 接收来自客户端的 QoS 1 消息数量                                                                             |
+| messages.qos1.received          | Integer   | 接收来自客户端的 QoS 2 消息数量                                                                             |
+| messages.qos0.sent              | Integer   | 发送给客户端的 QoS 0 消息数量                                                                              |
+| messages.qos1.sent              | Integer   | 发送给客户端的 QoS 1 消息数量                                                                              |
+| messages.qos2.sent              | Integer   | 发送给客户端的 QoS 2 消息数量                                                                              |
 | messages.received               | Integer   | 接收来自客户端的消息数量，等于 `messages.qos0.received`，`messages.qos1.received` 与 `messages.qos2.received` 之和 |
-| messages.sent                   | Integer   | 发送给客户端的消息数量，等于 `messages.qos0.sent`，`messages.qos1.sent` 与 `messages.qos2.sent` 之和 |
-| messages.retained               | Integer   | EMQX 存储的保留消息数量                                      |
-| messages.acked                  | Integer   | 已经应答的消息数量                                           |
+| messages.sent                   | Integer   | 发送给客户端的消息数量，等于 `messages.qos0.sent`，`messages.qos1.sent` 与 `messages.qos2.sent` 之和              |
+| messages.retained               | Integer   | EMQX 存储的保留消息数量                                                                                  |
+| messages.acked                  | Integer   | 已经应答的消息数量                                                                                       |
 
 ####  3.5.1.4 事件
 
-| Name                  | Data Type | Description                                                  |
-| --------------------- | --------- | ------------------------------------------------------------ |
-| actions.success       | Integer   | 规则引擎 action 执行成功次数                                 |
-| actions.error         | Integer   | 规则引擎 action 执行失败次数                                 |
-| actions.exception     | Integer   | 规则引擎 action 运行异常次数                                 |
-| rules.matched         | Integer   | 规则的匹配次数                                               |
-| client.auth.anonymous | Integer   | 客户端最终匿名形式登录的次数                                 |
-| client.connect        | Integer   | `client.connect` 钩子触发次数                                |
-| client.authenticate   | Integer   | `client.authenticate` 钩子触发次数                           |
-| client.connack        | Integer   | `client.connack` 钩子触发次数                                |
-| client.connected      | Integer   | `client.connected` 钩子触发次数                              |
-| client.disconnected   | Integer   | `client.disconnected` 钩子触发次数                           |
-| client.check_acl      | Integer   | `client.check_acl` 钩子触发次数                              |
-| client.subscribe      | Integer   | `client.subscribe` 钩子触发次数                              |
-| client.unsubscribe    | Integer   | `client.unsubscribe` 钩子触发次数                            |
-| client.auth.success   | Integer   | 客户端认证成功次数，至少启用一个认证插件后可用               |
-| client.auth.failure   | Integer   | 客户端认证失败次数，至少启用一个认证插件后可用               |
-| client.auth.ignore    | Integer   | 认证忽略次数，至少启用一个认证插件后可用，同时启用多个认证插件时，一次登录事件可能触发多次 ignore 计数，所有认证插件都 ignore 后，客户端可能以匿名方式成功登录 |
-| client.acl.allow      | Integer   | 客户端 ACL 校验通过次数，至少启用一个 ACL 插件后可用         |
-| client.acl.deny       | Integer   | 客户端 ACL 校验失败次数，至少启用一个 ACL 插件后可用         |
+| Name                  | Data Type | Description                                                                                                              |
+|-----------------------|-----------|--------------------------------------------------------------------------------------------------------------------------|
+| actions.success       | Integer   | 规则引擎 action 执行成功次数                                                                                                       |
+| actions.error         | Integer   | 规则引擎 action 执行失败次数                                                                                                       |
+| actions.exception     | Integer   | 规则引擎 action 运行异常次数                                                                                                       |
+| rules.matched         | Integer   | 规则的匹配次数                                                                                                                  |
+| client.auth.anonymous | Integer   | 客户端最终匿名形式登录的次数                                                                                                           |
+| client.connect        | Integer   | `client.connect` 钩子触发次数                                                                                                  |
+| client.authenticate   | Integer   | `client.authenticate` 钩子触发次数                                                                                             |
+| client.connack        | Integer   | `client.connack` 钩子触发次数                                                                                                  |
+| client.connected      | Integer   | `client.connected` 钩子触发次数                                                                                                |
+| client.disconnected   | Integer   | `client.disconnected` 钩子触发次数                                                                                             |
+| client.check_acl      | Integer   | `client.check_acl` 钩子触发次数                                                                                                |
+| client.subscribe      | Integer   | `client.subscribe` 钩子触发次数                                                                                                |
+| client.unsubscribe    | Integer   | `client.unsubscribe` 钩子触发次数                                                                                              |
+| client.auth.success   | Integer   | 客户端认证成功次数，至少启用一个认证插件后可用                                                                                                  |
+| client.auth.failure   | Integer   | 客户端认证失败次数，至少启用一个认证插件后可用                                                                                                  |
+| client.auth.ignore    | Integer   | 认证忽略次数，至少启用一个认证插件后可用，同时启用多个认证插件时，一次登录事件可能触发多次 ignore 计数，所有认证插件都 ignore 后，客户端可能以匿名方式成功登录                                  |
+| client.acl.allow      | Integer   | 客户端 ACL 校验通过次数，至少启用一个 ACL 插件后可用                                                                                          |
+| client.acl.deny       | Integer   | 客户端 ACL 校验失败次数，至少启用一个 ACL 插件后可用                                                                                          |
 | client.acl.ignore     | Integer   | ACL 校验忽略次数，至少启用一个 ACL 插件后可用，同时启用多个 ACL 插件时，一次发布/订阅事件可能触发多次 ignore 计数，所有 ACL插件都 ignore 后，发布/订阅操作可能因 acl_nomatch = true 成功 |
-| session.created       | Integer   | `session.created` 钩子触发次数                               |
-| session.discarded     | Integer   | `session.discarded` 钩子触发次数                             |
-| session.resumed       | Integer   | `session.resumed` 钩子触发次数                               |
-| session.takeovered    | Integer   | `session.takeovered` 钩子触发次数                            |
-| session.terminated    | Integer   | `session.terminated` 钩子触发次数                            |
+| session.created       | Integer   | `session.created` 钩子触发次数                                                                                                 |
+| session.discarded     | Integer   | `session.discarded` 钩子触发次数                                                                                               |
+| session.resumed       | Integer   | `session.resumed` 钩子触发次数                                                                                                 |
+| session.takeovered    | Integer   | `session.takeovered` 钩子触发次数                                                                                              |
+| session.terminated    | Integer   | `session.terminated` 钩子触发次数                                                                                              |
 
 
 
@@ -647,11 +647,11 @@ init([]) ->
 
 **写并发**
 
-这是一种优化，以实现非常高效的并发 **[添加](https://www.erlang.org/doc/man/counters.html#add-3)**和**[子](https://www.erlang.org/doc/man/counters.html#sub-3)**操作，但代价是潜在的读取不一致和每个计数器的内存消耗。
+这是一种优化，以实现非常高效的并发 **[添加](https://www.erlang.org/doc/man/counters.html#add-3)** 和 **[子](https://www.erlang.org/doc/man/counters.html#sub-3)** 操作，但代价是潜在的读取不一致和每个计数器的内存消耗。
 
 读取操作可能会看到关于并发写入操作的顺序不一致的结果。即使写操作 A 在写操作 B 之前按顺序完成，并发读取器可能会看到 A 和 B 的任意组合，仅包括 B。读操作只能保证在读取之前看到所有按顺序完成的写操作。没有写入会丢失，但最终都会被看到。
 
-write_concurrency的典型用例是对相同计数器的**[add](https://www.erlang.org/doc/man/counters.html#add-3)**和 **[sub](https://www.erlang.org/doc/man/counters.html#sub-3)**并发调用非常频繁，而**[get ](https://www.erlang.org/doc/man/counters.html#get-2)**和**[put](https://www.erlang.org/doc/man/counters.html#put-3)**调用的频率则低得多。缺乏绝对读取一致性也必须是可以接受的。
+write_concurrency的典型用例是对相同计数器的 **[add](https://www.erlang.org/doc/man/counters.html#add-3)** 和 **[sub](https://www.erlang.org/doc/man/counters.html#sub-3)** 并发调用非常频繁，而 **[get ](https://www.erlang.org/doc/man/counters.html#get-2)** 和 **[put](https://www.erlang.org/doc/man/counters.html#put-3)** 调用的频率则低得多。缺乏绝对读取一致性也必须是可以接受的。
 
 
 
