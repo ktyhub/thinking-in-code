@@ -7,23 +7,26 @@ EventLoopGroup是特殊的EventExecutorGroup类型，提供了注册Channel方�
 
 了解了启动类型的结构我们来继续看我们Demo的执行流程接下来可以看
 
- ```java
+```java
     EventLoopGroup bossGroup = new NioEventLoopGroup(1);
 
      EventLoopGroup workerGroup = new NioEventLoopGroup();
- ```
+```
 
 
 
 bossGroup 中只有一个线程, 在workerGroup线程池中没有指定线程数量，所以默认是 CPU 核心数乘2,
+
 ```java
 b.group(bossGroup, workerGroup)
 ```
 在ServerBootstrap类型中调用group方法
+
 - 将parentGroup赋值给AbstractBootstrap类中的group成员变量
 - 将childGroup赋值给ServerBootstrap类中的childGroup成员变量
 
 ServerBootstrap中的group方法代码如下
+
 ```java
  
  public ServerBootstrap group(EventLoopGroup parentGroup, EventLoopGroup childGroup) {
@@ -53,6 +56,7 @@ ServerBootstrap中的group方法代码如下
 同时会调用super.group(parentGroup)调用父类型AbstractBootstrap中的group方法来设置parentGroup变量.
 
 AbstractBootstrap类中的group方法如下：
+
 ```java
     public B group(EventLoopGroup group) {
 
@@ -368,7 +372,7 @@ newChild方法，由于多态的存在我们优先执行具体类型的方法这
 
 了解到了NioEventLoop对象的创建我们继续往下看NioEventLoop构造器
 
- ```java
+```java
   NioEventLoop(NioEventLoopGroup parent, Executor executor, SelectorProvider selectorProvider,          SelectStrategy strategy, RejectedExecutionHandler rejectedExecutionHandler) {    
    		super(parent, executor, false, DEFAULT_MAX_PENDING_TASKS, rejectedExecutionHandler);     
    		if (selectorProvider == null) {     
@@ -381,7 +385,7 @@ newChild方法，由于多态的存在我们优先执行具体类型的方法这
      		selector = openSelector();    
      		selectStrategy = strategy;  
      }
- ```
+```
 
 先调用父类构造器 这里新增了两个参数
 
@@ -565,7 +569,7 @@ DefaultEventExecutorChooserFactory类型的newChooser创建事件执行选择器
 
 
 
- ```java
+```java
   @Override
 
   public EventExecutorChooser newChooser(EventExecutor[] executors) {
@@ -582,7 +586,7 @@ DefaultEventExecutorChooserFactory类型的newChooser创建事件执行选择器
 
   }
 
- ```
+```
 
 //计算是否为2的幂可参考另外一个算法https://blog.csdn.net/OnionOmelette/article/details/53718623
 

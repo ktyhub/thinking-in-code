@@ -99,6 +99,7 @@ public final class EchoServer {
 ```
 启动过程主要通过创建启动器 ServerBootstrap类型并设置对应参数来进行
 启动,归纳下流程:
+
 - 创建 ServerBootstrap对象
 - 为 ServerBootstrap对象设置
 - ServerBootstrap的 group方法,设置主线程池以及I0操作线程池用于处理

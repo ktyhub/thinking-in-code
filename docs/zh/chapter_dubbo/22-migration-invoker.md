@@ -23,7 +23,7 @@
  如下所示：
 
  RegistryProtocol类型的interceptInvoker方法
- ```java
+```java
  protected <T> Invoker<T> interceptInvoker(ClusterInvoker<T> invoker, URL url, URL consumerUrl) {
   //目前存在的扩展类型为RegistryProtocolListener监听器的实现类型MigrationRuleListener 
         List<RegistryProtocolListener> listeners = findRegistryProtocolListeners(url);
@@ -36,7 +36,7 @@
         }
         return invoker;
     }
- ```
+```
 
 该方法尝试加载所有RegistryProtocolListener定义，这些定义通过与定义的交互来控制调用器的行为，然后使用这些侦听器更改MigrationInvoker的状态和行为。当前可用的监听器是MigrationRuleListener，用于通过动态变化的规则控制迁移行为。
 
@@ -188,7 +188,7 @@ MigrationRuleHandler的refreshInvoker，注意默认情况下这个step参数为
  这个规则就是智能选择应用级还是接口级的代码了，对应类型为MigrationInvoker的migrateToApplicationFirstInvoker方法，接下来我们详细看下：
 
  MigrationInvoker类型的migrateToApplicationFirstInvoker方法：
- ```java
+```java
  @Override
     public void migrateToApplicationFirstInvoker(MigrationRule newRule) {
         CountDownLatch latch = new CountDownLatch(0);
@@ -202,7 +202,7 @@ MigrationRuleHandler的refreshInvoker，注意默认情况下这个step参数为
         //计算当前使用应用级还是接口级服务发现的Invoker对象
         calcPreferredInvoker(newRule);
     }
- ```
+```
 
 ###  **刷新接口级服务发现Invoker** 
 

@@ -9,7 +9,7 @@
 这个驱动类型为：com.mysql.cj.jdbc.Driver
 接下来我们会详细看这个com.mysql.cj.jdbc.Driver中的连接方法。
 在详细介绍连接方法我们先简单看一下它的继承关系如下图所示：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/301d33568c404542b393b139d553522b.png)
+![7-druid.png](/img/chapter_druid/7-druid.png)
 
 
 ## 7.2 NonRegisteringDriver的connect方法

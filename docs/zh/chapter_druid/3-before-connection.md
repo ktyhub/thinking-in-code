@@ -45,6 +45,7 @@ public static void main(String[] args) throws SQLException {
 ```
 ## 3.2 使用数据源来获取连接
 前面调用的代码为：
+
 ```java
    Connection connection = dataSource.getConnection();
 

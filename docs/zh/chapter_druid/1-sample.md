@@ -17,7 +17,7 @@ git checkout 1.2.11
 ```
 
 获取到的代码如下图：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/231c5b6fb9d74c5b9eeef25194fd4a3c.png)
+![1-druid-github.png](/img/chapter_druid/1-druid-github.png)
 
 1.2.8的tag最后版本被改为了1.2.9_preview_01 ，这个代码管理稍微不规范了些，不过不影响我们分析
 
@@ -25,6 +25,7 @@ git checkout 1.2.11
 ## 1.3 Demo编写
 ### 1.3.1 创建数据库与表
 为了方便测试我们创建一个druid数据库来进行测试
+
 ```sql
 CREATE DATABASE `druid` CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_bin'
 
