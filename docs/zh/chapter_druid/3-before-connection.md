@@ -326,6 +326,7 @@ public static void main(String[] args) throws SQLException {
 
 
 上面的代码看似有点长，我们将其总结一下，一共分为5种类型的初始化：
+
 - 初始化基本信息：
     - id 种子对象初始化
     - jdbcUrl 参数初始化

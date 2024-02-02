@@ -36,7 +36,7 @@ MQTT 客户端订阅主题时，所在节点订阅成功后广播通知其他节
 
 MQTT 客户端发布消息时，所在节点会根据消息主题(Topic)，检索订阅并路由消息到相关节点。
 
-EMQX 消息服务器同一集群的所有节点，都会**复制一份主题(Topic) -> 节点(Node)映射的路由表** ，例如:
+EMQX 消息服务器同一集群的所有节点，都会 **复制一份主题(Topic) -> 节点(Node)映射的路由表** ，例如:
 
 ```bash
 topic1 -> node1, node2
@@ -75,13 +75,7 @@ init([]) ->
                                      {emqx_router, start_link, []}]),
     {ok, {{one_for_all, 0, 1}, [Helper, RouterPool]}}.
 ```
-
-
-
-
-
 前面主要启动了两种进程emqx_router_helper和emqx_router
-
 
 
 ## 4.3 路由辅助进程emqx_router_helper
@@ -94,8 +88,6 @@ start_link() ->
 ```
 
 初始化回调方法如下:
-
-
 
 ```erlang
 init([]) ->
@@ -113,7 +105,6 @@ init([]) ->
     ok = emqx_stats:update_interval(route_stats, fun ?MODULE:stats_fun/0),
     {ok, #{nodes => Nodes}, hibernate}.
 ```
-
 
 ## 4.4 路由进程emqx_router
 
