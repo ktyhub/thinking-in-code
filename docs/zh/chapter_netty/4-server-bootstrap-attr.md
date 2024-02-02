@@ -4,8 +4,7 @@
 
 示例代码如下：
 
- ```java
-
+```java
  EventLoopGroup bossGroup = new NioEventLoopGroup(1);
 
       EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -50,7 +49,7 @@
 
          });
 
- ```
+```
 
 
 
@@ -59,7 +58,7 @@
 
 
 在ServerBootstrap类型中
- ```java
+```java
  public ServerBootstrap group(EventLoopGroup parentGroup, EventLoopGroup childGroup) {
 
       super.group(parentGroup);
@@ -81,7 +80,7 @@
       return this;
 
   }
- ```
+```
 这个方法比较简单主要进行了参数校验childGroup不能为空并且只能赋值一次，然后将childGroup赋值给当前成员变量
 
 
@@ -95,7 +94,7 @@ AbstractBootstrap类型的group方法
 
 
 
- ```java
+```java
  public B group(EventLoopGroup group) {
 
       if (group == null) {
@@ -116,7 +115,7 @@ AbstractBootstrap类型的group方法
 
   }   
 
- ```
+```
 
 、AbstractBootstrap类型的group方法与 ServerBootstrap扩展的group方法实现代码大致一致参数校验，赋值给成员变量
 
@@ -127,7 +126,7 @@ AbstractBootstrap类型的group方法
 接下来我们看通道配置过程channel(NioServerSocketChannel.class)
 
 
- ```java
+```java
  public B channel(Class<? extends C> channelClass) {
 
       if (channelClass == null) {
@@ -139,7 +138,7 @@ AbstractBootstrap类型的group方法
       return channelFactory(new ReflectiveChannelFactory<C>(channelClass));
 
 }
- ```
+```
 
 
 
@@ -147,20 +146,20 @@ AbstractBootstrap类型的group方法
 这个方法主要是通过传入Channel类型的Class对象来创建工厂对象ReflectiveChannelFactory用于后期创建Channel
 
 这里有个泛型的约束需要当前类型是泛型C类型本身或者C的子类型，那C类型是什么类型呢其实在我们创建服务器启动类型ServerBootstrap的时候就指定好了约束如下所示：
- ```java
+```java
 public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerChannel>
 
  
 
 public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C extends Channel> implements Cloneable 
- ```
+```
 
 
 泛型C这里声明的是ServerChannel
 
 
 
-  ```java
+ ```java
 
  public B channelFactory(ChannelFactory<? extends C> channelFactory) {
 
@@ -184,7 +183,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
 
   }
 
-  ```
+ ```
 
 
 
@@ -343,7 +342,7 @@ ChannelOption主要配置一些网络属性，常见的参数可以见如下表�
 
 
 ChannelHandler用于服务请求。
- ```java
+```java
   public B handler(ChannelHandler handler) {
 
       if (handler == null) {
@@ -357,7 +356,7 @@ ChannelHandler用于服务请求。
       return (B) this;
 
   }
- ```
+```
 
 ChannelHandler用于处理一个I/O事件或拦截一个I/O操作，并将其转发到其ChannelPipeline中的下一个处理器。
 
@@ -399,7 +398,7 @@ ChannelHandler顶层接口类型提供了3个主要的方法
 这里设置了一个类型为LoggingHandler，LoggingHandler在发生各种入站，出站事件时候打印日志
 
 
- ```java
+```java
 .childHandler(new ChannelInitializer<SocketChannel>() {
 
            @Override
@@ -421,7 +420,7 @@ ChannelHandler顶层接口类型提供了3个主要的方法
          });
 
  
- ```
+```
 
 
 
@@ -555,11 +554,11 @@ EmbeddedChannelPipeline 单元测试使用
 
 
 在前面ServerBootstrap的属性已经初始化完毕，接下来开始开启服务，使用fluent style流式风格代码调用以下代码
- ```java
+```java
  ChannelFuture f = b.bind(PORT)
 
  .sync();
- ```
+```
 
 
 接下来我们先看来自AbstractBootstrap类型中的bind方法：
@@ -567,18 +566,18 @@ EmbeddedChannelPipeline 单元测试使用
 
 
 //创建一个新的并绑定它
- ```java
+```java
 public ChannelFuture bind(int inetPort) {
 
       return bind(new InetSocketAddress(inetPort));
 
   }
 
- ```
+```
 
 在前面我们说过bind有很多重载的方法到最后传入参数都将转换为SocketAddress类型地址对象然后调用如下代码开始绑定
 
-  ```java
+ ```java
 
  public ChannelFuture bind(SocketAddress localAddress) {
 
@@ -594,7 +593,7 @@ public ChannelFuture bind(int inetPort) {
 
   }
 
-  ```
+ ```
 
 validate();为参数校验，在ServerBootstrap类型中重写了这个方法主要验证了如下参数：
 
@@ -617,7 +616,7 @@ channelFactory
 这里又针对传入的地址参数进行校验不能为空localAddress
 
 然后继续调用doBind方法，直接看代码如下
- ```java
+```java
   private ChannelFuture doBind(final SocketAddress localAddress) {
 
       final ChannelFuture regFuture = initAndRegister();
@@ -687,7 +686,7 @@ channelFactory
       }
 
 }
- ```
+```
 
 
 
@@ -695,7 +694,7 @@ channelFactory
 //先来看初始化和注册通道
 
 
- ```java
+```java
 final ChannelFuture initAndRegister() {
 
       Channel channel = null;
@@ -768,14 +767,14 @@ final ChannelFuture initAndRegister() {
 
   }
 
- ```
+```
 
 
 
 
 
 ServerBootstrap中重写的init方法如下所示
- ```java
+```java
    @Override
 
   void init(Channel channel) throws Exception {
@@ -894,17 +893,17 @@ ServerBootstrap中重写的init方法如下所示
 
   }
 
- ```
+```
 
 
 
 接下来在initAndRegister
 
 注册ChannelPromise中的Channel，并在注册完成后通知ChannelFuture。这一步会将通道与EventLoop关联起来
- ```java
+```java
   ChannelFuture regFuture = config().group().register(channel);
 
-      ```
+     ```
 
 另外这一步比较重要的是会调用JDK nio下的注册方法sun.nio.ch.SelectorImpl 获取文件描述符注册选择事件,接下来就来拆解下注册流程
 
@@ -914,7 +913,7 @@ group()返回的是EventLoopGroup类型对象这里是NioEventLoopGroup
 
 register方法来自NioEventLoopGroup中在这里是调用继承方法来自MultithreadEventLoopGroup类型
 
-  ```java
+ ```java
 
 MultithreadEventLoopGroup类型中的register方法如下：
 
@@ -925,11 +924,11 @@ MultithreadEventLoopGroup类型中的register方法如下：
       return next().register(channel);
 
   }
- ```
+```
 
 
 先执行next在调用register方法我们再来看下next方法
- ```java
+```java
  @Override
 
   public EventLoop next() {
@@ -937,9 +936,9 @@ MultithreadEventLoopGroup类型中的register方法如下：
       return (EventLoop) super.next();
 
   }
- ```
+```
 next方法中调用父类型中的next，这里父类型是MultithreadEventExecutorGroup
- ```java
+```java
   @Override
 
   public EventExecutor next() {
@@ -947,7 +946,7 @@ next方法中调用父类型中的next，这里父类型是MultithreadEventExecu
       return chooser.next();
 
   }
- ```
+```
 使用EventExecutorChooser类型对象来帮忙选择事件执行器EventExecutor
 
 而EventExecutorChooser类型对象我们前面说过是通过DefaultEventExecutorChooserFactory类型工厂的工厂方法newChooser来创建的，
@@ -961,7 +960,7 @@ next()方法可以自行打开PowerOfTwoEventExecutorChooser类型和GenericEven
 register方法是来自事件执行器，在这里是子类型NioEventLoop
 
 可以继续看NioEventLoop中的register
- ```java
+```java
   @Override
 
   public ChannelFuture register(Channel channel) {
@@ -969,10 +968,10 @@ register方法是来自事件执行器，在这里是子类型NioEventLoop
       return register(new DefaultChannelPromise(channel, this));
 
   }
- ```
+```
 这里创建了一个DefaultChannelPromise类型对象来进行处理结果的回调
 
-  ```java
+ ```java
 
    @Override
 
@@ -985,13 +984,13 @@ register方法是来自事件执行器，在这里是子类型NioEventLoop
       return promise;
 
   }
-  ```
+ ```
 
 使用当前channel类型对象我们这里对应的是NioServerSocketChannel，获取到
 
 unsafe方法是来自NioServerSocketChannel的父类型AbstractNioChannel
 
-  ```java
+ ```java
 
   @Override
 
@@ -1000,10 +999,10 @@ unsafe方法是来自NioServerSocketChannel的父类型AbstractNioChannel
       return (NioUnsafe) super.unsafe();
 
   }
-  ```
+ ```
 
 这里继续调用父类型AbstractChannel的unsafe方法
- ```java
+```java
   @Override
 
   public Unsafe unsafe() {
@@ -1011,7 +1010,7 @@ unsafe方法是来自NioServerSocketChannel的父类型AbstractNioChannel
       return unsafe;
 
   }
- ```
+```
 
 
 
@@ -1022,7 +1021,7 @@ unsafe方法是来自NioServerSocketChannel的父类型AbstractNioChannel
 知道了Unsafe类型对象我们继续看register方法
 
 注册方法是调用NioMessageUnsafe类型的父类型AbstractUnsafe中的方法
- ```java
+```java
     @Override
 
       public final void register(EventLoop eventLoop, final ChannelPromise promise) {
@@ -1253,14 +1252,14 @@ private void register0(ChannelPromise promise) {
 
   }
 
- ```
+```
 
 //注册方法来自ServerSocketChannelImpl的父类型AbstractSelectableChannel
 
 
 
 用给定的选择器注册此通道，返回一个选择键。该方法首先验证该通道是否打开，以及给定的初始事件集合是否有效。如果该通道已经被给定的选择器注册，那么在将其兴趣设置为给定值后，将返回表示该注册的选择键。否则，该通道还没有被给定的选择器注册，因此在持有适当的锁时调用选择器的{AbstractSelector#register register}方法。结果键在返回之前被添加到该通道的键集。
- ```java
+```java
    public final SelectionKey register(Selector sel, int ops,
 
                       Object att)
@@ -1335,12 +1334,12 @@ private void register0(ChannelPromise promise) {
 
   }
 
- ```
+```
 
 
 
 //从所有选择键中找到与当前匹配selector相关联的SelectionKey对象
- ```java
+```java
    private SelectionKey findKey(Selector sel) {
 
       synchronized (keyLock) {
@@ -1436,7 +1435,7 @@ private void register0(ChannelPromise promise) {
   }
 
  
- ```
+```
 
 
 
@@ -1446,7 +1445,7 @@ private void register0(ChannelPromise promise) {
 通道注册完毕回到AbstractBootstrap的doBind方法接下来我们来看doBind方法中的doBind0
 
 通道的bind方法请求绑定到给定的SocketAddress并在操作完成后通知ChannelFuture绑定结果
- ```java
+```java
    private static void doBind0(
 
         final ChannelFuture regFuture, final Channel channel,
@@ -1481,10 +1480,10 @@ private void register0(ChannelPromise promise) {
 
   }
 
- ```
+```
 
 接下来看channl的bind方法先执行AbstractChannel类型中的doBind
- ```java
+```java
    @Override
 
   public ChannelFuture bind(SocketAddress localAddress, ChannelPromise promise) {
@@ -1492,7 +1491,7 @@ private void register0(ChannelPromise promise) {
       return pipeline.bind(localAddress, promise);
 
   }
- ```
+```
 
 
 
@@ -1500,7 +1499,7 @@ private void register0(ChannelPromise promise) {
 
 
 然后执行DefaultChannelPipeline的bind方法代码如下：
- ```java
+```java
 @Override
 
   public final ChannelFuture bind(SocketAddress localAddress, ChannelPromise promise) {
@@ -1510,9 +1509,9 @@ private void register0(ChannelPromise promise) {
   }
 
  
- ```
+```
 然后执行AbstractChannelHandlerContext的bind方法，代码如下：
- ```java
+```java
   @Override
 
   public ChannelFuture bind(final SocketAddress localAddress, final ChannelPromise promise) {
@@ -1595,12 +1594,12 @@ private void invokeBind(SocketAddress localAddress, ChannelPromise promise) {
 
   }
 
- ```
+```
 
 在我们系统里面有两个地方重写了bind一个是LoggingHandler一个是DefaultChannelPipeline
 
 先看下LoggingHandler方法的bind方法：
- ```java
+```java
   public void bind(ChannelHandlerContext ctx, SocketAddress localAddress, ChannelPromise promise) throws Exception {
 
       if (logger.isEnabled(internalLevel)) {
@@ -1614,7 +1613,7 @@ private void invokeBind(SocketAddress localAddress, ChannelPromise promise) {
   }
 
  
- ```
+```
 
 
 
@@ -1624,7 +1623,7 @@ private void invokeBind(SocketAddress localAddress, ChannelPromise promise) {
 这个绑定方法仅仅打印了日志，然后继续执行上下文绑定方法来触发下一个绑定事件
 
 然后看DefaultChannelPipeline的bind方法
- ```java
+```java
    @Override
 
       public void bind(
@@ -1725,10 +1724,10 @@ private void invokeBind(SocketAddress localAddress, ChannelPromise promise) {
 
  
 
- ```
+```
 
 模版方法doBind(SocketAddress localAddress)来自Channel子类型，这里是我们配置的channel的NioServerSocketChannel
- ```java
+```java
  
 
  @Override
@@ -1749,10 +1748,10 @@ private void invokeBind(SocketAddress localAddress, ChannelPromise promise) {
 
   }
 
- ```
+```
 
 当前实现的具体通道jdk nio通道为ServerSocketChannelImpl，绑定方法如下：
- ```java
+```java
   public ServerSocketChannel bind(SocketAddress var1, int var2) throws IOException {
 
       synchronized(this.lock) {
@@ -1805,14 +1804,14 @@ private void invokeBind(SocketAddress localAddress, ChannelPromise promise) {
 
  
 
- ```
+```
 
 Net类型中的绑定方法最终会调用native方法来绑定，如果还想要了解底层代码可以查看libnio模块不同的操作系统的实现是不同的
 
 
 
 backlog的默认值为 NetUtil.SOMAXCONN ，SOMAXCONN默认值获取方式如下：
- ```java
+```java
   SOMAXCONN = AccessController.doPrivileged(new PrivilegedAction<Integer>() {
 
         @Override
@@ -1893,6 +1892,6 @@ backlog的默认值为 NetUtil.SOMAXCONN ，SOMAXCONN默认值获取方式如下
 
       })
 
- ```
+```
 
  

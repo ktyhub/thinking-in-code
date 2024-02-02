@@ -62,9 +62,9 @@ AbstractBootstrap类型提供的方法
 
 IPV4中，0.0.0.0地址被用于表示一个无效的，未知的或者不可用的目标。
 
-\* 在服务器中，0.0.0.0指的是本机上的所有IPV4地址，如果一个主机有两个IP地址，192.168.1.1 和 10.1.2.1，并且该主机上的一个服务监听的地址是0.0.0.0,那么通过两个ip地址都能够访问该服务。
+* 在服务器中，0.0.0.0指的是本机上的所有IPV4地址，如果一个主机有两个IP地址，192.168.1.1 和 10.1.2.1，并且该主机上的一个服务监听的地址是0.0.0.0,那么通过两个ip地址都能够访问该服务。
 
-\* 在路由中，0.0.0.0表示的是默认路由，即当路由表中没有找到完全匹配的路由的时候所对应的路由。
+* 在路由中，0.0.0.0表示的是默认路由，即当路由表中没有找到完全匹配的路由的时候所对应的路由。
 
 用途总结：
 
@@ -99,17 +99,18 @@ IPV4中，0.0.0.0地址被用于表示一个无效的，未知的或者不可用
 ##   **Bootstrap客户端启动类**
 了解了服务端的启动类型扩展我们再来了解下客户端启动类型做了哪些扩展
 Bootstrap类型提供的方法
-|  方法                                                |  说明                                               |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| public Bootstrap resolver(AddressResolverGroup<?> resolver)  | 配置地址解析组，AddressResolver负责解析SocketAddress。它可以做一些地址转换工作。如Netty提供了RoundRobinInetAddressResolver，可以对下游服务集群进行轮询调用。 |
-| public Bootstrap remoteAddress(SocketAddress remoteAddress)  | 配置需要连接的远端地址当connect方法被调用时候会去连接此地址  |
-| public Bootstrap remoteAddress(String inetHost, int inetPort) | 配置需要连接的远端地址当connect方法被调用时候会去连接此地址  |
-| public Bootstrap remoteAddress(InetAddress inetHost, int inetPort) | 配置需要连接的远端地址当connect方法被调用时候会去连接此地址  |
-| public ChannelFuture connect()                               | 配置需要连接的远端地址当connect方法被调用时候会去连接此地址  |
-| public ChannelFuture connect(String inetHost, int inetPort)  | 配置需要连接的远端地址当connect方法被调用时候会去连接此地址  |
-| public ChannelFuture connect(InetAddress inetHost, int inetPort) | 配置需要连接的远端地址当connect方法被调用时候会去连接此地址  |
-| public ChannelFuture connect(SocketAddress remoteAddress)    | 配置需要连接的远端地址当connect方法被调用时候会去连接此地址  |
-| public ChannelFuture connect(SocketAddress remoteAddress, SocketAddress localAddress) | 配置需要连接的远端地址当connect方法被调用时候会去连接此地址  |
+
+| 方法                                                                                    | 说明                                                                                                            |
+|---------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|
+| public Bootstrap resolver(AddressResolverGroup<?> resolver)                           | 配置地址解析组，AddressResolver负责解析SocketAddress。它可以做一些地址转换工作。如Netty提供了RoundRobinInetAddressResolver，可以对下游服务集群进行轮询调用。 |
+| public Bootstrap remoteAddress(SocketAddress remoteAddress)                           | 配置需要连接的远端地址当connect方法被调用时候会去连接此地址                                                                             |
+| public Bootstrap remoteAddress(String inetHost, int inetPort)                         | 配置需要连接的远端地址当connect方法被调用时候会去连接此地址                                                                             |
+| public Bootstrap remoteAddress(InetAddress inetHost, int inetPort)                    | 配置需要连接的远端地址当connect方法被调用时候会去连接此地址                                                                             |
+| public ChannelFuture connect()                                                        | 配置需要连接的远端地址当connect方法被调用时候会去连接此地址                                                                             |
+| public ChannelFuture connect(String inetHost, int inetPort)                           | 配置需要连接的远端地址当connect方法被调用时候会去连接此地址                                                                             |
+| public ChannelFuture connect(InetAddress inetHost, int inetPort)                      | 配置需要连接的远端地址当connect方法被调用时候会去连接此地址                                                                             |
+| public ChannelFuture connect(SocketAddress remoteAddress)                             | 配置需要连接的远端地址当connect方法被调用时候会去连接此地址                                                                             |
+| public ChannelFuture connect(SocketAddress remoteAddress, SocketAddress localAddress) | 配置需要连接的远端地址当connect方法被调用时候会去连接此地址                                                                             |
 
 可以看到客户端启动类型主要扩展了两类方法，一个是用于地址解析的解析器，一个是用于连接远程地址的方法connect方法
 
