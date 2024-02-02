@@ -1,8 +1,9 @@
 #  **SpringApplication的run方法启动应用程序源码初探**
 ##  **SpringApplication简介**
 
-该类可**用于从Java主服务器引导** 和 **启动Spring应用程序方法** 。默认情况下，类将执行以下 **步骤** 来启动应用程序：
--  **创建** 一个适当的 **ApplicationContext实例** （取决于您的类路径）。
+该类可 **用于从Java主服务器引导** 和 **启动Spring应用程序方法** 。默认情况下，类将执行以下 **步骤** 来启动应用程序：
+  
+- **创建** 一个适当的 **ApplicationContext实例** （取决于您的类路径）。
 -  注册CommandLinePropertySource以将命令行参数传递给 Spring属性 。
 -  **刷新应用程序上下文** ，加载所有单例bean 。
 -  触发任何 CommandLineRunner Bean 。
