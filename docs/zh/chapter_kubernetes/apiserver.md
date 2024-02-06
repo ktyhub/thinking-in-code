@@ -1,7 +1,6 @@
 
 # apiserver的main方法
 
-
 这是一个Go语言的主程序文件，用于启动Kubernetes的API服务器。下面是对代码的详细解释：
 
 1. 首先，代码导入了一些必要的包，包括标准库的包（如`fmt`, `math/rand`, `os`, `time`）和一些Kubernetes特定的包（如`k8s.io/apiserver/pkg/server`, `k8s.io/kubernetes/cmd/kube-apiserver/app`, `k8s.io/kubernetes/cmd/kube-apiserver/app/options`等）。还有两个特殊的导入，它们的导入路径前面有一个下划线（`_`），这在Go中被称为“空白导入”，主要用于触发包级别的副作用，例如注册客户端的度量和版本度量。
