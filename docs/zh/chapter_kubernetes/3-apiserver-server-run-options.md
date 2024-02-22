@@ -103,7 +103,7 @@ func NewServerRunOptions() *ServerRunOptions {
 }
 ```
 
-##   server_run_options.go中的ServerRunOptions 配置对象初始化
+## server_run_options.go中的ServerRunOptions 配置对象初始化
 kubernetes的apiserver中的server_run_options.go文件中的ServerRunOptions结构体是一个通用服务器运行选项配置结构体，它包含了运行API服务器时的所有选项。
 
 ```go
@@ -167,7 +167,7 @@ func NewServerRunOptions() *ServerRunOptions {
 
 这个函数的返回值是一个指向`ServerRunOptions`结构体的指针，这个结构体包含了运行API服务器时的选项。
 
-### config.go中的NewConfig方法
+### config.go中的NewConfig方法创建默认配置
 
 NewConfig函数是在Go语言中创建一个新的Config结构体实例的方法。这个Config结构体包含了用于配置一个通用API服务器的所有必要信息。  在NewConfig函数中，首先创建一个新的Config实例，然后设置其默认值。这些默认值包括序列化器、读写端口、请求上下文映射器、处理器链构建函数、安全等待组、API组前缀、禁用的启动后钩子、健康检查等。
 
@@ -223,3 +223,20 @@ func NewConfig(codecs serializer.CodecFactory) *Config {
 | LongRunningFunc              | genericfilters.BasicLongRunningRequestCheck(sets.NewString("watch"), sets.NewString()) | 判断长时间运行请求的函数                      |
 
 这个表格包含了`NewConfig`方法中初始化的`Config`对象的字段名，初始化值，以及对这些字段的说明。
+
+
+
+### etcd.go中的NewEtcdOptions方法创建Etcd配置EtcdOptions
+
+```go
+func NewEtcdOptions(backendConfig *storagebackend.Config) *EtcdOptions {
+	return &EtcdOptions{
+		StorageConfig:           *backendConfig,
+		DefaultStorageMediaType: "application/json",
+		DeleteCollectionWorkers: 1,
+		EnableGarbageCollection: true,
+		EnableWatchCache:        true,
+		DefaultWatchCacheSize:   100,
+	}
+}
+```
