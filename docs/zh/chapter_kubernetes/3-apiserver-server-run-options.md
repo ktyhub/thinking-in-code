@@ -200,7 +200,7 @@ func NewConfig(codecs serializer.CodecFactory) *Config {
 ```
 
 
-`NewConfig`方法中初始化的`Config`对象的字段如下：
+`NewConfig`方法中初始化的`Config` 对象的字段如下：
 
 | 字段名                          | 初始化值                                                                                   | 说明                                |
 |------------------------------|----------------------------------------------------------------------------------------|-----------------------------------|
@@ -225,7 +225,6 @@ func NewConfig(codecs serializer.CodecFactory) *Config {
 这个表格包含了`NewConfig`方法中初始化的`Config`对象的字段名，初始化值，以及对这些字段的说明。
 
 
-
 ### etcd.go中的NewEtcdOptions方法创建Etcd配置EtcdOptions
 
 ```go
@@ -240,3 +239,5 @@ func NewEtcdOptions(backendConfig *storagebackend.Config) *EtcdOptions {
 	}
 }
 ```
+
+EtcdOptions 结构体
