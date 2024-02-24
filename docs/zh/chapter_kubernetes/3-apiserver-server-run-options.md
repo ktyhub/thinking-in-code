@@ -4,6 +4,7 @@ NewServerRunOptions方法在Kubernetes的apiserver中被用来创建一个新的
 这个实例包含了运行apiserver所需要的所有配置选项。
 
 这些选项包括：
+
 - 通用服务器运行选项
 - Etcd选项
 - 安全服务选项
@@ -49,6 +50,8 @@ NewServerRunOptions方法在Kubernetes的apiserver中被用来创建一个新的
 | EnableAggregatorRouting   | 是否启用聚合器路由                   |
 | MasterCount               | apiserver的数量                |
 | EndpointReconcilerType    | 端点协调器类型                     |
+
+`cmd/kube-apiserver/app/options/options.go` 中的NewServerRunOptions方法
 
 ```go
 // NewServerRunOptions creates a new ServerRunOptions object with default parameters
@@ -106,7 +109,6 @@ func NewServerRunOptions() *ServerRunOptions {
 ## server_run_options.go中的ServerRunOptions 配置对象初始化
 kubernetes的apiserver中的server_run_options.go文件中的ServerRunOptions结构体是一个通用服务器运行选项配置结构体，它包含了运行API服务器时的所有选项。
 
-```go
 ###  server_run_options.go中的ServerRunOptions 通用服务器运行选项配置结构体
 
 ```go
