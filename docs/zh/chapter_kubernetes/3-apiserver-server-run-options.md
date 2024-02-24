@@ -241,3 +241,17 @@ func NewEtcdOptions(backendConfig *storagebackend.Config) *EtcdOptions {
 ```
 
 EtcdOptions 结构体
+
+当然，以下是 `EtcdOptions` 结构体的字段以及它们的类型和描述：
+
+| 字段名 | 类型 | 描述 |
+| --- | --- | --- |
+| `StorageConfig` | `storagebackend.Config` | 用于配置存储后端的详细信息，如服务器列表、前缀、传输证书等 |
+| `EncryptionProviderConfigFilepath` | `string` | 用于指定加密提供者配置文件的路径 |
+| `EtcdServersOverrides` | `[]string` | 用于指定覆盖默认 Etcd 服务器的服务器列表 |
+| `DefaultStorageMediaType` | `string` | 用于指定存储媒体类型。默认值为 "application/json" |
+| `DeleteCollectionWorkers` | `int` | 用于指定删除集合操作的工作线程数 |
+| `EnableGarbageCollection` | `bool` | 用于指定是否启用垃圾收集 |
+| `EnableWatchCache` | `bool` | 用于指定是否启用 watch 缓存 |
+| `DefaultWatchCacheSize` | `int` | 用于指定默认的 watch 缓存大小 |
+| `WatchCacheSizes` | `[]string` | 用于指定每个资源的 watch 缓存大小 |
