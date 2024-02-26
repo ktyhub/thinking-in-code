@@ -171,6 +171,8 @@ func NewServerRunOptions() *ServerRunOptions {
 
 ### config.go中的NewConfig方法创建默认配置
 
+- 文件位置：`k8s.io/apiserver/pkg/server/config.go`
+
 NewConfig函数是在Go语言中创建一个新的Config结构体实例的方法。这个Config结构体包含了用于配置一个通用API服务器的所有必要信息。  在NewConfig函数中，首先创建一个新的Config实例，然后设置其默认值。这些默认值包括序列化器、读写端口、请求上下文映射器、处理器链构建函数、安全等待组、API组前缀、禁用的启动后钩子、健康检查等。
 
 ```go
@@ -201,7 +203,7 @@ func NewConfig(codecs serializer.CodecFactory) *Config {
 }
 ```
 
-
+#### Config结构体
 `NewConfig`方法中初始化的`Config` 对象的字段如下：
 
 | 字段名                          | 初始化值                                                                                   | 说明                                |
@@ -229,31 +231,123 @@ func NewConfig(codecs serializer.CodecFactory) *Config {
 
 ### etcd.go中的NewEtcdOptions方法创建Etcd配置EtcdOptions
 
+- 文件位置：`k8s.io/apiserver/pkg/server/options/etcd.go`
+
+对应代码如下所示：
 ```go
 func NewEtcdOptions(backendConfig *storagebackend.Config) *EtcdOptions {
 	return &EtcdOptions{
+		//StorageConfig：这个字段被设置为backendConfig的值，用于配置存储后端的详细信息。
 		StorageConfig:           *backendConfig,
+		//DefaultStorageMediaType：这个字段被设置为"application/json"，表示默认的存储媒体类型。
 		DefaultStorageMediaType: "application/json",
+		//DeleteCollectionWorkers：这个字段被设置为1，表示删除集合操作的工作线程数。
 		DeleteCollectionWorkers: 1,
-		EnableGarbageCollection: true,
+		//EnableGarbageCollection：这个字段被设置为true，表示是否启用垃圾收集。
+        EnableGarbageCollection: true,
+		//EnableWatchCache：这个字段被设置为true，表示是否启用watch缓存。
 		EnableWatchCache:        true,
+		//DefaultWatchCacheSize：这个字段被设置为100，表示默认的watch缓存大小
 		DefaultWatchCacheSize:   100,
 	}
 }
 ```
 
-EtcdOptions 结构体
+#### EtcdOptions 结构体
+每个字段的含义是什么呢，可以参考如下所示表格 ，以下是 `EtcdOptions` 结构体的字段以及它们的类型和描述：
 
-当然，以下是 `EtcdOptions` 结构体的字段以及它们的类型和描述：
+| 字段名                                | 类型                      | 描述                                 |
+|------------------------------------|-------------------------|------------------------------------|
+| `StorageConfig`                    | `storagebackend.Config` | 用于配置存储后端的详细信息，如服务器列表、前缀、传输证书等      |
+| `EncryptionProviderConfigFilepath` | `string`                | 用于指定加密提供者配置文件的路径                   |
+| `EtcdServersOverrides`             | `[]string`              | 用于指定覆盖默认 Etcd 服务器的服务器列表            |
+| `DefaultStorageMediaType`          | `string`                | 用于指定存储媒体类型。默认值为 "application/json" |
+| `DeleteCollectionWorkers`          | `int`                   | 用于指定删除集合操作的工作线程数                   |
+| `EnableGarbageCollection`          | `bool`                  | 用于指定是否启用垃圾收集                       |
+| `EnableWatchCache`                 | `bool`                  | 用于指定是否启用 watch 缓存                  |
+| `DefaultWatchCacheSize`            | `int`                   | 用于指定默认的 watch 缓存大小                 |
+| `WatchCacheSizes`                  | `[]string`              | 用于指定每个资源的 watch 缓存大小               |
 
-| 字段名 | 类型 | 描述 |
-| --- | --- | --- |
-| `StorageConfig` | `storagebackend.Config` | 用于配置存储后端的详细信息，如服务器列表、前缀、传输证书等 |
-| `EncryptionProviderConfigFilepath` | `string` | 用于指定加密提供者配置文件的路径 |
-| `EtcdServersOverrides` | `[]string` | 用于指定覆盖默认 Etcd 服务器的服务器列表 |
-| `DefaultStorageMediaType` | `string` | 用于指定存储媒体类型。默认值为 "application/json" |
-| `DeleteCollectionWorkers` | `int` | 用于指定删除集合操作的工作线程数 |
-| `EnableGarbageCollection` | `bool` | 用于指定是否启用垃圾收集 |
-| `EnableWatchCache` | `bool` | 用于指定是否启用 watch 缓存 |
-| `DefaultWatchCacheSize` | `int` | 用于指定默认的 watch 缓存大小 |
-| `WatchCacheSizes` | `[]string` | 用于指定每个资源的 watch 缓存大小 |
+
+### serving.go中创建安全配置SecureServingOptions
+
+- 文件位置：`pkg/kubeapiserver/options/serving.go`
+
+
+这个实例包含了用于启动一个安全（使用TLS）的API服务器所需的所有配置选项。
+
+
+对应方法的源码如下所示：
+ 
+```go
+func NewSecureServingOptions() *genericoptions.SecureServingOptions {
+	return &genericoptions.SecureServingOptions{
+		// 服务器绑定的IP地址。
+		BindAddress: net.ParseIP("0.0.0.0"),
+		//服务器绑定的端口号。
+		BindPort:    6443,
+		//服务器的证书信息，包括证书和密钥的文件路径。
+		ServerCert: genericoptions.GeneratableKeyCert{
+			PairName:      "apiserver",
+			CertDirectory: "/var/run/kubernetes",
+		},
+	}
+}
+```
+ 这些选项允许配置服务器以便在安全的环境中运行。
+ 
+ 
+#### SecureServingOptions结构体
+
+`SecureServingOptions` 是一个结构体，它包含了用于启动一个安全（使用TLS）的API服务器所需的所有配置选项。以下是 `SecureServingOptions` 结构体的字段以及它们的类型和描述：
+
+| 字段名         | 类型                                | 描述                                                                         |
+|-------------|-----------------------------------|----------------------------------------------------------------------------|
+| BindAddress | net.IP                            | 服务器绑定的IP地址。默认值为 "0.0.0.0"。                                                 |
+| BindPort    | int                               | 服务器绑定的端口号。默认值为 6443。                                                       |
+| ServerCert  | genericoptions.GeneratableKeyCert | 服务器的证书信息，包括证书和密钥的文件路径。默认的证书目录为 "/var/run/kubernetes"，默认的证书名称为 "apiserver"。 |
+| SNICertKeys | []genericoptions.SNICertKeyPair   | 用于支持SNI的证书和密钥的文件路径列表。默认为空列表。                                               |
+
+这些选项允许你配置服务器以便在安全的环境中运行，例如，你可以指定服务器的证书和密钥，以便服务器可以提供TLS连接。你还可以指定服务器应该绑定到的IP地址和端口。
+
+
+#### GeneratableKeyCert结构体
+
+`GeneratableKeyCert` 是一个结构体，它包含了生成证书和密钥所需的所有配置选项。以下是 `GeneratableKeyCert` 结构体的字段以及它们的类型和描述：
+
+| 字段名           | 类型      | 描述                                                                                              |
+|---------------|---------|-------------------------------------------------------------------------------------------------|
+| CertKey       | CertKey | 包含证书和密钥文件路径的结构体。                                                                                |
+| CACertFile    | string  | 可选的，包含证书链的文件路径。                                                                                 |
+| CertDirectory | string  | 将包含证书的目录。如果未明确设置证书和密钥，将使用此目录来推导出匹配的 "pair-name"。                                                |
+| PairName      | string  | 将与 CertDirectory 一起用来生成证书和密钥名称的名称。它将变为 CertDirectory/PairName.crt 和 CertDirectory/PairName.key。 |
+
+###  serving.go中创建非安全配置NewInsecureServingOptions
+
+ - 文件位置：`pkg/kubeapiserver/options/serving.go`
+
+
+`NewInsecureServingOptions` 函数用于创建一个新的 `InsecureServingOptions` 实例，这个实例包含了用于启动一个非安全（不使用TLS）的API服务器所需的所有配置选项。
+
+```go
+func NewInsecureServingOptions() *InsecureServingOptions {
+	return &InsecureServingOptions{
+		//服务器绑定的IP地址。
+		BindAddress: net.ParseIP("127.0.0.1"),
+		//服务器绑定的端口号。
+		BindPort:    8080,
+	}
+}
+```
+ 
+
+#### InsecureServingOptions结构体
+
+`InsecureServingOptions` 是一个结构体，它包含了用于启动一个非安全（不使用TLS）的API服务器所需的所有配置选项。以下是 `InsecureServingOptions` 结构体的字段以及它们的类型和描述：
+
+| 字段名         | 类型     | 描述                           |
+|-------------|--------|------------------------------|
+| BindAddress | net.IP | 服务器绑定的IP地址。默认值为 "127.0.0.1"。 |
+| BindPort    | int    | 服务器绑定的端口号。默认值为 8080。         |
+
+这些选项允许你配置服务器以便在非安全的环境中运行，例如，你可以指定服务器应该绑定到的IP地址和端口。
