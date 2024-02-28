@@ -1,57 +1,20 @@
-#  server_run_options.go中的NewServerRunOptions方法
-NewServerRunOptions方法在Kubernetes的apiserver中被用来创建一个新的ServerRunOptions实例。
+# 说明
 
-这个实例包含了运行apiserver所需要的所有配置选项。
+`NewServerRunOptions`方法在Kubernetes API服务器中起到了非常重要的作用。它负责创建一个新的`ServerRunOptions`实例，这个实例包含了运行API服务器所需的所有配置选项。
 
-这些选项包括：
+在Kubernetes API服务器的启动过程中，`NewServerRunOptions`方法会被调用，以初始化服务器的运行选项。这些选项包括通用服务器运行选项、Etcd选项、安全服务选项、非安全服务选项、审计选项、特性选项、准入选项、认证选项、授权选项、云提供商选项、存储序列化选项和API启用选项等。
 
-- 通用服务器运行选项
-- Etcd选项
-- 安全服务选项
-- 非安全服务选项
-- 审计选项
-- 特性选项
-- 准入选项
-- 认证选项
-- 授权选项
-- 云提供商选项
-- 存储序列化选项
-- API启用选项等等。
+这些选项的配置将影响API服务器的运行方式，包括服务器的绑定地址和端口、服务器的证书信息、支持SNI的证书和密钥的文件路径列表等。
 
-这个方法的主要作用是初始化这些选项，并将它们封装在一个ServerRunOptions对象中，以便于后续的使用和管理。
-具体参数内容如下表格所示：
+因此，`NewServerRunOptions`方法在整个程序中起到了关键的作用，它为API服务器的运行提供了必要的配置。
 
-| 参数                        | 说明                          |
-|---------------------------|-----------------------------|
-| GenericServerRunOptions   | 通用服务器运行选项，包括地址、端口、认证、授权等    |
-| Etcd                      | Etcd选项，包括地址、前缀、密钥文件等        |
-| SecureServing             | 安全服务选项，包括地址、端口、证书文件等        |
-| InsecureServing           | 非安全服务选项，包括地址、端口等            |
-| Audit                     | 审计选项，包括审计策略文件、审计日志文件等       |
-| Features                  | 特性选项，包括启用的特性列表              |
-| Admission                 | 准入选项，包括准入插件列表               |
-| Authentication            | 认证选项，包括认证方式、令牌文件、OIDC选项等    |
-| Authorization             | 授权选项，包括授权模式、Webhook配置等      |
-| CloudProvider             | 云提供商选项，包括云提供商名称、云配置文件路径等    |
-| StorageSerialization      | 存储序列化选项，包括存储媒体类型、默认存储版本等    |
-| APIEnablement             | API启用选项，包括运行时配置、API组、API版本等 |
-| AllowPrivileged           | 是否允许特权容器                    |
-| EnableLogsHandler         | 是否启用/logs处理程序               |
-| EventTTL                  | 事件的保留时间                     |
-| KubeletConfig             | Kubelet配置，包括地址类型、端口、超时等     |
-| KubernetesServiceNodePort | Kubernetes主服务的NodePort      |
-| MaxConnectionBytesPerSec  | 每秒最大连接字节数                   |
-| ServiceClusterIPRange     | 服务集群IP范围                    |
-| ServiceNodePortRange      | 服务NodePort范围                |
-| SSHKeyfile                | SSH密钥文件                     |
-| SSHUser                   | SSH用户                       |
-| ProxyClientCertFile       | 代理客户端证书文件                   |
-| ProxyClientKeyFile        | 代理客户端密钥文件                   |
-| EnableAggregatorRouting   | 是否启用聚合器路由                   |
-| MasterCount               | apiserver的数量                |
-| EndpointReconcilerType    | 端点协调器类型                     |
+##  server_run_options.go中的NewServerRunOptions方法
 
-`cmd/kube-apiserver/app/options/options.go` 中的NewServerRunOptions方法
+**位置：** `cmd/kube-apiserver/app/options/options.go`
+
+**说明：** NewServerRunOptions方法在Kubernetes的apiserver中被用来创建一个新的ServerRunOptions实例。
+
+**源码：**
 
 ```go
 // NewServerRunOptions creates a new ServerRunOptions object with default parameters
@@ -59,16 +22,27 @@ func NewServerRunOptions() *ServerRunOptions {
 	s := ServerRunOptions{
 		// 通用服务器运行选项，包括地址、端口、认证、授权等
 		GenericServerRunOptions: genericoptions.NewServerRunOptions(),
+		// Etcd选项
 		Etcd:                 genericoptions.NewEtcdOptions(storagebackend.NewDefaultConfig(kubeoptions.DefaultEtcdPathPrefix, nil)),
+		//安全服务选项
 		SecureServing:        kubeoptions.NewSecureServingOptions(),
+		//非安全服务选项
 		InsecureServing:      kubeoptions.NewInsecureServingOptions(),
+		//审计选项
 		Audit:                genericoptions.NewAuditOptions(),
+		//特性选项
 		Features:             genericoptions.NewFeatureOptions(),
+		//准入选项
 		Admission:            genericoptions.NewAdmissionOptions(),
+		//认证选项
 		Authentication:       kubeoptions.NewBuiltInAuthenticationOptions().WithAll(),
+		//授权选项
 		Authorization:        kubeoptions.NewBuiltInAuthorizationOptions(),
+		//云提供商选项
 		CloudProvider:        kubeoptions.NewCloudProviderOptions(),
+		//存储序列化选项
 		StorageSerialization: kubeoptions.NewStorageSerializationOptions(),
+		//API启用选项
 		APIEnablement:        kubeoptions.NewAPIEnablementOptions(),
 
 		EnableLogsHandler:      true,
@@ -105,11 +79,120 @@ func NewServerRunOptions() *ServerRunOptions {
 	return &s
 }
 ```
+ 
+这个实例包含了运行apiserver所需要的所有配置选项。
+
+###  options.go中的ServerRunOptions结构体
+
+**位置：** `cmd/kube-apiserver/app/options/options.go`
+
+**说明：** 这个类型是一个结构体，它包含了运行API服务器时的所有选项。
+
+**源码：**
+
+```go
+type ServerRunOptions struct {
+	GenericServerRunOptions *genericoptions.ServerRunOptions
+	Etcd                    *genericoptions.EtcdOptions
+	SecureServing           *genericoptions.SecureServingOptions
+	InsecureServing         *kubeoptions.InsecureServingOptions
+	Audit                   *genericoptions.AuditOptions
+	Features                *genericoptions.FeatureOptions
+	Admission               *genericoptions.AdmissionOptions
+	Authentication          *kubeoptions.BuiltInAuthenticationOptions
+	Authorization           *kubeoptions.BuiltInAuthorizationOptions
+	CloudProvider           *kubeoptions.CloudProviderOptions
+	StorageSerialization    *kubeoptions.StorageSerializationOptions
+	APIEnablement           *kubeoptions.APIEnablementOptions
+
+	AllowPrivileged           bool
+	EnableLogsHandler         bool
+	EventTTL                  time.Duration
+	KubeletConfig             kubeletclient.KubeletClientConfig
+	KubernetesServiceNodePort int
+	MaxConnectionBytesPerSec  int64
+	ServiceClusterIPRange     net.IPNet // TODO: make this a list
+	ServiceNodePortRange      utilnet.PortRange
+	SSHKeyfile                string
+	SSHUser                   string
+
+	ProxyClientCertFile string
+	ProxyClientKeyFile  string
+
+	EnableAggregatorRouting bool
+
+	MasterCount            int
+	EndpointReconcilerType string
+}
+```
+
+具体参数内容如下表格所示：
+
+| 参数                        | 说明                          |
+|---------------------------|-----------------------------|
+| GenericServerRunOptions   | 通用服务器运行选项，包括地址、端口、认证、授权等    |
+| Etcd                      | Etcd选项，包括地址、前缀、密钥文件等        |
+| SecureServing             | 安全服务选项，包括地址、端口、证书文件等        |
+| InsecureServing           | 非安全服务选项，包括地址、端口等            |
+| Audit                     | 审计选项，包括审计策略文件、审计日志文件等       |
+| Features                  | 特性选项，包括启用的特性列表              |
+| Admission                 | 准入选项，包括准入插件列表               |
+| Authentication            | 认证选项，包括认证方式、令牌文件、OIDC选项等    |
+| Authorization             | 授权选项，包括授权模式、Webhook配置等      |
+| CloudProvider             | 云提供商选项，包括云提供商名称、云配置文件路径等    |
+| StorageSerialization      | 存储序列化选项，包括存储媒体类型、默认存储版本等    |
+| APIEnablement             | API启用选项，包括运行时配置、API组、API版本等 |
+| AllowPrivileged           | 是否允许特权容器                    |
+| EnableLogsHandler         | 是否启用/logs处理程序               |
+| EventTTL                  | 事件的保留时间                     |
+| KubeletConfig             | Kubelet配置，包括地址类型、端口、超时等     |
+| KubernetesServiceNodePort | Kubernetes主服务的NodePort      |
+| MaxConnectionBytesPerSec  | 每秒最大连接字节数                   |
+| ServiceClusterIPRange     | 服务集群IP范围                    |
+| ServiceNodePortRange      | 服务NodePort范围                |
+| SSHKeyfile                | SSH密钥文件                     |
+| SSHUser                   | SSH用户                       |
+| ProxyClientCertFile       | 代理客户端证书文件                   |
+| ProxyClientKeyFile        | 代理客户端密钥文件                   |
+| EnableAggregatorRouting   | 是否启用聚合器路由                   |
+| MasterCount               | apiserver的数量                |
+| EndpointReconcilerType    | 端点协调器类型                     |
 
 ## server_run_options.go中的ServerRunOptions 配置对象初始化
-kubernetes的apiserver中的server_run_options.go文件中的ServerRunOptions结构体是一个通用服务器运行选项配置结构体，它包含了运行API服务器时的所有选项。
 
-###  server_run_options.go中的ServerRunOptions 通用服务器运行选项配置结构体
+**位置：** `k8s.io/apiserver/pkg/server/options/server_run_options.go`
+
+**说明：** `NewServerRunOptions`是一个函数，它创建并返回一个新的`ServerRunOptions`对象，并为其设置默认参数。这个函数不接受任何参数。
+
+**源码：**
+
+```go
+func NewServerRunOptions() *ServerRunOptions {
+	//在这个函数中，首先创建了一个新的`server.Config`对象，并将其默认值赋给了`defaults`变量。然后，使用这些默认值来初始化新的`ServerRunOptions`对象。
+    //具体逻辑看 ：config.go中的NewConfig方法
+	defaults := server.NewConfig(serializer.CodecFactory{})
+	return &ServerRunOptions{
+		//- `MaxRequestsInFlight`：非变更请求在给定时间内的最大数量。当服务器超过此数时，它会拒绝请求。零表示没有限制。
+		MaxRequestsInFlight:         defaults.MaxRequestsInFlight,
+		//- `MaxMutatingRequestsInFlight`：变更请求在给定时间内的最大数量。当服务器超过此数时，它会拒绝请求。零表示没有限制。
+		MaxMutatingRequestsInFlight: defaults.MaxMutatingRequestsInFlight,
+		//- `RequestTimeout`：处理程序必须保持请求打开的持续时间，超过此时间后，请求将超时。这是请求的默认超时时间，但某些特定类型的请求可能会被如`--min-request-timeout`这样的标志覆盖。
+        RequestTimeout:              defaults.RequestTimeout,
+		//- `MinRequestTimeout`：处理程序必须保持请求打开的最小秒数，超过此时间后，请求将超时。目前只有观察请求处理程序遵守这个字段，它选择一个大于这个数的随机值作为连接超时，以分散负载。
+        MinRequestTimeout:           defaults.MinRequestTimeout,
+	}
+}
+```
+
+这个函数的返回值是一个指向`ServerRunOptions`结构体的指针，这个结构体包含了运行API服务器时的选项。
+
+### server_run_options.go中的ServerRunOptions 通用服务器运行选项配置结构体
+
+**位置：** `k8s.io/apiserver/pkg/server/options/server_run_options.go`
+
+**说明：** kubernetes的apiserver中的server_run_options.go文件中的ServerRunOptions结构体是一个通用服务器运行选项配置结构体，它包含了运行API服务器时的所有选项。
+
+**源码：**
 
 ```go
 // ServerRunOptions contains the options while running a generic api server.
@@ -132,6 +215,7 @@ type ServerRunOptions struct {
 	TargetRAMMB                 int
 }
 ```
+
 先来看一下ServerRunOptions结构体的定义：
 
 | 属性名                         | 类型            | 描述                    |
@@ -145,35 +229,14 @@ type ServerRunOptions struct {
 | MinRequestTimeout           | int           | 处理程序必须保持请求打开的最小秒数     |
 | TargetRAMMB                 | int           | 以MB为单位的apiserver的内存限制 |
  
-### NewServerRunOptions方法创建一个新的ServerRunOptions对象
+ 
+## 配置信息config.go中的NewConfig方法创建默认配置
 
-`NewServerRunOptions`是一个函数，它创建并返回一个新的`ServerRunOptions`对象，并为其设置默认参数。这个函数不接受任何参数。
+**位置：** `k8s.io/apiserver/pkg/server/config.go`
 
-```go
-func NewServerRunOptions() *ServerRunOptions {
-	//在这个函数中，首先创建了一个新的`server.Config`对象，并将其默认值赋给了`defaults`变量。然后，使用这些默认值来初始化新的`ServerRunOptions`对象。
-    //具体逻辑看 ：config.go中的NewConfig方法
-	defaults := server.NewConfig(serializer.CodecFactory{})
-	return &ServerRunOptions{
-		//- `MaxRequestsInFlight`：非变更请求在给定时间内的最大数量。当服务器超过此数时，它会拒绝请求。零表示没有限制。
-		MaxRequestsInFlight:         defaults.MaxRequestsInFlight,
-		//- `MaxMutatingRequestsInFlight`：变更请求在给定时间内的最大数量。当服务器超过此数时，它会拒绝请求。零表示没有限制。
-		MaxMutatingRequestsInFlight: defaults.MaxMutatingRequestsInFlight,
-		//- `RequestTimeout`：处理程序必须保持请求打开的持续时间，超过此时间后，请求将超时。这是请求的默认超时时间，但某些特定类型的请求可能会被如`--min-request-timeout`这样的标志覆盖。
-        RequestTimeout:              defaults.RequestTimeout,
-		//- `MinRequestTimeout`：处理程序必须保持请求打开的最小秒数，超过此时间后，请求将超时。目前只有观察请求处理程序遵守这个字段，它选择一个大于这个数的随机值作为连接超时，以分散负载。
-        MinRequestTimeout:           defaults.MinRequestTimeout,
-	}
-}
-```
+**说明：** NewConfig函数是在Go语言中创建一个新的Config结构体实例的方法。这个Config结构体包含了用于配置一个通用API服务器的所有必要信息。  在NewConfig函数中，首先创建一个新的Config实例，然后设置其默认值。这些默认值包括序列化器、读写端口、请求上下文映射器、处理器链构建函数、安全等待组、API组前缀、禁用的启动后钩子、健康检查等。
 
-这个函数的返回值是一个指向`ServerRunOptions`结构体的指针，这个结构体包含了运行API服务器时的选项。
-
-### config.go中的NewConfig方法创建默认配置
-
-- 文件位置：`k8s.io/apiserver/pkg/server/config.go`
-
-NewConfig函数是在Go语言中创建一个新的Config结构体实例的方法。这个Config结构体包含了用于配置一个通用API服务器的所有必要信息。  在NewConfig函数中，首先创建一个新的Config实例，然后设置其默认值。这些默认值包括序列化器、读写端口、请求上下文映射器、处理器链构建函数、安全等待组、API组前缀、禁用的启动后钩子、健康检查等。
+**源码：**
 
 ```go
 // NewConfig returns a Config struct with the default values
@@ -203,7 +266,7 @@ func NewConfig(codecs serializer.CodecFactory) *Config {
 }
 ```
 
-#### Config结构体
+### Config结构体
 `NewConfig`方法中初始化的`Config` 对象的字段如下：
 
 | 字段名                          | 初始化值                                                                                   | 说明                                |
@@ -229,11 +292,14 @@ func NewConfig(codecs serializer.CodecFactory) *Config {
 这个表格包含了`NewConfig`方法中初始化的`Config`对象的字段名，初始化值，以及对这些字段的说明。
 
 
-### etcd.go中的NewEtcdOptions方法创建Etcd配置EtcdOptions
+## etcd.go中的NewEtcdOptions方法创建Etcd配置EtcdOptions
 
-- 文件位置：`k8s.io/apiserver/pkg/server/options/etcd.go`
+**位置：** `k8s.io/apiserver/pkg/server/options/etcd.go`
 
-对应代码如下所示：
+**说明：** 这个方法用于创建一个新的`EtcdOptions`实例，这个实例包含了用于配置etcd存储后端的所有选项。
+
+**源码：**
+
 ```go
 func NewEtcdOptions(backendConfig *storagebackend.Config) *EtcdOptions {
 	return &EtcdOptions{
@@ -252,8 +318,7 @@ func NewEtcdOptions(backendConfig *storagebackend.Config) *EtcdOptions {
 	}
 }
 ```
-
-#### EtcdOptions 结构体
+### EtcdOptions 结构体
 每个字段的含义是什么呢，可以参考如下所示表格 ，以下是 `EtcdOptions` 结构体的字段以及它们的类型和描述：
 
 | 字段名                                | 类型                      | 描述                                 |
@@ -269,16 +334,14 @@ func NewEtcdOptions(backendConfig *storagebackend.Config) *EtcdOptions {
 | `WatchCacheSizes`                  | `[]string`              | 用于指定每个资源的 watch 缓存大小               |
 
 
-### serving.go中创建安全配置SecureServingOptions
+## serving.go中创建安全配置SecureServingOptions
 
-- 文件位置：`pkg/kubeapiserver/options/serving.go`
+**位置：** `pkg/kubeapiserver/options/serving.go`
 
+**说明：** 这个方法用于创建一个新的`SecureServingOptions`实例，这个实例包含了用于启动一个安全（使用TLS）的API服务器所需的所有配置选项。
 
-这个实例包含了用于启动一个安全（使用TLS）的API服务器所需的所有配置选项。
+**源码：**
 
-
-对应方法的源码如下所示：
- 
 ```go
 func NewSecureServingOptions() *genericoptions.SecureServingOptions {
 	return &genericoptions.SecureServingOptions{
@@ -294,10 +357,9 @@ func NewSecureServingOptions() *genericoptions.SecureServingOptions {
 	}
 }
 ```
- 这些选项允许配置服务器以便在安全的环境中运行。
+这些选项允许配置服务器以便在安全的环境中运行。
  
- 
-#### SecureServingOptions结构体
+### SecureServingOptions结构体
 
 `SecureServingOptions` 是一个结构体，它包含了用于启动一个安全（使用TLS）的API服务器所需的所有配置选项。以下是 `SecureServingOptions` 结构体的字段以及它们的类型和描述：
 
@@ -310,8 +372,7 @@ func NewSecureServingOptions() *genericoptions.SecureServingOptions {
 
 这些选项允许你配置服务器以便在安全的环境中运行，例如，你可以指定服务器的证书和密钥，以便服务器可以提供TLS连接。你还可以指定服务器应该绑定到的IP地址和端口。
 
-
-#### GeneratableKeyCert结构体
+### GeneratableKeyCert结构体
 
 `GeneratableKeyCert` 是一个结构体，它包含了生成证书和密钥所需的所有配置选项。以下是 `GeneratableKeyCert` 结构体的字段以及它们的类型和描述：
 
@@ -322,9 +383,9 @@ func NewSecureServingOptions() *genericoptions.SecureServingOptions {
 | CertDirectory | string  | 将包含证书的目录。如果未明确设置证书和密钥，将使用此目录来推导出匹配的 "pair-name"。                                                |
 | PairName      | string  | 将与 CertDirectory 一起用来生成证书和密钥名称的名称。它将变为 CertDirectory/PairName.crt 和 CertDirectory/PairName.key。 |
 
-###  serving.go中创建非安全配置NewInsecureServingOptions
+##  serving.go中创建非安全配置NewInsecureServingOptions
 
- - 文件位置：`pkg/kubeapiserver/options/serving.go`
+**位置：** `pkg/kubeapiserver/options/serving.go`
 
 
 `NewInsecureServingOptions` 函数用于创建一个新的 `InsecureServingOptions` 实例，这个实例包含了用于启动一个非安全（不使用TLS）的API服务器所需的所有配置选项。
@@ -339,9 +400,8 @@ func NewInsecureServingOptions() *InsecureServingOptions {
 	}
 }
 ```
- 
 
-#### InsecureServingOptions结构体
+### InsecureServingOptions结构体
 
 `InsecureServingOptions` 是一个结构体，它包含了用于启动一个非安全（不使用TLS）的API服务器所需的所有配置选项。以下是 `InsecureServingOptions` 结构体的字段以及它们的类型和描述：
 
@@ -351,3 +411,23 @@ func NewInsecureServingOptions() *InsecureServingOptions {
 | BindPort    | int    | 服务器绑定的端口号。默认值为 8080。         |
 
 这些选项允许你配置服务器以便在非安全的环境中运行，例如，你可以指定服务器应该绑定到的IP地址和端口。
+
+## audit.go的NewAuditOptions方法
+
+**位置：** `k8s.io/apiserver/pkg/server/options/audit.go`
+
+**说明**
+
+**源码：**
+
+```go
+func NewAuditOptions() *AuditOptions {
+	return &AuditOptions{
+		WebhookOptions: AuditWebhookOptions{
+			Mode:        pluginwebhook.ModeBatch,
+			BatchConfig: pluginwebhook.NewDefaultBatchBackendConfig(),
+		},
+		LogOptions: AuditLogOptions{Format: pluginlog.FormatJson},
+	}
+}
+```
