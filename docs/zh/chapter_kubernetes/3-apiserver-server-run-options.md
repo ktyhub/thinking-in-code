@@ -386,10 +386,8 @@ func NewSecureServingOptions() *genericoptions.SecureServingOptions {
 ##  serving.go中创建非安全配置NewInsecureServingOptions
 
 **位置：** `pkg/kubeapiserver/options/serving.go`
-
-
-`NewInsecureServingOptions` 函数用于创建一个新的 `InsecureServingOptions` 实例，这个实例包含了用于启动一个非安全（不使用TLS）的API服务器所需的所有配置选项。
-
+**说明：** `NewInsecureServingOptions` 函数用于创建一个新的 `InsecureServingOptions` 实例，这个实例包含了用于启动一个非安全（不使用TLS）的API服务器所需的所有配置选项。
+**源码：**
 ```go
 func NewInsecureServingOptions() *InsecureServingOptions {
 	return &InsecureServingOptions{
@@ -418,16 +416,154 @@ func NewInsecureServingOptions() *InsecureServingOptions {
 
 **说明**
 
+`NewAuditOptions`方法用于创建一个新的`AuditOptions`实例。这个实例包含了用于配置API服务器审计功能的所有选项。
+
+在这个方法中，初始化了`WebhookOptions`和`LogOptions`：
+
+- `WebhookOptions`：用于配置审计Webhook的选项。默认模式设置为批处理模式，批处理配置使用默认的批处理后端配置。
+- `LogOptions`：用于配置审计日志的选项。默认的日志格式设置为JSON。
+
+这些选项允许你配置API服务器的审计功能，例如，你可以指定审计日志的格式，或者审计Webhook的工作模式等。
+
 **源码：**
 
 ```go
 func NewAuditOptions() *AuditOptions {
 	return &AuditOptions{
+		//用于配置审计Webhook的选项。默认模式设置为批处理模式，批处理配置使用默认的批处理后端配置
 		WebhookOptions: AuditWebhookOptions{
 			Mode:        pluginwebhook.ModeBatch,
 			BatchConfig: pluginwebhook.NewDefaultBatchBackendConfig(),
 		},
+		//用于配置审计日志的选项。默认的日志格式设置为JSON
 		LogOptions: AuditLogOptions{Format: pluginlog.FormatJson},
 	}
 }
 ```
+
+## feature.go中的NewFeatureOptions方法创建功能配置
+
+**位置：** `k8s.io/apiserver/pkg/server/options/feature.go`
+
+**说明：**
+
+`NewFeatureOptions`方法位于`k8s.io/apiserver/pkg/server/options/feature.go`文件中，它用于创建一个新的`FeatureOptions`实例。这个实例包含了用于配置API服务器功能的所有选项。
+
+在这个方法中，首先调用`server.NewConfig(serializer.CodecFactory{})`方法创建一个新的`server.Config`对象，并将其默认值赋给了`defaults`变量。然后，使用这些默认值来初始化新的`FeatureOptions`对象。
+
+**源码：**
+```go
+
+func NewFeatureOptions() *FeatureOptions {
+	defaults := server.NewConfig(serializer.CodecFactory{})
+
+	return &FeatureOptions{
+		//一个布尔值，表示是否启用性能分析。默认值从`server.Config`对象中获取。
+		EnableProfiling:           defaults.EnableProfiling,
+		//一个布尔值，表示是否启用争用分析。默认值从`server.Config`对象中获取。
+		EnableContentionProfiling: defaults.EnableContentionProfiling,
+		//一个布尔值，表示是否启用Swagger UI。默认值从`server.Config`对象中获取。
+		EnableSwaggerUI:           defaults.EnableSwaggerUI,
+	}
+}
+```
+这些选项允许你配置API服务器的各种功能，例如，你可以启用或禁用性能分析，争用分析，或Swagger UI。
+
+
+## admission.go中的NewAdmissionOptions方法
+
+**位置：**   `k8s.io/apiserver/pkg/server/options/admission.go`
+
+**说明：**
+
+`NewAdmissionOptions`方法位于`admission.go`文件中，它用于创建一个新的`AdmissionOptions`实例。这个实例包含了用于配置API服务器准入控制的所有选项。
+
+在这个方法中，首先创建一个新的`AdmissionOptions`对象，并初始化其`Plugins`字段为一个新的`admission.Plugins`实例。
+
+然后
+
+- 设置`PluginNames`字段为空字符串切片.
+- `RecommendedPluginOrder`字段为一个包含了推荐的准入控制插件顺序的字符串切片.
+- `DefaultOffPlugins`字段为一个包含了默认关闭的准入控制插件的字符串切片。
+- 最后，调用`server.RegisterAllAdmissionPlugins`方法注册所有的准入控制插件。
+
+**源码：**
+
+```go
+func NewAdmissionOptions() *AdmissionOptions {
+	options := &AdmissionOptions{
+		//一个`admission.Plugins`实例，用于存储所有的准入控制插件。
+		Plugins:     admission.NewPlugins(),
+		//一个字符串切片，用于存储启用的准入控制插件的名称。
+		PluginNames: []string{},
+		// This list is mix of mutating admission plugins and validating
+		// admission plugins. The apiserver always runs the validating ones
+		// after all the mutating ones, so their relative order in this list
+		// doesn't matter.
+		//一个字符串切片，用于存储推荐的准入控制插件的执行顺序。
+		RecommendedPluginOrder: []string{lifecycle.PluginName, initialization.PluginName, mutatingwebhook.PluginName, validatingwebhook.PluginName},
+		//一个字符串切片，用于存储默认关闭的准入控制插件的名称。
+		DefaultOffPlugins:      []string{initialization.PluginName, mutatingwebhook.PluginName, validatingwebhook.PluginName},
+	}
+	server.RegisterAllAdmissionPlugins(options.Plugins)
+	return options
+}
+```
+这些选项允许你配置API服务器的准入控制，例如，你可以选择启用或禁用某个准入控制插件，或者改变准入控制插件的执行顺序。
+
+
+
+## NewBuiltInAuthenticationOptions方法创建内置认证配置
+
+**位置：** `pkg/kubeapiserver/options/authentication.go`
+
+**说明：** 
+
+`NewBuiltInAuthenticationOptions`方法位于`authentication.go`文件中，它用于创建一个新的`BuiltInAuthenticationOptions`实例。这个实例包含了用于配置API服务器内置认证选项的所有设置。
+
+在这个方法中:
+
+- 创建一个新的`BuiltInAuthenticationOptions`对象
+- 并设置其`TokenSuccessCacheTTL`字段为10秒，`TokenFailureCacheTTL`字段为0秒。
+- 这两个字段分别用于设置成功和失败的token在缓存中的存活时间。
+
+  
+这些选项允许你配置API服务器的内置认证选项，例如，你可以设置成功和失败的token在缓存中的存活时间。
+
+**源码：**
+
+```go
+func NewBuiltInAuthenticationOptions() *BuiltInAuthenticationOptions {
+	return &BuiltInAuthenticationOptions{
+		//一个时间间隔，表示成功的token在缓存中的存活时间。
+		TokenSuccessCacheTTL: 10 * time.Second,
+		//一个时间间隔，表示失败的token在缓存中的存活时间。
+		TokenFailureCacheTTL: 0 * time.Second,
+	}
+}
+```
+
+
+
+
+## NewBuiltInAuthorizationOptions方法创建内置授权配置
+
+**位置：** `pkg/kubeapiserver/options/authorization.go`
+
+**说明：** 
+
+**源码：**
+
+```go
+func NewBuiltInAuthorizationOptions() *BuiltInAuthorizationOptions {
+	return &BuiltInAuthorizationOptions{
+		Mode: authzmodes.ModeAlwaysAllow,
+		WebhookCacheAuthorizedTTL:   5 * time.Minute,
+		WebhookCacheUnauthorizedTTL: 30 * time.Second,
+	}
+}
+```
+
+
+
+ 
