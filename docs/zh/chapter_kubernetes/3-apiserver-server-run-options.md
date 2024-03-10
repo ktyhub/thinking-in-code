@@ -550,20 +550,115 @@ func NewBuiltInAuthenticationOptions() *BuiltInAuthenticationOptions {
 
 **位置：** `pkg/kubeapiserver/options/authorization.go`
 
-**说明：** 
+**说明：**
+NewBuiltInAuthorizationOptions函数创建一个新的BuiltInAuthorizationOptions实例，并设置了上述参数的默认值。然后返回这个新创建的实例的指针。这个函数通常在初始化服务器配置时被调用，以设置授权选项的默认值。
 
 **源码：**
 
 ```go
 func NewBuiltInAuthorizationOptions() *BuiltInAuthorizationOptions {
 	return &BuiltInAuthorizationOptions{
+		//Mode：授权模式，其默认值为authzmodes.ModeAlwaysAllow，表示默认允许所有操作。
 		Mode: authzmodes.ModeAlwaysAllow,
+		//WebhookCacheAuthorizedTTL：授权的webhook响应的缓存持续时间，默认为5分钟。
 		WebhookCacheAuthorizedTTL:   5 * time.Minute,
+		//WebhookCacheUnauthorizedTTL：未授权的webhook响应的缓存持续时间，默认为30秒
 		WebhookCacheUnauthorizedTTL: 30 * time.Second,
 	}
 }
 ```
 
 
+## NewStorageSerializationOptions 
 
+**位置：** `pkg/kubeapiserver/options/storage_versions.go`
+
+**说明：**
+NewStorageSerializationOptions函数创建一个新的StorageSerializationOptions实例，并设置了上述参数的默认值。然后返回这个新创建的实例的指针。这个函数通常在初始化存储序列化选项时被调用，以设置默认的存储版本
+
+**源码：**
  
+```go
+func NewStorageSerializationOptions() *StorageSerializationOptions {
+	return &StorageSerializationOptions{
+		//DefaultStorageVersions：默认的存储版本，其值由legacyscheme.Registry.AllPreferredGroupVersions()函数返回，表示所有首选的组版本。
+		DefaultStorageVersions: legacyscheme.Registry.AllPreferredGroupVersions(),
+		//StorageVersions：存储版本，其值也由legacyscheme.Registry.AllPreferredGroupVersions()函数返回，表示所有首选的组版本。
+		StorageVersions:        legacyscheme.Registry.AllPreferredGroupVersions(),
+	}
+}
+```
+
+
+## NewStorageSerializationOptions
+
+**位置：** `cmd/kube-apiserver/app/options/plugins.go`
+
+**说明：**
+准入插件（Admission Plugins）是Kubernetes中的一种机制，它们可以拦截、修改或拒绝API服务器处理的请求。这些插件在API请求持久化到etcd之前运行，因此它们可以实施各种自定义的行为和策略，例如安全性、资源配额和默认值等。
+**源码：**
+
+```go
+
+// RegisterAllAdmissionPlugins registers all admission plugins
+//RegisterAllAdmissionPlugins函数接受一个指向admission.Plugins类型的指针作为参数。admission.Plugins类型是一个包含所有准入插件的注册表
+//在RegisterAllAdmissionPlugins函数中，每个准入插件都有一个对应的Register函数被调用，这些Register函数将插件注册到传入的admission.Plugins实例中。例如，admit.Register(plugins)将admit插件注册到插件列表中，alwayspullimages.Register(plugins)将alwayspullimages插件注册到插件列表中，以此类推
+func RegisterAllAdmissionPlugins(plugins *admission.Plugins) {
+	admit.Register(plugins)
+	//alwayspullimages.Register(plugins)：这行代码注册了AlwaysPullImages准入插件。AlwaysPullImages插件可以确保每个新创建的Pod总是从镜像仓库拉取最新的镜像，即使节点上已经存在相同的镜像。这可以防止使用可能已经过时或者包含安全漏洞的镜像
+	alwayspullimages.Register(plugins)
+	//antiaffinity.Register(plugins)：这行代码注册了AntiAffinity准入插件。AntiAffinity插件可以确保在同一个节点上不会运行具有相同标签的Pod，这有助于在节点故障时提高应用的可用性
+	antiaffinity.Register(plugins)
+	//`defaulttolerationseconds.Register(plugins)`：这行代码注册了DefaultTolerationSeconds准入插件。DefaultTolerationSeconds插件为每个新创建的Pod添加默认的容忍时间，这可以控制Pod在节点出现问题时的驱逐行为。
+	defaulttolerationseconds.Register(plugins)
+	//`deny.Register(plugins)`：这行代码注册了Deny准入插件。Deny插件可以拒绝所有的请求，通常用于测试。
+	deny.Register(plugins)
+	//`eventratelimit.Register(plugins)`：这行代码注册了EventRateLimit准入插件。EventRateLimit插件可以限制每个用户或者每个命名空间的事件产生速率，防止事件洪水攻击。
+    eventratelimit.Register(plugins)
+	//`exec.Register(plugins)`：这行代码注册了Exec准入插件。Exec插件可以控制哪些用户可以在Pod中执行命令。
+    exec.Register(plugins)
+	//`extendedresourcetoleration.Register(plugins)`：这行代码注册了ExtendedResourceToleration准入插件。ExtendedResourceToleration插件可以自动为使用扩展资源的Pod添加相应的容忍度，使得这些Pod可以被调度到具有这些扩展资源的节点上。
+    extendedresourcetoleration.Register(plugins)
+	//`gc.Register(plugins)`：这行代码注册了GC准入插件。GC插件可以在Pod被删除时自动清理其关联的资源，例如Secrets和ConfigMaps。
+	gc.Register(plugins)
+	//`imagepolicy.Register(plugins)`：这行代码注册了ImagePolicyWebhook准入插件。ImagePolicyWebhook插件可以根据外部webhook的策略决定是否允许使用某个镜像。
+	imagepolicy.Register(plugins)
+	//`initialresources.Register(plugins)`：这行代码注册了InitialResources准入插件。InitialResources插件可以根据历史数据自动为新创建的Pod设置资源请求和限制。
+	initialresources.Register(plugins)
+	//`limitranger.Register(plugins)`：这行代码注册了LimitRanger准入插件。LimitRanger插件可以为Pod和容器设置默认的资源请求和限制，也可以确保每个请求的资源使用在命名空间的资源配额之内。
+	limitranger.Register(plugins)
+	//`autoprovision.Register(plugins)`：这行代码注册了NamespaceAutoProvision准入插件。NamespaceAutoProvision插件可以在接收到的请求中指定的命名空间不存在时自动创建命名空间。
+    autoprovision.Register(plugins)
+	//`exists.Register(plugins)`：这行代码注册了NamespaceExists准入插件。NamespaceExists插件可以拒绝那些指定的命名空间不存在的请求。
+	exists.Register(plugins)
+	//`noderestriction.Register(plugins)`：这行代码注册了NodeRestriction准入插件。NodeRestriction插件可以限制节点可以修改的API对象和字段，以防止节点篡改其他节点或者系统的信息。
+	noderestriction.Register(plugins)
+	//`label.Register(plugins)`：这行代码注册了PersistentVolumeLabel准入插件。PersistentVolumeLabel插件可以自动为新创建的PersistentVolume添加云提供商的标签。
+    label.Register(plugins) // DEPRECATED in favor of NewPersistentVolumeLabelController in CCM
+	//`podnodeselector.Register(plugins)`：这行代码注册了PodNodeSelector准入插件。PodNodeSelector插件可以为新创建的Pod添加节点选择器，以控制Pod可以调度到哪些节点上。
+    podnodeselector.Register(plugins)
+	//`podpreset.Register(plugins)`：这行代码注册了PodPreset准入插件。PodPreset插件可以根据PodPreset资源自动为新创建的Pod添加环境变量、卷和卷挂载。
+    podpreset.Register(plugins)
+	//`podtolerationrestriction.Register(plugins)`：这行代码注册了PodTolerationRestriction准入插件。PodTolerationRestriction插件可以为新创建的Pod添加默认的容忍度，也可以限制用户可以设置的容忍度。
+    podtolerationrestriction.Register(plugins)
+	//`resourcequota.Register(plugins)`：这行代码注册了ResourceQuota准入插件。ResourceQuota插件可以限制每个命名空间可以使用的资源总量。
+    resourcequota.Register(plugins)
+	podsecuritypolicy.Register(plugins)
+	podpriority.Register(plugins)
+	scdeny.Register(plugins)
+	serviceaccount.Register(plugins)
+	setdefault.Register(plugins)
+	resize.Register(plugins)
+	pvcprotection.Register(plugins)
+}
+```
+  
+
+
+
+
+
+
+
+
+
