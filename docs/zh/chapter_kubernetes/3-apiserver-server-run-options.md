@@ -8,6 +8,7 @@
 
 因此，`NewServerRunOptions`方法在整个程序中起到了关键的作用，它为API服务器的运行提供了必要的配置。
 
+# 源码解析
 ##  server_run_options.go中的NewServerRunOptions方法
 
 **位置：** `cmd/kube-apiserver/app/options/options.go`
@@ -643,12 +644,19 @@ func RegisterAllAdmissionPlugins(plugins *admission.Plugins) {
     podtolerationrestriction.Register(plugins)
 	//`resourcequota.Register(plugins)`：这行代码注册了ResourceQuota准入插件。ResourceQuota插件可以限制每个命名空间可以使用的资源总量。
     resourcequota.Register(plugins)
+	//podsecuritypolicy.Register(plugins)：这行代码注册了PodSecurityPolicy准入插件。PodSecurityPolicy插件可以根据PodSecurityPolicy资源决定是否允许Pod的安全上下文设置。
 	podsecuritypolicy.Register(plugins)
+	//podpriority.Register(plugins)：这行代码注册了Priority准入插件。Priority插件可以根据PriorityClass资源为新创建的Pod设置优先级
 	podpriority.Register(plugins)
+	//scdeny.Register(plugins)：这行代码注册了SecurityContextDeny准入插件。SecurityContextDeny插件可以拒绝那些设置了安全上下文的请求
 	scdeny.Register(plugins)
+	//serviceaccount.Register(plugins)：这行代码注册了ServiceAccount准入插件。ServiceAccount插件可以自动为新创建的Pod添加ServiceAccount和相应的Secret。
 	serviceaccount.Register(plugins)
+	//setdefault.Register(plugins)：这行代码注册了StorageClassDefault准入插件。StorageClassDefault插件可以为没有指定StorageClass的PersistentVolumeClaim自动添加默认的StorageClass
 	setdefault.Register(plugins)
+	//resize.Register(plugins)：这行代码注册了PersistentVolumeClaimResize准入插件。PersistentVolumeClaimResize插件可以允许用户修改PersistentVolumeClaim的大小。
 	resize.Register(plugins)
+	//pvcprotection.Register(plugins)：这行代码注册了PVCProtection准入插件。PVCProtection插件可以防止在有Pod正在使用的PersistentVolumeClaim被用户删除
 	pvcprotection.Register(plugins)
 }
 ```
