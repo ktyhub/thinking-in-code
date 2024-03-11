@@ -35,24 +35,40 @@ fs.StringSliceVar(&s.CorsAllowedOriginList, "cors-allowed-origins", s.CorsAllowe
 // AddFlags adds flags for a specific APIServer to the specified FlagSet
 func (s *ServerRunOptions) AddFlags(fs *pflag.FlagSet) {
 	// Add the generic flags.
+	//调用 GenericServerRunOptions 结构体的 AddUniversalFlags 方法，向 fs 添加一些通用的标志。
 	s.GenericServerRunOptions.AddUniversalFlags(fs)
+	//添加一些与 Etcd 相关的标志
 	s.Etcd.AddFlags(fs)
+	//添加一些与安全服务相关的标志
 	s.SecureServing.AddFlags(fs)
+	//包括一些已经被弃用的标志。
 	s.SecureServing.AddDeprecatedFlags(fs)
+	//向 fs 添加一些与非安全服务相关的标志，
 	s.InsecureServing.AddFlags(fs)
+	//包括一些已经被弃用的标志。
 	s.InsecureServing.AddDeprecatedFlags(fs)
+	//向 fs 添加一些与审计相关的标志
 	s.Audit.AddFlags(fs)
+	//添加一些与特性相关的标志
 	s.Features.AddFlags(fs)
+	//向 fs 添加一些与身份验证相关的标志
 	s.Authentication.AddFlags(fs)
+	//向 fs 添加一些与授权相关的标志
 	s.Authorization.AddFlags(fs)
+	//向 fs 添加一些与云提供商相关的标志
 	s.CloudProvider.AddFlags(fs)
+	//向 fs 添加一些与存储序列化相关的标志
 	s.StorageSerialization.AddFlags(fs)
+	//向 fs 添加一些与 API 启用相关的标志。
 	s.APIEnablement.AddFlags(fs)
+	//向 fs 添加一些与准入控制相关的标志。
 	s.Admission.AddFlags(fs)
 
 	// Note: the weird ""+ in below lines seems to be the only way to get gofmt to
 	// arrange these text blocks sensibly. Grrr.
-
+    //这行代码添加了一个名为 "event-ttl" 的标志，这个标志的值会被存储在 s.EventTTL 中，
+	//如果在命令行中没有提供这个标志，那么就会使用 s.EventTTL 作为默认值。
+	//这个标志的使用说明是 "Amount of time to retain events."
 	fs.DurationVar(&s.EventTTL, "event-ttl", s.EventTTL,
 		"Amount of time to retain events.")
 
@@ -147,3 +163,110 @@ func (s *ServerRunOptions) AddFlags(fs *pflag.FlagSet) {
 
 }
 ```
+
+
+在 `options.go` 文件的 `AddFlags` 方法中，调用了多个方法来设置各种标志。以下是这些方法及其设置的标志的详细列表：
+
+1. `s.GenericServerRunOptions.AddUniversalFlags(fs)`
+
+| 标志名字 | 说明 |
+| --- | --- |
+| `advertise-address` | 用于设置 API 服务器向集群成员宣告的 IP 地址。这个地址必须能被集群的其他成员访问。如果为空，将使用 `--bind-address`。如果 `--bind-address` 未指定，将使用主机的默认接口。 |
+| `cors-allowed-origins` | 用于设置允许 CORS 的源列表，以逗号分隔。允许的源可以是正则表达式，以支持子域匹配。如果此列表为空，CORS 将不会被启用。 |
+| `target-ram-mb` | 用于设置 API 服务器的内存限制（MB），用于配置缓存等的大小。 |
+| `external-hostname` | 用于设置生成此主服务器的外部化 URL 时使用的主机名（例如，Swagger API 文档）。 |
+| `master-service-namespace` | 已弃用：从该命名空间中将 Kubernetes 主服务注入到 Pod 中。 |
+| `max-requests-inflight` | 用于设置同时进行的非变更请求的最大数量。当服务器超过此数时，它将拒绝请求。零表示无限制。 |
+| `max-mutating-requests-inflight` | 用于设置同时进行的变更请求的最大数量。当服务器超过此数时，它将拒绝请求。零表示无限制。 |
+| `request-timeout` | 用于设置处理程序必须保持请求打开的持续时间，然后才能将其计时。这是请求的默认请求超时，但是可以通过诸如 `--min-request-timeout` 的标志覆盖特定类型的请求。 |
+| `min-request-timeout` | 用于设置处理程序必须保持请求打开的最小秒数，然后才能将其计时。目前只有观察请求处理程序才会遵守此规则，该处理程序选择此数字以上的随机值作为连接超时，以分散负载。 |
+
+2. `s.Etcd.AddFlags(fs)`
+
+| 标志名字 | 说明 |
+| --- | --- |
+| `etcd-servers` | 用于设置 etcd 服务器的列表，以逗号分隔。 |
+| `etcd-prefix` | 用于设置 etcd 中 Kubernetes 对象的前缀。 |
+| `etcd-keyfile` | 用于设置 etcd 的 SSL 密钥文件路径。 |
+| `etcd-certfile` | 用于设置 etcd 的 SSL 证书文件路径。 |
+| `etcd-cafile` | 用于设置 etcd 的 SSL 证书颁发机构文件路径。 |
+| `etcd-compaction-interval` | 用于设置 etcd 的压缩间隔。 |
+
+3. `s.SecureServing.AddFlags(fs)`
+
+| 标志名字 | 说明 |
+| --- | --- |
+| `bind-address` | 用于设置服务器的监听地址。 |
+| `secure-port` | 用于设置服务器的 HTTPS 端口。 |
+| `cert-dir` | 用于设置存储证书的目录。 |
+| `tls-cert-file` | 用于设置 TLS 服务证书文件的路径。 |
+| `tls-private-key-file` | 用于设置 TLS 服务私钥文件的路径。 |
+| `tls-cipher-suites` | 用于设置支持的 TLS 密码套件列表。 |
+| `tls-min-version` | 用于设置支持的最小 TLS 版本。 |
+| `tls-sni-cert-key` | 用于设置一个或多个 SNI 证书。 |
+
+4. `s.InsecureServing.AddFlags(fs)`
+
+| 标志名字 | 说明 |
+| --- | --- |
+| `insecure-bind-address` | 用于设置非安全（HTTP）服务的监听地址。 |
+| `insecure-port` | 用于设置非安全（HTTP）服务的监听端口。 |
+
+5. `s.Audit.AddFlags(fs)`
+
+| 标志名字 | 说明 |
+| --- | --- |
+| `audit-log-path` | 用于设置审计日志文件的路径。 |
+| `audit-log-maxage` | 用于设置审计日志文件的最大保留天数。 |
+| `audit-log-maxbackup` | 用于设置审计日志文件的最大备份数。 |
+| `audit-log-maxsize` | 用于设置审计日志文件的最大大小（MB）。 |
+
+6. `s.Features.AddFlags(fs)`
+
+| 标志名字 | 说明 |
+| --- | --- |
+| `feature-gates` | 用于设置一组键=值对，用于描述 alpha/experimental 特性的特性门控。 |
+
+7. `s.Authentication.AddFlags(fs)`
+
+| 标志名字 | 说明 |
+| --- | --- |
+| `token-auth-file` | 用于设置令牌认证文件的路径。 |
+| `oidc-issuer-url` | 用于设置 OIDC 发行者 URL。 |
+| `oidc-client-id` | 用于设置 OIDC 客户端 ID。 |
+
+8. `s.Authorization.AddFlags(fs)`
+
+| 标志名字 | 说明 |
+| --- | --- |
+| `authorization-mode` | 用于设置授权模式。 |
+| `authorization-policy-file` | 用于设置授权策略文件的路径。 |
+
+9. `s.CloudProvider.AddFlags(fs)`
+
+| 标志名字 | 说明 |
+| --- | --- |
+| `cloud-provider` | 用于设置云服务提供商，例如 'aws'、'gce'、'azure'、'openstack'、'vsphere'、或 'oci'。 |
+| `cloud-config` | 用于设置云服务提供商配置文件的路径。 |
+
+10. `s.StorageSerialization.AddFlags(fs)`
+
+| 标志名字 | 说明 |
+| --- | --- |
+| `storage-versions` | 用于设置 API 服务器支持的资源版本。 |
+| `default-storage-media-type` | 用于设置 API 服务器默认的存储媒体类型。 |
+
+11. `s.APIEnablement.AddFlags(fs)`
+
+| 标志名字 | 说明 |
+| --- | --- |
+| `runtime-config` | 用于设置一组键=值对，用于描述运行时配置。 |
+
+12. `s.Admission.AddFlags(fs)`
+
+| 标志名字 | 说明 |
+| --- | --- |
+| `enable-admission-plugins` | 用于设置启用的准入控制插件列表。 |
+| `disable-admission-plugins` | 用于设置禁用的准入控制插件列表。 |
+
+这些标志都是用于配置 API 服务器的运行参数。
