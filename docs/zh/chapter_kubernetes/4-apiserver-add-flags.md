@@ -21,7 +21,7 @@ fs.StringSliceVar(&s.CorsAllowedOriginList, "cors-allowed-origins", s.CorsAllowe
 
 最后，`utilfeature.DefaultFeatureGate.AddFlag(fs)` 这行代码是用来添加一些默认的特性门控标志的。
 
-## AddFlags
+## 添加命令行标记的方法AddFlags
 
 **位置：** `cmd/kube-apiserver/app/options/options.go`
 
@@ -270,3 +270,28 @@ func (s *ServerRunOptions) AddFlags(fs *pflag.FlagSet) {
 | `disable-admission-plugins` | 用于设置禁用的准入控制插件列表。 |
 
 这些标志都是用于配置 API 服务器的运行参数。
+
+## 用于初始化命令行标志方法InitFlags
+**位置：** `k8s.io/apiserver/pkg/util/flag/flags.go`
+
+**说明：**
+用于初始化命令行标志方法InitFlags。这个方法的主要作用是规范化、解析和记录命令行标志。
+**源码：**
+
+```go
+// InitFlags normalizes, parses, then logs the command line flags
+func InitFlags() {
+	//设置标志名称的规范化函数。在这个例子中，它使用 WordSepNormalizeFunc 函数，该函数将所有包含 "" 的标志名称中的 "" 替换为 "-"。  
+	pflag.CommandLine.SetNormalizeFunc(WordSepNormalizeFunc)
+	//将 Go 的标准 flag 包的所有标志添加到 pflag 的命令行标志集中。这允许你在使用 pflag 的同时，也能使用 Go 标准库中的 flag 包。  
+	pflag.CommandLine.AddGoFlagSet(goflag.CommandLine)
+	//解析命令行参数。这将填充所有已定义的标志的值。  
+	pflag.Parse()
+	//遍历所有标志，并使用 glog 记录它们的名称和值。这对于调试和理解命令行参数如何影响程序的行为非常有用。 
+	pflag.VisitAll(func(flag *pflag.Flag) {
+		glog.V(2).Infof("FLAG: --%s=%q", flag.Name, flag.Value)
+	})
+}
+```
+
+
