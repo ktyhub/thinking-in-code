@@ -30,7 +30,6 @@ fs.StringSliceVar(&s.CorsAllowedOriginList, "cors-allowed-origins", s.CorsAllowe
 
 **源码：**
 
-
 ```go
 // AddFlags adds flags for a specific APIServer to the specified FlagSet
 func (s *ServerRunOptions) AddFlags(fs *pflag.FlagSet) {
