@@ -142,3 +142,96 @@ func CreateServerChain(runOptions *options.ServerRunOptions, stopCh <-chan struc
 	return aggregatorServer.GenericAPIServer, nil
 }
 ```
+
+
+## CreateNodeDialer创建拨号器基础结构以连接到节点 
+
+**位置：** `cmd/kube-apiserver/app/server.go`
+
+**说明：**
+这个方法的主要目的是构建一个完整的API服务器链，包括API扩展服务器、KubeAPIServer和聚合器服务器，以处理各种API请求。
+CreateNodeDialer 这个函数的主要作用是创建一个用于连接到 Kubernetes 集群中节点的网络连接器（dialer）。这个连接器可以用于访问节点上的服务，例如 kubelet API。
+
+在函数的实现中，首先根据 ServerRunOptions 中的 SSH 用户名和 SSH 密钥文件路径创建了一个 Tunneler 对象。
+然后，使用 Tunneler 的 Dial 方法作为 http.Transport 的 Dial 函数，创建了一个 http.Transport 对象。
+这样，当 http.Transport 需要建立网络连接时，就会使用 Tunneler 的 Dial 方法来建立连接
+
+**源码：**
+
+```go
+// CreateNodeDialer creates the dialer infrastructure to connect to the nodes.
+//	tunneler.Tunneler：这是一个网络隧道接口，用于建立到 Kubernetes 集群节点的网络连接。这个连接可以用于访问节点上的服务，例如 kubelet API。
+//*http.Transport：这是一个 HTTP 传输对象，定义了 HTTP 代理的设置。在 Kubernetes 中，这个对象通常用于设置 API 服务器如何通过网络访问其他服务，例如 etcd 或者其他 API 服务器
+func CreateNodeDialer(s *options.ServerRunOptions) (tunneler.Tunneler, *http.Transport, error) {
+	// Setup nodeTunneler if needed
+	//这是一个网络隧道接口，用于建立到 Kubernetes 集群节点的网络连接
+	var nodeTunneler tunneler.Tunneler
+	//proxyDialerFn 是一个类型为 utilnet.DialFunc 的变量。在 Go 中，DialFunc 是一个函数类型，它接收网络类型（例如 "tcp"、"udp"）和地址（例如 "localhost:8080"）作为参数，并返回一个网络连接和一个错误对象。  
+	//在这个上下文中，proxyDialerFn 被用作一个函数，用于建立网络连接。这个函数可能会被用于连接到 Kubernetes 集群中的节点，或者用于设置 HTTP 代理。
+	var proxyDialerFn utilnet.DialFunc
+	if len(s.SSHUser) > 0 {
+		// Get ssh key distribution func, if supported
+		var installSSHKey tunneler.InstallSSHKey
+		//cloudprovider.InitCloudProvider 是一个函数，它的主要作用是初始化云服务提供商。
+		//参数：s.CloudProvider.CloudProvider：这是一个字符串，表示要使用的云服务提供商的名称，例如 "aws"、"gcp"、"azure" 等。  
+		//参数：s.CloudProvider.CloudConfigFile：这是一个字符串，表示云服务提供商的配置文件的路径。这个配置文件包含了连接到云服务提供商所需的所有信息，例如 API 密钥、区域、网络设置等。
+		//返回值cloud:cloud：这是一个 cloudprovider.Interface 类型的对象，表示初始化后的云服务提供商。你可以使用这个对象来调用云服务提供商的 API，例如创建、删除和管理虚拟机、存储卷、网络等资源。
+		cloud, err := cloudprovider.InitCloudProvider(s.CloudProvider.CloudProvider, s.CloudProvider.CloudConfigFile)
+		if err != nil {
+			return nil, nil, fmt.Errorf("cloud provider could not be initialized: %v", err)
+		}
+		if cloud != nil {
+			if instances, supported := cloud.Instances(); supported {
+				//instances.AddSSHKeyToAllInstances  这个方法的作用是将 SSH 密钥添加到所有的实例中。
+				//在这个上下文中，"实例"通常指的是云服务提供商（如 AWS、GCP 或 Azure）中的虚拟机。
+				//这个方法通常用于设置和配置 SSH 隧道，使得 API 服务器可以通过 SSH 隧道安全地访问集群中的节点。
+				//这是 Kubernetes 中的一种网络连接方式，特别是在需要跨越网络边界（例如在云环境中）时
+				//这个方法是由云服务提供商的接口定义的，具体的实现会依赖于特定的云服务提供商。
+				//例如，AWS 的实现可能会将 SSH 密钥添加到 EC2 实例的元数据中，而 GCP 的实现可能会将 SSH 密钥添加到 Compute Engine 实例的 SSH 密钥元数据中
+				installSSHKey = instances.AddSSHKeyToAllInstances
+			}
+		}
+		if s.KubeletConfig.Port == 0 {
+			return nil, nil, fmt.Errorf("must enable kubelet port if proxy ssh-tunneling is specified")
+		}
+		if s.KubeletConfig.ReadOnlyPort == 0 {
+			return nil, nil, fmt.Errorf("must enable kubelet readonly port if proxy ssh-tunneling is specified")
+		}
+		// Set up the nodeTunneler
+		// TODO(cjcullen): If we want this to handle per-kubelet ports or other
+		// kubelet listen-addresses, we need to plumb through options.
+		//healthCheckPath 是一个 *url.URL 类型的变量，它表示一个 URL。
+		//在这个上下文中，healthCheckPath 被用作 Kubernetes 集群中节点的健康检查路径。
+		//这个 URL 通常指向节点上运行的 kubelet 的健康检查端点，例如 "http://127.0.0.1:10255/healthz"。
+		//当 Kubernetes 需要检查节点的健康状态时，它会向这个 URL 发送 HTTP 请求，如果收到的响应状态码为 200，则认为节点是健康的。
+		healthCheckPath := &url.URL{
+			Scheme: "http",
+			Host:   net.JoinHostPort("127.0.0.1", strconv.FormatUint(uint64(s.KubeletConfig.ReadOnlyPort), 10)),
+			Path:   "healthz",
+		}
+		//这行代码的含义是创建一个新的 SSH 隧道。  New 是 tunneler 包中的一个函数，用于创建一个新的 SSH 隧道。这个函数接收四个参数：  
+		//s.SSHUser：SSH 用户名，用于 SSH 连接。
+		//s.SSHKeyfile：SSH 密钥文件的路径，用于 SSH 连接的身份验证。
+		//healthCheckPath：健康检查路径，这是一个 URL，通常指向节点上运行的 kubelet 的健康检查端点。
+		//installSSHKey：这是一个函数，用于将 SSH 密钥添加到所有的实例中。
+		//函数的返回值是一个 Tunneler 对象，这个对象提供了一种通过 SSH 隧道连接到 Kubernetes 集群节点的方法。
+		nodeTunneler = tunneler.New(s.SSHUser, s.SSHKeyfile, healthCheckPath, installSSHKey)
+
+		// Use the nodeTunneler's dialer when proxying to pods, services, and nodes
+		proxyDialerFn = nodeTunneler.Dial
+	}
+	// Proxying to pods and services is IP-based... don't expect to be able to verify the hostname
+	proxyTLSClientConfig := &tls.Config{InsecureSkipVerify: true}
+	//主要作用是为 HTTP 传输设置默认的参数。这个函数接收一个 *http.Transport 类型的参数，并返回一个同样类型的值。  这个函数会设置以下默认参数：  
+	//DialContext：如果 DialContext 为空，它会被设置为 net.Dialer 的 DialContext 函数。
+	//MaxIdleConns：如果 MaxIdleConns 为 0，它会被设置为 100。
+	//IdleConnTimeout：如果 IdleConnTimeout 为 0，它会被设置为 90 秒。
+	//TLSHandshakeTimeout：如果 TLSHandshakeTimeout 为 0，它会被设置为 10 秒。
+	//这个函数的主要目的是确保 HTTP 传输有合理的默认设置，以优化网络连接的性能。
+	proxyTransport := utilnet.SetTransportDefaults(&http.Transport{
+		Dial:            proxyDialerFn,
+		TLSClientConfig: proxyTLSClientConfig,
+	})
+	return nodeTunneler, proxyTransport, nil
+}
+```
