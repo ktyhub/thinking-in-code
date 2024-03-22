@@ -133,7 +133,13 @@ func CreateServerChain(runOptions *options.ServerRunOptions, stopCh <-chan struc
 	}
 
 	if insecureServingOptions != nil {
-		insecureHandlerChain := kubeserver.BuildInsecureHandlerChain(aggregatorServer.GenericAPIServer.UnprotectedHandler(), kubeAPIServerConfig.GenericConfig)
+		//kubeserver.NonBlockingRun 是一个函数，它的主要作用是非阻塞地运行一个服务器。这个函数接收四个参数：  
+		//insecureServingOptions：这是一个指向 serveroptions.ServingOptions 类型的指针。ServingOptions 类型包含了用于配置服务器的选项，例如绑定地址和端口，以及用于 TLS 的证书和密钥。
+		//insecureHandlerChain：这是一个 HTTP 处理器链。在 Kubernetes 中，处理器链是一种模式，用于将多个 HTTP 处理器链接在一起，以便按顺序处理 HTTP 请求。每个处理器在处理完请求后，可以选择将请求传递给链中的下一个处理器，或者直接结束请求的处理。
+		//kubeAPIServerConfig.GenericConfig.RequestTimeout：这是一个 time.Duration 类型的值，表示服务器的请求超时时间。如果一个请求的处理时间超过了这个值，服务器将返回一个超时错误。
+		//stopCh：这是一个通道，用于接收停止信号。当接收到停止信号时，服务器将停止接收新的请求，并尽可能地完成正在处理的请求，然后关闭。
+		//这个函数的返回值是一个错误对象。如果在运行过程中出现错误，这个值将包含错误的详细信息。如果没有错误，这个值将为 nil。  在 Kubernetes 中，这个函数通常在启动 API 服务器或其他组件时调用，以非阻塞的方式启动服务器。这意味着，调用这个函数后，函数将立即返回，而服务器将在后台运行。这样，你可以在启动服务器后立即执行其他操作，而不需要等待服务器完全启动。
+		//insecureHandlerChain := kubeserver.BuildInsecureHandlerChain(aggregatorServer.GenericAPIServer.UnprotectedHandler(), kubeAPIServerConfig.GenericConfig)
 		if err := kubeserver.NonBlockingRun(insecureServingOptions, insecureHandlerChain, kubeAPIServerConfig.GenericConfig.RequestTimeout, stopCh); err != nil {
 			return nil, err
 		}
@@ -233,5 +239,248 @@ func CreateNodeDialer(s *options.ServerRunOptions) (tunneler.Tunneler, *http.Tra
 		TLSClientConfig: proxyTLSClientConfig,
 	})
 	return nodeTunneler, proxyTransport, nil
+}
+```
+
+
+
+
+## CreateKubeAPIServerConfig 创建用于运行 API 服务器的所有资源，但不运行任何资源
+
+**位置：** `cmd/kube-apiserver/app/server.go`
+
+**说明：**
+创建运行 API 服务器所需的所有资源，但并不运行它们 
+
+**源码：**
+```go
+// CreateKubeAPIServerConfig creates all the resources for running the API server, but runs none of them
+//s：这是一个 *options.ServerRunOptions 类型的指针，表示服务器运行选项。这些选项包括 API 服务器的配置信息，如绑定地址和端口，认证和授权配置，存储配置等。
+//nodeTunneler：这是一个 tunneler.Tunneler 类型的对象，用于创建到节点的 SSH 隧道。这个隧道可以用于代理到节点的连接，例如在 API 服务器和 kubelet 之间的通信。
+//proxyTransport：这是一个 *http.Transport 类型的对象，用于 HTTP 代理传输。
+
+//这个函数的返回值是多个对象和一个错误对象。返回的对象包括：  
+//kubeAPIServerConfig：这是一个 *master.Config 类型的对象，表示 API 服务器的配置。这个配置包括 API 服务器的各种设置，如认证和授权配置，存储配置，API 组和版本等。
+//sharedInformers：这是一个 informers.SharedInformerFactory 类型的对象，用于创建和管理共享的 informer。informer 是 Kubernetes 中用于监视和缓存 API 对象的工具。
+//versionedInformers：这是一个 clientgoinformers.SharedInformerFactory 类型的对象，用于创建和管理版本化的 informer。
+//insecureServingOptions：这是一个 *genericoptions.DeprecatedInsecureServingOptionsWithLoopback 类型的对象，表示不安全的服务选项。这些选项包括绑定地址和端口，以及用于身份验证的证书和密钥。
+//serviceResolver：这是一个 aggregatorapiserver.ServiceResolver 类型的对象，用于解析服务名称到服务 URL。
+//pluginInitializer：这是一个 admission.PluginInitializer 类型的对象，用于初始化准入控制插件。
+func CreateKubeAPIServerConfig(
+	s *options.ServerRunOptions,
+	nodeTunneler tunneler.Tunneler,
+	proxyTransport *http.Transport,
+) (
+	config *master.Config,
+	sharedInformers informers.SharedInformerFactory,
+	versionedInformers clientgoinformers.SharedInformerFactory,
+	insecureServingInfo *kubeserver.InsecureServingInfo,
+	serviceResolver aggregatorapiserver.ServiceResolver,
+	pluginInitializers []admission.PluginInitializer,
+	lastErr error,
+) {
+	// set defaults in the options before trying to create the generic config
+	//defaultOptions 是一个函数，它的主要作用是为服务器运行选项设置默认值。
+	//这个函数接收一个 *options.ServerRunOptions 类型的参数，表示服务器运行选项。  
+	//这个函数首先调用 s.GenericServerRunOptions.DefaultAdvertiseAddress(s.SecureServing) 和 kubeoptions.DefaultAdvertiseAddress(s.GenericServerRunOptions, s.InsecureServing) 来设置 API 服务器的默认公布的地址。  
+	//然后，它调用 master.DefaultServiceIPRange(s.ServiceClusterIPRange) 来获取服务 IP 范围和 API 服务器服务 IP，并将这些值设置为 s.ServiceClusterIPRange。 
+	//接下来，如果没有指定服务账户令牌签名的私钥，它将使用安全服务的服务器证书的私钥作为默认值。 
+	//如果没有设置 Etcd 的反序列化缓存大小，它将设置为默认值。  
+	//如果启用了 Etcd 的 watch 缓存，它将设置相关的默认值。  
+	//最后，如果在设置默认值的过程中出现错误，它将返回这个错误。 
+	//这个函数的主要目的是确保服务器运行选项有合理的默认设置，以便在没有明确指定某些选项的情况下，服务器仍然可以正常运行
+	if lastErr = defaultOptions(s); lastErr != nil {
+		return
+	}
+
+	// validate options
+	if errs := s.Validate(); len(errs) != 0 {
+		lastErr = utilerrors.NewAggregate(errs)
+		return
+	}
+
+	var genericConfig *genericapiserver.Config
+	//BuildGenericConfig 是一个函数，它的主要作用是根据提供的服务器运行选项和代理传输来构建一个通用的 API 服务器配置。这个函数接收两个参数：  
+	//s：这是一个 *options.ServerRunOptions 类型的指针，表示服务器运行选项。这些选项包括 API 服务器的配置信息，如绑定地址和端口，认证和授权配置，存储配置等。
+	//proxyTransport：这是一个 *http.Transport 类型的对象，用于 HTTP 代理传输。
+	//这个函数的返回值是多个对象和一个错误对象。返回的对象包括：
+	//genericConfig：这是一个 *genericapiserver.Config 类型的对象，表示通用的 API 服务器配置。这个配置包括 API 服务器的各种设置，如认证和授权配置，存储配置，API 组和版本等。
+	//sharedInformers：这是一个 informers.SharedInformerFactory 类型的对象，用于创建和管理共享的 informer。informer 是 Kubernetes 中用于监视和缓存 API 对象的工具。
+	//versionedInformers：这是一个 clientgoinformers.SharedInformerFactory 类型的对象，用于创建和管理版本化的 informer。
+	//insecureServingInfo：这是一个 *kubeserver.InsecureServingInfo 类型的对象，表示不安全的服务信息。这些信息包括绑定地址和端口，以及用于身份验证的证书和密钥。
+	//serviceResolver：这是一个 aggregatorapiserver.ServiceResolver 类型的对象，用于解析服务名称到服务 URL。
+	//pluginInitializers：这是一个 admission.PluginInitializer 类型的对象的切片，用于初始化准入控制插件。
+	//如果在构建过程中出现错误，错误对象将包含错误的详细信息。  这个函数的主要目的是根据提供的选项和代理传输，构建一个可以用于启动 API 服务器的通用配置。
+	genericConfig, sharedInformers, versionedInformers, insecureServingInfo, serviceResolver, pluginInitializers, lastErr = BuildGenericConfig(s, proxyTransport)
+	if lastErr != nil {
+		return
+	}
+
+	if _, port, err := net.SplitHostPort(s.Etcd.StorageConfig.ServerList[0]); err == nil && port != "0" && len(port) != 0 {
+		if err := utilwait.PollImmediate(etcdRetryInterval, etcdRetryLimit*etcdRetryInterval, preflight.EtcdConnection{ServerList: s.Etcd.StorageConfig.ServerList}.CheckEtcdServers); err != nil {
+			lastErr = fmt.Errorf("error waiting for etcd connection: %v", err)
+			return
+		}
+	}
+
+	capabilities.Initialize(capabilities.Capabilities{
+		AllowPrivileged: s.AllowPrivileged,
+		// TODO(vmarmol): Implement support for HostNetworkSources.
+		PrivilegedSources: capabilities.PrivilegedSources{
+			HostNetworkSources: []string{},
+			HostPIDSources:     []string{},
+			HostIPCSources:     []string{},
+		},
+		PerConnectionBandwidthLimitBytesPerSec: s.MaxConnectionBytesPerSec,
+	})
+
+	serviceIPRange, apiServerServiceIP, lastErr := master.DefaultServiceIPRange(s.ServiceClusterIPRange)
+	if lastErr != nil {
+		return
+	}
+
+	storageFactory, lastErr := BuildStorageFactory(s)
+	if lastErr != nil {
+		return
+	}
+
+	clientCA, lastErr := readCAorNil(s.Authentication.ClientCert.ClientCA)
+	if lastErr != nil {
+		return
+	}
+	requestHeaderProxyCA, lastErr := readCAorNil(s.Authentication.RequestHeader.ClientCAFile)
+	if lastErr != nil {
+		return
+	}
+
+	config = &master.Config{
+		GenericConfig: genericConfig,
+		ExtraConfig: master.ExtraConfig{
+			ClientCARegistrationHook: master.ClientCARegistrationHook{
+				ClientCA:                         clientCA,
+				RequestHeaderUsernameHeaders:     s.Authentication.RequestHeader.UsernameHeaders,
+				RequestHeaderGroupHeaders:        s.Authentication.RequestHeader.GroupHeaders,
+				RequestHeaderExtraHeaderPrefixes: s.Authentication.RequestHeader.ExtraHeaderPrefixes,
+				RequestHeaderCA:                  requestHeaderProxyCA,
+				RequestHeaderAllowedNames:        s.Authentication.RequestHeader.AllowedNames,
+			},
+
+			APIResourceConfigSource: storageFactory.APIResourceConfigSource,
+			StorageFactory:          storageFactory,
+			EnableCoreControllers:   true,
+			EventTTL:                s.EventTTL,
+			KubeletClientConfig:     s.KubeletConfig,
+			EnableUISupport:         true,
+			EnableLogsSupport:       s.EnableLogsHandler,
+			ProxyTransport:          proxyTransport,
+
+			Tunneler: nodeTunneler,
+
+			ServiceIPRange:       serviceIPRange,
+			APIServerServiceIP:   apiServerServiceIP,
+			APIServerServicePort: 443,
+
+			ServiceNodePortRange:      s.ServiceNodePortRange,
+			KubernetesServiceNodePort: s.KubernetesServiceNodePort,
+
+			EndpointReconcilerType: reconcilers.Type(s.EndpointReconcilerType),
+			MasterCount:            s.MasterCount,
+		},
+	}
+
+	if nodeTunneler != nil {
+		// Use the nodeTunneler's dialer to connect to the kubelet
+		config.ExtraConfig.KubeletClientConfig.Dial = nodeTunneler.Dial
+	}
+
+	return
+}
+```
+
+
+## defaultOptions 设置合理的默认设置
+
+**位置：** `cmd/kube-apiserver/app/server.go`
+
+**说明：**
+
+这个函数的主要目的是确保服务器运行选项有合理的默认设置，以便在没有明确指定某些选项的情况下，服务器仍然可以正常运行。
+
+**源码：**
+
+```go
+//这个函数接收一个 `*options.ServerRunOptions` 类型的参数，表示服务器运行选项。
+func defaultOptions(s *options.ServerRunOptions) error {
+	// set defaults
+	//设置 API 服务器的默认公开地址
+	if err := s.GenericServerRunOptions.DefaultAdvertiseAddress(s.SecureServing); err != nil {
+		return err
+	}
+	//	//设置 API 服务器的默认公开地址
+	if err := kubeoptions.DefaultAdvertiseAddress(s.GenericServerRunOptions, s.InsecureServing); err != nil {
+		return err
+	}
+	//获取服务 IP 范围和 API 服务器服务 IP，并将这些值设置为 `s.ServiceClusterIPRange`
+	serviceIPRange, apiServerServiceIP, err := master.DefaultServiceIPRange(s.ServiceClusterIPRange)
+	if err != nil {
+		return fmt.Errorf("error determining service IP ranges: %v", err)
+	}
+	s.ServiceClusterIPRange = serviceIPRange
+	//如果没有指定服务账户令牌签名的私钥，它将使用安全服务的服务器证书的私钥作为默认值
+	if err := s.SecureServing.MaybeDefaultWithSelfSignedCerts(s.GenericServerRunOptions.AdvertiseAddress.String(), []string{"kubernetes.default.svc", "kubernetes.default", "kubernetes"}, []net.IP{apiServerServiceIP}); err != nil {
+		return fmt.Errorf("error creating self-signed certificates: %v", err)
+	}
+	if err := s.CloudProvider.DefaultExternalHost(s.GenericServerRunOptions); err != nil {
+		return fmt.Errorf("error setting the external host value: %v", err)
+	}
+
+	s.Authentication.ApplyAuthorization(s.Authorization)
+
+	// Default to the private server key for service account token signing
+	if len(s.Authentication.ServiceAccounts.KeyFiles) == 0 && s.SecureServing.ServerCert.CertKey.KeyFile != "" {
+		if kubeauthenticator.IsValidServiceAccountKeyFile(s.SecureServing.ServerCert.CertKey.KeyFile) {
+			s.Authentication.ServiceAccounts.KeyFiles = []string{s.SecureServing.ServerCert.CertKey.KeyFile}
+		} else {
+			glog.Warning("No TLS key provided, service account token authentication disabled")
+		}
+	}
+    //如果没有设置 Etcd 的反序列化缓存大小，它将设置为默认值。
+    if s.Etcd.StorageConfig.DeserializationCacheSize == 0 {
+		// When size of cache is not explicitly set, estimate its size based on
+		// target memory usage.
+		glog.V(2).Infof("Initializing deserialization cache size based on %dMB limit", s.GenericServerRunOptions.TargetRAMMB)
+
+		// This is the heuristics that from memory capacity is trying to infer
+		// the maximum number of nodes in the cluster and set cache sizes based
+		// on that value.
+		// From our documentation, we officially recommend 120GB machines for
+		// 2000 nodes, and we scale from that point. Thus we assume ~60MB of
+		// capacity per node.
+		// TODO: We may consider deciding that some percentage of memory will
+		// be used for the deserialization cache and divide it by the max object
+		// size to compute its size. We may even go further and measure
+		// collective sizes of the objects in the cache.
+		clusterSize := s.GenericServerRunOptions.TargetRAMMB / 60
+		s.Etcd.StorageConfig.DeserializationCacheSize = 25 * clusterSize
+		if s.Etcd.StorageConfig.DeserializationCacheSize < 1000 {
+			s.Etcd.StorageConfig.DeserializationCacheSize = 1000
+		}
+	}
+	//如果启用了 Etcd 的 watch 缓存，它将设置相关的默认值。
+	if s.Etcd.EnableWatchCache {
+		glog.V(2).Infof("Initializing cache sizes based on %dMB limit", s.GenericServerRunOptions.TargetRAMMB)
+		sizes := cachesize.NewHeuristicWatchCacheSizes(s.GenericServerRunOptions.TargetRAMMB)
+		if userSpecified, err := serveroptions.ParseWatchCacheSizes(s.Etcd.WatchCacheSizes); err == nil {
+			for resource, size := range userSpecified {
+				sizes[resource] = size
+			}
+		}
+		s.Etcd.WatchCacheSizes, err = serveroptions.WriteWatchCacheSizes(sizes)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 ```
