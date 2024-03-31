@@ -571,12 +571,17 @@ func defaultOptions(s *options.ServerRunOptions) error {
 
 这个函数的主要目的是确保服务器运行选项有合理的默认设置，以便在没有明确指定某些选项的情况下，服务器仍然可以正常运行。
 
+PrepareRun 是 GenericAPIServer 结构体的一个方法，它在 API 安装后执行一些设置步骤。 
+
+这个方法的主要目的是在服务器开始运行之前进行一些必要的设置，例如安装 API 文档和健康检查等。
+
 **源码：**
 
 ```go
 
 //  执行 API 安装设置步骤后.
 func (s *GenericAPIServer) PrepareRun() preparedGenericAPIServer {
+	////这个方法首先检查是否有 swaggerConfig 和 openAPIConfig。如果有，它会在 GoRestfulContainer 中安装相应的路由。
 	if s.swaggerConfig != nil {
 		routes.Swagger{Config: s.swaggerConfig}.Install(s.Handler.GoRestfulContainer)
 	}
@@ -585,9 +590,194 @@ func (s *GenericAPIServer) PrepareRun() preparedGenericAPIServer {
 			Config: s.openAPIConfig,
 		}.Install(s.Handler.GoRestfulContainer, s.Handler.NonGoRestfulMux)
 	}
-
+	//然后，它调用 installHealthz 方法来安装健康检查。
 	s.installHealthz()
-
+    // 最后，它返回一个 preparedGenericAPIServer 结构体，该结构体包含一个指向 GenericAPIServer 的指针。
 	return preparedGenericAPIServer{s}
 }
 ```
+
+### 不安全的 http 服务器NonBlockingRun
+**位置：**
+`pkg/kubeapiserver/server/insecure_handler.go`
+
+**说明：**
+生成不安全的 http 服务器,给定的监听器上启动一个 HTTP 服务器，并在接收到关闭信号时优雅地关闭服务器。这个函数不会阻塞，它会在后台运行服务器。
+
+**源码：**
+
+```go
+// NonBlockingRun spawns the insecure http server. An error is
+// returned if the ports cannot be listened on.
+//insecureServingInfo 是一个 *InsecureServingInfo 实例，它定义了服务器的配置，如绑定地址和网络类型等。
+//insecureHandler 是一个 http.Handler 实例，它定义了服务器的处理器
+//shutDownTimeout 是一个 time.Duration 值，它定义了在接收到关闭信号后，服务器应该等待多长时间以完成现有的请求，然后关闭。
+//stopCh 是一个只读的通道，当这个通道关闭时，服务器将开始关闭过程。
+//这个函数的返回值是一个错误，如果在绑定端口时出现错误，将返回这个错误。
+func NonBlockingRun(insecureServingInfo *InsecureServingInfo, insecureHandler http.Handler, shutDownTimeout time.Duration, stopCh <-chan struct{}) error {
+	// Use an internal stop channel to allow cleanup of the listeners on error.
+	//使用内部停止通道以允许在出错时清理侦听器。
+	internalStopCh := make(chan struct{})
+	if insecureServingInfo != nil && insecureHandler != nil {
+    //它在给定的监听器上启动一个不安全的 HTTP 服务器，并在接收到关闭信号时优雅地关闭服务器。这个函数不会阻塞，它会在后台运行服务器
+    if err := serveInsecurely(insecureServingInfo, insecureHandler, shutDownTimeout, internalStopCh); err != nil {
+			close(internalStopCh)
+			return err
+		}
+	}
+
+	// Now that the listener has bound successfully, it is the
+	// responsibility of the caller to close the provided channel to
+	// ensure cleanup.
+	go func() {
+		<-stopCh
+		close(internalStopCh)
+	}()
+
+	return nil
+}
+
+```
+
+### serveInsecurely 运行不安全的 http 服务器
+**位置：**
+`pkg/kubeapiserver/server/insecure_handler.go`
+
+**说明：**
+创建监听器，启动server，默认监听地址为：127.0.0.1:8080
+
+**源码：**
+
+```go
+// serveInsecurely run the insecure http server. It fails only if the initial listen
+// call fails. The actual server loop (stoppable by closing stopCh) runs in a go
+// routine, i.e. serveInsecurely does not block.
+//serve不安全地运行不安全的 http 服务器。仅当初始侦听调用失败时，它才会失败。
+//实际的服务器循环（可通过关闭 stopCh 来停止）在 go 例程中运行，即 serveInsecurely 不会阻塞。
+//insecureServingInfo 是一个 *InsecureServingInfo 实例，它定义了服务器的配置，如绑定地址和网络类型等。
+//insecureHandler 是一个 http.Handler 实例，它定义了服务器的处理器。
+//shutDownTimeout 是一个 time.Duration 值，它定义了在接收到关闭信号后，服务器应该等待多长时间以完成现有的请求，然后关闭。
+//stopCh 是一个只读的通道，当这个通道关闭时，服务器将开始关闭过程
+func serveInsecurely(insecureServingInfo *InsecureServingInfo, insecureHandler http.Handler, shutDownTimeout time.Duration, stopCh <-chan struct{}) error {
+	//函数首先创建一个 http.Server 实例，并设置其地址、处理器和最大头部字节数。
+	//然后，它使用 insecureServingInfo 中的网络类型和绑定地址创建一个监听器。
+	//如果创建监听器时出现错误，函数会返回这个错误。
+	insecureServer := &http.Server{
+		Addr:           insecureServingInfo.BindAddress,
+		Handler:        insecureHandler,
+		MaxHeaderBytes: 1 << 20,
+	}
+	glog.Infof("Serving insecurely on %s", insecureServingInfo.BindAddress)
+	//用于在指定的网络地址上创建一个新的监听器。
+	ln, _, err := options.CreateListener(insecureServingInfo.BindNetwork, insecureServingInfo.BindAddress)
+	if err != nil {
+		return err
+	}
+	err = server.RunServer(insecureServer, ln, shutDownTimeout, stopCh)
+	return err
+}
+```
+
+```go
+//network：一个字符串，表示要使用的网络类型。常见的值包括 "tcp"、"tcp4"、"tcp6"。
+//addr：一个字符串，表示监听器应该绑定的网络地址。对于 TCP 网络，地址的格式是 "ip:port"
+func CreateListener(network, addr string) (net.Listener, int, error) {
+	if len(network) == 0 {
+		network = "tcp"
+	}
+	//net.Listen 是 Go 语言标准库 net 包中的一个函数，它用于在指定的网络地址上创建一个新的监听器。  函数接收两个参数：  
+	//network：一个字符串，表示要使用的网络类型。常见的值包括 "tcp"、"tcp4"、"tcp6"、"unix" 或 "unixpacket"。
+	//addr：一个字符串，表示监听器应该绑定的网络地址。对于 TCP 网络，地址的格式是 "ip:port"，对于 Unix 网络，地址是文件系统路径。
+	//函数返回两个值：
+	//Listener：一个 net.Listener 接口，表示新创建的监听器。你可以调用它的 Accept 方法来接收新的连接，或者调用它的 Close 方法来停止监听。
+	//error：如果在创建监听器的过程中发生错误，这个值会是一个描述错误的 error 对象。否则，这个值会是 nil。
+	ln, err := net.Listen(network, addr)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to listen on %v: %v", addr, err)
+	}
+
+	// get port
+	tcpAddr, ok := ln.Addr().(*net.TCPAddr)
+	if !ok {
+		ln.Close()
+		return nil, 0, fmt.Errorf("invalid listen address: %q", ln.Addr().String())
+	}
+    //函数返回监听器和监听器绑定的端口号。
+	return ln, tcpAddr.Port, nil
+}
+```
+
+```go
+// RunServer listens on the given port if listener is not given,
+// then spawns a go-routine continuously serving
+// until the stopCh is closed. This function does not block.
+//如果未提供侦听器，RunServer 会在给定端口上侦听，然后生成一个 go-routine 持续服务，直到 stopCh 关闭。此函数不会阻止。
+//RunServer 是一个函数，它在给定的监听器上启动一个 HTTP 服务器，并在接收到关闭信号时优雅地关闭服务器。这个函数不会阻塞，它会在后台运行服务器。
+//server：一个 *http.Server 实例，它定义了服务器的配置，如地址、处理器和最大头部字节数等。
+//ln：一个 net.Listener 实例，它定义了服务器的监听器。
+//shutDownTimeout：一个 time.Duration 值，它定义了在接收到关闭信号后，服务器应该等待多长时间以完成现有的请求，然后关闭。
+// stopCh：一个只读的通道，当这个通道关闭时，服务器将开始关闭过程。
+func RunServer(
+	server *http.Server,
+	ln net.Listener,
+	shutDownTimeout time.Duration,
+	stopCh <-chan struct{},
+) error {
+	if ln == nil {
+		return fmt.Errorf("listener must not be nil")
+	}
+
+	// Shutdown server gracefully.
+	//函数首先在一个新的 goroutine 中启动一个监听关闭信号的循环。
+	//当 stopCh 关闭时，这个循环会调用 server.Shutdown 方法来开始关闭服务器。
+	//这个方法会等待所有现有的请求完成或者达到 shutDownTimeout 时间限制，然后关闭服务器。
+	go func() {
+		<-stopCh
+		ctx, cancel := context.WithTimeout(context.Background(), shutDownTimeout)
+		server.Shutdown(ctx)
+		cancel()
+	}()
+    //函数在另一个新的 goroutine 中启动服务器。如果服务器在运行过程中出现错误，
+    //这个 goroutine 会打印错误信息并停止。如果服务器因为接收到了关闭信号而停止，
+    //这个 goroutine 会打印一个消息并正常结束。  
+    //这个函数的主要目的是在服务器需要关闭时，能够优雅地关闭，即等待所有现有的请求完成，然后再关闭服务器。
+    //这样可以避免在服务器关闭时突然中断用户的请求
+	go func() {
+		defer utilruntime.HandleCrash()
+
+		var listener net.Listener
+		listener = tcpKeepAliveListener{ln.(*net.TCPListener)}
+		if server.TLSConfig != nil {
+			listener = tls.NewListener(listener, server.TLSConfig)
+		}
+
+		err := server.Serve(listener)
+
+		msg := fmt.Sprintf("Stopped listening on %s", ln.Addr().String())
+		select {
+		case <-stopCh:
+			glog.Info(msg)
+		default:
+			panic(fmt.Sprintf("%s due to error: %v", msg, err))
+		}
+	}()
+
+	return nil
+}
+```
+在 Go 语言中，go func() 是用来创建并启动一个新的 goroutine 的语法。go 是一个关键字，后面跟着的函数调用会在一个新的 goroutine 中异步执行。  
+
+goroutine 是 Go 语言的并发执行单位，它比线程更轻量级，管理成本更低。Go 语言的运行时会自动在物理线程上调度 goroutines 的执行。
+
+以下是一个简单的例子：
+```go
+go func() {
+    fmt.Println("Hello, World!")
+}()
+```
+
+在这个例子中，我们创建了一个新的 goroutine 来执行一个匿名函数，这个函数会打印 "Hello, World!"。
+因为 goroutine 是异步执行的，所以这个函数调用不会阻塞当前的执行流程。 
+
+需要注意的是，如果主 goroutine（也就是程序的主执行流程）结束了，那么所有的 goroutine 都会被立即停止，不论它们是否已经执行完毕。
+因此，如果你需要等待一个 goroutine 完成，你可能需要使用通道（channel）或者 sync.WaitGroup 等同步机制。
