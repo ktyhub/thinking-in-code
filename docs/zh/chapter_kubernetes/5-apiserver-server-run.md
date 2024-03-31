@@ -315,75 +315,129 @@ func CreateKubeAPIServerConfig(
 	if lastErr != nil {
 		return
 	}
-
+	//将一个网络地址分割为主机和端口两部分。
 	if _, port, err := net.SplitHostPort(s.Etcd.StorageConfig.ServerList[0]); err == nil && port != "0" && len(port) != 0 {
 		if err := utilwait.PollImmediate(etcdRetryInterval, etcdRetryLimit*etcdRetryInterval, preflight.EtcdConnection{ServerList: s.Etcd.StorageConfig.ServerList}.CheckEtcdServers); err != nil {
 			lastErr = fmt.Errorf("error waiting for etcd connection: %v", err)
 			return
 		}
 	}
-
+    //，capabilities.Capabilities函数通常在启动时调用，用于获取集群的能力，然后根据这些能力来决定如何执行后续的操作。例如，如果集群不支持特权容器，那么在创建Pod时就不能设置privileged选项。
 	capabilities.Initialize(capabilities.Capabilities{
+		//allowPrivilegedContainers字段表示是否允许创建特权容器，SupportsDynamicVolumes字段表示是否支持动态卷等。
 		AllowPrivileged: s.AllowPrivileged,
 		// TODO(vmarmol): Implement support for HostNetworkSources.
 		PrivilegedSources: capabilities.PrivilegedSources{
+			//表示可以创建使用主机网络的Pod的源。如果数组为空，则表示没有任何源可以创建使用主机网络的Pod。
 			HostNetworkSources: []string{},
+			//表示可以创建使用主机PID命名空间的Pod的源。如果数组为空，则表示没有任何源可以创建使用主机PID命名空间的Pod
 			HostPIDSources:     []string{},
+			//表示可以创建使用主机IPC命名空间的Pod的源。如果数组为空，则表示没有任何源可以创建使用主机IPC命名空间的Pod。
 			HostIPCSources:     []string{},
 		},
-		PerConnectionBandwidthLimitBytesPerSec: s.MaxConnectionBytesPerSec,
+        //用于限制每个连接的带宽使用量。这个选项的值是每秒允许的字节数。
+        //如果这个值设置为0，那么就表示没有限制。  
+        //这个选项可以帮助防止单个连接占用过多的带宽，从而影响其他连接的性能。
+        //例如，如果一个Pod正在进行大量的数据传输，而这个数据传输占用了大部分的网络带宽，那么其他的Pod可能会因为网络带宽不足而无法正常工作。
+        //通过设置PerConnectionBandwidthLimitBytesPerSec，可以限制每个连接的带宽使用量，从而确保所有的Pod都能获得足够的网络带宽。
+        PerConnectionBandwidthLimitBytesPerSec: s.MaxConnectionBytesPerSec,
 	})
-
-	serviceIPRange, apiServerServiceIP, lastErr := master.DefaultServiceIPRange(s.ServiceClusterIPRange)
+	//master.DefaultServiceIPRange是Kubernetes中的一个函数，它用于获取或设置Kubernetes服务的默认IP范围。  
+	//这个函数接收一个IP网络参数，如果这个参数为空或未设置，函数将返回默认的服务IP范围，即10.0.0.0/24。
+	//同时，它还会返回这个IP范围中的第一个IP，通常被用作Kubernetes API服务器的服务IP。  
+	//如果提供的参数不为空，函数将尝试将其解析为IP网络，并返回这个网络和网络中的第一个IP。  
+	//这个函数主要用于Kubernetes API服务器的启动过程中，用于确定服务IP范围。
+	//服务IP范围是Kubernetes中服务对象的ClusterIP字段可以使用的IP地址范围。
+   	serviceIPRange, apiServerServiceIP, lastErr := master.DefaultServiceIPRange(s.ServiceClusterIPRange)
 	if lastErr != nil {
 		return
 	}
-
+    //BuildStorageFactory是一个函数，它负责构建Kubernetes API服务器的存储工厂。
+	//存储工厂是一个对象，它负责创建和配置用于存储Kubernetes资源的存储后端。 
+	//这个函数接收一个ServerRunOptions类型的参数，这个参数包含了API服务器的运行选项，包括etcd的配置、存储类型、存储版本等。 
+	//函数首先从运行选项中获取存储的序列化版本，然后使用这些信息创建一个新的存储工厂。  
+	//然后，函数将一些资源添加到存储工厂中，这些资源可以在多个API组之间共享。
+	//例如，networkpolicies资源可以在networking和extensions两个API组之间共享。 
+	//如果启用了存储加密，函数还会从运行选项中获取加密配置，并将其应用到存储工厂。 
+	//最后，函数返回创建的存储工厂和可能出现的错误。  
+	//这是BuildStorageFactory函数的基本工作流程。具体的实现可能会根据Kubernetes的版本和配置有所不同。
 	storageFactory, lastErr := BuildStorageFactory(s)
 	if lastErr != nil {
 		return
 	}
-
+    //接收一个文件路径作为参数，该文件应该是一个证书颁发机构（CA）的证书。这个函数尝试从给定的文件路径读取CA证书。
 	clientCA, lastErr := readCAorNil(s.Authentication.ClientCert.ClientCA)
 	if lastErr != nil {
 		return
 	}
-	requestHeaderProxyCA, lastErr := readCAorNil(s.Authentication.RequestHeader.ClientCAFile)
+    //接收一个文件路径作为参数，该文件应该是一个证书颁发机构（CA）的证书。这个函数尝试从给定的文件路径读取CA证书。
+    requestHeaderProxyCA, lastErr := readCAorNil(s.Authentication.RequestHeader.ClientCAFile)
 	if lastErr != nil {
 		return
 	}
-
+    //
 	config = &master.Config{
+		//GenericConfig：这是一个genericapiserver.Config类型的对象，包含了API服务器的通用配置，如安全设置、存储配置、审计配置等
 		GenericConfig: genericConfig,
+		//ExtraConfig：这是一个master.ExtraConfig类型的对象，包含了API服务器的特定配置，如服务IP范围、存储工厂、API组信息等
 		ExtraConfig: master.ExtraConfig{
 			ClientCARegistrationHook: master.ClientCARegistrationHook{
+				//ClientCA: 这是一个[]byte类型的字段，它包含了用于验证客户端证书的CA证书。
 				ClientCA:                         clientCA,
+				//它包含了用于从请求头中提取用户名的头字段名
 				RequestHeaderUsernameHeaders:     s.Authentication.RequestHeader.UsernameHeaders,
+				//它包含了用于从请求头中提取用户组的头字段名。
 				RequestHeaderGroupHeaders:        s.Authentication.RequestHeader.GroupHeaders,
+				//它包含了用于从请求头中提取额外信息的头字段名前缀。
 				RequestHeaderExtraHeaderPrefixes: s.Authentication.RequestHeader.ExtraHeaderPrefixes,
+				//用于验证请求头中的证书的CA证书。
 				RequestHeaderCA:                  requestHeaderProxyCA,
+				//允许的客户端证书的公共名（CN）。
 				RequestHeaderAllowedNames:        s.Authentication.RequestHeader.AllowedNames,
 			},
-
+            // 
 			APIResourceConfigSource: storageFactory.APIResourceConfigSource,
+			//StorageFactory：这是一个serverstorage.StorageFactory类型的对象，用于创建和配置存储后端
 			StorageFactory:          storageFactory,
+			//当设置为true时，Kubernetes API服务器将启动核心控制器。这些控制器是Kubernetes集群的关键部分，负责处理各种集群管理任务，如节点管理、副本控制、服务发现等
 			EnableCoreControllers:   true,
+			//EventTTL：这是一个time.Duration类型的对象，表示事件的生存时间。
 			EventTTL:                s.EventTTL,
+			//KubeletClientConfig：这是一个kubeletclient.KubeletClientConfig类型的对象，用于配置kubelet客户端。
 			KubeletClientConfig:     s.KubeletConfig,
+			//当设置为true时，Kubernetes API服务器将启用用户界面支持。这通常指的是Kubernetes Dashboard，这是一个基于Web的Kubernetes用户界面。
+			//http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
 			EnableUISupport:         true,
+			//当设置为true时，Kubernetes API服务器将启用日志支持。这意味着API服务器将能够处理和响应日志请求，例如从Pod中获取日志
 			EnableLogsSupport:       s.EnableLogsHandler,
+			//http.Transport类型的对象。这个对象用于配置API服务器与其他服务（如kubelet）之间的网络连接。  
+			//在Kubernetes中，API服务器需要与集群中的其他组件（如kubelet）进行通信。
+			//这种通信可能需要特殊的配置，例如使用SSH隧道或特殊的证书。
+			//ProxyTransport提供了一个接口，API服务器可以通过这个接口创建和配置这些网络连接。
 			ProxyTransport:          proxyTransport,
-
+            //用于配置API服务器与节点之间的SSH隧道，以便API服务器可以安全地访问节点上的kubelet。  
+			//在Kubernetes中，API服务器需要与集群中的其他组件（如kubelet）进行通信。
+			//这种通信可能需要特殊的配置，例如使用SSH隧道。
+			//Tunneler提供了一个接口，API服务器可以通过这个接口创建和配置这些SSH隧道。
 			Tunneler: nodeTunneler,
-
+            //在Kubernetes中，每个服务都会被分配一个IP地址，这个IP地址是在ServiceIPRange指定的范围内。这个IP地址用于在集群内部访问该服务。
 			ServiceIPRange:       serviceIPRange,
+			//用于配置Kubernetes API服务器的服务IP地址。  
+			//在Kubernetes中，API服务器的服务IP地址是集群内部用于访问API服务器的IP地址。
+			//这个地址通常是服务IP范围（ServiceIPRange）的第一个IP地址。
 			APIServerServiceIP:   apiServerServiceIP,
 			APIServerServicePort: 443,
-
+            //用于配置Kubernetes API服务器为服务分配NodePort的范围。  在Kubernetes中，当服务的类型为NodePort时，会为该服务分配一个NodePort，这个NodePort是在ServiceNodePortRange指定的范围内。 
 			ServiceNodePortRange:      s.ServiceNodePortRange,
+			//用于配置Kubernetes API服务器的服务NodePort。 
+			//在Kubernetes中，API服务器的服务NodePort是集群外部用于访问API服务器的端口。
+			//这个端口通常是服务NodePort范围（ServiceNodePortRange）内的一个端口
 			KubernetesServiceNodePort: s.KubernetesServiceNodePort,
-
+            //用于配置Kubernetes API服务器的端点（Endpoint）的协调器类型。  在Kubernetes中，API服务器的端点协调器用于确保API服务器的端点对象与实际的API服务器实例保持一致。这对于多个API服务器实例的场景尤其重要。
 			EndpointReconcilerType: reconcilers.Type(s.EndpointReconcilerType),
+			//用于配置Kubernetes API服务器的主节点数量。  
+			//在Kubernetes中，主节点数量是用于确定API服务器的端点协调器的行为。
+			//例如，如果你使用的端点协调器类型是MasterCount，那么主节点数量将决定API服务器的端点对象的数量。
 			MasterCount:            s.MasterCount,
 		},
 	}
@@ -398,7 +452,7 @@ func CreateKubeAPIServerConfig(
 ```
 
 
-## defaultOptions 设置合理的默认设置
+### defaultOptions 设置合理的默认设置
 
 **位置：** `cmd/kube-apiserver/app/server.go`
 
@@ -426,19 +480,36 @@ func defaultOptions(s *options.ServerRunOptions) error {
 		return fmt.Errorf("error determining service IP ranges: %v", err)
 	}
 	s.ServiceClusterIPRange = serviceIPRange
-	//如果没有指定服务账户令牌签名的私钥，它将使用安全服务的服务器证书的私钥作为默认值
+	//如果没有指定服务账户令牌签名的私钥，它将使用安全服务的服务器证书的私钥作为默认值 /var/run/kubernetes/ 创建apiserver.crt apiserver.key 文件
 	if err := s.SecureServing.MaybeDefaultWithSelfSignedCerts(s.GenericServerRunOptions.AdvertiseAddress.String(), []string{"kubernetes.default.svc", "kubernetes.default", "kubernetes"}, []net.IP{apiServerServiceIP}); err != nil {
 		return fmt.Errorf("error creating self-signed certificates: %v", err)
 	}
+	
+	//它的主要作用是设置 API 服务器的默认外部主机名。
+	// 这个函数首先检查是否已经设置了外部主机名。如果已经设置了，那么它将直接返回，不做任何操作。  
+	//如果没有设置外部主机名，那么它将尝试获取主机的 IP 地址，并将这个 IP 地址设置为外部主机名。
+	//获取 IP 地址的方式是，首先获取所有的网络接口，然后遍历这些接口，找到第一个非环回且非点对点的接口，然后获取这个接口的 IP 地址。  
+	//如果在获取 IP 地址的过程中出现错误，或者没有找到合适的网络接口，那么它将返回一个错误。  
+	//这个函数的主要目的是确保 API 服务器有一个可以被其他组件访问的地址。
+	//这个地址将被用于构建到 API 服务器的连接，例如在 kubelet 或者 kube-proxy 中。
 	if err := s.CloudProvider.DefaultExternalHost(s.GenericServerRunOptions); err != nil {
 		return fmt.Errorf("error setting the external host value: %v", err)
 	}
-
+	//用于将授权配置应用到API服务器的通用配置中。
+	//这个方法主要负责创建一个授权器（Authorizer），该授权器用于决定哪些用户可以访问哪些资源。 
+	//这个方法首先会将服务器运行选项中的授权配置转换为一个授权配置对象，然后调用该对象的New()方法来创建一个新的授权器。
+	//创建的授权器会被设置到API服务器的通用配置中。  
+	//此外，这个方法还会创建一个规则解析器（RuleResolver），该解析器用于确定用户的权限规则。
+	//这个规则解析器也会被设置到API服务器的通用配置中。  
+	//如果在创建授权器或规则解析器的过程中出现错误，ApplyAuthorization方法会返回这个错误。 
+	//这个方法的主要目的是确保API服务器有一个有效的授权机制，以便对用户的访问请求进行权限控制
 	s.Authentication.ApplyAuthorization(s.Authorization)
 
 	// Default to the private server key for service account token signing
 	if len(s.Authentication.ServiceAccounts.KeyFiles) == 0 && s.SecureServing.ServerCert.CertKey.KeyFile != "" {
 		if kubeauthenticator.IsValidServiceAccountKeyFile(s.SecureServing.ServerCert.CertKey.KeyFile) {
+			//默认为服务帐户令牌签名的专用服务器密钥 如果未配置则使用SecureServing.MaybeDefaultWithSelfSignedCerts方法在
+			// `/var/run/kubernetes/`  目录生成的密钥
 			s.Authentication.ServiceAccounts.KeyFiles = []string{s.SecureServing.ServerCert.CertKey.KeyFile}
 		} else {
 			glog.Warning("No TLS key provided, service account token authentication disabled")
@@ -460,6 +531,11 @@ func defaultOptions(s *options.ServerRunOptions) error {
 		// be used for the deserialization cache and divide it by the max object
 		// size to compute its size. We may even go further and measure
 		// collective sizes of the objects in the cache.
+		//这是启发式方法，它从内存容量中尝试推断集群中的最大节点数，并根据该值设置缓存大小。
+		//根据我们的文档，我们正式建议 2000 个节点使用 120GB 计算机，并从此进行扩展。
+		//因此，我们假设每个节点的容量为 ~60MB。
+		//TODO：我们可以考虑决定将一定比例的内存用于反序列化缓存，并将其除以最大对象大小以计算其大小。
+		//我们甚至可以更进一步，测量缓存中对象的集体大小。
 		clusterSize := s.GenericServerRunOptions.TargetRAMMB / 60
 		s.Etcd.StorageConfig.DeserializationCacheSize = 25 * clusterSize
 		if s.Etcd.StorageConfig.DeserializationCacheSize < 1000 {
@@ -469,6 +545,7 @@ func defaultOptions(s *options.ServerRunOptions) error {
 	//如果启用了 Etcd 的 watch 缓存，它将设置相关的默认值。
 	if s.Etcd.EnableWatchCache {
 		glog.V(2).Infof("Initializing cache sizes based on %dMB limit", s.GenericServerRunOptions.TargetRAMMB)
+		//ParseWatchCacheSizes 将缓存大小值列表转换为组资源映射,将一组缓存大小值转换为一组资源到请求大小的映射。  
 		sizes := cachesize.NewHeuristicWatchCacheSizes(s.GenericServerRunOptions.TargetRAMMB)
 		if userSpecified, err := serveroptions.ParseWatchCacheSizes(s.Etcd.WatchCacheSizes); err == nil {
 			for resource, size := range userSpecified {
@@ -484,3 +561,223 @@ func defaultOptions(s *options.ServerRunOptions) error {
 	return nil
 }
 ```
+
+
+## PrepareRun 执行 API 安装设置步骤
+
+**位置：** `apiserver/pkg/server/genericapiserver.go`
+
+**说明：**
+
+这个函数的主要目的是确保服务器运行选项有合理的默认设置，以便在没有明确指定某些选项的情况下，服务器仍然可以正常运行。
+
+PrepareRun 是 GenericAPIServer 结构体的一个方法，它在 API 安装后执行一些设置步骤。 
+
+这个方法的主要目的是在服务器开始运行之前进行一些必要的设置，例如安装 API 文档和健康检查等。
+
+**源码：**
+
+```go
+
+//  执行 API 安装设置步骤后.
+func (s *GenericAPIServer) PrepareRun() preparedGenericAPIServer {
+	////这个方法首先检查是否有 swaggerConfig 和 openAPIConfig。如果有，它会在 GoRestfulContainer 中安装相应的路由。
+	if s.swaggerConfig != nil {
+		routes.Swagger{Config: s.swaggerConfig}.Install(s.Handler.GoRestfulContainer)
+	}
+	if s.openAPIConfig != nil {
+		routes.OpenAPI{
+			Config: s.openAPIConfig,
+		}.Install(s.Handler.GoRestfulContainer, s.Handler.NonGoRestfulMux)
+	}
+	//然后，它调用 installHealthz 方法来安装健康检查。
+	s.installHealthz()
+    // 最后，它返回一个 preparedGenericAPIServer 结构体，该结构体包含一个指向 GenericAPIServer 的指针。
+	return preparedGenericAPIServer{s}
+}
+```
+
+### 不安全的 http 服务器NonBlockingRun
+**位置：**
+`pkg/kubeapiserver/server/insecure_handler.go`
+
+**说明：**
+生成不安全的 http 服务器,给定的监听器上启动一个 HTTP 服务器，并在接收到关闭信号时优雅地关闭服务器。这个函数不会阻塞，它会在后台运行服务器。
+
+**源码：**
+
+```go
+// NonBlockingRun spawns the insecure http server. An error is
+// returned if the ports cannot be listened on.
+//insecureServingInfo 是一个 *InsecureServingInfo 实例，它定义了服务器的配置，如绑定地址和网络类型等。
+//insecureHandler 是一个 http.Handler 实例，它定义了服务器的处理器
+//shutDownTimeout 是一个 time.Duration 值，它定义了在接收到关闭信号后，服务器应该等待多长时间以完成现有的请求，然后关闭。
+//stopCh 是一个只读的通道，当这个通道关闭时，服务器将开始关闭过程。
+//这个函数的返回值是一个错误，如果在绑定端口时出现错误，将返回这个错误。
+func NonBlockingRun(insecureServingInfo *InsecureServingInfo, insecureHandler http.Handler, shutDownTimeout time.Duration, stopCh <-chan struct{}) error {
+	// Use an internal stop channel to allow cleanup of the listeners on error.
+	//使用内部停止通道以允许在出错时清理侦听器。
+	internalStopCh := make(chan struct{})
+	if insecureServingInfo != nil && insecureHandler != nil {
+    //它在给定的监听器上启动一个不安全的 HTTP 服务器，并在接收到关闭信号时优雅地关闭服务器。这个函数不会阻塞，它会在后台运行服务器
+    if err := serveInsecurely(insecureServingInfo, insecureHandler, shutDownTimeout, internalStopCh); err != nil {
+			close(internalStopCh)
+			return err
+		}
+	}
+
+	// Now that the listener has bound successfully, it is the
+	// responsibility of the caller to close the provided channel to
+	// ensure cleanup.
+	go func() {
+		<-stopCh
+		close(internalStopCh)
+	}()
+
+	return nil
+}
+
+```
+
+### serveInsecurely 运行不安全的 http 服务器
+**位置：**
+`pkg/kubeapiserver/server/insecure_handler.go`
+
+**说明：**
+创建监听器，启动server，默认监听地址为：127.0.0.1:8080
+
+**源码：**
+
+```go
+// serveInsecurely run the insecure http server. It fails only if the initial listen
+// call fails. The actual server loop (stoppable by closing stopCh) runs in a go
+// routine, i.e. serveInsecurely does not block.
+//serve不安全地运行不安全的 http 服务器。仅当初始侦听调用失败时，它才会失败。
+//实际的服务器循环（可通过关闭 stopCh 来停止）在 go 例程中运行，即 serveInsecurely 不会阻塞。
+//insecureServingInfo 是一个 *InsecureServingInfo 实例，它定义了服务器的配置，如绑定地址和网络类型等。
+//insecureHandler 是一个 http.Handler 实例，它定义了服务器的处理器。
+//shutDownTimeout 是一个 time.Duration 值，它定义了在接收到关闭信号后，服务器应该等待多长时间以完成现有的请求，然后关闭。
+//stopCh 是一个只读的通道，当这个通道关闭时，服务器将开始关闭过程
+func serveInsecurely(insecureServingInfo *InsecureServingInfo, insecureHandler http.Handler, shutDownTimeout time.Duration, stopCh <-chan struct{}) error {
+	//函数首先创建一个 http.Server 实例，并设置其地址、处理器和最大头部字节数。
+	//然后，它使用 insecureServingInfo 中的网络类型和绑定地址创建一个监听器。
+	//如果创建监听器时出现错误，函数会返回这个错误。
+	insecureServer := &http.Server{
+		Addr:           insecureServingInfo.BindAddress,
+		Handler:        insecureHandler,
+		MaxHeaderBytes: 1 << 20,
+	}
+	glog.Infof("Serving insecurely on %s", insecureServingInfo.BindAddress)
+	//用于在指定的网络地址上创建一个新的监听器。
+	ln, _, err := options.CreateListener(insecureServingInfo.BindNetwork, insecureServingInfo.BindAddress)
+	if err != nil {
+		return err
+	}
+	err = server.RunServer(insecureServer, ln, shutDownTimeout, stopCh)
+	return err
+}
+```
+
+```go
+//network：一个字符串，表示要使用的网络类型。常见的值包括 "tcp"、"tcp4"、"tcp6"。
+//addr：一个字符串，表示监听器应该绑定的网络地址。对于 TCP 网络，地址的格式是 "ip:port"
+func CreateListener(network, addr string) (net.Listener, int, error) {
+	if len(network) == 0 {
+		network = "tcp"
+	}
+	//net.Listen 是 Go 语言标准库 net 包中的一个函数，它用于在指定的网络地址上创建一个新的监听器。  函数接收两个参数：  
+	//network：一个字符串，表示要使用的网络类型。常见的值包括 "tcp"、"tcp4"、"tcp6"、"unix" 或 "unixpacket"。
+	//addr：一个字符串，表示监听器应该绑定的网络地址。对于 TCP 网络，地址的格式是 "ip:port"，对于 Unix 网络，地址是文件系统路径。
+	//函数返回两个值：
+	//Listener：一个 net.Listener 接口，表示新创建的监听器。你可以调用它的 Accept 方法来接收新的连接，或者调用它的 Close 方法来停止监听。
+	//error：如果在创建监听器的过程中发生错误，这个值会是一个描述错误的 error 对象。否则，这个值会是 nil。
+	ln, err := net.Listen(network, addr)
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to listen on %v: %v", addr, err)
+	}
+
+	// get port
+	tcpAddr, ok := ln.Addr().(*net.TCPAddr)
+	if !ok {
+		ln.Close()
+		return nil, 0, fmt.Errorf("invalid listen address: %q", ln.Addr().String())
+	}
+    //函数返回监听器和监听器绑定的端口号。
+	return ln, tcpAddr.Port, nil
+}
+```
+
+```go
+// RunServer listens on the given port if listener is not given,
+// then spawns a go-routine continuously serving
+// until the stopCh is closed. This function does not block.
+//如果未提供侦听器，RunServer 会在给定端口上侦听，然后生成一个 go-routine 持续服务，直到 stopCh 关闭。此函数不会阻止。
+//RunServer 是一个函数，它在给定的监听器上启动一个 HTTP 服务器，并在接收到关闭信号时优雅地关闭服务器。这个函数不会阻塞，它会在后台运行服务器。
+//server：一个 *http.Server 实例，它定义了服务器的配置，如地址、处理器和最大头部字节数等。
+//ln：一个 net.Listener 实例，它定义了服务器的监听器。
+//shutDownTimeout：一个 time.Duration 值，它定义了在接收到关闭信号后，服务器应该等待多长时间以完成现有的请求，然后关闭。
+// stopCh：一个只读的通道，当这个通道关闭时，服务器将开始关闭过程。
+func RunServer(
+	server *http.Server,
+	ln net.Listener,
+	shutDownTimeout time.Duration,
+	stopCh <-chan struct{},
+) error {
+	if ln == nil {
+		return fmt.Errorf("listener must not be nil")
+	}
+
+	// Shutdown server gracefully.
+	//函数首先在一个新的 goroutine 中启动一个监听关闭信号的循环。
+	//当 stopCh 关闭时，这个循环会调用 server.Shutdown 方法来开始关闭服务器。
+	//这个方法会等待所有现有的请求完成或者达到 shutDownTimeout 时间限制，然后关闭服务器。
+	go func() {
+		<-stopCh
+		ctx, cancel := context.WithTimeout(context.Background(), shutDownTimeout)
+		server.Shutdown(ctx)
+		cancel()
+	}()
+    //函数在另一个新的 goroutine 中启动服务器。如果服务器在运行过程中出现错误，
+    //这个 goroutine 会打印错误信息并停止。如果服务器因为接收到了关闭信号而停止，
+    //这个 goroutine 会打印一个消息并正常结束。  
+    //这个函数的主要目的是在服务器需要关闭时，能够优雅地关闭，即等待所有现有的请求完成，然后再关闭服务器。
+    //这样可以避免在服务器关闭时突然中断用户的请求
+	go func() {
+		defer utilruntime.HandleCrash()
+
+		var listener net.Listener
+		listener = tcpKeepAliveListener{ln.(*net.TCPListener)}
+		if server.TLSConfig != nil {
+			listener = tls.NewListener(listener, server.TLSConfig)
+		}
+
+		err := server.Serve(listener)
+
+		msg := fmt.Sprintf("Stopped listening on %s", ln.Addr().String())
+		select {
+		case <-stopCh:
+			glog.Info(msg)
+		default:
+			panic(fmt.Sprintf("%s due to error: %v", msg, err))
+		}
+	}()
+
+	return nil
+}
+```
+在 Go 语言中，go func() 是用来创建并启动一个新的 goroutine 的语法。go 是一个关键字，后面跟着的函数调用会在一个新的 goroutine 中异步执行。  
+
+goroutine 是 Go 语言的并发执行单位，它比线程更轻量级，管理成本更低。Go 语言的运行时会自动在物理线程上调度 goroutines 的执行。
+
+以下是一个简单的例子：
+```go
+go func() {
+    fmt.Println("Hello, World!")
+}()
+```
+
+在这个例子中，我们创建了一个新的 goroutine 来执行一个匿名函数，这个函数会打印 "Hello, World!"。
+因为 goroutine 是异步执行的，所以这个函数调用不会阻塞当前的执行流程。 
+
+需要注意的是，如果主 goroutine（也就是程序的主执行流程）结束了，那么所有的 goroutine 都会被立即停止，不论它们是否已经执行完毕。
+因此，如果你需要等待一个 goroutine 完成，你可能需要使用通道（channel）或者 sync.WaitGroup 等同步机制。
