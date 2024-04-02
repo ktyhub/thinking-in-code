@@ -770,6 +770,7 @@ func RunServer(
 goroutine 是 Go 语言的并发执行单位，它比线程更轻量级，管理成本更低。Go 语言的运行时会自动在物理线程上调度 goroutines 的执行。
 
 以下是一个简单的例子：
+
 ```go
 go func() {
     fmt.Println("Hello, World!")
