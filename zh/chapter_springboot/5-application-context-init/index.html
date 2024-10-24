@@ -1,0 +1,3342 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="knowledge thinking you want to know">
+      
+      
+        <meta name="author" content="ktyhub">
+      
+      
+        <link rel="canonical" href="https://www.ktyhub.com/zh/chapter_springboot/5-application-context-init/">
+      
+      
+        <link rel="prev" href="../4-environment/">
+      
+      
+        <link rel="next" href="../6-reader-scanner/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.42">
+    
+    
+      
+        <title>5-ApplicationContext初始化 - Thinking In Code</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.0253249f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+Traditional+Chinese:300,300i,400,400i,700,700i%7CNoto+Sans+Traditional+Chinese:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Noto Sans Traditional Chinese";--md-code-font:"Noto Sans Traditional Chinese"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../../mermaid.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="white">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#springboot" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="Thinking In Code" class="md-header__button md-logo" aria-label="Thinking In Code" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Thinking In Code
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              5-ApplicationContext初始化
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="white"  aria-label="切换到夜间阅读模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到夜间阅读模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="black"  aria-label="切换到白天阅读模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到白天阅读模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/zh/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Thinking In Code" class="md-nav__button md-logo" aria-label="Thinking In Code" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Thinking In Code
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    技术博客
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            技术博客
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_1" id="__nav_1_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    前言
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            前言
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_preface/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    kubernetes(v1.9.9)(梳理中)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            kubernetes(v1.9.9)(梳理中)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kubernetes/1-index/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-克隆K8S源码
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kubernetes/2-apiserver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-ApiServer主流程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kubernetes/3-apiserver-server-run-options/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-ApiServer配置初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kubernetes/4-apiserver-add-flags/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-ApiServer命令行标记
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kubernetes/5-apiserver-server-run/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-ApiServer-API服务器链创建
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_3" id="__nav_1_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    ElasticJob(V2.1.5)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            ElasticJob(V2.1.5)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/1-introduce/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-分布式调度系统简介
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/2-reg/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-注册中心的设计原理
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/3-job-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-建造者构造作业配置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/4-job-template/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-调度作业模版类设计
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/5-job-config-storage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-分布式场景下存储的
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/6-job-registry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-单例模式作业注册表
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/7-quartz/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7-Quartz下的单机执行
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/8-job-life/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8-系统启动时的生命周期
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/9-listener/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9-调度作业的监听器大全
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/10-leader-latch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10-分布式锁实现选主节点
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/11-server-instance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11-服务和进程信息持久化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_4" id="__nav_1_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Zookeeper(V3.6.2)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            Zookeeper(V3.6.2)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/1-introduce/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-入门简介
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/2-implement/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-实现说明
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/3-install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-安装配置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/4-client/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-客户端入门
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/5-produce-and-consumer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-锁与生产者消费者
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/6-watch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-监听机制
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/7-start-source/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7-服务器入口
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/8-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8-配置加载
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/9-clear-log-start/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9-日志清理任务
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/10-init-main/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10-初始化和启动
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/11-reactor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11-网络IO初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/12-quorumpeer-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12-QuorumPeer初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/13-loaddatabase/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    13-初始化磁盘数据
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/14-reactor-io/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    14-Reactor网络IO
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/15-election/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    15-选举算法的准备等待选举
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/16-lookforleader/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    16-开始寻找leader
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_5" id="__nav_1_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Dubbbo(V3.0.8)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_5">
+            <span class="md-nav__icon md-icon"></span>
+            Dubbbo(V3.0.8)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/1-learn-from-a-demo/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-服务提供者的Demo
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/2-serviceconfig-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-ServiceConfig化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/3-model-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-领域模型Model对象
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/4-extension-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-Extension的初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/5-getadaptiveextension/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-getAdaptiveExtension方法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/6-extension-wrapper/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-Extension的Wrapper机制
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/7-extension-activate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7-Extension的Activate机制
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/8-dubbobootstrap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8-DubboBootstrap启动程序
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/9-application-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9-ApplicationConfig
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/10-registryconfig/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10-RegistryConfig
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/11-protocolconfig/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11-ProtocolConfig
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/12-start-life-cycle/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12-启动生命周期
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/13-configcenter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    13-配置中心初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/14-config-load/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    14-配置加载说明
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/15-metadata/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    15-元数据中心说明
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/16-moduledeployer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    16-模块发布器
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/17-provider-register/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    17-提供者双注册
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/18-metadataService-export/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    18-元数据服务的导出
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/19-consuemr-demo/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    19-消费者案例
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/20-reference-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    20-ReferenceConfig
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/21-refer-services/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    21-ReferServices
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/22-migration-invoker/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    22-自动决策应用级服务发现原理
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_6" id="__nav_1_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Apache Kafka Client(3.2)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_6">
+            <span class="md-nav__icon md-icon"></span>
+            Apache Kafka Client(3.2)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/1-introduce/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-入门笔记
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/2-high-performence/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-高性能高可用设计
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/3-client-sample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-客户端案例
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/4-kafka-producer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-KafkaProducer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/5-sender/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-发送器Sender
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/6-kafka-thread/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-客户端的IO线程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/7-kafka-producer-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7-KafkaProducer的初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/8-send-producer-data/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8-发送生产者数据
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/9-execute-io/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9-执行IO事件
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/10-handle-io/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10-处理IO结果
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_7" id="__nav_1_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Netty(v4.x)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_7">
+            <span class="md-nav__icon md-icon"></span>
+            Netty(v4.x)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_netty/1-sample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-Netty的入门
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_netty/2-bootstrap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-启动器Bootstrapp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_netty/3-event-loop-group-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-EventLoopGroup初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_netty/4-server-bootstrap-attr/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-BootStrap属性设置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_8" id="__nav_1_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Druid(v1.2.11)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_8">
+            <span class="md-nav__icon md-icon"></span>
+            Druid(v1.2.11)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/1-sample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-入门案例
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/2-datasource/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-数据源简介
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/3-before-connection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-初始化连接
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/4-db-type/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-DbType与驱动类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/5-log-stats-thread/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-监控信息线程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/6-create-and-start-creator-thread/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-物理连接创建线程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/7-driver-connect/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7-创建数据库连接对象
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/8-validate-connection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8-连接的首次验证
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/9-druid-destroy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9-Druid销毁线程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_9" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1_9" id="__nav_1_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    SpringBoot(v2.6.6)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1_9">
+            <span class="md-nav__icon md-icon"></span>
+            SpringBoot(v2.6.6)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1-sample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-入门案例
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2-spi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-run方法与SPI扫描
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../3-run/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-SpringApplication的run方法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../4-environment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-Environment初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    5-ApplicationContext初始化
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    5-ApplicationContext初始化
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      简介
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#applicationcontext" class="md-nav__link">
+    <span class="md-ellipsis">
+      创建ApplicationContext对象
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="创建ApplicationContext对象">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      容器工厂创建容器对象
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#annotationconfigapplicationcontext" class="md-nav__link">
+    <span class="md-ellipsis">
+      AnnotationConfigApplicationContext容器的初始化过程
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#beandefaultlistablebeanfactory" class="md-nav__link">
+    <span class="md-ellipsis">
+      可容器化的Bean工厂DefaultListableBeanFactory初始化过程
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#graalvm" class="md-nav__link">
+    <span class="md-ellipsis">
+      GraalVM特性
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../6-reader-scanner/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-Reader和Scanner
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_10" id="__nav_1_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    EMQX(V3.0)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_10">
+            <span class="md-nav__icon md-icon"></span>
+            EMQX(V3.0)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_emqx/1-introduce/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-EMQX简介
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_emqx/2-code-struct/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-项目结构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_emqx/3-kernel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-内核层启动
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_emqx/4-router/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-路由层启动
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_emqx/5-broker/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-代理层启动
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_11" id="__nav_1_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    RELEASE NOTE
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_11">
+            <span class="md-nav__icon md-icon"></span>
+            RELEASE NOTE
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/1-mybatis-plus-v359.md" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mybatis-plus v3.5.9
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/2-byte-buddy-1.15.7.md" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    byte-buddy 1.15.7
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      简介
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#applicationcontext" class="md-nav__link">
+    <span class="md-ellipsis">
+      创建ApplicationContext对象
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="创建ApplicationContext对象">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      容器工厂创建容器对象
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#annotationconfigapplicationcontext" class="md-nav__link">
+    <span class="md-ellipsis">
+      AnnotationConfigApplicationContext容器的初始化过程
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#beandefaultlistablebeanfactory" class="md-nav__link">
+    <span class="md-ellipsis">
+      可容器化的Bean工厂DefaultListableBeanFactory初始化过程
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#graalvm" class="md-nav__link">
+    <span class="md-ellipsis">
+      GraalVM特性
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="springboot"><strong>SpringBoot容器的创建</strong><a class="headerlink" href="#springboot" title="Permanent link">&para;</a></h1>
+<h2 id="_1"><strong>简介</strong><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>回顾一下我们 前面介绍的SpringBoot应用程序SpringApplication对象的运行方法的生命周期:</p>
+<p>先直接贴代码,然后在代码上贴注释来看:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">public</span><span class="w"> </span><span class="n">ConfigurableApplicationContext</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">String</span><span class="p">...</span><span class="w"> </span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="c1">//启动时间</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">   </span><span class="kt">long</span><span class="w"> </span><span class="n">startTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">();</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">   </span><span class="c1">//创建启动上下文对象</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">   </span><span class="n">DefaultBootstrapContext</span><span class="w"> </span><span class="n">bootstrapContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">createBootstrapContext</span><span class="p">();</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">   </span><span class="n">ConfigurableApplicationContext</span><span class="w"> </span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">   </span><span class="c1">//配置无头属性</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">   </span><span class="n">configureHeadlessProperty</span><span class="p">();</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">   </span><span class="c1">//获取运行监听器</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">   </span><span class="n">SpringApplicationRunListeners</span><span class="w"> </span><span class="n">listeners</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getRunListeners</span><span class="p">(</span><span class="n">args</span><span class="p">);</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">   </span><span class="c1">//调用启动类型的启动方法(这个需要启动类型实现对应接口)</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">   </span><span class="n">listeners</span><span class="p">.</span><span class="na">starting</span><span class="p">(</span><span class="n">bootstrapContext</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">mainApplicationClass</span><span class="p">);</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">   </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">   </span><span class="c1">//创建应用程序参数对象</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">      </span><span class="n">ApplicationArguments</span><span class="w"> </span><span class="n">applicationArguments</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DefaultApplicationArguments</span><span class="p">(</span><span class="n">args</span><span class="p">);</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">      </span><span class="c1">//准备启动环境</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">      </span><span class="n">ConfigurableEnvironment</span><span class="w"> </span><span class="n">environment</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">prepareEnvironment</span><span class="p">(</span><span class="n">listeners</span><span class="p">,</span><span class="w"> </span><span class="n">bootstrapContext</span><span class="p">,</span><span class="w"> </span><span class="n">applicationArguments</span><span class="p">);</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">      </span><span class="c1">//配置需要忽略的Bean信息</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">      </span><span class="n">configureIgnoreBeanInfo</span><span class="p">(</span><span class="n">environment</span><span class="p">);</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">      </span><span class="c1">//打印一个Banner提示下用户当前版本</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">      </span><span class="n">Banner</span><span class="w"> </span><span class="n">printedBanner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">printBanner</span><span class="p">(</span><span class="n">environment</span><span class="p">);</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">      </span><span class="c1">//创建应用程序上下文对象</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">      </span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">createApplicationContext</span><span class="p">();</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">      </span><span class="c1">//设置下上下文对象的应用程序启动器</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">      </span><span class="n">context</span><span class="p">.</span><span class="na">setApplicationStartup</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">applicationStartup</span><span class="p">);</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">      </span><span class="c1">//准备上下文</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">      </span><span class="n">prepareContext</span><span class="p">(</span><span class="n">bootstrapContext</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">environment</span><span class="p">,</span><span class="w"> </span><span class="n">listeners</span><span class="p">,</span><span class="w"> </span><span class="n">applicationArguments</span><span class="p">,</span><span class="w"> </span><span class="n">printedBanner</span><span class="p">);</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">      </span><span class="c1">//刷新上下文</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">        </span><span class="n">refreshContext</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">        </span><span class="c1">//刷新上下文之后的逻辑</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="w">      </span><span class="n">afterRefresh</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">applicationArguments</span><span class="p">);</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="w">      </span><span class="c1">//打印启动时间</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="w">      </span><span class="n">Duration</span><span class="w"> </span><span class="n">timeTakenToStartup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofNanos</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">startTime</span><span class="p">);</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">logStartupInfo</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a><span class="w">         </span><span class="k">new</span><span class="w"> </span><span class="n">StartupInfoLogger</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">mainApplicationClass</span><span class="p">).</span><span class="na">logStarted</span><span class="p">(</span><span class="n">getApplicationLog</span><span class="p">(),</span><span class="w"> </span><span class="n">timeTakenToStartup</span><span class="p">);</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a><span class="w">      </span><span class="c1">//应用程序启动完成的start回调方法</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="w">      </span><span class="n">listeners</span><span class="p">.</span><span class="na">started</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">timeTakenToStartup</span><span class="p">);</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a><span class="w">      </span><span class="c1">//获取所有的ApplicationRunner类型和CommandLineRunner类型对象,</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a><span class="w">      </span><span class="c1">//先调用ApplicationRunner类型的启动方法run</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a><span class="w">      </span><span class="c1">//再调用所有的CommandLineRunner的run方法</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a><span class="w">      </span><span class="n">callRunners</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">applicationArguments</span><span class="p">);</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a><span class="w">   </span><span class="p">}</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a><span class="w">   </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Throwable</span><span class="w"> </span><span class="n">ex</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a><span class="w">    </span><span class="c1">//失败则转换异常信息打印异常</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a><span class="w">      </span><span class="n">handleRunFailure</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">ex</span><span class="p">,</span><span class="w"> </span><span class="n">listeners</span><span class="p">);</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a><span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalStateException</span><span class="p">(</span><span class="n">ex</span><span class="p">);</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a><span class="w">   </span><span class="p">}</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a><span class="w">   </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a><span class="w">     </span><span class="c1">//调用监听器的回调running方法</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a><span class="w">      </span><span class="n">Duration</span><span class="w"> </span><span class="n">timeTakenToReady</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Duration</span><span class="p">.</span><span class="na">ofNanos</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">nanoTime</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">startTime</span><span class="p">);</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52" href="#__codelineno-0-52"></a><span class="w">      </span><span class="n">listeners</span><span class="p">.</span><span class="na">ready</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">timeTakenToReady</span><span class="p">);</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53" href="#__codelineno-0-53"></a><span class="w">   </span><span class="p">}</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54" href="#__codelineno-0-54"></a><span class="w">   </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Throwable</span><span class="w"> </span><span class="n">ex</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55" href="#__codelineno-0-55"></a><span class="w">      </span><span class="n">handleRunFailure</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">ex</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">);</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56" href="#__codelineno-0-56"></a><span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalStateException</span><span class="p">(</span><span class="n">ex</span><span class="p">);</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57" href="#__codelineno-0-57"></a><span class="w">   </span><span class="p">}</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58" href="#__codelineno-0-58"></a><span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="n">context</span><span class="p">;</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59" href="#__codelineno-0-59"></a><span class="p">}</span>
+</code></pre></div>
+<p>前面我们了解了很多基本信息的初始化比如启动监听器的触发,JVM配置参数,环境变量配置参数,Random配置和应用profile,和应用配置的加载,然后就是给我们打印个Banner信息提示一下SpringBoot的版本号,</p>
+<p>接下来就要介绍核心的内容篇幅Spring容器的创建,Spring容器的类型在这里以ConfigurableApplicationContext类型来表示,很多人经常说Spring容器就是ApplicationContext, 为什么会这么说呢那就得看这个类型做了什么可以称为容器.</p>
+<h2 id="applicationcontext"><strong>创建ApplicationContext对象</strong><a class="headerlink" href="#applicationcontext" title="Permanent link">&para;</a></h2>
+<p>这里我们继续看run方法的代码 这里先看创建上下文的具体过程;</p>
+<p>SpringApplication类型的createApplicationContext方法</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">//创建应用程序上下文对象</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">createApplicationContext</span><span class="p">();</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">protected</span><span class="w"> </span><span class="n">ConfigurableApplicationContext</span><span class="w"> </span><span class="nf">createApplicationContext</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">applicationContextFactory</span><span class="p">.</span><span class="na">create</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">webApplicationType</span><span class="p">);</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">}</span>
+</code></pre></div></p>
+<h3 id="_2"><strong>容器工厂创建容器对象</strong><a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>ApplicationContextFactory 的create方法的实现</p>
+<p>这种函数式编程在Java中我还是第一次见 将函数实现赋值给了一个变量这样方法也可以做为一个参数来传递了,也是Java函数编程的一个跨越吧,这个在Erlang中fun函数是一种基本的类型,有了这个实现钩子函数会比较方便</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">ApplicationContextFactory</span><span class="w"> </span><span class="n">DEFAULT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">webApplicationType</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">   </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">      </span><span class="c1">//判断当前应用程序类型,根据应用程序类型创建对应的上下文类型</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">      </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">webApplicationType</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="n">SERVLET</span><span class="p">:</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">AnnotationConfigServletWebServerApplicationContext</span><span class="p">();</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="n">REACTIVE</span><span class="p">:</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">AnnotationConfigReactiveWebServerApplicationContext</span><span class="p">();</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">      </span><span class="k">default</span><span class="p">:</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">AnnotationConfigApplicationContext</span><span class="p">();</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">   </span><span class="p">}</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">   </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">ex</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">IllegalStateException</span><span class="p">(</span><span class="s">&quot;Unable create a default ApplicationContext instance, &quot;</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">            </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;you may need a custom ApplicationContextFactory&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ex</span><span class="p">);</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">   </span><span class="p">}</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="p">};</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="w">    </span><span class="cm">/**</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="cm">     * Creates the {@link ConfigurableApplicationContext application context} for a</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="cm">     * {@link SpringApplication}, respecting the given {@code webApplicationType}.</span>
+<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a><span class="cm">     * @param webApplicationType the web application type</span>
+<a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a><span class="cm">     * @return the newly created application context</span>
+<a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="cm">     */</span>
+<a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="w">    </span><span class="n">ConfigurableApplicationContext</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="n">WebApplicationType</span><span class="w"> </span><span class="n">webApplicationType</span><span class="p">);</span>
+</code></pre></div>
+<p>这里我们需要创建的是AnnotationConfigApplicationContext类型的上下文在了解上下文对象构造器初始化的过程之前,我们先来详细看下上文类型之间的继承关系 <img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/816981b8ebe9419facc40a1259f04972.png" /></p>
+<p>从下往上依次解释下每个类型的作用:</p>
+<ul>
+<li>AnnotationConfigApplicationContext</li>
+</ul>
+<p>注解配置上下文实现类型</p>
+<p>独立应用程序上下文，接受组件类作为输入-特别是@Configuration注解修饰的类，但也包括普通@Component类型以及使用 JSR-330 注释的符合JSR-330的类。</p>
+<ul>
+<li>AnnotationConfigRegistry</li>
+</ul>
+<p>配置应用程序上下文的通用接口，定义注册和扫描方法</p>
+<ul>
+<li>GenericApplicationContext</li>
+</ul>
+<p>通用上下文实现类型</p>
+<p>包含单个内部DefaultListableBeanFactory实例且不采用特定bean定义格式的通用ApplicationContext实现。实现BeanDefinitionRegistry接口，以便允许对其应用任何bean定义读取器。</p>
+<p>典型用法是通过BeanDefinitionRegistry接口注册各种bean定义，然后调用refresh() )以使用应用程序上下文语义初始化这些bean（处理org.springframework.context.ApplicationContextAware、自动检测BeanFactoryPostProcessors等）。</p>
+<p>与为每次刷新创建新的内部BeanFactory实例的其他ApplicationContext实现不同，此上下文的内部BeanFactory从一开始就可用，可以在其上注册bean定义。refresh() 只能调用一次。</p>
+<p>使用方式:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="w">   </span><span class="n">GenericApplicationContext</span><span class="w"> </span><span class="n">ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">GenericApplicationContext</span><span class="p">();</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">   </span><span class="n">XmlBeanDefinitionReader</span><span class="w"> </span><span class="n">xmlReader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">XmlBeanDefinitionReader</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">   </span><span class="n">xmlReader</span><span class="p">.</span><span class="na">loadBeanDefinitions</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ClassPathResource</span><span class="p">(</span><span class="s">&quot;applicationContext.xml&quot;</span><span class="p">));</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">   </span><span class="n">PropertiesBeanDefinitionReader</span><span class="w"> </span><span class="n">propReader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PropertiesBeanDefinitionReader</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">   </span><span class="n">propReader</span><span class="p">.</span><span class="na">loadBeanDefinitions</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ClassPathResource</span><span class="p">(</span><span class="s">&quot;otherBeans.properties&quot;</span><span class="p">));</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">   </span><span class="n">ctx</span><span class="p">.</span><span class="na">refresh</span><span class="p">();</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">   </span><span class="n">MyBean</span><span class="w"> </span><span class="n">myBean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">MyBean</span><span class="p">)</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="na">getBean</span><span class="p">(</span><span class="s">&quot;myBean&quot;</span><span class="p">);</span>
+</code></pre></div>
+<p>对于XML bean定义的典型情况，只需使用ClassPathXmlApplicationContext或FileSystemXmlApplicationContext，它们更容易设置，但灵活性较差，因为您可以只使用XML Bean定义的标准资源位置，而不是混合任意Bean定义格式。在web环境中，等效的是org.springframework.web.context.support.XmlWebApplicationContext.。</p>
+<p>对于应该以可刷新的方式读取特殊bean定义格式的自定义应用程序上下文实现，请考虑从AbstractRefreshableApplicationContext基类派生。</p>
+<ul>
+<li>BeanDefinitionRegistry</li>
+</ul>
+<p>用于保存Bean定义的**注册表** 的接口，例如RootBeanDefinition和ChildBeanDefinition实例。通常由内部使用AbstractBeanDefinition层次结构的BeanFactory实现。
+这是Spring的Bean工厂包中封装Bean定义注册的**唯一接口** 。标准BeanFactory接口仅包括对完全配置的factory实例的访问。</p>
+<p>Spring的Bean定义读者希望开发者能够实现这个接口。Spring核心中的已知实现者是DefaultListableBeanFactory和GenericApplicationContext。</p>
+<ul>
+<li>AliasRegistry</li>
+</ul>
+<p>管理别名的通用接口。作为org.springframework.beans.factory.support.BeanDefinitionRegistry的顶层接口</p>
+<ul>
+<li>AbstractApplicationContext</li>
+</ul>
+<p>ApplicationContext接口的抽象实现。不指定用于配置的存储类型；只需实现公共上下文功能。使用模板方法设计模式，需要具体的子类来实现抽象方法。</p>
+<p>与普通的BeanFactory不同，ApplicationContext应该检测在其内部Bean工厂中定义的特殊Bean：因此，此类自动注册在上下文中定义为Bean的BeanFactoryPostProcessor、BeanPostProcessor和ApplicationListeners。</p>
+<p>MessageSource也可以在上下文中作为Bean提供，名称为“MessageSource”；否则，消息解析将委托给父上下文。此外，应用程序事件的广播可以作为上下文中类型为applicationEventMulticaster的“applicationEventMulticaster” Bean提供；否则，将使用SimpleApplicationEventMulticast类型的默认Multicast。</p>
+<p>通过扩展DefaultResourceLoader实现资源加载。因此，将非URL资源路径视为类路径资源（支持包含包路径的完整类路径资源名称，例如“mypackage/myresource.dat”），除非在子类中重写getResourceByPath方法</p>
+<ul>
+<li>ConfigurableApplicationContext</li>
+</ul>
+<p>SPI接口将由大多数（如果不是所有）应用程序上下文实现。除了ApplicationContext接口中的应用程序上下文客户端方法之外，还提供了配置应用程序上下文的工具。</p>
+<ul>
+<li>DefaultResourceLoader</li>
+</ul>
+<p>ResourceLoader接口的默认实现。由ResourceEditor使用，并用作org.springframework.context.support.AbstractApplicationContext的基类。也可以单独使用。如果位置值是URL，则返回UrlResource；如果是非URL路径或“classpath：”伪URL，则返回ClassPathResource。</p>
+<ul>
+<li>ResourceLoader</li>
+</ul>
+<p>用于加载资源（例如，类路径或文件系统资源）的策略接口。org.springframework.context.ApplicationContext 来提供此功能和扩展org.springframework.core.io.support.ResourcePatternResolver来支持。</p>
+<ul>
+<li>ApplicationContext</li>
+</ul>
+<p>为应用程序提供配置的中央接口。当应用程序运行时，这是只读的，但如果实现支持这一点，则可能会重新加载。</p>
+<p>ApplicationContext提供：</p>
+<ul>
+<li>访问应用程序组件的Bean工厂方法。继承自ListableBeanFactory。</li>
+<li>以通用方式加载文件资源的能力。继承自org.springframework.core.io.ResourceLoader 接口。</li>
+<li>向注册侦听器发布事件的能力。继承自ApplicationEventPublisher接口。</li>
+<li>能够解析消息，支持国际化。从MessageSource接口继承。</li>
+<li>从父上下文继承。后代上下文中的定义始终具有优先权。例如，这意味着整个web应用程序可以使用单个父上下文，而每个servlet都有自己的子上下文，独立于任何其他servlet的子上下文。</li>
+</ul>
+<p>除了标准的org.springframework.beans.factory.BeanFactory 生命周期功能之外，ApplicationContext实现还检测和调用ApplicationContextAware bean以及ResourceLoaderWare、ApplicationEventPublisherAware和MessageSourceAware bean。</p>
+<ul>
+<li>ListableBeanFactory</li>
+</ul>
+<p>BeanFactory接口的扩展由Bean工厂实现，Bean工厂可以枚举其所Bean实例，而不是按照客户端的请求逐个尝试查找Bean。预加载所有Bean定义的BeanFactory实现（例如基于XML的工厂）可以实现此接口。</p>
+<p>如果这是HierarchycalBeanFactory，则返回值将不考虑任何BeanFactory层次结构，而只与当前工厂中定义的Bean相关。使用BeanFactoryUtils助手类也可以考虑祖先工厂中的bean。</p>
+<p>这个接口中的方法将只期望这个工厂的bean定义。他们将忽略任何已通过其他方法（如org.springframework.beans.factory.config.ConfigurableBeanFactory的registerSingleton方法）注册的单例bean，但getBeanNamesForType和getBeansOfType除外，它们也将检查手动注册的单例。当然，BeanFactory的getBean也允许透明地访问这些特殊的Bean。然而，在典型场景中，所有Bean都将由外部Bean定义来定义，因此大多数应用程序不需要担心这种差异。</p>
+<p>注意：除了getBeanDefinitionCount和containsBeanDefinition之外，此接口中的方法不是为频繁调用而设计的。实现可能很慢。</p>
+<ul>
+<li>HierarchicalBeanFactory</li>
+</ul>
+<p>由bean工厂实现的子接口，可以是层次结构的一部分。
+可以在ConfigurableBeanFactory接口中找到允许以可配置方式设置父级的bean工厂的相应setParentBeanFactory方法。</p>
+<ul>
+<li>BeanFactory</li>
+</ul>
+<p>用于访问SpringBean容器的根接口。
+这是bean容器的基本客户端视图；其他接口（如ListableBeanFactory和org.springframework.beans.factory.config.ConfigurableBeanFactory ）可用于特定用途。</p>
+<p>此接口由包含许多Bean定义的对象实现，每个Bean定义由字符串名称唯一标识。根据Bean定义，工厂将返回所包含对象的独立实例（原型设计模式）或单个共享实例（单例设计模式的高级替代方案，其中实例是工厂范围内的单件）。将返回哪种类型的实例取决于bean工厂配置：API是相同的。自Spring 2.0以来，根据具体的应用程序上下文（例如web环境中的“请求”和“会话”范围），可以使用更多的范围。</p>
+<p>这种方法的要点是BeanFactory是应用程序组件的中央注册表，并集中配置应用程序组件（例如，单个对象不再需要读取属性文件）。有关这种方法的好处的讨论，请参阅“《Expert One-on-One J2EE Design and Development》”的第4章和第11章。</p>
+<p>请注意，通常最好依靠依赖注入（“推”配置）通过setter或构造函数配置应用程序对象，而不是使用任何形式的“拉”配置，如BeanFactory查找。Spring的依赖注入功能是使用这个BeanFactory接口及其子接口实现的。</p>
+<p>通常，BeanFactory将加载存储在配置源（如XML文档）中的bean定义，并使用org.springframework.beans 包配置bean。然而，实现可以直接在Java代码中返回它根据需要创建的Java对象。对于定义的存储方式没有任何限制：LDAP、RDBMS、XML、属性文件等。建议实现支持bean之间的引用（依赖注入）。</p>
+<p>与ListableBeanFactory中的方法不同，如果这是HierarchicalBeanFactory，则此接口中的所有操作也将检查父工厂。如果在此工厂实例中未找到bean，将询问直接的父工厂。此工厂实例中的bean应该覆盖任何父工厂中同名的bean</p>
+<p>Bean工厂实现应尽可能支持标准Bean生命周期接口。整套初始化方法及其标准顺序为：</p>
+<ol>
+<li>BeanNameAware的setBeanName</li>
+<li>BeanClassLoaderAware的setBeanClassLoader</li>
+<li>BeanFactoryAware的setBeanFactory</li>
+<li>EnvironmentAware的setEnvironment</li>
+<li>EmbeddedValueResolverAware的setEmbeddedValueResolver</li>
+<li>ResourceLoaderWare的setResourceLoader（仅在应用程序上下文中运行时适用）</li>
+<li>ApplicationEventPublisherAware的setApplicationEventPublisher（仅在应用程序上下文中运行时适用）</li>
+<li>MessageSourceAware的setMessageSource（仅在应用程序上下文中运行时适用）</li>
+<li>ApplicationContextAware的setApplicationContext（仅在应用程序上下文中运行时适用）</li>
+<li>ServletContextAware的setServletContext（仅在web应用程序上下文中运行时适用）</li>
+<li>BeanPostProcessor的postProcessBeforeInitialization方法</li>
+<li>初始化Bean InitializingBean的AfterPropertieSet</li>
+<li>使用自定义初始化方法定义init-method</li>
+<li>BeanPostProcessor的后处理postProcessAfterInitialization</li>
+</ol>
+<p>关闭bean工厂时，应用以下生命周期方法：</p>
+<ol>
+<li>销毁前的后处理DestructionAwareBeanPostProcessors 处理器的postProcessBeforeDestruction方法</li>
+<li>DisposableBean的destroy方法</li>
+<li>
+<p>自定义销毁方法destroy-method</p>
+</li>
+<li>
+<p>EnvironmentCapable</p>
+</li>
+</ol>
+<p>EnvironmentCapable接口，指示包含并公开环境引用的组件。
+所有Spring应用程序上下文都支持环境，该接口主要用于在接受BeanFactory实例的框架方法中执行instanceof检查，BeanFactory实例可能是应用程序上下文实例，也可能不是应用程序上下文实例，以便在环境确实可用时与环境交互。
+如上所述，ApplicationContext扩展了Environmentable，从而公开了getEnvironment() 方法；但是，ConfigurableApplicationContext重新定义了getEnvironment()  并缩小了签名范围以返回ConfigurableEnvironment。其效果是，在从ConfigurableApplicationContext访问环境对象之前，环境对象是“只读”的，此时也可以对其进行配置</p>
+<ul>
+<li>MessageSource</li>
+</ul>
+<p>用于解析消息的策略接口，支持此类消息的参数化和国际化。
+Spring为生产提供了两种现成的实现：</p>
+<p>org.springframework.context.support.ResourceBundleMessageSource:  建立在 java.util.ResourceBundle标准上
+org.springframework.context.support.ReloadableResourceBundleMessageSource: 高度可配置，尤其是在重新加载消息定义方面。</p>
+<ul>
+<li>ApplicationEventPublisher</li>
+</ul>
+<p>封装事件发布功能的接口。
+用作ApplicationContext的超级接口。</p>
+<ul>
+<li>ResourcePatternResolver</li>
+</ul>
+<p>用于将位置匹配（例如，Ant样式的路径模式）解析为资源对象的策略接口。</p>
+<p>这是ResourceLoader接口的扩展。可以检查传入的ResourceLoader（例如，在上下文中运行时通过org.springframework.context.ApplicationContext 传入的org.springframework.context.ResourceLoaderAware ）是否也实现了此扩展接口。</p>
+<p>PathMatchingResourcePatternResolver是一个独立的实现，可在ApplicationContext外部使用，ResourceArrayPropertyEditor也使用它来填充资源数组bean属性</p>
+<p>可用于任何类型的位置模式（例如“/WEB-INF/*-context.xml”）：输入模式必须与策略实现相匹配。此接口仅指定转换方法，而不是特定的模式格式。</p>
+<p>此接口还为类路径中的所有匹配资源建议一个新的资源前缀“classpath*：”。注意，在这种情况下，资源位置应该是没有占位符的路径（例如“/beans.xml”）；JAR文件或类路径中的不同目录可以包含多个同名文件。</p>
+<h2 id="annotationconfigapplicationcontext"><strong>AnnotationConfigApplicationContext容器的初始化过程</strong><a class="headerlink" href="#annotationconfigapplicationcontext" title="Permanent link">&para;</a></h2>
+<p>接下来我们按类型继承关系中代码的实际执行顺序来看，先来看刚刚我们调用的构造器</p>
+<p>先调用的是父类型AbstractApplicationContext 抽象容器的构造器</p>
+<p>这个构造器比较简单创建一个资源匹配解析器</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">public</span><span class="w"> </span><span class="nf">AbstractApplicationContext</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">   </span><span class="k">this</span><span class="p">.</span><span class="na">resourcePatternResolver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getResourcePatternResolver</span><span class="p">();</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kd">protected</span><span class="w"> </span><span class="n">ResourcePatternResolver</span><span class="w"> </span><span class="nf">getResourcePatternResolver</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">PathMatchingResourcePatternResolver</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="p">}</span>
+</code></pre></div>
+<p>然后再看通用上下文GenericApplicationContext的构造器</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kd">public</span><span class="w"> </span><span class="nf">GenericApplicationContext</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">   </span><span class="k">this</span><span class="p">.</span><span class="na">beanFactory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">DefaultListableBeanFactory</span><span class="p">();</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="p">}</span>
+</code></pre></div>
+<p>这个构造器创建了个默认集合类型的Bean工厂</p>
+<p>前面两个构造器创建完成了之后才会创建注解AnnotationConfigApplicationContext的构造器</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kd">public</span><span class="w"> </span><span class="nf">AnnotationConfigApplicationContext</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">   </span><span class="n">StartupStep</span><span class="w"> </span><span class="n">createAnnotatedBeanDefReader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">getApplicationStartup</span><span class="p">().</span><span class="na">start</span><span class="p">(</span><span class="s">&quot;spring.context.annotated-bean-reader.create&quot;</span><span class="p">);</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">   </span><span class="k">this</span><span class="p">.</span><span class="na">reader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">AnnotatedBeanDefinitionReader</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">   </span><span class="n">createAnnotatedBeanDefReader</span><span class="p">.</span><span class="na">end</span><span class="p">();</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">   </span><span class="k">this</span><span class="p">.</span><span class="na">scanner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ClassPathBeanDefinitionScanner</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="p">}</span>
+</code></pre></div>
+<p>这个构造器主要创建了两个对象：</p>
+<ul>
+<li>
+<p>reader：AnnotatedBeanDefinitionReader</p>
+</li>
+<li>
+<p>scanner：ClassPathBeanDefinitionScanner</p>
+</li>
+</ul>
+<p>AnnotatedBeanDefinitionReader：关于AnnotatedBeanDefinitionReader官方注释是这样解释的： 方便的适配器，用于bean类的编程注册。
+这是ClassPathBeanDefinitionScanner的另一种选择，应用相同的注释，但仅适用于显式注册的类。</p>
+<p>其实这个类型就是通过注解来扫描Bean的</p>
+<p>ClassPathBeanDefinitionScanner：bean定义扫描器，用于检测类路径上的bean候选，并向给定注册表（BeanFactory或ApplicationContext）注册相应的bean定义。
+候选类通过可配置的类型过滤器检测。默认过滤器包括用Spring的@Component, @Repository, @Service, or @Controller原型注释的类。
+还支持Java EE 6的javax.annotation.ManagedBean 和JSR-330的javax.inject.Named 注释（如果可用）。</p>
+<h2 id="beandefaultlistablebeanfactory"><strong>可容器化的Bean工厂DefaultListableBeanFactory初始化过程</strong><a class="headerlink" href="#beandefaultlistablebeanfactory" title="Permanent link">&para;</a></h2>
+<p>然后就得看默认的容器集合化的工厂 DefaultListableBeanFactory创建过程</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kd">public</span><span class="w"> </span><span class="nf">DefaultListableBeanFactory</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">   </span><span class="kd">super</span><span class="p">();</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="p">}</span>
+</code></pre></div>
+<p>执行父类型构造器 抽象可装配能力的Bean工厂 AbstractAutowireCapableBeanFactory()</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kd">public</span><span class="w"> </span><span class="nf">AbstractAutowireCapableBeanFactory</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">   </span><span class="kd">super</span><span class="p">();</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">   </span><span class="n">ignoreDependencyInterface</span><span class="p">(</span><span class="n">BeanNameAware</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">   </span><span class="n">ignoreDependencyInterface</span><span class="p">(</span><span class="n">BeanFactoryAware</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">   </span><span class="n">ignoreDependencyInterface</span><span class="p">(</span><span class="n">BeanClassLoaderAware</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">   </span><span class="c1">//是否开启了本地镜像</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">NativeDetector</span><span class="p">.</span><span class="na">inNativeImage</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">        </span><span class="c1">//用于BeanFactory的简单对象实例化策略。不支持方法注入，尽管它为要重写的子类提供了挂钩，以添加方法注入支持，例如通过重写方法。</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="na">instantiationStrategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">SimpleInstantiationStrategy</span><span class="p">();</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">   </span><span class="p">}</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">     </span><span class="c1">//在BeanFactory中使用的默认对象实例化策略。如果容器需要重写方法来实现方法注入，则使用CGLIB动态生成子类。</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">     </span><span class="c1">//CglibSubclassingInstantiationStrategy继承了SimpleInstantiationStrategy</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="na">instantiationStrategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CglibSubclassingInstantiationStrategy</span><span class="p">();</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">   </span><span class="p">}</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="p">}</span>
+</code></pre></div>
+<p>ignoreDependencyInterface 方法忽略自动关联的给定依赖关系接口。
+这通常 <strong>由应用程序上下文用于注册以其他方式解析的依赖项</strong> ，例如通过BeanFactoryAware的BeanFactory或通过ApplicationContextAware的ApplicationContext。 默认情况下，仅忽略BeanFactoryAware接口。要忽略其他类型，请为每个类型调用此方法</p>
+<ul>
+<li>
+<p>BeanNameAware 接口将由希望在bean工厂中知道其bean名称的bean实现。请注意，通常不建议对象依赖于其bean名称，因为这表示对外部配置的潜在脆弱依赖，以及对Spring API的不必要依赖。有关所有bean生命周期方法的列表，请参阅BeanFactory javadocs。</p>
+</li>
+<li>
+<p>BeanFactoryAware 接口将由希望了解其所属BeanFactory的Bean实现。例如，bean可以通过工厂查找协作bean（依赖项查找）。注意，大多数bean将选择通过相应的bean属性或构造函数参数（依赖注入）接收对协作bean的引用。有关所有bean生命周期方法的列表，请参阅BeanFactory javadocs</p>
+</li>
+<li>
+<p>BeanClassLoaderAware 回调，允许bean知道bean类装入器；也就是说，当前bean工厂用来加载bean类的类加载器。
+  这主要是由框架类实现的，框架类必须按名称提取应用程序类，尽管它们可能是从共享类加载器加载的。
+  有关所有bean生命周期方法的列表，请参阅BeanFactory javadocs。</p>
+</li>
+</ul>
+<p>NativeDetector.inNativeImage()这个代码是通过是否开启配置org.graalvm.nativeimage.imagecode来判断的</p>
+<p>See https://github.com/oracle/graal/blob/master/sdk/src/org.graalvm.nativeimage/src/org/graalvm/nativeimage/ImageInfo.java</p>
+<p>用于检测GraalVM本机图像环境的常见委托。
+需要使用-H:+InlineBeforeAlysis本机映像编译器标志，以便允许在生成时删除代码。</p>
+<p>GraalVM是一个共享运行时间的生态系统，无论是那些依赖于<a href="https://so.csdn.net/so/search?q=JVM&amp;spm=1001.2101.3001.7020">JVM</a>的语言（Java、Scala、Groovy、Kotlin）还是说其他的编程语言例如（JavaScript、Ruby、Python、R）有性能上的优势。另外，GraalVM能够通过一种前端的LLVM执行JVM上面的原生代码。GraalVM 1.0版本是基于JDK8的
+<img alt="5-graalvm.png" src="/img/chapter_springboot/5-graalvm.png" /></p>
+<p>虚拟化层代表了GraalVM提供的编程语言。非宿主型语言（JavaScript、<a href="https://so.csdn.net/so/search?q=Ruby&amp;spm=1001.2101.3001.7020">Ruby</a>、R、Python、LLVM二进制码）能够和基于JVM的宿主型语言达到同样的一个运行时间，并且两者可以在同一个内存空间中来回传递数据进行互操作。</p>
+<p>raalVM是由以下几个部分组成的：</p>
+<ul>
+<li>Graal： 动态的实时（JIT）编译器，通过独特的代码分析和优化方法，能够提升应用程序的效率和速度。</li>
+<li>Graal Polyglot APIs：APIs用来在共享运行时间里绑定编程语言。这些APIs可以根据你的需求去匹配编程语言，并且只需很少的资源就可以达到更好的性能。</li>
+<li>Graal SDK：一组高效的APIs集合，用于嵌入式Graal语言以及配置本机镜像。</li>
+<li>Oracle HotSpot Java Virtual Machine (JVM):针对那些基于JVM的语言或者支持非宿主编程语言提供的一个运行时环境。</li>
+</ul>
+<h2 id="graalvm"><strong>GraalVM特性</strong><a class="headerlink" href="#graalvm" title="Permanent link">&para;</a></h2>
+<p>GraalVM能够：</p>
+<ul>
+<li>代码运行的更快更高效</li>
+<li>和一些更现代化的编程语言直接操作</li>
+<li>通过Graal SDK嵌入到语言内部</li>
+<li>创建编译成功的本机镜像</li>
+<li>使用简单的工具集合来监控、调试、描述代码</li>
+</ul>
+<p>官方文档可以参考：</p>
+<p>https://www.graalvm.org/22.1/docs/getting-started/</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      可微信搜索 《中间件源码》 联系，订阅内容。   <br/>  Copyright &copy; 2022 - 2024 ktyhub.com copyright   <br/> 部分内容由GPT提供 转载声明：  本文转载自 [原文标题](原文链接)，由[www.ktyhub.com](www.ktyhub.com)创作，遵循 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) 许可协议。
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.next_previous", "content.code.annotate", "content.tooltips", "navigation.tracking", "navigation.sections", "navigation.top", "search.highlight", "search.share", "search.suggest"], "search": "../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+        <script src="/javascripts/google-tongji.js"></script>
+      
+        <script src="../../../mermaid.min.js"></script>
+      
+        <script src="/javascripts/baidu-tongji.js"></script>
+      
+    
+  </body>
+</html>

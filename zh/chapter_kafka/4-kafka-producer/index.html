@@ -1,0 +1,3840 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="knowledge thinking you want to know">
+      
+      
+        <meta name="author" content="ktyhub">
+      
+      
+        <link rel="canonical" href="https://www.ktyhub.com/zh/chapter_kafka/4-kafka-producer/">
+      
+      
+        <link rel="prev" href="../3-client-sample/">
+      
+      
+        <link rel="next" href="../5-sender/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.42">
+    
+    
+      
+        <title>4-KafkaProducer - Thinking In Code</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.0253249f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+Traditional+Chinese:300,300i,400,400i,700,700i%7CNoto+Sans+Traditional+Chinese:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Noto Sans Traditional Chinese";--md-code-font:"Noto Sans Traditional Chinese"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../../mermaid.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="white">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#kafkaproducer" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="Thinking In Code" class="md-header__button md-logo" aria-label="Thinking In Code" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Thinking In Code
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              4-KafkaProducer
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="white"  aria-label="切换到夜间阅读模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到夜间阅读模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="black"  aria-label="切换到白天阅读模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到白天阅读模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/zh/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Thinking In Code" class="md-nav__button md-logo" aria-label="Thinking In Code" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Thinking In Code
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    技术博客
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            技术博客
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_1" id="__nav_1_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    前言
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            前言
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_preface/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    kubernetes(v1.9.9)(梳理中)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            kubernetes(v1.9.9)(梳理中)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kubernetes/1-index/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-克隆K8S源码
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kubernetes/2-apiserver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-ApiServer主流程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kubernetes/3-apiserver-server-run-options/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-ApiServer配置初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kubernetes/4-apiserver-add-flags/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-ApiServer命令行标记
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kubernetes/5-apiserver-server-run/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-ApiServer-API服务器链创建
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_3" id="__nav_1_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    ElasticJob(V2.1.5)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            ElasticJob(V2.1.5)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/1-introduce/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-分布式调度系统简介
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/2-reg/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-注册中心的设计原理
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/3-job-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-建造者构造作业配置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/4-job-template/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-调度作业模版类设计
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/5-job-config-storage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-分布式场景下存储的
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/6-job-registry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-单例模式作业注册表
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/7-quartz/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7-Quartz下的单机执行
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/8-job-life/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8-系统启动时的生命周期
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/9-listener/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9-调度作业的监听器大全
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/10-leader-latch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10-分布式锁实现选主节点
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/11-server-instance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11-服务和进程信息持久化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_4" id="__nav_1_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Zookeeper(V3.6.2)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            Zookeeper(V3.6.2)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/1-introduce/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-入门简介
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/2-implement/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-实现说明
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/3-install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-安装配置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/4-client/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-客户端入门
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/5-produce-and-consumer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-锁与生产者消费者
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/6-watch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-监听机制
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/7-start-source/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7-服务器入口
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/8-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8-配置加载
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/9-clear-log-start/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9-日志清理任务
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/10-init-main/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10-初始化和启动
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/11-reactor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11-网络IO初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/12-quorumpeer-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12-QuorumPeer初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/13-loaddatabase/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    13-初始化磁盘数据
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/14-reactor-io/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    14-Reactor网络IO
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/15-election/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    15-选举算法的准备等待选举
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/16-lookforleader/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    16-开始寻找leader
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_5" id="__nav_1_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Dubbbo(V3.0.8)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_5">
+            <span class="md-nav__icon md-icon"></span>
+            Dubbbo(V3.0.8)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/1-learn-from-a-demo/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-服务提供者的Demo
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/2-serviceconfig-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-ServiceConfig化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/3-model-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-领域模型Model对象
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/4-extension-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-Extension的初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/5-getadaptiveextension/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-getAdaptiveExtension方法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/6-extension-wrapper/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-Extension的Wrapper机制
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/7-extension-activate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7-Extension的Activate机制
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/8-dubbobootstrap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8-DubboBootstrap启动程序
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/9-application-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9-ApplicationConfig
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/10-registryconfig/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10-RegistryConfig
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/11-protocolconfig/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11-ProtocolConfig
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/12-start-life-cycle/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12-启动生命周期
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/13-configcenter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    13-配置中心初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/14-config-load/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    14-配置加载说明
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/15-metadata/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    15-元数据中心说明
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/16-moduledeployer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    16-模块发布器
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/17-provider-register/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    17-提供者双注册
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/18-metadataService-export/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    18-元数据服务的导出
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/19-consuemr-demo/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    19-消费者案例
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/20-reference-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    20-ReferenceConfig
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/21-refer-services/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    21-ReferServices
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_dubbo/22-migration-invoker/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    22-自动决策应用级服务发现原理
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1_6" id="__nav_1_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Apache Kafka Client(3.2)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1_6">
+            <span class="md-nav__icon md-icon"></span>
+            Apache Kafka Client(3.2)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1-introduce/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-入门笔记
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2-high-performence/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-高性能高可用设计
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../3-client-sample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-客户端案例
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    4-KafkaProducer
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    4-KafkaProducer
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      简介
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafkaproducer_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      KafkaProducer对象初始化过程
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      基本配置的初始化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="基本配置的初始化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      基本配置详细说明
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#partitioner" class="md-nav__link">
+    <span class="md-ellipsis">
+      分区器Partitioner
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      拦截器
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      事务的一些配置
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      监控配置
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="监控配置">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metricconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置 MetricConfig
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metricsreporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置监控报告器MetricsReporter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metricscontext" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置 指标上下文MetricsContext
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置 指标 Metrics
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      生产者元数据
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="生产者元数据">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producermetadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      ProducerMetadata
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadatacache" class="md-nav__link">
+    <span class="md-ellipsis">
+      MetadataCache
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cluster
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      发送器对象的创建
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../5-sender/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-发送器Sender
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../6-kafka-thread/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-客户端的IO线程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../7-kafka-producer-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7-KafkaProducer的初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../8-send-producer-data/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8-发送生产者数据
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../9-execute-io/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9-执行IO事件
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-handle-io/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10-处理IO结果
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_7" id="__nav_1_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Netty(v4.x)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_7">
+            <span class="md-nav__icon md-icon"></span>
+            Netty(v4.x)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_netty/1-sample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-Netty的入门
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_netty/2-bootstrap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-启动器Bootstrapp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_netty/3-event-loop-group-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-EventLoopGroup初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_netty/4-server-bootstrap-attr/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-BootStrap属性设置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_8" id="__nav_1_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Druid(v1.2.11)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_8">
+            <span class="md-nav__icon md-icon"></span>
+            Druid(v1.2.11)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/1-sample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-入门案例
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/2-datasource/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-数据源简介
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/3-before-connection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-初始化连接
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/4-db-type/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-DbType与驱动类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/5-log-stats-thread/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-监控信息线程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/6-create-and-start-creator-thread/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-物理连接创建线程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/7-driver-connect/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7-创建数据库连接对象
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/8-validate-connection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8-连接的首次验证
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/9-druid-destroy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9-Druid销毁线程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_9" id="__nav_1_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    SpringBoot(v2.6.6)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_9">
+            <span class="md-nav__icon md-icon"></span>
+            SpringBoot(v2.6.6)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_springboot/1-sample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-入门案例
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_springboot/2-spi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-run方法与SPI扫描
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_springboot/3-run/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-SpringApplication的run方法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_springboot/4-environment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-Environment初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_springboot/5-application-context-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-ApplicationContext初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_springboot/6-reader-scanner/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-Reader和Scanner
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_10" id="__nav_1_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    EMQX(V3.0)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_10">
+            <span class="md-nav__icon md-icon"></span>
+            EMQX(V3.0)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_emqx/1-introduce/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-EMQX简介
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_emqx/2-code-struct/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-项目结构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_emqx/3-kernel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-内核层启动
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_emqx/4-router/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-路由层启动
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_emqx/5-broker/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-代理层启动
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_11" id="__nav_1_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    RELEASE NOTE
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_11">
+            <span class="md-nav__icon md-icon"></span>
+            RELEASE NOTE
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/1-mybatis-plus-v359.md" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mybatis-plus v3.5.9
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/2-byte-buddy-1.15.7.md" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    byte-buddy 1.15.7
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      简介
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kafkaproducer_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      KafkaProducer对象初始化过程
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      基本配置的初始化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="基本配置的初始化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      基本配置详细说明
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#partitioner" class="md-nav__link">
+    <span class="md-ellipsis">
+      分区器Partitioner
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      拦截器
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      事务的一些配置
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      监控配置
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="监控配置">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metricconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置 MetricConfig
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metricsreporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置监控报告器MetricsReporter
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metricscontext" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置 指标上下文MetricsContext
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      配置 指标 Metrics
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      生产者元数据
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="生产者元数据">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#producermetadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      ProducerMetadata
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadatacache" class="md-nav__link">
+    <span class="md-ellipsis">
+      MetadataCache
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cluster
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      发送器对象的创建
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="kafkaproducer"><strong>KafkaProducer生产者对象的长篇源码解析简介</strong><a class="headerlink" href="#kafkaproducer" title="Permanent link">&para;</a></h1>
+<h2 id="_1"><strong>简介</strong><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>生产者用来发送消息到kafka代理服务器，我们先来看下KafkaProducer类型的官方说明：</p>
+<p>KafkaProducer是将记录发布到Kafka群集的Kafka客户端。
+生产者是线程安全的，跨线程共享单个生产者实例通常比拥有多个实例更快。
+下面是一个简单的示例，使用producer发送包含序列号的字符串作为键/值对的记录。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="w"> </span><span class="n">Properties</span><span class="w"> </span><span class="n">props</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Properties</span><span class="p">();</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w"> </span><span class="n">props</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;bootstrap.servers&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;localhost:9092&quot;</span><span class="p">);</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w"> </span><span class="n">props</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;linger.ms&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w"> </span><span class="n">props</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;key.serializer&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;org.apache.kafka.common.serialization.StringSerializer&quot;</span><span class="p">);</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w"> </span><span class="n">props</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;value.serializer&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;org.apache.kafka.common.serialization.StringSerializer&quot;</span><span class="p">);</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w"> </span><span class="n">Producer</span><span class="w">  </span><span class="n">producer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">KafkaProducer</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">props</span><span class="p">);</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">     </span><span class="n">producer</span><span class="p">.</span><span class="na">send</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ProducerRecord</span><span class="w"> </span><span class="p">(</span><span class="s">&quot;my-topic&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="p">.</span><span class="na">toString</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="w"> </span><span class="n">Integer</span><span class="p">.</span><span class="na">toString</span><span class="p">(</span><span class="n">i</span><span class="p">)));</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w"> </span><span class="n">producer</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
+</code></pre></div>
+<p>生产者包括一个缓冲区池，其中保存尚未传输到服务器的记录，以及一个后台I/O线程，负责将这些记录转换为请求并将其传输到集群。使用后未关闭生产者将泄漏这些资源。</p>
+<ul>
+<li>
+<p>send() 方法是异步的。调用时，它将记录添加到挂起记录发送的缓冲区中，并立即返回。这使制作人能够将单个记录批处理在一起，以提高效率</p>
+</li>
+<li>
+<p>acks配置控制将请求视为完成的条件。默认设置“all”将导致阻止记录的完全提交，这是最慢但最持久的设置。</p>
+</li>
+<li>
+<p>如果请求失败，生产者可以自动重试。重试设置默认为整数Integer.MAX_VALUE，建议使用delivery.timeout.ms 控制重试行为，而不是重试。</p>
+</li>
+<li>
+<p>生产者为每个分区维护未发送记录的缓冲区。这些缓冲区的大小由 batch.size 配置。将其变大可能会导致更多的批处理，但需要更多的内存（因为通常每个活动分区都有一个这样的缓冲区）。</p>
+</li>
+<li>
+<p>默认情况下，即使缓冲区中有额外的未使用空间，也可以立即发送缓冲区。但是，如果要减少请求数，可以设置linger.ms 设置为大于0的值。这将指示生产者在发送请求之前等待该毫秒数，希望更多记录将到达以填充同一批。这类似于TCP中的Nagle算法。例如，在上面的代码片段中，可能所有100条记录都将在一个请求中发送，因为我们将延迟时间设置为1毫秒。然而，如果我们没有填满缓冲区，这个设置会给等待更多记录到达的请求增加1毫秒的延迟。请注意，及时到达的记录通常会一起批处理，即使存在 linger.ms=0。因此，在负载比较大的情况下，无论延迟linger配置如何，都会进行批处理；但是，如果将其设置为大于0的值，则在不处于最大负载的情况下，可能会导致更少、更高效的请求，而代价是很小的延迟</p>
+</li>
+<li>
+<p>buffer.memory控制生产者可用于缓冲的内存总量。如果记录的发送速度超过了它们传输到服务器的速度，那么该缓冲区空间将耗尽。当缓冲区空间耗尽时，其他发送调用将被阻止。阻止时间的阈值由max.block.m确定。之后，它抛出TimeoutException。</p>
+</li>
+<li>
+<p>key.serializer 和value.serializer 指示如何将用户随其ProducerRecord提供的键和值对象转换为字节。对于简单的字符串或字节类型，可以使用包含的org.apache.kafka.common.serialization.ByteArraySerializer或org.apache.kafka.common.serialization.StringSerializer 。</p>
+</li>
+<li>
+<p>从Kafka 0.11开始，KafkaProducer支持两种附加模式：幂等生产者和事务生产者。幂等生产者将Kafka的传递语义从至少一次传递加强到了完全一次传递。特别是生产者重试将不再引入重复。事务生产者允许应用程序将消息原子的发送到多个分区（和主题！）</p>
+</li>
+<li>
+<p>从Kafka  3.0开始，enable.idempotence配置默认为true。启用幂等时，重试配置将默认为Integer.MAX_VALUE，acks配置将默认为all。幂等生产者没有API更改，因此不需要修改现有应用程序来利用此功能</p>
+</li>
+<li>
+<p>为了利用幂等生产者，必须避免应用程序级的重新发送，因为这些数据不能重复消除。因此，如果应用程序启用了幂等性，建议不要设置重试配置，因为它将默认为Integer.MAX_VALUE。此外，如果发送（ProducerRecord）返回错误，即使无限次重试（例如，如果消息在发送之前在缓冲区中过期），则建议关闭生产者并检查最后生成的消息的内容，以确保其不重复。最后，生产者只能保证在单个会话中发送的消息的幂等性。</p>
+</li>
+<li>
+<p>要使用事务生产者和助理API，必须设置transactional.id配置属性。如果transactional.id设置后，幂等性将自动启用，同时生产者配置幂等性所依赖的。此外，应配置事务中包含的主题以确保持久性。特别是， replication.factor应至少为3，这些主题的min.insync.replicas应设置为2。最后，为了从端到端实现事务性保证，还必须将使用者配置为只读提交的消息</p>
+</li>
+<li>
+<p>transactional.id的目的是支持跨单个生产者实例的多个会话进行事务恢复。它通常是从分区的、有状态的应用程序中的碎片标识符派生出来的。因此，对于在分区应用程序中运行的每个生产者实例，它应该是唯一的。
+  所有新的事务性API都处于阻塞状态，并且在出现故障时会引发异常。下面的示例说明了如何使用新的API。它与上面的示例类似，只是所有100条消息都是单个事务的一部分</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="w"> </span><span class="n">Properties</span><span class="w"> </span><span class="n">props</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Properties</span><span class="p">();</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w"> </span><span class="n">props</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;bootstrap.servers&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;localhost:9092&quot;</span><span class="p">);</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w"> </span><span class="n">props</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="s">&quot;transactional.id&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;my-transactional-id&quot;</span><span class="p">);</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w"> </span><span class="n">Producer</span><span class="w">  </span><span class="n">producer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">KafkaProducer</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">props</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringSerializer</span><span class="p">(),</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringSerializer</span><span class="p">());</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w"> </span><span class="n">producer</span><span class="p">.</span><span class="na">initTransactions</span><span class="p">();</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w"> </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">     </span><span class="n">producer</span><span class="p">.</span><span class="na">beginTransaction</span><span class="p">();</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">     </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">         </span><span class="n">producer</span><span class="p">.</span><span class="na">send</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ProducerRecord</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="s">&quot;my-topic&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Integer</span><span class="p">.</span><span class="na">toString</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="w"> </span><span class="n">Integer</span><span class="p">.</span><span class="na">toString</span><span class="p">(</span><span class="n">i</span><span class="p">)));</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">     </span><span class="n">producer</span><span class="p">.</span><span class="na">commitTransaction</span><span class="p">();</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">ProducerFencedException</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">OutOfOrderSequenceException</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">AuthorizationException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">     </span><span class="c1">// We can&#39;t recover from these exceptions, so our only option is to close the producer and exit.</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">     </span><span class="n">producer</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">KafkaException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">     </span><span class="c1">// For all other exceptions, just abort the transaction and try again.</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">     </span><span class="n">producer</span><span class="p">.</span><span class="na">abortTransaction</span><span class="p">();</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w"> </span><span class="n">producer</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
+</code></pre></div>
+<p>正如示例中所提示的，每个生产者只能有一个未结束的事务。在beginTransaction() 和commitTransaction() 调用之间发送的所有消息都将是单个事务的一部分。当事务。如果指定了id，则生产者发送的所有消息都必须是事务的一部分。</p>
+<p>事务生产者使用异常来传递错误状态。 特别是，不需要为producer.send() 指定回调，也不需要在返回的将来指定回调到call .get()：</p>
+<p>如果任何一个producer.send() 或事务调用在事务期间遇到不可恢复的错误。有关从事务性发送中检测错误的更多详细信息，请参阅send（ProducerRecord）文档。
+调用 producer.abortTransaction() 在接收到KafkaException时，我们可以确保任何成功的写入都标记为已中止，从而保留事务保证。</p>
+<p>此客户端可以与版本为0.10.0或更新版本的代理通信。较旧或较新的代理可能不支持某些客户端功能。例如，事务性API需要broker版本0.11.0或更高版本。当调用在运行的代理版本中不可用的API时，您将收到UnsupportedVersionException。</p>
+<p>关于Kafka生产者的设计也是相对独立没有特别复杂的类型继承关系如下图</p>
+<p><img alt="3-4-kafka.png" src="/zh/chapter_kafka/3-4-kafka.png" /></p>
+<h2 id="kafkaproducer_1"><strong>KafkaProducer对象初始化过程</strong><a class="headerlink" href="#kafkaproducer_1" title="Permanent link">&para;</a></h2>
+<p>前面了解了当前的配置信息，这里我们来看下生产者对象KafkaProducer的初始化过程</p>
+<p>参数为属性的构造器：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">public</span><span class="w"> </span><span class="nf">KafkaProducer</span><span class="p">(</span><span class="n">Properties</span><span class="w"> </span><span class="n">properties</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="k">this</span><span class="p">(</span><span class="n">properties</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">);</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">}</span>
+</code></pre></div>
+<p>使用配置来调用重载的构造器方法，关于参数配置可以参阅官网<a href="https://kafka.apache.org/documentation.html#producerconfigs">生产者配置</a></p>
+<p>重载的3个参数的构造器</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kd">public</span><span class="w"> </span><span class="nf">KafkaProducer</span><span class="p">(</span><span class="n">Properties</span><span class="w"> </span><span class="n">properties</span><span class="p">,</span><span class="w"> </span><span class="n">Serializer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">&gt;</span><span class="w"> </span><span class="n">keySerializer</span><span class="p">,</span><span class="w"> </span><span class="n">Serializer</span><span class="o">&lt;</span><span class="n">V</span><span class="o">&gt;</span><span class="w"> </span><span class="n">valueSerializer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="k">this</span><span class="p">(</span><span class="n">Utils</span><span class="p">.</span><span class="na">propsToMap</span><span class="p">(</span><span class="n">properties</span><span class="p">),</span><span class="w"> </span><span class="n">keySerializer</span><span class="p">,</span><span class="w"> </span><span class="n">valueSerializer</span><span class="p">);</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="p">}</span>
+</code></pre></div>
+<p>这个构造器额外增加了key和value的序列化的参数 ，前面我们例子中的代码使用了Properties来传递了参数效果是一样的。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">public</span><span class="w"> </span><span class="nf">KafkaProducer</span><span class="p">(</span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">configs</span><span class="p">,</span><span class="w"> </span><span class="n">Serializer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">&gt;</span><span class="w"> </span><span class="n">keySerializer</span><span class="p">,</span><span class="w"> </span><span class="n">Serializer</span><span class="o">&lt;</span><span class="n">V</span><span class="o">&gt;</span><span class="w"> </span><span class="n">valueSerializer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="k">this</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ProducerConfig</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">appendSerializerToConfig</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span><span class="w"> </span><span class="n">keySerializer</span><span class="p">,</span><span class="w"> </span><span class="n">valueSerializer</span><span class="p">)),</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">            </span><span class="n">keySerializer</span><span class="p">,</span><span class="w"> </span><span class="n">valueSerializer</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="n">Time</span><span class="p">.</span><span class="na">SYSTEM</span><span class="p">);</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">}</span>
+</code></pre></div>
+<p>属性参数转换成了Map<String, Object>类型，然后这里继续进行转换，转换为ProducerConfig类型进行属性封装，关于这个配置对象这里先不细说，可以先来了解配置信息</p>
+<p>关于接下来重载的构造器就是执行了核心逻辑的构造器如下所示,代码略微有点长 后面我给总结一下：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">// visible for testing</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nd">@SuppressWarnings</span><span class="p">(</span><span class="s">&quot;unchecked&quot;</span><span class="p">)</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">KafkaProducer</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="w"> </span><span class="n">config</span><span class="p">,</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">              </span><span class="n">Serializer</span><span class="o">&lt;</span><span class="n">K</span><span class="o">&gt;</span><span class="w"> </span><span class="n">keySerializer</span><span class="p">,</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">              </span><span class="n">Serializer</span><span class="o">&lt;</span><span class="n">V</span><span class="o">&gt;</span><span class="w"> </span><span class="n">valueSerializer</span><span class="p">,</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">              </span><span class="n">ProducerMetadata</span><span class="w"> </span><span class="n">metadata</span><span class="p">,</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">              </span><span class="n">KafkaClient</span><span class="w"> </span><span class="n">kafkaClient</span><span class="p">,</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">              </span><span class="n">ProducerInterceptors</span><span class="o">&lt;</span><span class="n">K</span><span class="p">,</span><span class="w"> </span><span class="n">V</span><span class="o">&gt;</span><span class="w"> </span><span class="n">interceptors</span><span class="p">,</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">              </span><span class="n">Time</span><span class="w"> </span><span class="n">time</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">        </span><span class="c1">//生产者配置成员变量内存存储</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">producerConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">;</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">        </span><span class="c1">//系统时间参数赋值给成员变量</span>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">time</span><span class="p">;</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">              </span><span class="c1">//事务id参数获取transactional.id</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">transactionalId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">TRANSACTIONAL_ID_CONFIG</span><span class="p">);</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="w">              </span><span class="c1">//客户端参数id获取 client.id</span>
+<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">clientId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">CLIENT_ID_CONFIG</span><span class="p">);</span>
+<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>
+<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="w">        </span><span class="c1">//日式上下文初始化 指定了事务id和clientid的会打印到日志中</span>
+<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="w">        </span><span class="n">LogContext</span><span class="w"> </span><span class="n">logContext</span><span class="p">;</span>
+<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">transactionalId</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span>
+<a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="w">            </span><span class="n">logContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LogContext</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="s">&quot;[Producer clientId=%s] &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clientId</span><span class="p">));</span>
+<a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="w">        </span><span class="k">else</span>
+<a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="w">            </span><span class="n">logContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LogContext</span><span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="na">format</span><span class="p">(</span><span class="s">&quot;[Producer clientId=%s, transactionalId=%s] &quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clientId</span><span class="p">,</span><span class="w"> </span><span class="n">transactionalId</span><span class="p">));</span>
+<a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a><span class="w">        </span><span class="n">log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">logContext</span><span class="p">.</span><span class="na">logger</span><span class="p">(</span><span class="n">KafkaProducer</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a><span class="w">        </span><span class="n">log</span><span class="p">.</span><span class="na">trace</span><span class="p">(</span><span class="s">&quot;Starting the Kafka producer&quot;</span><span class="p">);</span>
+<a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a>
+<a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a><span class="w">        </span><span class="c1">//初始化监控指标配置 标签client-id配置</span>
+<a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a><span class="w">       </span><span class="c1">//关于生产者的监控指标可以看官网文档：https://kafka.apache.org/documentation/#producer_monitoring</span>
+<a id="__codelineno-5-31" name="__codelineno-5-31" href="#__codelineno-5-31"></a><span class="w">        </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">metricTags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Collections</span><span class="p">.</span><span class="na">singletonMap</span><span class="p">(</span><span class="s">&quot;client-id&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">clientId</span><span class="p">);</span>
+<a id="__codelineno-5-32" name="__codelineno-5-32" href="#__codelineno-5-32"></a><span class="w">        </span><span class="n">MetricConfig</span><span class="w"> </span><span class="n">metricConfig</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MetricConfig</span><span class="p">().</span><span class="na">samples</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="na">getInt</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">METRICS_NUM_SAMPLES_CONFIG</span><span class="p">))</span>
+<a id="__codelineno-5-33" name="__codelineno-5-33" href="#__codelineno-5-33"></a><span class="w">                </span><span class="p">.</span><span class="na">timeWindow</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">METRICS_SAMPLE_WINDOW_MS_CONFIG</span><span class="p">),</span><span class="w"> </span><span class="n">TimeUnit</span><span class="p">.</span><span class="na">MILLISECONDS</span><span class="p">)</span>
+<a id="__codelineno-5-34" name="__codelineno-5-34" href="#__codelineno-5-34"></a><span class="w">                </span><span class="p">.</span><span class="na">recordLevel</span><span class="p">(</span><span class="n">Sensor</span><span class="p">.</span><span class="na">RecordingLevel</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">METRICS_RECORDING_LEVEL_CONFIG</span><span class="p">)))</span>
+<a id="__codelineno-5-35" name="__codelineno-5-35" href="#__codelineno-5-35"></a><span class="w">                </span><span class="p">.</span><span class="na">tags</span><span class="p">(</span><span class="n">metricTags</span><span class="p">);</span>
+<a id="__codelineno-5-36" name="__codelineno-5-36" href="#__codelineno-5-36"></a><span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">MetricsReporter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">reporters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">getConfiguredInstances</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">METRIC_REPORTER_CLASSES_CONFIG</span><span class="p">,</span>
+<a id="__codelineno-5-37" name="__codelineno-5-37" href="#__codelineno-5-37"></a><span class="w">                </span><span class="n">MetricsReporter</span><span class="p">.</span><span class="na">class</span><span class="p">,</span>
+<a id="__codelineno-5-38" name="__codelineno-5-38" href="#__codelineno-5-38"></a><span class="w">                </span><span class="n">Collections</span><span class="p">.</span><span class="na">singletonMap</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">CLIENT_ID_CONFIG</span><span class="p">,</span><span class="w"> </span><span class="n">clientId</span><span class="p">));</span>
+<a id="__codelineno-5-39" name="__codelineno-5-39" href="#__codelineno-5-39"></a><span class="w">        </span><span class="c1">//jmx 方式提供的监控</span>
+<a id="__codelineno-5-40" name="__codelineno-5-40" href="#__codelineno-5-40"></a><span class="w">        </span><span class="n">JmxReporter</span><span class="w"> </span><span class="n">jmxReporter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">JmxReporter</span><span class="p">();</span>
+<a id="__codelineno-5-41" name="__codelineno-5-41" href="#__codelineno-5-41"></a><span class="w">        </span><span class="n">jmxReporter</span><span class="p">.</span><span class="na">configure</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="na">originals</span><span class="p">(</span><span class="n">Collections</span><span class="p">.</span><span class="na">singletonMap</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">CLIENT_ID_CONFIG</span><span class="p">,</span><span class="w"> </span><span class="n">clientId</span><span class="p">)));</span>
+<a id="__codelineno-5-42" name="__codelineno-5-42" href="#__codelineno-5-42"></a><span class="w">        </span><span class="n">reporters</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">jmxReporter</span><span class="p">);</span>
+<a id="__codelineno-5-43" name="__codelineno-5-43" href="#__codelineno-5-43"></a><span class="w">        </span><span class="c1">//监控指标上下文 （容器）</span>
+<a id="__codelineno-5-44" name="__codelineno-5-44" href="#__codelineno-5-44"></a><span class="w">        </span><span class="n">MetricsContext</span><span class="w"> </span><span class="n">metricsContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">KafkaMetricsContext</span><span class="p">(</span><span class="n">JMX_PREFIX</span><span class="p">,</span>
+<a id="__codelineno-5-45" name="__codelineno-5-45" href="#__codelineno-5-45"></a><span class="w">                </span><span class="n">config</span><span class="p">.</span><span class="na">originalsWithPrefix</span><span class="p">(</span><span class="n">CommonClientConfigs</span><span class="p">.</span><span class="na">METRICS_CONTEXT_PREFIX</span><span class="p">));</span>
+<a id="__codelineno-5-46" name="__codelineno-5-46" href="#__codelineno-5-46"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">metrics</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Metrics</span><span class="p">(</span><span class="n">metricConfig</span><span class="p">,</span><span class="w"> </span><span class="n">reporters</span><span class="p">,</span><span class="w"> </span><span class="n">time</span><span class="p">,</span><span class="w"> </span><span class="n">metricsContext</span><span class="p">);</span>
+<a id="__codelineno-5-47" name="__codelineno-5-47" href="#__codelineno-5-47"></a><span class="w">       </span><span class="c1">//生产者指标对象 </span>
+<a id="__codelineno-5-48" name="__codelineno-5-48" href="#__codelineno-5-48"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">producerMetrics</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">KafkaProducerMetrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">);</span>
+<a id="__codelineno-5-49" name="__codelineno-5-49" href="#__codelineno-5-49"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">partitioner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">getConfiguredInstance</span><span class="p">(</span>
+<a id="__codelineno-5-50" name="__codelineno-5-50" href="#__codelineno-5-50"></a><span class="w">                </span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">PARTITIONER_CLASS_CONFIG</span><span class="p">,</span>
+<a id="__codelineno-5-51" name="__codelineno-5-51" href="#__codelineno-5-51"></a><span class="w">                </span><span class="n">Partitioner</span><span class="p">.</span><span class="na">class</span><span class="p">,</span>
+<a id="__codelineno-5-52" name="__codelineno-5-52" href="#__codelineno-5-52"></a><span class="w">                </span><span class="n">Collections</span><span class="p">.</span><span class="na">singletonMap</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">CLIENT_ID_CONFIG</span><span class="p">,</span><span class="w"> </span><span class="n">clientId</span><span class="p">));</span>
+<a id="__codelineno-5-53" name="__codelineno-5-53" href="#__codelineno-5-53"></a><span class="w">       </span><span class="c1">//retry.backoff.ms 重试回退时间，在尝试重试对给定主题分区的失败请求之前等待的时间量。这避免了在某些故障情况下在紧密循环中重复发送请求。</span>
+<a id="__codelineno-5-54" name="__codelineno-5-54" href="#__codelineno-5-54"></a><span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="n">retryBackoffMs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">RETRY_BACKOFF_MS_CONFIG</span><span class="p">);</span>
+<a id="__codelineno-5-55" name="__codelineno-5-55" href="#__codelineno-5-55"></a><span class="w">        </span><span class="c1">//key的序列化器初始化key.serializer</span>
+<a id="__codelineno-5-56" name="__codelineno-5-56" href="#__codelineno-5-56"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">keySerializer</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-57" name="__codelineno-5-57" href="#__codelineno-5-57"></a><span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">keySerializer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">getConfiguredInstance</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">KEY_SERIALIZER_CLASS_CONFIG</span><span class="p">,</span>
+<a id="__codelineno-5-58" name="__codelineno-5-58" href="#__codelineno-5-58"></a><span class="w">                                                                                     </span><span class="n">Serializer</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<a id="__codelineno-5-59" name="__codelineno-5-59" href="#__codelineno-5-59"></a><span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">keySerializer</span><span class="p">.</span><span class="na">configure</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="na">originals</span><span class="p">(</span><span class="n">Collections</span><span class="p">.</span><span class="na">singletonMap</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">CLIENT_ID_CONFIG</span><span class="p">,</span><span class="w"> </span><span class="n">clientId</span><span class="p">)),</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<a id="__codelineno-5-60" name="__codelineno-5-60" href="#__codelineno-5-60"></a><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-61" name="__codelineno-5-61" href="#__codelineno-5-61"></a><span class="w">            </span><span class="n">config</span><span class="p">.</span><span class="na">ignore</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">KEY_SERIALIZER_CLASS_CONFIG</span><span class="p">);</span>
+<a id="__codelineno-5-62" name="__codelineno-5-62" href="#__codelineno-5-62"></a><span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">keySerializer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">keySerializer</span><span class="p">;</span>
+<a id="__codelineno-5-63" name="__codelineno-5-63" href="#__codelineno-5-63"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-5-64" name="__codelineno-5-64" href="#__codelineno-5-64"></a><span class="w">       </span><span class="c1">//值序列化器的初始化value.serializer</span>
+<a id="__codelineno-5-65" name="__codelineno-5-65" href="#__codelineno-5-65"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">valueSerializer</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-66" name="__codelineno-5-66" href="#__codelineno-5-66"></a><span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">valueSerializer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">getConfiguredInstance</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">VALUE_SERIALIZER_CLASS_CONFIG</span><span class="p">,</span>
+<a id="__codelineno-5-67" name="__codelineno-5-67" href="#__codelineno-5-67"></a><span class="w">                                                                                       </span><span class="n">Serializer</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+<a id="__codelineno-5-68" name="__codelineno-5-68" href="#__codelineno-5-68"></a><span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">valueSerializer</span><span class="p">.</span><span class="na">configure</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="na">originals</span><span class="p">(</span><span class="n">Collections</span><span class="p">.</span><span class="na">singletonMap</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">CLIENT_ID_CONFIG</span><span class="p">,</span><span class="w"> </span><span class="n">clientId</span><span class="p">)),</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+<a id="__codelineno-5-69" name="__codelineno-5-69" href="#__codelineno-5-69"></a><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-70" name="__codelineno-5-70" href="#__codelineno-5-70"></a><span class="w">            </span><span class="n">config</span><span class="p">.</span><span class="na">ignore</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">VALUE_SERIALIZER_CLASS_CONFIG</span><span class="p">);</span>
+<a id="__codelineno-5-71" name="__codelineno-5-71" href="#__codelineno-5-71"></a><span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">valueSerializer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">valueSerializer</span><span class="p">;</span>
+<a id="__codelineno-5-72" name="__codelineno-5-72" href="#__codelineno-5-72"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-5-73" name="__codelineno-5-73" href="#__codelineno-5-73"></a><span class="w">             </span><span class="c1">// 拦截器列表的初始化interceptor.classes</span>
+<a id="__codelineno-5-74" name="__codelineno-5-74" href="#__codelineno-5-74"></a><span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">ProducerInterceptor</span><span class="o">&lt;</span><span class="n">K</span><span class="p">,</span><span class="w"> </span><span class="n">V</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">interceptorList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">List</span><span class="p">)</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">getConfiguredInstances</span><span class="p">(</span>
+<a id="__codelineno-5-75" name="__codelineno-5-75" href="#__codelineno-5-75"></a><span class="w">                </span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">INTERCEPTOR_CLASSES_CONFIG</span><span class="p">,</span>
+<a id="__codelineno-5-76" name="__codelineno-5-76" href="#__codelineno-5-76"></a><span class="w">                </span><span class="n">ProducerInterceptor</span><span class="p">.</span><span class="na">class</span><span class="p">,</span>
+<a id="__codelineno-5-77" name="__codelineno-5-77" href="#__codelineno-5-77"></a><span class="w">                </span><span class="n">Collections</span><span class="p">.</span><span class="na">singletonMap</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">CLIENT_ID_CONFIG</span><span class="p">,</span><span class="w"> </span><span class="n">clientId</span><span class="p">));</span>
+<a id="__codelineno-5-78" name="__codelineno-5-78" href="#__codelineno-5-78"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">interceptors</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span>
+<a id="__codelineno-5-79" name="__codelineno-5-79" href="#__codelineno-5-79"></a><span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">interceptors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">interceptors</span><span class="p">;</span>
+<a id="__codelineno-5-80" name="__codelineno-5-80" href="#__codelineno-5-80"></a><span class="w">        </span><span class="k">else</span>
+<a id="__codelineno-5-81" name="__codelineno-5-81" href="#__codelineno-5-81"></a><span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">interceptors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ProducerInterceptors</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">interceptorList</span><span class="p">);</span>
+<a id="__codelineno-5-82" name="__codelineno-5-82" href="#__codelineno-5-82"></a>
+<a id="__codelineno-5-83" name="__codelineno-5-83" href="#__codelineno-5-83"></a><span class="w">        </span><span class="c1">//这个监听器是用于元数据更新时候的通知 ，这里是注册监听器的只有这个资源类型实现了ClusterResourceListener接口才会被添加到监听器里面</span>
+<a id="__codelineno-5-84" name="__codelineno-5-84" href="#__codelineno-5-84"></a><span class="w">        </span><span class="n">ClusterResourceListeners</span><span class="w"> </span><span class="n">clusterResourceListeners</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">configureClusterResourceListeners</span><span class="p">(</span><span class="n">keySerializer</span><span class="p">,</span>
+<a id="__codelineno-5-85" name="__codelineno-5-85" href="#__codelineno-5-85"></a><span class="w">                </span><span class="n">valueSerializer</span><span class="p">,</span><span class="w"> </span><span class="n">interceptorList</span><span class="p">,</span><span class="w"> </span><span class="n">reporters</span><span class="p">);</span>
+<a id="__codelineno-5-86" name="__codelineno-5-86" href="#__codelineno-5-86"></a><span class="w">        </span><span class="c1">//max.request.size参数初始化 请求的最大大小（以字节为单位） </span>
+<a id="__codelineno-5-87" name="__codelineno-5-87" href="#__codelineno-5-87"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">maxRequestSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">getInt</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">MAX_REQUEST_SIZE_CONFIG</span><span class="p">);</span>
+<a id="__codelineno-5-88" name="__codelineno-5-88" href="#__codelineno-5-88"></a><span class="w">       </span><span class="c1">//buffer.memory 生产者可用于缓冲等待发送到服务器的记录的内存总字节数。 </span>
+<a id="__codelineno-5-89" name="__codelineno-5-89" href="#__codelineno-5-89"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">totalMemorySize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">BUFFER_MEMORY_CONFIG</span><span class="p">);</span>
+<a id="__codelineno-5-90" name="__codelineno-5-90" href="#__codelineno-5-90"></a><span class="w">       </span><span class="c1">//compression.type 生产者生成的所有数据的压缩类型。默认值为无（即不压缩）。 </span>
+<a id="__codelineno-5-91" name="__codelineno-5-91" href="#__codelineno-5-91"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">compressionType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CompressionType</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">COMPRESSION_TYPE_CONFIG</span><span class="p">));</span>
+<a id="__codelineno-5-92" name="__codelineno-5-92" href="#__codelineno-5-92"></a><span class="w">            </span><span class="c1">//max.block.ms 配置控制KafkaProducer&#39;s send()、partitionsFor()、initTransactions()、sendOffsetsToTransaction()和方法将阻塞commitTransaction()多长时间。 </span>
+<a id="__codelineno-5-93" name="__codelineno-5-93" href="#__codelineno-5-93"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">maxBlockTimeMs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">MAX_BLOCK_MS_CONFIG</span><span class="p">);</span>
+<a id="__codelineno-5-94" name="__codelineno-5-94" href="#__codelineno-5-94"></a><span class="w">       </span><span class="c1">//delivery.timeout.ms send()调用返回后报告成功或失败的时间上限。 </span>
+<a id="__codelineno-5-95" name="__codelineno-5-95" href="#__codelineno-5-95"></a><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">deliveryTimeoutMs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">configureDeliveryTimeout</span><span class="p">(</span><span class="n">config</span><span class="p">,</span><span class="w"> </span><span class="n">log</span><span class="p">);</span>
+<a id="__codelineno-5-96" name="__codelineno-5-96" href="#__codelineno-5-96"></a>
+<a id="__codelineno-5-97" name="__codelineno-5-97" href="#__codelineno-5-97"></a><span class="w">      </span><span class="c1">//维护节点api版本，以便在NetworkClient（信息的来源）之外进行访问。该模式类似于对主题元数据使用元数据。注：此类仅用于卡夫卡内部使用。</span>
+<a id="__codelineno-5-98" name="__codelineno-5-98" href="#__codelineno-5-98"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">apiVersions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ApiVersions</span><span class="p">();</span>
+<a id="__codelineno-5-99" name="__codelineno-5-99" href="#__codelineno-5-99"></a>
+<a id="__codelineno-5-100" name="__codelineno-5-100" href="#__codelineno-5-100"></a><span class="w">        </span><span class="c1">//TransactionManager对象的初始化</span>
+<a id="__codelineno-5-101" name="__codelineno-5-101" href="#__codelineno-5-101"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">transactionManager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">configureTransactionState</span><span class="p">(</span><span class="n">config</span><span class="p">,</span><span class="w"> </span><span class="n">logContext</span><span class="p">);</span>
+<a id="__codelineno-5-102" name="__codelineno-5-102" href="#__codelineno-5-102"></a>
+<a id="__codelineno-5-103" name="__codelineno-5-103" href="#__codelineno-5-103"></a><span class="w">        </span><span class="c1">//此类充当队列，将记录累积到MemoryRecords实例中，以发送到服务器。累加器使用有限的内存，当内存耗尽时，append调用将被阻止，除非明确禁用此行为</span>
+<a id="__codelineno-5-104" name="__codelineno-5-104" href="#__codelineno-5-104"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">accumulator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">RecordAccumulator</span><span class="p">(</span><span class="n">logContext</span><span class="p">,</span>
+<a id="__codelineno-5-105" name="__codelineno-5-105" href="#__codelineno-5-105"></a><span class="w">                 </span><span class="c1">//batch.size 批处理大小参数 见后面解释</span>
+<a id="__codelineno-5-106" name="__codelineno-5-106" href="#__codelineno-5-106"></a><span class="w">                </span><span class="n">config</span><span class="p">.</span><span class="na">getInt</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">BATCH_SIZE_CONFIG</span><span class="p">),</span>
+<a id="__codelineno-5-107" name="__codelineno-5-107" href="#__codelineno-5-107"></a><span class="w">                 </span><span class="c1">//压缩类型</span>
+<a id="__codelineno-5-108" name="__codelineno-5-108" href="#__codelineno-5-108"></a><span class="w">                </span><span class="k">this</span><span class="p">.</span><span class="na">compressionType</span><span class="p">,</span>
+<a id="__codelineno-5-109" name="__codelineno-5-109" href="#__codelineno-5-109"></a><span class="w">                </span><span class="c1">//linger.ms 等待延迟 参数 见后面解释                                 </span>
+<a id="__codelineno-5-110" name="__codelineno-5-110" href="#__codelineno-5-110"></a><span class="w">                </span><span class="n">lingerMs</span><span class="p">(</span><span class="n">config</span><span class="p">),</span>
+<a id="__codelineno-5-111" name="__codelineno-5-111" href="#__codelineno-5-111"></a><span class="w">                </span><span class="c1">//重试的回退时间</span>
+<a id="__codelineno-5-112" name="__codelineno-5-112" href="#__codelineno-5-112"></a><span class="w">                </span><span class="n">retryBackoffMs</span><span class="p">,</span>
+<a id="__codelineno-5-113" name="__codelineno-5-113" href="#__codelineno-5-113"></a><span class="w">                </span><span class="c1">//报告成功或者失败的时间上限</span>
+<a id="__codelineno-5-114" name="__codelineno-5-114" href="#__codelineno-5-114"></a><span class="w">                </span><span class="n">deliveryTimeoutMs</span><span class="p">,</span>
+<a id="__codelineno-5-115" name="__codelineno-5-115" href="#__codelineno-5-115"></a><span class="w">                </span><span class="c1">//监控埋点</span>
+<a id="__codelineno-5-116" name="__codelineno-5-116" href="#__codelineno-5-116"></a><span class="w">                </span><span class="n">metrics</span><span class="p">,</span>
+<a id="__codelineno-5-117" name="__codelineno-5-117" href="#__codelineno-5-117"></a><span class="w">                </span><span class="n">PRODUCER_METRIC_GROUP_NAME</span><span class="p">,</span>
+<a id="__codelineno-5-118" name="__codelineno-5-118" href="#__codelineno-5-118"></a><span class="w">                </span><span class="n">time</span><span class="p">,</span>
+<a id="__codelineno-5-119" name="__codelineno-5-119" href="#__codelineno-5-119"></a><span class="w">                </span><span class="n">apiVersions</span><span class="p">,</span>
+<a id="__codelineno-5-120" name="__codelineno-5-120" href="#__codelineno-5-120"></a><span class="w">                </span><span class="n">transactionManager</span><span class="p">,</span>
+<a id="__codelineno-5-121" name="__codelineno-5-121" href="#__codelineno-5-121"></a><span class="w">                </span><span class="c1">//内存池</span>
+<a id="__codelineno-5-122" name="__codelineno-5-122" href="#__codelineno-5-122"></a><span class="w">                </span><span class="k">new</span><span class="w"> </span><span class="n">BufferPool</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">totalMemorySize</span><span class="p">,</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="na">getInt</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">BATCH_SIZE_CONFIG</span><span class="p">),</span><span class="w"> </span><span class="n">metrics</span><span class="p">,</span><span class="w"> </span><span class="n">time</span><span class="p">,</span><span class="w"> </span><span class="n">PRODUCER_METRIC_GROUP_NAME</span><span class="p">));</span>
+<a id="__codelineno-5-123" name="__codelineno-5-123" href="#__codelineno-5-123"></a><span class="w">                </span><span class="c1">//bootstrap.servers kafka 代理服务器地址</span>
+<a id="__codelineno-5-124" name="__codelineno-5-124" href="#__codelineno-5-124"></a><span class="w">        </span><span class="n">List</span><span class="o">&lt;</span><span class="n">InetSocketAddress</span><span class="o">&gt;</span><span class="w"> </span><span class="n">addresses</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ClientUtils</span><span class="p">.</span><span class="na">parseAndValidateAddresses</span><span class="p">(</span>
+<a id="__codelineno-5-125" name="__codelineno-5-125" href="#__codelineno-5-125"></a><span class="w">                </span><span class="n">config</span><span class="p">.</span><span class="na">getList</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">BOOTSTRAP_SERVERS_CONFIG</span><span class="p">),</span>
+<a id="__codelineno-5-126" name="__codelineno-5-126" href="#__codelineno-5-126"></a><span class="w">                </span><span class="n">config</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">CLIENT_DNS_LOOKUP_CONFIG</span><span class="p">));</span>
+<a id="__codelineno-5-127" name="__codelineno-5-127" href="#__codelineno-5-127"></a><span class="w">        </span><span class="c1">//生产者元数据对象初始化</span>
+<a id="__codelineno-5-128" name="__codelineno-5-128" href="#__codelineno-5-128"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">metadata</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-129" name="__codelineno-5-129" href="#__codelineno-5-129"></a><span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">metadata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">metadata</span><span class="p">;</span>
+<a id="__codelineno-5-130" name="__codelineno-5-130" href="#__codelineno-5-130"></a><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-131" name="__codelineno-5-131" href="#__codelineno-5-131"></a>
+<a id="__codelineno-5-132" name="__codelineno-5-132" href="#__codelineno-5-132"></a><span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">metadata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ProducerMetadata</span><span class="p">(</span><span class="n">retryBackoffMs</span><span class="p">,</span>
+<a id="__codelineno-5-133" name="__codelineno-5-133" href="#__codelineno-5-133"></a><span class="w">                    </span><span class="c1">//metadata.max.age.ms 即使我们没有看到任何分区领导层更改以主动发现任何新代理或分区，我们也强制刷新元数据的时间段（以毫秒为单位）                        </span>
+<a id="__codelineno-5-134" name="__codelineno-5-134" href="#__codelineno-5-134"></a><span class="w">                    </span><span class="n">config</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">METADATA_MAX_AGE_CONFIG</span><span class="p">),</span>
+<a id="__codelineno-5-135" name="__codelineno-5-135" href="#__codelineno-5-135"></a><span class="w">                    </span><span class="c1">//metadata.max.idle.ms 控制生产者为空闲主题缓存元数据的时间。如果自上次生成主题以来经过的时间超过了元数据空闲持续时间，则该主题的元数据将被遗忘，并且下一次对其的访问将强制执行元数据获取请求。</span>
+<a id="__codelineno-5-136" name="__codelineno-5-136" href="#__codelineno-5-136"></a><span class="w">                    </span><span class="n">config</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">METADATA_MAX_IDLE_CONFIG</span><span class="p">),</span>
+<a id="__codelineno-5-137" name="__codelineno-5-137" href="#__codelineno-5-137"></a><span class="w">                    </span><span class="n">logContext</span><span class="p">,</span>
+<a id="__codelineno-5-138" name="__codelineno-5-138" href="#__codelineno-5-138"></a><span class="w">                    </span><span class="n">clusterResourceListeners</span><span class="p">,</span>
+<a id="__codelineno-5-139" name="__codelineno-5-139" href="#__codelineno-5-139"></a><span class="w">                    </span><span class="n">Time</span><span class="p">.</span><span class="na">SYSTEM</span><span class="p">);</span>
+<a id="__codelineno-5-140" name="__codelineno-5-140" href="#__codelineno-5-140"></a><span class="w">            </span><span class="c1">//元数据初始化</span>
+<a id="__codelineno-5-141" name="__codelineno-5-141" href="#__codelineno-5-141"></a><span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">metadata</span><span class="p">.</span><span class="na">bootstrap</span><span class="p">(</span><span class="n">addresses</span><span class="p">);</span>
+<a id="__codelineno-5-142" name="__codelineno-5-142" href="#__codelineno-5-142"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-5-143" name="__codelineno-5-143" href="#__codelineno-5-143"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">errors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">metrics</span><span class="p">.</span><span class="na">sensor</span><span class="p">(</span><span class="s">&quot;errors&quot;</span><span class="p">);</span>
+<a id="__codelineno-5-144" name="__codelineno-5-144" href="#__codelineno-5-144"></a><span class="w">        </span><span class="c1">//创建一个发送对象 处理向Kafka集群发送PRODUCT请求的后台线程。该线程发出元数据请求以更新其集群视图，然后将生成请求发送到适当的节点。</span>
+<a id="__codelineno-5-145" name="__codelineno-5-145" href="#__codelineno-5-145"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">sender</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newSender</span><span class="p">(</span><span class="n">logContext</span><span class="p">,</span><span class="w"> </span><span class="n">kafkaClient</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">metadata</span><span class="p">);</span>
+<a id="__codelineno-5-146" name="__codelineno-5-146" href="#__codelineno-5-146"></a><span class="w">        </span><span class="c1">//io线程名字 kafka-producer-network-thread + clientId</span>
+<a id="__codelineno-5-147" name="__codelineno-5-147" href="#__codelineno-5-147"></a><span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">ioThreadName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NETWORK_THREAD_PREFIX</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; | &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">clientId</span><span class="p">;</span>
+<a id="__codelineno-5-148" name="__codelineno-5-148" href="#__codelineno-5-148"></a><span class="w">        </span><span class="c1">//io线程对象创建</span>
+<a id="__codelineno-5-149" name="__codelineno-5-149" href="#__codelineno-5-149"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">ioThread</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">KafkaThread</span><span class="p">(</span><span class="n">ioThreadName</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">sender</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<a id="__codelineno-5-150" name="__codelineno-5-150" href="#__codelineno-5-150"></a><span class="w">        </span><span class="c1">//io线程穷</span>
+<a id="__codelineno-5-151" name="__codelineno-5-151" href="#__codelineno-5-151"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">ioThread</span><span class="p">.</span><span class="na">start</span><span class="p">();</span>
+<a id="__codelineno-5-152" name="__codelineno-5-152" href="#__codelineno-5-152"></a><span class="w">        </span><span class="c1">//打印未使用的配置</span>
+<a id="__codelineno-5-153" name="__codelineno-5-153" href="#__codelineno-5-153"></a><span class="w">        </span><span class="n">config</span><span class="p">.</span><span class="na">logUnused</span><span class="p">();</span>
+<a id="__codelineno-5-154" name="__codelineno-5-154" href="#__codelineno-5-154"></a><span class="w">        </span><span class="c1">//jmx监控信息注册</span>
+<a id="__codelineno-5-155" name="__codelineno-5-155" href="#__codelineno-5-155"></a><span class="w">        </span><span class="n">AppInfoParser</span><span class="p">.</span><span class="na">registerAppInfo</span><span class="p">(</span><span class="n">JMX_PREFIX</span><span class="p">,</span><span class="w"> </span><span class="n">clientId</span><span class="p">,</span><span class="w"> </span><span class="n">metrics</span><span class="p">,</span><span class="w"> </span><span class="n">time</span><span class="p">.</span><span class="na">milliseconds</span><span class="p">());</span>
+<a id="__codelineno-5-156" name="__codelineno-5-156" href="#__codelineno-5-156"></a><span class="w">        </span><span class="n">log</span><span class="p">.</span><span class="na">debug</span><span class="p">(</span><span class="s">&quot;Kafka producer started&quot;</span><span class="p">);</span>
+<a id="__codelineno-5-157" name="__codelineno-5-157" href="#__codelineno-5-157"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Throwable</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-158" name="__codelineno-5-158" href="#__codelineno-5-158"></a><span class="w">        </span><span class="c1">// call close methods if internal objects are already constructed this is to prevent resource leak. see KAFKA-2121</span>
+<a id="__codelineno-5-159" name="__codelineno-5-159" href="#__codelineno-5-159"></a><span class="w">        </span><span class="n">close</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="na">ofMillis</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="kc">true</span><span class="p">);</span>
+<a id="__codelineno-5-160" name="__codelineno-5-160" href="#__codelineno-5-160"></a><span class="w">        </span><span class="c1">// now propagate the exception</span>
+<a id="__codelineno-5-161" name="__codelineno-5-161" href="#__codelineno-5-161"></a><span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">KafkaException</span><span class="p">(</span><span class="s">&quot;Failed to construct kafka producer&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">);</span>
+<a id="__codelineno-5-162" name="__codelineno-5-162" href="#__codelineno-5-162"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-5-163" name="__codelineno-5-163" href="#__codelineno-5-163"></a><span class="p">}</span>
+</code></pre></div>
+<p>看完了生产者的对象初始化过程，发现这个方法设计的太长了那就简单总结下：</p>
+<ul>
+<li>基本配置的初始化</li>
+<li>监控配置的初始化</li>
+<li>元数据配置的初始化</li>
+<li>发送对象的初始化</li>
+<li>io线程的初始化</li>
+</ul>
+<h2 id="_2"><strong>基本配置的初始化</strong><a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_3"><strong>基本配置详细说明</strong><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>关于Kafka生产者的参数配置，详情可以查阅官网：关于参数配置可以参阅官网<a href="https://kafka.apache.org/documentation.html#producerconfigs">生产者配置</a></p>
+<p>基本配置详细说明</p>
+<p>这里列举下在前面代码注释中没有详细说的一些配置，上面有一些配置比较长的就列在下面感兴趣的可以详细看一下：</p>
+<ul>
+<li>
+<p><strong>retry.backoff.ms</strong> 重试回退时间，在尝试重试对给定主题分区的失败请求之前等待的时间量。这避免了在某些故障情况下在紧密循环中重复发送请求。</p>
+</li>
+<li>
+<p><strong>max.request.size</strong> 参数初始化 请求的最大大小（以字节为单位）。此设置将限制生产者在单个请求中发送的记录批次数，以避免发送大量请求。这实际上也是最大未压缩记录批量大小的上限。请注意，服务器对记录批量大小有自己的上限（如果启用压缩，则在压缩之后），这可能与此不同。</p>
+</li>
+<li>
+<p><strong>buffer.memory</strong> 生产者可用于缓冲等待发送到服务器的记录的内存总字节数。如果记录的发送速度快于它们可以传递到服务器的速度，则生产者将阻塞，max.block.ms之后它将引发异常。此设置应大致对应于生产者将使用的总内存，但不是硬性限制，因为并非生产者使用的所有内存都用于缓冲。一些额外的内存将用于压缩（如果启用压缩）以及维护正在进行的请求。</p>
+</li>
+<li>
+<p><strong>compression.type</strong> 生产者生成的所有数据的压缩类型。默认值为无（即不压缩）。有效值为none、gzip、snappy、lz4或zstd。压缩是整批数据，所以批处理的效果也会影响压缩率（更多的批处理意味着更好的压缩）</p>
+</li>
+<li>
+<p><strong>delivery.timeout.ms</strong>  send()调用返回后报告成功或失败的时间上限。这限制了记录在发送之前将被延迟的总时间、等待代理确认的时间（如果需要）以及可重试发送失败所允许的时间。如果遇到不可恢复的错误，重试已用尽，或者记录被添加到到达较早交付到期期限的批次中，生产者可能会报告未能在此配置之前发送记录。此配置的值应大于或等于 和 之request.timeout.ms和linger.ms。</p>
+</li>
+<li>
+<p><strong>max.block.ms</strong> 配置控制KafkaProducer's send()、partitionsFor()、initTransactions()、sendOffsetsToTransaction()和方法将阻塞commitTransaction()多长时间。abortTransaction()对于send()此超时限制等待元数据获取和缓冲区分配的总时间（用户提供的序列化程序或分区程序中的阻塞不计入此超时）。对于partitionsFor()此超时限制，如果元数据不可用，则等待元数据所花费的时间。与事务相关的方法总是阻塞，但如果事务协调器无法被发现或在超时内没有响应，则可能会超时。</p>
+</li>
+<li>
+<p><strong>batch.size</strong> 每当多个记录被发送到同一个分区时，生产者将尝试将记录一起批处理成更少的请求。这有助于客户端和服务器的性能。此配置控制默认批量大小（以字节为单位）。不会尝试批处理大于此大小的记录。发送到代理的请求将包含多个批次，每个分区都有一个可发送的数据。小批量将使批处理不太常见，并且可能会降低吞吐量（批量大小为零将完全禁用批处理）。一个非常大的批处理大小可能会更浪费内存，因为我们总是会分配一个指定批处理大小的缓冲区以预期额外的记录。注意：此设置给出了要发送的批量大小的上限。如果我们为这个分区积累的字节数少于这个数量，我们将“徘徊”<code>linger.ms</code>等待更多记录出现的时间。此设置默认为 0，这意味着即使累积的批量大小在此设置<code>linger.ms</code>下，我们也会立即发送一条记录。<code>batch.size</code></p>
+</li>
+<li>
+<p><strong>linger.ms</strong> 生产者将在请求传输之间到达的任何记录组合成一个批处理请求。通常，这仅在记录到达速度快于发送速度时才会在负载下发生。但是在某些情况下，即使在中等负载下，客户端也可能希望减少请求的数量。此设置通过添加少量人为延迟来实现这一点——也就是说，生产者不会立即发送记录，而是等待给定的延迟以允许发送其他记录，以便可以将发送一起批处理。这可以被认为类似于 TCP 中的 Nagle 算法。这个设置给出了批处理延迟的上限：一旦我们得到<code>batch.size</code>不管这个设置如何，它都会立即发送一个分区的记录，但是如果我们为这个分区积累的字节数少于这个数量，我们将“徘徊”指定的时间，等待更多的记录出现。此设置默认为 0（即无延迟）。<code>linger.ms=5</code>例如，设置会产生减少发送请求数量的效果，但会给在没有负载的情况下发送的记录增加最多 5ms 的延迟。</p>
+</li>
+<li>
+<p><strong>BufferPool</strong> 保持在给定内存限制下的ByteBuffers池。该类型相当特定于生产者的需求。特别是它具有以下特性：</p>
+<ul>
+<li>
+<p>有一种特殊的“内存池大小”，这种大小的缓冲区保存在一个列表中并循环使用</p>
+</li>
+<li>
+<p>这是公平的。也就是说，所有内存都会分配给等待时间最长的线程，直到它有足够的内存为止。这可以防止线程请求大量内存并需要阻塞直到释放多个缓冲区时出现饥饿或死锁。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>bootstrap.servers</strong> 用于建立与 Kafka 集群的初始连接的主机/端口对列表。客户端将使用所有服务器，无论此处指定哪些服务器进行引导——此列表仅影响用于发现完整服务器集的初始主机。此列表应采用<code>host1:port1,host2:port2,...</code>. 由于这些服务器仅用于初始连接以发现完整的集群成员（可能会动态更改），因此此列表不需要包含完整的服务器集（但您可能需要多个服务器，以防服务器停机）</p>
+</li>
+<li>
+<p><strong>client.dns.lookup</strong> 控制客户端如何使用 DNS 查找。如果设置为<code>use_all_dns_ips</code>，则依次连接到每个返回的 IP 地址，直到建立成功的连接。断开连接后，使用下一个 IP。一旦所有 IP 都被使用过一次，客户端会再次从主机名解析 IP（然而，JVM 和操作系统都会缓存 DNS 名称查找）。如果设置为<code>resolve_canonical_bootstrap_servers_only</code>，则将每个引导地址解析为规范名称列表。在引导阶段之后，它的行为与<code>use_all_dns_ips</code>.</p>
+</li>
+</ul>
+<h3 id="partitioner"><strong>分区器Partitioner</strong><a class="headerlink" href="#partitioner" title="Permanent link">&para;</a></h3>
+<p>对应配置 partitioner.class</p>
+<p>用于确定生成记录时要发送到哪个分区的类。可用选项有：</p>
+<ul>
+<li><code>org.apache.kafka.clients.producer.internals.DefaultPartitioner</code>：默认分区器。此策略将尝试坚持一个分区，直到批次已满或 linger.ms已完成。它适用于以下策略：<ul>
+<li>如果未指定分区但存在键，则根据键的散列选择分区</li>
+<li>如果不存在分区或键，请选择在批处理已满或<code>linger.ms</code>已启动时更改的粘性分区。</li>
+</ul>
+</li>
+<li><code>org.apache.kafka.clients.producer.RoundRobinPartitioner</code>：这种分区策略是一系列连续记录中的每条记录将被发送到不同的分区（无论是否提供'key'），直到我们用完分区并重新开始。注意：有一个已知问题会在创建新批次时导致分布不均。详情请查看 KAFKA-9965。</li>
+<li><code>org.apache.kafka.clients.producer.UniformStickyPartitioner</code>：此分区策略将尝试坚持一个分区（无论是否提供了“密钥”），直到批次已满或已满<code>linger.ms</code>。</li>
+</ul>
+<p>实现该<code>org.apache.kafka.clients.producer.Partitioner</code>接口允许您插入自定义分区器。默认为org.apache.kafka.clients.producer.internals.DefaultPartitioner</p>
+<h3 id="_4"><strong>拦截器</strong><a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>对应配置interceptor.classes</p>
+<p>用作拦截器的类列表。实现该<code>org.apache.kafka.clients.producer.ProducerInterceptor</code>接口允许您在将生产者收到的记录发布到 Kafka 集群之前拦截（并可能改变）这些记录。默认情况下，没有拦截器。</p>
+<h3 id="_5"><strong>事务的一些配置</strong><a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>事务的配置对应类型事务管理器TransactionManager类型</p>
+<ul>
+<li>enable.idempotence</li>
+</ul>
+<p>当设置为“true”时，生产者将确保每条消息的一个副本被写入流中。如果为“false”，生产者由于代理失败等原因重试，可能会在流中写入重试消息的副本。请注意，启用幂等性要求max.in.flight.requests.per.connection小于或等于 5（保留任何允许值的消息顺序），retries大于 0，并且acks必须为“全部”。如果没有设置冲突配置，则默认启用幂等性。如果设置了冲突配置并且没有显式启用幂等性，则禁用幂等性。如果显式启用了幂等性并且设置了冲突的配置，ConfigException则抛出 a。</p>
+<ul>
+<li>
+<p>transactional.id 用于事务交付的 TransactionalId。这启用了跨越多个生产者会话的可靠性语义，因为它允许客户端保证在开始任何新事务之前已完成使用相同 TransactionalId 的事务。如果没有提供 TransactionalId，则生产者仅限于幂等交付。如果配置了 TransactionalId，<code>enable.idempotence</code>则暗示。默认情况下没有配置 TransactionId，这意味着不能使用事务。请注意，默认情况下，事务需要至少三个代理的集群，这是生产的推荐设置；对于开发，您可以通过调整代理设置来更改此设置<code>transaction.state.log.replication.factor</code>。</p>
+</li>
+<li>
+<p>transaction.timeout.ms 事务协调器在主动中止正在进行的事务之前等待生产者的事务状态更新的最长时间（毫秒）。如果此值大于代理中的 transaction.max.timeout.ms 设置，则请求将失败并出现<code>InvalidTxnTimeoutException</code>错误 默认：  60000（1 分钟）</p>
+</li>
+</ul>
+<h2 id="_6"><strong>监控配置</strong><a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="metricconfig"><strong>配置 MetricConfig</strong><a class="headerlink" href="#metricconfig" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>samples 样品配置</p>
+</li>
+<li>
+<p>metrics.sample.window.ms 配置 计算指标样本的时间窗口 单位毫秒 默认值为30000 (30 seconds)</p>
+</li>
+<li>
+<p>metrics.recording.level 指标的最高记录级别。默认为INFO 可以配置INFO, DEBUG, TRACE</p>
+</li>
+<li>
+<p>tags 监控标签，这里增加了一个client-id指标 ，后续其他指标也会加入</p>
+</li>
+</ul>
+<h3 id="metricsreporter"><strong>配置监控报告器MetricsReporter</strong><a class="headerlink" href="#metricsreporter" title="Permanent link">&para;</a></h3>
+<p>用作度量报告器的类的列表。实现org.apache.kafka.common.metrics.MetricsReporter 接口允许插入将被通知创建新度量的类。始终包含JmxReporter以注册JMX统计信息。</p>
+<h3 id="metricscontext"><strong>配置 指标上下文MetricsContext</strong><a class="headerlink" href="#metricscontext" title="Permanent link">&para;</a></h3>
+<p>作为MetricsContext的一个实现，它封装了Kafka服务和客户端所需的metrics上下文属性</p>
+<h3 id="metrics"><strong>配置 指标 Metrics</strong><a class="headerlink" href="#metrics" title="Permanent link">&para;</a></h3>
+<p>传感器和指标的注册。</p>
+<ul>
+<li>
+<p>指标是一种命名的数字指标。</p>
+</li>
+<li>
+<p>传感器是一个处理器，用于记录发生的数值测量。</p>
+</li>
+</ul>
+<p>我是这样理解的，指标是数据的标签和数据的值，传感器是用来计算和管理指标的</p>
+<p>每个传感器都有零个或多个相关指标。例如，传感器可能表示消息大小，我们可能会将平均、最大或其他统计信息的度量与此传感器关联，这些统计信息是根据传感器记录的消息大小序列计算出来的。
+用法如下所示：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="w"> </span><span class="c1">// set up metrics:</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">   </span><span class="n">Metrics</span><span class="w"> </span><span class="n">metrics</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Metrics</span><span class="p">();</span><span class="w"> </span><span class="c1">// this is the global repository of metrics and sensors</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">   </span><span class="n">Sensor</span><span class="w"> </span><span class="n">sensor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">metrics</span><span class="p">.</span><span class="na">sensor</span><span class="p">(</span><span class="s">&quot;message-sizes&quot;</span><span class="p">);</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">   </span><span class="n">MetricName</span><span class="w"> </span><span class="n">metricName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MetricName</span><span class="p">(</span><span class="s">&quot;message-size-avg&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;producer-metrics&quot;</span><span class="p">);</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">   </span><span class="n">sensor</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">metricName</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Avg</span><span class="p">());</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">   </span><span class="n">metricName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">MetricName</span><span class="p">(</span><span class="s">&quot;message-size-max&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;producer-metrics&quot;</span><span class="p">);</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">   </span><span class="n">sensor</span><span class="p">.</span><span class="na">add</span><span class="p">(</span><span class="n">metricName</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Max</span><span class="p">());</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">   </span><span class="c1">// as messages are sent we record the sizes</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">   </span><span class="n">sensor</span><span class="p">.</span><span class="na">record</span><span class="p">(</span><span class="n">messageSize</span><span class="p">);</span>
+</code></pre></div>
+<p>KafkaProducerMetrics 生产者度量类，用于处理生产者的一些监控指标</p>
+<p>官网提供了生产者指标的说明如链接：<a href="https://kafka.apache.org/documentation/#producer_monitoring">生产者监控</a></p>
+<h2 id="_7"><strong>生产者元数据</strong><a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="producermetadata"><strong>ProducerMetadata</strong><a class="headerlink" href="#producermetadata" title="Permanent link">&para;</a></h3>
+<p>这里主要来看生产者元数据对象的创建ProducerMetadata和启动方法：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">this</span><span class="p">.</span><span class="na">metadata</span><span class="p">.</span><span class="na">bootstrap</span><span class="p">(</span><span class="n">addresses</span><span class="p">);</span>
+</code></pre></div>
+<p>关于Metadata</p>
+<p>封装元数据周围的一些逻辑的类。
+此类由客户端线程（用于分区）和后台发送方线程共享。元数据仅为主题的一个子集维护，可以随时间添加到其中。当我们为主题请求元数据时，我们没有任何元数据，因为它将触发元数据更新。
+如果为元数据启用了主题过期，则在更新后，将从元数据刷新集中删除过期时间间隔内未使用的任何主题。使用者禁用主题过期，因为他们显式管理主题，而生产者依赖主题过期来限制刷新集。</p>
+<p>方法来自ProducerMetadata的父类型Metadata的启动方法bootstrap</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>public synchronized void bootstrap(List&lt;InetSocketAddress&gt; addresses) {
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    this.needFullUpdate = true;
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    this.updateVersion += 1;
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    this.cache = MetadataCache.bootstrap(addresses);
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>}
+</code></pre></div>
+<h3 id="metadatacache"><strong>MetadataCache</strong><a class="headerlink" href="#metadatacache" title="Permanent link">&para;</a></h3>
+<p>然后调用元数据缓存MetadataCache的bootstrap方法</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>static MetadataCache bootstrap(List&lt;InetSocketAddress&gt; addresses) {
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    Map&lt;Integer, Node&gt; nodes = new HashMap&lt;&gt;();
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    int nodeId = -1;
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    //地址转换为节点类型然后存储在节点map中
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    for (InetSocketAddress address : addresses) {
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>        nodes.put(nodeId, new Node(nodeId, address.getHostString(), address.getPort()));
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>        nodeId--;
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    }
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>    //创建元数据缓存对象
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>    return new MetadataCache(null, nodes, Collections.emptyList(),
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>            Collections.emptySet(), Collections.emptySet(), Collections.emptySet(),
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>            null, Collections.emptyMap(), Cluster.bootstrap(addresses));
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>}
+</code></pre></div>
+<p>MetadataCache</p>
+<p>Kafka集群中节点、主题和分区的内部可变缓存。这将保持最新的群集实例，该实例针对读取访问进行了优化。</p>
+<p>这个方法大致了解下元数据缓存存储了哪些数据即可，没有太复杂的逻辑需要重点看</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kd">private</span><span class="w"> </span><span class="nf">MetadataCache</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">clusterId</span><span class="p">,</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">                      </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">Integer</span><span class="p">,</span><span class="w"> </span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">nodes</span><span class="p">,</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">                      </span><span class="n">Collection</span><span class="o">&lt;</span><span class="n">PartitionMetadata</span><span class="o">&gt;</span><span class="w"> </span><span class="n">partitions</span><span class="p">,</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">                      </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">unauthorizedTopics</span><span class="p">,</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">                      </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">invalidTopics</span><span class="p">,</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">                      </span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">internalTopics</span><span class="p">,</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">                      </span><span class="n">Node</span><span class="w"> </span><span class="n">controller</span><span class="p">,</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">                      </span><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">Uuid</span><span class="o">&gt;</span><span class="w"> </span><span class="n">topicIds</span><span class="p">,</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">                      </span><span class="n">Cluster</span><span class="w"> </span><span class="n">clusterInstance</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="na">clusterId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clusterId</span><span class="p">;</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="na">nodes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nodes</span><span class="p">;</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="na">unauthorizedTopics</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">unauthorizedTopics</span><span class="p">;</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="na">invalidTopics</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">invalidTopics</span><span class="p">;</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="na">internalTopics</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">internalTopics</span><span class="p">;</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="na">controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">controller</span><span class="p">;</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="na">topicIds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">topicIds</span><span class="p">;</span>
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>
+<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="na">metadataByPartition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">HashMap</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">partitions</span><span class="p">.</span><span class="na">size</span><span class="p">());</span>
+<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">PartitionMetadata</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">partitions</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">metadataByPartition</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="na">topicPartition</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
+<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>
+<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">clusterInstance</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="w">        </span><span class="n">computeClusterView</span><span class="p">();</span>
+<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">clusterInstance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clusterInstance</span><span class="p">;</span>
+<a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a><span class="p">}</span>
+</code></pre></div>
+<p>这里还有一行代码需要注意：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1">//使用给定的主机/端口列表创建“引导”群集</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">Cluster</span><span class="p">.</span><span class="na">bootstrap</span><span class="p">(</span><span class="n">addresses</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="cluster"><strong>Cluster</strong><a class="headerlink" href="#cluster" title="Permanent link">&para;</a></h3>
+<p>Cluster 为Kafka集群中节点、主题和分区子集的不变表示。</p>
+<p>Cluster的启动方法</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>public static Cluster bootstrap(List&lt;InetSocketAddress&gt; addresses) {
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    List&lt;Node&gt; nodes = new ArrayList&lt;&gt;();
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    int nodeId = -1;
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    ///地址转节点信息封装
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>    for (InetSocketAddress address : addresses)
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>        nodes.add(new Node(nodeId--, address.getHostString(), address.getPort()));
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>    return new Cluster(null, true, nodes, new ArrayList&lt;&gt;(0),
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>        Collections.emptySet(), Collections.emptySet(), Collections.emptySet(), null, Collections.emptyMap());
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>}
+</code></pre></div>
+<p>Cluster的构造器 这个方法大致了解下元数据缓存存储了哪些数据即可，没有太复杂的逻辑需要重点看</p>
+<p>需要注意的是这里已经把服务端代理地址打乱了</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>private Cluster(String clusterId,
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>                boolean isBootstrapConfigured,
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>                Collection&lt;Node&gt; nodes,
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>                Collection&lt;PartitionInfo&gt; partitions,
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>                Set&lt;String&gt; unauthorizedTopics,
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>                Set&lt;String&gt; invalidTopics,
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>                Set&lt;String&gt; internalTopics,
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>                Node controller,
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>                Map&lt;String, Uuid&gt; topicIds) {
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>    this.isBootstrapConfigured = isBootstrapConfigured;
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>    this.clusterResource = new ClusterResource(clusterId);
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>    // make a randomized, unmodifiable copy of the nodes
+<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>    List&lt;Node&gt; copy = new ArrayList&lt;&gt;(nodes);
+<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>    //使用默认随机性对指定的列表元素进行随机重新排序来工作 打乱节点排序好像是要做客户端的随机负载均衡
+<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a>    Collections.shuffle(copy);
+<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a>    //下面几行代码是把节点id转为 这里要存储的类型Map&lt;Integer, Node&gt; key为节点id value为具体节点
+<a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a>    this.nodes = Collections.unmodifiableList(copy);
+<a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a>
+<a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a>    // Index the nodes for quick lookup
+<a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a>    Map&lt;Integer, Node&gt; tmpNodesById = new HashMap&lt;&gt;();
+<a id="__codelineno-13-21" name="__codelineno-13-21" href="#__codelineno-13-21"></a>    Map&lt;Integer, List&lt;PartitionInfo&gt;&gt; tmpPartitionsByNode = new HashMap&lt;&gt;(nodes.size());
+<a id="__codelineno-13-22" name="__codelineno-13-22" href="#__codelineno-13-22"></a>    for (Node node : nodes) {
+<a id="__codelineno-13-23" name="__codelineno-13-23" href="#__codelineno-13-23"></a>        tmpNodesById.put(node.id(), node);
+<a id="__codelineno-13-24" name="__codelineno-13-24" href="#__codelineno-13-24"></a>        // Populate the map here to make it easy to add the partitions per node efficiently when iterating over
+<a id="__codelineno-13-25" name="__codelineno-13-25" href="#__codelineno-13-25"></a>        // the partitions
+<a id="__codelineno-13-26" name="__codelineno-13-26" href="#__codelineno-13-26"></a>        tmpPartitionsByNode.put(node.id(), new ArrayList&lt;&gt;());
+<a id="__codelineno-13-27" name="__codelineno-13-27" href="#__codelineno-13-27"></a>    }
+<a id="__codelineno-13-28" name="__codelineno-13-28" href="#__codelineno-13-28"></a>    this.nodesById = Collections.unmodifiableMap(tmpNodesById);
+<a id="__codelineno-13-29" name="__codelineno-13-29" href="#__codelineno-13-29"></a>     //上面几行代码是把节点id转为 这里要存储的类型Map&lt;Integer, Node&gt; key为节点id value为具体节点
+<a id="__codelineno-13-30" name="__codelineno-13-30" href="#__codelineno-13-30"></a>
+<a id="__codelineno-13-31" name="__codelineno-13-31" href="#__codelineno-13-31"></a>
+<a id="__codelineno-13-32" name="__codelineno-13-32" href="#__codelineno-13-32"></a>
+<a id="__codelineno-13-33" name="__codelineno-13-33" href="#__codelineno-13-33"></a>
+<a id="__codelineno-13-34" name="__codelineno-13-34" href="#__codelineno-13-34"></a>    // index the partition infos by topic, topic+partition, and node
+<a id="__codelineno-13-35" name="__codelineno-13-35" href="#__codelineno-13-35"></a>    // note that this code is performance sensitive if there are a large number of partitions so we are careful
+<a id="__codelineno-13-36" name="__codelineno-13-36" href="#__codelineno-13-36"></a>    // to avoid unnecessary work
+<a id="__codelineno-13-37" name="__codelineno-13-37" href="#__codelineno-13-37"></a>    //按主题、主题+分区和节点索引分区信息
+<a id="__codelineno-13-38" name="__codelineno-13-38" href="#__codelineno-13-38"></a>        //请注意，如果有大量分区，则此代码对性能敏感，因此我们要小心
+<a id="__codelineno-13-39" name="__codelineno-13-39" href="#__codelineno-13-39"></a>        //避免不必要的工作
+<a id="__codelineno-13-40" name="__codelineno-13-40" href="#__codelineno-13-40"></a>    Map&lt;TopicPartition, PartitionInfo&gt; tmpPartitionsByTopicPartition = new HashMap&lt;&gt;(partitions.size());
+<a id="__codelineno-13-41" name="__codelineno-13-41" href="#__codelineno-13-41"></a>    Map&lt;String, List&lt;PartitionInfo&gt;&gt; tmpPartitionsByTopic = new HashMap&lt;&gt;();
+<a id="__codelineno-13-42" name="__codelineno-13-42" href="#__codelineno-13-42"></a>    for (PartitionInfo p : partitions) {
+<a id="__codelineno-13-43" name="__codelineno-13-43" href="#__codelineno-13-43"></a>        tmpPartitionsByTopicPartition.put(new TopicPartition(p.topic(), p.partition()), p);
+<a id="__codelineno-13-44" name="__codelineno-13-44" href="#__codelineno-13-44"></a>        tmpPartitionsByTopic.computeIfAbsent(p.topic(), topic -&gt; new ArrayList&lt;&gt;()).add(p);
+<a id="__codelineno-13-45" name="__codelineno-13-45" href="#__codelineno-13-45"></a>
+<a id="__codelineno-13-46" name="__codelineno-13-46" href="#__codelineno-13-46"></a>        // The leader may not be known
+<a id="__codelineno-13-47" name="__codelineno-13-47" href="#__codelineno-13-47"></a>        if (p.leader() == null || p.leader().isEmpty())
+<a id="__codelineno-13-48" name="__codelineno-13-48" href="#__codelineno-13-48"></a>            continue;
+<a id="__codelineno-13-49" name="__codelineno-13-49" href="#__codelineno-13-49"></a>
+<a id="__codelineno-13-50" name="__codelineno-13-50" href="#__codelineno-13-50"></a>        // If it is known, its node information should be available
+<a id="__codelineno-13-51" name="__codelineno-13-51" href="#__codelineno-13-51"></a>        List&lt;PartitionInfo&gt; partitionsForNode = Objects.requireNonNull(tmpPartitionsByNode.get(p.leader().id()));
+<a id="__codelineno-13-52" name="__codelineno-13-52" href="#__codelineno-13-52"></a>        partitionsForNode.add(p);
+<a id="__codelineno-13-53" name="__codelineno-13-53" href="#__codelineno-13-53"></a>    }
+<a id="__codelineno-13-54" name="__codelineno-13-54" href="#__codelineno-13-54"></a>
+<a id="__codelineno-13-55" name="__codelineno-13-55" href="#__codelineno-13-55"></a>    // Update the values of `tmpPartitionsByNode` to contain unmodifiable lists
+<a id="__codelineno-13-56" name="__codelineno-13-56" href="#__codelineno-13-56"></a>    for (Map.Entry&lt;Integer, List&lt;PartitionInfo&gt;&gt; entry : tmpPartitionsByNode.entrySet()) {
+<a id="__codelineno-13-57" name="__codelineno-13-57" href="#__codelineno-13-57"></a>        tmpPartitionsByNode.put(entry.getKey(), Collections.unmodifiableList(entry.getValue()));
+<a id="__codelineno-13-58" name="__codelineno-13-58" href="#__codelineno-13-58"></a>    }
+<a id="__codelineno-13-59" name="__codelineno-13-59" href="#__codelineno-13-59"></a>
+<a id="__codelineno-13-60" name="__codelineno-13-60" href="#__codelineno-13-60"></a>    // Populate `tmpAvailablePartitionsByTopic` and update the values of `tmpPartitionsByTopic` to contain
+<a id="__codelineno-13-61" name="__codelineno-13-61" href="#__codelineno-13-61"></a>    // unmodifiable lists
+<a id="__codelineno-13-62" name="__codelineno-13-62" href="#__codelineno-13-62"></a>    Map&lt;String, List&lt;PartitionInfo&gt;&gt; tmpAvailablePartitionsByTopic = new HashMap&lt;&gt;(tmpPartitionsByTopic.size());
+<a id="__codelineno-13-63" name="__codelineno-13-63" href="#__codelineno-13-63"></a>    for (Map.Entry&lt;String, List&lt;PartitionInfo&gt;&gt; entry : tmpPartitionsByTopic.entrySet()) {
+<a id="__codelineno-13-64" name="__codelineno-13-64" href="#__codelineno-13-64"></a>        String topic = entry.getKey();
+<a id="__codelineno-13-65" name="__codelineno-13-65" href="#__codelineno-13-65"></a>        List&lt;PartitionInfo&gt; partitionsForTopic = Collections.unmodifiableList(entry.getValue());
+<a id="__codelineno-13-66" name="__codelineno-13-66" href="#__codelineno-13-66"></a>        tmpPartitionsByTopic.put(topic, partitionsForTopic);
+<a id="__codelineno-13-67" name="__codelineno-13-67" href="#__codelineno-13-67"></a>        // Optimise for the common case where all partitions are available
+<a id="__codelineno-13-68" name="__codelineno-13-68" href="#__codelineno-13-68"></a>        boolean foundUnavailablePartition = partitionsForTopic.stream().anyMatch(p -&gt; p.leader() == null);
+<a id="__codelineno-13-69" name="__codelineno-13-69" href="#__codelineno-13-69"></a>        List&lt;PartitionInfo&gt; availablePartitionsForTopic;
+<a id="__codelineno-13-70" name="__codelineno-13-70" href="#__codelineno-13-70"></a>        if (foundUnavailablePartition) {
+<a id="__codelineno-13-71" name="__codelineno-13-71" href="#__codelineno-13-71"></a>            availablePartitionsForTopic = new ArrayList&lt;&gt;(partitionsForTopic.size());
+<a id="__codelineno-13-72" name="__codelineno-13-72" href="#__codelineno-13-72"></a>            for (PartitionInfo p : partitionsForTopic) {
+<a id="__codelineno-13-73" name="__codelineno-13-73" href="#__codelineno-13-73"></a>                if (p.leader() != null)
+<a id="__codelineno-13-74" name="__codelineno-13-74" href="#__codelineno-13-74"></a>                    availablePartitionsForTopic.add(p);
+<a id="__codelineno-13-75" name="__codelineno-13-75" href="#__codelineno-13-75"></a>            }
+<a id="__codelineno-13-76" name="__codelineno-13-76" href="#__codelineno-13-76"></a>            availablePartitionsForTopic = Collections.unmodifiableList(availablePartitionsForTopic);
+<a id="__codelineno-13-77" name="__codelineno-13-77" href="#__codelineno-13-77"></a>        } else {
+<a id="__codelineno-13-78" name="__codelineno-13-78" href="#__codelineno-13-78"></a>            availablePartitionsForTopic = partitionsForTopic;
+<a id="__codelineno-13-79" name="__codelineno-13-79" href="#__codelineno-13-79"></a>        }
+<a id="__codelineno-13-80" name="__codelineno-13-80" href="#__codelineno-13-80"></a>        tmpAvailablePartitionsByTopic.put(topic, availablePartitionsForTopic);
+<a id="__codelineno-13-81" name="__codelineno-13-81" href="#__codelineno-13-81"></a>    }
+<a id="__codelineno-13-82" name="__codelineno-13-82" href="#__codelineno-13-82"></a>
+<a id="__codelineno-13-83" name="__codelineno-13-83" href="#__codelineno-13-83"></a>    this.partitionsByTopicPartition = Collections.unmodifiableMap(tmpPartitionsByTopicPartition);
+<a id="__codelineno-13-84" name="__codelineno-13-84" href="#__codelineno-13-84"></a>    this.partitionsByTopic = Collections.unmodifiableMap(tmpPartitionsByTopic);
+<a id="__codelineno-13-85" name="__codelineno-13-85" href="#__codelineno-13-85"></a>    this.availablePartitionsByTopic = Collections.unmodifiableMap(tmpAvailablePartitionsByTopic);
+<a id="__codelineno-13-86" name="__codelineno-13-86" href="#__codelineno-13-86"></a>    this.partitionsByNode = Collections.unmodifiableMap(tmpPartitionsByNode);
+<a id="__codelineno-13-87" name="__codelineno-13-87" href="#__codelineno-13-87"></a>    this.topicIds = Collections.unmodifiableMap(topicIds);
+<a id="__codelineno-13-88" name="__codelineno-13-88" href="#__codelineno-13-88"></a>    Map&lt;Uuid, String&gt; tmpTopicNames = new HashMap&lt;&gt;();
+<a id="__codelineno-13-89" name="__codelineno-13-89" href="#__codelineno-13-89"></a>    topicIds.forEach((key, value) -&gt; tmpTopicNames.put(value, key));
+<a id="__codelineno-13-90" name="__codelineno-13-90" href="#__codelineno-13-90"></a>    this.topicNames = Collections.unmodifiableMap(tmpTopicNames);
+<a id="__codelineno-13-91" name="__codelineno-13-91" href="#__codelineno-13-91"></a>
+<a id="__codelineno-13-92" name="__codelineno-13-92" href="#__codelineno-13-92"></a>    this.unauthorizedTopics = Collections.unmodifiableSet(unauthorizedTopics);
+<a id="__codelineno-13-93" name="__codelineno-13-93" href="#__codelineno-13-93"></a>    this.invalidTopics = Collections.unmodifiableSet(invalidTopics);
+<a id="__codelineno-13-94" name="__codelineno-13-94" href="#__codelineno-13-94"></a>    this.internalTopics = Collections.unmodifiableSet(internalTopics);
+<a id="__codelineno-13-95" name="__codelineno-13-95" href="#__codelineno-13-95"></a>    this.controller = controller;
+<a id="__codelineno-13-96" name="__codelineno-13-96" href="#__codelineno-13-96"></a>}
+</code></pre></div>
+<h2 id="_8"><strong>发送器对象的创建</strong><a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>对应Sender 对应代码：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">this</span><span class="p">.</span><span class="na">sender</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newSender</span><span class="p">(</span><span class="n">logContext</span><span class="p">,</span><span class="w"> </span><span class="n">kafkaClient</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">metadata</span><span class="p">);</span>
+</code></pre></div>
+<p>Sender类型实现了Runnable接口</p>
+<p>Sender对象处理向Kafka群集发送生产消息的请求的后台线程。该线程发出元数据请求以更新其集群视图，然后将生成请求发送到适当的节点。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">Sender</span><span class="w"> </span><span class="nf">newSender</span><span class="p">(</span><span class="n">LogContext</span><span class="w"> </span><span class="n">logContext</span><span class="p">,</span><span class="w"> </span><span class="n">KafkaClient</span><span class="w"> </span><span class="n">kafkaClient</span><span class="p">,</span><span class="w"> </span><span class="n">ProducerMetadata</span><span class="w"> </span><span class="n">metadata</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">maxInflightRequests</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">producerConfig</span><span class="p">.</span><span class="na">getInt</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION</span><span class="p">);</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">requestTimeoutMs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">producerConfig</span><span class="p">.</span><span class="na">getInt</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">REQUEST_TIMEOUT_MS_CONFIG</span><span class="p">);</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">    </span><span class="n">ChannelBuilder</span><span class="w"> </span><span class="n">channelBuilder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ClientUtils</span><span class="p">.</span><span class="na">createChannelBuilder</span><span class="p">(</span><span class="n">producerConfig</span><span class="p">,</span><span class="w"> </span><span class="n">time</span><span class="p">,</span><span class="w"> </span><span class="n">logContext</span><span class="p">);</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">    </span><span class="n">ProducerMetrics</span><span class="w"> </span><span class="n">metricsRegistry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ProducerMetrics</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="na">metrics</span><span class="p">);</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">    </span><span class="n">Sensor</span><span class="w"> </span><span class="n">throttleTimeSensor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Sender</span><span class="p">.</span><span class="na">throttleTimeSensor</span><span class="p">(</span><span class="n">metricsRegistry</span><span class="p">.</span><span class="na">senderMetrics</span><span class="p">);</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">    </span><span class="n">KafkaClient</span><span class="w"> </span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kafkaClient</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">kafkaClient</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">NetworkClient</span><span class="p">(</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="n">Selector</span><span class="p">(</span><span class="n">producerConfig</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">CONNECTIONS_MAX_IDLE_MS_CONFIG</span><span class="p">),</span>
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="w">                    </span><span class="k">this</span><span class="p">.</span><span class="na">metrics</span><span class="p">,</span><span class="w"> </span><span class="n">time</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;producer&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">channelBuilder</span><span class="p">,</span><span class="w"> </span><span class="n">logContext</span><span class="p">),</span>
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="w">            </span><span class="n">metadata</span><span class="p">,</span>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="w">            </span><span class="n">clientId</span><span class="p">,</span>
+<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="w">            </span><span class="n">maxInflightRequests</span><span class="p">,</span>
+<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a><span class="w">            </span><span class="n">producerConfig</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">RECONNECT_BACKOFF_MS_CONFIG</span><span class="p">),</span>
+<a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a><span class="w">            </span><span class="n">producerConfig</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">RECONNECT_BACKOFF_MAX_MS_CONFIG</span><span class="p">),</span>
+<a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="w">            </span><span class="n">producerConfig</span><span class="p">.</span><span class="na">getInt</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">SEND_BUFFER_CONFIG</span><span class="p">),</span>
+<a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a><span class="w">            </span><span class="n">producerConfig</span><span class="p">.</span><span class="na">getInt</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">RECEIVE_BUFFER_CONFIG</span><span class="p">),</span>
+<a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a><span class="w">            </span><span class="n">requestTimeoutMs</span><span class="p">,</span>
+<a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a><span class="w">            </span><span class="n">producerConfig</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">SOCKET_CONNECTION_SETUP_TIMEOUT_MS_CONFIG</span><span class="p">),</span>
+<a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a><span class="w">            </span><span class="n">producerConfig</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">SOCKET_CONNECTION_SETUP_TIMEOUT_MAX_MS_CONFIG</span><span class="p">),</span>
+<a id="__codelineno-15-20" name="__codelineno-15-20" href="#__codelineno-15-20"></a><span class="w">            </span><span class="n">time</span><span class="p">,</span>
+<a id="__codelineno-15-21" name="__codelineno-15-21" href="#__codelineno-15-21"></a><span class="w">            </span><span class="kc">true</span><span class="p">,</span>
+<a id="__codelineno-15-22" name="__codelineno-15-22" href="#__codelineno-15-22"></a><span class="w">            </span><span class="n">apiVersions</span><span class="p">,</span>
+<a id="__codelineno-15-23" name="__codelineno-15-23" href="#__codelineno-15-23"></a><span class="w">            </span><span class="n">throttleTimeSensor</span><span class="p">,</span>
+<a id="__codelineno-15-24" name="__codelineno-15-24" href="#__codelineno-15-24"></a><span class="w">            </span><span class="n">logContext</span><span class="p">);</span>
+<a id="__codelineno-15-25" name="__codelineno-15-25" href="#__codelineno-15-25"></a>
+<a id="__codelineno-15-26" name="__codelineno-15-26" href="#__codelineno-15-26"></a><span class="w">    </span><span class="kt">short</span><span class="w"> </span><span class="n">acks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Short</span><span class="p">.</span><span class="na">parseShort</span><span class="p">(</span><span class="n">producerConfig</span><span class="p">.</span><span class="na">getString</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">ACKS_CONFIG</span><span class="p">));</span>
+<a id="__codelineno-15-27" name="__codelineno-15-27" href="#__codelineno-15-27"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Sender</span><span class="p">(</span><span class="n">logContext</span><span class="p">,</span>
+<a id="__codelineno-15-28" name="__codelineno-15-28" href="#__codelineno-15-28"></a><span class="w">            </span><span class="n">client</span><span class="p">,</span>
+<a id="__codelineno-15-29" name="__codelineno-15-29" href="#__codelineno-15-29"></a><span class="w">            </span><span class="n">metadata</span><span class="p">,</span>
+<a id="__codelineno-15-30" name="__codelineno-15-30" href="#__codelineno-15-30"></a><span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">accumulator</span><span class="p">,</span>
+<a id="__codelineno-15-31" name="__codelineno-15-31" href="#__codelineno-15-31"></a><span class="w">            </span><span class="n">maxInflightRequests</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-15-32" name="__codelineno-15-32" href="#__codelineno-15-32"></a><span class="w">            </span><span class="n">producerConfig</span><span class="p">.</span><span class="na">getInt</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">MAX_REQUEST_SIZE_CONFIG</span><span class="p">),</span>
+<a id="__codelineno-15-33" name="__codelineno-15-33" href="#__codelineno-15-33"></a><span class="w">            </span><span class="n">acks</span><span class="p">,</span>
+<a id="__codelineno-15-34" name="__codelineno-15-34" href="#__codelineno-15-34"></a><span class="w">            </span><span class="n">producerConfig</span><span class="p">.</span><span class="na">getInt</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">RETRIES_CONFIG</span><span class="p">),</span>
+<a id="__codelineno-15-35" name="__codelineno-15-35" href="#__codelineno-15-35"></a><span class="w">            </span><span class="n">metricsRegistry</span><span class="p">.</span><span class="na">senderMetrics</span><span class="p">,</span>
+<a id="__codelineno-15-36" name="__codelineno-15-36" href="#__codelineno-15-36"></a><span class="w">            </span><span class="n">time</span><span class="p">,</span>
+<a id="__codelineno-15-37" name="__codelineno-15-37" href="#__codelineno-15-37"></a><span class="w">            </span><span class="n">requestTimeoutMs</span><span class="p">,</span>
+<a id="__codelineno-15-38" name="__codelineno-15-38" href="#__codelineno-15-38"></a><span class="w">            </span><span class="n">producerConfig</span><span class="p">.</span><span class="na">getLong</span><span class="p">(</span><span class="n">ProducerConfig</span><span class="p">.</span><span class="na">RETRY_BACKOFF_MS_CONFIG</span><span class="p">),</span>
+<a id="__codelineno-15-39" name="__codelineno-15-39" href="#__codelineno-15-39"></a><span class="w">            </span><span class="k">this</span><span class="p">.</span><span class="na">transactionManager</span><span class="p">,</span>
+<a id="__codelineno-15-40" name="__codelineno-15-40" href="#__codelineno-15-40"></a><span class="w">            </span><span class="n">apiVersions</span><span class="p">);</span>
+<a id="__codelineno-15-41" name="__codelineno-15-41" href="#__codelineno-15-41"></a><span class="p">}</span>
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      可微信搜索 《中间件源码》 联系，订阅内容。   <br/>  Copyright &copy; 2022 - 2024 ktyhub.com copyright   <br/> 部分内容由GPT提供 转载声明：  本文转载自 [原文标题](原文链接)，由[www.ktyhub.com](www.ktyhub.com)创作，遵循 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) 许可协议。
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.next_previous", "content.code.annotate", "content.tooltips", "navigation.tracking", "navigation.sections", "navigation.top", "search.highlight", "search.share", "search.suggest"], "search": "../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+        <script src="/javascripts/google-tongji.js"></script>
+      
+        <script src="../../../mermaid.min.js"></script>
+      
+        <script src="/javascripts/baidu-tongji.js"></script>
+      
+    
+  </body>
+</html>
