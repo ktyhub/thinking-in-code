@@ -44,10 +44,4 @@ Checkstyle 10.19.0 - [发布说明](https://checkstyle.org/releasenotes.html#Rel
 
 在checkstyle 10.19.0版本中，新增了多个功能以增强代码检查的灵活性，同时修复了多个影响代码质量的bug，进一步提升了开发者的使用体验。
 
-### 爆款标题
-
-- "Checkstyle 10.19.0：新增空Switch块属性，提升代码质量！"
-- "重磅更新！Checkstyle 10.19.0修复多个关键bug，助力开发者！"
-- "Checkstyle 10.19.0发布：新特性与错误修复，代码检查更智能！"
-- "提升代码一致性！Checkstyle 10.19.0带来全新功能与修复！"
-- "Checkstyle 10.19.0更新：让你的代码更规范，问题更少！"
+ 
