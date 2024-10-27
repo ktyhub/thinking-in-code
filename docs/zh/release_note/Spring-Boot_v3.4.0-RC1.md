@@ -97,10 +97,4 @@ Spring-Boot v3.4.0-RC1版本带来了多项重要更新，包括增强了对Web�
 
 本次更新记录展示了Spring-Boot v3.4.0-RC1版本的多项新特性和修复，包括增强Web服务支持、改进RestTemplateBuilder、统一HTTP客户端行为等。此外，文档也得到了显著更新，确保开发者能够更好地利用这些新功能。
 
-### 爆款标题
-
-- "Spring-Boot v3.4.0-RC1：重磅更新，Web服务支持再升级！"
-- "解锁高效开发：Spring-Boot v3.4.0-RC1带来的新特性"
-- "Spring-Boot v3.4.0-RC1发布：自动配置与Bug修复双管齐下"
-- "Spring-Boot v3.4.0-RC1：让开发者更轻松的全新功能"
-- "Spring-Boot v3.4.0-RC1：你的开发效率提升利器！"
+ 
