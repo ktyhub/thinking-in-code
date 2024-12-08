@@ -1,0 +1,8323 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="knowledge thinking you want to know">
+      
+      
+        <meta name="author" content="ktyhub">
+      
+      
+        <link rel="canonical" href="https://www.ktyhub.com/zh/chapter_dubbo/3-model-init/">
+      
+      
+        <link rel="prev" href="../2-serviceconfig-config/">
+      
+      
+        <link rel="next" href="../4-extension-init/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.47">
+    
+    
+      
+        <title>3-领域模型Model对象 - Thinking In Code</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+Traditional+Chinese:300,300i,400,400i,700,700i%7CNoto+Sans+Traditional+Chinese:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Noto Sans Traditional Chinese";--md-code-font:"Noto Sans Traditional Chinese"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../../mermaid.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="white">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#model" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="Thinking In Code" class="md-header__button md-logo" aria-label="Thinking In Code" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Thinking In Code
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              3-领域模型Model对象
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="white"  aria-label="切换到夜间阅读模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换到夜间阅读模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="black"  aria-label="切换到白天阅读模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换到白天阅读模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/zh/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../chapter_preface/" class="md-tabs__link">
+          
+  
+  技术博客
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../release_note/" class="md-tabs__link">
+          
+  
+  新技术
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../book_index/" class="md-tabs__link">
+          
+  
+  读书笔记
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Thinking In Code" class="md-nav__button md-logo" aria-label="Thinking In Code" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Thinking In Code
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    技术博客
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            技术博客
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_1" id="__nav_1_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    前言
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            前言
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_preface/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    kubernetes(v1.9.9)(梳理中)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            kubernetes(v1.9.9)(梳理中)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kubernetes/1-index/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-克隆K8S源码
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kubernetes/2-apiserver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-ApiServer主流程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kubernetes/3-apiserver-server-run-options/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-ApiServer配置初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kubernetes/4-apiserver-add-flags/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-ApiServer命令行标记
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kubernetes/5-apiserver-server-run/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-ApiServer-API服务器链创建
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_3" id="__nav_1_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    ElasticJob(V2.1.5)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            ElasticJob(V2.1.5)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/1-introduce/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-分布式调度系统简介
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/2-reg/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-注册中心的设计原理
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/3-job-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-建造者构造作业配置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/4-job-template/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-调度作业模版类设计
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/5-job-config-storage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-分布式场景下存储的
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/6-job-registry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-单例模式作业注册表
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/7-quartz/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7-Quartz下的单机执行
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/8-job-life/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8-系统启动时的生命周期
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/9-listener/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9-调度作业的监听器大全
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/10-leader-latch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10-分布式锁实现选主节点
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_elasticjob/11-server-instance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11-服务和进程信息持久化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_4" id="__nav_1_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Zookeeper(V3.6.2)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            Zookeeper(V3.6.2)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/1-introduce/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-入门简介
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/2-implement/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-实现说明
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/3-install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-安装配置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/4-client/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-客户端入门
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/5-produce-and-consumer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-锁与生产者消费者
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/6-watch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-监听机制
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/7-start-source/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7-服务器入口
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/8-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8-配置加载
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/9-clear-log-start/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9-日志清理任务
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/10-init-main/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10-初始化和启动
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/11-reactor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11-网络IO初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/12-quorumpeer-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12-QuorumPeer初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/13-loaddatabase/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    13-初始化磁盘数据
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/14-reactor-io/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    14-Reactor网络IO
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/15-election/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    15-选举算法的准备等待选举
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_zookeeper/16-lookforleader/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    16-开始寻找leader
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1_5" id="__nav_1_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Dubbbo(V3.0.8)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1_5">
+            <span class="md-nav__icon md-icon"></span>
+            Dubbbo(V3.0.8)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../1-learn-from-a-demo/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-服务提供者的Demo
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../2-serviceconfig-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-ServiceConfig化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    3-领域模型Model对象
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    3-领域模型Model对象
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      模型对象的关系
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="模型对象的关系">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#abstractmethodconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      AbstractMethodConfig 配置对象中获取模型对象的调用
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用双重校验锁获取框架模型对象
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      刷新重置默认框架模型对象
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frameworkmodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      创建FrameworkModel对象
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="创建FrameworkModel对象">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frameworkmodel_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      初始化FrameworkModel
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scopemodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      初始化ScopeModel
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      初始类型定义构建器
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="初始类型定义构建器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      服务存储仓库对象的创建
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      域模型初始化器的获取与初始化回调
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      将内部应用配置对象创建与添加至应用模型中
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#applicationmodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      创建ApplicationModel对象
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="创建ApplicationModel对象">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#applicationmodel_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      ApplicationModel的构造器
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ApplicationModel的构造器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#applicationmodelframeworkmodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      将ApplicationModel添加至FrameworkModel容器中
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#applicationmodel_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      初始化ApplicationModel
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="初始化ApplicationModel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configmanagerinitialize" class="md-nav__link">
+    <span class="md-ellipsis">
+      ConfigManager类型的initialize方法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environmentinitialize" class="md-nav__link">
+    <span class="md-ellipsis">
+      Environment类型的initialize方法
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modulemodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      创建ModuleModel对象
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="创建ModuleModel对象">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      将模块模型添加至应用模型中
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      初始化模块模型
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="初始化模块模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      模块服务存储库的创建
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      模块配置管理器对象的创建与初始化
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      模块配置扩展的初始化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../4-extension-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-Extension的初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../5-getadaptiveextension/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-getAdaptiveExtension方法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../6-extension-wrapper/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-Extension的Wrapper机制
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../7-extension-activate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7-Extension的Activate机制
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../8-dubbobootstrap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8-DubboBootstrap启动程序
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../9-application-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9-ApplicationConfig
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-registryconfig/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10-RegistryConfig
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../11-protocolconfig/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    11-ProtocolConfig
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-start-life-cycle/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    12-启动生命周期
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-configcenter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    13-配置中心初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../14-config-load/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    14-配置加载说明
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-metadata/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    15-元数据中心说明
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../16-moduledeployer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    16-模块发布器
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../17-provider-register/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    17-提供者双注册
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../18-metadataService-export/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    18-元数据服务的导出
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../19-consuemr-demo/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    19-消费者案例
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../20-reference-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    20-ReferenceConfig
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../21-refer-services/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    21-ReferServices
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../22-migration-invoker/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    22-自动决策应用级服务发现原理
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_6" id="__nav_1_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Apache Kafka Client(3.2)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_6">
+            <span class="md-nav__icon md-icon"></span>
+            Apache Kafka Client(3.2)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/1-introduce/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-入门笔记
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/2-high-performence/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-高性能高可用设计
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/3-client-sample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-客户端案例
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/4-kafka-producer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-KafkaProducer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/5-sender/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-发送器Sender
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/6-kafka-thread/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-客户端的IO线程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/7-kafka-producer-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7-KafkaProducer的初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/8-send-producer-data/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8-发送生产者数据
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/9-execute-io/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9-执行IO事件
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_kafka/10-handle-io/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    10-处理IO结果
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_7" id="__nav_1_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Netty(v4.x)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_7">
+            <span class="md-nav__icon md-icon"></span>
+            Netty(v4.x)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_netty/1-sample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-Netty的入门
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_netty/2-bootstrap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-启动器Bootstrapp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_netty/3-event-loop-group-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-EventLoopGroup初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_netty/4-server-bootstrap-attr/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-BootStrap属性设置
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_8" id="__nav_1_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Druid(v1.2.11)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_8">
+            <span class="md-nav__icon md-icon"></span>
+            Druid(v1.2.11)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/1-sample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-入门案例
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/2-datasource/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-数据源简介
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/3-before-connection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-初始化连接
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/4-db-type/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-DbType与驱动类
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/5-log-stats-thread/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-监控信息线程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/6-create-and-start-creator-thread/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-物理连接创建线程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/7-driver-connect/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    7-创建数据库连接对象
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/8-validate-connection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    8-连接的首次验证
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_druid/9-druid-destroy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    9-Druid销毁线程
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_9" id="__nav_1_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    SpringBoot(v2.6.6)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_9">
+            <span class="md-nav__icon md-icon"></span>
+            SpringBoot(v2.6.6)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_springboot/1-sample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-入门案例
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_springboot/2-spi/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-run方法与SPI扫描
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_springboot/3-run/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-SpringApplication的run方法
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_springboot/4-environment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-Environment初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_springboot/5-application-context-init/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-ApplicationContext初始化
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_springboot/6-reader-scanner/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    6-Reader和Scanner
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_10" id="__nav_1_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    EMQX(V3.0)
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_10">
+            <span class="md-nav__icon md-icon"></span>
+            EMQX(V3.0)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_emqx/1-introduce/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    1-EMQX简介
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_emqx/2-code-struct/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2-项目结构
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_emqx/3-kernel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3-内核层启动
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_emqx/4-router/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    4-路由层启动
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chapter_emqx/5-broker/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    5-代理层启动
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    新技术
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            新技术
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    RELEASE NOTE
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            RELEASE NOTE
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/opentelemetry-java_Version%201.45.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    opentelemetry-java Version 1.45.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.9.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.9.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.232/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.232
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/PowerJob_PowerJob-V5.1.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PowerJob PowerJob-V5.1.1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/tensorflow-java_TensorFlow%20Java%201.0.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    tensorflow-java TensorFlow Java 1.0.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/spring-boot-admin_3.4.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    spring-boot-admin 3.4.1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.231/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.231
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.230/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.230
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.229/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.229
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.228/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.228
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.8.2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.8.2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/nacos_3.0.0-ALPHA%20%28Dec%205th%2C%202024%29/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nacos 3.0.0-ALPHA (Dec 5th, 2024)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/moby_v27.4.0-rc.4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    moby v27.4.0-rc.4
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.8.3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.8.3
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/dify_v0.13.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    dify v0.13.1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/PX4-Autopilot_Stable%20Release%20v1.15.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PX4-Autopilot Stable Release v1.15.1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/PX4-Autopilot_Stable%20Release%20v1.15.2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PX4-Autopilot Stable Release v1.15.2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.224/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.224
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.223/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.223
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.222/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.222
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/grpc_Release%20v1.68.2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    grpc Release v1.68.2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/dify_v0.13.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    dify v0.13.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.221/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.221
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.220/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.220
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.219/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.219
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/ansible_v2.17.7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ansible v2.17.7
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/ansible_v2.18.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ansible v2.18.1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.218/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.218
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.217/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.217
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/nightingale_v7.7.2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nightingale v7.7.2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/compose_v2.31.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    compose v2.31.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/AutoGPT_v0.4.8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AutoGPT v0.4.8
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/dbeaver_24.3.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    dbeaver 24.3.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/lettuce_6.5.1.RELEASE/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    lettuce 6.5.1.RELEASE
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.8.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.8.1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.8.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.8.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/maven_maven-4.0.0-rc-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    maven maven-4.0.0-rc-1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/maven_4.0.0-beta-5/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    maven 4.0.0-beta-5
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/moby_v27.4.0-rc.3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    moby v27.4.0-rc.3
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/checkstyle_checkstyle-10.20.2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    checkstyle checkstyle-10.20.2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/prometheus_3.0.1%20/%202024-11-28/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    prometheus 3.0.1 / 2024-11-28
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/quarkus_3.17.2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    quarkus 3.17.2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Stirling-PDF_0.35.0%20Multi-tool%20undo%20support%2C%20replacement%20of%20functionality/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Stirling-PDF 0.35.0 Multi-tool undo support, replacement of functionality
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.216/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.216
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.215/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.215
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/FastGPT_V4.8.14-fix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FastGPT V4.8.14-fix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.214/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.214
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.213/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.213
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.212/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.212
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.211/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.211
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/kotlin_Kotlin%202.1.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    kotlin Kotlin 2.1.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.210/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.210
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.209/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.209
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.208/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.208
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/flink-cdc_Release%203.2.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    flink-cdc Release 3.2.1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/spring-cloud-circuitbreaker_3.1.3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    spring-cloud-circuitbreaker 3.1.3
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/plantuml_snapshot%20-%20Native%20Image%20%28~v1.2024.9beta4%29/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    plantuml snapshot - Native Image (~v1.2024.9beta4)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/plantuml_snapshot%20-%20JAR%20%28~v1.2024.9beta4%29/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    plantuml snapshot - JAR (~v1.2024.9beta4)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.206/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.206
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.205/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.205
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/dify_v0.12.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    dify v0.12.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/spring-boot-admin_3.4.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    spring-boot-admin 3.4.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.203/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.203
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.202/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.202
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.201/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.201
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.200/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.200
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.6.7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.6.7
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.6.6/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.6.6
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.6.5/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.6.5
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.6.4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.6.4
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/pulsar_v4.0.1-candidate-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pulsar v4.0.1-candidate-1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/TypeScript_TypeScript%205.7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TypeScript TypeScript 5.7
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.199/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.199
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.6.3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.6.3
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.6.2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.6.2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/servicecomb-java-chassis_Apache%20ServiceComb%20Java-Chassis%203.2.3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    servicecomb-java-chassis Apache ServiceComb Java-Chassis 3.2.3
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/netdata_v2.0.3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    netdata v2.0.3
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/open-im-server_v3.8.2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    open-im-server v3.8.2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.6.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.6.1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.198/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.198
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/FastGPT_V4.8.14-alpha/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FastGPT V4.8.14-alpha
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.196/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.196
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Spring-Boot_v3.4.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spring-Boot v3.4.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Spring-Boot_v3.3.6/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spring-Boot v3.3.6
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Spring-Boot_v3.2.12/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spring-Boot v3.2.12
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/quarkus_3.16.4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    quarkus 3.16.4
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.5.3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.5.3
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.5.2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.5.2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/spring-session_3.4.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    spring-session 3.4.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.195/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.195
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.4.9/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.4.9
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.5.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.5.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.194/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.194
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.193/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.193
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/nightingale_v7.7.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nightingale v7.7.1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/dify_v0.11.2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    dify v0.11.2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/kotlin_Kotlin%202.1.0-RC2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    kotlin Kotlin 2.1.0-RC2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/plantuml_snapshot%20-%20Native%20Image%20%28~v1.2024.9beta2%29/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    plantuml snapshot - Native Image (~v1.2024.9beta2)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/plantuml_snapshot%20-%20JAR%20%28~v1.2024.9beta2%29/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    plantuml snapshot - JAR (~v1.2024.9beta2)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/itext-java_iText%20Core/Community%209.0.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    itext-java iText Core/Community 9.0.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/plantuml_snapshot%20-%20Native%20Image%20%28~v1.2024.9beta1%29/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    plantuml snapshot - Native Image (~v1.2024.9beta1)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/javacv_JavaCV%201.5.11/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    javacv JavaCV 1.5.11
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/struts_Struts%206.7.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    struts Struts 6.7.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/struts_Struts%207.0.0-M10/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    struts Struts 7.0.0-M10
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.4.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.4.1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/plantuml_snapshot%20-%20JAR%20%28~v1.2024.9beta1%29/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    plantuml snapshot - JAR (~v1.2024.9beta1)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Stirling-PDF_0.33.1%20Docker%20hub%20move%20to%20stirlingtools/stirling-pdf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Stirling-PDF 0.33.1 Docker hub move to stirlingtools/stirling-pdf
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v0.3.4.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v0.3.4.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/plantuml_Release%20-%20Native%20Image%20%28v1.2024.8%29/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    plantuml Release - Native Image (v1.2024.8)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/plantuml_v1.2024.8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    plantuml v1.2024.8
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gpt4free_g4f%20v-0.3.3.4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gpt4free g4f v-0.3.3.4
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/spring-boot-admin_3.3.6/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    spring-boot-admin 3.3.6
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/plantuml_snapshot%20-%20JAR%20%28~v1.2024.8%29/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    plantuml snapshot - JAR (~v1.2024.8)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.192/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.192
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/nightingale_v7.7.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nightingale v7.7.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/FastGPT_V4.8.13-fix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FastGPT V4.8.13-fix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.191/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.191
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.190/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.190
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/spring-framework_v6.2.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    spring-framework v6.2.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/spring-framework_v6.1.15/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    spring-framework v6.1.15
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/quarkus_3.16.3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    quarkus 3.16.3
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/FastGPT_v4.8.13/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FastGPT v4.8.13
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.189/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.189
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.188/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.188
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/opentelemetry-java-instrumentation_Version%202.10.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    opentelemetry-java-instrumentation Version 2.10.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/grafana_11.2.3%2Bsecurity-01/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    grafana 11.2.3+security-01
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/grafana_11.3.0%2Bsecurity-01/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    grafana 11.3.0+security-01
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/react-native_0.73.11/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    react-native 0.73.11
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/FastGPT_V4.8.13-beta/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FastGPT V4.8.13-beta
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.185/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.185
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/gradle_8.11/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    gradle 8.11
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/rancher_Pre-release%20v2.10.0-alpha11/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    rancher Pre-release v2.10.0-alpha11
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/aeron_1.44.6/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    aeron 1.44.6
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/tidb_TiDB%20v8.4.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    tidb TiDB v8.4.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/dify_v0.11.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    dify v0.11.1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/grafana_10.4.12/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    grafana 10.4.12
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/TypeScript_TypeScript%205.7%20RC/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TypeScript TypeScript 5.7 RC
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Activiti_7.19.0-rc.184/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Activiti 7.19.0-rc.184
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/btrace_v2.2.6/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    btrace v2.2.6
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/mapstruct_1.6.3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mapstruct 1.6.3
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/FastGPT_V4.8.13-alpha/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FastGPT V4.8.13-alpha
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/plantuml_snapshot%20-%20Native%20Image%20%28~v1.2024.8beta7%29/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    plantuml snapshot - Native Image (~v1.2024.8beta7)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/plantuml_snapshot%20-%20JAR%20%28~v1.2024.8beta7%29/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    plantuml snapshot - JAR (~v1.2024.8beta7)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Stirling-PDF_0.32.0%20Several%20bug%20fixes%2C%20multi-tool%20support%20blank%20page%20and%20more%21/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Stirling-PDF 0.32.0 Several bug fixes, multi-tool support blank page and more!
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/opentelemetry-java_Version%201.44.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    opentelemetry-java Version 1.44.1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/opentelemetry-java_Version%201.44.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    opentelemetry-java Version 1.44.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/hutool_5.8.33/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    hutool 5.8.33
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/redis_8.0-M02/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    redis 8.0-M02
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/minio_RELEASE.2024-11-07T00-52-20Z/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    minio RELEASE.2024-11-07T00-52-20Z
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/FastGPT_V4.8.12/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FastGPT V4.8.12
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/lettuce_6.1.11.RELEASE/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    lettuce 6.1.11.RELEASE
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/AutoGPT_agpt-platform-beta-v1.0.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AutoGPT agpt-platform-beta-v1.0.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/grpc_Release%20v1.67.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    grpc Release v1.67.1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/nightingale_v7.6.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    nightingale v7.6.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/redisson_redisson-3.38.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    redisson redisson-3.38.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/quarkus_3.16.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    quarkus 3.16.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/dubbo_dubbo-3.3.2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    dubbo dubbo-3.3.2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/docker-java_3.4.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    docker-java 3.4.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/hutool_5.8.32/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    hutool 5.8.32
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/iotdb_Apache%20IoTDB%201.1.2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    iotdb Apache IoTDB 1.1.2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/dubbo_dubbo-3.2.14/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    dubbo dubbo-3.2.14
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/kubernetes-dashboard_api/v1.10.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    kubernetes-dashboard api/v1.10.1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/harbor_v2.12.0-rc1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    harbor v2.12.0-rc1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/brpc_Apache%20bRPC%201.11.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    brpc Apache bRPC 1.11.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Spring-Boot_v3.3.5/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spring-Boot v3.3.5
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/AutoGPT_agpt-platform-beta-v0.1.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AutoGPT agpt-platform-beta-v0.1.1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/spotless_Lib%20v3.0.0.BETA4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    spotless Lib v3.0.0.BETA4
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/netdata_v1.47.5/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    netdata v1.47.5
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/dynamic-tp_1.1.9.1%20%28Oct%2024%2C%202024%29/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    dynamic-tp 1.1.9.1 (Oct 24, 2024)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/spotless_Maven%20Plugin%20v2.44.0.BETA4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    spotless Maven Plugin v2.44.0.BETA4
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/k3s_v1.31.2%2Bk3s1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    k3s v1.31.2+k3s1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/mybatis-plus-359/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    mybatis-plus v3.5.9
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/byte-buddy-1.15.7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    byte-buddy 1.15.7
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/influxdb_v2.7.1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    influxdb v2.7.1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/influxdb_v2.7.3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    influxdb v2.7.3
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/influxdb_v2.7.4/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    influxdb v2.7.4
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/spring-framework_v6.1.13/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    spring-framework v6.1.13
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/frp_v0.60.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    frp v0.60.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/spring-framework_v6.2.0-RC1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    spring-framework v6.2.0-RC1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/checkstyle_checkstyle-10.19.0/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    checkstyle checkstyle-10.19.0
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../release_note/Spring-Boot_v3.4.0-RC1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spring-Boot v3.4.0-RC1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    读书笔记
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            读书笔记
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    书籍推荐
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            书籍推荐
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../book_index/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    首页
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      模型对象的关系
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="模型对象的关系">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#abstractmethodconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      AbstractMethodConfig 配置对象中获取模型对象的调用
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      使用双重校验锁获取框架模型对象
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      刷新重置默认框架模型对象
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frameworkmodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      创建FrameworkModel对象
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="创建FrameworkModel对象">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#frameworkmodel_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      初始化FrameworkModel
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scopemodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      初始化ScopeModel
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      初始类型定义构建器
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="初始类型定义构建器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      服务存储仓库对象的创建
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      域模型初始化器的获取与初始化回调
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      将内部应用配置对象创建与添加至应用模型中
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#applicationmodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      创建ApplicationModel对象
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="创建ApplicationModel对象">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#applicationmodel_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      ApplicationModel的构造器
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ApplicationModel的构造器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#applicationmodelframeworkmodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      将ApplicationModel添加至FrameworkModel容器中
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#applicationmodel_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      初始化ApplicationModel
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="初始化ApplicationModel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configmanagerinitialize" class="md-nav__link">
+    <span class="md-ellipsis">
+      ConfigManager类型的initialize方法
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#environmentinitialize" class="md-nav__link">
+    <span class="md-ellipsis">
+      Environment类型的initialize方法
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modulemodel" class="md-nav__link">
+    <span class="md-ellipsis">
+      创建ModuleModel对象
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="创建ModuleModel对象">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      将模块模型添加至应用模型中
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      初始化模块模型
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="初始化模块模型">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      模块服务存储库的创建
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      模块配置管理器对象的创建与初始化
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      模块配置扩展的初始化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="model"><strong>框架,应用程序,模块领域模型Model对象的初始化</strong><a class="headerlink" href="#model" title="Permanent link">&para;</a></h1>
+<p>在上一章中我们详细看了服务配置ServiceConfig类型的初始化，
+不过我们跳过了AbstractMethodConfig的构造器中创建模块模型对象的过程，
+那这一章我们就来看下模块模型对象的初始化过程:</p>
+<pre><code class="language-java">public AbstractMethodConfig() {
+        super(ApplicationModel.defaultModel().getDefaultModule());
+    }
+</code></pre>
+<p><strong>那为什么会在Dubbo3的新版本中加入这个域模型呢</strong> ，主要有如下原因
+之前dubbo都是只有一个作用域的，通过静态类 属性共享
+增加域模型是为了:
+1. 让Dubbo支持多应用的部署，这块一些大企业有诉求
+2. 从架构设计上，解决静态属性资源共享、清理的问题
+3. 分层模型将应用的管理和服务的管理分开</p>
+<p>可能比较抽象，可以具体点来看。
+Dubbo3中在启动时候需要启动配置中心、元数据中心，这个配置中心和元数据中心可以归应用模型来管理。
+Dubbo作为RPC框架又需要启动服务和引用服务，服务级别的管理就交给了这个模块模型来管理。
+分层次的管理方便我们理解和处理逻辑，父子级别的模型又方便了数据传递。</p>
+<p>了解过JVM类加载机制的同学应该就比较清楚JVM类加载过程中的数据访问模型。子类加载器先交给父类加载器查找，找不到再从子类加载器中查找。Dubbo的分层模型类似这样一种机制，这一章先来简单了解下，后面用到时候具体细说。</p>
+<h2 id="_1"><strong>模型对象的关系</strong><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>为了不增加复杂性，我们这里仅仅列出模型对象类型类型之间的继承关系如下所示:
+<img alt="3-model.png" src="/img/chapter_dubbo/3-model.png" />
+<center>图3.1 模型对象的继承关系</center></p>
+<p>模型对象一共有4个，公共的属性和操作放在了域模型类型中，下面我们来详细说下这几个模型类型:</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ExtensionAccessor</strong></td>
+<td>- 扩展的统一访问器 - 用于获取扩展加载管理器ExtensionDirector对象 <strong>获取扩展对象ExtensionLoader</strong> 根据扩展名字 <strong>获取具体扩展对象</strong> - 获取自适应扩展对象- 获取默认扩展对象</td>
+</tr>
+<tr>
+<td><strong>ScopeModel</strong></td>
+<td>模型对象的公共抽象父类型  ，内部id用于表示模型树的层次结构  公共模型名称，可以被用户设置 描述信息 类加载器管理 父模型管理parent 当前模型的所属域ExtensionScope有: <strong>FRAMEWORK(框架)</strong> ，<strong>APPLICATION(应用)</strong> ，<strong>MODULE(模块)</strong> ，<strong>SELF(自给自足</strong> ，为每个作用域创建一个实例，用于特殊的SPI扩展，如ExtensionInjector) 具体的扩展加载程序管理器对象的管理: <strong>ExtensionDirector</strong> 域Bean工厂管理，一个内部共享的Bean工厂 <strong>ScopeBeanFactory</strong></td>
+</tr>
+<tr>
+<td><strong>FrameworkModel</strong></td>
+<td>dubbo框架模型，可与多个应用程序共享       - FrameworkModel实例对象集合，allInstances ，所有ApplicationModel实例对象集合，applicationModels ，发布的ApplicationModel实例对象集合pubApplicationModels ，框架的服务存储库 <strong>FrameworkServiceRepository</strong> 类型对象(数据存储在内存中) ，内部的应用程序模型对象internalApplicationModel</td>
+</tr>
+<tr>
+<td><strong>ApplicationModel</strong></td>
+<td>表示正在使用Dubbo的应用程序，并存储基本 <strong>元数据信息</strong> ，以便在RPC调用过程中使用。 ApplicationModel包括许多关于 <strong>发布服务</strong> 的ProviderModel和许多关于订阅服务的Consumer Model。</td>
+</tr>
+<tr>
+<td><strong>ModuleModel</strong></td>
+<td>服务模块的模型」</td>
+</tr>
+</tbody>
+</table>
+<p>了解了这几个模型对象的关系我们可以了解到这几个模型对象的管理层级从框架到应用程序，然后到模块的管理(FrameworkModel-&gt;ApplicationModel-&gt;ModuleModel)，他们主要用来针对框架，应用程序，模块的 <strong>存储</strong> ，<strong>发布管理，</strong> ，<strong>配置管理</strong></p>
+<p>看来Dubbo3 针对应用服务治理与运维这一块也是在努力尝试.</p>
+<h3 id="abstractmethodconfig"><strong>AbstractMethodConfig 配置对象中获取模型对象的调用</strong><a class="headerlink" href="#abstractmethodconfig" title="Permanent link">&para;</a></h3>
+<p>模块模型(ModuleModel)参数对象的创建
+这个AbstractMethodConfig构造器在初始化的时候调调用了这么一行代码做为参数向父类型传递对象.</p>
+<pre><code class="language-java">ApplicationModel.defaultModel().getDefaultModule()
+</code></pre>
+<p>默认情况下使用ApplicationModel的静态方法获取默认的模型对象和默认的模块对象</p>
+<p><strong>ApplicationModel</strong> (应用程序领域模型)类型中获取默认模型对象的方法:</p>
+<pre><code class="language-java"> public static ApplicationModel defaultModel() {
+        // should get from default FrameworkModel, avoid out of sync
+        return FrameworkModel.defaultModel().defaultApplication();
+    }
+</code></pre>
+<p>这里可以看到要想获取应用程序模型必须先通过框架领域模型来获取层级也是框架领域模型到应用程序领域模型</p>
+<h3 id="_2"><strong>使用双重校验锁获取框架模型对象</strong><a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>FrameworkModel(框架模型)的默认模型获取工厂方法defaultModel()</p>
+<pre><code class="language-java">    /**
+    * 在源码的注释上有这么一句话:在销毁默认的 FrameworkModel 时， FrameworkModel.defaultModel() 
+    *或ApplicationModel.defaultModel() 将返回一个损坏的模型
+    *可能会导致不可预知的问题。建议：尽量避免使用默认模型。
+    */
+   public static FrameworkModel defaultModel() {
+       //双重校验锁的形式创建单例对象
+        FrameworkModel instance = defaultInstance;
+        if (instance == null) {
+            synchronized (globalLock) {
+                //重置默认框架模型
+                resetDefaultFrameworkModel();
+                if (defaultInstance == null) {
+                    defaultInstance = new FrameworkModel();
+                }
+                instance = defaultInstance;
+            }
+        }
+        Assert.notNull(instance, &quot;Default FrameworkModel is null&quot;);
+        return instance;
+    }
+</code></pre>
+<h3 id="_3"><strong>刷新重置默认框架模型对象</strong><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>FrameworkModel中的重置默认框架模型resetDefaultFrameworkModel</p>
+<pre><code class="language-java">  private static void resetDefaultFrameworkModel() {
+        //全局悲观锁，同一个时刻只能有一个线程执行重置操作
+        synchronized (globalLock) {
+            //defaultInstance为当前成员变量FrameworkModel类型代表当前默认的FrameworkModel类型的实例对象
+            if (defaultInstance != null &amp;&amp; !defaultInstance.isDestroyed()) {
+                return;
+            }
+            FrameworkModel oldDefaultFrameworkModel = defaultInstance;
+            //存在实例模型列表则直接从内存缓存中查后续不需要创建了
+            if (allInstances.size() &gt; 0) {
+                //当前存在的有FrameworkModel框架实例多个列表则取第一个为默认的
+                defaultInstance = allInstances.get(0);
+            } else {
+                defaultInstance = null;
+            }
+            if (oldDefaultFrameworkModel != defaultInstance) {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info(&quot;Reset global default framework from &quot; + safeGetModelDesc(oldDefaultFrameworkModel) + &quot; to &quot; + safeGetModelDesc(defaultInstance));
+                }
+            }
+        }
+    }
+</code></pre>
+<p>上面单例做了很多的初始化操作，这里开始调用构造器来创建框架模型对象，如下代码:</p>
+<h2 id="frameworkmodel"><strong>创建FrameworkModel对象</strong><a class="headerlink" href="#frameworkmodel" title="Permanent link">&para;</a></h2>
+<p>FrameworkModel()构造器</p>
+<pre><code class="language-java">public FrameworkModel() {
+        //调用父类型ScopeModel传递参数，这个构造器的第一个参数为空代表这是一个顶层的域模型，第二个代表了这个是框架FRAMEWORK域，第三个false不是内部域
+        super(null, ExtensionScope.FRAMEWORK, false);
+        //内部id用于表示模型树的层次结构，如层次结构:
+        //FrameworkModel（索引=1）-&gt;ApplicationModel（索引=2）-&gt;ModuleModel（索引=1，第一个用户模块）
+        //这个index变量是static类型的为静态全局变量默认值从1开始，如果有多个框架模型对象则internalId编号从1开始依次递增
+        this.setInternalId(String.valueOf(index.getAndIncrement()));
+        // register FrameworkModel instance early
+        //将当前新创建的框架实例对象添加到容器中
+        synchronized (globalLock) {
+            //将当前框架模型实例添加到所有框架模型缓存对象中
+            allInstances.add(this);
+            //如上面代码所示重置默认的框架模型对象，这里将会是缓存实例列表的第一个，新增了一个刷新默认实例对象
+            resetDefaultFrameworkModel();
+        }
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(getDesc() + &quot; is created&quot;);
+        }
+        //初始化框架模型领域对象
+        initialize();
+    }
+</code></pre>
+<p>ExtensionScope.FRAMEWORK</p>
+<h3 id="frameworkmodel_1"><strong>初始化FrameworkModel</strong><a class="headerlink" href="#frameworkmodel_1" title="Permanent link">&para;</a></h3>
+<p>FrameworkModel框架模型的初始化方法initialize()</p>
+<pre><code class="language-java">@Override
+    protected void initialize() {
+      //这里初始化之前先调用下父类型ScopeModel的初始化方法我们在下面来看
+        super.initialize();
+        //使用TypeDefinitionBuilder的静态方法initBuilders来初始化类型构建器TypeBuilder类型集合
+        TypeDefinitionBuilder.initBuilders(this);
+        //框架服务存储仓库对象，可以用于快速查询服务提供者信息
+        serviceRepository = new FrameworkServiceRepository(this);
+        //获取ScopeModelInitializer类型(域模型初始化器)的扩展加载器ExtensionLoader，每个扩展类型都会创建一个扩展加载器缓存起来
+        ExtensionLoader&lt;ScopeModelInitializer&gt; initializerExtensionLoader = this.getExtensionLoader(ScopeModelInitializer.class);
+        //获取ScopeModelInitializer类型的支持的扩展集合，这里当前版本存在8个扩展类型实现
+        Set&lt;ScopeModelInitializer&gt; initializers = initializerExtensionLoader.getSupportedExtensionInstances();
+        //遍历这些扩展实现调用他们的initializeFrameworkModel方法来传递FrameworkModel类型对象，细节我们待会再详细说下
+        for (ScopeModelInitializer initializer : initializers) {
+            initializer.initializeFrameworkModel(this);
+        }
+        //创建一个内部的ApplicationModel类型，细节下面说
+        internalApplicationModel = new ApplicationModel(this, true);
+        //创建ApplicationConfig类型对象同时传递应用程序模型对象internalApplicationModel
+        //获取ConfigManager类型对象，然后设置添加当前应用配置对象
+       internalApplicationModel.getApplicationConfigManager().setApplication(
+            new ApplicationConfig(internalApplicationModel, CommonConstants.DUBBO_INTERNAL_APPLICATION));
+            //设置公开的模块名字为常量DUBBO_INTERNAL_APPLICATION
+        internalApplicationModel.setModelName(CommonConstants.DUBBO_INTERNAL_APPLICATION);
+    }
+</code></pre>
+<p>继续上面代码的调用链路，我们来看
+FrameworkModel的super.initialize();方法 调用父类型ScopeModel的initialize()方法</p>
+<h3 id="scopemodel"><strong>初始化ScopeModel</strong><a class="headerlink" href="#scopemodel" title="Permanent link">&para;</a></h3>
+<p>ScopeModel类型的初始化方法initialize():</p>
+<pre><code class="language-java">protected void initialize() {
+        //初始化ExtensionDirector是一个作用域扩展加载程序管理器。
+        //ExtensionDirector支持多个级别，子级可以继承父级的扩展实例。
+        //查找和创建扩展实例的方法类似于Java classloader。
+        this.extensionDirector = new ExtensionDirector(parent != null ? parent.getExtensionDirector() : null, scope, this);
+        //这个参考了Spring的生命周期回调思想，添加一个扩展初始化的前后调用的处理器，在扩展初始化之前或之后调用的后处理器，参数类型为ExtensionPostProcessor
+        this.extensionDirector.addExtensionPostProcessor(new ScopeModelAwareExtensionProcessor(this));
+        //创建一个内部共享的域工厂对象，用于注册Bean，创建Bean，获取Bean，初始化Bean等
+        this.beanFactory = new ScopeBeanFactory(parent != null ? parent.getBeanFactory() : null, extensionDirector);
+        //使用数据结构链表，创建销毁监听器容器，一般用于关闭进程，重置应用程序对象等操作时候调用
+        this.destroyListeners = new LinkedList&lt;&gt;();
+        //使用ConcurrentHashMap属性集合
+        this.attributes = new ConcurrentHashMap&lt;&gt;();
+        //使用ConcurrentHashSet存储当前域下的类加载器
+        this.classLoaders = new ConcurrentHashSet&lt;&gt;();
+
+        // Add Framework's ClassLoader by default
+        //将当前类的加载器存入加载器集合classLoaders中
+        ClassLoader dubboClassLoader = ScopeModel.class.getClassLoader();
+        if (dubboClassLoader != null) {
+            this.addClassLoader(dubboClassLoader);
+        }
+    }
+</code></pre>
+<h3 id="_4"><strong>初始类型定义构建器</strong><a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>TypeDefinitionBuilder的初始化类型构造器方法initBuilders</p>
+<pre><code class="language-java">public static void initBuilders(FrameworkModel model) {
+        Set&lt;TypeBuilder&gt; tbs = model.getExtensionLoader(TypeBuilder.class).getSupportedExtensionInstances();
+        BUILDERS = new ArrayList&lt;&gt;(tbs);
+    }
+</code></pre>
+<h4 id="_5"><strong>服务存储仓库对象的创建</strong><a class="headerlink" href="#_5" title="Permanent link">&para;</a></h4>
+<p>FrameworkServiceRepository对象的初始化</p>
+<pre><code class="language-java">public FrameworkServiceRepository(FrameworkModel frameworkModel) {
+        this.frameworkModel = frameworkModel;
+    }
+</code></pre>
+<h3 id="_6"><strong>域模型初始化器的获取与初始化回调</strong><a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>域模型初始化器的获取与初始化(ScopeModelInitializer类型和initializeFrameworkModel方法)
+加载到的ScopeModelInitializer类型的SPI扩展实现</p>
+<pre><code class="language-java">ExtensionLoader&lt;ScopeModelInitializer&gt; initializerExtensionLoader = this.getExtensionLoader(ScopeModelInitializer.class);
+    //获取ScopeModelInitializer类型的支持的扩展集合，这里当前版本存在8个扩展类型实现
+    Set&lt;ScopeModelInitializer&gt; initializers = initializerExtensionLoader.getSupportedExtensionInstances();
+    //遍历这些扩展实现调用他们的initializeFrameworkModel方法来传递FrameworkModel类型对象，细节我们待会再详细说下
+    for (ScopeModelInitializer initializer : initializers) {
+        initializer.initializeFrameworkModel(this);
+    }
+</code></pre>
+<p>通过Debug查到域模型初始化器的SPI扩展类型有如下8个:</p>
+<p><img alt="3-spi.png" src="/img/chapter_dubbo/3-spi.png" /></p>
+<p>这里我随机找两个说一下吧:
+容错域模型初始化器:ClusterScopeModelInitializer的initializeFrameworkModel方法:</p>
+<pre><code class="language-java">public class ClusterScopeModelInitializer implements ScopeModelInitializer {
+    @Override
+    public void initializeFrameworkModel(FrameworkModel frameworkModel) {
+        ScopeBeanFactory beanFactory = frameworkModel.getBeanFactory();
+        beanFactory.registerBean(RouterSnapshotSwitcher.class);
+    }
+</code></pre>
+<pre><code class="language-java">public class CommonScopeModelInitializer implements ScopeModelInitializer {
+    @Override
+    public void initializeFrameworkModel(FrameworkModel frameworkModel) {
+        ScopeBeanFactory beanFactory = frameworkModel.getBeanFactory();
+        beanFactory.registerBean(FrameworkExecutorRepository.class);
+    }
+</code></pre>
+<pre><code class="language-java">public class ConfigScopeModelInitializer implements ScopeModelInitializer {
+
+    @Override
+    public void initializeFrameworkModel(FrameworkModel frameworkModel) {
+        frameworkModel.addDestroyListener(new FrameworkModelCleaner());
+    }
+</code></pre>
+<h3 id="_7"><strong>将内部应用配置对象创建与添加至应用模型中</strong><a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>创建ApplicationConfig对象让后将其添加至应用模型中
+内部应用程序模型，这里为应用配置管理器设置一个应用配置对象，将这个应用配置的模块名字配置名字设置为DUBBO_INTERNAL_APPLICATION，
+应用配置记录着我们常见的应用配置信息，如下面表格所示:</p>
+<pre><code class="language-java"> //获取ConfigManager类型对象，然后设置添加当前应用配置对象
+   internalApplicationModel.getApplicationConfigManager().setApplication(
+        new ApplicationConfig(internalApplicationModel, CommonConstants.DUBBO_INTERNAL_APPLICATION));
+        //设置公开的模块名字为常量DUBBO_INTERNAL_APPLICATION
+    internalApplicationModel.setModelName(CommonConstants.DUBBO_INTERNAL_APPLICATION);
+</code></pre>
+<p>来自官网目前版本的配置解释:
+   官网当前的配置描述知道到了元数据类型，后面我再补充几个</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>对应URL参数</th>
+<th>类型</th>
+<th>是否必填</th>
+<th>缺省值</th>
+<th>作用</th>
+<th>描述</th>
+<th>兼容性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>application</td>
+<td>string</td>
+<td>必填</td>
+<td></td>
+<td>服务治理</td>
+<td>当前应用名称，用于注册中心计算应用间依赖关系，注意：消费者和提供者应用名不要一样，此参数不是匹配条件，你当前项目叫什么名字就填什么，和提供者消费者角色无关，比如：kylin应用调用了morgan应用的服务，则kylin项目配成kylin，morgan项目配成morgan，可能kylin也提供其它服务给别人使用，但kylin项目永远配成kylin，这样注册中心将显示kylin依赖于morgan</td>
+<td>1.0.16以上版本</td>
+</tr>
+<tr>
+<td>version</td>
+<td>application.version</td>
+<td>string</td>
+<td>可选</td>
+<td></td>
+<td>服务治理</td>
+<td>当前应用的版本</td>
+<td>2.2.0以上版本</td>
+</tr>
+<tr>
+<td>owner</td>
+<td>owner</td>
+<td>string</td>
+<td>可选</td>
+<td></td>
+<td>服务治理</td>
+<td>应用负责人，用于服务治理，请填写负责人公司邮箱前缀</td>
+<td>2.0.5以上版本</td>
+</tr>
+<tr>
+<td>organization</td>
+<td>organization</td>
+<td>string</td>
+<td>可选</td>
+<td></td>
+<td>服务治理</td>
+<td>组织名称(BU或部门)，用于注册中心区分服务来源，此配置项建议不要使用autoconfig，直接写死在配置中，比如china,intl,itu,crm,asc,dw,aliexpress等</td>
+<td>2.0.0以上版本</td>
+</tr>
+<tr>
+<td>architecture</td>
+<td>architecture</td>
+<td>string</td>
+<td>可选</td>
+<td></td>
+<td>服务治理</td>
+<td>用于服务分层对应的架构。如，intl、china。不同的架构使用不同的分层。</td>
+<td>2.0.7以上版本</td>
+</tr>
+<tr>
+<td>environment</td>
+<td>environment</td>
+<td>string</td>
+<td>可选</td>
+<td></td>
+<td>服务治理</td>
+<td>应用环境，如：develop/test/product，不同环境使用不同的缺省值，以及作为只用于开发测试功能的限制条件</td>
+<td>2.0.0以上版本</td>
+</tr>
+<tr>
+<td>compiler</td>
+<td>compiler</td>
+<td>string</td>
+<td>可选</td>
+<td>javassist</td>
+<td>性能优化</td>
+<td>Java字节码编译器，用于动态类的生成，可选：jdk或javassist</td>
+<td>2.1.0以上版本</td>
+</tr>
+<tr>
+<td>logger</td>
+<td>logger</td>
+<td>string</td>
+<td>可选</td>
+<td>slf4j</td>
+<td>性能优化</td>
+<td>日志输出方式，可选：slf4j,jcl,log4j,log4j2,jdk</td>
+<td>2.2.0以上版本</td>
+</tr>
+<tr>
+<td>metadata-type</td>
+<td>metadata-type</td>
+<td>String</td>
+<td>可选</td>
+<td>local</td>
+<td>服务治理</td>
+<td>metadata 传递方式，是以 Provider 视角而言的，Consumer 侧配置无效，可选值有：remote - Provider 把 metadata 放到远端注册中心，Consumer 从注册中心获取local - Provider 把 metadata 放在本地，Consumer 从 Provider 处直接获取</td>
+<td>2.7.6以上版本</td>
+</tr>
+</tbody>
+</table>
+<p>当前在Dubbo3.0.7中还有一些的配置我下面列举下:</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>对应URL参数</th>
+<th>类型</th>
+<th>是否必填</th>
+<th>缺省值</th>
+<th>作用</th>
+<th>描述</th>
+<th>兼容性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>register-consumer</td>
+<td>register-consumer</td>
+<td>boolean</td>
+<td>可选</td>
+<td>false</td>
+<td>服务治理</td>
+<td>是否注册使用者实例，默认为false。</td>
+<td></td>
+</tr>
+<tr>
+<td>register-mode</td>
+<td>register-mode</td>
+<td>string</td>
+<td>可选</td>
+<td>all</td>
+<td>服务治理</td>
+<td>将interface/instance/all 地址注册到注册中心，默认为all。</td>
+<td></td>
+</tr>
+<tr>
+<td>enable-empty-protection</td>
+<td>enable-empty-protection</td>
+<td>boolean</td>
+<td>可选</td>
+<td>true</td>
+<td>服务治理</td>
+<td>在空地址通知上启用空保护，默认为true</td>
+<td></td>
+</tr>
+<tr>
+<td>protocol</td>
+<td>protocol</td>
+<td>string</td>
+<td>可选</td>
+<td>dubbo</td>
+<td>服务治理</td>
+<td>此应用程序的首选协议（名称）</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="applicationmodel"><strong>创建ApplicationModel对象</strong><a class="headerlink" href="#applicationmodel" title="Permanent link">&para;</a></h2>
+<p>ApplicationModel对象的初始化调用
+ 在前面 3.2.4 FrameworkModel框架模型的初始化方法initialize() 章节中，
+我们看到了代码ApplicationModel对象的初始化调用如下代码，这里我们来详细说一下:</p>
+<pre><code class="language-java"> internalApplicationModel = new ApplicationModel(this, true);
+        internalApplicationModel.getApplicationConfigManager().setApplication(
+            new ApplicationConfig(internalApplicationModel, CommonConstants.DUBBO_INTERNAL_APPLICATION));
+        internalApplicationModel.setModelName(CommonConstants.DUBBO_INTERNAL_APPLICATION);
+
+</code></pre>
+<h3 id="applicationmodel_1"><strong>ApplicationModel的构造器</strong><a class="headerlink" href="#applicationmodel_1" title="Permanent link">&para;</a></h3>
+<p><code>ApplicationModel(FrameworkModel frameworkModel, boolean isInternal)</code>
+刚刚3.2.9那个地方我们看到了使用代码 <strong>new ApplicationModel(this, true)</strong> 来创建对象这里我们详细看下代码细节:</p>
+<pre><code class="language-java">public ApplicationModel(FrameworkModel frameworkModel, boolean isInternal) {
+        //调用父类型ScopeModel传递参数，这个构造器的传递没与前面看到的FrameworkModel构造器的中的调用参数有些不同第一个参数我们为frameworkModel代表父域模型，第二个参数标记域为应用程序级别APPLICATION，第三个参数我们传递的为true代表为内部域
+        super(frameworkModel, ExtensionScope.APPLICATION, isInternal);
+        Assert.notNull(frameworkModel, &quot;FrameworkModel can not be null&quot;);
+        //应用程序域成员变量记录frameworkModel对象
+        this.frameworkModel = frameworkModel;
+        //frameworkModel对象添加当前应用程序域对象
+        frameworkModel.addApplication(this);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(getDesc() + &quot; is created&quot;);
+        }
+        //初始化应用程序
+        initialize();
+    }
+</code></pre>
+<h4 id="applicationmodelframeworkmodel"><strong>将ApplicationModel添加至FrameworkModel容器中</strong><a class="headerlink" href="#applicationmodelframeworkmodel" title="Permanent link">&para;</a></h4>
+<p>FrameworkModel的添加应用程序方法addApplication:</p>
+<pre><code class="language-java">void addApplication(ApplicationModel applicationModel) {
+        // can not add new application if it's destroying
+        //检查FrameworkModel对象是否已经被标记为销毁状态，如果已经被销毁了则抛出异常无需执行逻辑
+        checkDestroyed();
+        synchronized (instLock) {
+            //如果还未添加过当前参数传递应用模型
+            if (!this.applicationModels.contains(applicationModel)) {
+                //为当前应用模型生成内部id
+                applicationModel.setInternalId(buildInternalId(getInternalId(), appIndex.getAndIncrement()));
+                //添加到成员变量集合applicationModels中
+                this.applicationModels.add(applicationModel);
+                //如果非内部的则也向公开应用模型集合pubApplicationModels中添加一下
+                if (!applicationModel.isInternal()) {
+                    this.pubApplicationModels.add(applicationModel);
+                }
+                resetDefaultAppModel();
+            }
+        }
+    }
+</code></pre>
+<p>内部id生成算法buildInternalId方法代码如下:
+看代码胜过，文字解释</p>
+<pre><code class="language-java"> protected String buildInternalId(String parentInternalId, long childIndex) {
+        // FrameworkModel    1
+        // ApplicationModel  1.1
+        // ModuleModel       1.1.1
+        if (StringUtils.hasText(parentInternalId)) {
+            return parentInternalId + &quot;.&quot; + childIndex;
+        } else {
+            return &quot;&quot; + childIndex;
+        }
+    }
+</code></pre>
+<p><strong>重置默认的应用模型对象</strong>
+FrameworkModel 重置默认的应用模型对象 resetDefaultAppModel()方法
+与默认框架模型设置方式类似取集合的第一个，这里应用模型需要使用公开的应用模型的第一个做为默认应用模型，代码如下所示:</p>
+<pre><code class="language-java">private void resetDefaultAppModel() {
+        synchronized (instLock) {
+            if (this.defaultAppModel != null &amp;&amp; !this.defaultAppModel.isDestroyed()) {
+                return;
+            }
+            //取第一个公开的应用模型做为默认应用模型
+            ApplicationModel oldDefaultAppModel = this.defaultAppModel;
+            if (pubApplicationModels.size() &gt; 0) {
+                this.defaultAppModel = pubApplicationModels.get(0);
+            } else {
+                this.defaultAppModel = null;
+            }
+            if (defaultInstance == this &amp;&amp; oldDefaultAppModel != this.defaultAppModel) {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info(&quot;Reset global default application from &quot; + safeGetModelDesc(oldDefaultAppModel) + &quot; to &quot; + safeGetModelDesc(this.defaultAppModel));
+                }
+            }
+        }
+    }
+</code></pre>
+<h3 id="applicationmodel_2"><strong>初始化ApplicationModel</strong><a class="headerlink" href="#applicationmodel_2" title="Permanent link">&para;</a></h3>
+<p>ApplicationModel的初始化initialize()方法
+在前面**3.2.10 ApplicationModel的构造器ApplicationModel(FrameworkModel frameworkModel, boolean isInternal)** 中的最后一行开始初始化应用模型我们还未详细说明下面可以来看下</p>
+<pre><code class="language-java">@Override
+    protected void initialize() {
+    //这个是调用域模型来初始化基础信息如扩展访问器等，可以参考 3.2.5 ScopeModel类型的初始化方法initialize()章节
+        super.initialize();
+        //创建一个内部的模块模型对象
+        internalModule = new ModuleModel(this, true);
+        //创建一个独立服务存储对象
+        this.serviceRepository = new ServiceRepository(this);
+        //获取应用程序初始化监听器ApplicationInitListener扩展
+        ExtensionLoader&lt;ApplicationInitListener&gt; extensionLoader = this.getExtensionLoader(ApplicationInitListener.class);
+        //如果存在应用程序初始化监听器扩展则执行这个初始化方法，在当前的版本还未看到有具体的扩展实现类型
+        Set&lt;String&gt; listenerNames = extensionLoader.getSupportedExtensions();
+        for (String listenerName : listenerNames) {
+            extensionLoader.getExtension(listenerName).init();
+        }
+        //初始化扩展(这个是应用程序生命周期的方法调用，这里调用初始化方法
+        initApplicationExts();
+
+        //获取域模型初始化器扩展对象列表，然后执行初始化方法
+        ExtensionLoader&lt;ScopeModelInitializer&gt; initializerExtensionLoader = this.getExtensionLoader(ScopeModelInitializer.class);
+        Set&lt;ScopeModelInitializer&gt; initializers = initializerExtensionLoader.getSupportedExtensionInstances();
+        for (ScopeModelInitializer initializer : initializers) {
+            initializer.initializeApplicationModel(this);
+        }
+    }
+</code></pre>
+<p>###  <strong>initApplicationExts()  初始化应用程序扩展方法</strong></p>
+<pre><code class="language-java">   private void initApplicationExts() {
+   //这个扩展实现一共有两个可以看下面那个图扩展类型为ConfigManager和Environment
+        Set&lt;ApplicationExt&gt; exts = this.getExtensionLoader(ApplicationExt.class).getSupportedExtensionInstances();
+        for (ApplicationExt ext : exts) {
+            ext.initialize();
+        }
+    }
+</code></pre>
+<p><img alt="在这里插入图片描述" src="/img/chapter_dubbo/3-ext.png" /></p>
+<h4 id="configmanagerinitialize"><strong>ConfigManager类型的initialize方法</strong><a class="headerlink" href="#configmanagerinitialize" title="Permanent link">&para;</a></h4>
+<p>先简单说下ConfigManager的作用，无锁配置管理器（通过ConcurrentHashMap），用于快速读取操作。写入操作锁带有配置类型的子配置映射，用于安全检查和添加新配置。
+其实ConfigManager实现类中并没有这个初始化方法initialize，不过ConfigManager的父类型AbstractConfigManager中是有initialize方法的，如下所示:</p>
+<p>AbstractConfigManager的初始化方法initialize</p>
+<pre><code class="language-java">@Override
+    public void initialize() throws IllegalStateException {
+        //乐观锁判断是否初始化过
+        if (!initialized.compareAndSet(false, true)) {
+            return;
+        }
+        //从模块环境中获取组合配置，目前Environment中有6种重要的配置，我们后面详细说
+        CompositeConfiguration configuration = scopeModel.getModelEnvironment().getConfiguration();
+
+        // dubbo.config.mode获取配置模式，配置模式对应枚举类型ConfigMode，目前有这么几个STRICT，OVERRIDE，OVERRIDE_ALL，OVERRIDE_IF_ABSENT，IGNORE，这个配置决定了属性覆盖的顺序，当有同一个配置key多次出现时候，以最新配置为准，还是以最老的那个配置为准，还是配置重复则抛出异常，默认值为严格模式STRICT重复则抛出异常
+        String configModeStr = (String) configuration.getProperty(ConfigKeys.DUBBO_CONFIG_MODE);
+        try {
+            if (StringUtils.hasText(configModeStr)) {
+                this.configMode = ConfigMode.valueOf(configModeStr.toUpperCase());
+            }
+        } catch (Exception e) {
+            String msg = &quot;Illegal '&quot; + ConfigKeys.DUBBO_CONFIG_MODE + &quot;' config value [&quot; + configModeStr + &quot;], available values &quot; + Arrays.toString(ConfigMode.values());
+            logger.error(msg, e);
+            throw new IllegalArgumentException(msg, e);
+        }
+
+        // dubbo.config.ignore-duplicated-interface
+        //忽略重复的接口（服务/引用）配置。默认值为false
+        String ignoreDuplicatedInterfaceStr = (String) configuration
+            .getProperty(ConfigKeys.DUBBO_CONFIG_IGNORE_DUPLICATED_INTERFACE);
+        if (ignoreDuplicatedInterfaceStr != null) {
+            this.ignoreDuplicatedInterface = Boolean.parseBoolean(ignoreDuplicatedInterfaceStr);
+        }
+
+        // print 打印配置信息
+        Map&lt;String, Object&gt; map = new LinkedHashMap&lt;&gt;();
+        map.put(ConfigKeys.DUBBO_CONFIG_MODE, configMode);
+        map.put(ConfigKeys.DUBBO_CONFIG_IGNORE_DUPLICATED_INTERFACE, this.ignoreDuplicatedInterface);
+        logger.info(&quot;Config settings: &quot; + map);
+    }
+</code></pre>
+<h4 id="environmentinitialize"><strong>Environment类型的initialize方法</strong><a class="headerlink" href="#environmentinitialize" title="Permanent link">&para;</a></h4>
+<p>这是一个与环境配置有关系的类型，我们先来简单了解下它的初始化方法，后期再详细说明:</p>
+<p>Environment类型的initialize方法</p>
+<pre><code class="language-java"> @Override
+    public void initialize() throws IllegalStateException {
+        //乐观锁判断是否进行过初始化
+        if (initialized.compareAndSet(false, true)) {
+            //PropertiesConfiguration从系统属性和dubbo.properties中获取配置
+            this.propertiesConfiguration = new PropertiesConfiguration(scopeModel);
+            //SystemConfiguration获取的是JVM参数 启动命令中-D指定的
+            this.systemConfiguration = new SystemConfiguration();
+            //EnvironmentConfiguration是从环境变量中获取的配置
+            this.environmentConfiguration = new EnvironmentConfiguration();
+            //外部的Global配置config-center global/default config
+            this.externalConfiguration = new InmemoryConfiguration(&quot;ExternalConfig&quot;);
+            //外部的应用配置如:config-center中的应用配置
+            this.appExternalConfiguration = new InmemoryConfiguration(&quot;AppExternalConfig&quot;);
+            //本地应用配置 ， 如Spring Environment/PropertySources/application.properties
+            this.appConfiguration = new InmemoryConfiguration(&quot;AppConfig&quot;);
+            //服务迁移配置加载 dubbo2升级dubbo3的一些配置
+            loadMigrationRule();
+        }
+    }
+    //服务迁移配置加载 JVM  &gt; env &gt;  代码路径dubbo-migration.yaml
+    private void loadMigrationRule() {
+     //文件路径配置的key dubbo.migration.file
+     // JVM参数中获取
+        String path = System.getProperty(CommonConstants.DUBBO_MIGRATION_KEY);
+        if (StringUtils.isEmpty(path)) {
+        //env环境变量中获取
+            path = System.getenv(CommonConstants.DUBBO_MIGRATION_KEY);
+            if (StringUtils.isEmpty(path)) {
+            //类路径下获取文件dubbo-migration.yaml
+                path = CommonConstants.DEFAULT_DUBBO_MIGRATION_FILE;
+            }
+        }
+        this.localMigrationRule = ConfigUtils.loadMigrationRule(scopeModel.getClassLoaders(), path);
+    }
+</code></pre>
+<p><strong>ConfigUtils中读取迁移规则配置文件loadMigrationRule</strong>
+这个我们不细说了，贴一下代码感兴趣可以了解下，这个代码主要是读取文件到内存字符串:</p>
+<pre><code class="language-java"> public static String loadMigrationRule(Set&lt;ClassLoader&gt; classLoaders, String fileName) {
+        String rawRule = &quot;&quot;;
+        if (checkFileNameExist(fileName)) {
+            try {
+                try (FileInputStream input = new FileInputStream(fileName)) {
+                    return readString(input);
+                }
+            } catch (Throwable e) {
+                logger.warn(&quot;Failed to load &quot; + fileName + &quot; file from &quot; + fileName + &quot;(ignore this file): &quot; + e.getMessage(), e);
+            }
+        }
+
+        try {
+            List&lt;ClassLoader&gt; classLoadersToLoad = new LinkedList&lt;&gt;();
+            classLoadersToLoad.add(ClassUtils.getClassLoader());
+            classLoadersToLoad.addAll(classLoaders);
+            for (Set&lt;URL&gt; urls : ClassLoaderResourceLoader.loadResources(fileName, classLoadersToLoad).values()) {
+                for (URL url : urls) {
+                    InputStream is = url.openStream();
+                    if (is != null) {
+                        return readString(is);
+                    }
+                }
+            }
+        } catch (Throwable e) {
+            logger.warn(&quot;Failed to load &quot; + fileName + &quot; file from &quot; + fileName + &quot;(ignore this file): &quot; + e.getMessage(), e);
+        }
+        return rawRule;
+    }
+
+    private static String readString(InputStream is) {
+        StringBuilder stringBuilder = new StringBuilder();
+        char[] buffer = new char[10];
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+            int n;
+            while ((n = reader.read(buffer)) != -1) {
+                if (n &lt; 10) {
+                    buffer = Arrays.copyOf(buffer, n);
+                }
+                stringBuilder.append(String.valueOf(buffer));
+                buffer = new char[10];
+            }
+        } catch (IOException e) {
+            logger.error(&quot;Read migration file error.&quot;, e);
+        }
+
+        return stringBuilder.toString();
+    }
+
+    /**
+     * check if the fileName can be found in filesystem
+     *
+     * @param fileName
+     * @return
+     */
+    private static boolean checkFileNameExist(String fileName) {
+        File file = new File(fileName);
+        return file.exists();
+    }
+</code></pre>
+<h2 id="modulemodel"><strong>创建ModuleModel对象</strong><a class="headerlink" href="#modulemodel" title="Permanent link">&para;</a></h2>
+<p>前面ApplicationModel对象初始化的时候创建了ModuleModel如下代码:</p>
+<pre><code class="language-java">internalModule = new ModuleModel(this, true);
+</code></pre>
+<p>这里我们来看下这个它所对应的构造器</p>
+<pre><code class="language-java">public ModuleModel(ApplicationModel applicationModel, boolean isInternal) {
+        //调用ScopeModel传递3个参数父模型，模型域为模块域，是否为内部模型参数为true
+        super(applicationModel, ExtensionScope.MODULE, isInternal);
+        Assert.notNull(applicationModel, &quot;ApplicationModel can not be null&quot;);
+        //初始化成员变量applicationModel
+        this.applicationModel = applicationModel;
+        //将模块模型添加至应用模型中
+        applicationModel.addModule(this, isInternal);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(getDesc() + &quot; is created&quot;);
+        }
+        //初始化模块模型
+        initialize();
+        Assert.notNull(serviceRepository, &quot;ModuleServiceRepository can not be null&quot;);
+        Assert.notNull(moduleConfigManager, &quot;ModuleConfigManager can not be null&quot;);
+        Assert.assertTrue(moduleConfigManager.isInitialized(), &quot;ModuleConfigManager can not be initialized&quot;);
+
+        // notify application check state
+        //获取应用程序发布对象，通知检查状态
+        ApplicationDeployer applicationDeployer = applicationModel.getDeployer();
+        if (applicationDeployer != null) {
+            applicationDeployer.notifyModuleChanged(this, DeployState.PENDING);
+        }
+    }
+</code></pre>
+<h3 id="_8"><strong>将模块模型添加至应用模型中</strong><a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p>如上面代码所示调用如下代码将模块模型添加到应用模型中:</p>
+<pre><code class="language-java"> applicationModel.addModule(this, isInternal);
+</code></pre>
+<p>这里我们来看下添加过程</p>
+<pre><code class="language-java">
+void addModule(ModuleModel moduleModel, boolean isInternal) {
+        //加锁
+        synchronized (moduleLock) {
+            //不存在则添加
+            if (!this.moduleModels.contains(moduleModel)) {
+                //检查应用模型是否已销毁
+                checkDestroyed();
+                //添加至模块模型成员变量中
+                this.moduleModels.add(moduleModel);
+                //设置模块模型内部id，这个内部id生成过程与上面将应用模型添加到框架模型中的方式是一致的
+                //可以参考 3.3.2 将ApplicationModel添加至FrameworkModel容器中
+                moduleModel.setInternalId(buildInternalId(getInternalId(), moduleIndex.getAndIncrement()));
+                //如果不是内部模型则添加到公开模块模型中
+                if (!isInternal) {
+                    pubModuleModels.add(moduleModel);
+                }
+            }
+        }
+    }
+</code></pre>
+<h3 id="_9"><strong>初始化模块模型</strong><a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p>前面ModuleModel构造器中通过initialize()方法来进行初始化操作如下代码:</p>
+<pre><code class="language-java">@Override
+    protected void initialize() {
+        //调用域模型ScopeModel的初始化，可以参考 3.2.5 ScopeModel类型的初始化方法initialize()章节
+        super.initialize();
+        //创建模块服务存储库对象
+        this.serviceRepository = new ModuleServiceRepository(this);
+        //创建模块配置管理对象
+        this.moduleConfigManager = new ModuleConfigManager(this);
+        //初始化模块配置管理对象
+        this.moduleConfigManager.initialize();
+
+        //初始化模块配置扩展
+        initModuleExt();
+
+        //初始化域模型扩展
+        ExtensionLoader&lt;ScopeModelInitializer&gt; initializerExtensionLoader = this.getExtensionLoader(ScopeModelInitializer.class);
+        Set&lt;ScopeModelInitializer&gt; initializers = initializerExtensionLoader.getSupportedExtensionInstances();
+        for (ScopeModelInitializer initializer : initializers) {
+            initializer.initializeModuleModel(this);
+        }
+    }
+</code></pre>
+<h4 id="_10"><strong>模块服务存储库的创建</strong><a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<p>ModuleServiceRepository是模块模型中用来存储服务的通过如下代码调用</p>
+<pre><code class="language-java">//创建模块服务存储库对象
+        this.serviceRepository = new ModuleServiceRepository(this);
+
+</code></pre>
+<p>这里我们来看下模块服务存储库的构造器代码:</p>
+<pre><code class="language-java"> public ModuleServiceRepository(ModuleModel moduleModel) {
+        //初始化模块模型
+        this.moduleModel = moduleModel;
+        //
+        frameworkServiceRepository = ScopeModelUtil.getFrameworkModel(moduleModel).getServiceRepository();
+    }
+</code></pre>
+<p>ModuleServiceRepository存储库中使用框架存储库frameworkServiceRepository来间接存储
+这里我们看下怎么通过模块模型获取框架服务存储库frameworkServiceRepository:通过代码</p>
+<pre><code class="language-java">ScopeModelUtil.getFrameworkModel(moduleModel).getServiceRepository()
+</code></pre>
+<p>ScopeModelUtil工具类获取getFrameworkModel代码如下:</p>
+<pre><code class="language-java">public static FrameworkModel getFrameworkModel(ScopeModel scopeModel) {
+        if (scopeModel == null) {
+            return FrameworkModel.defaultModel();
+        }
+        //通过成员变量获取(构造器初始化的时候将FrameworkModel赋值给了ApplicationModel的成员变量
+        if (scopeModel instanceof ApplicationModel) {
+            //直接获取
+            return ((ApplicationModel) scopeModel).getFrameworkModel();
+        } else if (scopeModel instanceof ModuleModel) {
+            ModuleModel moduleModel = (ModuleModel) scopeModel;
+            //间接通过ApplicationModel获取，不越级获取
+            return moduleModel.getApplicationModel().getFrameworkModel();
+        } else if (scopeModel instanceof FrameworkModel) {
+            return (FrameworkModel) scopeModel;
+        } else {
+            throw new IllegalArgumentException(&quot;Unable to get FrameworkModel from &quot; + scopeModel);
+        }
+    }
+</code></pre>
+<h4 id="_11"><strong>模块配置管理器对象的创建与初始化</strong><a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<pre><code class="language-java"> //创建模块配置管理对象
+        this.moduleConfigManager = new ModuleConfigManager(this);
+        //初始化模块配置管理对象
+        this.moduleConfigManager.initialize();
+</code></pre>
+<p>ModuleConfigManager的构造器代码如下:</p>
+<pre><code class="language-java">public ModuleConfigManager(ModuleModel moduleModel) {
+    //向抽象的配置管理器AbstractConfigManager传递参数
+    //模块模型参数，模块支持的配置类型集合
+        super(moduleModel, Arrays.asList(ModuleConfig.class, ServiceConfigBase.class, ReferenceConfigBase.class, ProviderConfig.class, ConsumerConfig.class));
+        //获取应用程序配置管理器
+        applicationConfigManager = moduleModel.getApplicationModel().getApplicationConfigManager();
+    }
+
+</code></pre>
+<p>ModuleConfigManager类型的初始化方法代码如下:</p>
+<pre><code class="language-java">@Override
+    public void initialize() throws IllegalStateException {
+        if (!initialized.compareAndSet(false, true)) {
+            return;
+        }
+        //获取组合配置对象
+        CompositeConfiguration configuration = scopeModel.getModelEnvironment().getConfiguration();
+
+        // dubbo.config.mode
+        //3.3.4.1提到过这里再重复一次 dubbo.config.mode获取配置模式，配置模式对应枚举类型ConfigMode，目前有这么几个STRICT，OVERRIDE，OVERRIDE_ALL，OVERRIDE_IF_ABSENT，IGNORE，这个配置决定了属性覆盖的顺序，当有同一个配置key多次出现时候，以最新配置为准，还是以最老的那个配置为准，还是配置重复则抛出异常，默认值为严格模式STRICT重复则抛出异常
+        String configModeStr = (String) configuration.getProperty(ConfigKeys.DUBBO_CONFIG_MODE);
+        try {
+            if (StringUtils.hasText(configModeStr)) {
+                this.configMode = ConfigMode.valueOf(configModeStr.toUpperCase());
+            }
+        } catch (Exception e) {
+            String msg = &quot;Illegal '&quot; + ConfigKeys.DUBBO_CONFIG_MODE + &quot;' config value [&quot; + configModeStr + &quot;], available values &quot; + Arrays.toString(ConfigMode.values());
+            logger.error(msg, e);
+            throw new IllegalArgumentException(msg, e);
+        }
+
+        // dubbo.config.ignore-duplicated-interface
+        //忽略重复的接口（服务/引用）配置。默认值为false
+        String ignoreDuplicatedInterfaceStr = (String) configuration
+            .getProperty(ConfigKeys.DUBBO_CONFIG_IGNORE_DUPLICATED_INTERFACE);
+        if (ignoreDuplicatedInterfaceStr != null) {
+            this.ignoreDuplicatedInterface = Boolean.parseBoolean(ignoreDuplicatedInterfaceStr);
+        }
+
+        // print 打印配置信息到控制台
+        Map&lt;String, Object&gt; map = new LinkedHashMap&lt;&gt;();
+        map.put(ConfigKeys.DUBBO_CONFIG_MODE, configMode);
+        map.put(ConfigKeys.DUBBO_CONFIG_IGNORE_DUPLICATED_INTERFACE, this.ignoreDuplicatedInterface);
+        logger.info(&quot;Config settings: &quot; + map);
+    }
+</code></pre>
+<h4 id="_12"><strong>模块配置扩展的初始化</strong><a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<pre><code class="language-java">initModuleExt();
+</code></pre>
+<pre><code class="language-java">private void initModuleExt() {
+//目前这里的扩展只支持有一个类型ModuleEnvironment
+        Set&lt;ModuleExt&gt; exts = this.getExtensionLoader(ModuleExt.class).getSupportedExtensionInstances();
+        for (ModuleExt ext : exts) {
+            ext.initialize();
+        }
+    }
+</code></pre>
+<p>ModuleEnvironment的初始化</p>
+<pre><code class="language-java">  @Override
+    public void initialize() throws IllegalStateException {
+        this.orderedPropertiesConfiguration = new OrderedPropertiesConfiguration(moduleModel);
+    }
+</code></pre>
+<p>OrderedPropertiesConfiguration对象的创建</p>
+<pre><code class="language-java">public OrderedPropertiesConfiguration(ModuleModel moduleModel) {
+        this.moduleModel = moduleModel;
+        refresh();
+    }
+
+    public void refresh() {
+        properties = new Properties();
+        //有序的配置提供器扩展获取
+        ExtensionLoader&lt;OrderedPropertiesProvider&gt; propertiesProviderExtensionLoader = moduleModel.getExtensionLoader(OrderedPropertiesProvider.class);
+        Set&lt;String&gt; propertiesProviderNames = propertiesProviderExtensionLoader.getSupportedExtensions();
+        if (CollectionUtils.isEmpty(propertiesProviderNames)) {
+            return;
+        }
+        List&lt;OrderedPropertiesProvider&gt; orderedPropertiesProviders = new ArrayList&lt;&gt;();
+        for (String propertiesProviderName : propertiesProviderNames) {
+            orderedPropertiesProviders.add(propertiesProviderExtensionLoader.getExtension(propertiesProviderName));
+        }
+
+        //order the propertiesProvider according the priority descending
+        //根据优先级进行排序，值越小优先级越高
+        orderedPropertiesProviders.sort((a, b) -&gt; b.priority() - a.priority());
+
+
+        //override the properties. 目前没看到有具体的扩展实现
+        for (OrderedPropertiesProvider orderedPropertiesProvider : orderedPropertiesProviders) {
+            properties.putAll(orderedPropertiesProvider.initProperties());
+        }
+
+    }
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      可微信搜索 《中间件源码》 联系，订阅内容。   <br/>  Copyright &copy; 2022 - 2024 ktyhub.com copyright   <br/> 部分内容由GPT提供 转载声明：  本文转载自 [原文标题](原文链接)，由[www.ktyhub.com](www.ktyhub.com)创作，遵循 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) 许可协议。
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.next_previous", "content.code.annotate", "content.tooltips", "navigation.tabs", "search.highlight", "search.share", "search.suggest"], "search": "../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+        <script src="/javascripts/google-tongji.js"></script>
+      
+        <script src="../../../mermaid.min.js"></script>
+      
+        <script src="/javascripts/baidu-tongji.js"></script>
+      
+    
+  </body>
+</html>
