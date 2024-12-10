@@ -52,7 +52,7 @@ Micrometer Tracing具有如下特性：
 
 上面的方式虽然可有有效的通过Trace和Span来检测到请求所处的位置，但是当处于某个系统的时候无法知道上下游关系，这就需要在上图的Custom Span中创建自定义跨度信息了，一个有前后关系的链路中需要在当前的Span跨度中增加父SpanId 来形成上下游关系如下图所示：
 
-![图片](https://mmbiz.qpic.cn/mmbiz_jpg/ic94cc1S0Z6GOnoyl4uktJcs59SEas96XiaU4aSAuszGeuOmu2FaJWmcorsic4jcza3iao910ibX6xhxx9bgzdL8OPQ/640?wx_fmt=jpeg&wxfrom=5&wx_lazy=1&wx_co=1)
+![图片](/img/chapter_post/img_26.png)
 
 ## 常见术语
 
@@ -133,11 +133,11 @@ Micrometer Tracing自带了一个物料清单（BOM），它是一个包含所�
 
 **链路追踪图**
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/ic94cc1S0Z6GOnoyl4uktJcs59SEas96XutNZnt4kLMTMVGfssTmxfmBwyTLyw8FOldkREk4RJtqajIUZmPkZgQ/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
+![图片](/img/chapter_post/img_27.png)
 
 **依赖关系图：**
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/ic94cc1S0Z6GOnoyl4uktJcs59SEas96Xpxh4cIJ3V2yfCKQNLz0pWPVZSI3XticZ8ye01YsicP48sCaicrVQGMUYw/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
+![图片](/img/chapter_post/img_28.png)
 
 如何去搭建Zipkin呢，可以参考官网的快速开始手册，直接运行jar执行文件或者使用docker来启动容器,直接运行可执行Jar的方式如下命令所示：
 
@@ -256,13 +256,13 @@ http://127.0.0.1:9411/
 
 在列表页中点击RUN QUERY即可看到所有的请求如下图所示：
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/ic94cc1S0Z6GOnoyl4uktJcs59SEas96XyibTLnyvrPBBzkIvWqtJEJI1bAGCgOgrnGNQavyZgDq6qQfpzJWKsWQ/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
+![图片](/img/chapter_post/img_29.png)
 
 #### 详情页
 
 点击某一个请求链路然后点击列表页中的SHOW按钮即可打开详情页来分析性能，如下图所示：
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/ic94cc1S0Z6GOnoyl4uktJcs59SEas96XuictbJ9Pd5BeR6TwZC6AKxshaCnwCRboTh2hLZPRTreRaPeRgyKNexw/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
+![图片](/img/chapter_post/img_30.png)
 
 # 总结
 
@@ -274,7 +274,7 @@ Micrometer Tracing为最流行的链路追踪系统库提供了一个简单的�
 
 Micrometer Tracing 在SpringBoot中充当了类似日志领域内 slf4j 门面的角色。在Java领域有了Spring的支持未来发展前途一片光明。
 
-![图片](https://mmbiz.qpic.cn/mmbiz_png/ic94cc1S0Z6GOnoyl4uktJcs59SEas96XjRgEkAZZRGdY2icdicS9MEbtoPudzygdLDK5teR68qgNC6b6R1pefxDQ/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
+![图片](/img/chapter_post/img_31.png)
 
 可以看到在未来Micrometer必定会在Java的可观测性领域越来越火，从成熟的Meter埋点到 Tracing 链路追踪。感兴趣的话可以试一试。
 
