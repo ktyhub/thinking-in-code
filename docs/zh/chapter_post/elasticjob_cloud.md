@@ -73,5 +73,4 @@ ShardingSphere-ElasticJob 是一个分布式任务调度框架，它由当当网
 [https://github.com/apache/shardingsphere-elasticjob/pull/2251](https://xie.infoq.cn/link?target=https%3A%2F%2Fgithub.com%2Fapache%2Fshardingsphere-elasticjob%2Fpull%2F2251)
 
 ![img](https://i-blog.csdnimg.cn/blog_migrate/118e1fbe567a53bccaff259bbc7babfe.png)
-
-关注微信公众号  **《中间件源码》**  订阅更多内容。
+ 
