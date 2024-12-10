@@ -62,7 +62,7 @@ Log4j 2 旨在用作审计日志记录，被设计为可靠、快速和可扩展
 ## 架构
 
 下面可以先整体来了解下UML图，这里我用文字的形式标明了日志类型的作用，可以简单了解下。
-![在这里插入图片描述](https://i-blog.csdnimg.cn/blog_migrate/40dff99c5d480e16e9a1e39fd5fca7c2.png#pic_center)
+![在这里插入图片描述](/img/chapter_post/img_21.png)
 
 
 
@@ -99,7 +99,7 @@ Log4j 2 旨在用作审计日志记录，被设计为可靠、快速和可扩展
 
 可以先通过如下图来看下Log4j2与Slf4之间的适配需要引入哪些依赖包：
 
-![Diagram showing which JARs correspond to which systems](https://i-blog.csdnimg.cn/blog_migrate/eb9026feb7bb1db143fb9530d8308788.png)
+![Diagram showing which JARs correspond to which systems](/img/chapter_post/img_22.png)
 
 可以看到如果要使用Slf4j门面的话，需要引入一个Slf4j门面依赖包slf4j-api和一个与log4j2绑定slf4j的桥接包log4j-slf4j-impl，下面就来看下我们要引入的依赖：
 
@@ -284,15 +284,15 @@ public class DemoLog {
 
 #### 控制台日志（非link.elastic包的日志）
 
-![logger.png](https://i-blog.csdnimg.cn/blog_migrate/340c0102617bf9d256a1927be80ccebc.png)
+![logger.png](/img/chapter_post/img_23.png)
 
 #### logger.log中的日志（link.elastic包下的日志）
 
-![logger.png](https://i-blog.csdnimg.cn/blog_migrate/f410158800db0bd0f64a7f951b67caf8.png)
+![logger.png](/img/chapter_post/img_24.png)
 
 #### error.log中的日志
 
-![errror.png](https://i-blog.csdnimg.cn/blog_migrate/3316ed746c6db5713ef7282a77708137.png)
+![errror.png](/img/chapter_post/img_25.png)
 可以看到这个例子充分的满足了前面的5大诉求：
 
 - **错误日志打印：**  这里使用了阈值过滤器ThresholdFilter，日志等级大于等于ERROR的接收打印其他的都拒绝

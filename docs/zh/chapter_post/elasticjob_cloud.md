@@ -35,17 +35,17 @@
 
 则指应用在容器中运行时需要稳定的持久化存储、稳定的网络标识、固定的 pod 启动和停止次序。这些应用需要在不同的节点之间保持数据同步，并且需要在节点故障时能够快速恢复。例如，数据库、缓存等都是有状态应用。
 
-![img](https://i-blog.csdnimg.cn/blog_migrate/bbd3d2a30c50fba4591f5cbb55c3eaaf.png)
+![img](/img/chapter_post/img.png)
 
 # 无状态下的容器
 
 可以看到对于大部分 **计算型** (业务型) ，非存储型的应用更推荐使用 **无状态** 的模式，这样就可以实现随意创建(扩容)，销毁(缩容)操作了，既然大部分业务系统使用了这种无状态容器就意味着容器的网络，存储等总是在每一次的销毁，创建的发布周期中发生变更。简单的说就是容器的 IP 在每次发布时 **总是会创建一个新的 IP**。
 
-![img](https://i-blog.csdnimg.cn/blog_migrate/32f55d3c73d9250278844055671b0f90.png)
+![img](/img/chapter_post/img_1.png)
 
 容器 IP 是如何在每次创建时产生一个新的 IP 的，这个原理可以去研究下 Kubernetes 的虚拟 IP 的产生，这里重点说下这个 IP 变更带来的问题，在传统的物理机和虚拟机下部署的服务的 IP 往往是由运维统一管控分配的，也就是说同一个应用使用哪些 IP 相对固定往往不会出现大规模的变更，但是云原生环境下无状态容器快速频繁的扩缩容时哪个服务使用哪个 IP 往往并不会固定每一次变更总会有一个新的 IP 的使用。
 
-![img](https://i-blog.csdnimg.cn/blog_migrate/73c5b274daa2937d27ebb69b708f8c8a.png)
+![img](/img/chapter_post/img_2.png)
 
 每次 IP 变更是无状态的一种模式本身并没有什么问题，但是有问题的是目前现有的很多框架或者中间件由于产生很早，开发阶段时还未遇到或者考虑到这种 IP 频繁变更的场景，经常会借助 IP 进行了有状态处理，比如 Dubbo2 中的接口级服务配置，ShardingSphere-ElasticJob 的有状态 Server IP 节点等等，这种对 IP 做了有状态操作的框架或者中间件在云原生环境频繁变更 IP 的场景下很容易产生大量无意义的脏数据存储，对注册中心或者存储都带来了无意义的压力。
 
@@ -53,7 +53,7 @@
 
 ShardingSphere-ElasticJob 是一个分布式任务调度框架，它由当当网基于 Quartz 二次开发，功能丰富强大，采用 Zookeeper 实现分布式协调，可实现任务高可用以及分片。ShardingSphere-ElasticJob 已于 2020 年 5 月 28 日成为 Apache ShardingSphere 的子项目。
 
-![img](https://i-blog.csdnimg.cn/blog_migrate/40da1f5612da67c49bb4110de08260f7.png)
+![img](/img/chapter_post/img_3.png)
 
 具体如何使用可以查阅官网，相关原理也可以查阅《中间件源码》公众号中对 ShardingSphere-ElasticJob 分析的文章。
 
@@ -72,5 +72,5 @@ ShardingSphere-ElasticJob 是一个分布式任务调度框架，它由当当网
 
 [https://github.com/apache/shardingsphere-elasticjob/pull/2251](https://xie.infoq.cn/link?target=https%3A%2F%2Fgithub.com%2Fapache%2Fshardingsphere-elasticjob%2Fpull%2F2251)
 
-![img](https://i-blog.csdnimg.cn/blog_migrate/118e1fbe567a53bccaff259bbc7babfe.png)
+![img](/img/chapter_post/img_4.png)
  
