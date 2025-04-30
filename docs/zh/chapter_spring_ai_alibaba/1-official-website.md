@@ -311,4 +311,160 @@ Anthropic公司提出的标准化协议，用于连接AI应用与各类工具/�
 | 应用场景 | 数据库集成 | 通过MCP服务实现大模型对MySQL/ES/Redis等数据库的操作能力 |
 | | 自动化测试 | 集成Puppeteer等工具实现网页自动化操作的MCP应用场景 |
 
-注：此表格已过滤示例代码中的具体实现细节（如方法参数名称）、重复的配置项说明以及文档中的版本号等临时性信息，聚焦于核心概念和通用技术要素。
+# Spring AI 源码解析：MCP链路调用流程及示例
+
+[https://java2ai.com/blog/spring-ai-mcp-desc](https://java2ai.com/blog/spring-ai-mcp-desc)
+
+| 类别      | 词条/概念                                | 详细说明                                                         |
+|---------|--------------------------------------|--------------------------------------------------------------|
+| 协议相关    | MCP (Model Context Protocol)         | 模型上下文协议，用于AI模型与外部系统交互的标准化协议，定义工具调用、资源访问等规范。                  |
+|         | LATEST_PROTOCOL_VERSION              | MCP协议的最新版本号，在初始化阶段用于版本协商。                                    |
+|         | 协议版本协商                               | 客户端与服务端在初始化时交换支持的协议版本，选择双方兼容的版本进行通信。                         |
+| 客户端组件   | McpClient                            | 客户端工厂类，提供同步/异步客户端创建方法，支持配置请求超时、客户端能力、工具发现、资源访问等功能。           |
+|         | McpAsyncClient                       | 异步客户端实现，基于Project Reactor的Mono/Flux类型，支持非阻塞操作，如工具调用、资源订阅等。   |
+|         | McpSyncClient                        | 同步客户端实现，封装McpAsyncClient提供阻塞式操作，功能与异步客户端一致。                  |
+|         | SyncSpec/AsyncSpec                   | 客户端配置构建器类，分别用于同步/异步客户端的超时、能力、根路径等参数设置。                       |
+| 服务端组件   | McpServer                            | 服务端工厂类，支持同步/异步服务端构建，提供工具暴露、资源管理、提示模板管理等功能。                   |
+|         | McpAsyncServer                       | 异步服务端实现，基于非阻塞操作处理客户端请求，支持动态添加工具/资源/提示，并通过通知机制推送变更。           |
+|         | McpSyncServer                        | 同步服务端实现，封装McpAsyncServer提供阻塞式操作，功能与异步服务端一致。                  |
+|         | AsyncSpecification/SyncSpecification | 服务端配置构建器类，用于定义服务端信息、能力、工具/资源/提示处理器等参数。                       |
+| 传输层     | McpTransport                         | 传输层核心接口，管理连接生命周期（连接/关闭）和消息处理，支持自定义传输机制实现。                    |
+|         | McpClientTransport                   | 客户端传输层接口，扩展McpTransport，定义连接方法，用于建立客户端与服务器的通信通道。             |
+|         | StdioClientTransport                 | 基于标准输入输出的传输实现，通过子进程stdin/stdout通信，支持启动外部服务器进程并处理JSON-RPC消息流。 |
+| 功能模块    | 工具调用 (callTool)                      | 客户端通过指定工具名称和参数调用服务端工具，服务端通过注册的处理器执行具体逻辑。                     |
+|         | 资源访问 (listResources/readResource)    | 客户端可列出服务端资源列表或读取特定资源内容，资源包括文件、数据库等上下文数据。                     |
+|         | 提示模板管理 (listPrompts/getPrompt)       | 服务端提供结构化提示模板，客户端可按名称获取模板内容，用于标准化与AI模型的交互。                    |
+|         | 根路径管理 (Root)                         | 客户端配置的根URI集合，标识可访问的资源路径，支持动态添加/移除并触发通知。                      |
+| 配置与初始化  | Initialization                       | 客户端与服务端建立连接时的初始化流程，协商协议版本、交换能力信息，并确认双方实现细节。                  |
+|         | ClientCapabilities                   | 客户端能力声明，包含支持的协议功能（如工具调用、资源订阅等），在初始化时与服务端能力匹配。                |
+|         | ServerCapabilities                   | 服务端能力声明，描述支持的功能（如工具暴露、资源提供等），客户端根据此调整交互逻辑。                   |
+|         | Implementation                       | 实现信息对象，包含客户端/服务端的名称和版本号，用于初始化阶段的信息交换。                        |
+| 动态管理机制  | 变更消费者 (Change Consumers)             | 客户端注册的监听器，用于接收工具/资源/提示列表变更通知，支持实时更新本地状态。                     |
+|         | 动态添加/移除 (addTool/removeResource)     | 服务端运行时动态注册或注销工具/资源/提示，触发列表变更通知，支持灵活扩展功能。                     |
+|         | 通知机制 (notifyToolsListChanged)        | 服务端主动推送变更事件，客户端通过预定义的消费者处理变更，保持状态同步。                         |
+| 日志与错误处理 | LoggingMessageNotification           | 日志消息通知对象，包含日志级别、内容等信息，客户端/服务端可通过日志消费者记录或转发日志。                |
+|         | LoggingLevel                         | 日志级别枚举（如DEBUG/INFO/WARN），客户端可设置服务端日志级别以过滤通知。                 |
+|         | McpError                             | MCP协议定义的异常类型，表示协议交互过程中的错误（如工具未找到、资源不存在等），包含错误码和详细描述。         |
+| 高级功能    | 采样处理 (Sampling)                      | 客户端可配置采样处理器（samplingHandler），在消息创建时执行自定义逻辑（如数据过滤或增强）。        |
+|         | 资源模板 (ResourceTemplate)              | 预定义的资源模板，服务端提供模板列表，客户端可根据模板快速生成资源请求参数。                       |
+|         | 能力协商 (Capabilities Negotiation)      | 初始化阶段客户端与服务端交换能力信息，确保双方仅使用共同支持的功能，避免兼容性问题。                   |
+| 底层通信机制  | JSON-RPC消息格式                         | 基于JSON-RPC 2.规范的通信格式，所有MCP交互（请求/响应/通知）均封装为结构化消息，包含方法名和参数。    |
+|         | 双向通信流 (Bidirectional Communication)  | 客户端与服务端通过传输层建立双向通信通道，支持并行处理多个请求和异步通知，提升交互效率。                 |
+
+# Spring AI 源码解析：Tool Calling链路调用流程及示例
+
+### 概念、名词、动词、关键词分类表
+
+[https://java2ai.com/blog/spring-ai-toolcalling](https://java2ai.com/blog/spring-ai-toolcalling)
+
+| 类别                                                  | 词条                                         | 详细说明                                                    |
+|-----------------------------------------------------|--------------------------------------------|---------------------------------------------------------|
+| **核心类**                                             | DefaultChatClient                          | `ChatClient` 接口的默认实现，负责处理工具调用请求，提供多种 `tools()`          
+ 方法重载，支持通过工具名称、回调对象、工具对象等方式注册工具。                     |
+| **接口**                                              | ToolDefinition                             | 定义工具的元数据接口，包含工具名称、描述、输入模式（JSON                          
+ Schema），用于模型识别工具的输入参数格式。                            |
+| **接口**                                              | ToolCallback                               | 工具回调接口，定义 `call()` 方法用于执行工具调用逻辑，包含                      
+ `getToolDefinition()` 获取工具元数据。                      |
+| **接口**                                              | ToolCallingManager                         | 工具调用管理器接口，负责解析工具定义和执行工具调用，核心方法包括                        
+ `resolveToolDefinitions()` 和 `executeToolCalls()`。  |
+| **注解**                                              | @Tool                                      | 标记方法为工具方法，支持自定义工具名称、描述、是否直接返回结果（`returnDirect`          
+ ）以及结果转换器（`resultConverter`）。                        |
+| **注解**                                              | @ToolParam                                 | 标记工具方法的参数，提供参数描述信息，辅助模型生成正确的输入参数。                       |
+| **工具类**                                             | ToolUtils                                  | 工具相关工具类，封装方法名称提取、描述生成、重复工具检测等功能。                        |
+| **配置类**                                             | TimeAutoConfiguration                      | 时间工具自动配置类，通过 `@ConditionalOnProperty` 控制是否启用，注册         
+ `GetCurrentTimeByTimeZoneIdService` 作为工具 Bean。      |
+| **服务类**                                             | GetCurrentTimeByTimeZoneIdService          | 时间工具服务类，实现 `Function` 接口，根据时区 ID                        
+ 返回当前时间，包含 `Request` 和 `Response` 记录类定义。             |
+| **配置属性**                                            | WeatherProperties                          | 天气工具配置属性类，从 `application.yml` 读取 `api-key` 配置，用于访问天气    
+ API。                                                |
+| **工具方法**                                            | getCityTimeMethod                          | 在 `TimeTools` 类中定义，通过 `@Tool` 注解标记，根据时区 ID              
+ 返回当前时间。                                             |
+| **工具回调相关**                                          | MethodToolCallback                         | 处理带有 `@Tool` 注解方法的回调实现类，将模型响应 JSON                      
+ 转换为方法参数，并通过反射执行方法调用。                                |
+| **工具回调相关**                                          | FunctionToolCallback                       | 处理函数式工具的回调实现类，支持 `Function`、`Supplier`、`Consumer`       
+ 等函数类型，将输入 JSON 反序列化为指定类型后执行调用。                      |
+| **工具上下文**                                           | ToolContext                                | 封装工具执行上下文信息，包含不可变的上下文数据（如历史消息记录），通过                     
+ `getToolCallHistory()` 获取工具调用历史。                    |
+| **工具调用管理器**                                         | DefaultToolCallingManager                  | `ToolCallingManager` 接口的默认实现，负责从                        
+ `ToolCallingChatOptions` 解析工具定义，执行工具调用，并构建工具上下文。    |
+| **结果转换器**                                           | ToolCallResultConverter                    | 工具结果转换接口，`DefaultToolCallResultConverter`               
+ 是其默认实现，将工具执行结果转换为 JSON 字符串。                         |
+| **工具注册与管理**                                         | ToolCallbackProvider                       | 工具回调提供者接口，`MethodToolCallbackProvider` 和                
+ `StaticToolCallbackProvider` 是其实现类，用于集中管理和提供工具回调实例。 |
+| **工具执行流程**                                          | 解析工具定义                                     | 从 `ToolCallingChatOptions`                              
+ 中提取工具定义，确保模型能正确识别工具的输入模式。                           |
+| **工具执行流程**                                          | 执行工具调用                                     | 根据模型响应中的 `ToolCalls`                                    
+ 信息，调用对应的工具回调，传递输入参数和上下文，返回执行结果。                     |
+| **工具实战示例**                                          | TimeController                             | 时间工具控制器，提供 `/time/chat-tool-function` 和                 
+ `/time/chat-tool-method` 接口，分别演示函数式和注解式工具调用。        |
+| **工具实战示例**                                          | WeatherController                          | 天气工具控制器，通过 `getWeatherFunction`                         
+ 工具查询天气信息，支持动态参数（城市、天数）。                             |
+| **相关配置**                                            | application.yml                            | 配置文件，定义工具相关配置（如 API 密钥、启用开关），如                          
+ `spring.ai.toolcalling.time.enabled` 控制时间工具的启用。     |
+| **工具方法参数**                                          | timeZoneId                                 | `@ToolParam` 标记的参数，在 `getCityTimeMethod` 中表示时区 ID（如     
+ `Asia/Shanghai`），由模型从用户输入中提取。                       |
+| **工具响应处理**                                          | ToolExecutionResult                        | 封装工具执行结果，包含更新后的对话历史（`conversationHistory`               
+ ）和是否直接返回结果（`returnDirect`）标志。                       |
+| **工具调用结果**                                          | returnDirect                               | `@Tool` 注解的 `returnDirect` 属性，若为 `true`                 
+ ，工具结果直接返回给用户，不经过模型处理。                               |
+| **工具回调提供者**                                         | MethodToolCallbackProvider                 | 通过扫描带有 `@Tool` 注解的方法，生成对应的                              
+ `MethodToolCallback` 实例，支持动态注册工具。                   |
+| **工具定义生成**                                          | JsonSchemaGenerator                        | 生成工具输入模式的 JSON Schema，描述参数类型和约束，如天气工具的                  
+ `city`（字符串）和 `days`（整数范围 1-14）。                     |
+| **工具元数据**                                           | ToolMetadata                               | 工具元数据接口，`DefaultToolMetadata` 是其实现类，目前仅用于控制是否直接返回结果（    
+ `returnDirect`）。                                    |
+| **工具调用上下文构建**                                       | buildToolContext                           | 在 `DefaultToolCallingManager` 中构建工具上下文，包含历史消息记录，供工具方法通过 
+ `ToolContext` 参数访问。                                 |
+| **工具执行结果处理**                                        | buildConversationHistoryAfterToolExecution | 将工具执行结果添加到对话历史中，生成新的                                    
+ `Message` 列表，用于模型生成最终响应。                            |
+| **工具调用链路**                                          | 工具调用链路（核心）                                 | 描述从 `ChatClient` 调用 `tools()`                           
+ 到模型生成最终响应的完整流程，包括工具注册、模型决策、工具执行、结果返回等步骤。            |
+| **工具调用管理器配置**                                       | ToolCallingChatOptions                     | 包含工具名称列表和回调列表，`resolveToolDefinitions()`                
+ 方法从中解析工具定义，合并重复项。                                   |
+| **工具回调解析**                                          | ToolCallbackResolver                       | 在 `DefaultToolCallingManager` 中用于按工具名称解析对应的             
+ `FunctionCallback`，确保请求中未显式注册的工具能被动态加载。             |
+
+# 构建智能 Web Search 应用：使用 Spring AI Alibaba 构建大模型联网搜索应用
+
+| **类别**       | **词条**                      | **详细说明**                                                        |
+|--------------|-----------------------------|-----------------------------------------------------------------|
+| **模块化RAG体系** | Pre-Retrieval               | 检索前处理阶段，通过增强、改写、扩展用户输入提升检索效率                                    |
+|              | QueryAugmenter              | 查询增强器，通过附加上下文数据优化原始查询，提供大模型所需的必要背景信息                            |
+|              | QueryTransformer            | 查询改写器，使用Prompt调优或大模型将用户模糊/片面的查询转化为结构化检索语句                       |
+|              | QueryExpander               | 查询扩展器，生成多个语义变体以获取不同视角的检索结果                                      |
+|              | Retrieval                   | 检索阶段，通过多种数据源（向量库/搜索引擎/数据库）获取与查询相关的文档                            |
+|              | DocumentRetriever           | 文档检索器，根据扩展后的查询从指定数据源（如IQS服务）获取候选文档                              |
+|              | DocumentJoiner              | 文档合并器，将多数据源/多查询变体获取的文档集合进行去重合并                                  |
+|              | Post-Retrieval              | 检索后处理阶段，优化检索结果以适应大模型处理限制                                        |
+|              | DocumentRanker              | 文档排序器，根据查询相关性对文档进行优先级排序（如使用DashScope的Rerank服务）                  |
+|              | DocumentSelector            | 文档选择器，过滤冗余/不相关文档以精简上下文信息                                        |
+|              | DocumentCompressor          | 文档压缩器，通过内容提炼减少信息噪音和冗余数据                                         |
+| **技术组件**     | Spring AI Alibaba           | 基于Spring框架的AI开发套件，提供RAG实现框架及阿里云服务集成                             |
+|              | DashScope API               | 阿里云模型服务平台，提供qwen-plus等大模型API接口                                  |
+|              | 阿里云IQS服务                    | 智能搜索服务，提供联网搜索能力及结果清洗处理                                          |
+|              | WebSearchRetriever          | 联网搜索检索器，封装IQS服务接口实现网页数据抓取与转换                                    |
+|              | ConcatenationDocumentJoiner | 文档合并策略实现，通过唯一性校验防止重复文档混入                                        |
+|              | ReasoningContentAdvisor     | 内容生成顾问，控制大模型输出中推理内容的整合比例                                        |
+| **算法模型**     | qwen-plus                   | 通义千问增强版模型，用于查询改写、文档排序等NLP处理任务                                   |
+|              | deepseek-r1                 | 深度求索模型，专用于生成包含联网搜索结果的最终答案                                       |
+| **数据处理**     | DataCleaner                 | 数据清洗组件，对IQS返回的原始搜索结果进行格式标准化和内容过滤                                |
+|              | Metadata Key                | 文档元数据标识（如URL/标题），用于去重和溯源                                        |
+| **开发模式**     | 模块化RAG                      | 将RAG流程分解为独立可配置模块（检索前/检索/检索后）的开发范式                               |
+|              | Advisors机制                  | Spring AI的流程拦截器，用于整合检索增强逻辑到对话流程                                 |
+| **核心方法**     | 查询增强(Query Augmentation)    | 通过上下文注入优化原始查询，解决语义模糊/格式不规范问题                                    |
+|              | 多查询扩展(Multi-Query)          | 生成多个查询变体提升检索覆盖率，突破单一查询视角限制                                      |
+|              | 文档分块(Document Chunking)     | 将长文档切分为语义段落，适配大模型上下文窗口限制                                        |
+| **性能优化**     | Incremental Output          | 流式输出模式，支持逐步生成响应内容提升用户体验                                         |
+|              | Fallback机制                  | 异常降级策略（如排序失败时返回原始结果），保障服务可用性                                    |
+| **工程实践**     | Prompt模板                    | 结构化提示词设计（如DEFAULT_PROMPT_TEMPLATE），控制大模型处理逻辑                    |
+|              | API密钥管理                     | 通过DashScope/IQS的API Key进行服务鉴权，属于系统安全配置                          |
+|              | 结果限制(maxResults)            | 控制单次检索返回的最大文档数量（如WebSearchRetriever设置maxResults=2）              |
+| **质量保障**     | 相关性排序(Relevance Ranking)    | 通过语义匹配算法（如DashScope Rerank）确保最相关文档优先呈现                          |
+|              | 上下文去重(Context Dedup)        | 基于文档元数据（如URL哈希值）的重复内容过滤机制                                       |
+| **应用场景**     | 联网搜索RAG                     | 结合搜索引擎实时数据与大模型推理能力，解决传统RAG静态知识库更新延迟问题                           |
+|              | 旅游推荐系统                      | 典型应用案例，通过实时检索网络资源生成包含最新信息的景点推荐（如杭州旅游地标查询）                       |
+| **系统特性**     | 可扩展架构                       | 各模块（检索器/排序器等）支持自定义实现，便于对接不同数据源和算法                               |
+|              | 多模型协同                       | 不同模型分工协作（qwen-plus处理改写、deepseek-r1生成答案），发挥各自优势                  |
+| **异常处理**     | 空上下文处理                      | CustomContextQueryAugmenter中allowEmptyContext配置控制空上下文场景下的查询传递逻辑 |
+|              | 服务容错                        | WebSearchRetriever在文档排序异常时自动降级返回原始结果，保障服务连续性                    |
+
