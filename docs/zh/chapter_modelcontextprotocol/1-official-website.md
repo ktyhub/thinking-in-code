@@ -259,3 +259,128 @@
 
 注：此表格已合并重复类别（如将"安全考虑"统一为"安全措施"
 ），排除了示例代码语言（TypeScript/Python）等具体实现细节，聚焦协议层面的核心概念。涵盖了传输机制、消息规范、安全策略、运维监控等完整技术栈要素。
+
+# Java SDK
+
+## 概述
+
+[https://modelcontextprotocol.io/sdk/java/mcp-overview](https://modelcontextprotocol.io/sdk/java/mcp-overview)
+
+| 类别        | 词条                           | 详细说明                                                                                           |
+|-----------|------------------------------|------------------------------------------------------------------------------------------------|
+| **协议相关**  | Model Context Protocol (MCP) | 整体协议框架，用于工具和资源的上下文管理，支持客户端-服务器交互的标准化协议                                                         |
+|           | JSON-RPC                     | 消息传输格式，用于协议层消息的序列化和反序列化，支持请求-响应模式的消息处理                                                         |
+| **架构层**   | Client/Server Layer          | 客户端（McpClient）和服务器（McpServer）的协议操作层，McpClient处理客户端协议，McpServer管理服务端逻辑                          |
+|           | Session Layer (McpSession)   | 通过DefaultMcpSession实现通信模式和状态管理，支持同步/异步操作                                                       |
+|           | Transport Layer              | 负责消息传输的底层实现，包括StdioTransport和多种HTTP SSE传输方式                                                    |
+| **核心组件**  | MCP Client                   | 客户端组件，负责与MCP服务器建立连接、管理通信并执行协议操作                                                                |
+|           | MCP Server                   | 服务端组件，提供工具、资源和能力给客户端，实现服务器端协议逻辑                                                                |
+|           | McpSession                   | 会话管理对象，控制通信状态和模式（同步/异步）                                                                        |
+| **协议功能**  | Tool discovery               | 工具发现机制，客户端可动态识别服务器提供的功能                                                                        |
+|           | Execution                    | 工具执行能力，客户端通过协议触发服务器端工具运行                                                                       |
+|           | Roots list management        | 资源根目录列表管理功能，支持列表变更通知和订阅机制                                                                      |
+|           | URI template-based access    | 基于URI模板的资源访问方式，支持动态参数化资源定位                                                                     |
+| **传输实现**  | StdioTransport               | 基于标准输入输出的进程间通信传输方式，核心模块默认实现                                                                    |
+|           | HTTP SSE transports          | 服务器发送事件的HTTP传输实现，包括：<br>- Java HttpClient<br>- Spring WebFlux（响应式）<br>- Spring WebMVC（Servlet） |
+| **编程范式**  | Synchronous                  | 同步编程模式，支持阻塞式请求处理                                                                               |
+|           | Asynchronous                 | 异步编程模式，支持非阻塞式消息处理                                                                              |
+| **消息处理**  | Type-safe response           | 类型安全的响应处理机制，确保数据格式正确性                                                                          |
+|           | Error handling               | 协议层的错误处理机制，包含验证和异常管理                                                                           |
+| **交互流程**  | Protocol compatibility check | 协议初始化时的版本兼容性验证                                                                                 |
+|           | Capability negotiation       | 客户端与服务器之间的能力协商过程                                                                               |
+| **资源管理**  | Subscription system          | 资源变更订阅机制，支持客户端注册监听特定资源变化                                                                       |
+|           | Content retrieval            | 资源内容获取功能，支持按需获取服务器资源                                                                           |
+| **依赖管理**  | Maven/Gradle                 | 项目构建工具，用于管理协议SDK的依赖集成                                                                          |
+|           | BOM (Bill of Materials)      | 依赖版本管理机制，声明所有推荐依赖版本，确保各传输模块版本兼容性                                                               |
+| **SDK组件** | mcp (核心库)                    | 提供基础协议实现和API的核心依赖                                                                              |
+|           | mcp-spring-webflux           | 基于响应式编程的WebFlux SSE传输实现                                                                        |
+|           | mcp-spring-webmvc            | 基于Servlet的WebMVC SSE传输实现                                                                       |
+|           | mcp-test                     | 测试工具库，支持MCP应用的集成测试                                                                             |
+
+## MCP ClientMCP 客户端
+
+| **类别**    | **词条**                       | **详细说明**                                                         |
+|-----------|------------------------------|------------------------------------------------------------------|
+| **协议组件**  | MCP Client                   | Model Context Protocol（MCP）架构中的核心组件，负责与MCP服务器建立连接、管理协议实现及客户端功能。  |
+|           | Model Context Protocol       | 定义客户端与服务器之间交互规则的协议，涵盖通信、资源管理、工具执行等模块。                            |
+| **协议协商**  | Protocol version negotiation | 客户端与服务器协商协议版本，确保兼容性。                                             |
+|           | Capability negotiation       | 确定客户端与服务器之间支持的功能（如资源访问、采样等），以启用或禁用特定交互能力。                        |
+| **通信机制**  | Message transport            | 客户端与服务器之间的消息传输机制，支持同步和异步通信。                                      |
+|           | JSON-RPC                     | 基于JSON的远程过程调用协议，用于客户端与服务器之间的结构化数据交换。                             |
+| **工具与执行** | Tool discovery               | 客户端发现服务器端提供的可用工具列表，工具为服务器端定义的函数。                                 |
+|           | Tool execution               | 客户端通过参数映射调用服务器端工具，支持同步（Sync API）和异步（Async API）方式。                |
+| **资源管理**  | Resource access              | 客户端通过URI模板访问服务器端资源（如数据源），支持发现和检索资源内容。                            |
+|           | Resource management          | 客户端对服务器端资源的统一管理接口，包括资源权限控制和生命周期管理。                               |
+| **提示系统**  | Prompt system                | 客户端与服务器端预定义提示模板的交互系统，支持动态生成文本（如基于参数的对话或指令生成）。                    |
+| **客户端能力** | Roots Support                | 定义服务器可访问的文件系统根目录边界，包括根目录列表查询、变更通知及权限控制。                          |
+|           | Sampling Support             | 允许服务器通过客户端发起LLM（大语言模型）交互请求（如文本生成或图像生成），客户端控制模型访问权限并可选附加MCP上下文信息。 |
+| **传输层实现** | STDIO                        | 基于标准输入输出的传输层实现，用于本地进程间通信。                                        |
+|           | SSE (HttpClient)             | 基于HTTP客户端的长连接（Server-Sent Events）传输实现，适用于实时流式通信场景。               |
+|           | SSE (WebFlux)                | 使用Reactive Web框架（如Spring WebFlux）实现的SSE传输层，支持高并发异步通信。            |
+| **API类型** | Sync API                     | 同步接口，适用于需要阻塞式调用的应用场景（如命令行工具）。                                    |
+|           | Async API                    | 异步接口，适用于非阻塞式高并发场景（如Web应用或实时系统）。                                  |
+| **核心功能**  | Roots management             | 管理服务器可访问的文件系统根目录列表，支持动态更新和权限分配。                                  |
+|           | LLM interactions             | 通过客户端代理的大语言模型交互，包括文本补全（completions）和生成（generations）等操作。          |
+|           | API keys                     | 客户端集中管理模型API密钥，避免服务器直接接触敏感信息，提升安全性。                              |
+| **交互类型**  | Text-based interactions      | 基于文本的LLM交互（如自然语言生成）。                                             |
+|           | Image-based interactions     | 基于图像的LLM交互（如图像生成或视觉推理）。                                          |
+| **上下文控制** | MCP server context           | 可选功能，允许将MCP服务器上下文信息（如会话状态）注入到LLM提示中，以增强生成相关性。                    |
+| **数据结构**  | Parameters map               | 工具或提示模板执行时传入的键值对参数集合，用于动态配置操作行为。                                 |
+|           | URI templates                | 资源访问中使用的统一资源标识符模板，支持动态路径匹配和参数化查询。                                |
+
+## MCP Server
+
+| **类别**       | **词条**                                                   | **详细说明**                                             |
+|--------------|----------------------------------------------------------|------------------------------------------------------|
+| **协议与架构**    | Model Context Protocol (MCP)                             | 核心协议，定义了服务器与客户端之间的交互规范，包括工具、资源、提示等功能的标准化操作流程。        |
+|              | MCP架构                                                    | 包含服务器和客户端的整体架构设计，支持会话管理、能力协商等功能。                     |
+|              | 会话架构                                                     | 版本0.8.x引入的基于会话的架构，支持多客户端并发连接和状态管理。                   |
+|              | JSON-RPC                                                 | 用于STDIO传输的消息协议，支持双向通信和非阻塞处理。                         |
+| **服务器组件与功能** | MCP Server                                               | 协议的服务端实现，负责暴露工具、管理资源、提供提示模板、处理客户端请求等核心功能。            |
+|              | 工具支持                                                     | 允许服务器注册工具（如计算器、API调用），供客户端调用。                        |
+|              | 资源支持                                                     | 支持URI访问模式的资源管理（如文件、数据库记录），客户端可读取资源内容。                |
+|              | 提示支持                                                     | 提供预定义的提示模板，供客户端生成标准化请求（如用户问候）。                       |
+|              | 完成支持                                                     | 为提示或资源URI提供自动补全建议（如代码补全）。                            |
+|              | 能力协商                                                     | 服务器与客户端协商支持的功能（如是否支持资源、工具、日志）。                       |
+|              | 结构化日志                                                    | 支持按不同级别（DEBUG、INFO等）发送日志通知，客户端可过滤接收。                 |
+|              | 会话管理                                                     | 管理多个客户端连接的会话生命周期，包括状态维护和优雅关闭。                        |
+| **传输与通信**    | 传输层                                                      | 负责客户端与服务器的通信协议实现，如STDIO、SSE等。                        |
+|              | STDIO传输                                                  | 通过标准输入/输出流进行JSON-RPC通信，适合进程间集成。                      |
+|              | SSE (Server-Sent Events)                                 | 基于HTTP的服务器推送技术，支持WebFlux、WebMvc、Servlet等实现。          |
+|              | WebFlux                                                  | 响应式SSE传输实现，适用于Spring WebFlux框架。                      |
+|              | WebMvc                                                   | 传统Spring MVC的SSE传输实现。                                |
+|              | Servlet                                                  | 基于Servlet API的SSE传输，支持异步处理和会话管理。                     |
+|              | 双向通信                                                     | STDIO支持客户端与服务器的双向请求/响应。                              |
+|              | 非阻塞消息处理                                                  | STDIO传输的消息处理机制，避免阻塞主线程。                              |
+|              | 序列化/反序列化                                                 | 使用ObjectMapper处理JSON消息的转换。                           |
+|              | 优雅关闭                                                     | 支持安全终止连接，确保未完成请求处理完毕。                                |
+|              | HTTP流式传输                                                 | SSE通过HTTP长连接持续推送事件。                                  |
+| **工具与资源**    | 工具（Tool）                                                 | 服务器暴露的可执行功能（如计算器），需定义名称、描述和参数模式（JSON Schema）。        |
+|              | 资源（Resource）                                             | 通过URI访问的数据实体（如文件、API响应），需定义MIME类型和读取逻辑。              |
+|              | 提示模板（Prompt Template）                                    | 预定义的交互模板，包含参数化消息（如动态生成用户提示）。                         |
+|              | 参数模式（JSON Schema）                                        | 工具或提示的参数约束定义，使用JSON Schema描述。                        |
+|              | CallToolResult                                           | 工具调用的返回结果，包含输出内容及是否需进一步交互。                           |
+|              | ReadResourceResult                                       | 资源读取的返回结果，包含资源内容。                                    |
+|              | GetPromptResult                                          | 提示请求的返回结果，包含格式化后的消息列表。                               |
+|              | CompleteResult                                           | 自动补全的返回结果，包含建议列表及分页信息。                               |
+| **规范与配置**    | Server Capabilities                                      | 服务器配置的功能开关（如启用资源、工具、日志）。                             |
+|              | SyncToolSpecification/AsyncToolSpecification             | 同步/异步工具的实现规范，包含工具定义和处理器函数。                           |
+|              | SyncResourceSpecification/AsyncResourceSpecification     | 同步/异步资源的实现规范，包含资源定义和读取逻辑。                            |
+|              | SyncPromptSpecification/AsyncPromptSpecification         | 同步/异步提示的实现规范，包含提示定义和模板生成逻辑。                          |
+|              | SyncCompletionSpecification/AsyncCompletionSpecification | 同步/异步自动补全的实现规范，包含补全类型（提示或资源）和处理器函数。                  |
+|              | ServerCapabilities构建器                                    | 使用建造者模式配置服务器能力（如`.resources(true).tools(true)`）。     |
+| **交互与操作**    | 注册工具/资源/提示                                               | 通过`addTool()`、`addResource()`等方法将功能注册到服务器。           |
+|              | 管理客户端连接                                                  | 处理并发连接，支持同步（McpSyncServer）或异步（McpAsyncServer）模式。     |
+|              | 处理请求                                                     | 在工具/资源/提示的处理器函数中执行具体逻辑（如计算、读取数据）。                    |
+|              | 发送日志通知                                                   | 通过`exchange.loggingNotification()`在会话中发送日志消息。        |
+|              | 设置日志级别                                                   | 客户端通过`setLoggingLevel()`过滤日志（如仅接收INFO及以上级别）。         |
+|              | 调用工具（CallTool）                                           | 客户端通过工具名称和参数调用服务器功能。                                 |
+|              | 请求采样（Sampling）                                           | 服务器向客户端请求语言模型生成内容（需客户端支持），需定义`CreateMessageRequest`。 |
+|              | CreateMessageRequest                                     | 采样请求参数，包含输入内容、模型偏好（如模型提示词、优先级）、最大生成长度等。              |
+| **日志与错误处理**  | LoggingLevel                                             | 日志级别枚举（DEBUG=0, INFO=1, NOTICE=2, ..., EMERGENCY=7）。 |
+|              | LoggingMessageNotification                               | 日志消息通知对象，包含级别、记录器名称、数据内容等。                           |
+|              | McpError                                                 | 统一错误类，覆盖协议兼容性、传输问题、工具执行异常等场景。                        |
+| **其他概念**     | 同步API/异步API                                              | 服务器支持两种集成模式：同步（阻塞式）和异步（响应式，如Project Reactor的Mono）。   |
+|              | 内容序列化                                                    | 使用ObjectMapper将对象转换为JSON格式。                          |
+|              | 上下文注入                                                    | 提示模板支持参数化替换（如将用户名动态插入问候语）。                           |
+|              | 会话生命周期                                                   | 从客户端连接到断开期间的状态管理（如资源释放）。                             |
