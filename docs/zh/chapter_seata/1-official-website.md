@@ -37,3 +37,33 @@ Apache Seata 是一个支持多模型的分布式事务框架，其核心机制�
 2. **数据回滚**：利用Before/After Image生成UNDO_LOG，支持事务失败时的自动补偿；
 3. **适用场景**：AT模式适合强一致性场景，TCC适用于自定义事务逻辑，Saga适用于跨系统长流程。  
    Seata通过灵活的事务模型和底层优化，解决了分布式系统中的数据一致性问题，同时平衡了性能与复杂度。
+
+# 示例
+[https://seata.apache.org/docs/user/quickstart](https://seata.apache.org/docs/user/quickstart)
+| **类别**                  | **词条**                          | **详细说明**                                                                                     |
+|---------------------------|-----------------------------------|-----------------------------------------------------------------------------------------------|
+| **微服务组件**             | StorageService                   | 库存服务，负责减少指定商品的库存数量。                                                          |
+|                           | OrderService                     | 订单服务，根据用户请求创建订单。                                                                |
+|                           | AccountService                   | 账户服务，从用户账户中扣减余额。                                                                |
+| **接口方法**               | `deduct()`                       | 属于`StorageService`接口，用于减少商品库存数量。                                                 |
+|                           | `create()`                       | 属于`OrderService`接口，创建订单并调用账户服务扣款。                                             |
+|                           | `debit()`                        | 属于`AccountService`接口，从用户账户中扣减指定金额。                                             |
+| **Seata组件**              | @GlobalTransactional             | 注解，用于标记需要分布式事务管理的方法（如`purchase()`方法）。                                    |
+|                           | AT模式（Auto Transaction Mode）  | Seata的事务模式，通过全局锁和两阶段提交（2PC）实现分布式事务。                                    |
+|                           | UNDO_LOG表                       | 用于存储事务回滚日志，支持AT模式下的事务恢复。                                                   |
+| **数据库相关**             | storage_tbl                      | 库存表，存储商品库存信息，字段包括`commodity_code`（商品编码）和`count`（数量）。                  |
+|                           | order_tbl                        | 订单表，存储订单信息，字段包括`user_id`、`commodity_code`、`count`和`money`。                     |
+|                           | account_tbl                      | 账户表，存储用户账户余额，字段包括`user_id`和`money`。                                            |
+|                           | InnoDB引擎                       | MySQL数据库引擎，支持事务和行级锁，是Seata AT模式的基础要求。                                     |
+| **事务模式与配置**         | 两阶段提交（2PC）                | 分布式事务协议，分为准备阶段和提交/回滚阶段，Seata通过AT模式自动实现。                             |
+|                           | storeMode                        | Seata服务端配置参数，支持日志存储模式（如`file`或`db`）。                                          |
+| **示例代码元素**           | BusinessServiceImpl              | 主业务逻辑类，调用库存服务和订单服务完成用户购买操作。                                            |
+|                           | OrderServiceImpl                 | 订单服务实现类，计算订单金额并调用账户服务扣款，最终插入订单记录。                                |
+| **配置参数**               | `seata-server.sh`/`seata-server.bat` | Seata服务端启动脚本，支持参数如`-h`（绑定IP）、`-p`（端口）、`-m`（日志存储模式）。                 |
+| **核心流程**               | 全局事务管理                     | 通过Seata协调微服务调用，保证所有操作要么全部成功，要么全部回滚。                                  |
+| **数据库表结构**           | UNDO_LOG表字段                   | 包含`xid`（全局事务ID）、`branch_id`（分支事务ID）、`rollback_info`（回滚数据）等字段。             |
+
+### 总结段落
+
+本文档介绍了Apache Seata在微服务场景下的分布式事务解决方案。通过一个用户购买商品的业务案例，展示了库存服务（`StorageService`）、订单服务（`OrderService`）和账户服务（`AccountService`）的协作流程。Seata通过`@GlobalTransactional`注解实现全局事务管理，核心机制是**AT模式**，依赖`UNDO_LOG`表记录事务回滚日志，并结合两阶段提交（2PC）保障数据一致性。  
+配置方面，需为每个服务创建独立的数据源（如`storage_tbl`、`order_tbl`、`account_tbl`），并确保数据库使用InnoDB引擎。Seata服务端通过命令行参数（如`-m`指定日志存储模式）启动，支持高可用和灵活部署。文档还提供了完整的SQL表结构定义和示例代码，帮助开发者快速实现基于Dubbo和Seata的分布式事务集成。
