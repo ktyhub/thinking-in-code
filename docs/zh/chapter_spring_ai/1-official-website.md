@@ -68,8 +68,6 @@ AI通过模板引擎、向量数据库和简化的函数调用机制，帮助开
 
 [https://docs.spring.io/spring-ai/reference/getting-started.html](https://docs.spring.io/spring-ai/reference/getting-started.html)
 
-### 表格总结
-
 | **类别**         | **词条**                | **详细说明**                                                                   |
 |----------------|-----------------------|----------------------------------------------------------------------------|
 | **依赖管理**       | Spring Milestone 仓库   | 用于发布 Spring 项目的稳定版本（非快照），需在构建工具中配置仓库地址 `https://repo.spring.io/milestone`。 |
@@ -167,3 +165,78 @@ Spring AI Advisors API 提供了一套模块化的拦截增强机制，通过**�
 `aroundStream()`）实现请求/响应的拦截、修改或阻断，典型应用包括日志记录、输入增强（如Re2技术）及安全控制。**流式处理**依赖
 `Flux`和响应式编程，需注意数据聚合与状态管理。**版本演进**中，接口从分离的Request/ResponseAdvisor合并为统一的Advisor，上下文改为不可变对象以提升线程安全性。
 **最佳实践**强调职责单一、上下文共享及顺序规划，确保功能可维护性和扩展性。
+
+# Spring AI API
+
+[https://docs.spring.io/spring-ai/reference/api/index.html](https://docs.spring.io/spring-ai/reference/api/index.html)
+
+| **类别**    | **词条**                               | **详细说明**                                                           |
+|-----------|--------------------------------------|--------------------------------------------------------------------|
+| **核心功能**  | AI Model API                         | 提供跨AI提供商的统一接口，支持聊天、图像生成、音频转录、文本转语音、嵌入模型等，支持同步和流式API。               |
+|           | Vector Store API                     | 跨向量数据库的便携API，支持元数据过滤和14种向量数据库（如Redis、Pinecone、Milvus等）。            |
+|           | Tool Calling API                     | 允许AI模型通过`@Tool`注解或`java.util.Function`调用用户自定义服务。                   |
+| **模型类型**  | Chat Models                          | 支持OpenAI、Azure、Mistral等提供商的对话模型，包含函数调用（部分已弃用）。                     |
+|           | Embedding Models                     | 支持文本嵌入、多模态嵌入，集成Amazon Bedrock、Google VertexAI、OpenAI等。             |
+|           | Image Models                         | 支持图像生成（如Stability、ZhiPuAI）、多模态生成（如Azure OpenAI）。                   |
+|           | Audio Models                         | 包含语音转录（Transcription）和文本转语音（TTS），支持Azure OpenAI、OpenAI等。           |
+|           | Moderation Models                    | 支持OpenAI的内容审核模型。                                                   |
+| **集成与扩展** | AI Provider 支持                       | 涵盖OpenAI、Azure、Amazon Bedrock、Google VertexAI、Hugging Face等20+服务商。 |
+|           | Vector Database 支持                   | 支持14种向量数据库，包括Chroma、Elasticsearch、Redis、Pinecone等。                 |
+| **数据处理**  | ETL Pipeline                         | 提供数据加载框架，用于向量数据库的数据工程，支持检索增强生成（RAG）模式。                             |
+|           | Retrieval Augmented Generation (RAG) | 通过结合用户数据与AI模型生成响应，提升结果相关性。                                         |
+| **开发工具**  | Auto Configuration                   | Spring Boot自动配置和Starter，简化AI模型和向量数据库的集成。                           |
+|           | Model Context Protocol (MCP)         | 提供客户端/服务端工具，支持模型上下文管理。                                             |
+| **应用场景**  | Structured Output                    | 支持AI模型输出结构化数据（如JSON）。                                              |
+|           | Chat Memory                          | 管理对话历史状态，用于持续上下文交互。                                                |
+|           | Observability                        | 提供模型调用监控和跟踪功能。                                                     |
+|           | Multimodality                        | 支持多模态输入（文本、图像、音频）的联合处理。                                            |
+| **API特性** | Prompt Engineering                   | 提供提示词模板（Prompts）和模式（Patterns），优化模型输入。                              |
+|           | Function Calling (Deprecated)        | 旧版函数调用接口（部分模型已弃用）。                                                 |
+| **工具与规范** | Service Connections                  | 支持Docker Compose、Testcontainers、云绑定等部署方式。                          |
+|           | Contribution Guidelines              | 提供开源贡献规范和升级说明。                                                     |
+
+---
+
+### 总结
+
+Spring AI API 是一个综合性框架，核心围绕**跨AI提供商的统一接口**（如Chat、Embedding、Image模型）和**向量数据库集成**
+（支持14种数据库）。其特色包括**工具调用API**（通过注解或函数调用服务）、**数据工程支持**（ETL管道和RAG模式）、**Spring Boot自动配置
+**，以及**多模态处理能力**（文本、图像、音频）。  
+该框架覆盖了从模型调用、数据管理到部署的全流程，强调可移植性（如Model Context Protocol）、开发便捷性（Auto
+Configuration）和扩展性（支持20+AI服务商），适用于复杂AI应用场景（如结构化输出、对话记忆管理）。
+
+# Chat Model API  聊天模型 API
+
+| **类别**       | **词条**                   | **详细说明**                                                                   |
+|--------------|--------------------------|----------------------------------------------------------------------------|
+| **核心接口**     | `ChatModel`              | 继承自`Model<Prompt, ChatResponse>`，提供`call`方法处理聊天请求，支持不同模型的切换。               |
+|              | `StreamingChatModel`     | 继承自`StreamingModel<Prompt, ChatResponse>`，使用响应式`Flux`流式传输结果。               |
+| **请求/响应类**   | `Prompt`                 | 封装输入消息列表（`List<Message>`）和可选的模型配置（`ChatOptions`），作为请求传递给模型。                |
+|              | `ChatResponse`           | 包含模型生成的响应结果列表（`List<Generation>`）和元数据（`ChatResponseMetadata`）。             |
+|              | `Generation`             | 继承自`ModelResult<AssistantMessage>`，表示单次生成的输出消息及其元数据（如置信度）。                 |
+| **消息结构**     | `Message`                | 接口，定义消息内容（`content`）、媒体附件（`Media`列表）和角色类型（`MessageType`）。                  |
+|              | `MessageType`            | 消息角色分类（如`system`、`user`、`assistant`），用于区分对话中的不同参与者。                        |
+|              | `UserMessage`            | `Message`的实现类，代表用户输入的消息。                                                   |
+|              | `AssistantMessage`       | `Message`的实现类，代表模型生成的响应消息。                                                 |
+| **配置选项**     | `ChatOptions`            | 继承自`ModelOptions`，定义模型参数（如`temperature`、`topP`、`topK`），可全局或通过`Prompt`动态覆盖。 |
+|              | `ModelOptions`           | 基础接口，提供模型配置的扩展能力。                                                          |
+| **元数据**      | `ChatResponseMetadata`   | 包含模型响应的全局元数据（如总耗时、模型版本）。                                                   |
+|              | `ChatGenerationMetadata` | 包含单次生成结果的元数据（如生成时间、token使用量）。                                              |
+| **设计哲学**     | 模块化与可互换性                 | Spring的核心设计原则，通过统一接口（如`ChatModel`）实现不同模型的快速切换。                             |
+| **功能方法**     | `call(String)`           | `ChatModel`的简化方法，直接接受字符串输入并返回响应文本。                                         |
+|              | `call(Prompt)`           | `ChatModel`的核心方法，接受结构化的`Prompt`输入并返回`ChatResponse`。                        |
+|              | `stream(Prompt)`         | `StreamingChatModel`的方法，以流式方式返回`Flux<ChatResponse>`。                       |
+| **模型实现与扩展**  | 预训练语言模型（如GPT）            | 支持集成多种模型（如OpenAI），通过`ChatModel`接口统一调用。                                     |
+|              | 模型特定选项                   | 允许开发者使用特定模型的参数（如OpenAI的`presencePenalty`），通过`Prompt`或全局配置覆盖。               |
+| **基础接口与工具类** | `Node<T>`                | 泛型接口，定义内容（`content`）和元数据（`metadata`键值对），`Message`继承自`Node<String>`。        |
+|              | `Media`                  | 表示消息中附加的多媒体内容（如图片、文件）。                                                     |
+
+---
+
+### **总结**
+
+Spring AI Chat Model API 提供了一套标准化的接口（如`ChatModel`和`StreamingChatModel`）与工具类（如`Prompt`、`Message`
+），用于集成多种预训练语言模型（如GPT）的对话能力。其核心设计遵循模块化和可互换性原则，开发者可通过统一的`call`或`stream`
+方法处理请求，并通过`ChatOptions`灵活配置模型参数。请求通过`Prompt`封装多角色消息（如`system`、`user`），响应则由
+`ChatResponse`和`Generation`
+结构化的元数据（如生成耗时、token统计）支持进一步分析。此API通过抽象化模型差异（如OpenAI的特定参数）和简化请求/响应处理流程，显著降低了AI能力集成的复杂性，同时保留了对底层模型的细粒度控制。
