@@ -240,3 +240,72 @@ Spring AI Chat Model API 提供了一套标准化的接口（如`ChatModel`和`S
 方法处理请求，并通过`ChatOptions`灵活配置模型参数。请求通过`Prompt`封装多角色消息（如`system`、`user`），响应则由
 `ChatResponse`和`Generation`
 结构化的元数据（如生成耗时、token统计）支持进一步分析。此API通过抽象化模型差异（如OpenAI的特定参数）和简化请求/响应处理流程，显著降低了AI能力集成的复杂性，同时保留了对底层模型的细粒度控制。
+
+# Embeddings Model API 嵌入模型 API
+
+| **类别**     | **词条**                      | **详细说明**                                                   |
+|------------|-----------------------------|------------------------------------------------------------|
+| **接口**     | EmbeddingClient             | Spring AI中用于与嵌入模型交互的核心接口，继承自`ModelClient`，提供文本转向量、批量处理等方法。 |
+| **接口继承关系** | ModelClient                 | 通用的AI模型交互接口，定义了标准方法，`EmbeddingClient`基于此扩展，实现特定嵌入功能。       |
+| **设计目标**   | 可移植性 (Portability)          | 支持快速切换不同嵌入模型（如OpenAI、Azure OpenAI等），代码修改最小化，符合Spring模块化理念。 |
+|            | 简单性 (Simplicity)            | 提供`embed()`等简化方法，隐藏底层复杂性，使开发者无需深入算法即可使用嵌入功能。               |
+| **核心类**    | EmbeddingRequest            | 继承自`ModelRequest`，封装嵌入请求的输入数据，包含文本列表和可选的配置选项。              |
+|            | EmbeddingResponse           | 继承自`ModelResponse`，封装嵌入模型的输出，包含多个`Embedding`对象和元数据。        |
+|            | Embedding                   | 表示单个文本的嵌入结果，包含向量数据、索引及元数据，继承自`ModelResult`。                |
+| **元数据**    | EmbeddingResponseMetadata   | 嵌入响应中的元数据，可能包含模型版本、请求耗时等信息。                                |
+|            | EmbeddingResultMetadata     | 单个嵌入结果的元数据，如置信度或特定模型的附加信息。                                 |
+| **方法**     | `embed(String text)`        | 将单个文本转换为数值向量，默认调用批量方法处理。                                   |
+|            | `embed(Document document)`  | 处理结构化文档的嵌入，提取文档内容后调用文本嵌入方法。                                |
+|            | `embed(List<String> texts)` | 批量处理文本列表，返回多个嵌入向量，底层调用`call()`方法。                          |
+|            | `call(EmbeddingRequest)`    | 核心方法，向嵌入模型发送请求并返回`EmbeddingResponse`，支持自定义参数。              |
+|            | `dimensions()`              | 返回嵌入向量的维度数（如1536维），通过测试字符串的嵌入结果动态获取。                       |
+| **数据类型**   | 数值向量 (Embedding Vector)     | 文本经嵌入模型转换后的浮点数列表，用于表示语义特征，支持下游任务（如分类、聚类）。                  |
+| **功能**     | 批量处理 (Batch Processing)     | 支持同时处理多个文本，提升效率，通过`embed(List<String>)`实现。                 |
+| **配置选项**   | EmbeddingOptions            | 可选的嵌入请求参数（如模型版本、精度），通过`EmbeddingRequest`传递，默认值为`EMPTY`。    |
+| **应用场景**   | 语义分析 (Semantic Analysis)    | 利用嵌入向量分析文本语义相似性，应用于搜索、推荐等场景。                               |
+|            | 文本分类 (Text Classification)  | 将文本嵌入后输入分类模型，提升分类效果。                                       |
+| **实现方式**   | 低层库/API                     | 不同`EmbeddingClient`实现依赖不同技术（如OpenAI API、本地库Ollie）。         |
+
+---
+
+### 总结
+
+Spring AI的**Embedding API**以**EmbeddingClient**接口为核心，围绕**可移植性**和**简单性**
+两大目标设计，支持开发者灵活切换嵌入模型（如OpenAI、Titan）并简化文本到向量的转换流程。其核心类包括封装请求的*
+*EmbeddingRequest**、响应结果的**EmbeddingResponse**及单个嵌入对象**Embedding**，通过`embed()`
+系列方法实现单文本或批量处理，返回浮点数向量供语义分析、分类等任务使用。接口继承自通用**ModelClient**，扩展了`call()`
+方法以支持底层模型调用，并通过`dimensions()`动态获取向量维度。元数据类（如**EmbeddingResponseMetadata**）提供附加信息，而*
+*EmbeddingOptions**允许配置请求参数。整体设计体现了Spring的模块化理念，通过标准化接口和分层封装，降低AI集成复杂度，适用于多种应用场景。
+
+
+
+
+### 当前文章主题说明
+文章主题为**Spring AI Image Model API的设计与实现**，旨在阐述该API如何通过模块化、可移植的接口和配套类（如`ImagePrompt`、`ImageResponse`等），简化开发者与图像生成模型的交互。其核心目标是提供统一的抽象层，允许开发者灵活切换不同AI模型的图像处理功能，同时封装请求构造和响应解析的复杂性。
+
+---
+
+### 关键词分类与说明
+
+| 类别                | 词条                  | 详细说明                                                                                     |
+|---------------------|-----------------------|----------------------------------------------------------------------------------------------|
+| **核心接口**         | `ImageModel`          | 函数式接口，继承自`Model<ImagePrompt, ImageResponse>`，定义了调用图像生成模型的统一方法`call()`。开发者通过此接口与不同模型交互。 |
+| **输入封装类**       | `ImagePrompt`         | 封装图像生成请求的输入数据，包含`ImageMessage`列表和可选的`ImageOptions`，实现`ModelRequest`接口。                          |
+|                     | `ImageMessage`        | 包含生成图像的文本描述及其权重（`text`和`weight`），用于指导模型生成内容。例如，权重可为正负值以增强或削弱某些特征。              |
+| **配置选项类**       | `ImageOptions`         | 接口，继承自`ModelOptions`，定义图像生成的通用参数（如数量`n`、尺寸`width/height`、响应格式`responseFormat`等）。模型实现可扩展此接口。 |
+|                     | 模型特定选项（如OpenAI） | 示例：OpenAI的`quality`（生成质量）和`style`（艺术风格）等参数，允许开发者在初始化或运行时覆盖默认配置。                        |
+| **输出处理类**       | `ImageResponse`       | 封装模型输出，包含`ImageGeneration`列表和元数据（`ImageResponseMetadata`），提供获取单结果或多结果的方法。                     |
+|                     | `ImageGeneration`     | 继承自`ModelResult<Image>`，表示单个生成结果及其元数据（如生成参数），包含图像数据（`Image`对象）和元数据（`ImageGenerationMetadata`）。 |
+|                     | `Image`               | 表示生成的图像数据，可能包含URL或Base64编码的二进制内容，具体由模型实现决定。                                                |
+| **元数据类**         | `ImageResponseMetadata` | 存储模型响应的全局元数据，如API调用耗时或请求ID。                                               |
+|                     | `ImageGenerationMetadata` | 存储单个生成结果的元数据，如模型使用的生成参数或调试信息。                                     |
+| **设计理念**         | 模块化与可互换性       | Spring框架的核心原则，允许开发者通过统一接口切换不同模型，减少代码改动。                      |
+|                     | 抽象化                | 通过`ImageModel`和配套类隐藏模型差异，开发者仅需关注业务逻辑，无需处理底层请求/响应格式差异。   |
+| **功能动词**         | 封装（Encapsulation）  | 将请求输入（`ImagePrompt`）、配置（`ImageOptions`）和输出（`ImageResponse`）封装为对象，简化交互流程。 |
+|                     | 扩展（Extension）     | 允许模型实现扩展`ImageOptions`接口添加专属参数（如OpenAI的`quality`），兼顾通用性与灵活性。     |
+|                     | 解析（Parsing）        | API内部自动将模型返回的原始数据（如JSON或二进制）解析为结构化的`ImageResponse`对象。           |
+
+---
+
+### 总结
+Spring AI Image Model API通过分层抽象和标准化类设计，实现了图像生成任务的模块化与可移植性。核心接口`ImageModel`及配套的输入类（`ImagePrompt`、`ImageMessage`）、配置类（`ImageOptions`）和输出类（`ImageResponse`、`ImageGeneration`）共同构建了一个统一的交互框架。开发者可通过配置`ImageOptions`定义通用参数，或使用模型专属选项（如OpenAI的`quality`）细化生成效果。API内部封装了请求构造与响应解析的复杂性，同时通过元数据类（`ImageResponseMetadata`）提供调试和监控支持。这一设计既遵循了Spring的模块化理念，又兼顾了不同模型的扩展需求，最终降低了集成多模型图像生成功能的开发成本。
