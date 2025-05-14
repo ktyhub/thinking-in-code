@@ -207,6 +207,8 @@ Configuration）和扩展性（支持20+AI服务商），适用于复杂AI应用
 
 # Chat Model API  聊天模型 API
 
+[https://docs.spring.io/spring-ai/reference/api/chatmodel.html](https://docs.spring.io/spring-ai/reference/api/chatmodel.html)
+
 | **类别**       | **词条**                   | **详细说明**                                                                   |
 |--------------|--------------------------|----------------------------------------------------------------------------|
 | **核心接口**     | `ChatModel`              | 继承自`Model<Prompt, ChatResponse>`，提供`call`方法处理聊天请求，支持不同模型的切换。               |
@@ -243,6 +245,8 @@ Spring AI Chat Model API 提供了一套标准化的接口（如`ChatModel`和`S
 
 # Embeddings Model API 嵌入模型 API
 
+[https://docs.spring.io/spring-ai/reference/api/embeddings.html](https://docs.spring.io/spring-ai/reference/api/embeddings.html)
+
 | **类别**     | **词条**                      | **详细说明**                                                   |
 |------------|-----------------------------|------------------------------------------------------------|
 | **接口**     | EmbeddingClient             | Spring AI中用于与嵌入模型交互的核心接口，继承自`ModelClient`，提供文本转向量、批量处理等方法。 |
@@ -277,35 +281,164 @@ Spring AI的**Embedding API**以**EmbeddingClient**接口为核心，围绕**可
 方法以支持底层模型调用，并通过`dimensions()`动态获取向量维度。元数据类（如**EmbeddingResponseMetadata**）提供附加信息，而*
 *EmbeddingOptions**允许配置请求参数。整体设计体现了Spring的模块化理念，通过标准化接口和分层封装，降低AI集成复杂度，适用于多种应用场景。
 
+# Image Model API
 
+[https://docs.spring.io/spring-ai/reference/api/imageclient.html](https://docs.spring.io/spring-ai/reference/api/imageclient.html)
 
-
-### 当前文章主题说明
-文章主题为**Spring AI Image Model API的设计与实现**，旨在阐述该API如何通过模块化、可移植的接口和配套类（如`ImagePrompt`、`ImageResponse`等），简化开发者与图像生成模型的交互。其核心目标是提供统一的抽象层，允许开发者灵活切换不同AI模型的图像处理功能，同时封装请求构造和响应解析的复杂性。
+文章主题为**Spring AI Image Model API的设计与实现**，旨在阐述该API如何通过模块化、可移植的接口和配套类（如`ImagePrompt`、
+`ImageResponse`等），简化开发者与图像生成模型的交互。其核心目标是提供统一的抽象层，允许开发者灵活切换不同AI模型的图像处理功能，同时封装请求构造和响应解析的复杂性。
 
 ---
 
 ### 关键词分类与说明
 
-| 类别                | 词条                  | 详细说明                                                                                     |
-|---------------------|-----------------------|----------------------------------------------------------------------------------------------|
-| **核心接口**         | `ImageModel`          | 函数式接口，继承自`Model<ImagePrompt, ImageResponse>`，定义了调用图像生成模型的统一方法`call()`。开发者通过此接口与不同模型交互。 |
-| **输入封装类**       | `ImagePrompt`         | 封装图像生成请求的输入数据，包含`ImageMessage`列表和可选的`ImageOptions`，实现`ModelRequest`接口。                          |
-|                     | `ImageMessage`        | 包含生成图像的文本描述及其权重（`text`和`weight`），用于指导模型生成内容。例如，权重可为正负值以增强或削弱某些特征。              |
-| **配置选项类**       | `ImageOptions`         | 接口，继承自`ModelOptions`，定义图像生成的通用参数（如数量`n`、尺寸`width/height`、响应格式`responseFormat`等）。模型实现可扩展此接口。 |
-|                     | 模型特定选项（如OpenAI） | 示例：OpenAI的`quality`（生成质量）和`style`（艺术风格）等参数，允许开发者在初始化或运行时覆盖默认配置。                        |
-| **输出处理类**       | `ImageResponse`       | 封装模型输出，包含`ImageGeneration`列表和元数据（`ImageResponseMetadata`），提供获取单结果或多结果的方法。                     |
-|                     | `ImageGeneration`     | 继承自`ModelResult<Image>`，表示单个生成结果及其元数据（如生成参数），包含图像数据（`Image`对象）和元数据（`ImageGenerationMetadata`）。 |
-|                     | `Image`               | 表示生成的图像数据，可能包含URL或Base64编码的二进制内容，具体由模型实现决定。                                                |
-| **元数据类**         | `ImageResponseMetadata` | 存储模型响应的全局元数据，如API调用耗时或请求ID。                                               |
-|                     | `ImageGenerationMetadata` | 存储单个生成结果的元数据，如模型使用的生成参数或调试信息。                                     |
-| **设计理念**         | 模块化与可互换性       | Spring框架的核心原则，允许开发者通过统一接口切换不同模型，减少代码改动。                      |
-|                     | 抽象化                | 通过`ImageModel`和配套类隐藏模型差异，开发者仅需关注业务逻辑，无需处理底层请求/响应格式差异。   |
-| **功能动词**         | 封装（Encapsulation）  | 将请求输入（`ImagePrompt`）、配置（`ImageOptions`）和输出（`ImageResponse`）封装为对象，简化交互流程。 |
-|                     | 扩展（Extension）     | 允许模型实现扩展`ImageOptions`接口添加专属参数（如OpenAI的`quality`），兼顾通用性与灵活性。     |
-|                     | 解析（Parsing）        | API内部自动将模型返回的原始数据（如JSON或二进制）解析为结构化的`ImageResponse`对象。           |
+| 类别        | 词条                        | 详细说明                                                                                           |
+|-----------|---------------------------|------------------------------------------------------------------------------------------------|
+| **核心接口**  | `ImageModel`              | 函数式接口，继承自`Model<ImagePrompt, ImageResponse>`，定义了调用图像生成模型的统一方法`call()`。开发者通过此接口与不同模型交互。         |
+| **输入封装类** | `ImagePrompt`             | 封装图像生成请求的输入数据，包含`ImageMessage`列表和可选的`ImageOptions`，实现`ModelRequest`接口。                         |
+|           | `ImageMessage`            | 包含生成图像的文本描述及其权重（`text`和`weight`），用于指导模型生成内容。例如，权重可为正负值以增强或削弱某些特征。                              |
+| **配置选项类** | `ImageOptions`            | 接口，继承自`ModelOptions`，定义图像生成的通用参数（如数量`n`、尺寸`width/height`、响应格式`responseFormat`等）。模型实现可扩展此接口。    |
+|           | 模型特定选项（如OpenAI）           | 示例：OpenAI的`quality`（生成质量）和`style`（艺术风格）等参数，允许开发者在初始化或运行时覆盖默认配置。                                |
+| **输出处理类** | `ImageResponse`           | 封装模型输出，包含`ImageGeneration`列表和元数据（`ImageResponseMetadata`），提供获取单结果或多结果的方法。                      |
+|           | `ImageGeneration`         | 继承自`ModelResult<Image>`，表示单个生成结果及其元数据（如生成参数），包含图像数据（`Image`对象）和元数据（`ImageGenerationMetadata`）。 |
+|           | `Image`                   | 表示生成的图像数据，可能包含URL或Base64编码的二进制内容，具体由模型实现决定。                                                    |
+| **元数据类**  | `ImageResponseMetadata`   | 存储模型响应的全局元数据，如API调用耗时或请求ID。                                                                    |
+|           | `ImageGenerationMetadata` | 存储单个生成结果的元数据，如模型使用的生成参数或调试信息。                                                                  |
+| **设计理念**  | 模块化与可互换性                  | Spring框架的核心原则，允许开发者通过统一接口切换不同模型，减少代码改动。                                                        |
+|           | 抽象化                       | 通过`ImageModel`和配套类隐藏模型差异，开发者仅需关注业务逻辑，无需处理底层请求/响应格式差异。                                          |
+| **功能动词**  | 封装（Encapsulation）         | 将请求输入（`ImagePrompt`）、配置（`ImageOptions`）和输出（`ImageResponse`）封装为对象，简化交互流程。                       |
+|           | 扩展（Extension）             | 允许模型实现扩展`ImageOptions`接口添加专属参数（如OpenAI的`quality`），兼顾通用性与灵活性。                                   |
+|           | 解析（Parsing）               | API内部自动将模型返回的原始数据（如JSON或二进制）解析为结构化的`ImageResponse`对象。                                          |
 
 ---
 
 ### 总结
-Spring AI Image Model API通过分层抽象和标准化类设计，实现了图像生成任务的模块化与可移植性。核心接口`ImageModel`及配套的输入类（`ImagePrompt`、`ImageMessage`）、配置类（`ImageOptions`）和输出类（`ImageResponse`、`ImageGeneration`）共同构建了一个统一的交互框架。开发者可通过配置`ImageOptions`定义通用参数，或使用模型专属选项（如OpenAI的`quality`）细化生成效果。API内部封装了请求构造与响应解析的复杂性，同时通过元数据类（`ImageResponseMetadata`）提供调试和监控支持。这一设计既遵循了Spring的模块化理念，又兼顾了不同模型的扩展需求，最终降低了集成多模型图像生成功能的开发成本。
+
+Spring AI Image Model API通过分层抽象和标准化类设计，实现了图像生成任务的模块化与可移植性。核心接口`ImageModel`及配套的输入类（
+`ImagePrompt`、`ImageMessage`）、配置类（`ImageOptions`）和输出类（`ImageResponse`、`ImageGeneration`）共同构建了一个统一的交互框架。开发者可通过配置
+`ImageOptions`定义通用参数，或使用模型专属选项（如OpenAI的`quality`）细化生成效果。API内部封装了请求构造与响应解析的复杂性，同时通过元数据类（
+`ImageResponseMetadata`）提供调试和监控支持。这一设计既遵循了Spring的模块化理念，又兼顾了不同模型的扩展需求，最终降低了集成多模型图像生成功能的开发成本。
+
+# 矢量数据库
+
+[https://docs.spring.io/spring-ai/reference/api/vectordbs.html](https://docs.spring.io/spring-ai/reference/api/vectordbs.html)
+
+### 向量数据库及相关概念分类表
+
+| **类别**      | **词条**                      | **详细说明**                                                                           |
+|-------------|-----------------------------|------------------------------------------------------------------------------------|
+| **核心概念**    | 向量数据库（Vector Databases）     | 一种专门用于AI应用的数据库类型，通过存储向量嵌入（vector embeddings）实现相似性搜索，与传统数据库的精确匹配不同。                 |
+|             | 相似性搜索（Similarity Search）    | 向量数据库的核心功能，根据查询向量返回相似向量，通过向量相似度计算（如余弦相似度）确定结果。                                     |
+|             | 检索增强生成（RAG）                 | 技术名称，指将用户查询与向量数据库中检索的相似文档结合，作为上下文输入AI模型生成回答。                                       |
+|             | Document类                   | 封装数据源（如PDF、Word文档）的内容和元数据（如文件名、标签等）的类，是向量数据库存储的基本单元。                               |
+|             | 元数据（Metadata）               | 存储在Document中的键值对信息，用于过滤和增强搜索（如文件来源、时间戳等）。                                          |
+| **操作与流程**   | 插入数据                        | 将数据封装为Document对象后存入向量数据库的过程，需通过Embedding模型生成向量嵌入。                                  |
+|             | 计算嵌入（Embedding）             | 使用嵌入模型（如BERT、OpenAI的text-embedding-ada-002）将文本转换为数值向量（List<Double>）。               |
+|             | 存储与检索                       | 向量数据库的核心操作：存储向量嵌入并支持基于相似度的检索。                                                      |
+| **技术术语**    | 向量嵌入（Vector Embeddings）     | 文本的数值表示形式，通过嵌入模型生成，用于相似性比较。                                                        |
+|             | K最近邻（KNN）                   | 相似性搜索算法，返回与查询向量最接近的K个结果（即`topK`参数）。                                                |
+|             | 相似度阈值（Similarity Threshold） | 0-1之间的数值，过滤低于此阈值的搜索结果（默认0.75），值越高匹配越严格。                                            |
+| **参数配置**    | `topK`                      | 控制返回的相似文档数量（如默认4）。                                                                 |
+|             | `filterExpression`          | 类SQL的表达式字符串或`Filter.Expression`对象，用于基于元数据过滤结果（如`country == 'UK' && year >= 2020`）。 |
+| **API与实现**  | `VectorStore`接口             | Spring AI提供的抽象接口，定义向量数据库的基本操作（如`add`、`delete`、`similaritySearch`）。                 |
+|             | `SearchRequest`             | 构建相似性搜索请求的类，支持设置`topK`、阈值和过滤条件。                                                    |
+|             | `SimpleVectorStore`         | Spring AI的持久化向量存储实现，适用于教学和小规模场景。                                                   |
+| **工具与模型**   | `EmbeddingClient`           | Spring AI中生成向量嵌入的客户端组件，需与AI模型匹配（如OpenAI模型需用`OpenAiEmbeddingClient`）。               |
+|             | 嵌入模型（Embedding Models）      | 包括Word2Vec、GLoVE、BERT、OpenAI的text-embedding-ada-002等，用于文本到向量的转换。                   |
+| **过滤器与表达式** | `Filter.Expression`         | 通过流畅API（Fluent DSL）构建的过滤条件（如`eq("genre", "drama")`）。                               |
+|             | 逻辑运算符                       | 支持`AND`、`OR`、`NOT`及比较运算符（`==`、`>`、`in`等），用于组合复杂过滤条件。                               |
+| **数据加载与处理** | `JsonReader`                | Spring AI的工具类，从JSON文件加载数据并解析为Document列表，支持指定字段（如`price`、`name`）。                   |
+
+---
+
+### **总结**
+
+向量数据库是AI应用中处理非结构化数据的核心工具，其核心功能是通过相似性搜索关联用户查询与存储的向量嵌入。Spring AI通过
+`VectorStore`接口抽象了向量数据库的操作，支持插入数据、相似性搜索及基于元数据的过滤。关键技术点包括嵌入模型（如OpenAI的text-embedding-ada-002）生成向量、
+`SearchRequest`参数（`topK`和阈值）控制搜索粒度，以及通过`Filter.Expression`
+实现元数据过滤。典型应用场景是RAG：将检索的文档作为上下文输入AI模型，提升回答准确性。当前实现以`SimpleVectorStore`
+为主，未来可能扩展更多数据库支持。开发者需关注嵌入模型的选择、数据加载流程（如`JsonReader`）及过滤表达式的灵活构建。
+
+# Retrieval Augmented Generation （RAG) 检索增强生成
+
+[https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html](https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html)
+
+| **类别**         | **词条**                               | **详细说明**                                                            |
+|----------------|--------------------------------------|---------------------------------------------------------------------|
+| **RAG核心概念**    | Retrieval Augmented Generation (RAG) | 通过检索外部数据增强生成模型的技术，解决大模型的长文本处理、事实准确性和上下文感知的局限性。                      |
+| **Advisors工具** | QuestionAnswerAdvisor                | 基于向量数据库的检索增强工具，通过相似性搜索获取相关文档，并将结果附加到用户查询上下文中。                       |
+|                | RetrievalAugmentationAdvisor         | 模块化RAG流程的预置实现，支持自定义检索、增强和生成步骤。                                      |
+| **RAG模块化架构**   | Pre-Retrieval (预检索阶段)                | 处理用户查询以优化检索结果的阶段，包括查询转换、扩展和翻译。                                      |
+|                | Retrieval (检索阶段)                     | 从数据源（如向量数据库）中检索相关文档的阶段。                                             |
+|                | Post-Retrieval (后检索阶段)               | 对检索到的文档进行排序、过滤或压缩的阶段，以提高生成质量。                                       |
+|                | Generation (生成阶段)                    | 结合用户查询和检索文档生成最终响应的阶段。                                               |
+| **预检索技术**      | Query Transformation (查询转换)          | 优化查询语义的技术，包括压缩、重写和翻译。                                               |
+|                | CompressionQueryTransformer          | 将对话历史和后续查询压缩为独立查询，保留上下文核心。                                          |
+|                | RewriteQueryTransformer              | 重写用户查询以适配目标系统（如向量库或搜索引擎）。                                           |
+|                | TranslationQueryTransformer          | 将查询翻译为嵌入模型支持的目标语言。                                                  |
+|                | MultiQueryExpander                   | 将单一查询扩展为多个语义变体，增加检索覆盖率。                                             |
+| **检索技术**       | Document Search (文档搜索)               | 从数据源中检索相关文档的核心过程。                                                   |
+|                | VectorStoreDocumentRetriever         | 基于向量数据库的文档检索工具，支持元数据过滤、相似性阈值（`similarityThreshold`）和返回数量（`topK`）配置。 |
+| **后检索技术**      | Document Ranking (文档排序)              | 根据相关性对文档重新排序，解决“中间丢失”问题。                                            |
+|                | Document Selection (文档选择)            | 去除冗余或不相关文档，优化生成输入。                                                  |
+|                | Document Compression (文档压缩)          | 压缩文档内容以减少噪声，适应模型上下文长度限制。                                            |
+| **生成技术**       | Query Augmentation (查询增强)            | 将检索文档内容整合到用户查询中，提供生成上下文。                                            |
+|                | ContextualQueryAugmenter             | 将检索文档内容附加到用户查询的默认增强工具，支持空上下文处理配置（`allowEmptyContext`）。              |
+| **配置与参数**      | Filter Expression (过滤表达式)            | 基于元数据的SQL式表达式，用于动态筛选检索结果（如`type == 'Spring'`）。                      |
+|                | Similarity Threshold (相似性阈值)         | 设定检索结果的最小相似度（如`0.8`），过滤低相关性文档。                                      |
+|                | topK                                 | 控制返回的检索结果数量（如`topK=5`）。                                             |
+| **实现细节**       | Modular RAG Architecture             | 模块化RAG框架，支持灵活组合预检索、检索、后检索和生成组件。                                     |
+
+---
+
+### **总结**
+
+Spring AI的RAG框架通过模块化设计将检索增强生成分解为预检索、检索、后检索和生成四个阶段，每个阶段提供可配置的组件（如查询转换工具
+`QueryTransformer`、文档检索器`VectorStoreDocumentRetriever`）。核心工具`QuestionAnswerAdvisor`和
+`RetrievalAugmentationAdvisor`
+简化了RAG流程的集成，支持动态过滤表达式、相似性阈值等参数优化检索结果。预检索阶段通过查询扩展和翻译提升检索覆盖率，后检索阶段通过排序和压缩优化输入质量，最终结合上下文生成更准确的回答。该架构兼顾灵活性与性能，适用于复杂知识库增强的生成场景。
+
+
+
+# ETL   
+
+提取、转换和加载 （ETL） 框架是检索增强生成 （RAG） 用例中数据处理的主干
+
+[https://docs.spring.io/spring-ai/reference/api/etl-pipeline.html](https://docs.spring.io/spring-ai/reference/api/etl-pipeline.html)
+
+### 关键词总结表格
+
+| **类别**                | **词条**                      | **详细说明**                                                                                                                                                                                                 |
+|-------------------------|-------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **核心概念**            | ETL Pipeline                  | 数据处理的流程框架，包含数据抽取（Extract）、转换（Transform）、加载（Load）三个阶段，是RAG（检索增强生成）用例的基石。                                                                                     |
+|                         | RAG (Retrieval Augmented Generation) | 一种通过检索外部数据增强生成模型能力的模式，ETL为其提供结构化数据支持。                                                                                                                                    |
+| **接口与实现**          | DocumentReader                | 接口，负责从不同数据源（如PDF、JSON、TXT等）读取原始数据并转换为`Document`对象列表。具体实现包括`PagePdfDocumentReader`、`JsonReader`等。                                                                  |
+|                         | DocumentTransformer           | 接口，负责对文档进行转换（如文本分割、元数据增强）。实现类如`TokenTextSplitter`、`KeywordMetadataEnricher`等。                                                                                             |
+|                         | DocumentWriter                | 接口，负责将处理后的文档存储到目标位置（如文件、向量数据库）。实现类如`VectorStore`、`FileDocumentWriter`等。                                                                                               |
+| **文档处理组件**        | Document                      | 核心数据单元，包含文本内容、元数据（如来源、页码）及可选的多媒体类型（图片、音频、视频）。                                                                                                                |
+|                         | Metadata                      | 文档的附加信息（如文件名、字符集、关键词），用于增强检索和生成效果。                                                                                                                                      |
+| **文档读取器实现**      | JsonReader                    | 从JSON文件读取文档，支持通过JSON Pointer提取嵌套数据，并可指定特定键作为内容或元数据。                                                                                                                   |
+|                         | TextReader                    | 读取纯文本文件，生成单个文档，支持自定义字符集和元数据。                                                                                                                                                  |
+|                         | MarkdownDocumentReader        | 解析Markdown文件，根据配置（如代码块、水平分割线）生成多个文档，保留标题和格式。                                                                                                                          |
+|                         | PagePdfDocumentReader         | 基于PDFBox的PDF阅读器，按页拆分文档，支持配置页边距和文本格式化。                                                                                                                                         |
+|                         | ParagraphPdfDocumentReader    | 根据PDF目录结构按段落拆分文档（需PDF包含目录信息）。                                                                                                                                                      |
+|                         | TikaDocumentReader            | 基于Apache Tika的多格式文档解析器，支持DOCX、PPTX、HTML等格式。                                                                                                                                            |
+| **转换器实现**          | TokenTextSplitter             | 按CL100K_BASE编码的Token数量分割文本，支持语义分块（如句末分割）和元数据继承。                                                                                                                            |
+|                         | KeywordMetadataEnricher       | 调用生成模型提取文档关键词，并添加到元数据中。                                                                                                                                                            |
+|                         | SummaryMetadataEnricher       | 调用生成模型生成当前/相邻文档摘要，增强上下文关联性。                                                                                                                                                     |
+| **写入器实现**          | VectorStore                   | 将文档存储到向量数据库，供RAG模型检索。                                                                                                                                                                   |
+|                         | FileDocumentWriter            | 将文档写入本地文件，支持元数据标记（如页码）、追加模式和文档分隔符。                                                                                                                                      |
+| **配置与参数**          | JsonMetadataGenerator         | 可自定义的JSON元数据生成逻辑，用于`JsonReader`。                                                                                                                                                           |
+|                         | PdfDocumentReaderConfig       | PDF阅读器的配置类，包含页边距、文本格式化规则（如删除顶部行数）等参数。                                                                                                                                  |
+|                         | MetadataMode                  | 元数据处理模式（如`ALL`保留全部元数据，`NONE`忽略元数据），影响转换和存储行为。                                                                                                                            |
+| **工具与库**            | Apache PDFBox                 | 用于解析PDF文件的库，被`PagePdfDocumentReader`和`ParagraphPdfDocumentReader`依赖。                                                                                                                         |
+|                         | Apache Tika                   | 多格式文档解析库，支持DOCX、PPTX等格式，被`TikaDocumentReader`依赖。                                                                                                                                       |
+|                         | Jackson                       | JSON处理库，用于`JsonReader`解析JSON数据。                                                                                                                                                                 |
+| **数据处理行为**        | JSON Pointer                  | 在JSON文档中定位特定元素的语法（RFC 6901），用于精准提取嵌套内容。                                                                                                                                        |
+|                         | Text Splitting                | 将长文本拆分为符合模型上下文窗口的小块，支持基于字符数、Token数或语义边界。                                                                                                                              |
+|                         | Metadata Enrichment           | 通过生成模型或规则增强文档元数据（如关键词、摘要），提升检索效果。                                                                                                                                        |
+
+---
+
+### **总结**
+本文详细阐述了Spring AI中ETL管道的核心组件及其在RAG用例中的应用。**ETL框架**通过`DocumentReader`（如JSON/PDF/Tika解析器）抽取多源数据，转换为标准`Document`对象；经`DocumentTransformer`（如文本分割、元数据增强）处理，适配模型需求；最终由`DocumentWriter`（如向量数据库、文件写入器）存储。关键工具如**Apache PDFBox**和**Tika**支持多格式解析，`TokenTextSplitter`和元数据增强器（如`KeywordMetadataEnricher`）则优化数据结构和检索效率。配置参数（如`MetadataMode`、`PdfDocumentReaderConfig`）提供了高度灵活性，确保从数据预处理到存储的全链路可控。这一框架为生成式AI的检索增强提供了可靠的数据基础。
