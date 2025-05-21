@@ -398,9 +398,7 @@ Spring AI的RAG框架通过模块化设计将检索增强生成分解为预检�
 `RetrievalAugmentationAdvisor`
 简化了RAG流程的集成，支持动态过滤表达式、相似性阈值等参数优化检索结果。预检索阶段通过查询扩展和翻译提升检索覆盖率，后检索阶段通过排序和压缩优化输入质量，最终结合上下文生成更准确的回答。该架构兼顾灵活性与性能，适用于复杂知识库增强的生成场景。
 
-
-
-# ETL   
+# ETL
 
 提取、转换和加载 （ETL） 框架是检索增强生成 （RAG） 用例中数据处理的主干
 
@@ -408,37 +406,302 @@ Spring AI的RAG框架通过模块化设计将检索增强生成分解为预检�
 
 ### 关键词总结表格
 
-| **类别**                | **词条**                      | **详细说明**                                                                                                                                                                                                 |
-|-------------------------|-------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **核心概念**            | ETL Pipeline                  | 数据处理的流程框架，包含数据抽取（Extract）、转换（Transform）、加载（Load）三个阶段，是RAG（检索增强生成）用例的基石。                                                                                     |
-|                         | RAG (Retrieval Augmented Generation) | 一种通过检索外部数据增强生成模型能力的模式，ETL为其提供结构化数据支持。                                                                                                                                    |
-| **接口与实现**          | DocumentReader                | 接口，负责从不同数据源（如PDF、JSON、TXT等）读取原始数据并转换为`Document`对象列表。具体实现包括`PagePdfDocumentReader`、`JsonReader`等。                                                                  |
-|                         | DocumentTransformer           | 接口，负责对文档进行转换（如文本分割、元数据增强）。实现类如`TokenTextSplitter`、`KeywordMetadataEnricher`等。                                                                                             |
-|                         | DocumentWriter                | 接口，负责将处理后的文档存储到目标位置（如文件、向量数据库）。实现类如`VectorStore`、`FileDocumentWriter`等。                                                                                               |
-| **文档处理组件**        | Document                      | 核心数据单元，包含文本内容、元数据（如来源、页码）及可选的多媒体类型（图片、音频、视频）。                                                                                                                |
-|                         | Metadata                      | 文档的附加信息（如文件名、字符集、关键词），用于增强检索和生成效果。                                                                                                                                      |
-| **文档读取器实现**      | JsonReader                    | 从JSON文件读取文档，支持通过JSON Pointer提取嵌套数据，并可指定特定键作为内容或元数据。                                                                                                                   |
-|                         | TextReader                    | 读取纯文本文件，生成单个文档，支持自定义字符集和元数据。                                                                                                                                                  |
-|                         | MarkdownDocumentReader        | 解析Markdown文件，根据配置（如代码块、水平分割线）生成多个文档，保留标题和格式。                                                                                                                          |
-|                         | PagePdfDocumentReader         | 基于PDFBox的PDF阅读器，按页拆分文档，支持配置页边距和文本格式化。                                                                                                                                         |
-|                         | ParagraphPdfDocumentReader    | 根据PDF目录结构按段落拆分文档（需PDF包含目录信息）。                                                                                                                                                      |
-|                         | TikaDocumentReader            | 基于Apache Tika的多格式文档解析器，支持DOCX、PPTX、HTML等格式。                                                                                                                                            |
-| **转换器实现**          | TokenTextSplitter             | 按CL100K_BASE编码的Token数量分割文本，支持语义分块（如句末分割）和元数据继承。                                                                                                                            |
-|                         | KeywordMetadataEnricher       | 调用生成模型提取文档关键词，并添加到元数据中。                                                                                                                                                            |
-|                         | SummaryMetadataEnricher       | 调用生成模型生成当前/相邻文档摘要，增强上下文关联性。                                                                                                                                                     |
-| **写入器实现**          | VectorStore                   | 将文档存储到向量数据库，供RAG模型检索。                                                                                                                                                                   |
-|                         | FileDocumentWriter            | 将文档写入本地文件，支持元数据标记（如页码）、追加模式和文档分隔符。                                                                                                                                      |
-| **配置与参数**          | JsonMetadataGenerator         | 可自定义的JSON元数据生成逻辑，用于`JsonReader`。                                                                                                                                                           |
-|                         | PdfDocumentReaderConfig       | PDF阅读器的配置类，包含页边距、文本格式化规则（如删除顶部行数）等参数。                                                                                                                                  |
-|                         | MetadataMode                  | 元数据处理模式（如`ALL`保留全部元数据，`NONE`忽略元数据），影响转换和存储行为。                                                                                                                            |
-| **工具与库**            | Apache PDFBox                 | 用于解析PDF文件的库，被`PagePdfDocumentReader`和`ParagraphPdfDocumentReader`依赖。                                                                                                                         |
-|                         | Apache Tika                   | 多格式文档解析库，支持DOCX、PPTX等格式，被`TikaDocumentReader`依赖。                                                                                                                                       |
-|                         | Jackson                       | JSON处理库，用于`JsonReader`解析JSON数据。                                                                                                                                                                 |
-| **数据处理行为**        | JSON Pointer                  | 在JSON文档中定位特定元素的语法（RFC 6901），用于精准提取嵌套内容。                                                                                                                                        |
-|                         | Text Splitting                | 将长文本拆分为符合模型上下文窗口的小块，支持基于字符数、Token数或语义边界。                                                                                                                              |
-|                         | Metadata Enrichment           | 通过生成模型或规则增强文档元数据（如关键词、摘要），提升检索效果。                                                                                                                                        |
+| **类别**      | **词条**                               | **详细说明**                                                                                         |
+|-------------|--------------------------------------|--------------------------------------------------------------------------------------------------|
+| **核心概念**    | ETL Pipeline                         | 数据处理的流程框架，包含数据抽取（Extract）、转换（Transform）、加载（Load）三个阶段，是RAG（检索增强生成）用例的基石。                          |
+|             | RAG (Retrieval Augmented Generation) | 一种通过检索外部数据增强生成模型能力的模式，ETL为其提供结构化数据支持。                                                            |
+| **接口与实现**   | DocumentReader                       | 接口，负责从不同数据源（如PDF、JSON、TXT等）读取原始数据并转换为`Document`对象列表。具体实现包括`PagePdfDocumentReader`、`JsonReader`等。 |
+|             | DocumentTransformer                  | 接口，负责对文档进行转换（如文本分割、元数据增强）。实现类如`TokenTextSplitter`、`KeywordMetadataEnricher`等。                    |
+|             | DocumentWriter                       | 接口，负责将处理后的文档存储到目标位置（如文件、向量数据库）。实现类如`VectorStore`、`FileDocumentWriter`等。                          |
+| **文档处理组件**  | Document                             | 核心数据单元，包含文本内容、元数据（如来源、页码）及可选的多媒体类型（图片、音频、视频）。                                                    |
+|             | Metadata                             | 文档的附加信息（如文件名、字符集、关键词），用于增强检索和生成效果。                                                               |
+| **文档读取器实现** | JsonReader                           | 从JSON文件读取文档，支持通过JSON Pointer提取嵌套数据，并可指定特定键作为内容或元数据。                                              |
+|             | TextReader                           | 读取纯文本文件，生成单个文档，支持自定义字符集和元数据。                                                                     |
+|             | MarkdownDocumentReader               | 解析Markdown文件，根据配置（如代码块、水平分割线）生成多个文档，保留标题和格式。                                                     |
+|             | PagePdfDocumentReader                | 基于PDFBox的PDF阅读器，按页拆分文档，支持配置页边距和文本格式化。                                                            |
+|             | ParagraphPdfDocumentReader           | 根据PDF目录结构按段落拆分文档（需PDF包含目录信息）。                                                                    |
+|             | TikaDocumentReader                   | 基于Apache Tika的多格式文档解析器，支持DOCX、PPTX、HTML等格式。                                                      |
+| **转换器实现**   | TokenTextSplitter                    | 按CL100K_BASE编码的Token数量分割文本，支持语义分块（如句末分割）和元数据继承。                                                  |
+|             | KeywordMetadataEnricher              | 调用生成模型提取文档关键词，并添加到元数据中。                                                                          |
+|             | SummaryMetadataEnricher              | 调用生成模型生成当前/相邻文档摘要，增强上下文关联性。                                                                      |
+| **写入器实现**   | VectorStore                          | 将文档存储到向量数据库，供RAG模型检索。                                                                            |
+|             | FileDocumentWriter                   | 将文档写入本地文件，支持元数据标记（如页码）、追加模式和文档分隔符。                                                               |
+| **配置与参数**   | JsonMetadataGenerator                | 可自定义的JSON元数据生成逻辑，用于`JsonReader`。                                                                 |
+|             | PdfDocumentReaderConfig              | PDF阅读器的配置类，包含页边距、文本格式化规则（如删除顶部行数）等参数。                                                            |
+|             | MetadataMode                         | 元数据处理模式（如`ALL`保留全部元数据，`NONE`忽略元数据），影响转换和存储行为。                                                    |
+| **工具与库**    | Apache PDFBox                        | 用于解析PDF文件的库，被`PagePdfDocumentReader`和`ParagraphPdfDocumentReader`依赖。                             |
+|             | Apache Tika                          | 多格式文档解析库，支持DOCX、PPTX等格式，被`TikaDocumentReader`依赖。                                                 |
+|             | Jackson                              | JSON处理库，用于`JsonReader`解析JSON数据。                                                                  |
+| **数据处理行为**  | JSON Pointer                         | 在JSON文档中定位特定元素的语法（RFC 6901），用于精准提取嵌套内容。                                                          |
+|             | Text Splitting                       | 将长文本拆分为符合模型上下文窗口的小块，支持基于字符数、Token数或语义边界。                                                         |
+|             | Metadata Enrichment                  | 通过生成模型或规则增强文档元数据（如关键词、摘要），提升检索效果。                                                                |
 
 ---
 
 ### **总结**
-本文详细阐述了Spring AI中ETL管道的核心组件及其在RAG用例中的应用。**ETL框架**通过`DocumentReader`（如JSON/PDF/Tika解析器）抽取多源数据，转换为标准`Document`对象；经`DocumentTransformer`（如文本分割、元数据增强）处理，适配模型需求；最终由`DocumentWriter`（如向量数据库、文件写入器）存储。关键工具如**Apache PDFBox**和**Tika**支持多格式解析，`TokenTextSplitter`和元数据增强器（如`KeywordMetadataEnricher`）则优化数据结构和检索效率。配置参数（如`MetadataMode`、`PdfDocumentReaderConfig`）提供了高度灵活性，确保从数据预处理到存储的全链路可控。这一框架为生成式AI的检索增强提供了可靠的数据基础。
+
+本文详细阐述了Spring AI中ETL管道的核心组件及其在RAG用例中的应用。**ETL框架**通过`DocumentReader`
+（如JSON/PDF/Tika解析器）抽取多源数据，转换为标准`Document`对象；经`DocumentTransformer`（如文本分割、元数据增强）处理，适配模型需求；最终由
+`DocumentWriter`（如向量数据库、文件写入器）存储。关键工具如**Apache PDFBox**和**Tika**支持多格式解析，`TokenTextSplitter`
+和元数据增强器（如`KeywordMetadataEnricher`）则优化数据结构和检索效率。配置参数（如`MetadataMode`、`PdfDocumentReaderConfig`
+）提供了高度灵活性，确保从数据预处理到存储的全链路可控。这一框架为生成式AI的检索增强提供了可靠的数据基础。
+
+# Structured Output Converter 结构化输出转换器
+
+| **类别**      | **词条**                           | **详细说明**                                                                           |
+|-------------|----------------------------------|------------------------------------------------------------------------------------|
+| **核心类与接口**  | `StructuredOutputConverter`      | Spring AI的核心接口，用于将LLM的文本输出转换为结构化类型（如Java类、JSON等），继承`Converter`和`FormatProvider`接口。 |
+|             | `BeanOutputConverter`            | 将LLM输出的JSON转换为Java Bean或复杂类型，支持通过`ParameterizedTypeReference`处理泛型结构。               |
+|             | `MapOutputConverter`             | 将LLM输出的JSON转换为`java.util.Map<String, Object>`实例。                                   |
+|             | `ListOutputConverter`            | 将LLM输出的逗号分隔文本转换为`java.util.List`实例。                                                |
+|             | `FormatProvider`                 | 接口，定义如何向LLM提供结构化输出的格式指令（如JSON模板）。                                                  |
+|             | `Converter`                      | Spring核心接口，负责将LLM的原始文本输出转换为目标类型（如`String`→`T`）。                                    |
+| **功能与机制**   | 结构化输出（Structured Output）         | LLM生成符合特定格式（JSON/XML/Java类）的文本，供下游应用解析和使用。                                         |
+|             | 格式指令（Format Instructions）        | 附加到用户输入的提示模板中，指导LLM生成符合目标结构的文本（如JSON Schema）。                                      |
+|             | 提示模板（PromptTemplate）             | 包含占位符（如`{format}`）的模板，动态插入格式指令以构建完整的LLM输入。                                         |
+|             | 转换流程（Conversion Process）         | 包含两阶段：1) 生成格式指令并发送给LLM；2) 将LLM返回的文本解析为目标类型（如JSON→Java对象）。                          |
+| **技术标准与格式** | JSON Schema                      | 用于定义JSON结构的规范，`BeanOutputConverter`通过DRAFT_2020_12版本生成与Java类对应的JSON模板。             |
+|             | RFC8259                          | JSON标准规范，要求LLM返回严格符合此标准的响应（如`MapOutputConverter`）。                                 |
+|             | 泛型类型（ParameterizedTypeReference） | 用于处理复杂Java泛型类型（如`List<ActorsFilmsRecord>`），在`BeanOutputConverter`中指定目标数据结构。        |
+| **操作与方法**   | `getFormat()`                    | `FormatProvider`接口方法，返回结构化输出的格式指令字符串（如JSON模板）。                                     |
+|             | `convert()`                      | `Converter`接口方法，将LLM的原始文本输出解析为目标类型实例（如`String`→`ActorsFilms`）。                     |
+| **验证与注意事项** | 验证机制（Validation）                 | 建议开发者实现校验逻辑，确保LLM输出符合预期（因LLM可能忽略格式指令或生成无效内容）。                                      |
+|             | 非确定性输出（Best Effort）              | 结构化输出转换是尽力而为的，LLM可能无法完全遵循格式要求，需结合错误处理机制。                                           |
+| **集成模型支持**  | JSON模式（JSON Mode）                | 部分AI模型（如OpenAI、Azure OpenAI、Mistral AI）内置支持生成严格JSON输出的配置选项。                        |
+|             | Ollama的`format`参数                | 通过设置`spring.ai.ollama.chat.options.format=json`强制Ollama生成JSON响应。                   |
+
+### 总结
+
+Spring AI的**结构化输出转换器**（如`StructuredOutputConverter`
+及其实现类）是一组工具，旨在将LLM生成的文本转换为结构化数据（如Java对象、JSON、Map或List）。其核心机制分为两步：
+
+1. **生成阶段**：通过`FormatProvider`向LLM附加格式指令（如JSON Schema），指导其生成符合目标结构的文本。
+2. **转换阶段**：利用`Converter`将LLM返回的文本解析为指定类型（如通过`ObjectMapper`反序列化JSON到Java Bean）。
+
+主要实现包括**BeanOutputConverter**（支持复杂Java类型与JSON的映射）、**MapOutputConverter**（生成键值对结构）和*
+*ListOutputConverter**（处理逗号分隔列表）。开发者需注意，LLM的输出可能存在不确定性，因此建议结合验证逻辑确保数据可靠性。此外，部分AI模型（如OpenAI、Azure
+OpenAI）提供原生JSON模式支持，可进一步提升结构化输出的稳定性。这一机制为下游应用（如数据管道、API集成）提供了可靠的结构化数据输入，是构建LLM驱动系统的关键组件。
+
+# Chat Memory 聊天记忆
+
+| 类别            | 词条                                                      | 详细说明                                                        |
+|---------------|---------------------------------------------------------|-------------------------------------------------------------|
+| **核心概念**      | Chat Memory                                             | Spring AI 提供的抽象层，用于存储和管理多轮对话中的上下文信息，解决LLM无状态问题。             |
+|               | Chat History                                            | 完整的对话历史记录，与Chat Memory不同，需通过其他方式（如Spring Data）持久化。          |
+|               | Large Language Models (LLMs)                            | 无状态模型，依赖外部机制（如Chat Memory）维护上下文。                            |
+| **内存类型**      | Message Window Chat Memory                              | 基于消息窗口的内存类型，保留最近的N条消息（默认20条），自动移除旧消息（系统消息优先保留）。             |
+| **存储库实现**     | InMemoryChatMemoryRepository                            | 基于内存的存储，使用`ConcurrentHashMap`，适用于临时或开发环境。                   |
+|               | JdbcChatMemoryRepository                                | 基于JDBC的关系型数据库存储，支持PostgreSQL、MySQL等，提供Schema自动初始化配置。        |
+|               | CassandraChatMemoryRepository                           | 基于Apache Cassandra的分布式存储，支持时间序列和TTL特性，适合高可用场景。              |
+|               | Neo4jChatMemoryRepository                               | 基于Neo4j图数据库的存储，使用节点和关系管理消息，支持自定义标签和索引优化。                    |
+| **配置属性**      | spring.ai.chat.memory.repository.jdbc.initialize-schema | 控制JDBC存储库的Schema初始化策略（`embedded`/`always`/`never`）。         |
+|               | spring.ai.chat.memory.cassandra.time-to-live            | 设置Cassandra存储消息的TTL（存活时间），用于自动清理旧数据。                        |
+| **操作与配置**     | store/retrieve                                          | 存储库的核心操作，用于持久化和读取消息。                                        |
+|               | auto-configure                                          | Spring AI自动配置默认存储库（如无其他配置，使用In-Memory）。                     |
+|               | Schema Initialization                                   | 存储库启动时的表结构初始化逻辑，支持自定义脚本或禁用初始化。                              |
+| **Advisor类型** | MessageChatMemoryAdvisor                                | 通过`ChatMemory`直接管理消息列表，将完整对话历史注入提示词。                        |
+|               | PromptChatMemoryAdvisor                                 | 将对话历史以文本形式追加到系统提示中，需自定义模板合并`instructions`和`memory`占位符。      |
+|               | VectorStoreChatMemoryAdvisor                            | 基于向量数据库的长期记忆管理，支持相似性检索，需模板包含`long_term_memory`占位符。          |
+| **集成技术**      | Spring Boot Auto-Configuration                          | 自动装配存储库和内存实例，简化配置。                                          |
+|               | Spring Data                                             | 推荐用于完整对话历史的持久化，与Chat Memory互补。                              |
+| **高级特性**      | Token Limit                                             | 未内置但可通过自定义策略实现，例如限制总token数而非消息条数。                           |
+|               | Tool Call Handling                                      | 当前版本暂未自动记录工具调用中间消息，需手动处理（参考User Controlled Tool Execution）。 |
+
+---
+
+### 总结
+
+Spring AI的**Chat Memory**模块旨在解决LLM无状态问题，通过多种内存类型（如**Message Window**
+）和存储库（内存/JDBC/Cassandra/Neo4j）实现上下文管理。核心区分**Chat Memory**（动态上下文）与**Chat History**
+（完整记录），后者需其他持久化方案。存储库支持自动Schema初始化与多数据库适配，**Jdbc**和**Cassandra**分别适用于关系型和分布式场景，
+**Neo4j**则利用图结构增强关联分析。
+
+在客户端集成中，**Advisors**
+（如MessageChatMemoryAdvisor）负责将内存内容注入对话流程，支持模板自定义。开发者需注意当前版本对工具调用中间消息的存储限制，需手动处理。整体设计灵活，结合Spring
+Boot自动配置，可快速适配不同场景需求，平衡性能与上下文相关性。
+
+# Tool Calling 工具调用
+
+| **类别**       | **词条**                            | **详细说明**                                                                                           |
+|--------------|-----------------------------------|----------------------------------------------------------------------------------------------------|
+| **核心概念**     | 工具调用（Tool Calling）                | AI模型通过客户端应用调用外部工具的能力，模型仅提供工具名和参数，应用执行并返回结果。                                                        |
+|              | 信息检索工具                            | 用于获取外部实时数据（如数据库、天气API），增强模型知识，适用于RAG场景。                                                            |
+|              | 动作执行工具                            | 允许在系统中执行操作（如发送邮件、创建记录），实现任务自动化。                                                                    |
+| **工具定义方式**   | `@Tool`注解                         | 声明方法为工具，可指定名称、描述、返回策略（`returnDirect`）和结果转换器。                                                       |
+|              | `MethodToolCallback`              | 通过方法（静态或实例）定义工具，支持自动生成输入参数的JSON模式。                                                                 |
+|              | `FunctionToolCallback`            | 基于函数（`Function`/`Consumer`等）定义工具，需显式指定输入类型和模式。                                                     |
+| **注解与接口**    | `@ToolParam`                      | 描述工具参数的详细信息（如格式、是否必填），影响JSON模式生成。                                                                  |
+|              | `ToolCallback`接口                  | 工具调用的核心接口，包含定义、元数据和执行逻辑。                                                                           |
+|              | `ToolDefinition`                  | 定义工具的名称、描述和输入参数JSON模式，供模型理解工具用途。                                                                   |
+| **执行管理**     | `ToolCallingManager`              | 管理工具执行生命周期，解析工具定义、执行调用并返回结果。                                                                       |
+|              | 框架控制执行                            | 默认模式，自动处理工具调用-执行-返回模型循环，用户无需干预。                                                                    |
+|              | 用户控制执行                            | 通过`internalToolExecutionEnabled=false`手动处理工具调用，适合需要自定义流程的场景。                                       |
+| **结果处理**     | `ToolCallResultConverter`         | 将工具执行结果转换为字符串返回给模型，默认使用Jackson序列化。                                                                 |
+|              | `returnDirect`                    | 控制工具结果直接返回用户（`true`）还是发送回模型（`false`），适用于需要终止推理链的场景。                                                |
+| **上下文传递**    | `ToolContext`                     | 传递用户自定义的上下文数据（如租户ID），工具执行时可访问，数据不暴露给模型。                                                            |
+| **工具解析**     | `ToolCallbackResolver`            | 动态解析工具名称到具体实现，支持`@Bean`定义的函数工具。                                                                    |
+|              | `SpringBeanToolCallbackResolver`  | 从Spring上下文中解析工具，支持动态加载函数工具。                                                                        |
+| **异常处理**     | `ToolExecutionException`          | 工具执行失败时抛出，可自定义处理策略（如返回错误信息或中断流程）。                                                                  |
+|              | `ToolExecutionExceptionProcessor` | 处理工具调用异常，决定返回错误消息或抛出异常。                                                                            |
+| **JSON模式生成** | `JsonSchemaGenerator`             | 自动为工具输入参数生成JSON模式，支持`@ToolParam`、`@Schema`等注解标注参数描述和约束。                                            |
+| **限制与约束**    | 不支持的类型                            | 方法/函数的参数或返回值不支持`Optional`、异步类型（`CompletableFuture`）、响应式类型（`Mono`）和函数式接口（需用`FunctionToolCallback`）。 |
+|              | 动态工具解析限制                          | 基于`@Bean`的函数工具缺乏类型安全，需通过常量名称引用。                                                                    |
+
+---
+
+### **总结**
+
+Spring AI的工具调用框架通过**声明式注解**（如`@Tool`）、**程序化配置**（如`MethodToolCallback`）和**动态解析**（如`@Bean`
+函数）支持灵活定义工具。工具分为**信息检索**（增强模型实时数据能力）和**动作执行**（自动化任务）两类，其生命周期由
+`ToolCallingManager`统一管理。开发者可选择框架自动处理工具调用，或通过`internalToolExecutionEnabled`手动控制流程。结果处理支持
+**直接返回用户**（`returnDirect`）或**模型二次加工**，并通过`ToolContext`传递安全上下文。工具输入参数的JSON模式由
+`JsonSchemaGenerator`自动生成，结合`@ToolParam`等注解优化模型调用准确性。异常处理和动态解析机制（`ToolCallbackResolver`
+）进一步提升了系统的健壮性和扩展性。该框架在保障安全性的同时，为AI应用提供了高效的外部工具集成方案。
+
+# Model Context Protocol (MCP) 模型上下文协议 （MCP）
+
+[https://docs.spring.io/spring-ai/reference/api/mcp/mcp-overview.html](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-overview.html)
+
+| 类别           | 词条                            | 详细说明                                                                                                                  |
+|--------------|-------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| **协议**       | Model Context Protocol (MCP)  | 一种标准化协议，用于AI模型与外部工具和资源的结构化交互，支持多种传输机制（如HTTP、SSE、Stdio）。                                                               |
+| **架构分层**     | 客户端/服务器层（Client/Server Layer） | 包含`McpClient`（客户端操作）和`McpServer`（服务器端协议管理），均通过`McpSession`进行通信。                                                       |
+|              | 会话层（Session Layer）            | 由`McpSession`实现，管理通信模式（同步/异步）、状态和消息流，核心实现为`DefaultMcpSession`。                                                        |
+|              | 传输层（Transport Layer）          | 处理JSON-RPC消息的序列化与反序列化，支持多种传输实现（如Stdio、HTTP SSE）。                                                                      |
+| **客户端功能**    | 协议版本协商                        | 客户端与服务器协商协议版本以确保兼容性。                                                                                                  |
+|              | 工具发现与执行                       | 客户端通过协议发现并调用服务器提供的工具（如函数调用）。                                                                                          |
+|              | 资源访问管理                        | 基于URI的资源访问（如文件、API），支持权限控制和缓存策略。                                                                                      |
+|              | 提示系统交互                        | 客户端与服务器交互动态生成或调整提示词模板。                                                                                                |
+| **传输机制**     | Stdio传输                       | 基于标准输入/输出的进程间通信方式，适用于本地或容器化环境。                                                                                        |
+|              | HTTP SSE传输                    | 通过HTTP服务器发送事件（Server-Sent Events）实现实时流式通信，支持同步和异步操作。                                                                  |
+|              | WebFlux SSE传输                 | 基于Spring WebFlux的响应式HTTP传输实现，支持高并发场景。                                                                                 |
+| **服务器功能**    | 工具暴露                          | 服务器向客户端公开可用工具（如API端点、数据处理功能）。                                                                                         |
+|              | 资源管理                          | 提供URI驱动的资源访问（如数据库连接、文件存储），支持多租户隔离。                                                                                    |
+|              | 结构化日志与通知                      | 服务器生成标准化的日志事件和通知，供客户端订阅和分析。                                                                                           |
+| **Spring集成** | MCP Boot Starters             | Spring Boot启动器，简化客户端和服务器配置，支持`spring-ai-starter-mcp-client`（核心）、`-server-webmvc`（MVC SSE）、`-server-webflux`（响应式SSE）等。 |
+|              | 迁移指南                          | 提供从MCP Java SDK 0.7.0到0.8.0的升级指导，涉及会话架构变更和API调整。                                                                      |
+| **功能特性**     | 同步/异步操作                       | 客户端和服务器均支持同步阻塞和异步非阻塞调用模式。                                                                                             |
+|              | 能力协商（Capability Negotiation）  | 客户端与服务器协商支持的功能集（如工具类型、资源访问权限）。                                                                                        |
+|              | Roots管理                       | 管理客户端可访问的根资源路径，实现资源隔离与安全控制。                                                                                           |
+| **开发工具**     | JSON-RPC                      | 基于JSON的远程过程调用协议，用于MCP消息的序列化与通信。                                                                                       |
+|              | 多模态支持                         | 支持文本、图像、音频等多种数据类型交互（通过资源URI和工具扩展）。                                                                                    |
+
+---
+
+### 总结
+
+**Model Context Protocol (MCP)** 是Spring AI生态中的核心协议，旨在标准化AI模型与外部工具的交互，其分层架构（客户端/服务器层、会话层、传输层）支持灵活的多传输机制（如Stdio、HTTP
+SSE）。通过**MCP Java SDK**，开发者可构建支持同步/异步操作、工具发现、资源管理的AI应用，而**Spring Boot集成**
+进一步简化了客户端和服务器的配置（如`spring-ai-starter-mcp-client`和`-server-webflux`
+）。关键功能包括协议版本协商、结构化日志、多模态支持，以及通过JSON-RPC实现的高效通信。该协议特别适用于需要复杂工具链和资源管理的场景（如RAG、多模型协作），并通过Spring生态提供企业级扩展能力。
+
+# 检索增强生成（RAG）
+
+[https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html](https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html)
+
+| **类别**         | **词条**                               | **详细说明**                                                                                                      |
+|----------------|--------------------------------------|---------------------------------------------------------------------------------------------------------------|
+| **技术方法**       | Retrieval Augmented Generation (RAG) | 一种通过检索外部数据增强生成结果的技术，解决大模型在长文本、事实准确性和上下文感知上的局限性。                                                               |
+| **Advisor实现类** | QuestionAnswerAdvisor                | 通过查询向量数据库获取与用户问题相关的文档，并将结果作为上下文输入模型生成答案。支持动态过滤表达式和相似度阈值配置。                                                    |
+|                | RetrievalAugmentationAdvisor         | 模块化的RAG流程实现类，支持预检索、检索、后检索和生成阶段的组件配置。可处理空上下文、动态过滤及多阶段查询增强。                                                     |
+| **模块化架构**      | 预检索（Pre-Retrieval）                   | 处理用户查询以优化检索效果，包含查询转换（Query Transformation）和查询扩展（Query Expansion）。                                             |
+|                | 检索（Retrieval）                        | 从数据源（如向量数据库）中检索相关文档，支持元数据过滤、相似度阈值和Top-K结果限制。                                                                  |
+|                | 后检索（Post-Retrieval）                  | 对检索结果进行排序、去重、压缩等处理，提升生成阶段的输入质量。包含文档排序（Ranker）、选择（Selector）、压缩（Compressor）等组件。                                 |
+|                | 生成（Generation）                       | 基于用户查询和检索结果生成最终响应，核心组件为上下文查询增强器（ContextualQueryAugmenter）。                                                    |
+| **预检索组件**      | QueryTransformer                     | 转换查询以适配检索系统，包含压缩（CompressionQueryTransformer）、重写（RewriteQueryTransformer）、翻译（TranslationQueryTransformer）等子类。 |
+|                | MultiQueryExpander                   | 将单一查询扩展为多个语义变体，增加检索多样性。支持控制是否包含原始查询及生成数量。                                                                     |
+| **检索组件**       | VectorStoreDocumentRetriever         | 从向量数据库中检索相似文档，支持静态或动态元数据过滤（通过`FilterExpression`）、相似度阈值（`similarityThreshold`）和Top-K结果限制。                      |
+|                | FilterExpressionBuilder              | 构建类似SQL的过滤表达式（如`type == 'Spring'`），用于检索时筛选文档元数据。                                                              |
+| **后检索组件**      | ConcatenationDocumentJoiner          | 合并多来源检索结果，处理重复文档（保留首次出现）。                                                                                     |
+| **生成组件**       | ContextualQueryAugmenter             | 将检索到的文档内容作为上下文增强用户查询。默认禁止空上下文（返回拒答），可配置`allowEmptyContext`允许空上下文生成回答。                                         |
+| **配置参数**       | FILTER_EXPRESSION                    | 动态过滤表达式参数，可通过`Query`或`Advisor`上下文传递，覆盖静态配置。                                                                   |
+|                | similarityThreshold                  | 相似度阈值（0-1），控制检索结果的最小匹配度。                                                                                      |
+|                | topK                                 | 返回最相关的文档数量。                                                                                                   |
+| **工具与依赖**      | spring-ai-advisors-vector-store      | Spring AI中支持向量存储检索的依赖库，需添加到项目以使用RAG相关的Advisor。                                                                |
+
+---
+
+### **总结**
+
+Spring AI通过**模块化架构**实现了灵活可配置的**检索增强生成（RAG）**流程。其核心分为**预检索**（查询转换与扩展）、**检索**
+（向量数据库查询与过滤）、**后检索**（结果优化）和**生成**（上下文增强）四个阶段，每个阶段提供多种组件（如`QueryTransformer`、
+`VectorStoreDocumentRetriever`、`ContextualQueryAugmenter`）支持定制。通过动态参数（如`FILTER_EXPRESSION`）和配置选项（如
+`similarityThreshold`），开发者能够针对业务需求调整检索精度与生成效果。该框架尤其适用于需要结合外部知识库提升生成质量的应用场景，例如事实问答和长文本生成。
+
+# ETL
+
+[https://docs.spring.io/spring-ai/reference/api/etl-pipeline.html](https://docs.spring.io/spring-ai/reference/api/etl-pipeline.html)
+
+### 概念、名词、动词及关键词表格
+
+| **类别**      | **词条**                       | **详细说明**                                                                  |
+|-------------|------------------------------|---------------------------------------------------------------------------|
+| **核心组件**    | ETL框架                        | 数据处理的骨干框架，包含Extract、Transform、Load三个阶段，用于将原始数据转换为结构化向量存储，支持RAG（检索增强生成）用例。 |
+|             | DocumentReader               | 接口，实现`Supplier<List<Document>>`，用于从PDF、JSON、文本等来源提取数据生成`Document`列表。      |
+|             | DocumentTransformer          | 接口，实现`Function<List<Document>, List<Document>>`，用于对文档进行分块、元数据增强等转换操作。     |
+|             | DocumentWriter               | 接口，实现`Consumer<List<Document>>`，负责将处理后的文档写入文件或向量数据库。                      |
+| **文档读取器实现** | JsonReader                   | 从JSON文件中提取文档内容，支持JSON指针定位嵌套数据，可配置元数据生成和指定键值提取。                            |
+|             | TextReader                   | 读取纯文本文件为单个`Document`，支持自定义字符集和元数据（如文件名）。                                  |
+|             | MarkdownDocumentReader       | 解析Markdown文件，按标题、段落、代码块等分割内容，支持水平线分块和元数据配置。                               |
+|             | PagePdfDocumentReader        | 使用Apache PDFBox按页拆分PDF文档，支持配置页面边距和文本格式化。                                  |
+|             | ParagraphPdfDocumentReader   | 基于PDF目录结构拆分文档为段落（需PDF包含目录元数据）。                                            |
+|             | TikaDocumentReader           | 通过Apache Tika解析多种格式（如DOCX、PPTX、HTML），提取文本内容。                              |
+| **转换器实现**   | TokenTextSplitter            | 基于CL100K_BASE编码按Token数分块文本，支持配置最小字符数、分块重叠等参数。                             |
+|             | KeywordMetadataEnricher      | 使用生成式模型提取文档关键词，添加到元数据字段`excerpt_keywords`。                                |
+|             | SummaryMetadataEnricher      | 生成当前/相邻文档摘要，添加`section_summary`、`prev_section_summary`等元数据。               |
+| **文档写入器实现** | FileDocumentWriter           | 将文档内容写入文件，支持附加模式、元数据输出（如`MetadataMode.ALL`）及文档分隔标记。                       |
+|             | VectorStore                  | 向量数据库存储接口，用于RAG检索场景，接受处理后文档列表。                                            |
+| **数据结构与配置** | Document类                    | 包含文本内容、元数据（键值对）及可选的多媒体类型（如图像、音频）。                                         |
+|             | JsonMetadataGenerator        | 可选组件，用于为JSON文档生成自定义元数据。                                                   |
+|             | MarkdownDocumentReaderConfig | 配置Markdown解析行为，如是否包含代码块、块引用，是否按水平线分块等。                                    |
+|             | PdfDocumentReaderConfig      | 配置PDF解析参数，如页面边距、文本格式化规则（删除顶部行数）及每文档包含的页数。                                 |
+| **关键技术**    | JSON指针（RFC 6901）             | 用于精准定位JSON文档中的嵌套元素（如`/store/books/0`）。                                    |
+|             | CL100K_BASE编码                | OpenAI模型使用的Token编码方式，用于TokenTextSplitter分块。                               |
+|             | MetadataMode                 | 元数据处理模式枚举（如`NONE`、`ALL`），控制写入文件或生成摘要时是否包含元数据。                             |
+
+---
+
+### 总结
+
+Spring AI的ETL框架通过**DocumentReader**、**DocumentTransformer**和**DocumentWriter**三大核心接口，构建了从多源数据提取到向量存储的完整流程。
+**DocumentReader**支持JSON、文本、Markdown、PDF（分页/分段）及Tika解析的多种格式，通过配置（如JSON指针、页面边距）实现灵活的内容提取。
+**DocumentTransformer**提供分块（TokenTextSplitter）、元数据增强（关键词/摘要生成）等功能，适配AI模型的输入限制。*
+*DocumentWriter**
+则支持文件输出（含元数据标记）和向量数据库存储，满足RAG场景需求。关键技术如CL100K_BASE编码、JSON指针及元数据模式（MetadataMode）贯穿整个流程，确保数据处理的精确性和可扩展性。该框架通过模块化设计，实现了对不同文档类型、
+
+# Prompt Engineering Patterns 提示工程模式
+
+[https://docs.spring.io/spring-ai/reference/api/chat/prompt-engineering-patterns.html](https://docs.spring.io/spring-ai/reference/api/chat/prompt-engineering-patterns.html)
+
+| **类别**   | **词条**                       | **详细说明**                                                                             |
+|----------|------------------------------|--------------------------------------------------------------------------------------|
+| **配置参数** | LLM Provider Selection       | 选择大型语言模型提供商（如OpenAI、Anthropic、Google Vertex AI等），通过Spring AI的starter依赖实现快速切换，保持代码不变性 |
+|          | Temperature                  | 控制生成随机性的参数（0.0-1.0），低值用于确定性输出（如分类），高值用于创造性任务                                         |
+|          | MaxTokens                    | 限制生成响应长度（5-1000+ tokens），影响输出内容的完整性                                                  |
+|          | Top-K/Top-P                  | 采样控制参数：Top-K限制候选token数量，Top-P动态选择概率累积阈值，共同影响生成多样性                                    |
+|          | Structured Response          | 通过`.entity()`方法将LLM输出直接映射到Java对象（如枚举/记录类），支持JSON等结构化格式                               |
+| **模型相关** | Model-Specific Options       | 提供商专属配置（如OpenAI的frequency_penalty、Anthropic的thinking模式），平衡功能特性与代码可移植性                |
+| **提示技术** | Zero-Shot Prompting          | 无示例直接指令（如情感分类），依赖模型预训练知识，适用于简单明确的任务                                                  |
+|          | Few-Shot Prompting           | 提供1-5个输入输出示例（如披萨订单解析），引导模型理解复杂模式或格式要求                                                |
+|          | System Prompting             | 设置全局行为规则（如响应格式限制），通过`.system()`方法定义，影响所有后续交互                                         |
+|          | Role Prompting               | 指定模型角色身份（如旅行顾问），通过`.system()`设定，影响回答风格和知识深度                                          |
+|          | Contextual Prompting         | 使用`.param()`注入上下文变量（如写作领域），增强回答的相关性和领域适应性                                            |
+|          | Step-Back Prompting          | 分步解决复杂问题：首先生成高层概念（如游戏关卡设计原则），再基于此生成具体内容                                              |
+|          | Chain of Thought (CoT)       | 要求逐步推理（如数学计算），通过"Let's think step by step"触发，显式展示思考过程                                |
+|          | Self-Consistency             | 多次运行模型（5次+）后投票选择结果，通过不同temperature设置增加路径多样性，提升复杂问题的可靠性                               |
+|          | Tree of Thoughts (ToT)       | 多路径探索框架（如象棋开局分析），包含候选生成、评估筛选、深度推演三阶段，用于复杂决策场景                                        |
+|          | Automatic Prompt Engineering | 模型自动生成/优化提示（如指令变体生成），通过BLEU等指标评估，实现提示工程自动化                                           |
+| **代码相关** | Code Prompting               | 面向编程任务的特殊提示技术，包含代码生成（Bash/Python脚本）、代码解释（逐行分析）、代码翻译（跨语言转换）三种模式，常用低temperature确保准确性   |
+| **评估方法** | BLEU Evaluation              | 机器翻译评估指标，用于自动提示工程中的候选提示质量对比                                                          |
+| **生产实践** | Entity Mapping               | Spring AI的核心特性，将LLM输出直接反序列化为类型安全的Java对象，支持枚举/记录类/复杂嵌套结构                              |
+|          | Majority Voting              | 自我一致性技术的决策机制，通过统计多次运行结果选择最高频答案                                                       |
+
+---
+
+### 总结
+
+本文系统阐述了Spring AI框架中提示工程的核心模式与技术。**配置参数**部分（Temperature/MaxTokens等）提供了模型行为的精细控制，
+**结构化响应**与**实体映射**特性显著简化了类型安全的数据处理。在提示技术维度，**Zero/Few-Shot**构成基础模式，*
+*System/Role/Contextual**提示实现上下文控制，**CoT/ToT**等进阶方法增强复杂推理能力。生产级实践强调**自我一致性**的可靠性保障与
+**自动提示工程**的效率优化。代码提示技术则展现了LLM在编程场景的特殊价值。Spring
+AI通过流畅的API设计，将这些模式无缝集成到Java应用中，支持从简单分类到多步代码生成的全场景需求，同时保持跨模型提供商的可移植性。开发者可通过参数调优与模式组合（如角色提示+少样本+实体映射），构建高效可靠的AI增强型应用。
