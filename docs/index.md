@@ -3,4 +3,4 @@
 
 Knowledge 、Thinking , You want to know
 
-{{ nav }}
+{{ nav_list(nav) }}
