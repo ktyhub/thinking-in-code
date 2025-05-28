@@ -1,6 +1,19 @@
-# Welcome to Thinking In Code
+# 🚀 Welcome to Thinking In Code
 
-Knowledge 、Thinking , You want to know
+<div style="text-align: center; margin: 2rem 0;">
+  <div style="font-size: 1.5em; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 600;">
+    💡 Knowledge • 🧠 Thinking • ✨ Everything You Want to Know
+  </div>
+  <div style="margin-top: 1rem; font-size: 1.1em; opacity: 0.8;">
+    🌟 Dive deep into middleware source code and cutting-edge technology
+  </div>
+</div>
+
+<div style="text-align: center; margin: 3rem 0;">
+  <div style="display: inline-block; padding: 15px 30px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 50px; color: white; font-weight: bold; box-shadow: 0 10px 30px rgba(79, 172, 254, 0.3); animation: pulse 2s infinite;">
+    🎯 Start Your Journey Into Code
+  </div>
+</div>
 
 ## 📚 技术博客 (Technical Blog)
 
