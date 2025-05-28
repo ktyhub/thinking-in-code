@@ -21,8 +21,6 @@
 
 ## ■ Technical Excellence
 
-<div style="border-left: 4px solid #000000; padding-left: 2rem; margin: 3rem 0;">
-
 ### ▲ Research & Analysis
 - [网址收藏](zh/chapter_post/site.md) - 精选技术网站收藏
 - [解锁 ElasticJob 云原生实践的难题](zh/chapter_post/elasticjob_cloud.md)
@@ -34,7 +32,6 @@
 - [大数据实时在线分析为何选择clickhouse？](zh/chapter_post/clickhouse.md)
 
 ### ● AI Technology Stack
-<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
 
 - **Spring AI Alibaba**
   - [官网笔记](zh/chapter_spring_ai_alibaba/1-official-website.md)
@@ -43,20 +40,14 @@
 - **Spring AI**
   - [官网笔记](zh/chapter_spring_ai/1-official-website.md)
 
-</div>
-
 ### ▲ Cloud Native Architecture
-<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
 
 - **Kubernetes (v1.9.9)**
   - [克隆K8S源码](zh/chapter_kubernetes/1-index.md)
   - [ApiServer主流程](zh/chapter_kubernetes/2-apiserver.md)
   - [ApiServer配置初始化](zh/chapter_kubernetes/3-apiserver-server-run-options.md)
 
-</div>
-
 ### ■ Distributed Systems
-<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
 
 - **ElasticJob (V2.1.5)**
   - [分布式调度系统简介](zh/chapter_elasticjob/1-introduce.md)
@@ -68,52 +59,35 @@
   - [实现说明](zh/chapter_zookeeper/2-implement.md)
   - [安装配置](zh/chapter_zookeeper/3-install.md)
 
-</div>
-
-</div>
-
 ### ◆ Microservices Architecture
-<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
 
 - **Dubbo (V3.0.8)**
   - [服务提供者的Demo](zh/chapter_dubbo/1-learn-from-a-demo.md)
   - [ServiceConfig化](zh/chapter_dubbo/2-serviceconfig-config.md)
   - [领域模型Model对象](zh/chapter_dubbo/3-model-init.md)
 
-</div>
-
 ### ▼ Message Queues
-<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
 
 - **Apache Kafka Client (3.2)**
   - [入门笔记](zh/chapter_kafka/1-introduce.md)
   - [高性能高可用设计](zh/chapter_kafka/2-high-performence.md)
   - [客户端案例](zh/chapter_kafka/3-client-sample.md)
 
-</div>
-
 ### ◇ Network Programming
-<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
 
 - **Netty (v4.x)**
   - [Netty的入门](zh/chapter_netty/1-sample.md)
   - [启动器Bootstrapp](zh/chapter_netty/2-bootstrap.md)
   - [EventLoopGroup初始化](zh/chapter_netty/3-event-loop-group-init.md)
 
-</div>
-
 ### ◈ Database Connection Pools
-<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
 
 - **Druid (v1.2.11)**
   - [入门案例](zh/chapter_druid/1-sample.md)
   - [数据源简介](zh/chapter_druid/2-datasource.md)
   - [初始化连接](zh/chapter_druid/3-before-connection.md)
 
-</div>
-
 ### ◉ Spring Ecosystem
-<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
 
 - **SpringBoot (v2.6.6)**
   - [入门案例](zh/chapter_springboot/1-sample.md)
@@ -123,10 +97,7 @@
 - **Reactor**
   - [Flux](zh/chaptor_reactor/Flux.md)
 
-</div>
-
 ### ◐ Linux Kernel
-<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
 
 - **eBPF**
   - [eBPF为什么很重要以及它的发展史](zh/chapter_linux/ebpf/1-ebpf.md)
@@ -138,16 +109,10 @@
   - [Linux内存相关命令](zh/chapter_linux/problem/memory.md)
   - [Linux磁盘相关命令](zh/chapter_linux/problem/disk.md)
 
-</div>
-
-<div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
-
 - **EMQX (V3.0)**
   - [EMQX简介](zh/chapter_emqx/1-introduce.md)
   - [项目结构](zh/chapter_emqx/2-code-struct.md)
   - [内核层启动](zh/chapter_emqx/3-kernel.md)
-
-</div>
 
 ---
 
@@ -165,7 +130,7 @@ Latest technology releases and open-source project updates
     <a href="zh/release_note/Spring-Boot_v3.3.12.md" style="color: #ffffff; text-decoration: none;">Spring Boot v3.3.12</a>
   </div>
   <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
-    <a href="zh/release_note/OpenHands_0.39.0%20-%202025-05-20.md" style="color: #ffffff; text-decoration: none;">OpenHands 0.39.0</a>
+    <a href="zh/release_note/OpenHands_0.39.0_-_2025-05-20.md" style="color: #ffffff; text-decoration: none;">OpenHands 0.39.0</a>
   </div>
   <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
     <a href="zh/release_note/FastGPT_V4.9.10-alpha.md" style="color: #ffffff; text-decoration: none;">FastGPT V4.9.10</a>
