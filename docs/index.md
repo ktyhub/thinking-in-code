@@ -2,3 +2,5 @@
 
 
 Knowledge 、Thinking , You want to know
+
+{{ nav }}
