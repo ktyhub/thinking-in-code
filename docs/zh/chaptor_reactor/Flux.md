@@ -242,3 +242,162 @@ create 方法的实现依赖于 FluxCreate 类，该类会根据所选的溢出�
 
 最后，每个由 create 方法创建的 Flux 都会通过 onAssembly 方法进行处理，这是 Reactor
 中的关键机制，支持操作符追踪、调试和钩子系统。这使得开发者可以更容易地调试和监控响应式流的运行状态。
+
+
+
+# Reactor Flux的背压机制详解
+
+背压(Backpressure)是响应式编程中的核心概念，用于解决生产者与消费者处理数据速率不匹配的问题。在Reactor框架中，Flux通过精心设计的背压机制确保系统稳定性和资源合理利用。
+
+## 什么是背压？
+
+背压是一种反馈机制，允许消费者告知生产者其能够处理数据的速率，从而避免消费者被过多数据压垮。当消费者处理速度跟不上生产者发送数据的速度时，背压机制会发挥作用。
+
+## Flux中的背压实现
+
+从源码中可以看出，Flux通过`request(n)`方法实现背压，消费者通过该方法向上游请求特定数量的数据元素：
+
+```java
+@Override
+public final void request(long n) {
+   if (Operators.validate(n)) {
+      long s = addCap(this, n);
+      // ...处理请求逻辑
+      onRequestedFromDownstream();
+   }
+}
+```
+
+
+
+
+
+## Flux的背压策略
+
+Flux提供了多种背压策略，在`FluxCreate`中通过`OverflowStrategy`枚举定义：
+
+### 1. BUFFER (缓存策略)
+
+```java
+static final class BufferAsyncSink<T> extends BaseSink<T> {
+   final Queue<T> queue;
+   // ...
+}
+```
+
+当消费者处理不及时时，BUFFER策略会将过多的数据项存储在无界队列中，等待消费者处理。这可能导致内存问题，但不会丢失数据。
+
+### 2. DROP (丢弃策略)
+
+```java
+static final class DropAsyncSink<T> extends NoOverflowBaseAsyncSink<T> {
+   @Override
+   void onOverflow() {
+      // nothing to do
+   }
+}
+```
+
+当消费者处理不及时时，DROP策略会简单地丢弃新到达的数据项，直到消费者可以再次处理数据。
+
+### 3. ERROR (错误策略)
+
+```java
+static final class ErrorAsyncSink<T> extends NoOverflowBaseAsyncSink<T> {
+   @Override
+   void onOverflow() {
+      error(Exceptions.failWithOverflow());
+   }
+}
+```
+
+当背压发生时，ERROR策略会以异常终止整个流处理。
+
+### 4. LATEST (保留最新策略)
+
+```java
+static final class LatestAsyncSink<T> extends BaseSink<T> {
+   final AtomicReference<T> queue;
+   // ...
+}
+```
+
+LATEST策略仅保留最新的数据项，丢弃之前的未处理项。这确保消费者总是处理最新数据，适用于只关心最新状态的场景。
+
+### 5. IGNORE (忽略策略)
+
+```java
+static final class IgnoreSink<T> extends BaseSink<T> {
+   // ...忽略背压控制，继续发送数据
+}
+```
+
+IGNORE策略完全忽略背压信号，无论消费者处理能力如何都持续发送数据。
+
+## 使用示例
+
+下面是使用不同背压策略的Flux.create示例：
+
+```java
+// 使用BUFFER策略
+Flux<Integer> bufferExample = Flux.create(sink -> {
+    for (int i = 0; i < 1000; i++) {
+        sink.next(i);
+    }
+    sink.complete();
+}, FluxSink.OverflowStrategy.BUFFER);
+
+// 使用DROP策略
+Flux<Integer> dropExample = Flux.create(sink -> {
+    for (int i = 0; i < 1000; i++) {
+        sink.next(i);
+    }
+    sink.complete();
+}, FluxSink.OverflowStrategy.DROP);
+
+// 使用ERROR策略
+Flux<Integer> errorExample = Flux.create(sink -> {
+    for (int i = 0; i < 1000; i++) {
+        sink.next(i);
+    }
+    sink.complete();
+}, FluxSink.OverflowStrategy.ERROR);
+```
+
+## 如何选择合适的背压策略
+
+- **BUFFER**: 当所有数据都必须处理且内存足够时
+- **DROP**: 允许丢弃部分数据，只关心处理新数据
+- **LATEST**: 只关心最新状态，如UI更新
+- **ERROR**: 严格要求背压，不能容忍任何数据堆积
+- **IGNORE**: 确定消费者可以快速处理或已有其他机制控制流量
+
+## 源码解析
+
+从源码可以看出，`FluxCreate`实现了背压的核心逻辑：
+
+1. `BaseSink`维护了请求计数，通过`REQUESTED`字段跟踪
+2. 不同的`Sink`实现针对各种背压策略提供具体行为
+3. `drain()`方法控制数据流动，确保只发送请求的数据量
+
+例如在`BufferAsyncSink`中，数据通过队列缓存，并在循环中根据请求量进行控制：
+
+```java
+long r = requestedFromDownstream();
+long e = 0L;
+
+while (e != r) {
+    // 发送数据逻辑
+    e++;
+}
+
+if (e != 0) {
+    produced(this, e);
+}
+```
+
+## 总结
+
+Reactor Flux的背压机制是保障响应式应用稳定性的关键特性，通过合理选择背压策略，可以有效平衡生产者和消费者的处理能力差异。不同策略各有优缺点，应根据实际业务场景选择合适的实现方式。
+
+深入理解背压机制不仅有助于正确使用Reactor框架，也能帮助开发者设计更为健壮的响应式系统。
