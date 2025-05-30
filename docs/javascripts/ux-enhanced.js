@@ -60,6 +60,12 @@
         const updateHeader = () => {
             const scrollY = window.pageYOffset;
             
+            // 移动端头部缩小
+            if (window.innerWidth < 768) {
+                header.style.height = scrollY > 50 ? '56px' : '72px';
+                header.style.fontSize = scrollY > 50 ? '0.875rem' : '1rem';
+            }
+
             if (scrollY > 100) {
                 header.classList.add('scrolled');
             } else {
@@ -91,6 +97,46 @@ if (scrollY > lastScrollY && scrollY > 200) {
 
     // ===== ENHANCED NAVIGATION =====
     function initEnhancedNavigation() {
+        // 移动端导航控制
+        const mobileMenuBtn = document.createElement('button');
+        mobileMenuBtn.className = 'mobile-menu-btn';
+        mobileMenuBtn.innerHTML = '☰';
+        mobileMenuBtn.style.cssText = `
+            display: none;
+            position: fixed;
+            top: var(--space-4);
+            right: var(--space-4);
+            background: var(--primary-brand);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: var(--space-2) var(--space-3);
+            z-index: 1001;
+        `;
+        document.body.appendChild(mobileMenuBtn);
+
+        const navContainer = document.querySelector('.md-nav');
+        if (!navContainer) return;
+
+        // 移动端菜单切换
+        mobileMenuBtn.addEventListener('click', () => {
+            navContainer.classList.toggle('active');
+            mobileMenuBtn.innerHTML = navContainer.classList.contains('active') ? '✕' : '☰';
+        });
+
+        // 窗口大小变化时切换菜单显示
+        window.addEventListener('resize', () => {
+            if (window.innerWidth < 768) {
+                mobileMenuBtn.style.display = 'block';
+                navContainer.style.transform = 'translateX(-100%)';
+            } else {
+                mobileMenuBtn.style.display = 'none';
+                navContainer.style.transform = 'translateX(0)';
+                navContainer.classList.remove('active');
+            }
+        });
+        window.dispatchEvent(new Event('resize'));
+
         const navLinks = document.querySelectorAll('.md-nav__link');
         
         navLinks.forEach(link => {
@@ -180,8 +226,19 @@ section.addEventListener('mouseenter', () => {
 });
 section.addEventListener('mouseleave', () => {
     section.style.transform = 'translateY(20px) scale(1)';
+    section.style.transition = 'transform var(--transition-slow)'; // 优化离开动画速度
 });
                 section.style.animationDelay = `${index * 0.1}s`;
+
+            // 移动端触摸优化
+            if (window.innerWidth < 768) {
+                section.style.transform = 'translateY(10px)';
+                section.addEventListener('touchstart', () => {
+                    section.style.transform = 'translateY(0) scale(1.02)';
+                }, { passive: true });
+                section.addEventListener('touchend', () => {
+                    section.style.transform = 'translateY(10px) scale(1)';
+                }, { passive: true });
             }
         });
     }
@@ -249,15 +306,42 @@ suggestionsContainer.addEventListener('click', (e) => {
     }
 });
 
+// 搜索建议键盘导航
+let selectedSuggestion = -1;
+const updateSelection = () => {
+    const suggestions = suggestionsContainer.querySelectorAll('.search-suggestion');
+    suggestions.forEach((sugg, idx) => {
+        sugg.style.background = idx === selectedSuggestion ? 'var(--dark-bg-tertiary)' : 'var(--dark-bg-secondary)';
+    });
+};
+
+document.addEventListener('keydown', (e) => {
+    if (!suggestionsContainer.style.display || suggestionsContainer.style.display === 'none') return;
+    const suggestions = suggestionsContainer.querySelectorAll('.search-suggestion');
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedSuggestion = (selectedSuggestion + 1) % suggestions.length;
+        updateSelection();
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedSuggestion = (selectedSuggestion - 1 + suggestions.length) % suggestions.length;
+        updateSelection();
+    } else if (e.key === 'Enter' && selectedSuggestion !== -1) {
+        suggestions[selectedSuggestion].click();
+    }
+});
+
 suggestionsContainer.addEventListener('mouseover', (e) => {
     if (e.target.classList.contains('search-suggestion')) {
-        e.target.style.background = 'var(--dark-bg-tertiary)';
+        selectedSuggestion = Array.from(suggestionsContainer.children).indexOf(e.target);
+        updateSelection();
     }
 });
 
 suggestionsContainer.addEventListener('mouseout', (e) => {
     if (e.target.classList.contains('search-suggestion')) {
-        e.target.style.background = 'var(--dark-bg-secondary)';
+        selectedSuggestion = -1;
+        updateSelection();
     }
 });
         searchInput.addEventListener('blur', () => {
@@ -297,19 +381,21 @@ suggestionsContainer.addEventListener('mouseout', (e) => {
             pre.addEventListener('mouseleave', () => copyButton.style.opacity = '0');
             
             copyButton.addEventListener('click', async () => {
-                try {
-                    await navigator.clipboard.writeText(block.textContent);
-                    copyButton.style.transform = 'scale(1.1)';
+    try {
         await navigator.clipboard.writeText(block.textContent);
+        copyButton.style.transform = 'scale(1.1)';
         copyButton.innerHTML = '✅';
+        // 调整提示位置避免遮挡
+        copyButton.style.right = '16px';
         setTimeout(() => {
             copyButton.innerHTML = '📋';
             copyButton.style.transform = 'scale(1)';
+            copyButton.style.right = '8px';
         }, 2000);
-                } catch (err) {
-                    console.error('Failed to copy code:', err);
-                }
-            });
+    } catch (err) {
+        console.error('Failed to copy code:', err);
+    }
+});
         });
     }
 
@@ -425,11 +511,13 @@ suggestionsContainer.addEventListener('mouseout', (e) => {
         window.addEventListener('scroll', toggleScrollButton);
         
         scrollButton.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // 添加点击颜色反馈
+    scrollButton.style.background = 'var(--primary-brand-hover)';
+    setTimeout(() => {
+        scrollButton.style.background = 'var(--primary-brand)';
+    }, 200);
+});
     }
 
     // ===== ENHANCED KEYBOARD NAVIGATION =====
