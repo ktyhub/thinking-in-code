@@ -150,8 +150,10 @@ if (navLinks.length === 0) {
 navLinks.forEach(link => {
     link.addEventListener('mouseenter', () => {
     try {
-
         link.style.animation = 'navLinkHover 0.3s forwards';
+    } catch (error) {
+        console.error('导航栏链接鼠标进入事件出错:', error);
+    }
     });
     link.addEventListener('mouseleave', () => {
     try {
@@ -172,6 +174,13 @@ navLinks.forEach(link => {
         sections.forEach((section, index) => {
             if (section.tagName && ['H1', 'H2', 'H3', 'P', 'UL', 'OL', 'BLOCKQUOTE'].includes(section.tagName)) {
                 section.classList.add('content-card', 'animate-fade-in-up');
+section.style.transform = 'translateY(20px)';
+section.addEventListener('mouseenter', () => {
+    section.style.transform = 'translateY(0) scale(1.02)';
+});
+section.addEventListener('mouseleave', () => {
+    section.style.transform = 'translateY(20px) scale(1)';
+});
                 section.style.animationDelay = `${index * 0.1}s`;
             }
         });
@@ -222,7 +231,7 @@ navLinks.forEach(link => {
 
             if (suggestions.length > 0) {
                 suggestionsContainer.innerHTML = suggestions.map(suggestion => 
-                    `<div class="search-suggestion" style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--dark-border);">${suggestion}</div>`
+                    `<div class="search-suggestion" style="padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--dark-border); transition: background 0.2s;" data-query="${suggestion}">${suggestion}</div>`
                 ).join('');
                 suggestionsContainer.style.display = 'block';
             } else {
@@ -231,6 +240,26 @@ navLinks.forEach(link => {
         }, 300);
 
         searchInput.addEventListener('input', (e) => handleSearch(e.target.value));
+suggestionsContainer.addEventListener('click', (e) => {
+    if (e.target.classList.contains('search-suggestion')) {
+        searchInput.value = e.target.dataset.query;
+        suggestionsContainer.style.display = 'none';
+        // 触发实际搜索逻辑（需根据项目具体搜索实现调整）
+        console.log('执行搜索:', e.target.dataset.query);
+    }
+});
+
+suggestionsContainer.addEventListener('mouseover', (e) => {
+    if (e.target.classList.contains('search-suggestion')) {
+        e.target.style.background = 'var(--dark-bg-tertiary)';
+    }
+});
+
+suggestionsContainer.addEventListener('mouseout', (e) => {
+    if (e.target.classList.contains('search-suggestion')) {
+        e.target.style.background = 'var(--dark-bg-secondary)';
+    }
+});
         searchInput.addEventListener('blur', () => {
             setTimeout(() => suggestionsContainer.style.display = 'none', 200);
         });
@@ -258,7 +287,7 @@ navLinks.forEach(link => {
                 cursor: pointer;
                 font-size: 12px;
                 opacity: 0;
-                transition: opacity 0.3s ease;
+                transition: opacity 0.3s ease, transform 0.2s ease;
             `;
             
             pre.style.position = 'relative';
@@ -270,8 +299,13 @@ navLinks.forEach(link => {
             copyButton.addEventListener('click', async () => {
                 try {
                     await navigator.clipboard.writeText(block.textContent);
-                    copyButton.innerHTML = '✅';
-                    setTimeout(() => copyButton.innerHTML = '📋', 2000);
+                    copyButton.style.transform = 'scale(1.1)';
+        await navigator.clipboard.writeText(block.textContent);
+        copyButton.innerHTML = '✅';
+        setTimeout(() => {
+            copyButton.innerHTML = '📋';
+            copyButton.style.transform = 'scale(1)';
+        }, 2000);
                 } catch (err) {
                     console.error('Failed to copy code:', err);
                 }
@@ -333,7 +367,7 @@ navLinks.forEach(link => {
                 z-index: 1000;
                 opacity: 0;
                 pointer-events: none;
-                transition: opacity 0.3s ease;
+                transition: opacity 0.3s ease, transform 0.2s ease;
                 border: 1px solid var(--dark-border);
                 box-shadow: var(--shadow-lg);
             `;
