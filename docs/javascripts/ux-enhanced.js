@@ -109,10 +109,12 @@ if (scrollY > lastScrollY && scrollY > 200) {
             background: var(--primary-brand);
             color: white;
             border: none;
-            border-radius: var(--radius-md);
-            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-full); /* 圆形按钮 */
+            padding: var(--space-3); /* 增加内边距 */
             z-index: 1001;
-        `;
+            box-shadow: var(--shadow-md); /* 添加阴影 */
+            transition: transform var(--transition-base);
+        `; /* 优化移动端菜单按钮样式 */
         document.body.appendChild(mobileMenuBtn);
 
         const navContainer = document.querySelector('.md-nav');
@@ -129,9 +131,11 @@ if (scrollY > lastScrollY && scrollY > 200) {
             if (window.innerWidth < 768) {
                 mobileMenuBtn.style.display = 'block';
                 navContainer.style.transform = 'translateX(-100%)';
+            navContainer.style.transition = 'transform var(--transition-slow)'; // 添加平滑过渡动画
             } else {
                 mobileMenuBtn.style.display = 'none';
                 navContainer.style.transform = 'translateX(0)';
+            navContainer.style.transition = 'transform var(--transition-slow)'; // 添加平滑过渡动画
                 navContainer.classList.remove('active');
             }
         });
@@ -156,12 +160,12 @@ if (scrollY > lastScrollY && scrollY > 200) {
                     height: ${size}px;
                     left: ${x}px;
                     top: ${y}px;
-                    background: rgba(255, 255, 255, 0.3);
+                    background: var(--accent-color); /* 使用辅助色增强视觉 */
                     border-radius: 50%;
                     transform: scale(0);
-                    animation: ripple 0.6s linear;
+                    animation: ripple 0.4s ease-out;
                     pointer-events: none;
-                `;
+                `; /* 优化涟漪动画时长和缓动函数 */
                 
                 this.style.position = 'relative';
                 this.style.overflow = 'hidden';
@@ -187,8 +191,12 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// 导航栏链接悬停动画，添加错误处理
-const navLinks = document.querySelectorAll('.md-tabs__link');
+// 优化导航链接选择器，兼容不同页面结构
+const navLinks = document.querySelectorAll('.md-tabs__link, .md-nav__link');
+if (navLinks.length === 0) {
+    console.error('未找到导航栏链接，请检查页面结构');
+    return;
+}
 if (navLinks.length === 0) {
     console.error('未找到导航栏链接，请检查页面结构');
 }
