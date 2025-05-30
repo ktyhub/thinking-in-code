@@ -83,7 +83,7 @@ Dubbo3 基于 Dubbo2 演进而来，在保持原有核心功能特性的同时�
 前面我们说了为什么要使用扩展机制,这里我们来看下具体实现
 
 先将扩展包里面的代码截个图认识认识各类型的单词
-![4-4-ext.png](/img/chaptre_dubbo/4-4-ext.png)
+![4-4-ext.png](/img/chapter_dubbo/4-4-ext.png)
 
 顺便我们先简单看下类结构图,后续再详细看每个类型的解释:
 ![4-5-ext.png](/img/chapter_dubbo/4-5-ext.png)
