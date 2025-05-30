@@ -66,12 +66,14 @@
                 header.classList.remove('scrolled');
             }
 
-            // Auto-hide header on scroll down, show on scroll up
-            if (scrollY > lastScrollY && scrollY > 200) {
-                header.style.transform = 'translateY(-100%)';
-            } else {
-                header.style.transform = 'translateY(0)';
-            }
+            // Auto-hide header on scroll down, show on scroll up, add fade-in/out effect
+if (scrollY > lastScrollY && scrollY > 200) {
+    header.style.transform = 'translateY(-100%)';
+    header.style.opacity = '0';
+} else {
+    header.style.transform = 'translateY(0)';
+    header.style.opacity = '1';
+}
 
             lastScrollY = scrollY;
             ticking = false;
@@ -124,16 +126,43 @@
         });
 
         // Add CSS for ripple animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes ripple {
-                to {
-                    transform: scale(4);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes ripple {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    @keyframes navLinkHover {
+        from { transform: translateY(0); }
+        to { transform: translateY(-5px); }
+    }
+`;
+document.head.appendChild(style);
+
+// 导航栏链接悬停动画，添加错误处理
+const navLinks = document.querySelectorAll('.md-tabs__link');
+if (navLinks.length === 0) {
+    console.error('未找到导航栏链接，请检查页面结构');
+}
+
+navLinks.forEach(link => {
+    link.addEventListener('mouseenter', () => {
+    try {
+
+        link.style.animation = 'navLinkHover 0.3s forwards';
+    });
+    link.addEventListener('mouseleave', () => {
+    try {
+
+        link.style.animation = 'none';
+    } catch (error) {
+        console.error('导航栏链接鼠标离开事件出错:', error);
+    }
+
+    });
+});
     }
 
     // ===== ENHANCED CONTENT CARDS =====
@@ -474,3 +503,32 @@
     init();
 
 })();
+
+
+// ====== 新增链接有效性校验 ======
+function validateNavigationLinks() {
+    document.querySelectorAll('a').forEach(link => {
+        fetch(link.href, { method: 'HEAD' })
+            .then(res => {
+                if (!res.ok) link.style.opacity = '0.5';
+            })
+            .catch(() => {
+                link.style.textDecoration = 'line-through';
+                link.title = '链接失效，请及时更新';
+            });
+    });
+}
+
+// ====== 增强导航反馈 ======
+function enhanceNavFeedback() {
+    const navItems = document.querySelectorAll('.md-nav__item');
+    navItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            item.style.transform = 'translateX(8px)';
+            item.style.transition = 'transform 0.3s ease';
+        });
+        item.addEventListener('mouseleave', () => {
+            item.style.transform = 'none';
+        });
+    });
+}
