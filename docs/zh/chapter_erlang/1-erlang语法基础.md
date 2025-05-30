@@ -274,11 +274,11 @@ pie() ->
 在shell中输入c(demo). 编译模块demo
 然后demo:pie(). 调用函数pie
 然后可以看到如下结果
-![在这里插入图片描述](https://img-blog.csdnimg.cn/286690b9b5bd4099b7e00c00466c1ae0.png)
+![erlang-1.png](/img/chapter_erlang/erlang-1.png)
 
 编译产生的目标文件为demo.beam如下所示:
 demo.beam为一个我们看不懂的目标文件,更适合Erlang虚拟机加载的文件
-![在这里插入图片描述](https://img-blog.csdnimg.cn/9aff6794cd2e480488c2c1e848c73da9.png)
+![erlang-2.png](/img/chapter_erlang/erlang-2.png)
 如果不想进shell也可以使用独立的编译器erlc 执行erlc demo.erl 来编译代码
 
 
@@ -609,7 +609,7 @@ Data必须是整数、浮点数或另一个位串。
 
 ### 比特位语法中的模式匹配
 可以用同样的语法来构造和分解元组， 也可以用同样的比特位语法来分解位串中的数据。相较于手工完成各种位移和掩码运算，用比特位语法来解析各种怪异的文件格式和协议数据显得手到擒来，也更不容易出错。作为一个经典示例，下面将为你展示如何利用函数子句中的模式来解析P报文首部的内容：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/0ccec4e79de443338f1fd398c4936b96.png)
+![erlang-3.png](/img/chapter_erlang/erlang-3.png)
 只要传入的报文的尺寸足够进行匹配，且Version字段为4，报文便会被解析为相应的变量，
 大部分变量都被解析为整数，只有OptionsAndPadding（一个长度取决于先前解析出的IHL字段的位串）和RemainingData.段除外，其中后者包含报文首部之后的所有数据。从一个二进制串中抽取另一个二进制串并不涉及数据复制，因此这种运算的成本很低。
 

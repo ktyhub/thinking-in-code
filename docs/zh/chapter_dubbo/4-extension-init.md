@@ -163,7 +163,7 @@ default <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
     }
 ```
 
-这里直接返回了extensionDirector,,不知道介绍到这里记得这个扩展加载程序管理器extensionDirector对象的由来不, 在上个章节[《3-框架,应用程序,模块领域模型Model对象的初始化》](/zh/chapter_dubbo/model-init)中3.2.2 初始化ScopeModel的章节中的ScopeModel类型的初始化方法initialize()方法中我们提到过这个对象的创建,具体代码如下所示(这个代码比较简单):
+这里直接返回了extensionDirector,,不知道介绍到这里记得这个扩展加载程序管理器extensionDirector对象的由来不, 在上个章节[《3-框架,应用程序,模块领域模型Model对象的初始化》](/zh/chapter_dubbo/3-model-init.md)中3.2.2 初始化ScopeModel的章节中的ScopeModel类型的初始化方法initialize()方法中我们提到过这个对象的创建,具体代码如下所示(这个代码比较简单):
 ```java
 this.extensionDirector = new ExtensionDirector(parent != null ? parent.getExtensionDirector() : null, scope, this);
        
