@@ -1,0 +1,1570 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="knowledge thinking you want to know">
+      
+      
+        <meta name="author" content="ktyhub">
+      
+      
+        <link rel="canonical" href="https://www.ktyhub.com/zh/chapter_post/micrometer_tracing/">
+      
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>简介 - Thinking In Code</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+Traditional+Chinese:300,300i,400,400i,700,700i%7CNoto+Sans+Traditional+Chinese:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Noto Sans Traditional Chinese";--md-code-font:"Noto Sans Traditional Chinese"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/ux-enhanced.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/white-theme.css">
+    
+      <link rel="stylesheet" href="../../../mermaid.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-RFRF1TVRMP"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-RFRF1TVRMP",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="black">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="Thinking In Code" class="md-header__button md-logo" aria-label="Thinking In Code" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Thinking In Code
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              简介
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/zh/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../index" class="md-tabs__link">
+        
+  
+  
+    
+  
+  🏠 首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_preface/about_the_book/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📚 前言
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_elasticjob/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🚀 技术体系
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_spring_ai/1-official-website/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🤖 AI 技术栈
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_jdk/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  💻 编程语言
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_algorithm/114-preorder/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🧮 算法与数据结构
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_linux/problem/5-linux问题分析/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🐧 Linux 系统
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../site/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📚 深度专题
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_elasticjob/1-introduce/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📖 源码深度解析
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../release_note/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🆕 新技术发布
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Thinking In Code" class="md-nav__button md-logo" aria-label="Thinking In Code" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Thinking In Code
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../index" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    🏠 首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../chapter_preface/about_the_book/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    📚 前言
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_elasticjob/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🚀 技术体系
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_spring_ai/1-official-website/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🤖 AI 技术栈
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_jdk/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    💻 编程语言
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_algorithm/114-preorder/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🧮 算法与数据结构
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_linux/problem/5-linux问题分析/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🐧 Linux 系统
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../site/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    📚 深度专题
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_elasticjob/1-introduce/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    📖 源码深度解析
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../release_note/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🆕 新技术发布
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="_1">简介<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<p>使用微服务框架的同学不知道有没有遇到过这样的问题，有业务同学投诉说未收到消息或者系统提示500状态码错误，然后App服务端同学开始根据业务反馈过来的用户信息查询日志，发现当前系统没有问题，然后将下游系统的负责人拉进群里协助排查问题，下游系统的同学又排查发现自己的系统也没问题又会将他的下游系统的同学拉进群，大家重复着这样的循环，群里面的人也越来越多，排查的链路也越来越长，业务同学也很着急催了一次又一次，直到达到循环的终止条件：链路中有一个同学发现系统日志里面抛出了一个异常，终于定位到了问题。</p>
+<p>可以看到我们的服务拆分的越细排查问题的时候就会有越多的同学参与进来，耗费的时间就越长，业务对技术的评价变的越差。</p>
+<p>日益复杂的软件架构导致系统在出现问题的时候，发现问题和排查问题的效率极低。那这个问题如何解决呢？就需要引入一个称为链路追踪的系统。</p>
+<p>说起链路追踪系统，最为著名理论还是谷歌的一篇论文：</p>
+<p><em>《Dapper, a Large-Scale Distributed Systems Tracing Infrastructure》</em></p>
+<p>论文中详细的介绍了Dapper链路追踪系统的基本原理和关键技术点。如果对论文原文比较感兴趣可以访问地址：</p>
+<p>https://research.google/pubs/pub36356/</p>
+<p>或者在如下微信公众号 <strong>中间件源码</strong> 中发送**dapper**关键词获取原文和译文的PDF。</p>
+<p>链路追踪系统不仅仅可以帮助排查问题还可以用于分析系统请求链路中的性能问题，这里就不详细拆解枯燥的论文了，为了简单起见通过Micrometer提供的Tracing门面来引入全链路追踪系统的一些概念和说明。关于为什么需要链路追踪系统和对于可观测性的一些知识也可以参考前面的文章：</p>
+<p>《<a href="http://mp.weixin.qq.com/s?__biz=MzIxMTAzMjM1Ng==&amp;mid=2647852506&amp;idx=1&amp;sn=a6b1b78a3e3a41983790e51363612d36&amp;chksm=8f7c2591b80bac8725b7195a84a2823cb3c8eb8d15abd5e6b533c10e92e977a7616a5655bd98&amp;scene=21#wechat_redirect">可观测性神器之Micrometer</a>》</p>
+<p>那下面就进入正文看一看Micrometer提供的Tracing门面是如何定义链路追踪系统的。</p>
+<h1 id="_2">架构说明<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h1>
+<h2 id="_3">定位<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<p>Micrometer Tracing为最流行的链路追踪系统库提供了一个简单的外观。</p>
+<p>Micrometer Tracing具有如下特性：</p>
+<ul>
+<li><strong>基于JVM：</strong> 基于 JVM 的应用程序代码。</li>
+<li><strong>低开销：</strong> 收集数据增加很少甚至没有开销，同时最大限度地提高跟踪工作的可移植性。</li>
+<li><strong>可扩展：</strong> 厂商无关的API, 内部包含一个带有仪器SPI的核心模块、一组包含各种示踪剂桥接的模块、一组包含专用跨度报告机制的模块和一个测试套件。</li>
+<li><strong>简单易用：</strong> 为了方便使用它还提供了对 Micrometer 的Tracing扩展<code>ObservationHandler</code>。每当使用 一个<code>Observation</code>时，都会创建、启动、停止和报告相应的跨度。</li>
+</ul>
+<h2 id="_4">架构<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
+<h2 id="_5">请求响应链路模型<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>下面可以通过一个官方的图来了解下从请求到响应的这个过程的完整链路，通过这个链路图来引入链路追踪系统的一些常见名词与概念。</p>
+<p>可以看到如下几个要点:</p>
+<ul>
+<li>SERVICE1是起始链路产生了TraceId。</li>
+<li>内部业务处理的时候产生了SpanId。</li>
+<li>在SERVICE2中会将请求发送给多个下游服务，TraceId依旧使用的是同一个。</li>
+<li>但是内部业务处理的时候多个线程可以使用多个不同的SpanId。</li>
+</ul>
+<h2 id="_6">父子关系处理<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<p>上面的方式虽然可有有效的通过Trace和Span来检测到请求所处的位置，但是当处于某个系统的时候无法知道上下游关系，这就需要在上图的Custom Span中创建自定义跨度信息了，一个有前后关系的链路中需要在当前的Span跨度中增加父SpanId 来形成上下游关系如下图所示：</p>
+<p><img alt="图片" src="/img/chapter_post/img_26.png" /></p>
+<h2 id="_7">常见术语<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>Micrometer Tracing 借用了谷歌Dapper论文中的一些术语，让我们看下在Micrometer中将要出现的一些常见的名词含义，方便我们理解接下来要熟悉的入门例子。</p>
+<p><strong>Trace(追踪）：</strong> 一组形成树状结构的跨度。代表一个潜在的，分布式的，存在并行数据或并行执行轨迹（潜在的分布式、并行）的系统。</p>
+<p><strong>Span（跨度）：</strong> 基本工作单元。代表系统中具有开始时间和执行时长的逻辑运行单元。Span之间通过嵌套或者顺序排列建立逻辑因果关系。例如，发送 RPC 是一个新的 Span，发送对 RPC 的响应也是如此。跨度还有其他数据，例如描述、带时间戳的事件、键值注释（标签）、导致它们的跨度的 ID 和进程 ID（通常是 IP 地址）。</p>
+<p><strong>Baggage（行李）：</strong> Baggage存储在SpanContext中的一个键值对(SpanContext)集合。它会在一条追踪链路上的所有Span内全局传输，包含这些span对应的SpanContexts。在这种情况下，”Baggage”会随着Trace一同传播，Baggage拥有强大功能，也会有很大的消耗。由于Baggage的全局传输，如果包含的数量量太大，或者元素太多，它将降低系统的吞吐量或增加RPC的延迟。</p>
+<p><strong>Annotation/Event(注解/事件）：</strong> 用于及时记录一个事件的存在。</p>
+<p><strong>Tracer（追踪器）：</strong> 处理跨度(Span)生命周期的库。它可以创建、启动、停止和通过reporters / exporters来上报跨度到外部系统。</p>
+<p>有了Trace和Span这样的数据，再排查一个链路上请求异常的时候就可以通过TraceId来快速定位请求落到了哪个系统上终止了，然后在对应系统中搜索Traceid相关日志来分析原因，但是一个TraceId的请求可能在这个系统中以多线程的方式执行时，开启了多个Span，这个时候就要通过SpanId来精确这个请求在内部的处理逻辑了。有了这些理论知识做铺垫那接下来就尝试使用Micrometer Tracing来开发一个简单的链路追踪功能吧。</p>
+<h1 id="_8">开发入门<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h1>
+<h2 id="_9">依赖引入<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<p>Micrometer Tracing自带了一个物料清单（BOM），它是一个包含所有项目版本的项目的依赖接下来以Maven依赖引入为例：</p>
+<h3 id="micrometer">Micrometer核心依赖<a class="headerlink" href="#micrometer" title="Permanent link">&para;</a></h3>
+<p>这里一共需要引入两个依赖:</p>
+<ul>
+<li>用来管理版本号的BOM</li>
+<li>micrometer-tracing核心依赖</li>
+</ul>
+<pre><code class="language-xml">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.micrometer&lt;/groupId&gt;
+            &lt;artifactId&gt;micrometer-tracing-bom&lt;/artifactId&gt;
+            &lt;version&gt;${micrometer-tracing.version}&lt;/version&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;
+
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;io.micrometer&lt;/groupId&gt;
+      &lt;artifactId&gt;micrometer-tracing&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+<p><strong>桥接依赖</strong></p>
+<p>由于Micrometer Tracing是一个门面工具自身并没有实现完整的链路追踪系统，具体的链路追踪另外需要引入的是第三方链路追踪系统的依赖，下面就以Zipkin 链路追踪系统为例：</p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;io.micrometer&lt;/groupId&gt;
+    &lt;artifactId&gt;micrometer-tracing-bridge-brave&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;io.zipkin.reporter2&lt;/groupId&gt;
+    &lt;artifactId&gt;zipkin-reporter-brave&lt;/artifactId&gt;
+    &lt;version&gt;2.16.3&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;io.zipkin.reporter2&lt;/groupId&gt;
+    &lt;artifactId&gt;zipkin-sender-urlconnection&lt;/artifactId&gt;
+    &lt;version&gt;2.16.3&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+<p><em>官方提示：只能依赖一个桥接的依赖。类路径上不应该有两个第三方桥接依赖同时出现。</em></p>
+<h3 id="zipkin">Zipkin<a class="headerlink" href="#zipkin" title="Permanent link">&para;</a></h3>
+<p>前面我们引入的brave是Zipkin的一个Java依赖库。Zipkin是一个分布式跟踪系统。它有助于收集解决服务架构中的延迟问题所需的计时数据。功能包括收集和查找此数据。为了帮助理解我们可以看下Zipkin提供的UI管理端页面如下所示：</p>
+<p><strong>链路追踪图</strong></p>
+<p><img alt="图片" src="/img/chapter_post/img_27.png" /></p>
+<p><strong>依赖关系图：</strong></p>
+<p><img alt="图片" src="/img/chapter_post/img_28.png" /></p>
+<p>如何去搭建Zipkin呢，可以参考官网的快速开始手册，直接运行jar执行文件或者使用docker来启动容器,直接运行可执行Jar的方式如下命令所示：</p>
+<pre><code>curl -sSL https://zipkin.io/quickstart.sh | bash -s
+java -jar zipkin.jar
+</code></pre>
+<p>更详细的zipkin内容，感兴趣可以打开官网来看下，链接如下：</p>
+<p>https://zipkin.io/pages/quickstart.html</p>
+<h2 id="_10">入门示例<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<p>前面介绍了如何安装Zipkin，下面就直接来贴一下官方提供的Java示例了，通过示例来详细看下：</p>
+<pre><code class="language-java">import brave.Tracing;
+import brave.baggage.BaggageField;
+import brave.baggage.BaggagePropagation;
+import brave.baggage.BaggagePropagationConfig;
+import brave.handler.SpanHandler;
+import brave.propagation.B3Propagation;
+import brave.propagation.StrictCurrentTraceContext;
+import brave.sampler.Sampler;
+import io.micrometer.tracing.CurrentTraceContext;
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
+import io.micrometer.tracing.brave.bridge.BraveBaggageManager;
+import io.micrometer.tracing.brave.bridge.BraveCurrentTraceContext;
+import io.micrometer.tracing.brave.bridge.BraveTracer;
+import zipkin2.reporter.AsyncReporter;
+import zipkin2.reporter.brave.ZipkinSpanHandler;
+import zipkin2.reporter.urlconnection.URLConnectionSender;
+
+public class MicrometerTracingBrave {
+    public static void main(String[] args) {
+        //[Brave component]使用SpanHandler的示例。
+        // SpanHandler是一个在完成跨度时调用的组件。
+        // 这里我们有一个设置示例，通过UrlConnectionSender（通过&lt;io.Zipkin.reporter2:Zipkin-sender-urlconnection&gt;依赖项）
+        // 以Zipkin格式将跨度发送到所提供的位置。另一个选项可以是使用TestSpanHandler进行测试
+        SpanHandler spanHandler = ZipkinSpanHandler
+                .create(AsyncReporter.create(URLConnectionSender.create(&quot;http://localhost:9411/api/v2/spans&quot;)));
+
+                // 〔Brave组件〕CurrentTraceContext是一个Brave组件，它允许您检索当前TraceContext。
+        StrictCurrentTraceContext braveCurrentTraceContext = StrictCurrentTraceContext.create();
+
+                // [Micrometer Tracing 组件] Brave的CurrentTraceContext的Micrometer包装类型
+        CurrentTraceContext bridgeContext = new BraveCurrentTraceContext(braveCurrentTraceContext);
+
+                // [Brave组件]跟踪是根组件，允许配置跟踪程序、处理程序、上下文传播等。
+        Tracing tracing = Tracing.newBuilder().currentTraceContext(braveCurrentTraceContext).supportsJoin(false)
+                .traceId128Bit(true)
+                // 要使Baggage（行李）正常工作，您需要提供要传播的字段列表
+             .propagationFactory(BaggagePropagation.newFactoryBuilder(B3Propagation.FACTORY)
+                        .add(BaggagePropagationConfig.SingleBaggageField
+                                .remote(BaggageField.create(&quot;from_span_in_scope 1&quot;)))
+                        .build()).sampler(Sampler.ALWAYS_SAMPLE).addSpanHandler(spanHandler).build();
+
+
+                // [Brave 组件] Tracer是用于处理跨度生命周期的组件
+        brave.Tracer braveTracer = tracing.tracer();
+
+                //--------上面主要是brave创建Tracer追踪器的逻辑，可以随时替换为其他链路追踪系统-------//
+                //--------下面是Micrometer Tracing门面做的操作---------------------------------//
+
+                // [Micrometer Tracing 组件] Micrometer Tracing包装类型，包装了Brave‘s Tracer的Tracer
+        Tracer tracer = new BraveTracer(braveTracer, bridgeContext, new BraveBaggageManager());
+        // 创建跨度。如果此线程中存在span，它将成为“newSpan”的父级。
+        Span newSpan = tracer.nextSpan().name(&quot;calculateTax&quot;);
+                // 开始一个跨度并将其放在范围内。放入范围意味着将范围放在本地线程中，如果已配置，则调整MDC以包含跟踪信息
+        try (Tracer.SpanInScope ws = tracer.withSpan(newSpan.start())) {
+            // 您可以标记一个span-在其上放置一个键值对，以便更好地调试
+            newSpan.tag(&quot;taxValue&quot;, &quot;value&quot;);
+            // 记录一个事件
+            newSpan.event(&quot;taxCalculated&quot;);
+        }
+        finally {
+            // 一旦完成，记得结束跨度。这将允许收集跨度并将其发送到分布式跟踪系统，例如Zipkin
+            newSpan.end();
+        }
+    }
+}
+</code></pre>
+<p>示例中每行代码都标记了注释，可以通过注释来了解下Trace和Span的创建过程，通过运行代码进行埋点。</p>
+<h3 id="zipkin_1">使用Zipkin分析链路<a class="headerlink" href="#zipkin_1" title="Permanent link">&para;</a></h3>
+<h4 id="zipkin_2">运行Zipkin<a class="headerlink" href="#zipkin_2" title="Permanent link">&para;</a></h4>
+<p>前面简单说了下搭建Zipkin的方式，这里再详细说一下细节：</p>
+<pre><code>curl -sSL https://zipkin.io/quickstart.sh | bash -s
+java -jar zipkin.jar
+</code></pre>
+<p>如果windows下无法使用curl命令和bash命令，可以直接下载Zipkin的jar进行运行, Zipkin可执行文件下载链接为：</p>
+<p>https://search.maven.org/remote_content?g=io.zipkin&amp;a=zipkin-server&amp;v=LATEST&amp;c=exec</p>
+<h4 id="_11">运行应用程序<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h4>
+<p>直接运行前面示例代码的main方法即可。自动上报链路信息到kin。</p>
+<h4 id="zipkin_3">使用Zipkin分析链路<a class="headerlink" href="#zipkin_3" title="Permanent link">&para;</a></h4>
+<p>浏览器打开Zipkin控制台，地址如下：</p>
+<p>http://127.0.0.1:9411/</p>
+<h4 id="_12">列表页<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<p>在列表页中点击RUN QUERY即可看到所有的请求如下图所示：</p>
+<p><img alt="图片" src="/img/chapter_post/img_29.png" /></p>
+<h4 id="_13">详情页<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
+<p>点击某一个请求链路然后点击列表页中的SHOW按钮即可打开详情页来分析性能，如下图所示：</p>
+<p><img alt="图片" src="/img/chapter_post/img_30.png" /></p>
+<h1 id="_14">总结<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h1>
+<p>Micrometer Tracing为最流行的链路追踪系统库提供了一个简单的外观，对于框架层的服务来说引入这样的门面是非常实用的，对于第三方链路追踪系统只需要根据内部规范实现桥接的代码即可，无需让框架层耦合。</p>
+<p>不过相比于OpenTracing这样的老牌链路追踪门面，Micrometer Tracing并不是最成熟的，不过OpenTracing已经归档不再维护，OpenTracing和OpenCensus合并为OpenTelemetry之后统一了可观测性门面。OpenTelemetry，也简称为 OTel，是一个供应商中立的开源 可观察性框架，用于检测、生成、收集和导出遥测数据，如跟踪、 指标、 日志。作为行业标准，它本身就受到许多供应商的支持，已经比较成熟了。</p>
+<p>尽管OpenTelemetry已经很成熟了，不过有意思的是SpringBoot3 在 Spring Boot Actuator 中使用的链路追踪门面为 Micrometer Tracing ，为Micrometer Tracing 实现了依赖性管理和自动配置。</p>
+<p>Micrometer Tracing 在SpringBoot中充当了类似日志领域内 slf4j 门面的角色。在Java领域有了Spring的支持未来发展前途一片光明。</p>
+<p><img alt="图片" src="/img/chapter_post/img_31.png" /></p>
+<p>可以看到在未来Micrometer必定会在Java的可观测性领域越来越火，从成熟的Meter埋点到 Tracing 链路追踪。感兴趣的话可以试一试。</p>
+<p>对Micrometer Tracing感兴趣可以关注微信公众号《中间件源码》订阅交流吧。</p>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  <form class="md-feedback" name="feedback" hidden>
+    <fieldset>
+      <legend class="md-feedback__title">
+        Was this page helpful?
+      </legend>
+      <div class="md-feedback__inner">
+        <div class="md-feedback__list">
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page was helpful" data-md-value="1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8m2 0a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10M10 9.5c0 .8-.7 1.5-1.5 1.5S7 10.3 7 9.5 7.7 8 8.5 8s1.5.7 1.5 1.5m7 0c0 .8-.7 1.5-1.5 1.5S14 10.3 14 9.5 14.7 8 15.5 8s1.5.7 1.5 1.5m-5 7.73c-1.75 0-3.29-.73-4.19-1.81L9.23 14c.45.72 1.52 1.23 2.77 1.23s2.32-.51 2.77-1.23l1.42 1.42c-.9 1.08-2.44 1.81-4.19 1.81"/></svg>
+            </button>
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page could be improved" data-md-value="0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8m2 0a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10m-6.5-4c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5-1.5-.7-1.5-1.5.7-1.5 1.5-1.5M10 9.5c0 .8-.7 1.5-1.5 1.5S7 10.3 7 9.5 7.7 8 8.5 8s1.5.7 1.5 1.5m2 4.5c1.75 0 3.29.72 4.19 1.81l-1.42 1.42C14.32 16.5 13.25 16 12 16s-2.32.5-2.77 1.23l-1.42-1.42C8.71 14.72 10.25 14 12 14"/></svg>
+            </button>
+          
+        </div>
+        <div class="md-feedback__note">
+          
+            <div data-md-value="1" hidden>
+              
+              
+                
+              
+              
+              
+                
+                
+              
+              Thanks for your feedback!
+            </div>
+          
+            <div data-md-value="0" hidden>
+              
+              
+                
+              
+              
+              
+                
+                
+              
+              Thanks for your feedback! Help us improve this page by <a href="https://github.com/ktyhub/thinking-in-code/issues/new/?title=[Feedback]+%E7%AE%80%E4%BB%8B+-+/zh/chapter_post/micrometer_tracing/" target="_blank" rel="noopener">telling us what you found lacking</a>.
+            </div>
+          
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      可微信搜索 《中间件源码》 联系，订阅内容。   <br/>  Copyright &copy; 2022 - 2024 ktyhub.com copyright   <br/> 部分内容由GPT提供 转载声明：  本文转载自 [原文标题](原文链接)，由[www.ktyhub.com](www.ktyhub.com)创作，遵循 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) 许可协议。
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/ktyhub/thinking-in-code" target="_blank" rel="noopener" title="GitHub Repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://www.ktyhub.com" target="_blank" rel="noopener" title="Official Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M352 256c0 22.2-1.2 43.6-3.3 64H163.4c-2.2-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64h185.3c2.2 20.4 3.3 41.8 3.3 64m28.8-64h123.1c5.3 20.5 8.1 41.9 8.1 64s-2.8 43.5-8.1 64H380.8c2.1-20.6 3.2-42 3.2-64s-1.1-43.4-3.2-64m112.6-32H376.7c-10-63.9-29.8-117.4-55.3-151.6 78.3 20.7 142 77.5 171.9 151.6zm-149.1 0H167.7c6.1-36.4 15.5-68.6 27-94.7 10.5-23.6 22.2-40.7 33.5-51.5C239.4 3.2 248.7 0 256 0s16.6 3.2 27.8 13.8c11.3 10.8 23 27.9 33.5 51.5 11.6 26 20.9 58.2 27 94.7m-209 0H18.6c30-74.1 93.6-130.9 172-151.6-25.5 34.2-45.3 87.7-55.3 151.6M8.1 192h123.1c-2.1 20.6-3.2 42-3.2 64s1.1 43.4 3.2 64H8.1C2.8 299.5 0 278.1 0 256s2.8-43.5 8.1-64m186.6 254.6c-11.6-26-20.9-58.2-27-94.6h176.6c-6.1 36.4-15.5 68.6-27 94.6-10.5 23.6-22.2 40.7-33.5 51.5-11.2 10.7-20.5 13.9-27.8 13.9s-16.6-3.2-27.8-13.8c-11.3-10.8-23-27.9-33.5-51.5zM135.3 352c10 63.9 29.8 117.4 55.3 151.6-78.4-20.7-142-77.5-172-151.6zm358.1 0c-30 74.1-93.6 130.9-171.9 151.6 25.5-34.2 45.2-87.7 55.3-151.6h116.7z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="#" target="_blank" rel="noopener" title="WeChat - 中间件源码" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M385.2 167.6c6.4 0 12.6.3 18.8 1.1C387.4 90.3 303.3 32 207.7 32 100.5 32 13 104.8 13 197.4c0 53.4 29.3 97.5 77.9 131.6l-19.3 58.6 68-34.1c24.4 4.8 43.8 9.7 68.2 9.7 6.2 0 12.1-.3 18.3-.8-4-12.9-6.2-26.6-6.2-40.8-.1-84.9 72.9-154 165.3-154m-104.5-52.9c14.5 0 24.2 9.7 24.2 24.4 0 14.5-9.7 24.2-24.2 24.2-14.8 0-29.3-9.7-29.3-24.2.1-14.7 14.6-24.4 29.3-24.4m-136.4 48.6c-14.5 0-29.3-9.7-29.3-24.2 0-14.8 14.8-24.4 29.3-24.4 14.8 0 24.4 9.7 24.4 24.4 0 14.6-9.6 24.2-24.4 24.2M563 319.4c0-77.9-77.9-141.3-165.4-141.3-92.7 0-165.4 63.4-165.4 141.3S305 460.7 397.6 460.7c19.3 0 38.9-5.1 58.6-9.9l53.4 29.3-14.8-48.6C534 402.1 563 363.2 563 319.4m-219.1-24.5c-9.7 0-19.3-9.7-19.3-19.6 0-9.7 9.7-19.3 19.3-19.3 14.8 0 24.4 9.7 24.4 19.3 0 10-9.7 19.6-24.4 19.6m107.1 0c-9.7 0-19.3-9.7-19.3-19.6 0-9.7 9.7-19.3 19.3-19.3 14.5 0 24.4 9.7 24.4 19.3.1 10-9.9 19.6-24.4 19.6"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+
+
+<h4>Cookie consent</h4>
+<p>We use cookies to recognize your repeated visits and preferences, as well as to measure the effectiveness of our documentation and whether users find what they're searching for. With your consent, you're helping us to make our documentation better.</p>
+<input class="md-toggle" type="checkbox" id="__settings" >
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="analytics" checked>
+      <span class="task-list-indicator"></span>
+      Google Analytics
+    </label>
+  </li>
+
+      
+    
+    
+      
+    
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">同意</button>
+    
+    
+    
+  
+    
+    
+      <button type="reset" class="md-button md-button--primary">拒绝</button>
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">管理设定</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.tabs.fixed", "navigation.tabs.sticky", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.prune", "navigation.indexes", "navigation.top", "navigation.footer", "toc.follow", "toc.integrate", "search.highlight", "search.share", "search.suggest", "content.code.copy", "content.code.select", "content.code.annotate", "content.tooltips", "content.tabs.link", "content.action.edit", "content.action.view", "header.autohide", "announce.dismiss"], "search": "../../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+        <script src="/javascripts/google-tongji.js"></script>
+      
+        <script src="../../../mermaid.min.js"></script>
+      
+        <script src="/javascripts/baidu-tongji.js"></script>
+      
+        <script src="/javascripts/fun-interactions.js"></script>
+      
+        <script src="/javascripts/ux-enhanced.js"></script>
+      
+    
+  </body>
+</html>

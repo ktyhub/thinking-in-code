@@ -1,0 +1,1668 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="knowledge thinking you want to know">
+      
+      
+        <meta name="author" content="ktyhub">
+      
+      
+        <link rel="canonical" href="https://www.ktyhub.com/zh/chapter_dubbo/6-extension-wrapper/">
+      
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析 - Thinking In Code</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+Traditional+Chinese:300,300i,400,400i,700,700i%7CNoto+Sans+Traditional+Chinese:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Noto Sans Traditional Chinese";--md-code-font:"Noto Sans Traditional Chinese"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/ux-enhanced.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/white-theme.css">
+    
+      <link rel="stylesheet" href="../../../mermaid.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-RFRF1TVRMP"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-RFRF1TVRMP",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="black">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#dubbospiwrapper" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="Thinking In Code" class="md-header__button md-logo" aria-label="Thinking In Code" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Thinking In Code
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/zh/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../index" class="md-tabs__link">
+        
+  
+  
+    
+  
+  🏠 首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_preface/about_the_book/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📚 前言
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_elasticjob/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🚀 技术体系
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_spring_ai/1-official-website/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🤖 AI 技术栈
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_jdk/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  💻 编程语言
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_algorithm/114-preorder/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🧮 算法与数据结构
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_linux/problem/5-linux问题分析/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🐧 Linux 系统
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_post/site/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📚 深度专题
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_elasticjob/1-introduce/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📖 源码深度解析
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../release_note/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🆕 新技术发布
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Thinking In Code" class="md-nav__button md-logo" aria-label="Thinking In Code" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Thinking In Code
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../index" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    🏠 首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../chapter_preface/about_the_book/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    📚 前言
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_elasticjob/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🚀 技术体系
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_spring_ai/1-official-website/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🤖 AI 技术栈
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_jdk/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    💻 编程语言
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_algorithm/114-preorder/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🧮 算法与数据结构
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_linux/problem/5-linux问题分析/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🐧 Linux 系统
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../chapter_post/site/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    📚 深度专题
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_elasticjob/1-introduce/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    📖 源码深度解析
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../release_note/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🆕 新技术发布
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="dubbospiwrapper"><strong>Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析</strong><a class="headerlink" href="#dubbospiwrapper" title="Permanent link">&para;</a></h1>
+<h2 id="_1"><strong>普通扩展对象的加载与创建</strong><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>这里我们要分析的是ExtensionLoader类型的getExtension(String name)方法, 有了前面自适应扩展的铺垫,这里就更容易来看了getExtension是根据扩展名字获取具体扩展的通用方法,我们来根据某个类型来获取扩展的时候就是走的这里,比如在这个博客开头的介绍:</p>
+<ul>
+<li>ApplicationModel中获取配置管理器对象</li>
+</ul>
+<pre><code class="language-java"> configManager = (ConfigManager) this.getExtensionLoader(ApplicationExt.class)
+                .getExtension(ConfigManager.NAME);
+
+</code></pre>
+<h3 id="getextension"><strong>getExtension方法源码</strong><a class="headerlink" href="#getextension" title="Permanent link">&para;</a></h3>
+<p>先来看下getExtension方法的源码,根据扩展名字查询扩展对象</p>
+<pre><code class="language-java">
+public T getExtension(String name) {
+        //这里并不能看到什么,只多传了个参数wrap为true调用另外一个重载的方法
+        T extension = getExtension(name, true);
+        if (extension == null) {
+            throw new IllegalArgumentException(&quot;Not find extension: &quot; + name);
+        }
+        return extension;
+    }
+</code></pre>
+<pre><code class="language-java">public T getExtension(String name, boolean wrap) {
+        //检查扩展加载器是否已被销毁
+        checkDestroyed();
+        if (StringUtils.isEmpty(name)) {
+            throw new IllegalArgumentException(&quot;Extension name == null&quot;);
+        }
+        //扩展名字为true则加载默认扩展
+        if (&quot;true&quot;.equals(name)) {
+            return getDefaultExtension();
+        }
+        //非wrap类型则将缓存的扩展名字key加上_origin后缀
+        //wrap是aop机制 俗称切面,这个origin在aop里面可以称为切点,下面的wrap扩展可以称为增强通知的类型,普通扩展和wrap扩展的扩展名字是一样的
+        String cacheKey = name;
+        if (!wrap) {
+            cacheKey += &quot;_origin&quot;;
+        }
+        //从cachedInstances缓存中查询
+        final Holder&lt;Object&gt; holder = getOrCreateHolder(cacheKey);
+        Object instance = holder.get();
+        //缓存中不存在则创建扩展对象 双重校验锁
+        if (instance == null) {
+            synchronized (holder) {
+                //双重校验锁的方式
+                instance = holder.get();
+                if (instance == null) {
+                    //创建扩展对象
+                    instance = createExtension(name, wrap);
+                    holder.set(instance);
+                }
+            }
+        }
+        return (T) instance;
+    }
+</code></pre>
+<p>我们先来看一下默认扩展的加载代码:</p>
+<pre><code class="language-java">public T getDefaultExtension() {
+        //加载扩展类型对应的所有扩展SPI实现类型,在加载所有扩展实现类型的时候会缓存这个扩展的默认实现类型,将对象缓存在cachedDefaultName中
+        getExtensionClasses();
+        if (StringUtils.isBlank(cachedDefaultName) || &quot;true&quot;.equals(cachedDefaultName)) {
+            return null;
+        }
+        //再回到加载扩展的方法
+        return getExtension(cachedDefaultName);
+    }
+</code></pre>
+<p>创建扩展对象方法这个和自适应扩展的创建扩展类似
+createExtension:
+具体过程如下:
+- <strong>加载扩展类型:</strong> getExtensionClasses()
+- <strong>创建扩展对象:</strong> createExtensionInstance(clazz)
+- <strong>注入自适应扩展:</strong> injectExtension(instance);
+- wrap处理</p>
+<pre><code class="language-java">private T createExtension(String name, boolean wrap) {
+        //扩展的创建的第一步扫描所有jar中的扩展实现,这里扫描完之后获取对应扩展名字的扩展实现类型的Class对象
+        Class&lt;?&gt; clazz = getExtensionClasses().get(name);
+        //出现异常了 转换下异常信息 再抛出
+        if (clazz == null || unacceptableExceptions.contains(name)) {
+            throw findException(name);
+        }
+        try {
+            //当前扩展对象是否已经创建过了则直接从缓存中获取
+            T instance = (T) extensionInstances.get(clazz);
+            if (instance == null) {
+                //第一次获取缓存中肯定没有则创建扩展对象然后缓存起来
+                //createExtensionInstance 这个是与自适应扩展对象创建对象的不同之处
+                extensionInstances.putIfAbsent(clazz, createExtensionInstance(clazz));
+                instance = (T) extensionInstances.get(clazz);
+                instance = postProcessBeforeInitialization(instance, name);
+                //注入扩展自适应方法,这个方法前面讲自适应扩展时候说了,注入自适应扩展方法的自适应扩展对象
+                injectExtension(instance);
+                instance = postProcessAfterInitialization(instance, name);
+            }
+            //是否开启了wrap
+            //Dubbo通过Wrapper实现AOP的方法
+            if (wrap) {
+            //这个可以参考下Dubbo扩展的加载
+                List&lt;Class&lt;?&gt;&gt; wrapperClassesList = new ArrayList&lt;&gt;();
+                //wrap类型排序 这个wrap类型是如何来的呢,在前面扫描扩展类型的时候如果当前扩展类型不是Adaptive注解修饰的,并且当前类型type有个构造器参数是type自身的也是前面加载扩展类型时候说的装饰器模式 可以参考DubboProtocol的构造器
+                if (cachedWrapperClasses != null) {
+                    wrapperClassesList.addAll(cachedWrapperClasses);
+                    //根据Wrapper注解的order值来进行排序值越小越在列表的前面
+                    wrapperClassesList.sort(WrapperComparator.COMPARATOR);
+                    //反转之后值越大就会在列表的前面
+                    Collections.reverse(wrapperClassesList);
+                }
+                //从缓存中查到了wrapper扩展则遍历这些wrapp扩展进行筛选
+                if (CollectionUtils.isNotEmpty(wrapperClassesList)) {
+                    for (Class&lt;?&gt; wrapperClass : wrapperClassesList) {
+                        Wrapper wrapper = wrapperClass.getAnnotation(Wrapper.class);
+                        //需要包装的扩展名。当此数组为空时，默认值为匹配
+                        //看下当前扩展是否匹配这个wrap,如何判断呢?
+                        //wrapper注解不存在或者matches匹配,或者mismatches不包含当前扩展
+                        //如果匹配到了当前扩展对象是需要进行wrapp的就为当前扩展创建当前wrapper扩展对象进行包装
+                        boolean match = (wrapper == null) ||
+                            ((ArrayUtils.isEmpty(wrapper.matches()) || ArrayUtils.contains(wrapper.matches(), name)) &amp;&amp;
+                                !ArrayUtils.contains(wrapper.mismatches(), name));
+                                //这是扩展类型是匹配wrapp的则开始注入
+                        if (match) {
+                        //匹配到了就创建所有的wrapper类型的对象同时构造器参数设置为当前类型
+                            instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance));
+                            instance = postProcessAfterInitialization(instance, name);
+                        }
+                    }
+                }
+            }
+
+            // Warning: After an instance of Lifecycle is wrapped by cachedWrapperClasses, it may not still be Lifecycle instance, this application may not invoke the lifecycle.initialize hook.
+            //初始化扩展,如果当前扩展是Lifecycle类型则调用初始化方法
+            initExtension(instance);
+            return instance;
+        } catch (Throwable t) {
+            throw new IllegalStateException(&quot;Extension instance (name: &quot; + name + &quot;, class: &quot; +
+                type + &quot;) couldn't be instantiated: &quot; + t.getMessage(), t);
+        }
+    }
+</code></pre>
+<h3 id="_2"><strong>创建扩展对象</strong><a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>前面加载扩展类型在自适应扩展的时候已经说过了这里就不重复了,这里我们来看下
+扩展对象的创建过程:createExtensionInstance(clazz)</p>
+<p>前面看自适应扩展对象创建的时候自适应扩展对象仅仅是使用反射newInstance了一个扩展对象,而普通的扩展类型创建对象的过程就相对复杂一点,接下来我们来看下:</p>
+<p>ExtensionLoader的createExtensionInstance方法</p>
+<pre><code class="language-java">private Object createExtensionInstance(Class&lt;?&gt; type) throws ReflectiveOperationException {
+        //在ExtensionLoader构造器中,有个initInstantiationStrategy()方法中new了一个初始化策略InstantiationStrategy类型对象 
+        return instantiationStrategy.instantiate(type);
+    }
+</code></pre>
+<p>InstantiationStrategy的实例化对象方法instantiate</p>
+<pre><code class="language-java">public &lt;T&gt; T instantiate(Class&lt;T&gt; type) throws ReflectiveOperationException {
+
+        // should not use default constructor directly, maybe also has another constructor matched scope model arguments
+        // 1. try to get default constructor
+        Constructor&lt;T&gt; defaultConstructor = null;
+        try {
+            //反射获取对应类型的无参构造器
+            defaultConstructor = type.getConstructor();
+        } catch (NoSuchMethodException e) {
+            // ignore no default constructor
+        }
+
+        // 2. use matched constructor if found
+        List&lt;Constructor&gt; matchedConstructors = new ArrayList&lt;&gt;();
+        //获取所有构造器
+        Constructor&lt;?&gt;[] declaredConstructors = type.getConstructors();
+        //遍历构造器列表,
+        for (Constructor&lt;?&gt; constructor : declaredConstructors) {
+        //如果存在构造器则构造器参数类型是否为ScopeModel类型,如果为ScopeModel则为匹配的构造器 说明我们扩展类型在这个版本如果想要让这个构造器生效必须参数类型为ScopeModel
+            if (isMatched(constructor)) {
+                matchedConstructors.add(constructor);
+            }
+        }
+        // remove default constructor from matchedConstructors
+        if (defaultConstructor != null) {
+            matchedConstructors.remove(defaultConstructor);
+        }
+
+        // match order:
+        // 1. the only matched constructor with parameters
+        // 2. default constructor if absent
+
+        Constructor targetConstructor;
+        //匹配的参数ScopeModel的构造器太多了就抛出异常
+        if (matchedConstructors.size() &gt; 1) {
+            throw new IllegalArgumentException(&quot;Expect only one but found &quot; +
+                matchedConstructors.size() + &quot; matched constructors for type: &quot; + type.getName() +
+                &quot;, matched constructors: &quot; + matchedConstructors);
+        } else if (matchedConstructors.size() == 1) {
+        //一个参数一般为一个参数类型ScopeModel的构造器
+            targetConstructor = matchedConstructors.get(0);
+        } else if (defaultConstructor != null) {
+        //如果没有自定义构造器则使用空参数构造器
+            targetConstructor = defaultConstructor;
+        } else {
+        //一个构造器也没匹配上也要报错
+            throw new IllegalArgumentException(&quot;None matched constructor was found for type: &quot; + type.getName());
+        }
+
+        // create instance with arguments
+        //反射获取构造器参数的参数类型列表
+        Class[] parameterTypes = targetConstructor.getParameterTypes();
+        //如果存在参数则为参数设置值
+        Object[] args = new Object[parameterTypes.length];
+        for (int i = 0; i &lt; parameterTypes.length; i++) {
+        //借助scopeModelAccessor工具获取参数类型,这个参数类型为当前的域模型对象
+            args[i] = getArgumentValueForType(parameterTypes[i]);
+        }
+        //创建扩展对象
+        return (T) targetConstructor.newInstance(args);
+    }
+</code></pre>
+<h2 id="wrap"><strong>wrap机制</strong><a class="headerlink" href="#wrap" title="Permanent link">&para;</a></h2>
+<h3 id="wrapper"><strong>Wrapper机制说明</strong><a class="headerlink" href="#wrapper" title="Permanent link">&para;</a></h3>
+<p>Dubbo通过Wrapper实现AOP的方法</p>
+<p>Wrapper机制，即扩展点自动包装。Wrapper 类同样实现了扩展点接口，但是 Wrapper 不是扩展点的真正实现。它的用途主要是用于从 ExtensionLoader 返回扩展点时，包装在真正的扩展点实现外。即从 ExtensionLoader 中返回的实际上是 Wrapper 类的实例，Wrapper 持有了实际的扩展点实现类。
+扩展点的 Wrapper 类可以有多个，也可以根据需要新增。
+通过 Wrapper 类可以把所有扩展点公共逻辑移至 Wrapper 中。新加的 Wrapper 在所有的扩展点上添加了逻辑，有些类似 AOP，即 Wrapper 代理了扩展点。</p>
+<p>Wrapper的规范
+Wrapper 机制不是通过注解实现的，而是通过一套 Wrapper 规范实现的。
+Wrapper 类在定义时需要遵循如下规范。</p>
+<ul>
+<li>该类要实现 SPI 接口</li>
+<li>该类中要有 SPI 接口的引用</li>
+<li>该类中必须含有一个含参的构造方法且参数只能有一个类型为SPI接口</li>
+<li>在接口实现方法中要调用 SPI 接口引用对象的相应方法</li>
+<li>该类名称以 Wrapper 结尾</li>
+</ul>
+<p>比如如下几个扩展类型</p>
+<pre><code class="language-java"> class org.apache.dubbo.rpc.protocol.ProtocolListenerWrapper
+ class org.apache.dubbo.qos.protocol.QosProtocolWrapper
+ class org.apache.dubbo.rpc.protocol.ProtocolListenerWrapper
+ class org.apache.dubbo.qos.protocol.QosProtocolWrapper
+</code></pre>
+<p>回顾下Wrapper扩展类型的扫描于对象的创建</p>
+<h3 id="wrapper_1"><strong>Wrapper类型的扫描</strong><a class="headerlink" href="#wrapper_1" title="Permanent link">&para;</a></h3>
+<p><strong>Wrapper类型的扫描代码如下:</strong></p>
+<p>来自前面小节ExtensionLoader类型中的loadClass方法</p>
+<pre><code class="language-java"> //扩展子类型是否存在这个注解@Adaptive
+        if (clazz.isAnnotationPresent(Adaptive.class)) {
+            cacheAdaptiveClass(clazz, overridden);
+        } else if (isWrapperClass(clazz)) {
+        //扩展子类型构造器中是否有这个类型的接口 (这个可以想象下我们了解的Java IO流中的类型使用到的装饰器模式 构造器传个类型)
+            cacheWrapperClass(clazz);
+        } else {
+</code></pre>
+<p>isWrapperClass方法通过判断构造器类型是否为当前类型来判断是否为Wrapper类型</p>
+<pre><code class="language-java"> private boolean isWrapperClass(Class&lt;?&gt; clazz) {
+        try {
+            clazz.getConstructor(type);
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+    }
+</code></pre>
+<h3 id="wrapper_2"><strong>Wrapper类型的创建</strong><a class="headerlink" href="#wrapper_2" title="Permanent link">&para;</a></h3>
+<p>这个可以看下 getExtension方法源码的获取扩展对象时候查询扩展对象是否有对应的Wrapper类型的扩展为其创建Wrapper扩展对象,如下代码</p>
+<pre><code class="language-java">//Dubbo通过Wrapper实现AOP的方法
+            if (wrap) {
+            //这个可以参考下Dubbo扩展的加载
+                List&lt;Class&lt;?&gt;&gt; wrapperClassesList = new ArrayList&lt;&gt;();
+                //wrap类型排序 这个wrap类型是如何来的呢,在前面扫描扩展类型的时候如果当前扩展类型不是Adaptive注解修饰的,并且当前类型type有个构造器参数是type自身的也是前面加载扩展类型时候说的装饰器模式 可以参考DubboProtocol的构造器
+                if (cachedWrapperClasses != null) {
+                    wrapperClassesList.addAll(cachedWrapperClasses);
+                    //根据Wrapper注解的order值来进行排序值越小越在列表的前面
+                    wrapperClassesList.sort(WrapperComparator.COMPARATOR);
+                    //反转之后值越大就会在列表的前面
+                    Collections.reverse(wrapperClassesList);
+                }
+                //从缓存中查到了wrapper扩展则遍历这些wrapp扩展进行筛选
+                if (CollectionUtils.isNotEmpty(wrapperClassesList)) {
+                    for (Class&lt;?&gt; wrapperClass : wrapperClassesList) {
+                        Wrapper wrapper = wrapperClass.getAnnotation(Wrapper.class);
+                        //需要包装的扩展名。当此数组为空时，默认值为匹配
+                        //看下当前扩展是否匹配这个wrap,如何判断呢?
+                        //wrapper注解不存在或者matches匹配,或者mismatches不包含当前扩展
+                        //如果匹配到了当前扩展对象是需要进行wrapp的就为当前扩展创建当前wrapper扩展对象进行包装
+                        boolean match = (wrapper == null) ||
+                            ((ArrayUtils.isEmpty(wrapper.matches()) || ArrayUtils.contains(wrapper.matches(), name)) &amp;&amp;
+                                !ArrayUtils.contains(wrapper.mismatches(), name));
+                                //这是扩展类型是匹配wrapp的则开始注入
+                        if (match) {
+                        //匹配到了就创建所有的wrapper类型的对象同时构造器参数设置为当前类型
+                            instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(instance));
+                            instance = postProcessAfterInitialization(instance, name);
+                        }
+                    }
+                }
+            }
+</code></pre>
+<p>主要来看下什么情况下才为当前扩展类型创建Wrapper包装类型:
+- wrapper注解不存在(前面判断过Wrapper类型是构造器满足条件的)
+- 存在Wrapper注解:
+    - matches匹配,
+    - 或者mismatches不包含当前扩展</p>
+<p>如果匹配到了当前扩展对象是需要进行wrapp的就为当前扩展创建当前wrapper扩展对象进行包装。</p>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  <form class="md-feedback" name="feedback" hidden>
+    <fieldset>
+      <legend class="md-feedback__title">
+        Was this page helpful?
+      </legend>
+      <div class="md-feedback__inner">
+        <div class="md-feedback__list">
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page was helpful" data-md-value="1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8m2 0a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10M10 9.5c0 .8-.7 1.5-1.5 1.5S7 10.3 7 9.5 7.7 8 8.5 8s1.5.7 1.5 1.5m7 0c0 .8-.7 1.5-1.5 1.5S14 10.3 14 9.5 14.7 8 15.5 8s1.5.7 1.5 1.5m-5 7.73c-1.75 0-3.29-.73-4.19-1.81L9.23 14c.45.72 1.52 1.23 2.77 1.23s2.32-.51 2.77-1.23l1.42 1.42c-.9 1.08-2.44 1.81-4.19 1.81"/></svg>
+            </button>
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page could be improved" data-md-value="0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8m2 0a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10m-6.5-4c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5-1.5-.7-1.5-1.5.7-1.5 1.5-1.5M10 9.5c0 .8-.7 1.5-1.5 1.5S7 10.3 7 9.5 7.7 8 8.5 8s1.5.7 1.5 1.5m2 4.5c1.75 0 3.29.72 4.19 1.81l-1.42 1.42C14.32 16.5 13.25 16 12 16s-2.32.5-2.77 1.23l-1.42-1.42C8.71 14.72 10.25 14 12 14"/></svg>
+            </button>
+          
+        </div>
+        <div class="md-feedback__note">
+          
+            <div data-md-value="1" hidden>
+              
+              
+                
+              
+              
+              
+                
+                
+              
+              Thanks for your feedback!
+            </div>
+          
+            <div data-md-value="0" hidden>
+              
+              
+                
+              
+              
+              
+                
+                
+              
+              Thanks for your feedback! Help us improve this page by <a href="https://github.com/ktyhub/thinking-in-code/issues/new/?title=[Feedback]+Dubbo%E7%9A%84SPI%E6%89%A9%E5%B1%95%E6%9C%BA%E5%88%B6%E4%B9%8B%E6%99%AE%E9%80%9A%E6%89%A9%E5%B1%95%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9B%E5%BB%BA%E4%B8%8EWrapper%E6%9C%BA%E5%88%B6%E7%9A%84%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90+-+/zh/chapter_dubbo/6-extension-wrapper/" target="_blank" rel="noopener">telling us what you found lacking</a>.
+            </div>
+          
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      可微信搜索 《中间件源码》 联系，订阅内容。   <br/>  Copyright &copy; 2022 - 2024 ktyhub.com copyright   <br/> 部分内容由GPT提供 转载声明：  本文转载自 [原文标题](原文链接)，由[www.ktyhub.com](www.ktyhub.com)创作，遵循 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) 许可协议。
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/ktyhub/thinking-in-code" target="_blank" rel="noopener" title="GitHub Repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://www.ktyhub.com" target="_blank" rel="noopener" title="Official Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M352 256c0 22.2-1.2 43.6-3.3 64H163.4c-2.2-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64h185.3c2.2 20.4 3.3 41.8 3.3 64m28.8-64h123.1c5.3 20.5 8.1 41.9 8.1 64s-2.8 43.5-8.1 64H380.8c2.1-20.6 3.2-42 3.2-64s-1.1-43.4-3.2-64m112.6-32H376.7c-10-63.9-29.8-117.4-55.3-151.6 78.3 20.7 142 77.5 171.9 151.6zm-149.1 0H167.7c6.1-36.4 15.5-68.6 27-94.7 10.5-23.6 22.2-40.7 33.5-51.5C239.4 3.2 248.7 0 256 0s16.6 3.2 27.8 13.8c11.3 10.8 23 27.9 33.5 51.5 11.6 26 20.9 58.2 27 94.7m-209 0H18.6c30-74.1 93.6-130.9 172-151.6-25.5 34.2-45.3 87.7-55.3 151.6M8.1 192h123.1c-2.1 20.6-3.2 42-3.2 64s1.1 43.4 3.2 64H8.1C2.8 299.5 0 278.1 0 256s2.8-43.5 8.1-64m186.6 254.6c-11.6-26-20.9-58.2-27-94.6h176.6c-6.1 36.4-15.5 68.6-27 94.6-10.5 23.6-22.2 40.7-33.5 51.5-11.2 10.7-20.5 13.9-27.8 13.9s-16.6-3.2-27.8-13.8c-11.3-10.8-23-27.9-33.5-51.5zM135.3 352c10 63.9 29.8 117.4 55.3 151.6-78.4-20.7-142-77.5-172-151.6zm358.1 0c-30 74.1-93.6 130.9-171.9 151.6 25.5-34.2 45.2-87.7 55.3-151.6h116.7z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="#" target="_blank" rel="noopener" title="WeChat - 中间件源码" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M385.2 167.6c6.4 0 12.6.3 18.8 1.1C387.4 90.3 303.3 32 207.7 32 100.5 32 13 104.8 13 197.4c0 53.4 29.3 97.5 77.9 131.6l-19.3 58.6 68-34.1c24.4 4.8 43.8 9.7 68.2 9.7 6.2 0 12.1-.3 18.3-.8-4-12.9-6.2-26.6-6.2-40.8-.1-84.9 72.9-154 165.3-154m-104.5-52.9c14.5 0 24.2 9.7 24.2 24.4 0 14.5-9.7 24.2-24.2 24.2-14.8 0-29.3-9.7-29.3-24.2.1-14.7 14.6-24.4 29.3-24.4m-136.4 48.6c-14.5 0-29.3-9.7-29.3-24.2 0-14.8 14.8-24.4 29.3-24.4 14.8 0 24.4 9.7 24.4 24.4 0 14.6-9.6 24.2-24.4 24.2M563 319.4c0-77.9-77.9-141.3-165.4-141.3-92.7 0-165.4 63.4-165.4 141.3S305 460.7 397.6 460.7c19.3 0 38.9-5.1 58.6-9.9l53.4 29.3-14.8-48.6C534 402.1 563 363.2 563 319.4m-219.1-24.5c-9.7 0-19.3-9.7-19.3-19.6 0-9.7 9.7-19.3 19.3-19.3 14.8 0 24.4 9.7 24.4 19.3 0 10-9.7 19.6-24.4 19.6m107.1 0c-9.7 0-19.3-9.7-19.3-19.6 0-9.7 9.7-19.3 19.3-19.3 14.5 0 24.4 9.7 24.4 19.3.1 10-9.9 19.6-24.4 19.6"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+
+
+<h4>Cookie consent</h4>
+<p>We use cookies to recognize your repeated visits and preferences, as well as to measure the effectiveness of our documentation and whether users find what they're searching for. With your consent, you're helping us to make our documentation better.</p>
+<input class="md-toggle" type="checkbox" id="__settings" >
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="analytics" checked>
+      <span class="task-list-indicator"></span>
+      Google Analytics
+    </label>
+  </li>
+
+      
+    
+    
+      
+    
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">同意</button>
+    
+    
+    
+  
+    
+    
+      <button type="reset" class="md-button md-button--primary">拒绝</button>
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">管理设定</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.tabs.fixed", "navigation.tabs.sticky", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.prune", "navigation.indexes", "navigation.top", "navigation.footer", "toc.follow", "toc.integrate", "search.highlight", "search.share", "search.suggest", "content.code.copy", "content.code.select", "content.code.annotate", "content.tooltips", "content.tabs.link", "content.action.edit", "content.action.view", "header.autohide", "announce.dismiss"], "search": "../../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+        <script src="/javascripts/google-tongji.js"></script>
+      
+        <script src="../../../mermaid.min.js"></script>
+      
+        <script src="/javascripts/baidu-tongji.js"></script>
+      
+        <script src="/javascripts/fun-interactions.js"></script>
+      
+        <script src="/javascripts/ux-enhanced.js"></script>
+      
+    
+  </body>
+</html>

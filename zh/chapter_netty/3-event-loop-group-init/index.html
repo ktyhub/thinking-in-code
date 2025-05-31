@@ -1,0 +1,1972 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="knowledge thinking you want to know">
+      
+      
+        <meta name="author" content="ktyhub">
+      
+      
+        <link rel="canonical" href="https://www.ktyhub.com/zh/chapter_netty/3-event-loop-group-init/">
+      
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>EventLoopGroup对象的初始化 - Thinking In Code</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+Traditional+Chinese:300,300i,400,400i,700,700i%7CNoto+Sans+Traditional+Chinese:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Noto Sans Traditional Chinese";--md-code-font:"Noto Sans Traditional Chinese"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/ux-enhanced.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/white-theme.css">
+    
+      <link rel="stylesheet" href="../../../mermaid.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-RFRF1TVRMP"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-RFRF1TVRMP",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="black">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#eventloopgroup" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="Thinking In Code" class="md-header__button md-logo" aria-label="Thinking In Code" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Thinking In Code
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              EventLoopGroup对象的初始化
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/zh/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../index" class="md-tabs__link">
+        
+  
+  
+    
+  
+  🏠 首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_preface/about_the_book/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📚 前言
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_elasticjob/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🚀 技术体系
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_spring_ai/1-official-website/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🤖 AI 技术栈
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_jdk/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  💻 编程语言
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_algorithm/114-preorder/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🧮 算法与数据结构
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_linux/problem/5-linux问题分析/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🐧 Linux 系统
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_post/site/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📚 深度专题
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_elasticjob/1-introduce/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📖 源码深度解析
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../release_note/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🆕 新技术发布
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Thinking In Code" class="md-nav__button md-logo" aria-label="Thinking In Code" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Thinking In Code
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../index" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    🏠 首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../chapter_preface/about_the_book/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    📚 前言
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_elasticjob/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🚀 技术体系
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_spring_ai/1-official-website/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🤖 AI 技术栈
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_jdk/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    💻 编程语言
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_algorithm/114-preorder/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🧮 算法与数据结构
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_linux/problem/5-linux问题分析/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🐧 Linux 系统
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../chapter_post/site/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    📚 深度专题
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_elasticjob/1-introduce/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    📖 源码深度解析
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../release_note/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🆕 新技术发布
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="eventloopgroup"><strong>EventLoopGroup对象的初始化</strong><a class="headerlink" href="#eventloopgroup" title="Permanent link">&para;</a></h1>
+<h2 id="_1"><strong>简介</strong><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>EventLoopGroup是特殊的EventExecutorGroup类型，提供了注册Channel方法和获取下一个可用的EventLoop对象</p>
+<p>了解了启动类型的结构我们来继续看我们Demo的执行流程接下来可以看</p>
+<pre><code class="language-java">    EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+
+     EventLoopGroup workerGroup = new NioEventLoopGroup();
+</code></pre>
+<p>bossGroup 中只有一个线程, 在workerGroup线程池中没有指定线程数量，所以默认是 CPU 核心数乘2,</p>
+<pre><code class="language-java">b.group(bossGroup, workerGroup)
+</code></pre>
+<p>在ServerBootstrap类型中调用group方法</p>
+<ul>
+<li>将parentGroup赋值给AbstractBootstrap类中的group成员变量</li>
+<li>将childGroup赋值给ServerBootstrap类中的childGroup成员变量</li>
+</ul>
+<p>ServerBootstrap中的group方法代码如下</p>
+<pre><code class="language-java">
+ public ServerBootstrap group(EventLoopGroup parentGroup, EventLoopGroup childGroup) {
+
+     super.group(parentGroup);
+
+     if (childGroup == null) {
+
+       throw new NullPointerException(&quot;childGroup&quot;);
+
+     }
+
+     if (this.childGroup != null) {
+
+       throw new IllegalStateException(&quot;childGroup set already&quot;);
+
+     }
+
+     this.childGroup = childGroup;
+
+     return this;
+
+  }
+</code></pre>
+<p>同时会调用super.group(parentGroup)调用父类型AbstractBootstrap中的group方法来设置parentGroup变量.</p>
+<p>AbstractBootstrap类中的group方法如下：</p>
+<pre><code class="language-java">    public B group(EventLoopGroup group) {
+
+     if (group == null) {
+
+       throw new NullPointerException(&quot;group&quot;);
+
+     }
+
+     if (this.group != null) {
+
+       throw new IllegalStateException(&quot;group set already&quot;);
+
+     }
+
+     this.group = group;
+
+     return (B) this;
+
+}
+</code></pre>
+<p>通过group方法我们可以看到在这里仅仅是将对象赋值给成员变量，参数不能为空也不能重复设置</p>
+<h2 id="eventloopgroup_1"><strong>EventLoopGroup相关类型</strong><a class="headerlink" href="#eventloopgroup_1" title="Permanent link">&para;</a></h2>
+<p>在了解详细内容之前可以先看下当前类型的类继承关系，这里需要一个完整的类型继承图</p>
+<ul>
+<li>
+<p>ScheduledExecutorService，Iterable<EventExecutor></p>
+</li>
+<li>
+<p>EventExecutorGroup</p>
+</li>
+<li>
+<p>EventLoopGroup</p>
+</li>
+<li>
+<p>AbstractEventLoopGroup  MultithreadEventLoopGroup EventLoop</p>
+</li>
+</ul>
+<h2 id="eventloopgroup_2"><strong>EventLoopGroup子类型</strong><a class="headerlink" href="#eventloopgroup_2" title="Permanent link">&para;</a></h2>
+<p>在这里我们先详细说一下EventLoopGroup的作用和每个类型的作用后面会详细介绍每个方法的作用:</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EventExecutorGroup</td>
+<td>父类型：用于管理EventExecutor对象提供可用EventExecutor对象，和关闭EventExecutor类型对象的功能</td>
+</tr>
+<tr>
+<td>AbstractEventLoopGroup</td>
+<td>实现EventLoopGroup接口的的抽象基类，目前未做具体扩展</td>
+</tr>
+<tr>
+<td>MultithreadEventLoopGroup</td>
+<td>实现EventLoopGroup接口的的抽象基类，支持多线程，在同一时间用多个线程处理它们的任务</td>
+</tr>
+<tr>
+<td>EventLoop</td>
+<td>处理所有的I/O操作通道，一个  EventLoop实例通常会处理多个 Channel实例，这通常取决于实现细节和内部结构。比如NioEventLoop，EpollEventLoop等</td>
+</tr>
+</tbody>
+</table>
+<h2 id="multithreadeventloopgroup"><strong>MultithreadEventLoopGroup 子类型</strong><a class="headerlink" href="#multithreadeventloopgroup" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DefaultEventLoopGroup</td>
+<td>MultithreadEventLoopGroup类型的子类，只重写了newChild方法用来创建DefaultEventLoop对象</td>
+</tr>
+<tr>
+<td>EpollEventLoopGroup</td>
+<td>MultithreadEventLoopGroup类型的子类，基于Linux的epoll IO模型用于创建EpollEventLoop对象，具有更好的性能，只能用于Linux下</td>
+</tr>
+<tr>
+<td>NioEventLoopGroup</td>
+<td>MultithreadEventLoopGroup类型的子类，用于创建NioEventLoop对象</td>
+</tr>
+</tbody>
+</table>
+<h2 id="eventloop"><strong>EventLoop子类型</strong><a class="headerlink" href="#eventloop" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SingleThreadEventLoop</td>
+<td>EventLoop的实现，抽象基类，它在一个线程中执行所有提交的任务。</td>
+</tr>
+<tr>
+<td>EmbeddedEventLoop</td>
+<td>Embeded开头的类型是Netty为单元测试而提供的</td>
+</tr>
+</tbody>
+</table>
+<h2 id="singlethreadeventloop"><strong>SingleThreadEventLoop子类型</strong><a class="headerlink" href="#singlethreadeventloop" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DefaultEventLoop</td>
+<td>默认的EventLoop实现，从任务队列中取任务执行</td>
+</tr>
+<tr>
+<td>EpollEventLoop</td>
+<td>基于Linux下的epoll IO模型实现的事件循环</td>
+</tr>
+<tr>
+<td>NioEventLoop</td>
+<td>NIO事件循环实现，基于多路复用机制</td>
+</tr>
+<tr>
+<td>ThreadPerChannelEventLoop</td>
+<td>OIO网络模型的事件循环实现，所以总的来说一个ThreadPerChannelEventLoop对应一个Channel</td>
+</tr>
+</tbody>
+</table>
+<p>综上所看EventLoopGroup所包含的类型主要有两大类一个是多线程的EventLoopGroup和单线程的EventLoop，多线程的EventLoopGroup用来创建EventLoop，而单线程的EventLoop用来处理IO事件</p>
+<h3 id="eventloopgroup_3"><strong>EventLoopGroup类型提供的方法如下：</strong><a class="headerlink" href="#eventloopgroup_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EventLoop next()</td>
+<td>返回下一个可以使用的EventLoop对象</td>
+</tr>
+<tr>
+<td>ChannelFuture register(Channel channel)</td>
+<td>用EventLoop注册一个Channel。一旦注册完成，返回的ChannelFuture将得到通知。</td>
+</tr>
+<tr>
+<td>ChannelFuture register(ChannelPromise promise)</td>
+<td>使用ChannelFuture在EventLoop中注册一个Channel。一旦注册完成，传递的ChannelFuture将得到通知，也将被返回。Promise用于异步执行</td>
+</tr>
+<tr>
+<td>ChannelFuture register(Channel channel, ChannelPromise promise)</td>
+<td>用这个EventLoop注册一个 Channel。一旦注册完成，传递的ChannelFuture将得到通知，也将被返回。这个方法已经过时了可以使用上个方法使用#register(ChannelPromise)}代替。</td>
+</tr>
+</tbody>
+</table>
+<p>了解了在这里我们先详细说一下EventLoopGroup的实现，我们来看下与EventLoopGroup相关类型的作用，在后面我们用到时候详细来说明</p>
+<p>了解了每个类型的作用再来回过头来看我们的示例代码</p>
+<pre><code class="language-java">EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+
+EventLoopGroup workerGroup = new NioEventLoopGroup();
+
+</code></pre>
+<h2 id="nioeventloopgroup"><strong>NioEventLoopGroup初始化过程</strong><a class="headerlink" href="#nioeventloopgroup" title="Permanent link">&para;</a></h2>
+<h3 id="nioeventloopgroup_1"><strong>NioEventLoopGroup构造器</strong><a class="headerlink" href="#nioeventloopgroup_1" title="Permanent link">&para;</a></h3>
+<p>我们的示例代码使用到NioEventLoopGroup用来创建NioEventLoop对象，所以我们这里使用的网络模型也是NIO类型的多路复用机制，</p>
+<p>我们来详细看下创建NioEventLoopGroup对象所经历的过程</p>
+<p>//无参构造器</p>
+<pre><code class="language-java">  public NioEventLoopGroup() {
+
+     this(0);
+
+  }
+</code></pre>
+<p>//线程数设置构造器</p>
+<pre><code class="language-java">  public NioEventLoopGroup(int nThreads) {
+
+     this(nThreads, (Executor) null);
+
+  }
+</code></pre>
+<p>//最终会调用到如下构造器</p>
+<pre><code class="language-java">   public NioEventLoopGroup(int nThreads, Executor executor, final SelectorProvider selectorProvider,
+
+                final SelectStrategyFactory selectStrategyFactory) {
+
+     super(nThreads, executor, selectorProvider, selectStrategyFactory, RejectedExecutionHandlers.reject());
+
+  }
+</code></pre>
+<p>我们先来了解下每个参数的作用：</p>
+<ul>
+<li>nThreads 线程数</li>
+<li>executor  用来执行任务的执行器这个是java.util.concurrent包下的顶层执行器接口</li>
+<li>selectorProvider SelectorProvider 定义了创建 Selector、ServerSocketChannel、SocketChannel 等方法，采用 JDK 的 Service Provider Interface (SPI) 方式实现。</li>
+<li>selectStrategyFactory  用来创建Select策略SelectStrategy类型对象，当IO循环事件中通过SelectStrategy中的calculateStrategy方法来计算跳过还是进行IO</li>
+</ul>
+<p>NioEventLoopGroup的参数了解了我们可以继续往下执行，接下来调用父类的构造器</p>
+<pre><code class="language-java">super(nThreads, executor, selectorProvider, selectStrategyFactory, RejectedExecutionHandlers.reject());
+</code></pre>
+<p>在这里多了一个参数RejectedExecutionHandlers.reject()  任务执行拒绝策略，默认的拒绝策略无法添加任务则会抛出异常</p>
+<h3 id="multithreadeventloopgroup_1"><strong>MultithreadEventLoopGroup构造器</strong><a class="headerlink" href="#multithreadeventloopgroup_1" title="Permanent link">&para;</a></h3>
+<p>然后我们来看第一个父类MultithreadEventLoopGroup所对应的构造器</p>
+<pre><code class="language-java">protected MultithreadEventLoopGroup(int nThreads, Executor executor, Object... args) {
+
+     super(nThreads == 0 ? DEFAULT_EVENT_LOOP_THREADS : nThreads, executor, args);
+
+  }
+</code></pre>
+<p>在这个构造器中会有一些参数的转化，我们来详细看下：</p>
+<ul>
+<li>nThreads ：如果线程数量为0的时候则使用默认的DEFAULT_EVENT_LOOP_THREADS 那默认线程数量如何计算的呢可以看如下代码：</li>
+</ul>
+<pre><code class="language-java"> static {
+
+     DEFAULT_EVENT_LOOP_THREADS = Math.max(1, SystemPropertyUtil.getInt(
+
+         &quot;io.netty.eventLoopThreads&quot;, Runtime.getRuntime().availableProcessors() * 2));
+
+
+
+     if (logger.isDebugEnabled()) {
+
+       logger.debug(&quot;-Dio.netty.eventLoopThreads: {}&quot;, DEFAULT_EVENT_LOOP_THREADS);
+
+     }
+
+  }
+</code></pre>
+<p>如果JVM参数io.netty.eventLoopThreads中存在参数值则以这个JVM参数为准，否则的话以可用处理器核数*2为准</p>
+<p>如果说系统属性中获取到的JVM参数小于1则以1为准做为默认线程数量</p>
+<p>然后我们可以看args 做为可变参数把selectorProvider，selectStrategyFactory，RejectedExecutionHandler放入了可变数组中来存储，</p>
+<p>这个构造器仍会调用super来执行我们可以继续往下看</p>
+<p>MultithreadEventExecutorGroup</p>
+<p>被调用到的构造器方法如下：</p>
+<pre><code class="language-java"> protected MultithreadEventExecutorGroup(int nThreads, Executor executor, Object... args) {     
+    this(nThreads, executor, DefaultEventExecutorChooserFactory.INSTANCE, args); 
+}
+</code></pre>
+<p>这个构造器新增了一个参数DefaultEventExecutorChooserFactory ,默认实现，用来创建EventExecutorChooser对象 ，EventExecutorChooser来选择下一个 EventExecutor 对象，同样这里可以先了解这个类是做什么用的</p>
+<p>接下来我们看另外一个被调用到的构造器</p>
+<pre><code class="language-java">protected MultithreadEventExecutorGroup(int nThreads, Executor executor,
+                                            EventExecutorChooserFactory chooserFactory, Object... args) {
+        checkPositive(nThreads, &quot;nThreads&quot;);
+//创建一个单线程的任务执行器   
+        if (executor == null) {
+        //ThreadPerTaskExecutor命令模式实现的单线程任务执行器，传递任务内部创建一个子县城来执行  
+            executor = new ThreadPerTaskExecutor(newDefaultThreadFactory());
+        }
+//创建事件执行器数组
+        children = new EventExecutor[nThreads];
+
+        for (int i = 0; i &lt; nThreads; i ++) {
+            boolean success = false;
+            try {
+                children[i] = newChild(executor, args);
+                success = true;
+            } catch (Exception e) {
+                // TODO: Think about if this is a good exception type
+                throw new IllegalStateException(&quot;failed to create a child event loop&quot;, e);
+            } finally {
+                if (!success) {
+                    for (int j = 0; j &lt; i; j ++) {
+                        children[j].shutdownGracefully();
+                    }
+
+                    for (int j = 0; j &lt; i; j ++) {
+                        EventExecutor e = children[j];
+                        try {
+                            while (!e.isTerminated()) {
+                                e.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
+                            }
+                        } catch (InterruptedException interrupted) {
+                            // Let the caller handle the interruption.
+                            Thread.currentThread().interrupt();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        chooser = chooserFactory.newChooser(children);
+
+        final FutureListener&lt;Object&gt; terminationListener = new FutureListener&lt;Object&gt;() {
+            @Override
+            public void operationComplete(Future&lt;Object&gt; future) throws Exception {
+                if (terminatedChildren.incrementAndGet() == children.length) {
+                    terminationFuture.setSuccess(null);
+                }
+            }
+        };
+
+        for (EventExecutor e: children) {
+            e.terminationFuture().addListener(terminationListener);
+        }
+
+        Set&lt;EventExecutor&gt; childrenSet = new LinkedHashSet&lt;EventExecutor&gt;(children.length);
+        Collections.addAll(childrenSet, children);
+        readonlyChildren = Collections.unmodifiableSet(childrenSet);
+    }
+</code></pre>
+<p>newChild方法，由于多态的存在我们优先执行具体类型的方法这里我们创建的对象是NioEventLoopGroup类型所以需要看下NioEventLoopGroup重写父类型的newChild方法：</p>
+<pre><code class="language-java">  @Override  
+  protected EventLoop newChild(Executor executor, Object... args) throws Exception {     
+
+        return new NioEventLoop(this, executor, (SelectorProvider) args[0],       ((SelectStrategyFactory) args[1]).newSelectStrategy(), (RejectedExecutionHandler) args[2]); 
+   }
+</code></pre>
+<p>通过源码可以看到通过newChild方法主要是用来创建EventLoop类型的对象，在NioEventLoopGroup类型的其中一个作用就是用来创建NioEventLoop类型的对象</p>
+<p>创建NioEventLoop对象一共传递了5个参数</p>
+<ul>
+<li>当前NioEventLoopGroup类型对象</li>
+<li>用来执行任务的执行器</li>
+<li>前面构造器中传入的SelectorProvider类型对象</li>
+<li>通过前面构造器传入的SelectStrategyFactory对象创建SelectStrategy，默认为DefaultSelectStrategy类型</li>
+<li>拒绝策略默认为前面构造器传入的 抛出异常拒绝策略</li>
+</ul>
+<p>了解到了NioEventLoop对象的创建我们继续往下看NioEventLoop构造器</p>
+<pre><code class="language-java">  NioEventLoop(NioEventLoopGroup parent, Executor executor, SelectorProvider selectorProvider,          SelectStrategy strategy, RejectedExecutionHandler rejectedExecutionHandler) {    
+        super(parent, executor, false, DEFAULT_MAX_PENDING_TASKS, rejectedExecutionHandler);     
+        if (selectorProvider == null) {     
+              throw new NullPointerException(&quot;selectorProvider&quot;);     
+        }     
+          if (strategy == null) {      
+            throw new NullPointerException(&quot;selectStrategy&quot;);    
+            }     
+            provider = selectorProvider;     
+            selector = openSelector();    
+            selectStrategy = strategy;  
+     }
+</code></pre>
+<p>先调用父类构造器 这里新增了两个参数</p>
+<p>一个是addTaskWakesUp 添加任务时候是否唤醒线程，这里默认值为false，当为false时候执行唤醒方法</p>
+<p>DEFAULT_MAX_PENDING_TASKS，这个参数主要用来设置等待任务队列的大小</p>
+<p>父类构造器执行完毕之后进行参数校验，然后为成员变量provider赋值</p>
+<p>接下来通过调用openSelector方法创建Selector类型对象，openSelector方法执行逻辑我们在后面看</p>
+<p>最后为selectStrategy成员变量赋值</p>
+<p>系统属性io.netty.eventLoop.maxPendingTasks没有设置，就默认Integer.MAX_VALUE，设置的参数如果小于16则默认为16</p>
+<p>接下来我们继续看NioEventLoop的父类型SingleThreadEventLoop的构造器</p>
+<pre><code class="language-java">   protected SingleThreadEventLoop(EventLoopGroup parent, Executor executor, boolean addTaskWakesUp, int maxPendingTasks, RejectedExecutionHandler rejectedExecutionHandler) {     
+        super(parent, executor, addTaskWakesUp, maxPendingTasks, rejectedExecutionHandler);                     
+        tailTasks = newTaskQueue(maxPendingTasks);  
+   }
+</code></pre>
+<p>SingleThreadEventLoop类型先调用父类有参数构造器，然后再创建tailTask，tailTask是用来收尾的队列在执行任务队列taskQueue完毕之后会通过afterRunningAllTasks调用，</p>
+<p>而任务队列taskQueue的创建是在调用super中</p>
+<p>我们看下需要执行的父类型SingleThreadEventExecutor的构造器</p>
+<pre><code class="language-java">   protected SingleThreadEventExecutor(EventExecutorGroup parent, Executor executor,                     boolean addTaskWakesUp, int maxPendingTasks, RejectedExecutionHandler rejectedHandler) {       
+        super(parent); 
+        this.addTaskWakesUp = addTaskWakesUp;
+        this.maxPendingTasks = Math.max(16, maxPendingTasks);
+        this.executor = ObjectUtil.checkNotNull(executor, &quot;executor&quot;);
+        taskQueue = newTaskQueue(this.maxPendingTasks);
+        rejectedExecutionHandler = ObjectUtil.checkNotNull(rejectedHandler, &quot;rejectedHandler&quot;); 
+     }
+</code></pre>
+<p>这里的super主要是用来向父类型传递对象，就不详细展开了,主要看下当前类型做了哪些操作</p>
+<p>为成员变量addTaskWakesUp赋值，决定是否唤醒任务</p>
+<p>为成员变量maxPendingTasks赋值，来指定等待任务队列大小</p>
+<p>为成员变量executor赋值，来执行具体任务，当前对象不能为空</p>
+<p>创建taskQueue，默认SingleThreadEventExecutor类型会创建LinkedBlockingQueue队列，但是由于多态的存在，我们创建的是NioEventLoop类型对象则会执行NioEventLoop中的newTaskQueue，</p>
+<p>NioEventLoop中通过newTaskQueue方法来创建无锁队列。</p>
+<p>为成员变量rejectedExecutionHandler赋值，在任务队列满的时候执行拒绝策略</p>
+<p>父类构造器执行完毕之后会执行NioEventLoop的openSelector方法，具体代码如下：</p>
+<pre><code class="language-java">private Selector openSelector() {     
+        try {      
+         //通过上面了解到provider对象是通过SPI获取获取不到则使用DefaultSelectorProvider工厂创建了KQueueSelectorProvider类型对象，创建的选择器为KQueueSelectorImpl         
+            unwrappedSelector = provider.openSelector();     
+        } catch (IOException e) {
+            throw new ChannelException(&quot;failed to open a new selector&quot;, e);
+        }
+</code></pre>
+<div class="highlight"><pre><span></span><code> //JVM参数中的io.netty.noKeySetOptimization参数，禁用优化选项，默认为false,Netty的 JDK SelectionKey优化开关,默认关闭,设置true开启禁用性能优化开关,
+</code></pre></div>
+<pre><code class="language-java">     if (DISABLE_KEYSET_OPTIMIZATION) {
+
+       return unwrappedSelector;
+
+     }
+</code></pre>
+<div class="highlight"><pre><span></span><code> //SelectedSelectionKeySet内部很简单，使用数组代替原Selector的中的HashSet，提高性能。数组默认大小为1024，不够用时容量*2。
+</code></pre></div>
+<pre><code class="language-java">    final SelectedSelectionKeySet selectedKeySet = new SelectedSelectionKeySet();
+</code></pre>
+<div class="highlight"><pre><span></span><code> //加载JDK的select实现SelectorImpl类
+</code></pre></div>
+<pre><code class="language-java">    Object maybeSelectorImplClass = AccessController.doPrivileged(new PrivilegedAction&lt;Object&gt;() {        @Override
+         public Object run() {
+            try {
+                return Class.forName(&quot;sun.nio.ch.SelectorImpl&quot;,false,               PlatformDependent.getSystemClassLoader());
+            } catch (Throwable cause) {
+                return cause;
+            }
+         }
+    });
+</code></pre>
+<div class="highlight"><pre><span></span><code> //加载的SelectorImpl失败则直接返回默认的unwrappedSelector
+</code></pre></div>
+<pre><code class="language-java">    if (!(maybeSelectorImplClass instanceof Class) || 
+    // ensure the current selector implementation is what we can instrument.         !((Class&lt;?&gt;) maybeSelectorImplClass).isAssignableFrom(unwrappedSelector.getClass())) {       if (maybeSelectorImplClass instanceof Throwable) {         Throwable t = (Throwable) maybeSelectorImplClass;         logger.trace(&quot;failed to instrument a special java.util.Set into: {}&quot;, unwrappedSelector, t);       }       return unwrappedSelector;     }      final Class&lt;?&gt; selectorImplClass = (Class&lt;?&gt;) maybeSelectorImplClass;
+</code></pre>
+<p>//反射替换SelectorImpl类型的成员变量selectedKeys，publicSelectedKeys的值为优化后的SelectedSelectionKeySet类型 Object maybeException = AccessController.doPrivileged(new PrivilegedAction<Object>() { @Override public Object run() { try { //由于JDK的安全检查耗时较多.所以通过setAccessible(true)的方式关闭安全检查就可以达到提升反射速度的目的。 然而，带来的副作用，也不容忽视。如上所述，设置Field对象的Accessible的访问标志位为 true，就可以通过反射获取私有变量的值，在访问时会忽略访问修饰符的检查。</p>
+<pre><code class="language-java">Field selectedKeysField = selectorImplClass.getDeclaredField(&quot;selectedKeys&quot;); 
+Field publicSelectedKeysField = selectorImplClass.getDeclaredField(&quot;publicSelectedKeys&quot;); Throwable cause = ReflectionUtil.trySetAccessible(selectedKeysField); 
+if (cause != null) { 
+return cause; 
+} 
+cause = ReflectionUtil.trySetAccessible(publicSelectedKeysField); 
+if (cause != null) { 
+return cause; 
+} 
+//替换掉nio中的SelectorImpl成员变量selectedKeys（类型为HashSet）使用优化后的SelectedSelectionKeySet类型 
+selectedKeysField.set(unwrappedSelector, selectedKeySet); 
+publicSelectedKeysField.set(unwrappedSelector, selectedKeySet); 
+return null; 
+} catch (NoSuchFieldException e) { 
+return e; 
+} catch (IllegalAccessException e) { 
+return e; 
+} } });
+</code></pre>
+<p>//替换变量异常直接返回默认selector</p>
+<pre><code class="language-java">    if (maybeException instanceof Exception) {
+
+       selectedKeys = null;
+
+       Exception e = (Exception) maybeException;
+
+       logger.trace(&quot;failed to instrument a special java.util.Set into: {}&quot;, unwrappedSelector, e);
+
+       return unwrappedSelector;
+
+     }
+
+     selectedKeys = selectedKeySet;
+
+     logger.trace(&quot;instrumented a special java.util.Set into: {}&quot;, unwrappedSelector);
+
+     //nio优化顺利则最终使用netty自定义的Select类型，创建SelectedSelectionKeySetSelector对象，
+
+     return new SelectedSelectionKeySetSelector(unwrappedSelector, selectedKeySet);
+
+  }
+</code></pre>
+<p>这个选择器创建的代码看起来比较长，总结一下：</p>
+<p>先创建JDK NIO的选择器对象默认为KQueueSelectorImpl类型的unwrappedSelector对象</p>
+<p>然后获取默认的unwrappedSelector对象的父类型SelectorImpl的成员变量selectedKeys和publicSelectedKeys</p>
+<p>然后替换对象unwrappedSelector的父类型SelectorImpl中的成员变量selectedKeys和publicSelectedKeys的值为SelectedSelectionKeySet类型对象</p>
+<p>最后使用装饰(包装)模式通过unwrappedSelector和selectedKeySet创建SelectedSelectionKeySetSelector类型的选择器对象</p>
+<p>DefaultEventExecutorChooserFactory类型的newChooser创建事件执行选择器</p>
+<pre><code class="language-java">  @Override
+
+  public EventExecutorChooser newChooser(EventExecutor[] executors) {
+
+     if (isPowerOfTwo(executors.length)) {
+
+       return new PowerOfTwoEventExecutorChooser(executors);
+
+     } else {
+
+       return new GenericEventExecutorChooser(executors);
+
+     }
+
+  }
+
+</code></pre>
+<p>//计算是否为2的幂可参考另外一个算法https://blog.csdn.net/OnionOmelette/article/details/53718623</p>
+<p>//看不太懂太难了</p>
+<pre><code class="language-java">  private static boolean isPowerOfTwo(int val) {
+
+     return (val &amp; -val) == val;
+
+  }
+
+</code></pre>
+<p>//可并发的轮训算法，返回的值不会超过素组的长度</p>
+<div class="highlight"><pre><span></span><code>    //&amp;运算效率较高
+</code></pre></div>
+<pre><code class="language-java">    //2的幂次选择器
+
+private static final class PowerOfTwoEventExecutorChooser implements EventExecutorChooser {
+
+        //原子自增
+
+             private final AtomicInteger idx = new AtomicInteger();
+
+     private final EventExecutor[] executors;
+
+
+
+     PowerOfTwoEventExecutorChooser(EventExecutor[] executors) {
+
+       this.executors = executors;
+
+     }
+
+
+
+                //可并发的轮训算法，返回的值不会超过素组的长度
+
+                //&amp;运算效率较高
+
+             @Override
+
+     public EventExecutor next() {
+
+       // 这个单独写个文档吧 比较好的算法
+
+       return executors[idx.getAndIncrement() &amp; executors.length - 1];
+
+     }
+
+}
+
+
+
+            //普通选择器
+
+private static final class GenericEventExecutorChooser implements EventExecutorChooser {
+
+        //原子自增
+
+             private final AtomicInteger idx = new AtomicInteger();
+
+     private final EventExecutor[] executors;
+
+
+
+     GenericEventExecutorChooser(EventExecutor[] executors) {
+
+       this.executors = executors;
+
+     }
+
+
+
+     @Override
+
+     public EventExecutor next() {
+
+            //可并发的轮训算法，返回的值不会超过素组的长度
+
+            //计数器不断自增 然后与素组长度取模 最后拿绝对值
+
+       return executors[Math.abs(idx.getAndIncrement() % executors.length)];
+
+     }
+
+} 
+</code></pre>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  <form class="md-feedback" name="feedback" hidden>
+    <fieldset>
+      <legend class="md-feedback__title">
+        Was this page helpful?
+      </legend>
+      <div class="md-feedback__inner">
+        <div class="md-feedback__list">
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page was helpful" data-md-value="1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8m2 0a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10M10 9.5c0 .8-.7 1.5-1.5 1.5S7 10.3 7 9.5 7.7 8 8.5 8s1.5.7 1.5 1.5m7 0c0 .8-.7 1.5-1.5 1.5S14 10.3 14 9.5 14.7 8 15.5 8s1.5.7 1.5 1.5m-5 7.73c-1.75 0-3.29-.73-4.19-1.81L9.23 14c.45.72 1.52 1.23 2.77 1.23s2.32-.51 2.77-1.23l1.42 1.42c-.9 1.08-2.44 1.81-4.19 1.81"/></svg>
+            </button>
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page could be improved" data-md-value="0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8m2 0a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10m-6.5-4c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5-1.5-.7-1.5-1.5.7-1.5 1.5-1.5M10 9.5c0 .8-.7 1.5-1.5 1.5S7 10.3 7 9.5 7.7 8 8.5 8s1.5.7 1.5 1.5m2 4.5c1.75 0 3.29.72 4.19 1.81l-1.42 1.42C14.32 16.5 13.25 16 12 16s-2.32.5-2.77 1.23l-1.42-1.42C8.71 14.72 10.25 14 12 14"/></svg>
+            </button>
+          
+        </div>
+        <div class="md-feedback__note">
+          
+            <div data-md-value="1" hidden>
+              
+              
+                
+              
+              
+              
+                
+                
+              
+              Thanks for your feedback!
+            </div>
+          
+            <div data-md-value="0" hidden>
+              
+              
+                
+              
+              
+              
+                
+                
+              
+              Thanks for your feedback! Help us improve this page by <a href="https://github.com/ktyhub/thinking-in-code/issues/new/?title=[Feedback]+EventLoopGroup%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96+-+/zh/chapter_netty/3-event-loop-group-init/" target="_blank" rel="noopener">telling us what you found lacking</a>.
+            </div>
+          
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      可微信搜索 《中间件源码》 联系，订阅内容。   <br/>  Copyright &copy; 2022 - 2024 ktyhub.com copyright   <br/> 部分内容由GPT提供 转载声明：  本文转载自 [原文标题](原文链接)，由[www.ktyhub.com](www.ktyhub.com)创作，遵循 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) 许可协议。
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/ktyhub/thinking-in-code" target="_blank" rel="noopener" title="GitHub Repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://www.ktyhub.com" target="_blank" rel="noopener" title="Official Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M352 256c0 22.2-1.2 43.6-3.3 64H163.4c-2.2-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64h185.3c2.2 20.4 3.3 41.8 3.3 64m28.8-64h123.1c5.3 20.5 8.1 41.9 8.1 64s-2.8 43.5-8.1 64H380.8c2.1-20.6 3.2-42 3.2-64s-1.1-43.4-3.2-64m112.6-32H376.7c-10-63.9-29.8-117.4-55.3-151.6 78.3 20.7 142 77.5 171.9 151.6zm-149.1 0H167.7c6.1-36.4 15.5-68.6 27-94.7 10.5-23.6 22.2-40.7 33.5-51.5C239.4 3.2 248.7 0 256 0s16.6 3.2 27.8 13.8c11.3 10.8 23 27.9 33.5 51.5 11.6 26 20.9 58.2 27 94.7m-209 0H18.6c30-74.1 93.6-130.9 172-151.6-25.5 34.2-45.3 87.7-55.3 151.6M8.1 192h123.1c-2.1 20.6-3.2 42-3.2 64s1.1 43.4 3.2 64H8.1C2.8 299.5 0 278.1 0 256s2.8-43.5 8.1-64m186.6 254.6c-11.6-26-20.9-58.2-27-94.6h176.6c-6.1 36.4-15.5 68.6-27 94.6-10.5 23.6-22.2 40.7-33.5 51.5-11.2 10.7-20.5 13.9-27.8 13.9s-16.6-3.2-27.8-13.8c-11.3-10.8-23-27.9-33.5-51.5zM135.3 352c10 63.9 29.8 117.4 55.3 151.6-78.4-20.7-142-77.5-172-151.6zm358.1 0c-30 74.1-93.6 130.9-171.9 151.6 25.5-34.2 45.2-87.7 55.3-151.6h116.7z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="#" target="_blank" rel="noopener" title="WeChat - 中间件源码" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M385.2 167.6c6.4 0 12.6.3 18.8 1.1C387.4 90.3 303.3 32 207.7 32 100.5 32 13 104.8 13 197.4c0 53.4 29.3 97.5 77.9 131.6l-19.3 58.6 68-34.1c24.4 4.8 43.8 9.7 68.2 9.7 6.2 0 12.1-.3 18.3-.8-4-12.9-6.2-26.6-6.2-40.8-.1-84.9 72.9-154 165.3-154m-104.5-52.9c14.5 0 24.2 9.7 24.2 24.4 0 14.5-9.7 24.2-24.2 24.2-14.8 0-29.3-9.7-29.3-24.2.1-14.7 14.6-24.4 29.3-24.4m-136.4 48.6c-14.5 0-29.3-9.7-29.3-24.2 0-14.8 14.8-24.4 29.3-24.4 14.8 0 24.4 9.7 24.4 24.4 0 14.6-9.6 24.2-24.4 24.2M563 319.4c0-77.9-77.9-141.3-165.4-141.3-92.7 0-165.4 63.4-165.4 141.3S305 460.7 397.6 460.7c19.3 0 38.9-5.1 58.6-9.9l53.4 29.3-14.8-48.6C534 402.1 563 363.2 563 319.4m-219.1-24.5c-9.7 0-19.3-9.7-19.3-19.6 0-9.7 9.7-19.3 19.3-19.3 14.8 0 24.4 9.7 24.4 19.3 0 10-9.7 19.6-24.4 19.6m107.1 0c-9.7 0-19.3-9.7-19.3-19.6 0-9.7 9.7-19.3 19.3-19.3 14.5 0 24.4 9.7 24.4 19.3.1 10-9.9 19.6-24.4 19.6"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+
+
+<h4>Cookie consent</h4>
+<p>We use cookies to recognize your repeated visits and preferences, as well as to measure the effectiveness of our documentation and whether users find what they're searching for. With your consent, you're helping us to make our documentation better.</p>
+<input class="md-toggle" type="checkbox" id="__settings" >
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="analytics" checked>
+      <span class="task-list-indicator"></span>
+      Google Analytics
+    </label>
+  </li>
+
+      
+    
+    
+      
+    
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">同意</button>
+    
+    
+    
+  
+    
+    
+      <button type="reset" class="md-button md-button--primary">拒绝</button>
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">管理设定</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.tabs.fixed", "navigation.tabs.sticky", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.prune", "navigation.indexes", "navigation.top", "navigation.footer", "toc.follow", "toc.integrate", "search.highlight", "search.share", "search.suggest", "content.code.copy", "content.code.select", "content.code.annotate", "content.tooltips", "content.tabs.link", "content.action.edit", "content.action.view", "header.autohide", "announce.dismiss"], "search": "../../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+        <script src="/javascripts/google-tongji.js"></script>
+      
+        <script src="../../../mermaid.min.js"></script>
+      
+        <script src="/javascripts/baidu-tongji.js"></script>
+      
+        <script src="/javascripts/fun-interactions.js"></script>
+      
+        <script src="/javascripts/ux-enhanced.js"></script>
+      
+    
+  </body>
+</html>

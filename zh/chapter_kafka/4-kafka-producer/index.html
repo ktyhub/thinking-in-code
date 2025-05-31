@@ -1,0 +1,2003 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="knowledge thinking you want to know">
+      
+      
+        <meta name="author" content="ktyhub">
+      
+      
+        <link rel="canonical" href="https://www.ktyhub.com/zh/chapter_kafka/4-kafka-producer/">
+      
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>KafkaProducer生产者对象的长篇源码解析简介 - Thinking In Code</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+Traditional+Chinese:300,300i,400,400i,700,700i%7CNoto+Sans+Traditional+Chinese:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Noto Sans Traditional Chinese";--md-code-font:"Noto Sans Traditional Chinese"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/ux-enhanced.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/white-theme.css">
+    
+      <link rel="stylesheet" href="../../../mermaid.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-RFRF1TVRMP"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-RFRF1TVRMP",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="black">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#kafkaproducer" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="Thinking In Code" class="md-header__button md-logo" aria-label="Thinking In Code" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Thinking In Code
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              KafkaProducer生产者对象的长篇源码解析简介
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/zh/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../index" class="md-tabs__link">
+        
+  
+  
+    
+  
+  🏠 首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_preface/about_the_book/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📚 前言
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_elasticjob/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🚀 技术体系
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_spring_ai/1-official-website/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🤖 AI 技术栈
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_jdk/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  💻 编程语言
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_algorithm/114-preorder/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🧮 算法与数据结构
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_linux/problem/5-linux问题分析/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🐧 Linux 系统
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_post/site/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📚 深度专题
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_elasticjob/1-introduce/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📖 源码深度解析
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../release_note/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🆕 新技术发布
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Thinking In Code" class="md-nav__button md-logo" aria-label="Thinking In Code" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Thinking In Code
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../index" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    🏠 首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../chapter_preface/about_the_book/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    📚 前言
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_elasticjob/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🚀 技术体系
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_spring_ai/1-official-website/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🤖 AI 技术栈
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_jdk/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    💻 编程语言
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_algorithm/114-preorder/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🧮 算法与数据结构
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_linux/problem/5-linux问题分析/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🐧 Linux 系统
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../chapter_post/site/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    📚 深度专题
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_elasticjob/1-introduce/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    📖 源码深度解析
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../release_note/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🆕 新技术发布
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="kafkaproducer"><strong>KafkaProducer生产者对象的长篇源码解析简介</strong><a class="headerlink" href="#kafkaproducer" title="Permanent link">&para;</a></h1>
+<h2 id="_1"><strong>简介</strong><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>生产者用来发送消息到kafka代理服务器，我们先来看下KafkaProducer类型的官方说明：</p>
+<p>KafkaProducer是将记录发布到Kafka群集的Kafka客户端。
+生产者是线程安全的，跨线程共享单个生产者实例通常比拥有多个实例更快。
+下面是一个简单的示例，使用producer发送包含序列号的字符串作为键/值对的记录。</p>
+<pre><code class="language-java"> Properties props = new Properties();
+ props.put(&quot;bootstrap.servers&quot;, &quot;localhost:9092&quot;);
+ props.put(&quot;linger.ms&quot;, 1);
+ props.put(&quot;key.serializer&quot;, &quot;org.apache.kafka.common.serialization.StringSerializer&quot;);
+ props.put(&quot;value.serializer&quot;, &quot;org.apache.kafka.common.serialization.StringSerializer&quot;);
+
+ Producer  producer = new KafkaProducer&lt;&gt;(props);
+ for (int i = 0; i &lt; 100; i++)
+     producer.send(new ProducerRecord (&quot;my-topic&quot;, Integer.toString(i), Integer.toString(i)));
+
+ producer.close();
+</code></pre>
+<p>生产者包括一个缓冲区池，其中保存尚未传输到服务器的记录，以及一个后台I/O线程，负责将这些记录转换为请求并将其传输到集群。使用后未关闭生产者将泄漏这些资源。</p>
+<ul>
+<li>
+<p>send() 方法是异步的。调用时，它将记录添加到挂起记录发送的缓冲区中，并立即返回。这使制作人能够将单个记录批处理在一起，以提高效率</p>
+</li>
+<li>
+<p>acks配置控制将请求视为完成的条件。默认设置“all”将导致阻止记录的完全提交，这是最慢但最持久的设置。</p>
+</li>
+<li>
+<p>如果请求失败，生产者可以自动重试。重试设置默认为整数Integer.MAX_VALUE，建议使用delivery.timeout.ms 控制重试行为，而不是重试。</p>
+</li>
+<li>
+<p>生产者为每个分区维护未发送记录的缓冲区。这些缓冲区的大小由 batch.size 配置。将其变大可能会导致更多的批处理，但需要更多的内存（因为通常每个活动分区都有一个这样的缓冲区）。</p>
+</li>
+<li>
+<p>默认情况下，即使缓冲区中有额外的未使用空间，也可以立即发送缓冲区。但是，如果要减少请求数，可以设置linger.ms 设置为大于0的值。这将指示生产者在发送请求之前等待该毫秒数，希望更多记录将到达以填充同一批。这类似于TCP中的Nagle算法。例如，在上面的代码片段中，可能所有100条记录都将在一个请求中发送，因为我们将延迟时间设置为1毫秒。然而，如果我们没有填满缓冲区，这个设置会给等待更多记录到达的请求增加1毫秒的延迟。请注意，及时到达的记录通常会一起批处理，即使存在 linger.ms=0。因此，在负载比较大的情况下，无论延迟linger配置如何，都会进行批处理；但是，如果将其设置为大于0的值，则在不处于最大负载的情况下，可能会导致更少、更高效的请求，而代价是很小的延迟</p>
+</li>
+<li>
+<p>buffer.memory控制生产者可用于缓冲的内存总量。如果记录的发送速度超过了它们传输到服务器的速度，那么该缓冲区空间将耗尽。当缓冲区空间耗尽时，其他发送调用将被阻止。阻止时间的阈值由max.block.m确定。之后，它抛出TimeoutException。</p>
+</li>
+<li>
+<p>key.serializer 和value.serializer 指示如何将用户随其ProducerRecord提供的键和值对象转换为字节。对于简单的字符串或字节类型，可以使用包含的org.apache.kafka.common.serialization.ByteArraySerializer或org.apache.kafka.common.serialization.StringSerializer 。</p>
+</li>
+<li>
+<p>从Kafka 0.11开始，KafkaProducer支持两种附加模式：幂等生产者和事务生产者。幂等生产者将Kafka的传递语义从至少一次传递加强到了完全一次传递。特别是生产者重试将不再引入重复。事务生产者允许应用程序将消息原子的发送到多个分区（和主题！）</p>
+</li>
+<li>
+<p>从Kafka  3.0开始，enable.idempotence配置默认为true。启用幂等时，重试配置将默认为Integer.MAX_VALUE，acks配置将默认为all。幂等生产者没有API更改，因此不需要修改现有应用程序来利用此功能</p>
+</li>
+<li>
+<p>为了利用幂等生产者，必须避免应用程序级的重新发送，因为这些数据不能重复消除。因此，如果应用程序启用了幂等性，建议不要设置重试配置，因为它将默认为Integer.MAX_VALUE。此外，如果发送（ProducerRecord）返回错误，即使无限次重试（例如，如果消息在发送之前在缓冲区中过期），则建议关闭生产者并检查最后生成的消息的内容，以确保其不重复。最后，生产者只能保证在单个会话中发送的消息的幂等性。</p>
+</li>
+<li>
+<p>要使用事务生产者和助理API，必须设置transactional.id配置属性。如果transactional.id设置后，幂等性将自动启用，同时生产者配置幂等性所依赖的。此外，应配置事务中包含的主题以确保持久性。特别是， replication.factor应至少为3，这些主题的min.insync.replicas应设置为2。最后，为了从端到端实现事务性保证，还必须将使用者配置为只读提交的消息</p>
+</li>
+<li>
+<p>transactional.id的目的是支持跨单个生产者实例的多个会话进行事务恢复。它通常是从分区的、有状态的应用程序中的碎片标识符派生出来的。因此，对于在分区应用程序中运行的每个生产者实例，它应该是唯一的。
+  所有新的事务性API都处于阻塞状态，并且在出现故障时会引发异常。下面的示例说明了如何使用新的API。它与上面的示例类似，只是所有100条消息都是单个事务的一部分</p>
+</li>
+</ul>
+<pre><code class="language-java"> Properties props = new Properties();
+ props.put(&quot;bootstrap.servers&quot;, &quot;localhost:9092&quot;);
+ props.put(&quot;transactional.id&quot;, &quot;my-transactional-id&quot;);
+ Producer  producer = new KafkaProducer&lt;&gt;(props, new StringSerializer(), new StringSerializer());
+
+ producer.initTransactions();
+
+ try {
+     producer.beginTransaction();
+     for (int i = 0; i &lt; 100; i++)
+         producer.send(new ProducerRecord&lt;&gt;(&quot;my-topic&quot;, Integer.toString(i), Integer.toString(i)));
+     producer.commitTransaction();
+ } catch (ProducerFencedException | OutOfOrderSequenceException | AuthorizationException e) {
+     // We can't recover from these exceptions, so our only option is to close the producer and exit.
+     producer.close();
+ } catch (KafkaException e) {
+     // For all other exceptions, just abort the transaction and try again.
+     producer.abortTransaction();
+ }
+ producer.close();
+</code></pre>
+<p>正如示例中所提示的，每个生产者只能有一个未结束的事务。在beginTransaction() 和commitTransaction() 调用之间发送的所有消息都将是单个事务的一部分。当事务。如果指定了id，则生产者发送的所有消息都必须是事务的一部分。</p>
+<p>事务生产者使用异常来传递错误状态。 特别是，不需要为producer.send() 指定回调，也不需要在返回的将来指定回调到call .get()：</p>
+<p>如果任何一个producer.send() 或事务调用在事务期间遇到不可恢复的错误。有关从事务性发送中检测错误的更多详细信息，请参阅send（ProducerRecord）文档。
+调用 producer.abortTransaction() 在接收到KafkaException时，我们可以确保任何成功的写入都标记为已中止，从而保留事务保证。</p>
+<p>此客户端可以与版本为0.10.0或更新版本的代理通信。较旧或较新的代理可能不支持某些客户端功能。例如，事务性API需要broker版本0.11.0或更高版本。当调用在运行的代理版本中不可用的API时，您将收到UnsupportedVersionException。</p>
+<p>关于Kafka生产者的设计也是相对独立没有特别复杂的类型继承关系如下图</p>
+<p><img alt="3-4-kafka.png" src="/zh/chapter_kafka/3-4-kafka.png" /></p>
+<h2 id="kafkaproducer_1"><strong>KafkaProducer对象初始化过程</strong><a class="headerlink" href="#kafkaproducer_1" title="Permanent link">&para;</a></h2>
+<p>前面了解了当前的配置信息，这里我们来看下生产者对象KafkaProducer的初始化过程</p>
+<p>参数为属性的构造器：</p>
+<pre><code class="language-java">public KafkaProducer(Properties properties) {
+    this(properties, null, null);
+}
+</code></pre>
+<p>使用配置来调用重载的构造器方法，关于参数配置可以参阅官网<a href="https://kafka.apache.org/documentation.html#producerconfigs">生产者配置</a></p>
+<p>重载的3个参数的构造器</p>
+<pre><code class="language-java">public KafkaProducer(Properties properties, Serializer&lt;K&gt; keySerializer, Serializer&lt;V&gt; valueSerializer) {
+    this(Utils.propsToMap(properties), keySerializer, valueSerializer);
+}
+</code></pre>
+<p>这个构造器额外增加了key和value的序列化的参数 ，前面我们例子中的代码使用了Properties来传递了参数效果是一样的。</p>
+<pre><code class="language-java">public KafkaProducer(Map&lt;String, Object&gt; configs, Serializer&lt;K&gt; keySerializer, Serializer&lt;V&gt; valueSerializer) {
+    this(new ProducerConfig(ProducerConfig.appendSerializerToConfig(configs, keySerializer, valueSerializer)),
+            keySerializer, valueSerializer, null, null, null, Time.SYSTEM);
+}
+</code></pre>
+<p>属性参数转换成了Map<String, Object>类型，然后这里继续进行转换，转换为ProducerConfig类型进行属性封装，关于这个配置对象这里先不细说，可以先来了解配置信息</p>
+<p>关于接下来重载的构造器就是执行了核心逻辑的构造器如下所示,代码略微有点长 后面我给总结一下：</p>
+<pre><code class="language-java">// visible for testing
+@SuppressWarnings(&quot;unchecked&quot;)
+KafkaProducer(ProducerConfig config,
+              Serializer&lt;K&gt; keySerializer,
+              Serializer&lt;V&gt; valueSerializer,
+              ProducerMetadata metadata,
+              KafkaClient kafkaClient,
+              ProducerInterceptors&lt;K, V&gt; interceptors,
+              Time time) {
+    try {
+        //生产者配置成员变量内存存储
+        this.producerConfig = config;
+        //系统时间参数赋值给成员变量
+        this.time = time;
+              //事务id参数获取transactional.id
+        String transactionalId = config.getString(ProducerConfig.TRANSACTIONAL_ID_CONFIG);
+              //客户端参数id获取 client.id
+        this.clientId = config.getString(ProducerConfig.CLIENT_ID_CONFIG);
+
+        //日式上下文初始化 指定了事务id和clientid的会打印到日志中
+        LogContext logContext;
+        if (transactionalId == null)
+            logContext = new LogContext(String.format(&quot;[Producer clientId=%s] &quot;, clientId));
+        else
+            logContext = new LogContext(String.format(&quot;[Producer clientId=%s, transactionalId=%s] &quot;, clientId, transactionalId));
+        log = logContext.logger(KafkaProducer.class);
+        log.trace(&quot;Starting the Kafka producer&quot;);
+
+        //初始化监控指标配置 标签client-id配置
+       //关于生产者的监控指标可以看官网文档：https://kafka.apache.org/documentation/#producer_monitoring
+        Map&lt;String, String&gt; metricTags = Collections.singletonMap(&quot;client-id&quot;, clientId);
+        MetricConfig metricConfig = new MetricConfig().samples(config.getInt(ProducerConfig.METRICS_NUM_SAMPLES_CONFIG))
+                .timeWindow(config.getLong(ProducerConfig.METRICS_SAMPLE_WINDOW_MS_CONFIG), TimeUnit.MILLISECONDS)
+                .recordLevel(Sensor.RecordingLevel.forName(config.getString(ProducerConfig.METRICS_RECORDING_LEVEL_CONFIG)))
+                .tags(metricTags);
+        List&lt;MetricsReporter&gt; reporters = config.getConfiguredInstances(ProducerConfig.METRIC_REPORTER_CLASSES_CONFIG,
+                MetricsReporter.class,
+                Collections.singletonMap(ProducerConfig.CLIENT_ID_CONFIG, clientId));
+        //jmx 方式提供的监控
+        JmxReporter jmxReporter = new JmxReporter();
+        jmxReporter.configure(config.originals(Collections.singletonMap(ProducerConfig.CLIENT_ID_CONFIG, clientId)));
+        reporters.add(jmxReporter);
+        //监控指标上下文 （容器）
+        MetricsContext metricsContext = new KafkaMetricsContext(JMX_PREFIX,
+                config.originalsWithPrefix(CommonClientConfigs.METRICS_CONTEXT_PREFIX));
+        this.metrics = new Metrics(metricConfig, reporters, time, metricsContext);
+       //生产者指标对象 
+        this.producerMetrics = new KafkaProducerMetrics(metrics);
+        this.partitioner = config.getConfiguredInstance(
+                ProducerConfig.PARTITIONER_CLASS_CONFIG,
+                Partitioner.class,
+                Collections.singletonMap(ProducerConfig.CLIENT_ID_CONFIG, clientId));
+       //retry.backoff.ms 重试回退时间，在尝试重试对给定主题分区的失败请求之前等待的时间量。这避免了在某些故障情况下在紧密循环中重复发送请求。
+        long retryBackoffMs = config.getLong(ProducerConfig.RETRY_BACKOFF_MS_CONFIG);
+        //key的序列化器初始化key.serializer
+        if (keySerializer == null) {
+            this.keySerializer = config.getConfiguredInstance(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+                                                                                     Serializer.class);
+            this.keySerializer.configure(config.originals(Collections.singletonMap(ProducerConfig.CLIENT_ID_CONFIG, clientId)), true);
+        } else {
+            config.ignore(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG);
+            this.keySerializer = keySerializer;
+        }
+       //值序列化器的初始化value.serializer
+        if (valueSerializer == null) {
+            this.valueSerializer = config.getConfiguredInstance(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                                                                                       Serializer.class);
+            this.valueSerializer.configure(config.originals(Collections.singletonMap(ProducerConfig.CLIENT_ID_CONFIG, clientId)), false);
+        } else {
+            config.ignore(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG);
+            this.valueSerializer = valueSerializer;
+        }
+             // 拦截器列表的初始化interceptor.classes
+        List&lt;ProducerInterceptor&lt;K, V&gt;&gt; interceptorList = (List) config.getConfiguredInstances(
+                ProducerConfig.INTERCEPTOR_CLASSES_CONFIG,
+                ProducerInterceptor.class,
+                Collections.singletonMap(ProducerConfig.CLIENT_ID_CONFIG, clientId));
+        if (interceptors != null)
+            this.interceptors = interceptors;
+        else
+            this.interceptors = new ProducerInterceptors&lt;&gt;(interceptorList);
+
+        //这个监听器是用于元数据更新时候的通知 ，这里是注册监听器的只有这个资源类型实现了ClusterResourceListener接口才会被添加到监听器里面
+        ClusterResourceListeners clusterResourceListeners = configureClusterResourceListeners(keySerializer,
+                valueSerializer, interceptorList, reporters);
+        //max.request.size参数初始化 请求的最大大小（以字节为单位） 
+        this.maxRequestSize = config.getInt(ProducerConfig.MAX_REQUEST_SIZE_CONFIG);
+       //buffer.memory 生产者可用于缓冲等待发送到服务器的记录的内存总字节数。 
+        this.totalMemorySize = config.getLong(ProducerConfig.BUFFER_MEMORY_CONFIG);
+       //compression.type 生产者生成的所有数据的压缩类型。默认值为无（即不压缩）。 
+        this.compressionType = CompressionType.forName(config.getString(ProducerConfig.COMPRESSION_TYPE_CONFIG));
+            //max.block.ms 配置控制KafkaProducer's send()、partitionsFor()、initTransactions()、sendOffsetsToTransaction()和方法将阻塞commitTransaction()多长时间。 
+        this.maxBlockTimeMs = config.getLong(ProducerConfig.MAX_BLOCK_MS_CONFIG);
+       //delivery.timeout.ms send()调用返回后报告成功或失败的时间上限。 
+        int deliveryTimeoutMs = configureDeliveryTimeout(config, log);
+
+      //维护节点api版本，以便在NetworkClient（信息的来源）之外进行访问。该模式类似于对主题元数据使用元数据。注：此类仅用于卡夫卡内部使用。
+        this.apiVersions = new ApiVersions();
+
+        //TransactionManager对象的初始化
+        this.transactionManager = configureTransactionState(config, logContext);
+
+        //此类充当队列，将记录累积到MemoryRecords实例中，以发送到服务器。累加器使用有限的内存，当内存耗尽时，append调用将被阻止，除非明确禁用此行为
+        this.accumulator = new RecordAccumulator(logContext,
+                 //batch.size 批处理大小参数 见后面解释
+                config.getInt(ProducerConfig.BATCH_SIZE_CONFIG),
+                 //压缩类型
+                this.compressionType,
+                //linger.ms 等待延迟 参数 见后面解释                                 
+                lingerMs(config),
+                //重试的回退时间
+                retryBackoffMs,
+                //报告成功或者失败的时间上限
+                deliveryTimeoutMs,
+                //监控埋点
+                metrics,
+                PRODUCER_METRIC_GROUP_NAME,
+                time,
+                apiVersions,
+                transactionManager,
+                //内存池
+                new BufferPool(this.totalMemorySize, config.getInt(ProducerConfig.BATCH_SIZE_CONFIG), metrics, time, PRODUCER_METRIC_GROUP_NAME));
+                //bootstrap.servers kafka 代理服务器地址
+        List&lt;InetSocketAddress&gt; addresses = ClientUtils.parseAndValidateAddresses(
+                config.getList(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG),
+                config.getString(ProducerConfig.CLIENT_DNS_LOOKUP_CONFIG));
+        //生产者元数据对象初始化
+        if (metadata != null) {
+            this.metadata = metadata;
+        } else {
+
+            this.metadata = new ProducerMetadata(retryBackoffMs,
+                    //metadata.max.age.ms 即使我们没有看到任何分区领导层更改以主动发现任何新代理或分区，我们也强制刷新元数据的时间段（以毫秒为单位）                        
+                    config.getLong(ProducerConfig.METADATA_MAX_AGE_CONFIG),
+                    //metadata.max.idle.ms 控制生产者为空闲主题缓存元数据的时间。如果自上次生成主题以来经过的时间超过了元数据空闲持续时间，则该主题的元数据将被遗忘，并且下一次对其的访问将强制执行元数据获取请求。
+                    config.getLong(ProducerConfig.METADATA_MAX_IDLE_CONFIG),
+                    logContext,
+                    clusterResourceListeners,
+                    Time.SYSTEM);
+            //元数据初始化
+            this.metadata.bootstrap(addresses);
+        }
+        this.errors = this.metrics.sensor(&quot;errors&quot;);
+        //创建一个发送对象 处理向Kafka集群发送PRODUCT请求的后台线程。该线程发出元数据请求以更新其集群视图，然后将生成请求发送到适当的节点。
+        this.sender = newSender(logContext, kafkaClient, this.metadata);
+        //io线程名字 kafka-producer-network-thread + clientId
+        String ioThreadName = NETWORK_THREAD_PREFIX + &quot; | &quot; + clientId;
+        //io线程对象创建
+        this.ioThread = new KafkaThread(ioThreadName, this.sender, true);
+        //io线程穷
+        this.ioThread.start();
+        //打印未使用的配置
+        config.logUnused();
+        //jmx监控信息注册
+        AppInfoParser.registerAppInfo(JMX_PREFIX, clientId, metrics, time.milliseconds());
+        log.debug(&quot;Kafka producer started&quot;);
+    } catch (Throwable t) {
+        // call close methods if internal objects are already constructed this is to prevent resource leak. see KAFKA-2121
+        close(Duration.ofMillis(0), true);
+        // now propagate the exception
+        throw new KafkaException(&quot;Failed to construct kafka producer&quot;, t);
+    }
+}
+</code></pre>
+<p>看完了生产者的对象初始化过程，发现这个方法设计的太长了那就简单总结下：</p>
+<ul>
+<li>基本配置的初始化</li>
+<li>监控配置的初始化</li>
+<li>元数据配置的初始化</li>
+<li>发送对象的初始化</li>
+<li>io线程的初始化</li>
+</ul>
+<h2 id="_2"><strong>基本配置的初始化</strong><a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_3"><strong>基本配置详细说明</strong><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>关于Kafka生产者的参数配置，详情可以查阅官网：关于参数配置可以参阅官网<a href="https://kafka.apache.org/documentation.html#producerconfigs">生产者配置</a></p>
+<p>基本配置详细说明</p>
+<p>这里列举下在前面代码注释中没有详细说的一些配置，上面有一些配置比较长的就列在下面感兴趣的可以详细看一下：</p>
+<ul>
+<li>
+<p><strong>retry.backoff.ms</strong> 重试回退时间，在尝试重试对给定主题分区的失败请求之前等待的时间量。这避免了在某些故障情况下在紧密循环中重复发送请求。</p>
+</li>
+<li>
+<p><strong>max.request.size</strong> 参数初始化 请求的最大大小（以字节为单位）。此设置将限制生产者在单个请求中发送的记录批次数，以避免发送大量请求。这实际上也是最大未压缩记录批量大小的上限。请注意，服务器对记录批量大小有自己的上限（如果启用压缩，则在压缩之后），这可能与此不同。</p>
+</li>
+<li>
+<p><strong>buffer.memory</strong> 生产者可用于缓冲等待发送到服务器的记录的内存总字节数。如果记录的发送速度快于它们可以传递到服务器的速度，则生产者将阻塞，max.block.ms之后它将引发异常。此设置应大致对应于生产者将使用的总内存，但不是硬性限制，因为并非生产者使用的所有内存都用于缓冲。一些额外的内存将用于压缩（如果启用压缩）以及维护正在进行的请求。</p>
+</li>
+<li>
+<p><strong>compression.type</strong> 生产者生成的所有数据的压缩类型。默认值为无（即不压缩）。有效值为none、gzip、snappy、lz4或zstd。压缩是整批数据，所以批处理的效果也会影响压缩率（更多的批处理意味着更好的压缩）</p>
+</li>
+<li>
+<p><strong>delivery.timeout.ms</strong>  send()调用返回后报告成功或失败的时间上限。这限制了记录在发送之前将被延迟的总时间、等待代理确认的时间（如果需要）以及可重试发送失败所允许的时间。如果遇到不可恢复的错误，重试已用尽，或者记录被添加到到达较早交付到期期限的批次中，生产者可能会报告未能在此配置之前发送记录。此配置的值应大于或等于 和 之request.timeout.ms和linger.ms。</p>
+</li>
+<li>
+<p><strong>max.block.ms</strong> 配置控制KafkaProducer's send()、partitionsFor()、initTransactions()、sendOffsetsToTransaction()和方法将阻塞commitTransaction()多长时间。abortTransaction()对于send()此超时限制等待元数据获取和缓冲区分配的总时间（用户提供的序列化程序或分区程序中的阻塞不计入此超时）。对于partitionsFor()此超时限制，如果元数据不可用，则等待元数据所花费的时间。与事务相关的方法总是阻塞，但如果事务协调器无法被发现或在超时内没有响应，则可能会超时。</p>
+</li>
+<li>
+<p><strong>batch.size</strong> 每当多个记录被发送到同一个分区时，生产者将尝试将记录一起批处理成更少的请求。这有助于客户端和服务器的性能。此配置控制默认批量大小（以字节为单位）。不会尝试批处理大于此大小的记录。发送到代理的请求将包含多个批次，每个分区都有一个可发送的数据。小批量将使批处理不太常见，并且可能会降低吞吐量（批量大小为零将完全禁用批处理）。一个非常大的批处理大小可能会更浪费内存，因为我们总是会分配一个指定批处理大小的缓冲区以预期额外的记录。注意：此设置给出了要发送的批量大小的上限。如果我们为这个分区积累的字节数少于这个数量，我们将“徘徊”<code>linger.ms</code>等待更多记录出现的时间。此设置默认为 0，这意味着即使累积的批量大小在此设置<code>linger.ms</code>下，我们也会立即发送一条记录。<code>batch.size</code></p>
+</li>
+<li>
+<p><strong>linger.ms</strong> 生产者将在请求传输之间到达的任何记录组合成一个批处理请求。通常，这仅在记录到达速度快于发送速度时才会在负载下发生。但是在某些情况下，即使在中等负载下，客户端也可能希望减少请求的数量。此设置通过添加少量人为延迟来实现这一点——也就是说，生产者不会立即发送记录，而是等待给定的延迟以允许发送其他记录，以便可以将发送一起批处理。这可以被认为类似于 TCP 中的 Nagle 算法。这个设置给出了批处理延迟的上限：一旦我们得到<code>batch.size</code>不管这个设置如何，它都会立即发送一个分区的记录，但是如果我们为这个分区积累的字节数少于这个数量，我们将“徘徊”指定的时间，等待更多的记录出现。此设置默认为 0（即无延迟）。<code>linger.ms=5</code>例如，设置会产生减少发送请求数量的效果，但会给在没有负载的情况下发送的记录增加最多 5ms 的延迟。</p>
+</li>
+<li>
+<p><strong>BufferPool</strong> 保持在给定内存限制下的ByteBuffers池。该类型相当特定于生产者的需求。特别是它具有以下特性：</p>
+<ul>
+<li>
+<p>有一种特殊的“内存池大小”，这种大小的缓冲区保存在一个列表中并循环使用</p>
+</li>
+<li>
+<p>这是公平的。也就是说，所有内存都会分配给等待时间最长的线程，直到它有足够的内存为止。这可以防止线程请求大量内存并需要阻塞直到释放多个缓冲区时出现饥饿或死锁。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>bootstrap.servers</strong> 用于建立与 Kafka 集群的初始连接的主机/端口对列表。客户端将使用所有服务器，无论此处指定哪些服务器进行引导——此列表仅影响用于发现完整服务器集的初始主机。此列表应采用<code>host1:port1,host2:port2,...</code>. 由于这些服务器仅用于初始连接以发现完整的集群成员（可能会动态更改），因此此列表不需要包含完整的服务器集（但您可能需要多个服务器，以防服务器停机）</p>
+</li>
+<li>
+<p><strong>client.dns.lookup</strong> 控制客户端如何使用 DNS 查找。如果设置为<code>use_all_dns_ips</code>，则依次连接到每个返回的 IP 地址，直到建立成功的连接。断开连接后，使用下一个 IP。一旦所有 IP 都被使用过一次，客户端会再次从主机名解析 IP（然而，JVM 和操作系统都会缓存 DNS 名称查找）。如果设置为<code>resolve_canonical_bootstrap_servers_only</code>，则将每个引导地址解析为规范名称列表。在引导阶段之后，它的行为与<code>use_all_dns_ips</code>.</p>
+</li>
+</ul>
+<h3 id="partitioner"><strong>分区器Partitioner</strong><a class="headerlink" href="#partitioner" title="Permanent link">&para;</a></h3>
+<p>对应配置 partitioner.class</p>
+<p>用于确定生成记录时要发送到哪个分区的类。可用选项有：</p>
+<ul>
+<li><code>org.apache.kafka.clients.producer.internals.DefaultPartitioner</code>：默认分区器。此策略将尝试坚持一个分区，直到批次已满或 linger.ms已完成。它适用于以下策略：<ul>
+<li>如果未指定分区但存在键，则根据键的散列选择分区</li>
+<li>如果不存在分区或键，请选择在批处理已满或<code>linger.ms</code>已启动时更改的粘性分区。</li>
+</ul>
+</li>
+<li><code>org.apache.kafka.clients.producer.RoundRobinPartitioner</code>：这种分区策略是一系列连续记录中的每条记录将被发送到不同的分区（无论是否提供'key'），直到我们用完分区并重新开始。注意：有一个已知问题会在创建新批次时导致分布不均。详情请查看 KAFKA-9965。</li>
+<li><code>org.apache.kafka.clients.producer.UniformStickyPartitioner</code>：此分区策略将尝试坚持一个分区（无论是否提供了“密钥”），直到批次已满或已满<code>linger.ms</code>。</li>
+</ul>
+<p>实现该<code>org.apache.kafka.clients.producer.Partitioner</code>接口允许您插入自定义分区器。默认为org.apache.kafka.clients.producer.internals.DefaultPartitioner</p>
+<h3 id="_4"><strong>拦截器</strong><a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>对应配置interceptor.classes</p>
+<p>用作拦截器的类列表。实现该<code>org.apache.kafka.clients.producer.ProducerInterceptor</code>接口允许您在将生产者收到的记录发布到 Kafka 集群之前拦截（并可能改变）这些记录。默认情况下，没有拦截器。</p>
+<h3 id="_5"><strong>事务的一些配置</strong><a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>事务的配置对应类型事务管理器TransactionManager类型</p>
+<ul>
+<li>enable.idempotence</li>
+</ul>
+<p>当设置为“true”时，生产者将确保每条消息的一个副本被写入流中。如果为“false”，生产者由于代理失败等原因重试，可能会在流中写入重试消息的副本。请注意，启用幂等性要求max.in.flight.requests.per.connection小于或等于 5（保留任何允许值的消息顺序），retries大于 0，并且acks必须为“全部”。如果没有设置冲突配置，则默认启用幂等性。如果设置了冲突配置并且没有显式启用幂等性，则禁用幂等性。如果显式启用了幂等性并且设置了冲突的配置，ConfigException则抛出 a。</p>
+<ul>
+<li>
+<p>transactional.id 用于事务交付的 TransactionalId。这启用了跨越多个生产者会话的可靠性语义，因为它允许客户端保证在开始任何新事务之前已完成使用相同 TransactionalId 的事务。如果没有提供 TransactionalId，则生产者仅限于幂等交付。如果配置了 TransactionalId，<code>enable.idempotence</code>则暗示。默认情况下没有配置 TransactionId，这意味着不能使用事务。请注意，默认情况下，事务需要至少三个代理的集群，这是生产的推荐设置；对于开发，您可以通过调整代理设置来更改此设置<code>transaction.state.log.replication.factor</code>。</p>
+</li>
+<li>
+<p>transaction.timeout.ms 事务协调器在主动中止正在进行的事务之前等待生产者的事务状态更新的最长时间（毫秒）。如果此值大于代理中的 transaction.max.timeout.ms 设置，则请求将失败并出现<code>InvalidTxnTimeoutException</code>错误 默认：  60000（1 分钟）</p>
+</li>
+</ul>
+<h2 id="_6"><strong>监控配置</strong><a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="metricconfig"><strong>配置 MetricConfig</strong><a class="headerlink" href="#metricconfig" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>samples 样品配置</p>
+</li>
+<li>
+<p>metrics.sample.window.ms 配置 计算指标样本的时间窗口 单位毫秒 默认值为30000 (30 seconds)</p>
+</li>
+<li>
+<p>metrics.recording.level 指标的最高记录级别。默认为INFO 可以配置INFO, DEBUG, TRACE</p>
+</li>
+<li>
+<p>tags 监控标签，这里增加了一个client-id指标 ，后续其他指标也会加入</p>
+</li>
+</ul>
+<h3 id="metricsreporter"><strong>配置监控报告器MetricsReporter</strong><a class="headerlink" href="#metricsreporter" title="Permanent link">&para;</a></h3>
+<p>用作度量报告器的类的列表。实现org.apache.kafka.common.metrics.MetricsReporter 接口允许插入将被通知创建新度量的类。始终包含JmxReporter以注册JMX统计信息。</p>
+<h3 id="metricscontext"><strong>配置 指标上下文MetricsContext</strong><a class="headerlink" href="#metricscontext" title="Permanent link">&para;</a></h3>
+<p>作为MetricsContext的一个实现，它封装了Kafka服务和客户端所需的metrics上下文属性</p>
+<h3 id="metrics"><strong>配置 指标 Metrics</strong><a class="headerlink" href="#metrics" title="Permanent link">&para;</a></h3>
+<p>传感器和指标的注册。</p>
+<ul>
+<li>
+<p>指标是一种命名的数字指标。</p>
+</li>
+<li>
+<p>传感器是一个处理器，用于记录发生的数值测量。</p>
+</li>
+</ul>
+<p>我是这样理解的，指标是数据的标签和数据的值，传感器是用来计算和管理指标的</p>
+<p>每个传感器都有零个或多个相关指标。例如，传感器可能表示消息大小，我们可能会将平均、最大或其他统计信息的度量与此传感器关联，这些统计信息是根据传感器记录的消息大小序列计算出来的。
+用法如下所示：</p>
+<pre><code class="language-java"> // set up metrics:
+   Metrics metrics = new Metrics(); // this is the global repository of metrics and sensors
+   Sensor sensor = metrics.sensor(&quot;message-sizes&quot;);
+   MetricName metricName = new MetricName(&quot;message-size-avg&quot;, &quot;producer-metrics&quot;);
+   sensor.add(metricName, new Avg());
+   metricName = new MetricName(&quot;message-size-max&quot;, &quot;producer-metrics&quot;);
+   sensor.add(metricName, new Max());
+
+   // as messages are sent we record the sizes
+   sensor.record(messageSize);
+</code></pre>
+<p>KafkaProducerMetrics 生产者度量类，用于处理生产者的一些监控指标</p>
+<p>官网提供了生产者指标的说明如链接：<a href="https://kafka.apache.org/documentation/#producer_monitoring">生产者监控</a></p>
+<h2 id="_7"><strong>生产者元数据</strong><a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<h3 id="producermetadata"><strong>ProducerMetadata</strong><a class="headerlink" href="#producermetadata" title="Permanent link">&para;</a></h3>
+<p>这里主要来看生产者元数据对象的创建ProducerMetadata和启动方法：</p>
+<pre><code class="language-java">this.metadata.bootstrap(addresses);
+</code></pre>
+<p>关于Metadata</p>
+<p>封装元数据周围的一些逻辑的类。
+此类由客户端线程（用于分区）和后台发送方线程共享。元数据仅为主题的一个子集维护，可以随时间添加到其中。当我们为主题请求元数据时，我们没有任何元数据，因为它将触发元数据更新。
+如果为元数据启用了主题过期，则在更新后，将从元数据刷新集中删除过期时间间隔内未使用的任何主题。使用者禁用主题过期，因为他们显式管理主题，而生产者依赖主题过期来限制刷新集。</p>
+<p>方法来自ProducerMetadata的父类型Metadata的启动方法bootstrap</p>
+<pre><code>public synchronized void bootstrap(List&lt;InetSocketAddress&gt; addresses) {
+    this.needFullUpdate = true;
+    this.updateVersion += 1;
+    this.cache = MetadataCache.bootstrap(addresses);
+}
+</code></pre>
+<h3 id="metadatacache"><strong>MetadataCache</strong><a class="headerlink" href="#metadatacache" title="Permanent link">&para;</a></h3>
+<p>然后调用元数据缓存MetadataCache的bootstrap方法</p>
+<pre><code>static MetadataCache bootstrap(List&lt;InetSocketAddress&gt; addresses) {
+    Map&lt;Integer, Node&gt; nodes = new HashMap&lt;&gt;();
+    int nodeId = -1;
+    //地址转换为节点类型然后存储在节点map中
+    for (InetSocketAddress address : addresses) {
+        nodes.put(nodeId, new Node(nodeId, address.getHostString(), address.getPort()));
+        nodeId--;
+    }
+    //创建元数据缓存对象
+    return new MetadataCache(null, nodes, Collections.emptyList(),
+            Collections.emptySet(), Collections.emptySet(), Collections.emptySet(),
+            null, Collections.emptyMap(), Cluster.bootstrap(addresses));
+}
+</code></pre>
+<p>MetadataCache</p>
+<p>Kafka集群中节点、主题和分区的内部可变缓存。这将保持最新的群集实例，该实例针对读取访问进行了优化。</p>
+<p>这个方法大致了解下元数据缓存存储了哪些数据即可，没有太复杂的逻辑需要重点看</p>
+<pre><code class="language-java">private MetadataCache(String clusterId,
+                      Map&lt;Integer, Node&gt; nodes,
+                      Collection&lt;PartitionMetadata&gt; partitions,
+                      Set&lt;String&gt; unauthorizedTopics,
+                      Set&lt;String&gt; invalidTopics,
+                      Set&lt;String&gt; internalTopics,
+                      Node controller,
+                      Map&lt;String, Uuid&gt; topicIds,
+                      Cluster clusterInstance) {
+    this.clusterId = clusterId;
+    this.nodes = nodes;
+    this.unauthorizedTopics = unauthorizedTopics;
+    this.invalidTopics = invalidTopics;
+    this.internalTopics = internalTopics;
+    this.controller = controller;
+    this.topicIds = topicIds;
+
+    this.metadataByPartition = new HashMap&lt;&gt;(partitions.size());
+    for (PartitionMetadata p : partitions) {
+        this.metadataByPartition.put(p.topicPartition, p);
+    }
+
+    if (clusterInstance == null) {
+        computeClusterView();
+    } else {
+        this.clusterInstance = clusterInstance;
+    }
+}
+</code></pre>
+<p>这里还有一行代码需要注意：</p>
+<pre><code class="language-java">//使用给定的主机/端口列表创建“引导”群集
+Cluster.bootstrap(addresses)
+</code></pre>
+<h3 id="cluster"><strong>Cluster</strong><a class="headerlink" href="#cluster" title="Permanent link">&para;</a></h3>
+<p>Cluster 为Kafka集群中节点、主题和分区子集的不变表示。</p>
+<p>Cluster的启动方法</p>
+<pre><code>public static Cluster bootstrap(List&lt;InetSocketAddress&gt; addresses) {
+    List&lt;Node&gt; nodes = new ArrayList&lt;&gt;();
+    int nodeId = -1;
+    ///地址转节点信息封装
+    for (InetSocketAddress address : addresses)
+        nodes.add(new Node(nodeId--, address.getHostString(), address.getPort()));
+    return new Cluster(null, true, nodes, new ArrayList&lt;&gt;(0),
+        Collections.emptySet(), Collections.emptySet(), Collections.emptySet(), null, Collections.emptyMap());
+}
+</code></pre>
+<p>Cluster的构造器 这个方法大致了解下元数据缓存存储了哪些数据即可，没有太复杂的逻辑需要重点看</p>
+<p>需要注意的是这里已经把服务端代理地址打乱了</p>
+<pre><code>private Cluster(String clusterId,
+                boolean isBootstrapConfigured,
+                Collection&lt;Node&gt; nodes,
+                Collection&lt;PartitionInfo&gt; partitions,
+                Set&lt;String&gt; unauthorizedTopics,
+                Set&lt;String&gt; invalidTopics,
+                Set&lt;String&gt; internalTopics,
+                Node controller,
+                Map&lt;String, Uuid&gt; topicIds) {
+    this.isBootstrapConfigured = isBootstrapConfigured;
+    this.clusterResource = new ClusterResource(clusterId);
+    // make a randomized, unmodifiable copy of the nodes
+    List&lt;Node&gt; copy = new ArrayList&lt;&gt;(nodes);
+    //使用默认随机性对指定的列表元素进行随机重新排序来工作 打乱节点排序好像是要做客户端的随机负载均衡
+    Collections.shuffle(copy);
+    //下面几行代码是把节点id转为 这里要存储的类型Map&lt;Integer, Node&gt; key为节点id value为具体节点
+    this.nodes = Collections.unmodifiableList(copy);
+
+    // Index the nodes for quick lookup
+    Map&lt;Integer, Node&gt; tmpNodesById = new HashMap&lt;&gt;();
+    Map&lt;Integer, List&lt;PartitionInfo&gt;&gt; tmpPartitionsByNode = new HashMap&lt;&gt;(nodes.size());
+    for (Node node : nodes) {
+        tmpNodesById.put(node.id(), node);
+        // Populate the map here to make it easy to add the partitions per node efficiently when iterating over
+        // the partitions
+        tmpPartitionsByNode.put(node.id(), new ArrayList&lt;&gt;());
+    }
+    this.nodesById = Collections.unmodifiableMap(tmpNodesById);
+     //上面几行代码是把节点id转为 这里要存储的类型Map&lt;Integer, Node&gt; key为节点id value为具体节点
+
+
+
+
+    // index the partition infos by topic, topic+partition, and node
+    // note that this code is performance sensitive if there are a large number of partitions so we are careful
+    // to avoid unnecessary work
+    //按主题、主题+分区和节点索引分区信息
+        //请注意，如果有大量分区，则此代码对性能敏感，因此我们要小心
+        //避免不必要的工作
+    Map&lt;TopicPartition, PartitionInfo&gt; tmpPartitionsByTopicPartition = new HashMap&lt;&gt;(partitions.size());
+    Map&lt;String, List&lt;PartitionInfo&gt;&gt; tmpPartitionsByTopic = new HashMap&lt;&gt;();
+    for (PartitionInfo p : partitions) {
+        tmpPartitionsByTopicPartition.put(new TopicPartition(p.topic(), p.partition()), p);
+        tmpPartitionsByTopic.computeIfAbsent(p.topic(), topic -&gt; new ArrayList&lt;&gt;()).add(p);
+
+        // The leader may not be known
+        if (p.leader() == null || p.leader().isEmpty())
+            continue;
+
+        // If it is known, its node information should be available
+        List&lt;PartitionInfo&gt; partitionsForNode = Objects.requireNonNull(tmpPartitionsByNode.get(p.leader().id()));
+        partitionsForNode.add(p);
+    }
+
+    // Update the values of `tmpPartitionsByNode` to contain unmodifiable lists
+    for (Map.Entry&lt;Integer, List&lt;PartitionInfo&gt;&gt; entry : tmpPartitionsByNode.entrySet()) {
+        tmpPartitionsByNode.put(entry.getKey(), Collections.unmodifiableList(entry.getValue()));
+    }
+
+    // Populate `tmpAvailablePartitionsByTopic` and update the values of `tmpPartitionsByTopic` to contain
+    // unmodifiable lists
+    Map&lt;String, List&lt;PartitionInfo&gt;&gt; tmpAvailablePartitionsByTopic = new HashMap&lt;&gt;(tmpPartitionsByTopic.size());
+    for (Map.Entry&lt;String, List&lt;PartitionInfo&gt;&gt; entry : tmpPartitionsByTopic.entrySet()) {
+        String topic = entry.getKey();
+        List&lt;PartitionInfo&gt; partitionsForTopic = Collections.unmodifiableList(entry.getValue());
+        tmpPartitionsByTopic.put(topic, partitionsForTopic);
+        // Optimise for the common case where all partitions are available
+        boolean foundUnavailablePartition = partitionsForTopic.stream().anyMatch(p -&gt; p.leader() == null);
+        List&lt;PartitionInfo&gt; availablePartitionsForTopic;
+        if (foundUnavailablePartition) {
+            availablePartitionsForTopic = new ArrayList&lt;&gt;(partitionsForTopic.size());
+            for (PartitionInfo p : partitionsForTopic) {
+                if (p.leader() != null)
+                    availablePartitionsForTopic.add(p);
+            }
+            availablePartitionsForTopic = Collections.unmodifiableList(availablePartitionsForTopic);
+        } else {
+            availablePartitionsForTopic = partitionsForTopic;
+        }
+        tmpAvailablePartitionsByTopic.put(topic, availablePartitionsForTopic);
+    }
+
+    this.partitionsByTopicPartition = Collections.unmodifiableMap(tmpPartitionsByTopicPartition);
+    this.partitionsByTopic = Collections.unmodifiableMap(tmpPartitionsByTopic);
+    this.availablePartitionsByTopic = Collections.unmodifiableMap(tmpAvailablePartitionsByTopic);
+    this.partitionsByNode = Collections.unmodifiableMap(tmpPartitionsByNode);
+    this.topicIds = Collections.unmodifiableMap(topicIds);
+    Map&lt;Uuid, String&gt; tmpTopicNames = new HashMap&lt;&gt;();
+    topicIds.forEach((key, value) -&gt; tmpTopicNames.put(value, key));
+    this.topicNames = Collections.unmodifiableMap(tmpTopicNames);
+
+    this.unauthorizedTopics = Collections.unmodifiableSet(unauthorizedTopics);
+    this.invalidTopics = Collections.unmodifiableSet(invalidTopics);
+    this.internalTopics = Collections.unmodifiableSet(internalTopics);
+    this.controller = controller;
+}
+</code></pre>
+<h2 id="_8"><strong>发送器对象的创建</strong><a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>
+<p>对应Sender 对应代码：</p>
+<pre><code class="language-java">this.sender = newSender(logContext, kafkaClient, this.metadata);
+</code></pre>
+<p>Sender类型实现了Runnable接口</p>
+<p>Sender对象处理向Kafka群集发送生产消息的请求的后台线程。该线程发出元数据请求以更新其集群视图，然后将生成请求发送到适当的节点。</p>
+<pre><code class="language-java">Sender newSender(LogContext logContext, KafkaClient kafkaClient, ProducerMetadata metadata) {
+    int maxInflightRequests = producerConfig.getInt(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION);
+    int requestTimeoutMs = producerConfig.getInt(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG);
+    ChannelBuilder channelBuilder = ClientUtils.createChannelBuilder(producerConfig, time, logContext);
+    ProducerMetrics metricsRegistry = new ProducerMetrics(this.metrics);
+    Sensor throttleTimeSensor = Sender.throttleTimeSensor(metricsRegistry.senderMetrics);
+    KafkaClient client = kafkaClient != null ? kafkaClient : new NetworkClient(
+            new Selector(producerConfig.getLong(ProducerConfig.CONNECTIONS_MAX_IDLE_MS_CONFIG),
+                    this.metrics, time, &quot;producer&quot;, channelBuilder, logContext),
+            metadata,
+            clientId,
+            maxInflightRequests,
+            producerConfig.getLong(ProducerConfig.RECONNECT_BACKOFF_MS_CONFIG),
+            producerConfig.getLong(ProducerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG),
+            producerConfig.getInt(ProducerConfig.SEND_BUFFER_CONFIG),
+            producerConfig.getInt(ProducerConfig.RECEIVE_BUFFER_CONFIG),
+            requestTimeoutMs,
+            producerConfig.getLong(ProducerConfig.SOCKET_CONNECTION_SETUP_TIMEOUT_MS_CONFIG),
+            producerConfig.getLong(ProducerConfig.SOCKET_CONNECTION_SETUP_TIMEOUT_MAX_MS_CONFIG),
+            time,
+            true,
+            apiVersions,
+            throttleTimeSensor,
+            logContext);
+
+    short acks = Short.parseShort(producerConfig.getString(ProducerConfig.ACKS_CONFIG));
+    return new Sender(logContext,
+            client,
+            metadata,
+            this.accumulator,
+            maxInflightRequests == 1,
+            producerConfig.getInt(ProducerConfig.MAX_REQUEST_SIZE_CONFIG),
+            acks,
+            producerConfig.getInt(ProducerConfig.RETRIES_CONFIG),
+            metricsRegistry.senderMetrics,
+            time,
+            requestTimeoutMs,
+            producerConfig.getLong(ProducerConfig.RETRY_BACKOFF_MS_CONFIG),
+            this.transactionManager,
+            apiVersions);
+}
+</code></pre>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  <form class="md-feedback" name="feedback" hidden>
+    <fieldset>
+      <legend class="md-feedback__title">
+        Was this page helpful?
+      </legend>
+      <div class="md-feedback__inner">
+        <div class="md-feedback__list">
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page was helpful" data-md-value="1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8m2 0a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10M10 9.5c0 .8-.7 1.5-1.5 1.5S7 10.3 7 9.5 7.7 8 8.5 8s1.5.7 1.5 1.5m7 0c0 .8-.7 1.5-1.5 1.5S14 10.3 14 9.5 14.7 8 15.5 8s1.5.7 1.5 1.5m-5 7.73c-1.75 0-3.29-.73-4.19-1.81L9.23 14c.45.72 1.52 1.23 2.77 1.23s2.32-.51 2.77-1.23l1.42 1.42c-.9 1.08-2.44 1.81-4.19 1.81"/></svg>
+            </button>
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page could be improved" data-md-value="0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8m2 0a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10m-6.5-4c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5-1.5-.7-1.5-1.5.7-1.5 1.5-1.5M10 9.5c0 .8-.7 1.5-1.5 1.5S7 10.3 7 9.5 7.7 8 8.5 8s1.5.7 1.5 1.5m2 4.5c1.75 0 3.29.72 4.19 1.81l-1.42 1.42C14.32 16.5 13.25 16 12 16s-2.32.5-2.77 1.23l-1.42-1.42C8.71 14.72 10.25 14 12 14"/></svg>
+            </button>
+          
+        </div>
+        <div class="md-feedback__note">
+          
+            <div data-md-value="1" hidden>
+              
+              
+                
+              
+              
+              
+                
+                
+              
+              Thanks for your feedback!
+            </div>
+          
+            <div data-md-value="0" hidden>
+              
+              
+                
+              
+              
+              
+                
+                
+              
+              Thanks for your feedback! Help us improve this page by <a href="https://github.com/ktyhub/thinking-in-code/issues/new/?title=[Feedback]+KafkaProducer%E7%94%9F%E4%BA%A7%E8%80%85%E5%AF%B9%E8%B1%A1%E7%9A%84%E9%95%BF%E7%AF%87%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%E7%AE%80%E4%BB%8B+-+/zh/chapter_kafka/4-kafka-producer/" target="_blank" rel="noopener">telling us what you found lacking</a>.
+            </div>
+          
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      可微信搜索 《中间件源码》 联系，订阅内容。   <br/>  Copyright &copy; 2022 - 2024 ktyhub.com copyright   <br/> 部分内容由GPT提供 转载声明：  本文转载自 [原文标题](原文链接)，由[www.ktyhub.com](www.ktyhub.com)创作，遵循 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) 许可协议。
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/ktyhub/thinking-in-code" target="_blank" rel="noopener" title="GitHub Repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://www.ktyhub.com" target="_blank" rel="noopener" title="Official Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M352 256c0 22.2-1.2 43.6-3.3 64H163.4c-2.2-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64h185.3c2.2 20.4 3.3 41.8 3.3 64m28.8-64h123.1c5.3 20.5 8.1 41.9 8.1 64s-2.8 43.5-8.1 64H380.8c2.1-20.6 3.2-42 3.2-64s-1.1-43.4-3.2-64m112.6-32H376.7c-10-63.9-29.8-117.4-55.3-151.6 78.3 20.7 142 77.5 171.9 151.6zm-149.1 0H167.7c6.1-36.4 15.5-68.6 27-94.7 10.5-23.6 22.2-40.7 33.5-51.5C239.4 3.2 248.7 0 256 0s16.6 3.2 27.8 13.8c11.3 10.8 23 27.9 33.5 51.5 11.6 26 20.9 58.2 27 94.7m-209 0H18.6c30-74.1 93.6-130.9 172-151.6-25.5 34.2-45.3 87.7-55.3 151.6M8.1 192h123.1c-2.1 20.6-3.2 42-3.2 64s1.1 43.4 3.2 64H8.1C2.8 299.5 0 278.1 0 256s2.8-43.5 8.1-64m186.6 254.6c-11.6-26-20.9-58.2-27-94.6h176.6c-6.1 36.4-15.5 68.6-27 94.6-10.5 23.6-22.2 40.7-33.5 51.5-11.2 10.7-20.5 13.9-27.8 13.9s-16.6-3.2-27.8-13.8c-11.3-10.8-23-27.9-33.5-51.5zM135.3 352c10 63.9 29.8 117.4 55.3 151.6-78.4-20.7-142-77.5-172-151.6zm358.1 0c-30 74.1-93.6 130.9-171.9 151.6 25.5-34.2 45.2-87.7 55.3-151.6h116.7z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="#" target="_blank" rel="noopener" title="WeChat - 中间件源码" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M385.2 167.6c6.4 0 12.6.3 18.8 1.1C387.4 90.3 303.3 32 207.7 32 100.5 32 13 104.8 13 197.4c0 53.4 29.3 97.5 77.9 131.6l-19.3 58.6 68-34.1c24.4 4.8 43.8 9.7 68.2 9.7 6.2 0 12.1-.3 18.3-.8-4-12.9-6.2-26.6-6.2-40.8-.1-84.9 72.9-154 165.3-154m-104.5-52.9c14.5 0 24.2 9.7 24.2 24.4 0 14.5-9.7 24.2-24.2 24.2-14.8 0-29.3-9.7-29.3-24.2.1-14.7 14.6-24.4 29.3-24.4m-136.4 48.6c-14.5 0-29.3-9.7-29.3-24.2 0-14.8 14.8-24.4 29.3-24.4 14.8 0 24.4 9.7 24.4 24.4 0 14.6-9.6 24.2-24.4 24.2M563 319.4c0-77.9-77.9-141.3-165.4-141.3-92.7 0-165.4 63.4-165.4 141.3S305 460.7 397.6 460.7c19.3 0 38.9-5.1 58.6-9.9l53.4 29.3-14.8-48.6C534 402.1 563 363.2 563 319.4m-219.1-24.5c-9.7 0-19.3-9.7-19.3-19.6 0-9.7 9.7-19.3 19.3-19.3 14.8 0 24.4 9.7 24.4 19.3 0 10-9.7 19.6-24.4 19.6m107.1 0c-9.7 0-19.3-9.7-19.3-19.6 0-9.7 9.7-19.3 19.3-19.3 14.5 0 24.4 9.7 24.4 19.3.1 10-9.9 19.6-24.4 19.6"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+
+
+<h4>Cookie consent</h4>
+<p>We use cookies to recognize your repeated visits and preferences, as well as to measure the effectiveness of our documentation and whether users find what they're searching for. With your consent, you're helping us to make our documentation better.</p>
+<input class="md-toggle" type="checkbox" id="__settings" >
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="analytics" checked>
+      <span class="task-list-indicator"></span>
+      Google Analytics
+    </label>
+  </li>
+
+      
+    
+    
+      
+    
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">同意</button>
+    
+    
+    
+  
+    
+    
+      <button type="reset" class="md-button md-button--primary">拒绝</button>
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">管理设定</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.tabs.fixed", "navigation.tabs.sticky", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.prune", "navigation.indexes", "navigation.top", "navigation.footer", "toc.follow", "toc.integrate", "search.highlight", "search.share", "search.suggest", "content.code.copy", "content.code.select", "content.code.annotate", "content.tooltips", "content.tabs.link", "content.action.edit", "content.action.view", "header.autohide", "announce.dismiss"], "search": "../../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+        <script src="/javascripts/google-tongji.js"></script>
+      
+        <script src="../../../mermaid.min.js"></script>
+      
+        <script src="/javascripts/baidu-tongji.js"></script>
+      
+        <script src="/javascripts/fun-interactions.js"></script>
+      
+        <script src="/javascripts/ux-enhanced.js"></script>
+      
+    
+  </body>
+</html>

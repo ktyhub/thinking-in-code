@@ -1,0 +1,2210 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="knowledge thinking you want to know">
+      
+      
+        <meta name="author" content="ktyhub">
+      
+      
+        <link rel="canonical" href="https://www.ktyhub.com/zh/chapter_dubbo/15-metadata/">
+      
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>Dubbo的三大中心之元数据中心源码解析 - Thinking In Code</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+Traditional+Chinese:300,300i,400,400i,700,700i%7CNoto+Sans+Traditional+Chinese:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Noto Sans Traditional Chinese";--md-code-font:"Noto Sans Traditional Chinese"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/ux-enhanced.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/white-theme.css">
+    
+      <link rel="stylesheet" href="../../../mermaid.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-RFRF1TVRMP"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-RFRF1TVRMP",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>if("undefined"!=typeof __md_analytics){var consent=__md_get("__consent");consent&&consent.analytics&&__md_analytics()}</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="black">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#dubbo" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="Thinking In Code" class="md-header__button md-logo" aria-label="Thinking In Code" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Thinking In Code
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Dubbo的三大中心之元数据中心源码解析
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/zh/" hreflang="zh" class="md-select__link">
+              中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="分享" aria-label="分享" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../index" class="md-tabs__link">
+        
+  
+  
+    
+  
+  🏠 首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_preface/about_the_book/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📚 前言
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_elasticjob/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🚀 技术体系
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_spring_ai/1-official-website/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🤖 AI 技术栈
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_jdk/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  💻 编程语言
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_algorithm/114-preorder/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🧮 算法与数据结构
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_linux/problem/5-linux问题分析/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🐧 Linux 系统
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_post/site/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📚 深度专题
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../chapter_elasticjob/1-introduce/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  📖 源码深度解析
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../release_note/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  🆕 新技术发布
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Thinking In Code" class="md-nav__button md-logo" aria-label="Thinking In Code" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Thinking In Code
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../index" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    🏠 首页
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../chapter_preface/about_the_book/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    📚 前言
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_elasticjob/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🚀 技术体系
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_spring_ai/1-official-website/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🤖 AI 技术栈
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_jdk/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    💻 编程语言
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_algorithm/114-preorder/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🧮 算法与数据结构
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_linux/problem/5-linux问题分析/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🐧 Linux 系统
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../chapter_post/site/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    📚 深度专题
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    
+  
+  
+  
+    <a href="../../chapter_elasticjob/1-introduce/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    📖 源码深度解析
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../release_note/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    🆕 新技术发布
+    
+  </span>
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="dubbo"><strong>Dubbo的三大中心之元数据中心源码解析</strong><a class="headerlink" href="#dubbo" title="Permanent link">&para;</a></h1>
+<h2 id="_1"><strong>简介</strong><a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>关于元数据中心的概念对于大部分用户来说是比较陌生的,配置中心的话我们还好理解,对于元数据中心是什么,我们来看下我从官网拷贝过来的一段文字:</p>
+<p>元数据中心在2.7.x版本开始支持，随着应用级别的服务注册和服务发现在Dubbo中落地，<strong>元数据中心也变的越来越重要</strong> 。在以下几种情况下会需要部署元数据中心：</p>
+<ul>
+<li>对于一个原先采用老版本Dubbo搭建的应用服务，在迁移到Dubbo 3时，Dubbo 3 会需要一个 <strong>元数据中心来维护RPC服务与应用的映射关系（即接口与应用的映射关系）</strong> ，因为如果采用了 <strong>应用级别的服务发现和服务注册</strong> ，在注册中心中将**采用“应用 —— 实例列表”结构 ** 的数据组织形式，** 不再是以往的“接口 —— 实例列表”结构的数据组织形式** ，而以往用接口级别的服务注册和服务发现的应用服务在 <strong>迁移到应用级别</strong> 时，<strong>得不到接口与应用之间的对应关系</strong> ，从而无法从注册中心得到实例列表信息，所以 <strong>Dubbo为了兼容这种场景，在Provider端启动时，会往元数据中心存储接口与应用的映射关系</strong> 。</li>
+<li>为了让 <strong>注册中心更加聚焦与地址的发现和推送能力</strong> ，<strong>减轻注册中心的负担</strong> ，元数据中心承载了所有的服务元数据、大量接口/方法级别配置信息等，无论是接口粒度还是应用粒度的服务发现和注册，元数据中心都起到了重要的作用。</li>
+<li>如果有以上两种需求，都可以选择部署元数据中心，并通过Dubbo的配置来集成该元数据中心。</li>
+</ul>
+<p><strong>元数据中心并不依赖于注册中心和配置中心</strong> ，用户可以自由选择是否集成和部署元数据中心，如下图所示：</p>
+<p><img alt="15-config.png" src="/img/chapter_dubbo/15-config.png" /></p>
+<p>该图中不配备配置中心，意味着可以不需要全局管理配置的能力。该图中不配备注册中心，意味着可能采用了Dubbo mesh的方案，也可能不需要进行服务注册，仅仅接收直连模式的服务调用。
+官网参考文章地址:
+- <a href="https://dubbo.apache.org/zh/docs/v3.0/concepts/registry-configcenter-metadata/">部署架构（注册中心 配置中心 元数据中心</a>
+- <a href="https://dubbo.apache.org/zh/docs/references/metadata/">元数据参考手册</a></p>
+<p>综上所述可以用几句话概括下:
+- 元数据中心来维护RPC服务与应用的映射关系（即接口与应用的映射关系）来兼容接口与应用之间的对应关系
+- 让注册中心更加聚焦与地址的发现和推送能力</p>
+<p>注册中心的启动是在DefaultApplicationDeployer中的初始化方法 initialize() 中:如下所示</p>
+<p>这里只看下 startMetadataCenter();方法即可</p>
+<pre><code class="language-java"> @Override
+    public void initialize() {
+        if (initialized) {
+            return;
+        }
+        // Ensure that the initialization is completed when concurrent calls
+        synchronized (startLock) {
+            if (initialized) {
+                return;
+            }
+            // register shutdown hook
+            registerShutdownHook();
+
+            startConfigCenter();
+
+            loadApplicationConfigs();
+
+            initModuleDeployers();
+
+            // @since 2.7.8
+            startMetadataCenter();
+
+            initialized = true;
+
+            if (logger.isInfoEnabled()) {
+                logger.info(getIdentifier() + &quot; has been initialized!&quot;);
+            }
+        }
+    }
+
+</code></pre>
+<h2 id="_2"><strong>深入探究元数据中心的启动过程</strong><a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="_3"><strong>启动元数据中心的代码全貌</strong><a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>关于元数据中心我们看下 startMetadataCenter()方法来大致了解下整个流程</p>
+<pre><code class="language-java">private void startMetadataCenter() {
+        //如果未配置元数据中心的地址等配置则使用注册中心的地址等配置做为元数据中心的配置
+        useRegistryAsMetadataCenterIfNecessary();
+        //获取应用的配置信息
+        ApplicationConfig applicationConfig = getApplication();
+        //元数据配置类型 元数据类型， local 或 remote,，如果选择远程，则需要进一步指定元数据中心
+        String metadataType = applicationConfig.getMetadataType();
+        // FIXME, multiple metadata config support.
+        //查询元数据中心的地址等配置
+        Collection&lt;MetadataReportConfig&gt; metadataReportConfigs = configManager.getMetadataConfigs();
+
+        if (CollectionUtils.isEmpty(metadataReportConfigs)) {
+        //这个就是判断 如果选择远程，则需要进一步指定元数据中心 否则就抛出来异常
+            if (REMOTE_METADATA_STORAGE_TYPE.equals(metadataType)) {
+                throw new IllegalStateException(&quot;No MetadataConfig found, Metadata Center address is required when 'metadata=remote' is enabled.&quot;);
+            }
+            return;
+        }
+        //MetadataReport实例的存储库对象获取
+        MetadataReportInstance metadataReportInstance = applicationModel.getBeanFactory().getBean(MetadataReportInstance.class);
+        List&lt;MetadataReportConfig&gt; validMetadataReportConfigs = new ArrayList&lt;&gt;(metadataReportConfigs.size());
+        for (MetadataReportConfig metadataReportConfig : metadataReportConfigs) {
+            ConfigValidationUtils.validateMetadataConfig(metadataReportConfig);
+            validMetadataReportConfigs.add(metadataReportConfig);
+        }
+        //初始化元数据
+        metadataReportInstance.init(validMetadataReportConfigs);
+        //MetadataReport实例的存储库对象初始化失败则抛出异常
+        if (!metadataReportInstance.inited()) {
+            throw new IllegalStateException(String.format(&quot;%s MetadataConfigs found, but none of them is valid.&quot;, metadataReportConfigs.size()));
+        }
+    }
+</code></pre>
+<h3 id="_4"><strong>元数据中心未配置则使用注册中心配置</strong><a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>前面在说配置中心的时候有说过配置中心如果未配置会使用注册中心的地址等信息作为默认配置,这里元数据做了类似的操作:如代码:
+DefaultApplicationDeployer类型的 useRegistryAsMetadataCenterIfNecessary()方法</p>
+<pre><code class="language-java">private void useRegistryAsMetadataCenterIfNecessary() {
+        //配置缓存中查询元数据配置
+        Collection&lt;MetadataReportConfig&gt; metadataConfigs = configManager.getMetadataConfigs();
+        //配置存在则直接返回
+        if (CollectionUtils.isNotEmpty(metadataConfigs)) {
+            return;
+        }
+        ////查询是否有注册中心设置了默认配置isDefault 设置为true的注册中心则为默认注册中心列表,如果没有注册中心设置为默认注册中心,则获取所有未设置默认配置的注册中心列表
+        List&lt;RegistryConfig&gt; defaultRegistries = configManager.getDefaultRegistries();
+        if (defaultRegistries.size() &gt; 0) {
+        //多注册中心遍历
+            defaultRegistries
+                .stream()
+                //筛选符合条件的注册中心 (筛选逻辑就是查看是否有对应协议的扩展支持)
+                .filter(this::isUsedRegistryAsMetadataCenter)
+                //注册中心配置映射为元数据中心  映射就是获取需要的配置
+                .map(this::registryAsMetadataCenter)
+                //将元数据中心配置存储在配置缓存中方便后续使用
+                .forEach(metadataReportConfig -&gt; {
+
+                    if (metadataReportConfig.getId() == null) {
+                        Collection&lt;MetadataReportConfig&gt; metadataReportConfigs = configManager.getMetadataConfigs();
+                        if (CollectionUtils.isNotEmpty(metadataReportConfigs)) {
+                            for (MetadataReportConfig existedConfig : metadataReportConfigs) {
+                                if (existedConfig.getId() == null &amp;&amp; existedConfig.getAddress().equals(metadataReportConfig.getAddress())) {
+                                    return;
+                                }
+                            }
+                        }
+                        configManager.addMetadataReport(metadataReportConfig);
+                    } else {
+                        Optional&lt;MetadataReportConfig&gt; configOptional = configManager.getConfig(MetadataReportConfig.class, metadataReportConfig.getId());
+                        if (configOptional.isPresent()) {
+                            return;
+                        }
+                        configManager.addMetadataReport(metadataReportConfig);
+                    }
+                    logger.info(&quot;use registry as metadata-center: &quot; + metadataReportConfig);
+                });
+        }
+    }
+</code></pre>
+<p>这个代码有些细节就不细说了 我们概括下顺序梳理下思路:
+- 配置缓存中查询元数据配置,配置存在则直接返回
+- 查询所有可用的默认注册中心列表
+    - 多注册中心遍历
+    -  选符合条件的注册中心 (筛选逻辑就是查看是否有对应协议的扩展支持)
+    - 注册中心配置RegistryConfig映射转换为元数据中心配置类型MetadataReportConfig  映射就是获取需要的配置
+    - 将元数据中心配置存储在配置缓存中方便后续使用</p>
+<p>元数据的配置可以参考官网:<a href="https://dubbo.apache.org/zh/docs/v3.0/references/metadata/">元数据参考手册</a></p>
+<p>这里主要看下可配置项有哪些 对应类型为MetadataReportConfig 在官网暂时未找到合适的文档,这里整理下属性列表方便后续配置说明查看:</p>
+<table>
+<thead>
+<tr>
+<th>配置变量</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>String</td>
+<td>配置id</td>
+</tr>
+<tr>
+<td>protocol</td>
+<td>String</td>
+<td>元数据协议</td>
+</tr>
+<tr>
+<td>address</td>
+<td>String</td>
+<td>元数据中心地址</td>
+</tr>
+<tr>
+<td>port</td>
+<td>Integer</td>
+<td>元数据中心端口</td>
+</tr>
+<tr>
+<td>username</td>
+<td>String</td>
+<td>元数据中心认证用户名</td>
+</tr>
+<tr>
+<td>password</td>
+<td>String</td>
+<td>元数据中心认证密码</td>
+</tr>
+<tr>
+<td>timeout</td>
+<td>Integer</td>
+<td>元数据中心的请求超时（毫秒）</td>
+</tr>
+<tr>
+<td>group</td>
+<td>String</td>
+<td>该组将元数据保存在中。它与注册表相同</td>
+</tr>
+<tr>
+<td>parameters</td>
+<td>Map<String, String></td>
+<td>自定义参数</td>
+</tr>
+<tr>
+<td>retryTimes</td>
+<td>Integer</td>
+<td>重试次数</td>
+</tr>
+<tr>
+<td>retryPeriod</td>
+<td>Integer</td>
+<td>重试间隔</td>
+</tr>
+<tr>
+<td>cycleReport</td>
+<td>Boolean</td>
+<td>默认情况下， 是否每天重复存储完整的元数据</td>
+</tr>
+<tr>
+<td>syncReport</td>
+<td>Boolean</td>
+<td>Sync or Async report.</td>
+</tr>
+<tr>
+<td>cluster</td>
+<td>Boolean</td>
+<td>需要群集支持，默认为false</td>
+</tr>
+<tr>
+<td>registry</td>
+<td>String</td>
+<td>注册表配置id</td>
+</tr>
+<tr>
+<td>file</td>
+<td>String</td>
+<td>元数据报告文件存储位置</td>
+</tr>
+<tr>
+<td>check</td>
+<td>Boolean</td>
+<td>连接到元数据中心时要应用的失败策略</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5"><strong>元数据中心的初始化逻辑</strong><a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h4 id="_6"><strong>元数据中心的初始化调用逻辑</strong><a class="headerlink" href="#_6" title="Permanent link">&para;</a></h4>
+<p>主要看这一行比较重要的逻辑:</p>
+<pre><code class="language-java"> //初始化元数据
+ metadataReportInstance.init(validMetadataReportConfigs);
+</code></pre>
+<p>在了解这一行逻辑之前我们先来看下元数据相关联的类型:</p>
+<p>MetadataReportInstance中的初始化方法init</p>
+<pre><code class="language-java"> public void init(List&lt;MetadataReportConfig&gt; metadataReportConfigs) {
+        //CAS判断是否有初始化过
+        if (!init.compareAndSet(false, true)) {
+            return;
+        }
+        //元数据类型配置如果未配置则默认为local 
+        this.metadataType = applicationModel.getApplicationConfigManager().getApplicationOrElseThrow().getMetadataType();
+        if (metadataType == null) {
+            this.metadataType = DEFAULT_METADATA_STORAGE_TYPE;
+        }
+        //获取MetadataReportFactory 工厂类型
+        MetadataReportFactory metadataReportFactory = applicationModel.getExtensionLoader(MetadataReportFactory.class).getAdaptiveExtension();
+            //多元数据中心初始化
+        for (MetadataReportConfig metadataReportConfig : metadataReportConfigs) {
+            init(metadataReportConfig, metadataReportFactory);
+        }
+    }
+
+    private void init(MetadataReportConfig config, MetadataReportFactory metadataReportFactory) {
+    //配置转url
+        URL url = config.toUrl();
+        if (METADATA_REPORT_KEY.equals(url.getProtocol())) {
+            String protocol = url.getParameter(METADATA_REPORT_KEY, DEFAULT_DIRECTORY);
+            url = URLBuilder.from(url)
+                    .setProtocol(protocol)
+                    .setScopeModel(config.getScopeModel())
+                    .removeParameter(METADATA_REPORT_KEY)
+                    .build();
+        }
+        url = url.addParameterIfAbsent(APPLICATION_KEY, applicationModel.getCurrentConfig().getName());
+        String relatedRegistryId = isEmpty(config.getRegistry()) ? (isEmpty(config.getId()) ? DEFAULT_KEY : config.getId()) : config.getRegistry();
+        //从元数据工厂中获取元数据
+        MetadataReport metadataReport = metadataReportFactory.getMetadataReport(url);
+        //缓存元数据到内存
+        if (metadataReport != null) {
+            metadataReports.put(relatedRegistryId, metadataReport);
+        }
+    }
+</code></pre>
+<p>关于元数据的初始化我们主要看两个位置:
+- 一个是元数据工厂对象的创建与初始化MetadataReportFactory
+- 一个是元数据对象的创建与初始化MetadataReport</p>
+<h4 id="metadatareportfactory"><strong>元数据工厂对象MetadataReportFactory</strong><a class="headerlink" href="#metadatareportfactory" title="Permanent link">&para;</a></h4>
+<p>关于元数据工厂类型MetadataReportFactory,元数据工厂 用于 <strong>创建与管理元数据对象</strong> , 相关类型如下:
+<img alt="15-metadata-2" src="/img/chapter_dubbo/15-metadata-2.png" /></p>
+<p>我们这里主要以为Zookeeper扩展的元数据工厂ZookeeperMetadataReportFactory类型为例子:
+实现类型逻辑不复杂,这里就直接贴代码看看:</p>
+<pre><code class="language-java">public class ZookeeperMetadataReportFactory extends AbstractMetadataReportFactory {
+    //与Zookeeper交互的传输器
+    private ZookeeperTransporter zookeeperTransporter;
+    //应用程序模型
+    private ApplicationModel applicationModel;
+
+    public ZookeeperMetadataReportFactory(ApplicationModel applicationModel) {
+        this.applicationModel = applicationModel;
+        this.zookeeperTransporter = ZookeeperTransporter.getExtension(applicationModel);
+    }
+
+    @DisableInject
+    public void setZookeeperTransporter(ZookeeperTransporter zookeeperTransporter) {
+        this.zookeeperTransporter = zookeeperTransporter;
+    }
+
+    @Override
+    public MetadataReport createMetadataReport(URL url) {
+        return new ZookeeperMetadataReport(url, zookeeperTransporter);
+    }
+
+}
+</code></pre>
+<p>元数据工厂的实现比较简单 
+- 继承抽象的元数据工厂AbstractMetadataReportFactory
+- 实现工厂方法createMetadataReport来创建一个元数据操作类型</p>
+<p>如果我们想要实现一个元数据工厂扩展可以参考Zookeeper的这个方式</p>
+<h4 id="metadatareport"><strong>元数据操作对象MetadataReport的创建与初始化</strong><a class="headerlink" href="#metadatareport" title="Permanent link">&para;</a></h4>
+<p>前面的从元数据工厂中获取元数据操作对象的逻辑处理代码如下:</p>
+<pre><code class="language-java">//从元数据工厂中获取元数据 ,url对象可以理解为配置
+ MetadataReport metadataReport = metadataReportFactory.getMetadataReport(url);
+</code></pre>
+<p>关于元数据对象,用于元数据信息的增删改查等逻辑的操作与元数据信息的缓存</p>
+<p><img alt="15-metadata-3.png" src="/img/chapter_dubbo/15-metadata-3.png" /></p>
+<p>我们这里还是以Zookeeper的实现ZookeeperMetadataReportFactory类型做为参考:</p>
+<p>我们先来看这个逻辑</p>
+<pre><code class="language-java">//从元数据工厂中获取元数据 ,url对象可以理解为配置
+ MetadataReport metadataReport = metadataReportFactory.getMetadataReport(url);
+</code></pre>
+<p>ZookeeperMetadataReportFactory的父类型AbstractMetadataReportFactory中的getMetadataReport方法如下:</p>
+<pre><code class="language-java"> @Override
+    public MetadataReport getMetadataReport(URL url) {
+    //url值参考例子zookeeper://127.0.0.1:2181?application=dubbo-demo-api-provider&amp;client=&amp;port=2181&amp;protocol=zookeeper
+            //如果存在export则移除
+        url = url.setPath(MetadataReport.class.getName())
+            .removeParameters(EXPORT_KEY, REFER_KEY);
+           //生成元数据缓存key 元数据维度 地址+名字 
+           //如: zookeeper://127.0.0.1:2181/org.apache.dubbo.metadata.report.MetadataReport
+        String key = url.toServiceString();
+        //缓存中查询 查到则直接返回
+        MetadataReport metadataReport = serviceStoreMap.get(key);
+        if (metadataReport != null) {
+            return metadataReport;
+        }
+
+        // Lock the metadata access process to ensure a single instance of the metadata instance
+        //存在写操作 加个锁
+        lock.lock();
+        try {
+            //双重校验锁在查一下
+            metadataReport = serviceStoreMap.get(key);
+            if (metadataReport != null) {
+                return metadataReport;
+            }
+            //check参数 查元数据报错是否抛出异常
+            boolean check = url.getParameter(CHECK_KEY, true) &amp;&amp; url.getPort() != 0;        
+            try {
+                //关键模版方法 调用扩展实现的具体业务(创建元数据操作对象)
+                metadataReport = createMetadataReport(url);
+            } catch (Exception e) {
+                if (!check) {
+                    logger.warn(&quot;The metadata reporter failed to initialize&quot;, e);
+                } else {
+                    throw e;
+                }
+            }
+        //check逻辑检查
+            if (check &amp;&amp; metadataReport == null) {
+                throw new IllegalStateException(&quot;Can not create metadata Report &quot; + url);
+            }
+            //缓存对象 
+            if (metadataReport != null) {
+                serviceStoreMap.put(key, metadataReport);
+            }
+            //返回
+            return metadataReport;
+        } finally {
+            // Release the lock
+            lock.unlock();
+        }
+    }
+
+</code></pre>
+<p>上面这个抽象类AbstractMetadataReportFactory中的获取元数据操作对象的模版方法getMetadataReport(URL url), 用了双重校验锁的逻辑来创建对象缓存对象,又用了模版方法设计模式,来让抽象类做通用的逻辑,让实现类型去做扩展, 虽然代码写的太长了些整体还是用了不少的设计思想.</p>
+<p>我们直接看这个代码:</p>
+<pre><code class="language-java">metadataReport = createMetadataReport(url);
+</code></pre>
+<p>这个创建元数据操作对象的代码实际上走的是实现类型的逻辑:</p>
+<p>来自工厂Bean ZookeeperMetadataReportFactory的工厂方法如下所示:</p>
+<pre><code class="language-java">@Override
+    public MetadataReport createMetadataReport(URL url) {
+        return new ZookeeperMetadataReport(url, zookeeperTransporter);
+    }
+</code></pre>
+<p>创建了元数据操作对象,这里我们继续看下元数据操作对象ZookeeperMetadataReport创建做了哪些逻辑:
+来自ZookeeperMetadataReport的构造器:</p>
+<pre><code class="language-java">public ZookeeperMetadataReport(URL url, ZookeeperTransporter zookeeperTransporter) {
+        //url即配置 配置传递给抽象类 做一些公共的逻辑
+        //url参考:zookeeper://127.0.0.1:2181/org.apache.dubbo.metadata.report.MetadataReport?application=dubbo-demo-api-provider&amp;client=&amp;port=2181&amp;protocol=zookeeper
+        super(url);
+        if (url.isAnyHost()) {
+            throw new IllegalStateException(&quot;registry address == null&quot;);
+        }
+        String group = url.getGroup(DEFAULT_ROOT);
+        if (!group.startsWith(PATH_SEPARATOR)) {
+            group = PATH_SEPARATOR + group;
+        }
+        this.root = group;
+        //连接Zookeeper
+        zkClient = zookeeperTransporter.connect(url);
+    }
+</code></pre>
+<p>核心的公共的操作逻辑封装在父类AbstractMetadataReport里面
+我们来看前面super调用的构造器逻辑:
+如下所示:</p>
+<pre><code class="language-java"> public AbstractMetadataReport(URL reportServerURL) {
+ //设置url 如:zookeeper://127.0.0.1:2181/org.apache.dubbo.metadata.report.MetadataReport?application=dubbo-demo-api-provider&amp;client=&amp;port=2181&amp;protocol=zookeeper
+        setUrl(reportServerURL);
+        // Start file save timer
+        //缓存的文件名字
+        //格式为: 用户目录+/.dubbo/dubbo-metadata- + 应用程序名字application + url地址(IP+端口) + 后缀.cache 如下所示
+        ///Users/song/.dubbo/dubbo-metadata-dubbo-demo-api-provider-127.0.0.1-2181.cache
+        String defaultFilename = System.getProperty(USER_HOME) + DUBBO_METADATA +
+            reportServerURL.getApplication() + &quot;-&quot; +
+            replace(reportServerURL.getAddress(), &quot;:&quot;, &quot;-&quot;) + CACHE;
+            //如果用户配置了缓存文件名字则以用户配置为准file
+        String filename = reportServerURL.getParameter(FILE_KEY, defaultFilename);
+        File file = null;
+        //文件名字不为空
+        if (ConfigUtils.isNotEmpty(filename)) {
+            file = new File(filename);
+            //文件和父目录不存在则创建文件目录
+            if (!file.exists() &amp;&amp; file.getParentFile() != null &amp;&amp; !file.getParentFile().exists()) {
+                if (!file.getParentFile().mkdirs()) {
+                    throw new IllegalArgumentException(&quot;Invalid service store file &quot; + file + &quot;, cause: Failed to create directory &quot; + file.getParentFile() + &quot;!&quot;);
+                }
+            }
+            // if this file exists, firstly delete it.
+            //还未初始化则已存在的历史文件删除掉
+            if (!initialized.getAndSet(true) &amp;&amp; file.exists()) {
+                file.delete();
+            }
+        }
+        //赋值给成员变量后续继续可以用
+        this.file = file;
+        //文件存在则直接加载文件中的内容
+        loadProperties();
+        //sync-report配置的值为同步配置还异步配置,true是同步配置,默认为false为异步配置
+        syncReport = reportServerURL.getParameter(SYNC_REPORT_KEY, false);
+        //重试属性与逻辑也封装了一个类型 创建对象
+        //retry-times重试次数配置 默认为100次
+        //retry-period 重试间隔配置 默认为3000
+        metadataReportRetry = new MetadataReportRetry(reportServerURL.getParameter(RETRY_TIMES_KEY, DEFAULT_METADATA_REPORT_RETRY_TIMES),
+            reportServerURL.getParameter(RETRY_PERIOD_KEY, DEFAULT_METADATA_REPORT_RETRY_PERIOD));
+
+        // cycle report the data switch
+        //是否定期从元数据中心同步配置
+        //cycle-report配置默认为true
+        if (reportServerURL.getParameter(CYCLE_REPORT_KEY, DEFAULT_METADATA_REPORT_CYCLE_REPORT)) {
+        //开启重试定时器 24个小时间隔从元数据中心同步一次
+            reportTimerScheduler = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory(&quot;DubboMetadataReportTimer&quot;, true));
+            reportTimerScheduler.scheduleAtFixedRate(this::publishAll, calculateStartTime(), ONE_DAY_IN_MILLISECONDS, TimeUnit.MILLISECONDS);
+        }
+
+        this.reportMetadata = reportServerURL.getParameter(REPORT_METADATA_KEY, false);
+        this.reportDefinition = reportServerURL.getParameter(REPORT_DEFINITION_KEY, true);
+    }
+
+</code></pre>
+<h4 id="zookeeper"><strong>内存中元数据自动同步到Zookeeper和本地文件</strong><a class="headerlink" href="#zookeeper" title="Permanent link">&para;</a></h4>
+<p>这里来总结下元数据操作的初始化逻辑:</p>
+<ul>
+<li>首次初始化清理历史元数据文件如:
+  <code>Users/song/.dubbo/dubbo-metadata-dubbo-demo-api-provider-127.0.0.1-2181.cache</code></li>
+<li>如果非首次进来则直接加载缓存在本地的缓存文件,赋值给properties成员变量</li>
+<li>初始化同步配置是否异步(默认为false), sync-report配置的值为同步配置还异步配置,true是同步配置,默认为false为异步配置</li>
+<li>初始化重试属性</li>
+<li>是否定期从元数据中心同步配置初始化 默认为true 24小时自动同步一次</li>
+</ul>
+<p>关于元数据同步可以看AbstractMetadataReport类型的publishAll方法:</p>
+<pre><code class="language-java">  reportTimerScheduler = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory(&quot;DubboMetadataReportTimer&quot;, true));
+            reportTimerScheduler.scheduleAtFixedRate(this::publishAll, calculateStartTime(), ONE_DAY_IN_MILLISECONDS, TimeUnit.MILLISECONDS);
+</code></pre>
+<p>这里有个方法叫做calculateStartTime 这个代码是随机时间的between 2:00 am to 6:00 am, the time is random.  2点到6点之间启动, 低峰期启动自动同步 
+返回值:</p>
+<p>AbstractMetadataReport类型的</p>
+<pre><code class="language-java">  void publishAll() {
+        logger.info(&quot;start to publish all metadata.&quot;);
+        this.doHandleMetadataCollection(allMetadataReports);
+    }
+</code></pre>
+<p>AbstractMetadataReport类型的doHandleMetadataCollection</p>
+<pre><code class="language-java">private boolean doHandleMetadataCollection(Map&lt;MetadataIdentifier, Object&gt; metadataMap) {
+        if (metadataMap.isEmpty()) {
+            return true;
+        }
+        Iterator&lt;Map.Entry&lt;MetadataIdentifier, Object&gt;&gt; iterable = metadataMap.entrySet().iterator();
+        while (iterable.hasNext()) {
+            Map.Entry&lt;MetadataIdentifier, Object&gt; item = iterable.next();
+            if (PROVIDER_SIDE.equals(item.getKey().getSide())) {
+                //提供端的元数据则存储提供端元数据
+                this.storeProviderMetadata(item.getKey(), (FullServiceDefinition) item.getValue());
+            } else if (CONSUMER_SIDE.equals(item.getKey().getSide())) {
+            //消费端的元数据则存储提供端元数据
+                this.storeConsumerMetadata(item.getKey(), (Map) item.getValue());
+            }
+
+        }
+        return false;
+    }
+</code></pre>
+<p>提供端元数据的存储:
+AbstractMetadataReport类型的storeProviderMetadata</p>
+<pre><code class="language-java"> @Override
+    public void storeProviderMetadata(MetadataIdentifier providerMetadataIdentifier, ServiceDefinition serviceDefinition) {
+        if (syncReport) {
+            storeProviderMetadataTask(providerMetadataIdentifier, serviceDefinition);
+        } else {
+            reportCacheExecutor.execute(() -&gt; storeProviderMetadataTask(providerMetadataIdentifier, serviceDefinition));
+        }
+    }
+</code></pre>
+<p>AbstractMetadataReport类型的storeProviderMetadataTask
+具体同步代码:storeProviderMetadataTask</p>
+<pre><code class="language-java">private void storeProviderMetadataTask(MetadataIdentifier providerMetadataIdentifier, ServiceDefinition serviceDefinition) {
+        try {
+            if (logger.isInfoEnabled()) {
+                logger.info(&quot;store provider metadata. Identifier : &quot; + providerMetadataIdentifier + &quot;; definition: &quot; + serviceDefinition);
+            }
+            allMetadataReports.put(providerMetadataIdentifier, serviceDefinition);
+            failedReports.remove(providerMetadataIdentifier);
+            Gson gson = new Gson();
+            String data = gson.toJson(serviceDefinition);
+             //内存中的元数据同步到元数据中心
+            doStoreProviderMetadata(providerMetadataIdentifier, data);
+            //内存中的元数据同步到本地文件
+            saveProperties(providerMetadataIdentifier, data, true, !syncReport);
+        } catch (Exception e) {
+            // retry again. If failed again, throw exception.
+            failedReports.put(providerMetadataIdentifier, serviceDefinition);
+            metadataReportRetry.startRetryTask();
+            logger.error(&quot;Failed to put provider metadata &quot; + providerMetadataIdentifier + &quot; in  &quot; + serviceDefinition + &quot;, cause: &quot; + e.getMessage(), e);
+        }
+    }
+
+</code></pre>
+<p>上面代码我们主要看本地内存中的元数据同步到元数据中心和存本地的两个点:</p>
+<pre><code class="language-java">//内存中的元数据同步到元数据中心
+doStoreProviderMetadata(providerMetadataIdentifier, data);
+//内存中的元数据同步到本地文件
+saveProperties(providerMetadataIdentifier, data, true, 
+</code></pre>
+<p>//内存中的元数据同步到元数据中心</p>
+<p>这个方法会调用当前子类重写的具体存储逻辑:这里我们以
+ZookeeperMetadataReport的doStoreProviderMetadata举例:</p>
+<pre><code class="language-java">   private void storeMetadata(MetadataIdentifier metadataIdentifier, String v) {
+        //使用zkClient创建一个节点数据为参数V v是前面说的服务定义数据
+        zkClient.create(getNodePath(metadataIdentifier), v, false);
+    }
+</code></pre>
+<p>这里参数我们举个例子: 提供者的元数据内容如下:
+节点路径为:</p>
+<ul>
+<li><code>/dubbo/metadata/link.elastic.dubbo.entity.DemoService/provider/dubbo-demo-api-provider</code></li>
+</ul>
+<p>格式:
+- /dubbo/metadata前缀
+- 服务提供者接口
+- 提供者类型provider
+- 应用名</p>
+<p>具体的元数据内容如下:
+比较详细的记录了应用信息,服务接口信息和服务接口对应的方法信息</p>
+<pre><code class="language-json">{
+  &quot;parameters&quot;: {
+    &quot;side&quot;: &quot;provider&quot;,
+    &quot;interface&quot;: &quot;link.elastic.dubbo.entity.DemoService&quot;,
+    &quot;pid&quot;: &quot;38680&quot;,
+    &quot;application&quot;: &quot;dubbo-demo-api-provider&quot;,
+    &quot;dubbo&quot;: &quot;2.0.2&quot;,
+    &quot;release&quot;: &quot;3.0.8&quot;,
+    &quot;anyhost&quot;: &quot;true&quot;,
+    &quot;bind.ip&quot;: &quot;192.168.1.9&quot;,
+    &quot;methods&quot;: &quot;sayHello,sayHelloAsync&quot;,
+    &quot;background&quot;: &quot;false&quot;,
+    &quot;deprecated&quot;: &quot;false&quot;,
+    &quot;dynamic&quot;: &quot;true&quot;,
+    &quot;service-name-mapping&quot;: &quot;true&quot;,
+    &quot;generic&quot;: &quot;false&quot;,
+    &quot;bind.port&quot;: &quot;20880&quot;,
+    &quot;timestamp&quot;: &quot;1653097653865&quot;
+  },
+  &quot;canonicalName&quot;: &quot;link.elastic.dubbo.entity.DemoService&quot;,
+  &quot;codeSource&quot;: &quot;file:/Users/song/Desktop/Computer/A/code/gitee/weaving-a-net/weaving-test/dubbo-test/target/classes/&quot;,
+  &quot;methods&quot;: [
+    {
+      &quot;name&quot;: &quot;sayHello&quot;,
+      &quot;parameterTypes&quot;: [
+        &quot;java.lang.String&quot;
+      ],
+      &quot;returnType&quot;: &quot;java.lang.String&quot;,
+      &quot;annotations&quot;: [
+
+      ]
+    },
+    {
+      &quot;name&quot;: &quot;sayHelloAsync&quot;,
+      &quot;parameterTypes&quot;: [
+        &quot;java.lang.String&quot;
+      ],
+      &quot;returnType&quot;: &quot;java.util.concurrent.CompletableFuture&quot;,
+      &quot;annotations&quot;: [
+
+      ]
+    }
+  ],
+  &quot;types&quot;: [
+    {
+      &quot;type&quot;: &quot;java.util.concurrent.CompletableFuture&quot;,
+      &quot;properties&quot;: {
+        &quot;result&quot;: &quot;java.lang.Object&quot;,
+        &quot;stack&quot;: &quot;java.util.concurrent.CompletableFuture.Completion&quot;
+      }
+    },
+    {
+      &quot;type&quot;: &quot;java.lang.Object&quot;
+    },
+    {
+      &quot;type&quot;: &quot;java.lang.String&quot;
+    },
+    {
+      &quot;type&quot;: &quot;java.util.concurrent.CompletableFuture.Completion&quot;,
+      &quot;properties&quot;: {
+        &quot;next&quot;: &quot;java.util.concurrent.CompletableFuture.Completion&quot;,
+        &quot;status&quot;: &quot;int&quot;
+      }
+    },
+    {
+      &quot;type&quot;: &quot;int&quot;
+    }
+  ],
+  &quot;annotations&quot;: [
+
+  ]
+}
+</code></pre>
+<p>本地缓存文件的写入 可以看下如下代码
+AbstractMetadataReport类型的saveProperties方法</p>
+<pre><code class="language-java"> private void saveProperties(MetadataIdentifier metadataIdentifier, String value, boolean add, boolean sync) {
+        if (file == null) {
+            return;
+        }
+
+        try {
+            if (add) {
+                properties.setProperty(metadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY), value);
+            } else {
+                properties.remove(metadataIdentifier.getUniqueKey(KeyTypeEnum.UNIQUE_KEY));
+            }
+            long version = lastCacheChanged.incrementAndGet();
+            if (sync) {
+                //获取最新修改版本持久化到磁盘
+                new SaveProperties(version).run();
+            } else {
+                reportCacheExecutor.execute(new SaveProperties(version));
+            }
+
+        } catch (Throwable t) {
+            logger.warn(t.getMessage(), t);
+        }
+    }
+</code></pre>
+<p>主要看如下代码:</p>
+<pre><code class="language-java"> new SaveProperties(version).run();
+</code></pre>
+<p>SaveProperties类型代码如下:</p>
+<pre><code class="language-java">  private class SaveProperties implements Runnable {
+        private long version;
+
+        private SaveProperties(long version) {
+            this.version = version;
+        }
+
+        @Override
+        public void run() {
+            doSaveProperties(version);
+        }
+    }
+</code></pre>
+<p>继续看doSaveProperties方法:</p>
+<pre><code class="language-java">private void doSaveProperties(long version) {
+        //不是最新的就不要持久化了
+        if (version &lt; lastCacheChanged.get()) {
+            return;
+        }
+        if (file == null) {
+            return;
+        }
+        // Save
+        try {
+            //创建本地文件锁:
+            //路径为:
+            ///Users/song/.dubbo/dubbo-metadata-dubbo-demo-api-provider-127.0.0.1-2181.cache.lock
+            File lockfile = new File(file.getAbsolutePath() + &quot;.lock&quot;);
+            //锁文件不存在则创建锁文件
+            if (!lockfile.exists()) {
+                lockfile.createNewFile();
+            }
+            //随机访问文件工具类对象创建 读写权限
+            try (RandomAccessFile raf = new RandomAccessFile(lockfile, &quot;rw&quot;);
+            //文件文件Channel
+            //返回与此文件关联的唯一FileChannel对象。
+                FileChannel channel = raf.getChannel()) {
+                //FileChannel中的lock()与tryLock()方法都是尝试去获取在某一文件上的独有锁（以下简称独有锁），可以实现进程间操作的互斥。区别在于lock()会阻塞（blocking）方法的执行，tryLock()则不会。
+                FileLock lock = channel.tryLock();
+                //如果多个线程同时进来未获取锁的则抛出异常
+                if (lock == null) {
+                    throw new IOException(&quot;Can not lock the metadataReport cache file &quot; + file.getAbsolutePath() + &quot;, ignore and retry later, maybe multi java process use the file, please config: dubbo.metadata.file=xxx.properties&quot;);
+                }
+                // Save
+                try {
+                    //文件不存在则创建本地元数据缓存文件
+                    ///Users/song/.dubbo/dubbo-metadata-dubbo-demo-api-provider-127.0.0.1-2181.cache
+                    if (!file.exists()) {
+                        file.createNewFile();
+                    }
+
+                    Properties tmpProperties;
+                    if (!syncReport) {
+                        // When syncReport = false, properties.setProperty and properties.store are called from the same
+                        // thread(reportCacheExecutor), so deep copy is not required
+                        tmpProperties = properties;
+                    } else {
+                        // Using store method and setProperty method of the this.properties will cause lock contention
+                        // under multi-threading, so deep copy a new container
+                        //异步存储会导致锁争用 使用此的store方法和setProperty方法。属性将导致多线程下的锁争用，因此深度复制新容器
+                        tmpProperties = new Properties();
+                        Set&lt;Map.Entry&lt;Object, Object&gt;&gt; entries = properties.entrySet();
+                        for (Map.Entry&lt;Object, Object&gt; entry : entries) {
+                            tmpProperties.setProperty((String) entry.getKey(), (String) entry.getValue());
+                        }
+                    }
+
+                    try (FileOutputStream outputFile = new FileOutputStream(file)) {
+                    //Properties类型自带的方法:
+                    //将此属性表中的属性列表（键和元素对）以适合使用load（Reader）方法的格式写入输出字符流。
+                        tmpProperties.store(outputFile, &quot;Dubbo metadataReport Cache&quot;);
+                    }
+                } finally {
+                    lock.release();
+                }
+            }
+        } catch (Throwable e) {
+            if (version &lt; lastCacheChanged.get()) {
+                return;
+            } else {
+                reportCacheExecutor.execute(new SaveProperties(lastCacheChanged.incrementAndGet()));
+            }
+            //这个代码太诡异了如果是lock失败也会打印异常给人非常疑惑的感觉 后续会修复
+            logger.warn(&quot;Failed to save service store file, cause: &quot; + e.getMessage(), e);
+        }
+    }
+</code></pre>
+<p>写入文件的内容大致如下</p>
+<pre><code class="language-json">link.elastic.dubbo.entity.DemoService:::provider:dubbo-demo-api-provider -&gt; {
+  &quot;parameters&quot;: {
+    &quot;side&quot;: &quot;provider&quot;,
+    &quot;interface&quot;: &quot;link.elastic.dubbo.entity.DemoService&quot;,
+    &quot;pid&quot;: &quot;41457&quot;,
+    &quot;application&quot;: &quot;dubbo-demo-api-provider&quot;,
+    &quot;dubbo&quot;: &quot;2.0.2&quot;,
+    &quot;release&quot;: &quot;3.0.8&quot;,
+    &quot;anyhost&quot;: &quot;true&quot;,
+    &quot;bind.ip&quot;: &quot;192.168.1.9&quot;,
+    &quot;methods&quot;: &quot;sayHello,sayHelloAsync&quot;,
+    &quot;background&quot;: &quot;false&quot;,
+    &quot;deprecated&quot;: &quot;false&quot;,
+    &quot;dynamic&quot;: &quot;true&quot;,
+    &quot;service-name-mapping&quot;: &quot;true&quot;,
+    &quot;generic&quot;: &quot;false&quot;,
+    &quot;bind.port&quot;: &quot;20880&quot;,
+    &quot;timestamp&quot;: &quot;1653100253548&quot;
+  },
+  &quot;canonicalName&quot;: &quot;link.elastic.dubbo.entity.DemoService&quot;,
+  &quot;codeSource&quot;: &quot;file:/Users/song/Desktop/Computer/A/code/gitee/weaving-a-net/weaving-test/dubbo-test/target/classes/&quot;,
+  &quot;methods&quot;: [
+    {
+      &quot;name&quot;: &quot;sayHelloAsync&quot;,
+      &quot;parameterTypes&quot;: [
+        &quot;java.lang.String&quot;
+      ],
+      &quot;returnType&quot;: &quot;java.util.concurrent.CompletableFuture&quot;,
+      &quot;annotations&quot;: [
+
+      ]
+    },
+    {
+      &quot;name&quot;: &quot;sayHello&quot;,
+      &quot;parameterTypes&quot;: [
+        &quot;java.lang.String&quot;
+      ],
+      &quot;returnType&quot;: &quot;java.lang.String&quot;,
+      &quot;annotations&quot;: [
+
+      ]
+    }
+  ],
+  &quot;types&quot;: [
+    {
+      &quot;type&quot;: &quot;java.util.concurrent.CompletableFuture&quot;,
+      &quot;properties&quot;: {
+        &quot;result&quot;: &quot;java.lang.Object&quot;,
+        &quot;stack&quot;: &quot;java.util.concurrent.CompletableFuture.Completion&quot;
+      }
+    },
+    {
+      &quot;type&quot;: &quot;java.lang.Object&quot;
+    },
+    {
+      &quot;type&quot;: &quot;java.lang.String&quot;
+    },
+    {
+      &quot;type&quot;: &quot;java.util.concurrent.CompletableFuture.Completion&quot;,
+      &quot;properties&quot;: {
+        &quot;next&quot;: &quot;java.util.concurrent.CompletableFuture.Completion&quot;,
+        &quot;status&quot;: &quot;int&quot;
+      }
+    },
+    {
+      &quot;type&quot;: &quot;int&quot;
+    }
+  ],
+  &quot;annotations&quot;: [
+
+  ]
+}
+</code></pre>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  <form class="md-feedback" name="feedback" hidden>
+    <fieldset>
+      <legend class="md-feedback__title">
+        Was this page helpful?
+      </legend>
+      <div class="md-feedback__inner">
+        <div class="md-feedback__list">
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page was helpful" data-md-value="1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8m2 0a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10M10 9.5c0 .8-.7 1.5-1.5 1.5S7 10.3 7 9.5 7.7 8 8.5 8s1.5.7 1.5 1.5m7 0c0 .8-.7 1.5-1.5 1.5S14 10.3 14 9.5 14.7 8 15.5 8s1.5.7 1.5 1.5m-5 7.73c-1.75 0-3.29-.73-4.19-1.81L9.23 14c.45.72 1.52 1.23 2.77 1.23s2.32-.51 2.77-1.23l1.42 1.42c-.9 1.08-2.44 1.81-4.19 1.81"/></svg>
+            </button>
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page could be improved" data-md-value="0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8m2 0a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10m-6.5-4c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5-1.5-.7-1.5-1.5.7-1.5 1.5-1.5M10 9.5c0 .8-.7 1.5-1.5 1.5S7 10.3 7 9.5 7.7 8 8.5 8s1.5.7 1.5 1.5m2 4.5c1.75 0 3.29.72 4.19 1.81l-1.42 1.42C14.32 16.5 13.25 16 12 16s-2.32.5-2.77 1.23l-1.42-1.42C8.71 14.72 10.25 14 12 14"/></svg>
+            </button>
+          
+        </div>
+        <div class="md-feedback__note">
+          
+            <div data-md-value="1" hidden>
+              
+              
+                
+              
+              
+              
+                
+                
+              
+              Thanks for your feedback!
+            </div>
+          
+            <div data-md-value="0" hidden>
+              
+              
+                
+              
+              
+              
+                
+                
+              
+              Thanks for your feedback! Help us improve this page by <a href="https://github.com/ktyhub/thinking-in-code/issues/new/?title=[Feedback]+Dubbo%E7%9A%84%E4%B8%89%E5%A4%A7%E4%B8%AD%E5%BF%83%E4%B9%8B%E5%85%83%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90+-+/zh/chapter_dubbo/15-metadata/" target="_blank" rel="noopener">telling us what you found lacking</a>.
+            </div>
+          
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      可微信搜索 《中间件源码》 联系，订阅内容。   <br/>  Copyright &copy; 2022 - 2024 ktyhub.com copyright   <br/> 部分内容由GPT提供 转载声明：  本文转载自 [原文标题](原文链接)，由[www.ktyhub.com](www.ktyhub.com)创作，遵循 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) 许可协议。
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/ktyhub/thinking-in-code" target="_blank" rel="noopener" title="GitHub Repository" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://www.ktyhub.com" target="_blank" rel="noopener" title="Official Website" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M352 256c0 22.2-1.2 43.6-3.3 64H163.4c-2.2-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64h185.3c2.2 20.4 3.3 41.8 3.3 64m28.8-64h123.1c5.3 20.5 8.1 41.9 8.1 64s-2.8 43.5-8.1 64H380.8c2.1-20.6 3.2-42 3.2-64s-1.1-43.4-3.2-64m112.6-32H376.7c-10-63.9-29.8-117.4-55.3-151.6 78.3 20.7 142 77.5 171.9 151.6zm-149.1 0H167.7c6.1-36.4 15.5-68.6 27-94.7 10.5-23.6 22.2-40.7 33.5-51.5C239.4 3.2 248.7 0 256 0s16.6 3.2 27.8 13.8c11.3 10.8 23 27.9 33.5 51.5 11.6 26 20.9 58.2 27 94.7m-209 0H18.6c30-74.1 93.6-130.9 172-151.6-25.5 34.2-45.3 87.7-55.3 151.6M8.1 192h123.1c-2.1 20.6-3.2 42-3.2 64s1.1 43.4 3.2 64H8.1C2.8 299.5 0 278.1 0 256s2.8-43.5 8.1-64m186.6 254.6c-11.6-26-20.9-58.2-27-94.6h176.6c-6.1 36.4-15.5 68.6-27 94.6-10.5 23.6-22.2 40.7-33.5 51.5-11.2 10.7-20.5 13.9-27.8 13.9s-16.6-3.2-27.8-13.8c-11.3-10.8-23-27.9-33.5-51.5zM135.3 352c10 63.9 29.8 117.4 55.3 151.6-78.4-20.7-142-77.5-172-151.6zm358.1 0c-30 74.1-93.6 130.9-171.9 151.6 25.5-34.2 45.2-87.7 55.3-151.6h116.7z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="#" target="_blank" rel="noopener" title="WeChat - 中间件源码" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M385.2 167.6c6.4 0 12.6.3 18.8 1.1C387.4 90.3 303.3 32 207.7 32 100.5 32 13 104.8 13 197.4c0 53.4 29.3 97.5 77.9 131.6l-19.3 58.6 68-34.1c24.4 4.8 43.8 9.7 68.2 9.7 6.2 0 12.1-.3 18.3-.8-4-12.9-6.2-26.6-6.2-40.8-.1-84.9 72.9-154 165.3-154m-104.5-52.9c14.5 0 24.2 9.7 24.2 24.4 0 14.5-9.7 24.2-24.2 24.2-14.8 0-29.3-9.7-29.3-24.2.1-14.7 14.6-24.4 29.3-24.4m-136.4 48.6c-14.5 0-29.3-9.7-29.3-24.2 0-14.8 14.8-24.4 29.3-24.4 14.8 0 24.4 9.7 24.4 24.4 0 14.6-9.6 24.2-24.4 24.2M563 319.4c0-77.9-77.9-141.3-165.4-141.3-92.7 0-165.4 63.4-165.4 141.3S305 460.7 397.6 460.7c19.3 0 38.9-5.1 58.6-9.9l53.4 29.3-14.8-48.6C534 402.1 563 363.2 563 319.4m-219.1-24.5c-9.7 0-19.3-9.7-19.3-19.6 0-9.7 9.7-19.3 19.3-19.3 14.8 0 24.4 9.7 24.4 19.3 0 10-9.7 19.6-24.4 19.6m107.1 0c-9.7 0-19.3-9.7-19.3-19.6 0-9.7 9.7-19.3 19.3-19.3 14.5 0 24.4 9.7 24.4 19.3.1 10-9.9 19.6-24.4 19.6"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+      <div class="md-consent" data-md-component="consent" id="__consent" hidden>
+        <div class="md-consent__overlay"></div>
+        <aside class="md-consent__inner">
+          <form class="md-consent__form md-grid md-typeset" name="consent">
+            
+
+
+
+<h4>Cookie consent</h4>
+<p>We use cookies to recognize your repeated visits and preferences, as well as to measure the effectiveness of our documentation and whether users find what they're searching for. With your consent, you're helping us to make our documentation better.</p>
+<input class="md-toggle" type="checkbox" id="__settings" >
+<div class="md-consent__settings">
+  <ul class="task-list">
+    
+    
+      
+        
+  
+  
+    
+    
+  
+  <li class="task-list-item">
+    <label class="task-list-control">
+      <input type="checkbox" name="analytics" checked>
+      <span class="task-list-indicator"></span>
+      Google Analytics
+    </label>
+  </li>
+
+      
+    
+    
+      
+    
+    
+  </ul>
+</div>
+<div class="md-consent__controls">
+  
+    
+      <button class="md-button md-button--primary">同意</button>
+    
+    
+    
+  
+    
+    
+      <button type="reset" class="md-button md-button--primary">拒绝</button>
+    
+    
+  
+    
+    
+    
+      <label class="md-button" for="__settings">管理设定</label>
+    
+  
+</div>
+          </form>
+        </aside>
+      </div>
+      <script>var consent=__md_get("__consent");if(consent)for(var input of document.forms.consent.elements)input.name&&(input.checked=consent[input.name]||!1);else"file:"!==location.protocol&&setTimeout((function(){document.querySelector("[data-md-component=consent]").hidden=!1}),250);var form=document.forms.consent;for(var action of["submit","reset"])form.addEventListener(action,(function(e){if(e.preventDefault(),"reset"===e.type)for(var n of document.forms.consent.elements)n.name&&(n.checked=!1);__md_set("__consent",Object.fromEntries(Array.from(new FormData(form).keys()).map((function(e){return[e,!0]})))),location.hash="",location.reload()}))</script>
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.instant.prefetch", "navigation.instant.progress", "navigation.tabs.fixed", "navigation.tabs.sticky", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.path", "navigation.prune", "navigation.indexes", "navigation.top", "navigation.footer", "toc.follow", "toc.integrate", "search.highlight", "search.share", "search.suggest", "content.code.copy", "content.code.select", "content.code.annotate", "content.tooltips", "content.tabs.link", "content.action.edit", "content.action.view", "header.autohide", "announce.dismiss"], "search": "../../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+        <script src="/javascripts/google-tongji.js"></script>
+      
+        <script src="../../../mermaid.min.js"></script>
+      
+        <script src="/javascripts/baidu-tongji.js"></script>
+      
+        <script src="/javascripts/fun-interactions.js"></script>
+      
+        <script src="/javascripts/ux-enhanced.js"></script>
+      
+    
+  </body>
+</html>
