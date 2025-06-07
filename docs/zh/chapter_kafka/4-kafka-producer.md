@@ -1,7 +1,7 @@
  
-# 4  KafkaProducer生产者对象的长篇源码解析简介
+#  **KafkaProducer生产者对象的长篇源码解析简介**
 
-## 4.1  简介
+##   **简介**
 
 生产者用来发送消息到kafka代理服务器，我们先来看下KafkaProducer类型的官方说明：
 
@@ -27,8 +27,6 @@ KafkaProducer是将记录发布到Kafka群集的Kafka客户端。
 
 生产者包括一个缓冲区池，其中保存尚未传输到服务器的记录，以及一个后台I/O线程，负责将这些记录转换为请求并将其传输到集群。使用后未关闭生产者将泄漏这些资源。
 
-
-
 - send() 方法是异步的。调用时，它将记录添加到挂起记录发送的缓冲区中，并立即返回。这使制作人能够将单个记录批处理在一起，以提高效率
 
 - acks配置控制将请求视为完成的条件。默认设置“all”将导致阻止记录的完全提交，这是最慢但最持久的设置。
@@ -52,8 +50,7 @@ KafkaProducer是将记录发布到Kafka群集的Kafka客户端。
 - transactional.id的目的是支持跨单个生产者实例的多个会话进行事务恢复。它通常是从分区的、有状态的应用程序中的碎片标识符派生出来的。因此，对于在分区应用程序中运行的每个生产者实例，它应该是唯一的。
   所有新的事务性API都处于阻塞状态，并且在出现故障时会引发异常。下面的示例说明了如何使用新的API。它与上面的示例类似，只是所有100条消息都是单个事务的一部分
 
-​
-
+ 
 ```java
  Properties props = new Properties();
  props.put("bootstrap.servers", "localhost:9092");
@@ -86,14 +83,11 @@ KafkaProducer是将记录发布到Kafka群集的Kafka客户端。
 
 此客户端可以与版本为0.10.0或更新版本的代理通信。较旧或较新的代理可能不支持某些客户端功能。例如，事务性API需要broker版本0.11.0或更高版本。当调用在运行的代理版本中不可用的API时，您将收到UnsupportedVersionException。
 
-
-
 关于Kafka生产者的设计也是相对独立没有特别复杂的类型继承关系如下图
 
-![\[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-0S2gk5jT-1654222173144)(/Users/song/Library/Application Support/typora-user-images/image-20220531081423973.png)\]](https://img-blog.csdnimg.cn/6d5d212aa0c74848bafec8367b82c5c0.png)
+![3-4-kafka.png](/zh/chapter_kafka/3-4-kafka.png)
 
-
-## 4.2 KafkaProducer对象初始化过程
+##  **KafkaProducer对象初始化过程**
 
 前面了解了当前的配置信息，这里我们来看下生产者对象KafkaProducer的初始化过程
 
@@ -104,7 +98,6 @@ public KafkaProducer(Properties properties) {
     this(properties, null, null);
 }
 ```
-
 
 
 使用配置来调用重载的构造器方法，关于参数配置可以参阅官网[生产者配置](https://kafka.apache.org/documentation.html#producerconfigs)
@@ -297,11 +290,6 @@ KafkaProducer(ProducerConfig config,
 ```
 
 
-
--
-
-
-
 看完了生产者的对象初始化过程，发现这个方法设计的太长了那就简单总结下：
 
 - 基本配置的初始化
@@ -312,8 +300,8 @@ KafkaProducer(ProducerConfig config,
 
 
 
-## 4.3 基本配置的初始化
-### 4.3.1  基本配置详细说明
+##  **基本配置的初始化**
+###  **基本配置详细说明**
 关于Kafka生产者的参数配置，详情可以查阅官网：关于参数配置可以参阅官网[生产者配置](https://kafka.apache.org/documentation.html#producerconfigs)
 
 基本配置详细说明
@@ -348,7 +336,7 @@ KafkaProducer(ProducerConfig config,
 
 
 
-### 4.3.2 分区器Partitioner
+###  **分区器Partitioner**
 
 对应配置 partitioner.class
 
@@ -357,22 +345,19 @@ KafkaProducer(ProducerConfig config,
 -   `org.apache.kafka.clients.producer.internals.DefaultPartitioner`：默认分区器。此策略将尝试坚持一个分区，直到批次已满或 linger.ms已完成。它适用于以下策略：
     - 如果未指定分区但存在键，则根据键的散列选择分区
     - 如果不存在分区或键，请选择在批处理已满或`linger.ms`已启动时更改的粘性分区。
-
 -   `org.apache.kafka.clients.producer.RoundRobinPartitioner`：这种分区策略是一系列连续记录中的每条记录将被发送到不同的分区（无论是否提供'key'），直到我们用完分区并重新开始。注意：有一个已知问题会在创建新批次时导致分布不均。详情请查看 KAFKA-9965。
-
 -   `org.apache.kafka.clients.producer.UniformStickyPartitioner`：此分区策略将尝试坚持一个分区（无论是否提供了“密钥”），直到批次已满或已满`linger.ms`。
 
 实现该`org.apache.kafka.clients.producer.Partitioner`接口允许您插入自定义分区器。默认为org.apache.kafka.clients.producer.internals.DefaultPartitioner
 
 
-
-###  4.3.3 拦截器
+###   **拦截器**
 
 对应配置interceptor.classes
 
 用作拦截器的类列表。实现该`org.apache.kafka.clients.producer.ProducerInterceptor`接口允许您在将生产者收到的记录发布到 Kafka 集群之前拦截（并可能改变）这些记录。默认情况下，没有拦截器。
 
-### 4.4.4 事务的一些配置
+###  **事务的一些配置**
 
 事务的配置对应类型事务管理器TransactionManager类型
 
@@ -384,9 +369,9 @@ KafkaProducer(ProducerConfig config,
 
 - transaction.timeout.ms 事务协调器在主动中止正在进行的事务之前等待生产者的事务状态更新的最长时间（毫秒）。如果此值大于代理中的 transaction.max.timeout.ms 设置，则请求将失败并出现`InvalidTxnTimeoutException`错误 默认：	60000（1 分钟）
 
-## 4.4 监控配置
+##  **监控配置**
 
-### 4.4.1 配置 MetricConfig
+###  **配置 MetricConfig**
 
 - samples 样品配置
 
@@ -398,15 +383,15 @@ KafkaProducer(ProducerConfig config,
 
 
 
-### 4.4.2 配置监控报告器MetricsReporter
+###  **配置监控报告器MetricsReporter**
 
 用作度量报告器的类的列表。实现org.apache.kafka.common.metrics.MetricsReporter 接口允许插入将被通知创建新度量的类。始终包含JmxReporter以注册JMX统计信息。
 
-### 4.4.3 配置 指标上下文MetricsContext
+###  **配置 指标上下文MetricsContext**
 
 作为MetricsContext的一个实现，它封装了Kafka服务和客户端所需的metrics上下文属性
 
-### 4.4.4 配置 指标 Metrics
+###  **配置 指标 Metrics**
 
 传感器和指标的注册。
 
@@ -442,8 +427,8 @@ KafkaProducerMetrics 生产者度量类，用于处理生产者的一些监控�
 
 
 
-## 4.5 生产者元数据
-### 4.5.1 ProducerMetadata
+##  **生产者元数据**
+###  **ProducerMetadata**
 这里主要来看生产者元数据对象的创建ProducerMetadata和启动方法：
 
 ```java
@@ -469,7 +454,7 @@ public synchronized void bootstrap(List<InetSocketAddress> addresses) {
 ```
 
 
-### 4.5.3 MetadataCache
+###  **MetadataCache**
 然后调用元数据缓存MetadataCache的bootstrap方法
 
 ```
@@ -534,7 +519,7 @@ private MetadataCache(String clusterId,
 Cluster.bootstrap(addresses)
 ```
 
-### 4.5.3  Cluster
+###   **Cluster**
 
 Cluster 为Kafka集群中节点、主题和分区子集的不变表示。
 
@@ -663,7 +648,7 @@ private Cluster(String clusterId,
 
 
 
-## 4.6 发送器对象的创建
+##  **发送器对象的创建**
 
 对应Sender 对应代码：
 

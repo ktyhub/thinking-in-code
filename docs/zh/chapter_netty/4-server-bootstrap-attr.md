@@ -1,11 +1,10 @@
-#  4 ServerBootstrap属性 设置
+#   **ServerBootstrap属性 设置**
 
 在服务端示例中，我们已经创建了ServerBootstrap对象和EventLoopGroup对象，ServerBootstrap用来启动服务端，EventLoopGroup用来处理事件轮训，我们接下来看下EventLoopGroup类型对象是如何配置在ServerBootstrap类型中的
 
 示例代码如下：
 
- ```java
-
+```java
  EventLoopGroup bossGroup = new NioEventLoopGroup(1);
 
       EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -50,7 +49,7 @@
 
          });
 
- ```
+```
 
 
 
@@ -59,7 +58,7 @@
 
 
 在ServerBootstrap类型中
- ```java
+```java
  public ServerBootstrap group(EventLoopGroup parentGroup, EventLoopGroup childGroup) {
 
       super.group(parentGroup);
@@ -81,7 +80,7 @@
       return this;
 
   }
- ```
+```
 这个方法比较简单主要进行了参数校验childGroup不能为空并且只能赋值一次，然后将childGroup赋值给当前成员变量
 
 
@@ -95,7 +94,7 @@ AbstractBootstrap类型的group方法
 
 
 
- ```java
+```java
  public B group(EventLoopGroup group) {
 
       if (group == null) {
@@ -116,7 +115,7 @@ AbstractBootstrap类型的group方法
 
   }   
 
- ```
+```
 
 、AbstractBootstrap类型的group方法与 ServerBootstrap扩展的group方法实现代码大致一致参数校验，赋值给成员变量
 
@@ -127,7 +126,7 @@ AbstractBootstrap类型的group方法
 接下来我们看通道配置过程channel(NioServerSocketChannel.class)
 
 
- ```java
+```java
  public B channel(Class<? extends C> channelClass) {
 
       if (channelClass == null) {
@@ -139,7 +138,7 @@ AbstractBootstrap类型的group方法
       return channelFactory(new ReflectiveChannelFactory<C>(channelClass));
 
 }
- ```
+```
 
 
 
@@ -147,20 +146,20 @@ AbstractBootstrap类型的group方法
 这个方法主要是通过传入Channel类型的Class对象来创建工厂对象ReflectiveChannelFactory用于后期创建Channel
 
 这里有个泛型的约束需要当前类型是泛型C类型本身或者C的子类型，那C类型是什么类型呢其实在我们创建服务器启动类型ServerBootstrap的时候就指定好了约束如下所示：
- ```java
+```java
 public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerChannel>
 
  
 
 public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C extends Channel> implements Cloneable 
- ```
+```
 
 
 泛型C这里声明的是ServerChannel
 
 
 
-  ```java
+ ```java
 
  public B channelFactory(ChannelFactory<? extends C> channelFactory) {
 
@@ -184,7 +183,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
 
   }
 
-  ```
+ ```
 
 
 
@@ -266,39 +265,39 @@ NioSctpServerChannel，OioSctpServerChannel
 
 
 
-|  方法  | 说明  |
-|  ----  | ----  |
-| ChannelId id()| 返回Channel的全局唯一标示 |
-| EventLoop eventLoop()  | 返回Channel中注册的EventLoop事件轮训对象 |
-|Channel parent()|返回当前Channel的父Channel|
-|ChannelConfig config()|返回当前Channel的配置对象ChannelConfig|
-|boolean isOpen()|如果{Channel}是打开的并且稍后可能会被激活，则返回{true}|
-|boolean isRegistered()|如果Channel被EventLoop}注册，则返回true|
-|boolean isActive()|如果Channel处于活动状态且已连接，则返回true|
-|ChannelMetadata metadata()|返回Channel的ChannelMetadata，它描述了Channel的性质。|
-|SocketAddress localAddress()|返回此通道绑定到的本地地址。返回的SocketAddress应该向下转换为更具体的类型，例如InetSocketAddress，以检索详细信息。|
-|SocketAddress localAddress()|返回此通道绑定到的本地地址。返回的SocketAddress应该向下转换为更具体的类型，例如InetSocketAddress，以检索详细信息。|
-|SocketAddress remoteAddress()|返回此通道所连接的远程地址。返回的SocketAddress应该向下转换为更具体的类型，例如InetSocketAddress，以检索详细信息。返回此通道的远程地址。返回此通道所连接的远程地址。返回的SocketAddress应该向下转换为更具体的类型，例如InetSocketAddress，以检索详细信息。此通道的远端地址。 如果这个通道没有连接则返回null。如果该通道没有连接，但它可以从任意远程地址接收消息(例如DatagramChannel)，使用 DatagramPacket#recipient()来确定接收消息的来源，因为该方法将返回null。|
-|ChannelFuture closeFuture()|返回ChannelFuture，当该通道关闭时，该通道将被通知。此方法总是返回相同的未来实例。|
-|boolean isWritable()|是否可写I/O 当且仅当I/O线程将立即执行请求的写操作时返回true。当这个方法返回false时，任何写请求都将排队，直到I/O线程准备好处理排队的写请求。|
-|long bytesBeforeUnwritable()|获取在isWritable()返回false之前可以写入多少字节|
-|long bytesBeforeWritable()|获取在isWritable()返回true之前必须从底层缓冲区抽取多少字节。这个返回值总是非负的。|
-|Unsafe unsafe()|返回一个仅供内部使用的 对象，该对象提供不安全操作|
-|ChannelPipeline pipeline()|返回分配的ChannelPipeline|
-|ByteBufAllocator alloc()|返回分配的ByteBufAllocator，它将用于分配ByteBuf|
-|Channel read()|请求从通道读取数据到第一个入站缓冲区,触发一个ChannelInboundHandler 的channelRead (ChannelHandlerContext,Object)方法  |
-|Channel flush()|刷新所有挂起的消息|
-|SocketAddress localAddress()|返回此通道绑定到的本地地址。返回的SocketAddress应该向下转换为更具体的类型，例如InetSocketAddress，以检索详细信息。|
-|SocketAddress remoteAddress()|返回此通道所连接的远程地址。返回的SocketAddress应该向下转换为更具体的类型，例如InetSocketAddress，以检索详细信息。返回此通道的远程地址。返回此通道所连接的远程地址。返回的SocketAddress应该向下转换为更具体的类型，例如InetSocketAddress，以检索详细信息。此通道的远端地址。 如果这个通道没有连接则返回null。如果该通道没有连接，但它可以从任意远程地址接收消息(例如DatagramChannel)，使用 DatagramPacket#recipient()来确定接收消息的来源，因为该方法将返回null。|
-|ChannelFuture closeFuture()|返回ChannelFuture，当该通道关闭时，该通道将被通知。此方法总是返回相同的未来实例。|
-|boolean isWritable()|是否可写I/O 当且仅当I/O线程将立即执行请求的写操作时返回true。当这个方法返回false时，任何写请求都将排队，直到I/O线程准备好处理排队的写请求。|
-|long bytesBeforeUnwritable()|获取在isWritable()返回false之前可以写入多少字节|
-|long bytesBeforeWritable()|获取在isWritable()返回true之前必须从底层缓冲区抽取多少字节。这个返回值总是非负的。|
-|Unsafe unsafe()|返回一个仅供内部使用的 对象，该对象提供不安全操作|
-|ChannelPipeline pipeline()|返回分配的ChannelPipeline|
-|ByteBufAllocator alloc()|返回分配的ByteBufAllocator，它将用于分配ByteBuf|
-|Channel read()|请求从通道读取数据到第一个入站缓冲区,触发一个ChannelInboundHandler 的channelRead (ChannelHandlerContext,Object)方法  |
-|Channel flush()|刷新所有挂起的消息|
+| 方法                            | 说明                                                                                                                                                                                                                                                                                        |
+|-------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ChannelId id()                | 返回Channel的全局唯一标示                                                                                                                                                                                                                                                                          |
+| EventLoop eventLoop()         | 返回Channel中注册的EventLoop事件轮训对象                                                                                                                                                                                                                                                              |
+| Channel parent()              | 返回当前Channel的父Channel                                                                                                                                                                                                                                                                      |
+| ChannelConfig config()        | 返回当前Channel的配置对象ChannelConfig                                                                                                                                                                                                                                                             |
+| boolean isOpen()              | 如果{Channel}是打开的并且稍后可能会被激活，则返回{true}                                                                                                                                                                                                                                                       |
+| boolean isRegistered()        | 如果Channel被EventLoop}注册，则返回true                                                                                                                                                                                                                                                            |
+| boolean isActive()            | 如果Channel处于活动状态且已连接，则返回true                                                                                                                                                                                                                                                               |
+| ChannelMetadata metadata()    | 返回Channel的ChannelMetadata，它描述了Channel的性质。                                                                                                                                                                                                                                                 |
+| SocketAddress localAddress()  | 返回此通道绑定到的本地地址。返回的SocketAddress应该向下转换为更具体的类型，例如InetSocketAddress，以检索详细信息。                                                                                                                                                                                                                  |
+| SocketAddress localAddress()  | 返回此通道绑定到的本地地址。返回的SocketAddress应该向下转换为更具体的类型，例如InetSocketAddress，以检索详细信息。                                                                                                                                                                                                                  |
+| SocketAddress remoteAddress() | 返回此通道所连接的远程地址。返回的SocketAddress应该向下转换为更具体的类型，例如InetSocketAddress，以检索详细信息。返回此通道的远程地址。返回此通道所连接的远程地址。返回的SocketAddress应该向下转换为更具体的类型，例如InetSocketAddress，以检索详细信息。此通道的远端地址。 如果这个通道没有连接则返回null。如果该通道没有连接，但它可以从任意远程地址接收消息(例如DatagramChannel)，使用 DatagramPacket#recipient()来确定接收消息的来源，因为该方法将返回null。 |
+| ChannelFuture closeFuture()   | 返回ChannelFuture，当该通道关闭时，该通道将被通知。此方法总是返回相同的未来实例。                                                                                                                                                                                                                                           |
+| boolean isWritable()          | 是否可写I/O 当且仅当I/O线程将立即执行请求的写操作时返回true。当这个方法返回false时，任何写请求都将排队，直到I/O线程准备好处理排队的写请求。                                                                                                                                                                                                           |
+| long bytesBeforeUnwritable()  | 获取在isWritable()返回false之前可以写入多少字节                                                                                                                                                                                                                                                          |
+| long bytesBeforeWritable()    | 获取在isWritable()返回true之前必须从底层缓冲区抽取多少字节。这个返回值总是非负的。                                                                                                                                                                                                                                         |
+| Unsafe unsafe()               | 返回一个仅供内部使用的 对象，该对象提供不安全操作                                                                                                                                                                                                                                                                 |
+| ChannelPipeline pipeline()    | 返回分配的ChannelPipeline                                                                                                                                                                                                                                                                      |
+| ByteBufAllocator alloc()      | 返回分配的ByteBufAllocator，它将用于分配ByteBuf                                                                                                                                                                                                                                                       |
+| Channel read()                | 请求从通道读取数据到第一个入站缓冲区,触发一个ChannelInboundHandler 的channelRead (ChannelHandlerContext,Object)方法                                                                                                                                                                                                |
+| Channel flush()               | 刷新所有挂起的消息                                                                                                                                                                                                                                                                                 |
+| SocketAddress localAddress()  | 返回此通道绑定到的本地地址。返回的SocketAddress应该向下转换为更具体的类型，例如InetSocketAddress，以检索详细信息。                                                                                                                                                                                                                  |
+| SocketAddress remoteAddress() | 返回此通道所连接的远程地址。返回的SocketAddress应该向下转换为更具体的类型，例如InetSocketAddress，以检索详细信息。返回此通道的远程地址。返回此通道所连接的远程地址。返回的SocketAddress应该向下转换为更具体的类型，例如InetSocketAddress，以检索详细信息。此通道的远端地址。 如果这个通道没有连接则返回null。如果该通道没有连接，但它可以从任意远程地址接收消息(例如DatagramChannel)，使用 DatagramPacket#recipient()来确定接收消息的来源，因为该方法将返回null。 |
+| ChannelFuture closeFuture()   | 返回ChannelFuture，当该通道关闭时，该通道将被通知。此方法总是返回相同的未来实例。                                                                                                                                                                                                                                           |
+| boolean isWritable()          | 是否可写I/O 当且仅当I/O线程将立即执行请求的写操作时返回true。当这个方法返回false时，任何写请求都将排队，直到I/O线程准备好处理排队的写请求。                                                                                                                                                                                                           |
+| long bytesBeforeUnwritable()  | 获取在isWritable()返回false之前可以写入多少字节                                                                                                                                                                                                                                                          |
+| long bytesBeforeWritable()    | 获取在isWritable()返回true之前必须从底层缓冲区抽取多少字节。这个返回值总是非负的。                                                                                                                                                                                                                                         |
+| Unsafe unsafe()               | 返回一个仅供内部使用的 对象，该对象提供不安全操作                                                                                                                                                                                                                                                                 |
+| ChannelPipeline pipeline()    | 返回分配的ChannelPipeline                                                                                                                                                                                                                                                                      |
+| ByteBufAllocator alloc()      | 返回分配的ByteBufAllocator，它将用于分配ByteBuf                                                                                                                                                                                                                                                       |
+| Channel read()                | 请求从通道读取数据到第一个入站缓冲区,触发一个ChannelInboundHandler 的channelRead (ChannelHandlerContext,Object)方法                                                                                                                                                                                                |
+| Channel flush()               | 刷新所有挂起的消息                                                                                                                                                                                                                                                                                 |
 
 
 
@@ -306,44 +305,44 @@ ChannelOption主要配置一些网络属性，常见的参数可以见如下表�
 
 
 
-|  方法  | 说明  |
-|  ----  | ----  |
-|ALLOCATOR|在4.x版本中，UnpooledByteBufAllocator是默认的allocator，尽管其存在某些限制。现在PooledByteBufAllocator已经广泛使用一段时间，并且我们有了增强的缓冲区泄漏追踪机制， 所以是时候让PooledByteBufAllocator成为默认了。总结：Netty4使用对象池，重用缓冲区。bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
-bootstrap.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);|
-|RCVBUF_ALLOCATOR|Netty参数，用于Channel分配接受Buffer的分配器，默认值为AdaptiveRecvByteBufAllocator.DEFAULT，是一个自适应的接受缓冲区分配器，能根据接受到的数据自动调节大小。可选值为FixedRecvByteBufAllocator，固定大小的接受缓冲区分配器。|
-|MESSAGE_SIZE_ESTIMATOR|Netty参数，消息大小估算器，默认为DefaultMessageSizeEstimator.DEFAULT。估算ByteBuf、ByteBufHolder和FileRegion的大小，其中ByteBuf和ByteBufHolder为实际大小，FileRegion估算值为0。该值估算的字节数在计算水位时使用，FileRegion为0可知FileRegion不影响高低水位。|
-|CONNECT_TIMEOUT_MILLIS|Netty参数，连接超时毫秒数，默认值30000毫秒即30秒。|
-|MAX_MESSAGES_PER_READ|Netty参数，一次Loop读取的最大消息数，对于ServerChannel或者NioByteChannel，默认值为16，其他Channel默认值为1。默认值这样设置，是因为：ServerChannel需要接受足够多的连接，保证大吞吐量，NioByteChannel可以减少不必要的系统调用select。|
-|WRITE_SPIN_COUNT|Netty参数，一个Loop写操作执行的最大次数，默认值为16。也就是说，对于大数据量的写操作至多进行16次，如果16次仍没有全部写完数据，此时会提交一个新的写任务给EventLoop，任务将在下次调度继续执行。这样，其他的写请求才能被响应不会因为单个大数据量写请求而耽误。|
-|WRITE_SPIN_COUNT|Netty参数，一个Loop写操作执行的最大次数，默认值为16。也就是说，对于大数据量的写操作至多进行16次，如果16次仍没有全部写完数据，此时会提交一个新的写任务给EventLoop，任务将在下次调度继续执行。这样，其他的写请求才能被响应不会因为单个大数据量写请求而耽误。|
-|WRITE_BUFFER_HIGH_WATER_MARK|Netty参数，写高水位标记，默认值64KB。如果Netty的写缓冲区中的字节超过该值，Channel的isWritable()返回False。、|
-|WRITE_BUFFER_LOW_WATER_MARK|Netty参数，写低水位标记，默认值32KB。当Netty的写缓冲区中的字节超过高水位之后若下降到低水位，则Channel的isWritable()返回True。写高低水位标记使用户可以控制写入数据速度，从而实现流量控制。推荐做法是：每次调用channl.write(msg)方法首先调用channel.isWritable()判断是否可写。|
-|WRITE_BUFFER_WATER_MARK|设置WriteBufferWaterMark对象类型用于设置写缓冲区的低水位和高水位。|
-|ALLOW_HALF_CLOSURE|半关闭套接字（Half-closed sockets）TCP及SCTP允许在不完全关闭socket的前提下关闭socket的出站传输。这样的socket称之为 ‘a half-closed socket’，用户可以通过调用 SocketChannel.shutdownOutput() 方法来产生半关闭socket。如果远端节点关闭了出站传输，SocketChannel.read(..) 就会返回 -1，看起来跟关闭的连接似乎没区别。3.x没有 shutdownOutput() 操作。并且 当 SocketChannel.read(..) 返回 -1 时总是会关闭连接。4.0中加入了 SocketChannel.shutdownOutput() 方法来支持半关闭socket，同时，用户可以设置 ChannelOption 为 ‘ALLOW_HALF_CLOSURE’ 来防止Netty在 SocketChannel.read(..) 返回 -1 时自动关闭连接|
-|AUTO_READ|Netty参数，自动读取，默认值为True。Netty只在必要的时候才设置关心相应的I/O事件。对于读操作，需要调用channel.read()设置关心的I/O事件为OP_READ，这样若有数据到达才能读取以供用户处理。该值为True时，每次读操作完毕后会自动调用channel.read()，从而有数据到达便能读取；否则，需要用户手动调用channel.read()。需要注意的是：当调用config.setAutoRead(boolean)方法时，如果状态由false变为true，将会调用channel.read()方法读取数据；由true变为false，将调用config.autoReadCleared()方法终止数据读取。|
-|AUTO_CLOSE|自动关闭将在未来的版本中被移除。如果为true，则该通道在写失败时自动并立即关闭。缺省值为true。|
-|SO_BROADCAST|Socket参数，设置广播模式。|
-|SO_KEEPALIVE|Socket参数，连接保活，默认值为False。启用该功能时，TCP会主动探测空闲连接的有效性。可以将此功能视为TCP的心跳机制，需要注意的是：默认的心跳间隔是7200s即2小时。Netty默认关闭该功能。|
-|SO_SNDBUF|TCP发送缓冲区的容量上限 缓冲区的上限不能无限大，如果超过内核设置的上限值，则以内核设置值为准（sysctl -a命令查看）|
-|SO_RCVBUF|TCP接受缓冲区的容量上限 缓冲区的上限不能无限大，如果超过内核设置的上限值，则以内核设置值为准（sysctl -a命令查看）|
-|SO_REUSEADDR|ChanneOption.SO_REUSEADDR对应于套接字选项中的SO_REUSEADDR，这个参数表示允许重复使用本地地址和端口，
-比如，某个服务器进程占用了TCP的80端口进行监听，此时再次监听该端口就会返回错误，使用该参数就可以解决问题，该参数允许共用该端口，这个在服务器程序中比较常使用，比如某个进程非正常退出，该程序占用的端口可能要被占用一段时间才能允许其他进程使用，而且程序死掉以后，内核一需要一定的时间才能够释放此端口，不设置SO_REUSEADDR|
-|SO_LINGER|Netty对底层Socket参数的简单封装，关闭Socket的延迟时间，默认值为-1，表示禁用该功能。-1以及所有<0的数表示socket.close()方法立即返回，但OS底层会将发送缓冲区全部发送到对端。0表示socket.close()方法立即返回，OS放弃发送缓冲区的数据直接向对端发送RST包，对端收到复位错误。非0整数值表示调用socket.close()方法的线程被阻塞直到延迟时间到或发送缓冲区中的数据发送完毕，若超时，则对端会收到复位错误。|
-|SO_BACKLOG|Socket参数，服务端接受连接的队列长度，如果队列已满，客户端连接将被拒绝。默认值，Windows为200，其他为128。|
-|SO_TIMEOUT|这个参数设定的是连接成功后，等待读取数据或者写数据的最大超时时间，单位为毫秒。如果设置为0，则表示永远不会超时|
-|IP_TOS|IP参数，设置IP头部的Type-of-Service字段，用于描述IP包的优先级和QoS选项。|
-|IP_MULTICAST_ADDR|对应IP参数IP_MULTICAST_IF，设置对应地址的网卡为多播模式。|
-|IP_MULTICAST_IF|对应IP参数IP_MULTICAST_IF2，同上但支持IPV6。|
-|IP_MULTICAST_TTL|IP参数，多播数据报的time-to-live即存活跳数。|
-|IP_MULTICAST_LOOP_DISABLED|对应IP参数IP_MULTICAST_LOOP，设置本地回环接口的多播功能。由于IP_MULTICAST_LOOP返回True表示关闭，所以Netty加上后缀_DISABLED防止歧义。|
-|TCP_NODELAY|TCP参数，立即发送数据，默认值为Ture（Netty默认为True而操作系统默认为False）。该值设置Nagle算法的启用，改算法将小的碎片数据连接成更大的报文来最小化所发送的报文的数量，如果需要发送一些较小的报文，则需要禁用该算法。Netty默认禁用该算法，从而最小化报文传输延时|
-|DATAGRAM_CHANNEL_ACTIVE_ON_REGISTRATION|Netty参数，DatagramChannel注册的EventLoop即表示已激活。|
-|SINGLE_EVENTEXECUTOR_PER_GROUP|Netty参数，单线程执行ChannelPipeline中的事件，默认值为True。该值控制执行ChannelPipeline中执行ChannelHandler的线程。如果为Trye，整个pipeline由一个线程执行，这样不需要进行线程切换以及线程同步，是Netty4的推荐做法；如果为False，ChannelHandler中的处理过程会由Group中的不同线程执行。|
+| 方法                                                                                                                                                                    | 说明                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ALLOCATOR                                                                                                                                                             | 在4.x版本中，UnpooledByteBufAllocator是默认的allocator，尽管其存在某些限制。现在PooledByteBufAllocator已经广泛使用一段时间，并且我们有了增强的缓冲区泄漏追踪机制， 所以是时候让PooledByteBufAllocator成为默认了。总结：Netty4使用对象池，重用缓冲区。bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);                                                                                                                                                                                                   |
+| bootstrap.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);                                                                                       |                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| RCVBUF_ALLOCATOR                                                                                                                                                      | Netty参数，用于Channel分配接受Buffer的分配器，默认值为AdaptiveRecvByteBufAllocator.DEFAULT，是一个自适应的接受缓冲区分配器，能根据接受到的数据自动调节大小。可选值为FixedRecvByteBufAllocator，固定大小的接受缓冲区分配器。                                                                                                                                                                                                                                                                                              |
+| MESSAGE_SIZE_ESTIMATOR                                                                                                                                                | Netty参数，消息大小估算器，默认为DefaultMessageSizeEstimator.DEFAULT。估算ByteBuf、ByteBufHolder和FileRegion的大小，其中ByteBuf和ByteBufHolder为实际大小，FileRegion估算值为0。该值估算的字节数在计算水位时使用，FileRegion为0可知FileRegion不影响高低水位。                                                                                                                                                                                                                                                        |
+| CONNECT_TIMEOUT_MILLIS                                                                                                                                                | Netty参数，连接超时毫秒数，默认值30000毫秒即30秒。                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| MAX_MESSAGES_PER_READ                                                                                                                                                 | Netty参数，一次Loop读取的最大消息数，对于ServerChannel或者NioByteChannel，默认值为16，其他Channel默认值为1。默认值这样设置，是因为：ServerChannel需要接受足够多的连接，保证大吞吐量，NioByteChannel可以减少不必要的系统调用select。                                                                                                                                                                                                                                                                                          |
+| WRITE_SPIN_COUNT                                                                                                                                                      | Netty参数，一个Loop写操作执行的最大次数，默认值为16。也就是说，对于大数据量的写操作至多进行16次，如果16次仍没有全部写完数据，此时会提交一个新的写任务给EventLoop，任务将在下次调度继续执行。这样，其他的写请求才能被响应不会因为单个大数据量写请求而耽误。                                                                                                                                                                                                                                                                                                          |
+| WRITE_SPIN_COUNT                                                                                                                                                      | Netty参数，一个Loop写操作执行的最大次数，默认值为16。也就是说，对于大数据量的写操作至多进行16次，如果16次仍没有全部写完数据，此时会提交一个新的写任务给EventLoop，任务将在下次调度继续执行。这样，其他的写请求才能被响应不会因为单个大数据量写请求而耽误。                                                                                                                                                                                                                                                                                                          |
+| WRITE_BUFFER_HIGH_WATER_MARK                                                                                                                                          | Netty参数，写高水位标记，默认值64KB。如果Netty的写缓冲区中的字节超过该值，Channel的isWritable()返回False。、                                                                                                                                                                                                                                                                                                                                                                          |
+| WRITE_BUFFER_LOW_WATER_MARK                                                                                                                                           | Netty参数，写低水位标记，默认值32KB。当Netty的写缓冲区中的字节超过高水位之后若下降到低水位，则Channel的isWritable()返回True。写高低水位标记使用户可以控制写入数据速度，从而实现流量控制。推荐做法是：每次调用channl.write(msg)方法首先调用channel.isWritable()判断是否可写。                                                                                                                                                                                                                                                                        |
+| WRITE_BUFFER_WATER_MARK                                                                                                                                               | 设置WriteBufferWaterMark对象类型用于设置写缓冲区的低水位和高水位。                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ALLOW_HALF_CLOSURE                                                                                                                                                    | 半关闭套接字（Half-closed sockets）TCP及SCTP允许在不完全关闭socket的前提下关闭socket的出站传输。这样的socket称之为 ‘a half-closed socket’，用户可以通过调用 SocketChannel.shutdownOutput() 方法来产生半关闭socket。如果远端节点关闭了出站传输，SocketChannel.read(..) 就会返回 -1，看起来跟关闭的连接似乎没区别。3.x没有 shutdownOutput() 操作。并且 当 SocketChannel.read(..) 返回 -1 时总是会关闭连接。4.0中加入了 SocketChannel.shutdownOutput() 方法来支持半关闭socket，同时，用户可以设置 ChannelOption 为 ‘ALLOW_HALF_CLOSURE’ 来防止Netty在 SocketChannel.read(..) 返回 -1 时自动关闭连接 |
+| AUTO_READ                                                                                                                                                             | Netty参数，自动读取，默认值为True。Netty只在必要的时候才设置关心相应的I/O事件。对于读操作，需要调用channel.read()设置关心的I/O事件为OP_READ，这样若有数据到达才能读取以供用户处理。该值为True时，每次读操作完毕后会自动调用channel.read()，从而有数据到达便能读取；否则，需要用户手动调用channel.read()。需要注意的是：当调用config.setAutoRead(boolean)方法时，如果状态由false变为true，将会调用channel.read()方法读取数据；由true变为false，将调用config.autoReadCleared()方法终止数据读取。                                                                                                                      |
+| AUTO_CLOSE                                                                                                                                                            | 自动关闭将在未来的版本中被移除。如果为true，则该通道在写失败时自动并立即关闭。缺省值为true。                                                                                                                                                                                                                                                                                                                                                                                                 |
+| SO_BROADCAST                                                                                                                                                          | Socket参数，设置广播模式。                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| SO_KEEPALIVE                                                                                                                                                          | Socket参数，连接保活，默认值为False。启用该功能时，TCP会主动探测空闲连接的有效性。可以将此功能视为TCP的心跳机制，需要注意的是：默认的心跳间隔是7200s即2小时。Netty默认关闭该功能。                                                                                                                                                                                                                                                                                                                                            |
+| SO_SNDBUF                                                                                                                                                             | TCP发送缓冲区的容量上限 缓冲区的上限不能无限大，如果超过内核设置的上限值，则以内核设置值为准（sysctl -a命令查看）                                                                                                                                                                                                                                                                                                                                                                                    |
+| SO_RCVBUF                                                                                                                                                             | TCP接受缓冲区的容量上限 缓冲区的上限不能无限大，如果超过内核设置的上限值，则以内核设置值为准（sysctl -a命令查看）                                                                                                                                                                                                                                                                                                                                                                                    |
+| SO_REUSEADDR                                                                                                                                                          | ChanneOption.SO_REUSEADDR对应于套接字选项中的SO_REUSEADDR，这个参数表示允许重复使用本地地址和端口，                                                                                                                                                                                                                                                                                                                                                                               |
+| 比如，某个服务器进程占用了TCP的80端口进行监听，此时再次监听该端口就会返回错误，使用该参数就可以解决问题，该参数允许共用该端口，这个在服务器程序中比较常使用，比如某个进程非正常退出，该程序占用的端口可能要被占用一段时间才能允许其他进程使用，而且程序死掉以后，内核一需要一定的时间才能够释放此端口，不设置SO_REUSEADDR |                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| SO_LINGER                                                                                                                                                             | Netty对底层Socket参数的简单封装，关闭Socket的延迟时间，默认值为-1，表示禁用该功能。-1以及所有<0的数表示socket.close()方法立即返回，但OS底层会将发送缓冲区全部发送到对端。0表示socket.close()方法立即返回，OS放弃发送缓冲区的数据直接向对端发送RST包，对端收到复位错误。非0整数值表示调用socket.close()方法的线程被阻塞直到延迟时间到或发送缓冲区中的数据发送完毕，若超时，则对端会收到复位错误。                                                                                                                                                                                                              |
+| SO_BACKLOG                                                                                                                                                            | Socket参数，服务端接受连接的队列长度，如果队列已满，客户端连接将被拒绝。默认值，Windows为200，其他为128。                                                                                                                                                                                                                                                                                                                                                                                     |
+| SO_TIMEOUT                                                                                                                                                            | 这个参数设定的是连接成功后，等待读取数据或者写数据的最大超时时间，单位为毫秒。如果设置为0，则表示永远不会超时                                                                                                                                                                                                                                                                                                                                                                                            |
+| IP_TOS                                                                                                                                                                | IP参数，设置IP头部的Type-of-Service字段，用于描述IP包的优先级和QoS选项。                                                                                                                                                                                                                                                                                                                                                                                                   |
+| IP_MULTICAST_ADDR                                                                                                                                                     | 对应IP参数IP_MULTICAST_IF，设置对应地址的网卡为多播模式。                                                                                                                                                                                                                                                                                                                                                                                                              |
+| IP_MULTICAST_IF                                                                                                                                                       | 对应IP参数IP_MULTICAST_IF2，同上但支持IPV6。                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| IP_MULTICAST_TTL                                                                                                                                                      | IP参数，多播数据报的time-to-live即存活跳数。                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| IP_MULTICAST_LOOP_DISABLED                                                                                                                                            | 对应IP参数IP_MULTICAST_LOOP，设置本地回环接口的多播功能。由于IP_MULTICAST_LOOP返回True表示关闭，所以Netty加上后缀_DISABLED防止歧义。                                                                                                                                                                                                                                                                                                                                                      |
+| TCP_NODELAY                                                                                                                                                           | TCP参数，立即发送数据，默认值为Ture（Netty默认为True而操作系统默认为False）。该值设置Nagle算法的启用，改算法将小的碎片数据连接成更大的报文来最小化所发送的报文的数量，如果需要发送一些较小的报文，则需要禁用该算法。Netty默认禁用该算法，从而最小化报文传输延时                                                                                                                                                                                                                                                                                                    |
+| DATAGRAM_CHANNEL_ACTIVE_ON_REGISTRATION                                                                                                                               | Netty参数，DatagramChannel注册的EventLoop即表示已激活。                                                                                                                                                                                                                                                                                                                                                                                                         |
+| SINGLE_EVENTEXECUTOR_PER_GROUP                                                                                                                                        | Netty参数，单线程执行ChannelPipeline中的事件，默认值为True。该值控制执行ChannelPipeline中执行ChannelHandler的线程。如果为Trye，整个pipeline由一个线程执行，这样不需要进行线程切换以及线程同步，是Netty4的推荐做法；如果为False，ChannelHandler中的处理过程会由Group中的不同线程执行。                                                                                                                                                                                                                                                         |
 
 
 
 ChannelHandler用于服务请求。
- ```java
+```java
   public B handler(ChannelHandler handler) {
 
       if (handler == null) {
@@ -357,7 +356,7 @@ ChannelHandler用于服务请求。
       return (B) this;
 
   }
- ```
+```
 
 ChannelHandler用于处理一个I/O事件或拦截一个I/O操作，并将其转发到其ChannelPipeline中的下一个处理器。
 
@@ -389,17 +388,17 @@ ChannelDuplexHandler处理入站和出站事件
 
 ChannelHandler顶层接口类型提供了3个主要的方法
 
-|  方法  | 说明  |
-|  ----  | ----  |
-|handlerAdded(ChannelHandlerContext ctx) |ChannelHandler被添加到实际的上下文并准备好处理事件之后调用|
-|handlerRemoved(ChannelHandlerContext ctx)|在ChannelHandler从实际上下文中移除后调用，并且它不再处理事件|
-|exceptionCaught(ChannelHandlerContext ctx, Throwable cause)|过时的方法抛出异常后被调用|
+| 方法                                                          | 说明                                    |
+|-------------------------------------------------------------|---------------------------------------|
+| handlerAdded(ChannelHandlerContext ctx)                     | ChannelHandler被添加到实际的上下文并准备好处理事件之后调用  |
+| handlerRemoved(ChannelHandlerContext ctx)                   | 在ChannelHandler从实际上下文中移除后调用，并且它不再处理事件 |
+| exceptionCaught(ChannelHandlerContext ctx, Throwable cause) | 过时的方法抛出异常后被调用                         |
 
 
 这里设置了一个类型为LoggingHandler，LoggingHandler在发生各种入站，出站事件时候打印日志
 
 
- ```java
+```java
 .childHandler(new ChannelInitializer<SocketChannel>() {
 
            @Override
@@ -421,7 +420,7 @@ ChannelHandler顶层接口类型提供了3个主要的方法
          });
 
  
- ```
+```
 
 
 
@@ -555,11 +554,11 @@ EmbeddedChannelPipeline 单元测试使用
 
 
 在前面ServerBootstrap的属性已经初始化完毕，接下来开始开启服务，使用fluent style流式风格代码调用以下代码
- ```java
+```java
  ChannelFuture f = b.bind(PORT)
 
  .sync();
- ```
+```
 
 
 接下来我们先看来自AbstractBootstrap类型中的bind方法：
@@ -567,18 +566,18 @@ EmbeddedChannelPipeline 单元测试使用
 
 
 //创建一个新的并绑定它
- ```java
+```java
 public ChannelFuture bind(int inetPort) {
 
       return bind(new InetSocketAddress(inetPort));
 
   }
 
- ```
+```
 
 在前面我们说过bind有很多重载的方法到最后传入参数都将转换为SocketAddress类型地址对象然后调用如下代码开始绑定
 
-  ```java
+ ```java
 
  public ChannelFuture bind(SocketAddress localAddress) {
 
@@ -594,7 +593,7 @@ public ChannelFuture bind(int inetPort) {
 
   }
 
-  ```
+ ```
 
 validate();为参数校验，在ServerBootstrap类型中重写了这个方法主要验证了如下参数：
 
@@ -617,7 +616,7 @@ channelFactory
 这里又针对传入的地址参数进行校验不能为空localAddress
 
 然后继续调用doBind方法，直接看代码如下
- ```java
+```java
   private ChannelFuture doBind(final SocketAddress localAddress) {
 
       final ChannelFuture regFuture = initAndRegister();
@@ -687,7 +686,7 @@ channelFactory
       }
 
 }
- ```
+```
 
 
 
@@ -695,7 +694,7 @@ channelFactory
 //先来看初始化和注册通道
 
 
- ```java
+```java
 final ChannelFuture initAndRegister() {
 
       Channel channel = null;
@@ -768,14 +767,14 @@ final ChannelFuture initAndRegister() {
 
   }
 
- ```
+```
 
 
 
 
 
 ServerBootstrap中重写的init方法如下所示
- ```java
+```java
    @Override
 
   void init(Channel channel) throws Exception {
@@ -894,17 +893,17 @@ ServerBootstrap中重写的init方法如下所示
 
   }
 
- ```
+```
 
 
 
 接下来在initAndRegister
 
 注册ChannelPromise中的Channel，并在注册完成后通知ChannelFuture。这一步会将通道与EventLoop关联起来
- ```java
+```java
   ChannelFuture regFuture = config().group().register(channel);
 
-      ```
+     ```
 
 另外这一步比较重要的是会调用JDK nio下的注册方法sun.nio.ch.SelectorImpl 获取文件描述符注册选择事件,接下来就来拆解下注册流程
 
@@ -914,7 +913,7 @@ group()返回的是EventLoopGroup类型对象这里是NioEventLoopGroup
 
 register方法来自NioEventLoopGroup中在这里是调用继承方法来自MultithreadEventLoopGroup类型
 
-  ```java
+ ```java
 
 MultithreadEventLoopGroup类型中的register方法如下：
 
@@ -925,11 +924,11 @@ MultithreadEventLoopGroup类型中的register方法如下：
       return next().register(channel);
 
   }
- ```
+```
 
 
 先执行next在调用register方法我们再来看下next方法
- ```java
+```java
  @Override
 
   public EventLoop next() {
@@ -937,9 +936,9 @@ MultithreadEventLoopGroup类型中的register方法如下：
       return (EventLoop) super.next();
 
   }
- ```
+```
 next方法中调用父类型中的next，这里父类型是MultithreadEventExecutorGroup
- ```java
+```java
   @Override
 
   public EventExecutor next() {
@@ -947,7 +946,7 @@ next方法中调用父类型中的next，这里父类型是MultithreadEventExecu
       return chooser.next();
 
   }
- ```
+```
 使用EventExecutorChooser类型对象来帮忙选择事件执行器EventExecutor
 
 而EventExecutorChooser类型对象我们前面说过是通过DefaultEventExecutorChooserFactory类型工厂的工厂方法newChooser来创建的，
@@ -961,7 +960,7 @@ next()方法可以自行打开PowerOfTwoEventExecutorChooser类型和GenericEven
 register方法是来自事件执行器，在这里是子类型NioEventLoop
 
 可以继续看NioEventLoop中的register
- ```java
+```java
   @Override
 
   public ChannelFuture register(Channel channel) {
@@ -969,10 +968,10 @@ register方法是来自事件执行器，在这里是子类型NioEventLoop
       return register(new DefaultChannelPromise(channel, this));
 
   }
- ```
+```
 这里创建了一个DefaultChannelPromise类型对象来进行处理结果的回调
 
-  ```java
+ ```java
 
    @Override
 
@@ -985,13 +984,13 @@ register方法是来自事件执行器，在这里是子类型NioEventLoop
       return promise;
 
   }
-  ```
+ ```
 
 使用当前channel类型对象我们这里对应的是NioServerSocketChannel，获取到
 
 unsafe方法是来自NioServerSocketChannel的父类型AbstractNioChannel
 
-  ```java
+ ```java
 
   @Override
 
@@ -1000,10 +999,10 @@ unsafe方法是来自NioServerSocketChannel的父类型AbstractNioChannel
       return (NioUnsafe) super.unsafe();
 
   }
-  ```
+ ```
 
 这里继续调用父类型AbstractChannel的unsafe方法
- ```java
+```java
   @Override
 
   public Unsafe unsafe() {
@@ -1011,7 +1010,7 @@ unsafe方法是来自NioServerSocketChannel的父类型AbstractNioChannel
       return unsafe;
 
   }
- ```
+```
 
 
 
@@ -1022,7 +1021,7 @@ unsafe方法是来自NioServerSocketChannel的父类型AbstractNioChannel
 知道了Unsafe类型对象我们继续看register方法
 
 注册方法是调用NioMessageUnsafe类型的父类型AbstractUnsafe中的方法
- ```java
+```java
     @Override
 
       public final void register(EventLoop eventLoop, final ChannelPromise promise) {
@@ -1253,14 +1252,14 @@ private void register0(ChannelPromise promise) {
 
   }
 
- ```
+```
 
 //注册方法来自ServerSocketChannelImpl的父类型AbstractSelectableChannel
 
 
 
 用给定的选择器注册此通道，返回一个选择键。该方法首先验证该通道是否打开，以及给定的初始事件集合是否有效。如果该通道已经被给定的选择器注册，那么在将其兴趣设置为给定值后，将返回表示该注册的选择键。否则，该通道还没有被给定的选择器注册，因此在持有适当的锁时调用选择器的{AbstractSelector#register register}方法。结果键在返回之前被添加到该通道的键集。
- ```java
+```java
    public final SelectionKey register(Selector sel, int ops,
 
                       Object att)
@@ -1335,12 +1334,12 @@ private void register0(ChannelPromise promise) {
 
   }
 
- ```
+```
 
 
 
 //从所有选择键中找到与当前匹配selector相关联的SelectionKey对象
- ```java
+```java
    private SelectionKey findKey(Selector sel) {
 
       synchronized (keyLock) {
@@ -1436,7 +1435,7 @@ private void register0(ChannelPromise promise) {
   }
 
  
- ```
+```
 
 
 
@@ -1446,7 +1445,7 @@ private void register0(ChannelPromise promise) {
 通道注册完毕回到AbstractBootstrap的doBind方法接下来我们来看doBind方法中的doBind0
 
 通道的bind方法请求绑定到给定的SocketAddress并在操作完成后通知ChannelFuture绑定结果
- ```java
+```java
    private static void doBind0(
 
         final ChannelFuture regFuture, final Channel channel,
@@ -1481,10 +1480,10 @@ private void register0(ChannelPromise promise) {
 
   }
 
- ```
+```
 
 接下来看channl的bind方法先执行AbstractChannel类型中的doBind
- ```java
+```java
    @Override
 
   public ChannelFuture bind(SocketAddress localAddress, ChannelPromise promise) {
@@ -1492,7 +1491,7 @@ private void register0(ChannelPromise promise) {
       return pipeline.bind(localAddress, promise);
 
   }
- ```
+```
 
 
 
@@ -1500,7 +1499,7 @@ private void register0(ChannelPromise promise) {
 
 
 然后执行DefaultChannelPipeline的bind方法代码如下：
- ```java
+```java
 @Override
 
   public final ChannelFuture bind(SocketAddress localAddress, ChannelPromise promise) {
@@ -1510,9 +1509,9 @@ private void register0(ChannelPromise promise) {
   }
 
  
- ```
+```
 然后执行AbstractChannelHandlerContext的bind方法，代码如下：
- ```java
+```java
   @Override
 
   public ChannelFuture bind(final SocketAddress localAddress, final ChannelPromise promise) {
@@ -1595,12 +1594,12 @@ private void invokeBind(SocketAddress localAddress, ChannelPromise promise) {
 
   }
 
- ```
+```
 
 在我们系统里面有两个地方重写了bind一个是LoggingHandler一个是DefaultChannelPipeline
 
 先看下LoggingHandler方法的bind方法：
- ```java
+```java
   public void bind(ChannelHandlerContext ctx, SocketAddress localAddress, ChannelPromise promise) throws Exception {
 
       if (logger.isEnabled(internalLevel)) {
@@ -1614,7 +1613,7 @@ private void invokeBind(SocketAddress localAddress, ChannelPromise promise) {
   }
 
  
- ```
+```
 
 
 
@@ -1624,7 +1623,7 @@ private void invokeBind(SocketAddress localAddress, ChannelPromise promise) {
 这个绑定方法仅仅打印了日志，然后继续执行上下文绑定方法来触发下一个绑定事件
 
 然后看DefaultChannelPipeline的bind方法
- ```java
+```java
    @Override
 
       public void bind(
@@ -1725,10 +1724,10 @@ private void invokeBind(SocketAddress localAddress, ChannelPromise promise) {
 
  
 
- ```
+```
 
 模版方法doBind(SocketAddress localAddress)来自Channel子类型，这里是我们配置的channel的NioServerSocketChannel
- ```java
+```java
  
 
  @Override
@@ -1749,10 +1748,10 @@ private void invokeBind(SocketAddress localAddress, ChannelPromise promise) {
 
   }
 
- ```
+```
 
 当前实现的具体通道jdk nio通道为ServerSocketChannelImpl，绑定方法如下：
- ```java
+```java
   public ServerSocketChannel bind(SocketAddress var1, int var2) throws IOException {
 
       synchronized(this.lock) {
@@ -1805,14 +1804,14 @@ private void invokeBind(SocketAddress localAddress, ChannelPromise promise) {
 
  
 
- ```
+```
 
 Net类型中的绑定方法最终会调用native方法来绑定，如果还想要了解底层代码可以查看libnio模块不同的操作系统的实现是不同的
 
 
 
 backlog的默认值为 NetUtil.SOMAXCONN ，SOMAXCONN默认值获取方式如下：
- ```java
+```java
   SOMAXCONN = AccessController.doPrivileged(new PrivilegedAction<Integer>() {
 
         @Override
@@ -1893,6 +1892,6 @@ backlog的默认值为 NetUtil.SOMAXCONN ，SOMAXCONN默认值获取方式如下
 
       })
 
- ```
+```
 
  

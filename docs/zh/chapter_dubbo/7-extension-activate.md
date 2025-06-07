@@ -166,7 +166,7 @@ SPI提供程序可以调用ExtensionLoader。getActivateExtension(URL、String�
             return new ArrayList<>(activateExtensionsMap.values());
         }
     }
- ```
+```
 
  
 再来回顾下扫描扩展类型的时候,与激活扩展的相关扫描代码:

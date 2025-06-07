@@ -1,8 +1,8 @@
 
 
-# 5- Kafka的发送器对象的初始化
+#   **Kafka的发送器对象的初始化**
 
-## 5.1 发送器对象的创建
+## **发送器对象的创建**
 
 对应Sender 对应代码：
 
@@ -97,9 +97,9 @@ Sender newSender(LogContext logContext, KafkaClient kafkaClient, ProducerMetadat
 
 
 
-## 5.2 网络客户端KafkaClient类型对象的创建于初始化
+##  **网络客户端KafkaClient类型对象的创建于初始化**
 
-### 5.2.1 简介
+###   **简介**
 
 网络客户端 对象创建 用于异步请求/响应网络i/o的网络客户端。这是一个内部类，用于实现面向用户的生产者和消费者客户端。NetworkClient此类不是线程安全的！
 
@@ -134,7 +134,7 @@ Sender newSender(LogContext logContext, KafkaClient kafkaClient, ProducerMetadat
             logContext);
 ```
 
-### 5.2.2 Selector类型对象的创建
+###  **Selector类型对象的创建**
 
 nioSelector接口，用于执行非阻塞多连接网络I/O。connections.max.idle.ms 空闲连接超时：服务器套接字处理器线程关闭空闲超过此时间的连接
 
@@ -215,7 +215,7 @@ public Selector(int maxReceiveSize,
 
 
 
-## 5.2.3 NetworkClient网络客户端的初始化
+##  **NetworkClient网络客户端的初始化**
 
 初始化代码如下：
 

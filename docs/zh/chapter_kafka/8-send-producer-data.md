@@ -1,5 +1,5 @@
 
-## 发送器Sender类型的的sendProducerData 模版方法
+## **发送器Sender类型的的sendProducerData 模版方法**
 
 当前方法的代码大纲如下：
 
@@ -131,7 +131,7 @@ private long sendProducerData(long now) {
 
 
 
-## 批处理消息存放到网络通道中
+## **批处理消息存放到网络通道中**
 
 
 
@@ -339,13 +339,13 @@ public void addInterestOps(int ops) {
 消息请求放入Kafka通道
 
 - 开始调用sendProducerData方法
-- **集群信息查询：**MetadataCache中获取集群元数据信息Cluster
-- **主题分区查询：**获取准备发送数据的分区列表，记录累加器中获取准备准备发送数据的主题分区
+- **集群信息查询：** MetadataCache中获取集群元数据信息Cluster
+- **主题分区查询：** 获取准备发送数据的分区列表，记录累加器中获取准备准备发送数据的主题分区
     - 查询遍历缓存的主题分区与批处理队列集合ConcurrentMap<TopicPartition, Deque<ProducerBatch>> batches
         - 从主题分区信息中获取leader节点信息：Node leader
         - 根据批处理队列Deque<ProducerBatch> 中的第一个元素判断是否需要发送如果需要发送则将leader节点对象添加到准备发送节点集合Set<Node> readyNodes中然后将其返回
-- **无leader主题分区更新元数据：**如果存在主题分区对应的leader为空则强制更新无leader的主题分区对应的元数据
-- **遍历准备发送数据的节点**：集合Set<Node> readyNodes
+- **无leader主题分区更新元数据：** 如果存在主题分区对应的leader为空则强制更新无leader的主题分区对应的元数据
+- **遍历准备发送数据的节点：** 集合Set<Node> readyNodes
     - 连接移除或者无法正常建立连接的节点则直接移除
     - 如果连接状态建立正常则直接返回true继续
     - 如果还未建立连接状态则执行initiateConnect方法设置连接IO事件SelectionKey.OP_CONNECT
@@ -368,7 +368,7 @@ public void addInterestOps(int ops) {
             - 将节点id nodeConnectionId与KafkaChannel存入通道集合Map<String, KafkaChannel> channels
             - IdleExpiryManager 连接过期管理器对当前连接进行管理
                 - 将连接的connectionId和连接创建时间存入IdleExpiryManager的LRU集合中Map<String, Long> lruConnections
-- **批处理记录的创建：**RecordAccumulator记录累加器调用**drain方法**进行记录的创建
+- **批处理记录的创建：** RecordAccumulator记录累加器调用 **drain方法** 进行记录的创建
     - 遍历当前所有准备好的节点集合Set<Node> readyNodes;
         - 从元数据中获取当前节点id的分区信息：List<PartitionInfo> parts，然后循环分区数据
             - 开始创建主题分区对象TopicPartition
@@ -377,25 +377,25 @@ public void addInterestOps(int ops) {
             - batch.close();
             - 将批处理存放在List<ProducerBatch> ready集合中
             - 最终放到节点id映射批处理集合中进行返回：Map<Integer, List<ProducerBatch>> batches
-- **所有请求添加到飞行窗口**：将所有请求添加到飞行窗口addToInflightBatches(batches);
+- **所有请求添加到飞行窗口** ：将所有请求添加到飞行窗口addToInflightBatches(batches);
     - 遍历批量处理列表
     - 获取当前分区的飞行窗口批处理列表，如果不存在则创建一个List<ProducerBatch> inflightBatchList
     - 飞行窗口中存放当前分区的批处理列表 Map<TopicPartition, List<ProducerBatch>> inFlightBatches
-- **遍历批处理batches列表：**发送的请求处理**调用**sendProduceRequests方法**开始遍历批处理batches列表 每个节点对应的每个批处理队列Map<Integer, List<ProducerBatch>> batches
+- **遍历批处理batches列表：  发送的请求处理 ** 调用 ** sendProduceRequests方法** 开始遍历批处理batches列表 每个节点对应的每个批处理队列Map<Integer, List<ProducerBatch>> batches
     - 处理当前节点的批处理队列 List<ProducerBatch> batches
     - 遍历当前节点的批处理队列 List<ProducerBatch> batches
         - 处理当前批处理消息ProducerBatch batch
-        - KafkaClient创建请求对象**ClientRequest**
+        - KafkaClient创建请求对象 **ClientRequest**
         - KafkaClient调用send方法发送ClientRequest
         - 调用NetworkClient的doSend执行发送逻辑
-            - 根据版本、ACK、和分区内存数据等变量**创建ProduceRequest对象**
-            - 创建**请求头RequestHeader**
-            - 将节点id destination变量和请求头RequestHeader对象封装为**NetworkSend对象**
-            - 再将数据封装为**InFlightRequest inFlightRequest对象**
-            - 将其添加到**InFlightRequests inFlightRequests集合中**
+            - 根据版本、ACK、和分区内存数据等变量 **创建ProduceRequest对象**
+            - 创建 **请求头RequestHeader**
+            - 将节点id destination变量和请求头RequestHeader对象封装为 **NetworkSend对象**
+            - 再将数据封装为 **InFlightRequest inFlightRequest对象**
+            - 将其添加到 **InFlightRequests inFlightRequests集合中**
             - 调用Selectable的send方法
                 - 获取当前连接的KafkaChannel
                 - 将待发送的任务NetworkSend对象存放在KafkaChannel通道中
-                - TransportLayer触发SelectionKey的interestOps设置**OP_WRITE**
+                - TransportLayer触发SelectionKey的interestOps设置 **OP_WRITE**
 - 结束
 

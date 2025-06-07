@@ -16,12 +16,13 @@
 
 关于DruidDataSource这个类型在官方文档与源码中都未找到任何的注释，那我们暂时就称它为Druid数据源吧，数据源封装了需要连接的数据库的基本信息，我们先来看下它的类型继承关系，然后再看它的属性：
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/21154e7de439443da7b66df7e28e2145.png)
+![2-druid-data-source.png](/img/chapter_druid/2-druid-data-source.png)
 
 
 
 ## 2.2 类型介绍
 在详细说明DruidDataSource类型之前我们先来看相关类型有什么作用，不论是继承还是实现的关系最终DruidDataSource都会具备父类的一些特征与行为，那就来看下相关父类型的作用：
+ 
 - DruidDataSource
   Druid的数据源类型
 - DruidAbstractDataSource
@@ -66,6 +67,7 @@ Druid无参构造器：
 ```
 
 重载调用的构造器
+
 ```java
  public DruidDataSource(boolean fairLock){
         super(fairLock);
@@ -93,6 +95,7 @@ DruidDataSource的父类型DruidAbstractDataSource类型的构造器
 
 DruidDataSource的configFromPropety(System.getProperties()); 从JVM参数中读取配置、
 这个方法会读取一些配置信息，这里先来看下会从JVM参数中读取哪些配置信息，后续详细来看
+
 ```java
 public void configFromPropety(Properties properties) {
         {
@@ -459,6 +462,7 @@ public void configFromPropety(Properties properties) {
 ## 2.4 DruidDataSource 属性设置
 前面我们讲了DruidDataSource的构造器相对来说没有复杂的逻辑，接下来我们继续看例子代码，如下：
 下面代码仅仅是调用了set方法
+
 ```java
 		DruidDataSource dataSource = new DruidDataSource();
 		   //连接数据库的url，不同数据库不一样

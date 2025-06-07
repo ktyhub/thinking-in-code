@@ -587,7 +587,7 @@ synchronized void send(ByteBuffer b) throws IOException {
 否则，此方法将此缓冲区中的 length 个字节复制到给定数组中，从该缓冲区的当前位置和数组中的给定偏移量开始。 然后这个缓冲区的位置按长度递增。
 换句话说，以 `src.get(dst, off, len) `形式调用此方法与循环具有完全相同的效果
 
- ```java
+```java
   for (int i = off; i < off + len; i++)
       dst[i] = src.get():
 ```
