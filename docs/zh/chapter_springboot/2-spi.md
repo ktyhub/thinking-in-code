@@ -1,8 +1,9 @@
-# 2-SpringApplication的run方法启动应用程序源码初探
-## 2.1 SpringApplication简介
+#  **SpringApplication的run方法启动应用程序源码初探**
+##  **SpringApplication简介**
 
-该类可**用于从Java主服务器引导**和**启动Spring应用程序方法** 。默认情况下，类将执行以下**步骤**来启动应用程序：
--  **创建**一个适当的**ApplicationContext实例**（取决于您的类路径）。
+该类可 **用于从Java主服务器引导** 和 **启动Spring应用程序方法** 。默认情况下，类将执行以下 **步骤** 来启动应用程序：
+  
+- **创建** 一个适当的 **ApplicationContext实例** （取决于您的类路径）。
 -  注册CommandLinePropertySource以将命令行参数传递给 Spring属性 。
 -  **刷新应用程序上下文** ，加载所有单例bean 。
 -  触发任何 CommandLineRunner Bean 。
@@ -42,7 +43,7 @@ application.run(args)
 ```
 
 
-## 2.2 SpringApplication对象的创建与运行方法调用
+##  **SpringApplication对象的创建与运行方法调用**
 上一个博客中我们使用官网的代码生成器为我们生成了一个
 
 
@@ -67,7 +68,7 @@ SpringApplication.run(DemoApplication.class, args);
 ```
 
 打开SpringApplication类型的的run方法的源码如下所示:
-这个方法是个**静态辅助方法** ，为了**方便我们启动程序**提供的,帮助我们**转换下参数** ,可用于使用默认设置从指定源运行SpringApplication。
+这个方法是个 **静态辅助方法** ，为了 **方便我们启动程序** 提供的,帮助我们 **转换下参数** ,可用于使用默认设置从指定源运行SpringApplication。
 
 ```java
  public static ConfigurableApplicationContext run(Class<?> primarySource, String... args) {
@@ -76,7 +77,7 @@ SpringApplication.run(DemoApplication.class, args);
 ```
 
 继续看SpringApplication类型中重载的run方法:
-这个方法也是个**静态辅助方法** ，用于**帮助创建一个SpringApplication对象**来启动应用
+这个方法也是个 **静态辅助方法** ，用于 **帮助创建一个SpringApplication对象** 来启动应用
 ```java
 public static ConfigurableApplicationContext run(Class<?>[] primarySources, String[] args) {
         return (new SpringApplication(primarySources)).run(args);
@@ -118,14 +119,15 @@ SpringApplication的构造器:
 ```
 
 
-### 2.2.1 推断当前WEB应用类型
+###  **推断当前WEB应用类型**
 
 在了解Web类型推断之前我们先来看下Spring为我们提供来哪些Web类型，系统使用WebApplicationType 枚举类型来表示，目前一共提供了三种Web程序类型如下：
-|类型  |描述  |
-|--|--|
-| NONE | 	应用程序不应作为web应用程序运行，也不应启动嵌入式web服务器。|
-| SERVLET|  应用程序应作为基于servlet的web应用程序运行，并应启动嵌入式servlet web服务器。|
-| REACTIVE|  应用程序应该作为反应式web应用程序运行，并且应该启动嵌入式反应式web服务器。|
+
+| 类型       | 描述                                                |
+|----------|---------------------------------------------------|
+| NONE     | 	应用程序不应作为web应用程序运行，也不应启动嵌入式web服务器。                |
+| SERVLET  | 应用程序应作为基于servlet的web应用程序运行，并应启动嵌入式servlet web服务器。 |
+| REACTIVE | 应用程序应该作为反应式web应用程序运行，并且应该启动嵌入式反应式web服务器。          |
 
 目前版本的SpringBoot应用程序只支持3种默认的Web类型，在我们项目开发中并不会去明确配置当我们的Web程序类型，那SpringBoot是如何推断呢，解析来我们就来看下推断Web程序应用类型的实现原理。
 
@@ -157,7 +159,7 @@ static WebApplicationType deduceFromClasspath() {
 通过源码我们可以了解到推断方法主要使用ClassUtils.isPresent来判断Web应用程序类型， 推断过程中优先判断是否为反应式应用程序，然后根据Servlet判断是否为非Web应用类型，最后则默认为Servlet应用类型
 
 
-### 2.2.2 SpringBoot中的类SPI扩展配置文件扫描
+###   **SpringBoot中的类SPI扩展配置文件扫描**
 前面构造器中我们看到了这么一行代码,这个代码相对复杂一些,用于加载Spring扩展配置的
 
 ```java

@@ -340,6 +340,6 @@ isWrapperClass方法通过判断构造器类型是否为当前类型来判断是
 	- matches匹配,
 	- 或者mismatches不包含当前扩展
 
-如果匹配到了当前扩展对象是需要进行wrapp的就为当前扩展创建当前wrapper扩展对象进行包装
+如果匹配到了当前扩展对象是需要进行wrapp的就为当前扩展创建当前wrapper扩展对象进行包装。
 
  

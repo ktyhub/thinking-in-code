@@ -1,29 +1,29 @@
 
-# 22-Dubbo3消费者自动感应决策应用级服务发现原理
-## 22.1 简介
+#  **Dubbo3消费者自动感应决策应用级服务发现原理**
+##  **简介**
 这里要说的内容对Dubbo2迁移到Dubbo3的应用比较有帮助，消费者应用级服务发现做了一些自动决策的逻辑来决定当前消费者是应用级发现还是接口级服务发现，这里与前面说的提供者双注册的原理是对等的，提供者默认同时进行应用级注册和接口级注册，消费者对提供者注册的数据来决定使用应用级发现或者接口级发现。这些都是默认的行为，当然对于消费者来说还可以自定义其他的迁移规则，具体的需要我们详细来看逻辑。
 
-如果说对于迁移过程比较感兴趣可以直接去官网看文档相对来说还是比较清晰:[https://dubbo.apache.org/zh-cn/docs/migration/migration-service-discovery/](/zh-cn/docs/migration/migration-service-discovery/)
+如果说对于迁移过程比较感兴趣可以直接去官网看文档相对来说还是比较清晰:[https://dubbo.apache.org/zh-cn/docs/migration/migration-service-discovery/](https://dubbo.apache.org/zh-cn/docs/migration/migration-service-discovery)
 
 这里再借官网的图来用用，迁移过程主要如下所示：
 第一个图是提供者双注册的图：
-![在这里插入图片描述](/imgs/v3/migration/provider-registration.png)
+![22-1-discovery.png](/img/chapter_dubbo/22-1-discovery.png)
 
 第二个图是消费者订阅决策的图：
-![在这里插入图片描述](/imgs/v3/migration/consumer-subscription.png)
+![consumer-subscription.png](/img/chapter_dubbo/consumer-subscription.png)
 
 第三个图就是精确到消费者订阅的代码层的逻辑了，消费者服务间调用通过一个Invoker类型对象来进行对象，如下图所示消费者代理对象通过创建一个迁移容错的调用器对象来对应用级或者接口级订阅进行适配如下所示
-![在这里插入图片描述](/imgs/v3/migration/migration-cluster-invoker.png)
+![migration-cluster-invoker.png](/img/chapter_dubbo/22-3-migration-cluster-invoker.png)
 
 第二个图和第三个图是重点要关注的这一个文章的内容主要就是说这里的逻辑。
 
- 关于代码位置如果不知道是如何调用到这一块逻辑的可以查看博文[《21-Dubbo3消费者引用服务入口》](https://blog.elastic.link/2022/07/10/dubbo/21-dubbo-xiao-fei-zhe-yin-yong-fu-wu-de-ru-kou/)
+ 关于代码位置如果不知道是如何调用到这一块逻辑的可以查看博文[《21-Dubbo3消费者引用服务入口》](/zh/chapter_dubbo/21-refer-services)
 
  这里直接将代码位置定位到：RegistryProtocol类型的interceptInvoker方法中：
  如下所示：
 
  RegistryProtocol类型的interceptInvoker方法
- ```java
+```java
  protected <T> Invoker<T> interceptInvoker(ClusterInvoker<T> invoker, URL url, URL consumerUrl) {
   //目前存在的扩展类型为RegistryProtocolListener监听器的实现类型MigrationRuleListener 
         List<RegistryProtocolListener> listeners = findRegistryProtocolListeners(url);
@@ -36,11 +36,11 @@
         }
         return invoker;
     }
- ```
+```
 
 该方法尝试加载所有RegistryProtocolListener定义，这些定义通过与定义的交互来控制调用器的行为，然后使用这些侦听器更改MigrationInvoker的状态和行为。当前可用的监听器是MigrationRuleListener，用于通过动态变化的规则控制迁移行为。
 
-## 22.2 MigrationRuleListener 类型的onRefer方法
+##  **MigrationRuleListener 类型的onRefer方法**
 
 
 直接来看代码：
@@ -58,7 +58,7 @@
     }
 ```
 
-关于这个igrationRule的文可以直接看官方的文档比较详细：[地址迁移规则说明](/zh-cn/docs/advanced/migration-invoker/#1-%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%B8%8B%E5%8F%91%E6%8E%A8%E8%8D%90)
+关于这个igrationRule的文可以直接看官方的文档比较详细：[地址迁移规则说明](https://cn.dubbo.apache.org/zh-cn/docs/advanced/migration-invoker/#1-%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%B8%8B%E5%8F%91%E6%8E%A8%E8%8D%90)
 
 
 这个迁移规则是为了更细粒度的迁移决策：
@@ -90,8 +90,8 @@ applications: 应用粒度配置（可选）
 
 不过为了简单起见暂时先不详细说这个配置细节，我们继续往下看
 
-## 22.3 迁移规则处理器执行迁移规则MigrationRuleHandler类型的doMigrate方法
-### 22.3.1 迁移规则的模版方法：
+##  **迁移规则处理器执行迁移规则MigrationRuleHandler类型的doMigrate方法**
+###  **迁移规则的模版方法：**
 
 MigrationRuleHandler类型的doMigrate方法代码如下：
 ```java
@@ -122,7 +122,7 @@ public synchronized void doMigrate(MigrationRule rule) {
         }
     }
 ```
-### 22.3.2 服务发现调用器对象的选择（决策服务发现策略）
+###  **服务发现调用器对象的选择（决策服务发现策略）**
 
 这里就是关键代码了：通过迁移配置和当前提供者注册信息来决定创建什么类型的调用器对象（Invoker)来为后续服务调用做准备
 
@@ -173,7 +173,8 @@ MigrationRuleHandler的refreshInvoker，注意默认情况下这个step参数为
 
 可以看到这个代码做了判断的逻辑分别对应了Dubbo3消费者迁移的一个状态逻辑：
 三种状态分别如下枚举类型：
-当前共存在三种状态，
+当前共存在三种状态：
+
 - FORCE_INTERFACE（强制接口级）
 - APPLICATION_FIRST（应用级优先）
 - FORCE_APPLICATION（强制应用级）
@@ -183,11 +184,11 @@ MigrationRuleHandler的refreshInvoker，注意默认情况下这个step参数为
 
 
 
- ### 22.3.3 应用级优先的服务发现规则逻辑
+ ###  **应用级优先的服务发现规则逻辑**
  这个规则就是智能选择应用级还是接口级的代码了，对应类型为MigrationInvoker的migrateToApplicationFirstInvoker方法，接下来我们详细看下：
 
  MigrationInvoker类型的migrateToApplicationFirstInvoker方法：
- ```java
+```java
  @Override
     public void migrateToApplicationFirstInvoker(MigrationRule newRule) {
         CountDownLatch latch = new CountDownLatch(0);
@@ -201,9 +202,9 @@ MigrationRuleHandler的refreshInvoker，注意默认情况下这个step参数为
         //计算当前使用应用级还是接口级服务发现的Invoker对象
         calcPreferredInvoker(newRule);
     }
- ```
+```
 
-### 22.3.4 刷新接口级服务发现Invoker 
+###  **刷新接口级服务发现Invoker** 
 
 MigrationInvoker类型的refreshInterfaceInvoker方法
 ```java
@@ -231,7 +232,7 @@ protected void refreshInterfaceInvoker(CountDownLatch latch) {
         });
     }
 ```
-### 22.3.5 刷新应用级服务发现Invoker类型对象
+###   **刷新应用级服务发现Invoker类型对象**
 MigrationInvoker类型的refreshServiceDiscoveryInvoker方法
 ```java
 protected void refreshServiceDiscoveryInvoker(CountDownLatch latch) {
@@ -258,7 +259,7 @@ protected void refreshServiceDiscoveryInvoker(CountDownLatch latch) {
         });
     }
 ```
-### 22.3.6 计算当前使用应用级还是接口级服务发现的Invoker对象
+###  **计算当前使用应用级还是接口级服务发现的Invoker对象**
 
 MigrationInvoker类型的的calcPreferredInvoker方法
 

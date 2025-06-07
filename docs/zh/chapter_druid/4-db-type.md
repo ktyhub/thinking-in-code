@@ -1,11 +1,11 @@
 # 4-DruidDataSource初始化时的神操作之自动解析DbType与驱动类
 ## 4.1 简介
 前面那个博客《3-Connection连接数据库之前的初始化操作》我们简单介绍了连接时候的初始化操作，其中有两个地方调用了JdbcUtils 来通过配置的jdbc url来自动解析数据库类型和驱动的代码，这里将会简单介绍下，方便我们了解Druid支持的数据库操作，如果在开发工作中有手动配置数据源和数据库类型的地方可以参考这两个方法实现，也可以直接把代码拷贝过去：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/bfbdd6d75adf48e2b86a0fa4475643dd.png)
+![3-jdbcutils.png](/img/chapter_druid/3-jdbcutils.png)
 
 JdbcUtils中自动解析的代码并不是特别复杂的逻辑，这里介绍一下主要方便我们了解下Druid支持的底层数据库类型，以MySQL这个Demo为例 ，这里我们传递的jdbcUrl参数如下：
 
-```java
+```properties
 jdbc:mysql://localhost:3306/druid?allowMultiQueries=true
 ```
 

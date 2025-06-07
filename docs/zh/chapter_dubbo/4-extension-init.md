@@ -101,14 +101,14 @@ Dubbo3 基于 Dubbo2 演进而来，在保持原有核心功能特性的同时�
 | **DubboInternalLoadingStrategy**    | Dubbo内置的扩展加载策略,将加载文件目录为META-INF/dubbo/internal/的扩展                                                                                                                                                                |
 | **DubboLoadingStrategy**            | Dubbo普通的扩展加载策略,将加载目录为META-INF/dubbo/的扩展                                                                                                                                                                           |
 | **ServicesLoadingStrategy**         | JAVA SPI加载策略 ,将加载目录为META-INF/services/的扩展                                                                                                                                                                         |
-| **Wrapper**注解                       |                                                                                                                                                                                                                   |
+| **Wrapper** 注解                      |                                                                                                                                                                                                                   |
 | **SPI注解**                           |                                                                                                                                                                                                                   |
-| **ExtensionInjector**接口             | 为SPI扩展提供资源的注入器。                                                                                                                                                                                                   |
+| **ExtensionInjector** 接口            | 为SPI扩展提供资源的注入器。                                                                                                                                                                                                   |
 | **ExtensionAccessorAware**          | SPI扩展可以实现这个感知接口，以获得适当的xtensionAccessor实例。                                                                                                                                                                         | 
-| DisableInject注解                     |                                                                                                                                                                                                                   |
+| **DisableInject注解**                     |                                                                                                                                                                                                                   |
 | **AdaptiveClassCodeGenerator**      | 自适应类的代码生成器                                                                                                                                                                                                        |
-| **Adaptive**注解                      | 为ExtensionLoader注入依赖扩展实例提供有用信息。                                                                                                                                                                                   |	 
-| **Activate**注解                      | Activate。此注解对于使用给定条件自动激活某些扩展非常有用，例如：@Activate可用于在有多个实现时加载某些筛选器扩展。 **group()** 指定组条件。框架SPI定义了有效的组值。**value()** 指定URL条件中的参数键。SPI提供程序可以调用ExtensionLoader。getActivateExtension(URL、String、String)方法以查找具有给定条件的所有已激活扩展。 |
+| **Adaptive** 注解                     | 为ExtensionLoader注入依赖扩展实例提供有用信息。                                                                                                                                                                                   |	 
+| **Activate** 注解                     | Activate。此注解对于使用给定条件自动激活某些扩展非常有用，例如：@Activate可用于在有多个实现时加载某些筛选器扩展。 **group()** 指定组条件。框架SPI定义了有效的组值。**value()** 指定URL条件中的参数键。SPI提供程序可以调用ExtensionLoader。getActivateExtension(URL、String、String)方法以查找具有给定条件的所有已激活扩展。 |
 | **ActivateComparator**              | Activate扩展的排序器                                                                                                                                                                                                    |
 | **MultiInstanceActivateComparator** |                                                                                                                                                                                                                   |
 | **WrapperComparator**               |                                                                                                                                                                                                                   |
@@ -163,7 +163,7 @@ default <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
     }
 ```
 
-这里直接返回了extensionDirector,,不知道介绍到这里记得这个扩展加载程序管理器extensionDirector对象的由来不, 在上个章节[《3-框架,应用程序,模块领域模型Model对象的初始化》](https://blog.elastic.link/2022/07/10/dubbo/3-kuang-jia-ying-yong-cheng-xu-mo-kuai-ling-yu-mo-xing-model-dui-xiang-de-chu-shi-hua/)中3.2.2 初始化ScopeModel的章节中的ScopeModel类型的初始化方法initialize()方法中我们提到过这个对象的创建,具体代码如下所示(这个代码比较简单):
+这里直接返回了extensionDirector,,不知道介绍到这里记得这个扩展加载程序管理器extensionDirector对象的由来不, 在上个章节[《3-框架,应用程序,模块领域模型Model对象的初始化》](/zh/chapter_dubbo/model-init)中3.2.2 初始化ScopeModel的章节中的ScopeModel类型的初始化方法initialize()方法中我们提到过这个对象的创建,具体代码如下所示(这个代码比较简单):
 ```java
 this.extensionDirector = new ExtensionDirector(parent != null ? parent.getExtensionDirector() : null, scope, this);
        
@@ -193,6 +193,7 @@ public interface TypeBuilder extends Prioritized {
 ExtensionDirector类型中获取扩展加载器的代码
 这个代码非常有意思 **其实就是前面说到的域模型架构的数据访问架构** 类似于JVM类加载器访问加载类的情况,但是这个顺序可能有所不同,Dubbo的扩展加载器是如何访问的呢?
 遵循以下顺序:
+
 - 先从 **缓存中** 查询扩展加载器
 -  如果前面没找到则查询扩展类型的scope所属域,如果是 **当前域扩展** 则从直接创建扩展加载器
 - 如果前面没找到就从 **父扩展访问器** 中查询,查询这个扩展是否数据父扩展域
