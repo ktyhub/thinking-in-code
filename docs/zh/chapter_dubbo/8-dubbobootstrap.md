@@ -1,7 +1,7 @@
 
 # **Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化**
 ##  **启动器简介**
-在说启动器之前先把视野拉回第一章[《1-从一个服务提供者的Demo说起》](/zh/chapter_dubbo/1-learch-from-a-demo)我们的Demo代码,下面只贴一下核心代码:
+在说启动器之前先把视野拉回第一章[《1-从一个服务提供者的Demo说起》](/zh/chapter_dubbo/1-learn-from-a-demo)我们的Demo代码,下面只贴一下核心代码:
 
 ```java
 public class Application {

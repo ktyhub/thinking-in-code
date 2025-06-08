@@ -136,7 +136,7 @@ public class MicrometerTest
 
 
 通过运行 main 方法，在浏览器中访问地址 `http://localhost:8080/prometheus` 就可以看到我们程序提供给普罗米修斯监控的指标了
-![img.png](img.png)
+![img.png](/img/chapter_post/img.png)
 
 这个例子相对还是比较简单的，可以动手尝试一下，便于理解。
 

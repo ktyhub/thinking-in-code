@@ -1,7 +1,7 @@
 
 #  **全局视野来看Dubbo3的服务启动生命周期**
 ##  **启动方法简介**
-在说启动方法之前先把视野拉回第一章[《1-从一个服务提供者的Demo说起》](/zh/chapter_dubbo/1-learn-from-a-demo)我们的Demo代码,下面只贴一下核心代码:
+在说启动方法之前先把视野拉回第一章[《1-从一个服务提供者的Demo说起》](/zh/chapter_dubbo/1-learn-from-a-demo.md)我们的Demo代码,下面只贴一下核心代码:
 
 ```java
 public class Application {

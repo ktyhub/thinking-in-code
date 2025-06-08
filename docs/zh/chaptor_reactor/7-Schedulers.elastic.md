@@ -160,7 +160,11 @@ Flux.defer(() -> {
 }).subscribe();
 ```
 
+<<<<<<< HEAD
+## 七、未来演进方向（书籍前瞻）
+=======
 ## 七、未来演进方向
+>>>>>>> branch 'main' of git@github.com:ktyhub/thinking-in-code.git
 
 1. **智能调度器**：根据任务类型（CPU/I/O）自动选择最优调度器
 2. **云原生适配**：支持 Kubernetes 环境下的弹性扩缩容

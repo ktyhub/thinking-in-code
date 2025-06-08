@@ -487,7 +487,7 @@ private void doExportUrl(URL url, boolean withMetaData) {
 ```java
  Exporter<?> exporter = protocolSPI.export(invoker);
 ```
-这个使用了Adaptor扩展和Wrapper机制Debug起来不太方便这里贴一下调用堆栈![在这里插入图片描述](/imgs/blog/source-blog/16-deploy3.png)
+这个使用了Adaptor扩展和Wrapper机制Debug起来不太方便这里贴一下调用堆栈![在这里插入图片描述](/img/chapter_dubbo/16-deploy3.png)
 
 ###  **协议序列化机制ProtocolSerializationWrapper**
 
