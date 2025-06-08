@@ -18,7 +18,7 @@ tags:
     <h1>思考代码之美 (Thinking In Code)</h1>
     <p class="subtitle">探索技术背后的原理，掌握编程的艺术与智慧</p>
     <div class="hero-buttons">
-      <a href="zh/chapter_preface/index.md" class="md-button md-button--primary" title="开始探索技术内容" aria-label="浏览全部技术内容">开始探索</a>
+      <a href="/zh/chapter_preface/index/" class="md-button md-button--primary" title="开始探索技术内容" aria-label="浏览全部技术内容">开始探索</a>
       <a href="#featured" class="md-button" title="查看特色文章" aria-label="直接跳转到特色文章部分">特色文章</a>
     </div>
   </div>
@@ -30,7 +30,7 @@ tags:
 
 > *编程不仅仅是写代码，更是思考的艺术。*
 
-通过深入分析开源项目的源码，我们一起探索各种中间件、框架和工具的内部实现机制，让您不仅能够熟练使用这些技术，还能够理解其设计思想，甚至能够在需要时进行定制和优化。
+通过深入分析开源项目的源码，我们一起探索各种中间件、框架和工具的内部实现机制，让您不��能够熟练使用这些技术，还能够理解其设计思想，甚至能够在需要时进行定制和优化。
 
 ---
 
@@ -141,7 +141,7 @@ tags:
       <li><a href="zh/chapter_kubernetes/1-index.md" title="Kubernetes容器编排">Kubernetes技术</a></li>
       <li><a href="zh/chapter_modelcontextprotocol/index.md" title="MCP协议">MCP协议</a></li>
       <li><a href="zh/chapter_post/elasticjob_cloud.md" title="ElasticJob云原生实践">云原生应用</a></li>
-      <li><a href="zh/chapter_n8n/1-official-website.md" title="N8N工作流自动化">工作流自动化</a></li>
+      <li><a href="zh/chapter_n8n/1-official-website.md" title="N8N���作流自动化">工作流自动化</a></li>
       <li><a href="zh/chapter_ai/1-llm-integration.md" title="大语言模型集成开发">LLM开发</a></li>
     </ul>
   </div>
