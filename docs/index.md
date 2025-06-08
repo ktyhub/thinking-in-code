@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 # ⚫ Thinking In Code
-=======
 ---
 title: Thinking In Code | 深入理解代码的艺术与原理
 description: 专注于源码解析、中间件原理和云原生技术的知识分享平台。探索Dubbo、Zookeeper、ElasticJob等流行框架的设计思想和内部实现机制。
@@ -13,9 +11,6 @@ tags:
   - 云原生技术
   - Java框架解析
 ---
->>>>>>> branch 'main' of git@github.com:ktyhub/thinking-in-code.git
-
-<<<<<<< HEAD
 <div class="hero-section" style="text-align: center; margin: 3rem 0; padding: 4rem 2rem; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%); border-radius: 16px; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
   <div style="font-size: 4rem; margin-bottom: 2rem; animation: float 3s ease-in-out infinite; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 900; letter-spacing: 4px;">
     ▲ ● ■
@@ -39,11 +34,8 @@ tags:
     </a>
   </div>
 </div>
-=======
 # 🧠 深入理解代码的艺术
->>>>>>> branch 'main' of git@github.com:ktyhub/thinking-in-code.git
 
-<<<<<<< HEAD
 ## ■ Technical Excellence
 =======
 <div class="hero-section" aria-label="网站介绍">
