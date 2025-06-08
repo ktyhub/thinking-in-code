@@ -1,0 +1,61 @@
+# Spring-Boot v3.4.0-M1
+```markdown
+## ⭐ 新功能
+
+- 允许`ContainerConnectionDetailsFactory`匹配多个不同的连接名称 [#41543](https://github.com/spring-projects/spring-boot/issues/41543)
+- 添加对Docker Compose中Postgres信任主机认证方法的支持 [#41511](https://github.com/spring-projects/spring-boot/pull/41511)
+- 添加帮助编写JSON的实用工具类 [#41489](https://github.com/spring-projects/spring-boot/issues/41489)
+- 废弃`LOGGED_APPLICATION_NAME`日志属性，支持使用字面值的`APPLICATION_NAME` [#41444](https://github.com/spring-projects/spring-boot/issues/41444)
+- 移除在3.4中已标记为废弃的APIs [#41435](https://github.com/spring-projects/spring-boot/issues/41435)
+- 默认注册`Base64ProtocolResolver`作为协议解析器 [#41433](https://github.com/spring-projects/spring-boot/issues/41433)
+- 废弃`spring.gson.lenient`，推出新的`spring.gson.strictness`属性 [#41430](https://github.com/spring-projects/spring-boot/issues/41430)
+- 支持在构建镜像时使用不受信任的CNB构建器 [#41352](https://github.com/spring-projects/spring-boot/issues/41352)
+- 对Kafka退避属性进行分组 [#41335](https://github.com/spring-projects/spring-boot/pull/41335)
+- 支持redis/redis-stack和redis/redis-stack-server的服务连接 [#41327](https://github.com/spring-projects/spring-boot/pull/41327)
+- 在注销时发布一个`AuditEvent` [#41278](https://github.com/spring-projects/spring-boot/pull/41278)
+- 向`ProcessInfo`添加内存信息 [#41262](https://github.com/spring-projects/spring-boot/pull/41262)
+- 为`MockMvcTester`添加测试自动配置 [#41198](https://github.com/spring-projects/spring-boot/issues/41198)
+- 将Gradle的最低支持版本提升到7.6.4+或8.3+ [#41180](https://github.com/spring-projects/spring-boot/issues/41180)
+- 使用`Liquibase Customizer`自动配置`SpringLiquibase` [#40986](https://github.com/spring-projects/spring-boot/pull/40986)
+- 为OpenTelemetry日志提供自动配置 [#40961](https://github.com/spring-projects/spring-boot/pull/40961)
+- 使提供自定义`RequestToViewNameTranslator`更加容易 [#40874](https://github.com/spring-projects/spring-boot/pull/40874)
+- 默认使用Paketo tiny构建器为JVM和原生应用 [#40859](https://github.com/spring-projects/spring-boot/issues/40859)
+- 添加对`org.testcontainers.kafka.KafkaContainer`的支持 [#40695](https://github.com/spring-projects/spring-boot/pull/40695)
+- 添加针对r2dbc-proxy的`ProxyConnectionFactory.Builder`的自定义器 [#40555](https://github.com/spring-projects/spring-boot/pull/40555)
+- 添加Lettuce的`ClientOptions`自定义器 [#40484](https://github.com/spring-projects/spring-boot/pull/40484)
+- 将`@Validated` `@ConfigurationProperties`的级联行为与bean验证规范对齐 [#40345](https://github.com/spring-projects/spring-boot/issues/40345)
+- 添加对webjars-locator-lite的支持 [#40146](https://github.com/spring-projects/spring-boot/issues/40146)
+- 向`MailSender`添加`SslBundle`支持 [#40037](https://github.com/spring-projects/spring-boot/pull/40037)
+- 添加用于区分应用程序组的标准化属性 [#39957](https://github.com/spring-projects/spring-boot/pull/39957)
+- 废弃`@MockBean`和`@SpyBean` [#39864](https://github.com/spring-projects/spring-boot/pull/39864)
+- 使用JMS消息监听器容器的本地连接工厂 [#39816](https://github.com/spring-projects/spring-boot/issues/39816)
+- 提供一个回调，允许自定义创建JCache `CacheManager`的属性 [#39350](https://github.com/spring-projects/spring-boot/issues/39350)
+- 允许在getter上使用`NestedConfigurationProperty` [#38844](https://github.com/spring-projects/spring-boot/pull/38844)
+- 添加用于指定Docker Compose启动和关闭标志的属性 [#38763](https://github.com/spring-projects/spring-boot/issues/38763)
+- 通过属性禁用跟踪导出 [#34620](https://github.com/spring-projects/spring-boot/issues/34620)
+- 支持结构化日志作为模式布局日志的替代方案 [#5479](https://github.com/spring-projects/spring-boot/issues/5479)
+
+## 🐞 问题修复
+
+- Spring Authorization Server现在默认将`multipleIssuersAllowed`设置为false，且无法轻易重新启用 [#41544](https://github.com/spring-projects/spring-boot/issues/41544)
+- `ServiceConnection`与`@DataLdapTest`不兼容 [#41525](https://github.com/spring-projects/spring-boot/issues/41525)
+- Spring Integration 6.2中引入的`defaultTimeout`设置没有对应的配置属性 [#41522](https://github.com/spring-projects/spring-boot/issues/41522)
+- 在`OnClassCondition.resolveOutcomesThreaded`中自动配置期间发生NPE，因为`firstHalf`为null [#41505](https://github.com/spring-projects/spring-boot/issues/41505)
+- `@NestedConfigurationProperty`在记录类型上不起作用 [#41317](https://github.com/spring-projects/spring-boot/issues/41317)
+- `PropertiesMigrationListener`错误地报告属性已废弃 [#41253](https://github.com/spring-projects/spring-boot/issues/41253)
+- `TestcontainersLifecycleBeanPostProcessor`与作用域bean一起使用时无法正确工作 [#41239](https://github.com/spring-projects/spring-boot/issues/41239)
+- 如果`spring.config.import`解析失败，错误消息可能会产生误导 [#41237](https://github.com/spring-projects/spring-boot/issues/41237)
+- Docker桌面更新后，构建镜像失败，错误信息为'Illegal char <:> at index 5: npipe:////' [#41235](https://github.com/spring-projects/spring-boot/issues/41235)
+- 使用Jetty时，过滤器、监听器和servlet没有使用相同的线程上下文类加载器进行初始化 [#41226](https://github.com/spring-projects/spring-boot/issues/41226)
+- 使用Webflux、随机端口和多个上下文的`DirtiesContext`会导致多个上下文行为异常 [#41222](https://github.com/spring-projects/spring-boot/issues/41222)
+- 在原生镜像中使用`spring-boot-starter-activemq`时，出现`org.apache.activemq.ActiveMQConnectionFactory.<init>`的`NoSuchMethodException` [#41215](https://github.com/spring-projects/spring-boot/issues/41215)
+- 当多个合并的上下文配置导致Logback模型被多次写入时，测试AOT处理失败 [#36997](https://github.com/spring-projects/spring-boot/issues/36997)
+
+## 📔 文档
+
+- 修复README中的文档链接 [#41546](https://github.com/spring-projects/spring-boot/issues/41546)
+- 记录每个`spring.mvc.format`和`spring.webflux.format`属性适用的类型 [#41519](https://github.com/spring-projects/spring-boot/issues/41519)
+- 记录`logging.file.name`和`logging.file.path`不能一起使用 [#41517](https://github.com/spring-projects/spring-boot/issues/41517)
+- 完善CDS操作指南 [#41467](https://github.com/spring-projects/spring-boot/issues/41467)
+- 修复`BootstrapContext`的javadoc中的拼写错误 [#41449](https://github.com/spring-projects/spring-boot/issues/41449)
+- "Efficient Deployments"文档中的CDS链接已损坏
