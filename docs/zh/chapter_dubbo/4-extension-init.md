@@ -83,7 +83,7 @@ Dubbo3 基于 Dubbo2 演进而来，在保持原有核心功能特性的同时�
 前面我们说了为什么要使用扩展机制,这里我们来看下具体实现
 
 先将扩展包里面的代码截个图认识认识各类型的单词
-![4-4-ext.png](/img/chaptre_dubbo/4-4-ext.png)
+![4-4-ext.png](/img/chapter_dubbo/4-4-ext.png)
 
 顺便我们先简单看下类结构图,后续再详细看每个类型的解释:
 ![4-5-ext.png](/img/chapter_dubbo/4-5-ext.png)
@@ -163,7 +163,7 @@ default <T> ExtensionLoader<T> getExtensionLoader(Class<T> type) {
     }
 ```
 
-这里直接返回了extensionDirector,,不知道介绍到这里记得这个扩展加载程序管理器extensionDirector对象的由来不, 在上个章节[《3-框架,应用程序,模块领域模型Model对象的初始化》](/zh/chapter_dubbo/model-init)中3.2.2 初始化ScopeModel的章节中的ScopeModel类型的初始化方法initialize()方法中我们提到过这个对象的创建,具体代码如下所示(这个代码比较简单):
+这里直接返回了extensionDirector,,不知道介绍到这里记得这个扩展加载程序管理器extensionDirector对象的由来不, 在上个章节[《3-框架,应用程序,模块领域模型Model对象的初始化》](/zh/chapter_dubbo/3-model-init.md)中3.2.2 初始化ScopeModel的章节中的ScopeModel类型的初始化方法initialize()方法中我们提到过这个对象的创建,具体代码如下所示(这个代码比较简单):
 ```java
 this.extensionDirector = new ExtensionDirector(parent != null ? parent.getExtensionDirector() : null, scope, this);
        

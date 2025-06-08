@@ -1,4 +1,30 @@
 # spring-framework v6.1.10
+<<<<<<< HEAD
+## ⭐ 新特性
+
+- 在关闭时，`PersistenceExceptionTranslationInterceptor`中的防御性`PersistenceExceptionTranslator` bean检索 [#33067](https://github.com/spring-projects/spring-framework/issues/33067)
+- `DisconnectedClientHelper`支持所有"connection reset"异常短语 [#33064](https://github.com/spring-projects/spring-framework/issues/33064)
+
+## 🐞 Bug修复
+
+- 使用RestClient记录了重复的观察 [#33068](https://github.com/spring-projects/spring-framework/issues/33068)
+- 自Spring Framework 6.1.3起，WebFlux验证需要Servlet API [#33043](https://github.com/spring-projects/spring-framework/issues/33043)
+- 在意外的`@Autowired` `@Bean`方法中带有`@Value`参数时，没有符合类型'java.lang.String'的bean [#33030](https://github.com/spring-projects/spring-framework/issues/33030)
+- 当多次调用时，ConfigurationClassEnhancer不使用正确的ClassLoader [#33024](https://github.com/spring-projects/spring-framework/issues/33024)
+
+## 📔 文档
+
+- Spring框架文档中的注解驱动监听器端点部分的拼写错误 [#33050](https://github.com/spring-projects/spring-framework/issues/33050)
+- Spring框架文档中的容器扩展点部分引用了错误的属性名 [#33037](https://github.com/spring-projects/spring-framework/issues/33037)
+- 修复注释中的拼写错误 [#33036](https://github.com/spring-projects/spring-framework/pull/33036)
+- ApplicationContextEvent的javadoc中的构造函数详情不正确 [#33032](https://github.com/spring-projects/spring-framework/issues/33032)
+
+## ❤️ 贡献者
+
+感谢所有参与此次发布的贡献者：
+
+github-actions[bot] 和 [tafjwr](https://github.com/tafjwr)
+=======
 ### Spring Framework是什么？
 
 Spring Framework是一个开源的Java企业级应用程序开发框架，旨在简化Java开发过程。它提供了全面的基础设施支持，使开发者能够专注于业务逻辑，而不必过多关注底层细节。Spring的核心特性包括依赖注入、面向切面编程、事务管理和MVC框架等，广泛应用于构建企业级应用程序和微服务架构。
@@ -71,3 +97,4 @@ public class Main {
 - 修复了Spring Framework文档中容器扩展点部分引用错误属性名称的问题。
 - 修复了注释中的拼写错误。
 - 修复了`ApplicationContextEvent`的javadoc中构造函数细节不正确的问题。
+>>>>>>> branch 'main' of git@github.com:ktyhub/thinking-in-code.git

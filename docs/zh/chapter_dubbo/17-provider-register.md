@@ -78,7 +78,7 @@ dubbo.application.register-mode=all
 - instance 应用级注册
 - interface 接口级注册
 
-后面的代码如果想要看更详细的代码可以看博客[《16-模块发布器发布服务全过程》](/zh/chapter_dubbo/16-module-deployer)中的双注册配置的解析
+后面的代码如果想要看更详细的代码可以看博客[《16-模块发布器发布服务全过程》](/zh/chapter_dubbo/16-moduledeployer.md)中的双注册配置的解析
 关于这个配置的使用我们详细来看下，在Dubbo服务注册时候会先通过此配置查询需要注册服务地址，具体代码位于ServiceConfig的doExportUrls()方法中：
 
 ```java

@@ -1,4 +1,7 @@
 # spring-framework v6.1.13
+<<<<<<< HEAD
+null
+=======
 ### Spring Framework是什么？
 
 Spring Framework是一个开源的Java框架，旨在简化企业级应用程序的开发。它提供了一系列功能，包括依赖注入、面向切面编程、事务管理和MVC（模型-视图-控制器）架构，使开发者能够更轻松地构建可扩展和高效的应用程序。
@@ -95,3 +98,4 @@ public class Main {
 - 升级到Micrometer 1.12.10。
 - 升级到Objenesis 3.4。
 - 升级到Reactor 2023.0.10。
+>>>>>>> branch 'main' of git@github.com:ktyhub/thinking-in-code.git
