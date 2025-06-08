@@ -18,7 +18,7 @@ tags:
     <h1>思考代码之美 (Thinking In Code)</h1>
     <p class="subtitle">探索技术背后的原理，掌握编程的艺术与智慧</p>
     <div class="hero-buttons">
-      <a href="/zh/chapter_preface/index/" class="md-button md-button--primary" title="开始探索技术内容" aria-label="浏览全部技术内容">开始探索</a>
+      <a href="/zh/chapter_preface/" class="md-button md-button--primary" title="开始探索技术内容" aria-label="浏览全部技术内容">开始探索</a>
       <a href="#featured" class="md-button" title="查看特色文章" aria-label="直接跳转到特色文章部分">特色文章</a>
     </div>
   </div>
