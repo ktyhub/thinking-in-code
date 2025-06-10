@@ -41,30 +41,30 @@ tags:
 <div class="grid-container" aria-label="特色技术内容分类">
     <div class="grid-item">
         <h3>🔍 源码解析系列</h3>
-        <p>深入剖析流行框架和中间件的实现原理</p>
-        <a href="zh/chapter_dubbo/1-learn-from-a-demo.md" title="学习Dubbo框架源码解析" aria-label="Dubbo源码解析系列文章">Dubbo源码解析</a> | 
-        <a href="zh/chapter_zookeeper/1-introduce.md" title="了解Zookeeper内部机制" aria-label="Zookeeper内部机制详解">Zookeeper内部机制</a> | 
-        <a href="zh/chapter_elasticjob/1-introduce.md" title="探索ElasticJob调度原理" aria-label="ElasticJob调度原理解析">ElasticJob调度原理</a>
+        <p>深入剖析�������行框架和中间件的实现原理</p>
+        <a href="/zh/chapter_dubbo/1-learn-from-a-demo" title="学习Dubbo框架源码解析" aria-label="Dubbo源码解析系列文章">Dubbo源码解析</a> | 
+        <a href="/zh/chapter_zookeeper/1-introduce" title="了解Zookeeper内部机制" aria-label="Zookeeper内部机制详解">Zookeeper内部机制</a> | 
+        <a href="/zh/chapter_elasticjob/1-introduce" title="探索ElasticJob调度原理" aria-label="ElasticJob调度原理解析">ElasticJob调度原理</a>
     </div>
     <div class="grid-item">
         <h3>⚡ 响应式编程</h3>
         <p>掌握现代异步编程模型和并发处理</p>
-        <a href="zh/chaptor_reactor/Flux.md" title="Flux响应式编程基础" aria-label="学习Flux响应式编程基础">Flux基础</a> | 
-        <a href="zh/chaptor_reactor/1-Flux.md" title="Flux创建原理详解" aria-label="深入理解Flux创建原理">Flux创建原理</a> | 
-        <a href="zh/chaptor_reactor/6-Scheduler.md" title="响应式编程调度器原理" aria-label="掌握响应式编程调度器原理">调度器原理</a>
+        <a href="/zh/chapter_reactor/Flux" title="Flux响应式编程基础" aria-label="学习Flux响应式编程基础">Flux基础</a> | 
+        <a href="/zh/chapter_reactor/1-Flux" title="Flux创建原理详解" aria-label="深入理解Flux创建原理">Flux创建原理</a> | 
+        <a href="/zh/chapter_reactor/6-Scheduler" title="响应式编程调度器原理" aria-label="掌握响应式编程调度器原理">调度器原理</a>
     </div>
     <div class="grid-item">
         <h3>☁️ 云原生技术</h3>
         <p>探索容器化和微服务架构的核心技术</p>
-        <a href="zh/chapter_kubernetes/1-index.md" title="深入学习Kubernetes源码" aria-label="Kubernetes源码解析">Kubernetes源码解析</a> | 
-        <a href="zh/chapter_post/elasticjob_cloud.md" title="ElasticJob云原生实践指南" aria-label="ElasticJob云原生实践">ElasticJob云原生实践</a>
+        <a href="/zh/chapter_kubernetes/1-index" title="深入学习Kubernetes源码" aria-label="Kubernetes源码解析">Kubernetes源码解析</a> | 
+        <a href="/zh/chapter_post/elasticjob_cloud" title="ElasticJob云原生实践指南" aria-label="ElasticJob云原生实践">ElasticJob云原生实践</a>
     </div>
     <div class="grid-item">
         <h3>🤖 AI与新技术</h3>
         <p>紧跟前沿，探索人工智能与新兴技术</p>
-        <a href="zh/chapter_spring_ai/1-official-website.md" title="Spring AI框架学习" aria-label="Spring AI框架学习">Spring AI</a> | 
-        <a href="zh/chapter_spring_ai_alibaba/1-official-website.md" title="Spring AI Alibaba实践" aria-label="Spring AI Alibaba实践">Spring AI Alibaba</a> | 
-        <a href="zh/release_note/index.md" title="最新技术动态" aria-label="查看最新技术动态">技术动态</a>
+        <a href="/zh/chapter_spring_ai/1-official-website" title="Spring AI框架学习" aria-label="Spring AI框架学习">Spring AI</a> | 
+        <a href="/zh/chapter_spring_ai_alibaba/1-official-website" title="Spring AI Alibaba实践" aria-label="Spring AI Alibaba实践">Spring AI Alibaba</a> | 
+        <a href="/zh/release_note/" title="最新技术动态" aria-label="查看最新技术动态">技术动态</a>
     </div>
 </div>
 
@@ -75,35 +75,35 @@ tags:
 <div class="topic-container">
     <div class="topic">
         <span class="topic-icon">☕</span>
-        <a href="zh/chapter_dubbo/1-learn-from-a-demo.md">中间件源码剖析</a>
+        <a href="/zh/chapter_dubbo/1-learn-from-a-demo">中间件源码剖析</a>
     </div>
     <div class="topic">
         <span class="topic-icon">🧩</span>
-        <a href="zh/chaptor_reactor/Flux.md">响应式编程</a>
+        <a href="/zh/chaptor_reactor/Flux">响应式编程</a>
     </div>
     <div class="topic">
         <span class="topic-icon">🔄</span>
-        <a href="zh/chapter_kafka/1-introduce.md">消息队列</a>
+        <a href="/zh/chapter_kafka/1-introduce">消息队列</a>
     </div>
     <div class="topic">
         <span class="topic-icon">🌐</span>
-        <a href="zh/chapter_netty/1-sample.md">网络编程</a>
+        <a href="/zh/chapter_netty/1-sample">网络编程</a>
     </div>
     <div class="topic">
         <span class="topic-icon">🧠</span>
-        <a href="zh/chapter_spring_ai/1-official-website.md">AI应用</a>
+        <a href="/zh/chapter_spring_ai/1-official-website">AI应用</a>
     </div>
     <div class="topic">
         <span class="topic-icon">🐧</span>
-        <a href="zh/chapter_linux/problem/cpu.md">Linux性能优化</a>
+        <a href="/zh/chapter_linux/problem/cpu">Linux性能优化</a>
     </div>
     <div class="topic">
         <span class="topic-icon">⚙️</span>
-        <a href="zh/chapter_springboot/1-sample.md">Spring生态</a>
+        <a href="/zh/chapter_springboot/1-sample">Spring生态</a>
     </div>
     <div class="topic">
         <span class="topic-icon">📊</span>
-        <a href="zh/chapter_post/clickhouse.md">大数据分析</a>
+        <a href="/zh/chapter_post/clickhouse">大数据分析</a>
     </div>
 </div>
 
@@ -115,51 +115,51 @@ tags:
   <div class="site-map-section">
     <h3>🧠 核心技术</h3>
     <ul class="site-map-list">
-      <li><a href="zh/chapter_dubbo/1-learn-from-a-demo.md" title="深入学习Dubbo框架">Dubbo源码解析</a></li>
-      <li><a href="zh/chapter_zookeeper/1-introduce.md" title="了解Zookeeper内部原理">Zookeeper原理</a></li>
-      <li><a href="zh/chapter_elasticjob/1-introduce.md" title="ElasticJob实现原理">ElasticJob详解</a></li>
-      <li><a href="zh/chapter_netty/1-sample.md" title="Netty网络框架剖析">Netty网络编程</a></li>
-      <li><a href="zh/chapter_springboot/1-sample.md" title="Spring Boot核心原理">Spring Boot解析</a></li>
+      <li><a href="/zh/chapter_dubbo/1-learn-from-a-demo" title="深入学习Dubbo框架">Dubbo源码解析</a></li>
+      <li><a href="/zh/chapter_zookeeper/1-introduce" title="了解Zookeeper内部原理">Zookeeper原理</a></li>
+      <li><a href="/zh/chapter_elasticjob/1-introduce" title="ElasticJob实现原理">ElasticJob详解</a></li>
+      <li><a href="/zh/chapter_netty/1-sample" title="Netty网络框架剖析">Netty网络编程</a></li>
+      <li><a href="/zh/chapter_springboot/1-sample" title="Spring Boot核心原理">Spring Boot解析</a></li>
     </ul>
   </div>
   
   <div class="site-map-section">
     <h3>💾 数据技术</h3>
     <ul class="site-map-list">
-      <li><a href="zh/chapter_kafka/1-introduce.md" title="Kafka消息队列">Kafka解析</a></li>
-      <li><a href="zh/chapter_mysql/1-sample.md" title="MySQL数据库原理">MySQL技术</a></li>
-      <li><a href="zh/chapter_post/clickhouse.md" title="ClickHouse大数据分析">ClickHouse应用</a></li>
-      <li><a href="zh/chapter_druid/1-druid_source.md" title="Druid连接池解析">Druid解析</a></li>
+      <li><a href="/zh/chapter_kafka/1-introduce" title="Kafka消息队列">Kafka解析</a></li>
+      <li><a href="/zh/chapter_mysql/1-sample" title="MySQL数据库原理">MySQL技术</a></li>
+      <li><a href="/zh/chapter_post/clickhouse" title="ClickHouse大数据分析">ClickHouse应用</a></li>
+      <li><a href="/zh/chapter_druid/1-druid_source" title="Druid连接池解析">Druid解析</a></li>
     </ul>
   </div>
   
   <div class="site-map-section">
     <h3>🚀 前沿技术</h3>
     <ul class="site-map-list">
-      <li><a href="zh/chapter_spring_ai/1-official-website.md" title="Spring AI应用">Spring AI</a></li>
-      <li><a href="zh/chaptor_reactor/Flux.md" title="响应式编程">响应式编程</a></li>
-      <li><a href="zh/chapter_kubernetes/1-index.md" title="Kubernetes容器编排">Kubernetes技术</a></li>
-      <li><a href="zh/chapter_modelcontextprotocol/index.md" title="MCP协议">MCP协议</a></li>
-      <li><a href="zh/chapter_post/elasticjob_cloud.md" title="ElasticJob云原生实践">云原生应用</a></li>
-      <li><a href="zh/chapter_n8n/1-official-website.md" title="N8N���作流自动化">工作流自动化</a></li>
-      <li><a href="zh/chapter_ai/1-llm-integration.md" title="大语言模型集成开发">LLM开发</a></li>
+      <li><a href="/zh/chapter_spring_ai/1-official-website" title="Spring AI应用">Spring AI</a></li>
+      <li><a href="/zh/chaptor_reactor/Flux" title="响应式编程">响应式编程</a></li>
+      <li><a href="/zh/chapter_kubernetes/1-index" title="Kubernetes容器编排">Kubernetes技术</a></li>
+      <li><a href="/zh/chapter_modelcontextprotocol/index" title="MCP协议">MCP协议</a></li>
+      <li><a href="/zh/chapter_post/elasticjob_cloud" title="ElasticJob云原生实践">云原生应用</a></li>
+      <li><a href="/zh/chapter_n8n/1-official-website" title="N8N工作流自动化">工作流自动化</a></li>
+      <li><a href="/zh/chapter_ai/1-llm-integration" title="大语言模型集成开发">LLM开发</a></li>
     </ul>
   </div>
   
   <div class="site-map-section">
     <h3>🔧 实用工具</h3>
     <ul class="site-map-list">
-      <li><a href="zh/chapter_linux/problem/cpu.md" title="Linux性能优化">Linux性能优化</a></li>
-      <li><a href="zh/chapter_post/micrometer.md" title="Micrometer监控">可观测性工具</a></li>
-      <li><a href="zh/chapter_post/site.md" title="实用网址收藏">开发者资源</a></li>
-      <li><a href="zh/chapter_algorithm/1-sample.md" title="算法学习">算法精选</a></li>
-      <li><a href="zh/chapter_post/log4j2.md" title="日志技术">日志最佳实践</a></li>
+      <li><a href="/zh/chapter_linux/problem/cpu" title="Linux性能优化">Linux性能优化</a></li>
+      <li><a href="/zh/chapter_post/micrometer" title="Micrometer监控">可观测性工具</a></li>
+      <li><a href="/zh/chapter_post/site" title="实用网址收藏">开发者资源</a></li>
+      <li><a href="/zh/chapter_algorithm/1-sample" title="算法学习">算法精选</a></li>
+      <li><a href="/zh/chapter_post/log4j2" title="日志技术">日志最佳实践</a></li>
     </ul>
   </div>
 </div>
 
 <div class="footer-message">
-  <p>可微信搜索《中间件源码》联系，订阅内容。</p>
+  <p>可��信搜索《中间件源码》联系，订阅内容。</p>
   <p>在这里，我们一起探索代码的奥秘，解析技术的本质。</p>
 </div>
 
