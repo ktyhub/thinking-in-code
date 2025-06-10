@@ -17,25 +17,28 @@
     bottom: 0;
 }
 
-/* 确保页面内容至少填满视口高度，避免短内容页面的footer位置不美观 */
+/* 修复：确保页面内容至少填满视口高度，避免短内容页面的footer位置不美观 */
 body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    overflow-x: hidden; /* 修复：防止水平滚动条 */
+    margin: 0; /* 修复：确保body没有额外的边距导致滚动 */
 }
 
 .md-main {
     flex: 1;
+    overflow-x: hidden; /* 修复：防止主要内容区域出现水平滚动条 */
 }
 
-/* 设置导航菜单滚动 */
+/* 修复：设置导航菜单滚动 */
 .md-sidebar__inner {
     position: sticky;
     top: 4.8rem;
     height: calc(100vh - 4.8rem); /* 计算可视区域高度 */
     overflow-y: auto;
     overflow-x: hidden;
-    padding-bottom: 150px; /* 保持增加后的底部空间，确保底部内容不被footer遮挡 */
+    padding-bottom: 120px; /* 修复：减少底部填充空间，避免过度滚动 */
 }
 
 /* 移除对所有菜单项最后一项的通用边距设置 */
@@ -43,20 +46,32 @@ body {
     margin-bottom: 60px;
 } */
 
-/* 只对整个导航的最后一级菜单中的最后一个项目增加底部边距 */
+/* 修复：只对整个导航的最后一级菜单中的最后一个项目增加适当的底部边距 */
 .md-nav--primary > .md-nav__list > .md-nav__item:last-child .md-nav__item:last-child > .md-nav__link {
-    margin-bottom: 60px;
+    margin-bottom: 40px; /* 修复：减少底部边距，避免过度滚动 */
 }
 
-/* 特别处理release note部分，因为它通常包含很多子项并且可能是最后一个主菜单 */
+/* 修复：特别处理release note部分，因为它通常包含很多子项并且可能是最后一个主菜单 */
 .md-nav__item:has(> .md-nav__link:contains("RELEASE NOTE")) .md-nav__list .md-nav__item:last-child {
-    margin-bottom: 60px;
+    margin-bottom: 40px; /* 修复：减少底部边距，避免过度滚动 */
 }
 
-/* 修复RELEASE NOTE菜单与其他菜单之间的间距问题 */
+/* 修复RELEASE NOTE菜单与其他���单之间的间距问题 */
 .md-nav__item:has(> .md-nav__link:contains("RELEASE NOTE")) {
     margin-bottom: 0; /* 移除RELEASE NOTE菜单项本身的额外底部边距 */
     margin-top: 0; /* 移除RELEASE NOTE菜单项本身的额外顶部边距 */
+}
+
+/* 修复：特别���对"新技术"导航下的菜单间距问题 */
+.md-nav__item:has(> .md-nav__link:contains("新技术")) > .md-nav > .md-nav__list > .md-nav__item {
+    margin-top: 0; /* 移除顶部间距 */
+    margin-bottom: 0; /* 移除底部间距 */
+}
+
+/* 专门修复"新技术"导航下"首页"和"RELEASE NOTE"之间的间距 */
+.md-nav__item:has(> .md-nav__link:contains("首页")) + .md-nav__item:has(> .md-nav__link:contains("RELEASE NOTE")) {
+    margin-top: 0.1rem; /* 设置非常小的顶部边距 */
+    padding-top: 0; /* 移除顶部内边距 */
 }
 
 /* 统一优化所有菜单项之间的间距 */
@@ -64,11 +79,12 @@ body {
     margin: 0; /* 重置所有菜单项的外边距 */
 }
 
-/* 设置菜单链接的内边距，使菜单项之间有适当的距离但不过大 */
+/* 修复：设置菜单链接的内边距，使菜单项之间有适当的距离但不过大 */
 .md-nav__link {
     padding-top: 0.2rem; /* 减小顶部内边距 */
     padding-bottom: 0.2rem; /* 减小底部内边距 */
     margin: 0; /* 确保没有外边距 */
+    transition: background-color 0.2s; /* 修复：添加过渡效果，减少抖动感 */
 }
 
 /* 确保子菜单项之间的间距也是紧凑的 */
@@ -87,9 +103,10 @@ body {
     scroll-behavior: smooth;
 }
 
-/* 确保导航菜单中不会出现水平滚动条 */
+/* 修复：确保导航菜单中不会出现水平滚动条 */
 .md-nav__list {
     overflow-x: hidden;
+    width: 100%; /* 确保宽度正确 */
 }
 
 /* 优化移动设备上的导航菜单滚动体验 */
@@ -102,76 +119,89 @@ body {
     }
 }
 
-/* 为所有导航菜单项中的emoji添加右侧间距 - 增加间距 */
-.md-nav__link:first-letter {
-    margin-right: 0.8em; /* 增加emoji和文字之间的间距，原来是0.4em */
-    display: inline-block; /* 确保���距生效 */
-}
-
-/* 为顶部标签中的emoji添加右侧间距 - 增加间距 */
-.md-tabs__link:first-letter {
-    margin-right: 0.8em; /* 增加间距，原来是0.4em */
+/* 删除原来对所有首字母应用的间距规则 */
+/* .md-nav__link:first-letter {
+    margin-right: 0.5em;
     display: inline-block;
-}
+} */
 
-/* 为面包屑导航中的emoji添加右侧间距 - 增加间距 */
-.md-breadcrumb:first-letter {
-    margin-right: 0.8em; /* 增加间距，原来是0.4em */
+/* 新增：只为菜单项中的emoji图标添加右侧间距 */
+.md-nav__link .twemoji,
+.md-nav__link .emojione {
+    margin-right: 0.5em;
     display: inline-block;
+    vertical-align: middle;
 }
 
-/* 新增：使用Unicode字符属性选择器，专门���emoji和文字之间添加间隔 */
-.md-nav__link::before {
+/* 修复：为顶部标签中的emoji添加右侧间距 */
+.md-tabs__link .twemoji,
+.md-tabs__link .emojione {
+    margin-right: 0.5em;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* 修复：为面包屑导航中的emoji添加右侧间距 */
+.md-breadcrumb .twemoji,
+.md-breadcrumb .emojione {
+    margin-right: 0.5em;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* 移除：这个选择器可能导致布局不一致 */
+/* .md-nav__link::before {
     content: " ";
     white-space: pre;
     display: inline;
     visibility: hidden;
-}
+} */
 
-/* 专门为标题和emoji之间添加更明显的空格 */
+/* 修复：调整字符间距，防止过大间距导致抖动 */
 .md-nav__item .md-nav__link {
-    letter-spacing: 0.08em; /* 增加字符间距 */
+    letter-spacing: normal; /* 修复：恢复正常字符间距，避免所有字母之间都产生间距 */
 }
 
-/* 确保emoji和文本之间有额外空间 */
+/* 修复：确保emoji和文本之间有适当空间，但不过大 */
 [class*="md-nav"] [class*="__link"] > span:first-child {
-    margin-right: 0.5em;
+    margin-right: 0.3em; /* 修复：减少间距 */
 }
 
-/* 修改：使用横向滚动条替代省略号 */
+/* 修复：替换横向滚动机制，改用截断和省略号，防止菜单抖动 */
 .md-nav__link {
     white-space: nowrap; /* 保持不换行 */
-    overflow-x: auto; /* 允许水平滚动 */
-    overflow-y: hidden; /* 隐藏垂直滚动 */
+    overflow: hidden; /* 修复：隐藏溢出文本，不使用滚动 */
+    text-overflow: ellipsis; /* 修复：使用省略号替代滚动条 */
     padding-right: 0.5rem;
-    padding-bottom: 3px; /* 为滚动条留出空间 */
+    padding-bottom: 0.2rem; /* 减少底部填充，避免不必要的空间 */
     max-width: 100%;
     display: block;
-    scrollbar-width: thin; /* Firefox 滚动条设置 */
-    scrollbar-color: rgba(0, 0, 0, 0.2) transparent; /* Firefox 滚动条颜色 */
 }
 
-/* WebKit 浏览器滚动条美化 */
-.md-nav__link::-webkit-scrollbar {
-    height: 3px; /* 水平滚动条高度 */
+/* 移除：不再需要滚动条相关样式 */
+/* .md-nav__link::-webkit-scrollbar {
+    height: 3px;
 }
 
 .md-nav__link::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2); /* 滚动条颜色 */
+    background-color: rgba(0, 0, 0, 0.2);
     border-radius: 4px;
 }
 
 .md-nav__link::-webkit-scrollbar-track {
-    background: transparent; /* 轨道透明 */
-}
+    background: transparent;
+} */
 
-/* 鼠标悬停时保留显示全文的效果 */
+/* 修复：鼠标悬停时的行为，防止抖动 */
 .md-nav__link:hover {
-    overflow: visible;
-    z-index: 10;
+    overflow: hidden; /* 修复：保持溢出隐藏，防止抖动 */
+    text-overflow: ellipsis; /* 修复：保持使用省略号 */
+    z-index: 1;
     position: relative;
-    background-color: var(--md-default-bg-color, #fff);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    background-color: var(--md-typeset-a-color, #0366d6);
+    color: white !important;
+    border-radius: 3px;
+    box-shadow: none; /* 移除阴影，防止布局抖动 */
 }
 
 /* 对Release Note部分特殊处理 */
@@ -179,19 +209,40 @@ body {
     font-size: 0.95em; /* 略微减小字体大小 */
 }
 
-/* 针对面包屑导航样式调整，避免滚动条影响布局 */
+/* 修复：针对面包屑导航样式调整 */
 .md-breadcrumb {
-    overflow-x: visible !important;
+    overflow-x: hidden !important; /* 修复：隐藏可能的水平溢出 */
+    text-overflow: ellipsis; /* 使用省略号 */
 }
 
-/* 针对侧边栏中最后几项菜单的特殊处理，避免滚动条被截断 */
+/* 修复：针对侧边栏中最后几项菜单的特殊处理 */
 .md-nav__item:last-child .md-nav__link,
 .md-nav__item:nth-last-child(2) .md-nav__link,
 .md-nav__item:nth-last-child(3) .md-nav__link {
-    margin-bottom: 3px;
+    margin-bottom: 2px;
 }
 
-/* 滚动条在菜单悬停时才显示，提升美观度 */
-.md-nav__link:not(:hover)::-webkit-scrollbar-thumb {
-    background-color: transparent;
+/* 修复：为活动菜单项添加更明显的视觉提示 */
+.md-nav__link--active {
+    font-weight: bold;
+    color: var(--md-typeset-a-color, #0366d6) !important;
+}
+
+/* 修复：阻止页面内容水平溢出 */
+.md-grid {
+    max-width: 100%;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+/* 修复：确保内容区域不会导致水平滚动 */
+.md-content {
+    overflow-x: hidden;
+}
+
+/* 修复：移动设备上的布局问题 */
+@media only screen and (max-width: 76.1875em) {
+    html, body {
+        overflow-x: hidden;
+    }
 }
