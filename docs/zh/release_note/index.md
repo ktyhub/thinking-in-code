@@ -5,8 +5,8 @@
     <h2>掌握技术趋势 <span class="accent">引领创新未来</span></h2>
     <p>这里汇聚全球开源技术社区的最新发布信息，助您时刻把握科技脉搏</p>
     <div class="search-container">
-      <input type="text" id="tech-search" placeholder="搜索框架或版本..." onkeyup="searchReleases()">
-      <button class="search-btn"><i class="fas fa-search"></i></button>
+      <input type="text" id="tech-search" placeholder="搜索框架或版本..." onkeyup="handleSearchKeyUp(event)">
+      <button class="search-btn" onclick="performGlobalSearch()"><i class="fas fa-search"></i></button>
     </div>
   </div>
   <div class="hero-image">
@@ -152,6 +152,42 @@ document.addEventListener('DOMContentLoaded', function() {
   animateTechSphere();
 });
 
+// 处理搜索框回车事件
+function handleSearchKeyUp(event) {
+  if (event.key === 'Enter') {
+    performGlobalSearch();
+  }
+}
+
+// 执行全局搜索，调用右上角搜索框
+function performGlobalSearch() {
+  const searchText = document.getElementById('tech-search').value.trim();
+  if (searchText) {
+    // 获取导航栏上的搜索框
+    const globalSearchInput = document.querySelector('.md-search__input');
+    if (globalSearchInput) {
+      // 设置全局搜索框的值
+      globalSearchInput.value = searchText;
+      
+      // 触发输入事件以激活搜索
+      globalSearchInput.dispatchEvent(new Event('input', { bubbles: true }));
+      
+      // 点击搜索图标以打开搜索结果
+      const searchIcon = document.querySelector('.md-header__button[aria-label="搜索"]') || 
+                         document.querySelector('.md-header__button[aria-label="Search"]');
+      if (searchIcon) {
+        searchIcon.click();
+      }
+      
+      // 聚焦到搜索框
+      globalSearchInput.focus();
+    } else {
+      // 如果无法找到全局搜索框，使用window.location进行搜索
+      window.location.href = `${window.location.origin}/search.html?q=${encodeURIComponent(searchText)}`;
+    }
+  }
+}
+
 // 初始化数据
 function initReleaseData() {
   // 这里将通过AJAX或其他方式获取所有发布数据
@@ -160,7 +196,7 @@ function initReleaseData() {
   // 加载最新发布
   loadLatestReleases();
   
-  // 加载所有发布记录
+  // 加载所有发���记录
   loadAllReleases();
   
   // 更新统计数据
@@ -207,10 +243,9 @@ function filterByCategory(category) {
 }
 
 // 搜索功能
-function searchReleases() {
-  const searchText = document.getElementById('tech-search').value.toLowerCase();
-  // 实现搜索逻辑
-  // ...
+function searchReleases(text) {
+  const searchText = text || document.getElementById('tech-search').value.toLowerCase();
+  // 本地搜索逻辑...
 }
 
 // 显示所有项目
