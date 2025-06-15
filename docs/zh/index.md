@@ -119,12 +119,17 @@
     <a href="/zh/chapter_kubernetes/" class="category-card" data-aos="zoom-in" data-aos-delay="300">
       <div class="category-icon"><i class="fas fa-cubes"></i></div>
       <h3>云原生</h3>
-      <p>��器化与微服务架构实践</p>
+      <p>容器化与微服务架构实践</p>
     </a>
     <a href="/zh/chapter_ddd/" class="category-card" data-aos="zoom-in" data-aos-delay="400">
       <div class="category-icon"><i class="fas fa-sitemap"></i></div>
       <h3>领域驱动设计</h3>
       <p>DDD理念与复杂系统构建</p>
+    </a>
+    <a href="/zh/3d_showcase/" class="category-card" data-aos="zoom-in" data-aos-delay="500">
+      <div class="category-icon"><i class="fas fa-cube"></i></div>
+      <h3>Three.js 3D</h3>
+      <p>交互式3D图形与Web可视化</p>
     </a>
   </div>
 </div>
@@ -387,7 +392,7 @@ function loadLatestArticles() {
   const latestArticles = [
     {
       title: "Spring AI 与大语言模型集成实践",
-      description: "探索如何在Spring��用中集成最新的大语言模型技术",
+      description: "探索���何在Spring应用中集成最新的大语言模型技术",
       category: "人工智能",
       date: "2025-06-01",
       url: "/zh/chapter_spring_ai/llm_integration/"
@@ -400,7 +405,7 @@ function loadLatestArticles() {
       url: "/zh/chapter_kubernetes/custom_operator/"
     },
     {
-      title: "事件风暴建模工作坊实践",
+      title: "事件��暴建模工作坊实践",
       description: "如何通过事件风暴快速构建领域模型",
       category: "DDD",
       date: "2025-05-18", 
