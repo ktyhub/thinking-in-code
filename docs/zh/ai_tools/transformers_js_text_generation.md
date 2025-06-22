@@ -2,7 +2,7 @@
 
 体验直接在您的浏览器中运行的文本生成 AI 模型！借助 [Transformers.js](https://huggingface.co/docs/transformers.js/index)，我们可以让 AI 根据您提供的提示（prompt）创作文本。
 
-在下面的文本框中输入一个英文句子作为开头，然后点击“生成文本”按钮，模型将尝试补全后续内容。
+在下面的文本框中输入一个英文句子作为开头，然后点击“生成文本”按���，模型将尝试补全后续内容。
 
 <div class="ai-interactive-area">
   <textarea id="text-generation-input" rows="4" placeholder="Enter your English prompt here (e.g., 'Once upon a time, in a land far away...')"></textarea>
@@ -14,8 +14,31 @@
 </div>
 
 <script type="module">
-  // 使用 ES 模块导��� Transformers.js
-  import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1';
+  // 使用最新版本的 Transformers.js
+  import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.19.0';
+
+  // 多CDN回退策略
+  window.addEventListener("error", function(e) {
+    if (e.target.tagName === "SCRIPT" && e.target.src.includes("@xenova/transformers")) {
+      console.log("CDN加载失败，尝试备用CDN");
+      const cdns = [
+        "https://unpkg.com/@xenova/transformers@2.19.0",
+        "https://esm.sh/@xenova/transformers@2.19.0",
+        "https://cdn.skypack.dev/@xenova/transformers@2.19.0"
+      ];
+      
+      const failedSrc = e.target.src;
+      const cdnIndex = cdns.findIndex(cdn => failedSrc.includes(cdn));
+      const nextIndex = cdnIndex + 1 < cdns.length ? cdnIndex + 1 : -1;
+      
+      if (nextIndex >= 0) {
+        const script = document.createElement("script");
+        script.type = "module";
+        script.src = cdns[nextIndex];
+        document.head.appendChild(script);
+      }
+    }
+  }, true);
 
   // 配置 Transformers.js
   env.allowLocalModels = false; // 不允许本地模型，仅从 Hugging Face Hub 下载
@@ -26,6 +49,14 @@
   const generatedTextOutput = document.getElementById('generated-text');
 
   let generator = null;
+  let modelLoadTimeout = null;
+  
+  // 备选模型配置列表
+  const modelConfigs = [
+    { name: 'Xenova/distilgpt2', maxLength: 100 },
+    { name: 'Xenova/gpt2', maxLength: 100 }, 
+    { name: 'Xenova/flan-t5-small', maxLength: 100 }
+  ];
 
   generateButton.addEventListener('click', async () => {
     const prompt = textInput.value;
@@ -35,50 +66,121 @@
     }
 
     generateButton.disabled = true;
-    generateButton.textContent = "正在加载模型并生成...";
+    generateButton.textContent = "正在处理...";
     generatedTextOutput.textContent = "处理中...";
 
     try {
       // 首次点击时加载模型
       if (!generator) {
-        generatedTextOutput.textContent = "首次加载文本生成模型 (可能需要一些时间)...";
-        // 使用 Xenova/distilgpt2 模型进行文本生成
-        // 您可以从 Hugging Face Hub 选择其他兼容的文本生成模型
-        generator = await pipeline('text-generation', 'Xenova/distilgpt2', {
-          progress_callback: (progress) => {
-            generatedTextOutput.textContent = `模型加载中: ${progress.file} (${Math.round(progress.progress)}%)`;
-          }
+        await loadModel();
+      }
+      
+      // 生成文本
+      if (generator) {
+        const result = await generator(prompt, {
+          max_new_tokens: 100,
+          temperature: 0.7,
+          repetition_penalty: 1.2
         });
-        generatedTextOutput.textContent = "模型加载完毕!";
-      }
-      
-      // 执行文本生成
-      // max_length 控制生成文本的最大长度 (包括提示)
-      // num_return_sequences 控制返回多少个独立的生成序列
-      const output = await generator(prompt, { 
-        max_length: 100, 
-        num_return_sequences: 1,
-        temperature: 0.7, // 控制随机性，较低的值���保守，较高的值更多样
-        top_k: 50,        // 仅从概率最高的 k 个词中采样
-        do_sample: true   // 开启采样，否则是贪婪搜索
-      });
-      
-      // 显示结果
-      // output 结构通常是 [{ generated_text: '...' }]
-      if (output && output.length > 0 && output[0].generated_text) {
-        generatedTextOutput.textContent = output[0].generated_text;
-      } else {
-        generatedTextOutput.textContent = "文本生成失败或无输出";
-      }
 
+        // 显示生成的文本
+        let generatedText = result[0].generated_text;
+        generatedTextOutput.textContent = generatedText;
+      }
     } catch (error) {
-      console.error('文本生成出错:', error);
-      generatedTextOutput.textContent = '错误: ' + error.message;
+      console.error('文本生成错误:', error);
+      generatedTextOutput.textContent = `生成失败: ${error.message}`;
     } finally {
       generateButton.disabled = false;
       generateButton.textContent = "生成文本";
     }
   });
+  
+  async function loadModel() {
+    generatedTextOutput.textContent = "正在加载文本生成模型...";
+    
+    // 添加超时机制
+    if (modelLoadTimeout) {
+      clearTimeout(modelLoadTimeout);
+    }
+    
+    // 30秒后超时
+    let timeoutReject = null;
+    const timeoutPromise = new Promise((_, reject) => {
+      timeoutReject = reject;
+      modelLoadTimeout = setTimeout(() => {
+        reject(new Error('模型加载超时，请检查网络连接'));
+      }, 30000);
+    });
+    
+    try {
+      // 依次尝试加载备选模型，直到成功
+      for (let i = 0; i < modelConfigs.length; i++) {
+        const modelConfig = modelConfigs[i];
+        try {
+          generatedTextOutput.textContent = `正在加载模型 ${i+1}/${modelConfigs.length}: ${modelConfig.name}`;
+          
+          // 加载文本生成模型，与超时竞争
+          const genPipeline = await Promise.race([
+            pipeline('text-generation', modelConfig.name, {
+              progress_callback: (progress) => {
+                if (progress.status === 'progress') {
+                  const percent = Math.round(progress.progress * 100);
+                  generatedTextOutput.textContent = `模型加载中: ${percent}%`;
+                }
+              },
+              quantized: true // 使用量化模型减少下载大小
+            }),
+            timeoutPromise
+          ]);
+          
+          if (genPipeline) {
+            generator = genPipeline;
+            // 清除超时
+            if (modelLoadTimeout) {
+              clearTimeout(modelLoadTimeout);
+            }
+            generatedTextOutput.textContent = "模型加载完成，准备生成文本";
+            return;
+          }
+        } catch (error) {
+          console.error(`模型 ${modelConfig.name} 加载失败:`, error);
+          if (i === modelConfigs.length - 1) {
+            throw error; // 如果是最后一个模型，抛出错误
+          }
+          // 否则尝试下一个模型
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+    } catch (error) {
+      // 显示友好的错误提示
+      generatedTextOutput.innerHTML = `
+      <div style="color: #d32f2f; background-color: #ffebee; padding: 15px; border-radius: 4px; margin: 15px 0;">
+          <h4 style="margin-top: 0;">模型加载失败</h4>
+          <p><strong>错误信息:</strong> ${error.message || "未知错误"}</p>
+          
+          <p><strong>可能的原因:</strong></p>
+          <ul>
+              <li>网络连接问题</li>
+              <li>浏览器不支持WebAssembly</li>
+              <li>服务器暂时无法访问</li>
+          </ul>
+          
+          <p><strong>您可以尝试:</strong></p>
+          <ul>
+              <li><a href="javascript:window.location.reload()">刷新页面</a>重试</li>
+              <li>检查您的网络连接</li>
+              <li>尝试使用Chrome或Firefox浏览器</li>
+          </ul>
+      </div>
+      `;
+      // 清除超时
+      if (modelLoadTimeout) {
+        clearTimeout(modelLoadTimeout);
+      }
+      throw error;
+    }
+  }
 </script>
 
 ## 工作原理
@@ -113,4 +215,3 @@
 *   以及更多自然语言处理和计算机视觉任务
 
 所有这些都在用户浏览器中完成，保护了用户隐私并减少了服务器负载。
-
