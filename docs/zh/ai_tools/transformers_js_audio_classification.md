@@ -17,7 +17,19 @@ Transformers.js 提供了预训练的音频分类模型，如 Audio Spectrogram 
 <html lang="zh">
 <head>
     <title>Transformers.js 音频分类示例</title>
-    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.14.0"></script>
+    <!-- 更新到最新稳定版本，并添加备用CDN地址 -->
+    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.15.1"></script>
+    <script>
+        // 如果主CDN失败，尝试备用CDN
+        window.addEventListener("error", function(e) {
+            if (e.target.tagName === "SCRIPT" && e.target.src.includes("@xenova/transformers")) {
+                console.log("主CDN加载失败，尝试备用CDN");
+                const script = document.createElement("script");
+                script.src = "https://unpkg.com/@xenova/transformers@2.15.1";
+                document.head.appendChild(script);
+            }
+        }, true);
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -40,6 +52,10 @@ Transformers.js 提供了预训练的音频分类模型，如 Audio Spectrogram 
         }
         button:hover {
             background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
         }
         #results {
             margin-top: 20px;
@@ -79,6 +95,24 @@ Transformers.js 提供了预训练的音频分类模型，如 Audio Spectrogram 
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
+        #loading-indicator {
+            display: none;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #4CAF50;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -105,7 +139,12 @@ Transformers.js 提供了预训练的音频分类模型，如 Audio Spectrogram 
         
         <button id="classify-btn">分类音频</button>
         
-        <div id="status">状态: 准备就绪</div>
+        <div id="status">状态: 初始化中...</div>
+        
+        <div id="loading-indicator">
+            <div class="spinner"></div>
+            <p id="loading-text">正在加载模型，请稍候...</p>
+        </div>
         
         <div id="results">
             <h3>分类结果:</h3>
@@ -115,33 +154,41 @@ Transformers.js 提供了预训练的音频分类模型，如 Audio Spectrogram 
 
     <script>
         // 使用 Transformers.js 进行音频分类
-        const { pipeline } = window.transformers;
-        
         let classificationModel = null;
         let isModelLoading = false;
         let audioBlob = null;
         let mediaRecorder = null;
         let recordedChunks = [];
+        let modelLoadingTimeout = null;
+        let modelLoadRetries = 0;
+        const MAX_RETRIES = 3;
         
-        const statusElement = document.getElementById(&apos;status&apos;);
-        const audioPlayer = document.getElementById(&apos;audio-player&apos;);
-        const audioFileInput = document.getElementById(&apos;audio-file&apos;);
-        const classifyButton = document.getElementById(&apos;classify-btn&apos;);
-        const resultsContainer = document.getElementById(&apos;results-container&apos;);
-        const uploadSection = document.getElementById(&apos;upload-section&apos;);
-        const recordSection = document.getElementById(&apos;record-section&apos;);
-        const recordButton = document.getElementById(&apos;record-button&apos;);
-        const recordingStatus = document.getElementById(&apos;recording-status&apos;);
+        const statusElement = document.getElementById("status");
+        const audioPlayer = document.getElementById("audio-player");
+        const audioFileInput = document.getElementById("audio-file");
+        const classifyButton = document.getElementById("classify-btn");
+        const resultsContainer = document.getElementById("results-container");
+        const uploadSection = document.getElementById("upload-section");
+        const recordSection = document.getElementById("record-section");
+        const recordButton = document.getElementById("record-button");
+        const recordingStatus = document.getElementById("recording-status");
+        const loadingIndicator = document.getElementById("loading-indicator");
+        const loadingText = document.getElementById("loading-text");
+        
+        // 检查 Transformers.js 是否正确加载
+        function checkTransformersLoaded() {
+            return typeof window.transformers !== "undefined" && window.transformers !== null;
+        }
         
         // 处理音频源切换
-        document.querySelectorAll(&apos;input[name="audio-source"]&apos;).forEach(radio => {
-            radio.addEventListener(&apos;change&apos;, (e) => {
-                if (e.target.value === &apos;upload&apos;) {
-                    uploadSection.style.display = &apos;block&apos;;
-                    recordSection.style.display = &apos;none&apos;;
+        document.querySelectorAll("input[name=\"audio-source\"]").forEach(radio => {
+            radio.addEventListener("change", (e) => {
+                if (e.target.value === "upload") {
+                    uploadSection.style.display = "block";
+                    recordSection.style.display = "none";
                 } else {
-                    uploadSection.style.display = &apos;none&apos;;
-                    recordSection.style.display = &apos;block&apos;;
+                    uploadSection.style.display = "none";
+                    recordSection.style.display = "block";
                 }
             });
         });
@@ -151,25 +198,68 @@ Transformers.js 提供了预训练的音频分类模型，如 Audio Spectrogram 
             if (isModelLoading || classificationModel) return;
             
             try {
+                // 检查库是否加载成功
+                if (!checkTransformersLoaded()) {
+                    throw new Error("Transformers.js 库未能正确加载。请刷新页面或检查网络连接。");
+                }
+                
+                const { pipeline } = window.transformers;
+                
                 isModelLoading = true;
-                statusElement.textContent = &apos;状态: 正在加载音频分类模型...&apos;;
+                statusElement.textContent = "状态: 正在加载音频分类模型...";
+                loadingIndicator.style.display = "block";
                 
-                classificationModel = await pipeline(&apos;audio-classification&apos;, &apos;Xenova/ast-finetuned-audioset-10-10-0.4593&apos;);
+                // 添加超时处理
+                modelLoadingTimeout = setTimeout(() => {
+                    if (isModelLoading && !classificationModel) {
+                        statusElement.textContent = "状态: 模型加载时间较长，请耐心等待...";
+                        loadingText.textContent = "模型加载时间较长，请耐心等待...";
+                    }
+                }, 10000);
                 
-                statusElement.textContent = &apos;状态: 模型已加载，准备就绪&apos;;
+                classificationModel = await pipeline("audio-classification", "Xenova/ast-finetuned-audioset-10-10-0.4593", {
+                    progress_callback: (progress) => {
+                        if (progress.status === "progress") {
+                            const percent = Math.round(progress.progress * 100);
+                            loadingText.textContent = `正在加载模型: ${percent}%`;
+                        }
+                    }
+                });
+                
+                clearTimeout(modelLoadingTimeout);
+                statusElement.textContent = "状态: 模型已加载，准备就绪";
+                loadingIndicator.style.display = "none";
+                classifyButton.disabled = false;
             } catch (error) {
-                statusElement.textContent = `状态: 模型加载失败 - ${error.message}`;
-                console.error(&apos;模型加载错误:&apos;, error);
+                clearTimeout(modelLoadingTimeout);
+                console.error("模型加载错误:", error);
+                
+                if (modelLoadRetries < MAX_RETRIES) {
+                    modelLoadRetries++;
+                    statusElement.textContent = `状态: 模型加载失败，正在尝试重新加载 (${modelLoadRetries}/${MAX_RETRIES})`;
+                    loadingText.textContent = `正在重新加载模型 (${modelLoadRetries}/${MAX_RETRIES})...`;
+                    setTimeout(loadModel, 3000); // 3秒后重试
+                } else {
+                    statusElement.textContent = `状态: 模型加载失败 - ${error.message}`;
+                    loadingIndicator.style.display = "none";
+                    alert("无法加载音频分类模型。请检查您的网络连接并刷新页面重试。");
+                }
             } finally {
                 isModelLoading = false;
             }
         }
 
-        // 初始加载模型
-        loadModel();
+        // 初始化
+        window.addEventListener("DOMContentLoaded", () => {
+            statusElement.textContent = "状态: 准备加载模型...";
+            classifyButton.disabled = true;
+            
+            // 延迟加载模型，确保页面已完全加载
+            setTimeout(loadModel, 1000);
+        });
         
         // 处理音频文件上传
-        audioFileInput.addEventListener(&apos;change&apos;, (e) => {
+        audioFileInput.addEventListener("change", (e) => {
             const file = e.target.files[0];
             if (!file) return;
             
@@ -178,29 +268,29 @@ Transformers.js 提供了预训练的音频分类模型，如 Audio Spectrogram 
         });
         
         // 处理录音
-        recordButton.addEventListener(&apos;click&apos;, async () => {
-            if (mediaRecorder && mediaRecorder.state === &apos;recording&apos;) {
+        recordButton.addEventListener("click", async () => {
+            if (mediaRecorder && mediaRecorder.state === "recording") {
                 mediaRecorder.stop();
-                recordButton.classList.remove(&apos;recording&apos;);
-                recordingStatus.textContent = &apos;录音已结束&apos;;
+                recordButton.classList.remove("recording");
+                recordingStatus.textContent = "录音已结束";
                 return;
             }
             
             try {
-                recordingStatus.textContent = &apos;请求麦克风权限...&apos;;
+                recordingStatus.textContent = "请求麦克风权限...";
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 
                 recordedChunks = [];
                 mediaRecorder = new MediaRecorder(stream);
                 
-                mediaRecorder.addEventListener(&apos;dataavailable&apos;, (e) => {
+                mediaRecorder.addEventListener("dataavailable", (e) => {
                     if (e.data.size > 0) {
                         recordedChunks.push(e.data);
                     }
                 });
                 
-                mediaRecorder.addEventListener(&apos;stop&apos;, () => {
-                    audioBlob = new Blob(recordedChunks, { type: &apos;audio/webm&apos; });
+                mediaRecorder.addEventListener("stop", () => {
+                    audioBlob = new Blob(recordedChunks, { type: "audio/webm" });
                     audioPlayer.src = URL.createObjectURL(audioBlob);
                     
                     // 停止所有轨道
@@ -209,40 +299,46 @@ Transformers.js 提供了预训练的音频分类模型，如 Audio Spectrogram 
                 
                 // 开始录音
                 mediaRecorder.start();
-                recordButton.classList.add(&apos;recording&apos;);
-                recordingStatus.textContent = &apos;正在录音...（点击停止）&apos;;
+                recordButton.classList.add("recording");
+                recordingStatus.textContent = "正在录音...（点击停止）";
             } catch (error) {
                 recordingStatus.textContent = `录音失败: ${error.message}`;
-                console.error(&apos;录音错误:&apos;, error);
+                console.error("录音错误:", error);
             }
         });
         
         // 分类音频
-        classifyButton.addEventListener(&apos;click&apos;, async () => {
+        classifyButton.addEventListener("click", async () => {
             if (!audioBlob) {
-                alert(&apos;请先上传或录制音频&apos;);
+                alert("请先上传或录制音频");
                 return;
             }
             
             if (!classificationModel) {
-                alert(&apos;模型尚未加载完成，请稍候&apos;);
+                if (isModelLoading) {
+                    alert("模型正在加载中，请稍候");
+                } else {
+                    alert("模型未加载，正在尝试重新加载");
+                    loadModel();
+                }
                 return;
             }
             
             try {
-                statusElement.textContent = &apos;状态: 正在分析音频...&apos;;
-                resultsContainer.innerHTML = &apos;<p>分析中...</p>&apos;;
+                statusElement.textContent = "状态: 正在分析音频...";
+                resultsContainer.innerHTML = "<p>分析中...</p>";
+                classifyButton.disabled = true;
                 
                 // 使用模型分类音频
                 const results = await classificationModel(audioBlob);
                 
                 // 显示结果
-                resultsContainer.innerHTML = &apos;&apos;;
+                resultsContainer.innerHTML = "";
                 results.forEach(result => {
                     const percentage = (result.score * 100).toFixed(2);
                     
-                    const resultItem = document.createElement(&apos;div&apos;);
-                    resultItem.className = &apos;result-item&apos;;
+                    const resultItem = document.createElement("div");
+                    resultItem.className = "result-item";
                     resultItem.innerHTML = `
                         <div>
                             <strong>${result.label}</strong>
@@ -254,11 +350,13 @@ Transformers.js 提供了预训练的音频分类模型，如 Audio Spectrogram 
                     resultsContainer.appendChild(resultItem);
                 });
                 
-                statusElement.textContent = &apos;状态: 分析完成&apos;;
+                statusElement.textContent = "状态: 分析完成";
             } catch (error) {
                 statusElement.textContent = `状态: 分析失败 - ${error.message}`;
                 resultsContainer.innerHTML = `<p>分析失败: ${error.message}</p>`;
-                console.error(&apos;音频分析错误:&apos;, error);
+                console.error("音频分析错误:", error);
+            } finally {
+                classifyButton.disabled = false;
             }
         });
     </script>
