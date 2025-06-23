@@ -9,11 +9,11 @@
 异常检测方法主要分为三类：
 - **监督式**：通过标记数据训练模型区分正常和异常
 - **半监督式**：仅使用正常数据训练模型，然后识别偏离正常模式的数据
-- **无监督式**：不使用标记数据，通过识别数据分布的远离点来检测异常
+- **无监督式**：不使用标记数据，通过识别数据分布的远离点来�����测异常
 
 深度学习方法包括自编码器(Autoencoders)、变分自编码器(VAEs)、生成对抗网络(GANs)和基于Transformer的模型。
 
-## 交互式AI工具
+## 交互式AI���具
 
 以下是一个使用 Transformers.js 实现异常检测的基本示例，我们将使用特征提取和距离度量方法来识别异常数据点：
 
@@ -22,7 +22,34 @@
 <html lang="zh">
 <head>
     <title>Transformers.js 异常检测示例</title>
-    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.14.0"></script>
+    <!-- 使用更轻量级的 distilbert 模型 -->
+    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.19.0"></script>
+    <script>
+        // 多CDN回退策略 - 如果主CDN失败，依次尝试其他备用CDN
+        window.addEventListener("error", function(e) {
+            if (e.target.tagName === "SCRIPT" && e.target.src.includes("@xenova/transformers")) {
+                console.log("CDN加载失败，尝试备用CDN");
+                const cdns = [
+                    "https://unpkg.com/@xenova/transformers@2.19.0",
+                    "https://esm.sh/@xenova/transformers@2.19.0",
+                    "https://cdn.skypack.dev/@xenova/transformers@2.19.0"
+                ];
+                
+                // 尝试下一个可用的CDN
+                const failedSrc = e.target.src;
+                const cdnIndex = cdns.findIndex(cdn => failedSrc.includes(cdn));
+                const nextIndex = cdnIndex + 1 < cdns.length ? cdnIndex + 1 : -1;
+                
+                if (nextIndex >= 0) {
+                    const script = document.createElement("script");
+                    script.src = cdns[nextIndex];
+                    script.onload = () => console.log("已从备用CDN加载Transformers.js");
+                    script.onerror = () => console.error("所有CDN尝试均失败");
+                    document.head.appendChild(script);
+                }
+            }
+        }, true);
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -67,9 +94,38 @@
             background-color: rgba(255, 0, 0, 0.1);
         }
         .loading {
-            display: none;
+            display: flex;
             margin: 10px 0;
             color: #666;
+            align-items: center;
+            gap: 10px;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border-left-color: #09f;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .error-message {
+            color: #d9534f;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .manual-analysis {
+            margin-top: 15px;
+            display: none;
+            border-top: 1px dashed #ccc;
+            padding-top: 15px;
         }
     </style>
 </head>
@@ -87,15 +143,20 @@
 包装精美，送货及时，体验很好。
 性价比很高，推荐购买。
 质量不错，但是发货有点慢。
-下次还会再来购买，非常满意。
+下次���会再来购买，非常满意。
 这家店完全是骗子！产品是假的！快递员态度也很差！投诉！
 产品外观设计很漂亮，使用也很方便。
 比预期的要好，会推荐给朋友。</textarea>
             <div class="controls">
                 <button id="analyze-btn">分析数据</button>
                 <button id="clear-btn">清除数据</button>
+                <button id="analyze-manual-btn" style="display:none">简单分析</button>
             </div>
-            <div id="loading" class="loading">正在分析中，请稍候...</div>
+            <div id="loading" class="loading" style="display:none;">
+                <div class="spinner"></div>
+                <span id="loading-text">正在分析中，请稍候...</span>
+            </div>
+            <div id="error-message" class="error-message" style="display:none;"></div>
         </div>
         
         <div class="panel">
@@ -107,42 +168,207 @@
             <div id="result-details">
                 <p>点击"分析数据"按钮以开始分析</p>
             </div>
+            
+            <div id="manual-analysis" class="manual-analysis">
+                <h4>简单文本特征分析</h4>
+                <p>如果模型加载失败，我们可以使用简单的文本特征进行异常检测：</p>
+                <div id="manual-results"></div>
+            </div>
         </div>
     </div>
 
     <script>
         // 初始化变量
-        let featureExtractionPipeline;
+        let featureExtractor = null;
         let isModelLoaded = false;
         let chart = null;
+        let modelLoadRetries = 0;
+        const MAX_RETRIES = 2;
         
-        const textArea = document.getElementById(&apos;text-area&apos;);
-        const analyzeBtn = document.getElementById(&apos;analyze-btn&apos;);
-        const clearBtn = document.getElementById(&apos;clear-btn&apos;);
-        const loadingDiv = document.getElementById(&apos;loading&apos;);
-        const resultSummaryDiv = document.getElementById(&apos;result-summary&apos;);
-        const resultDetailsDiv = document.getElementById(&apos;result-details&apos;);
-        const chartCanvas = document.getElementById(&apos;anomaly-chart&apos;);
+        const textArea = document.getElementById("text-area");
+        const analyzeBtn = document.getElementById("analyze-btn");
+        const clearBtn = document.getElementById("clear-btn");
+        const analyzeManualBtn = document.getElementById("analyze-manual-btn");
+        const loadingDiv = document.getElementById("loading");
+        const loadingText = document.getElementById("loading-text");
+        const resultSummaryDiv = document.getElementById("result-summary");
+        const resultDetailsDiv = document.getElementById("result-details");
+        const chartCanvas = document.getElementById("anomaly-chart");
+        const errorMessageDiv = document.getElementById("error-message");
+        const manualAnalysisDiv = document.getElementById("manual-analysis");
+        const manualResultsDiv = document.getElementById("manual-results");
+        
+        // 检查Transformers.js是否正确加载
+        function checkTransformersLoaded() {
+            return typeof window.transformers !== "undefined" && window.transformers !== null;
+        }
         
         // 加载模型
         async function loadModel() {
-            if (isModelLoaded) return;
+            if (isModelLoaded) return true;
             
-            loadingDiv.style.display = &apos;block&apos;;
-            loadingDiv.textContent = &apos;正在加载模型，这可能需要一分钟...&apos;;
+            loadingDiv.style.display = "flex";
+            errorMessageDiv.style.display = "none";
+            loadingText.textContent = "正在加载模型，这可能需要一分钟...";
             
             try {
-                // 使用特征提取模型
-                featureExtractionPipeline = await window.pipeline(
-                    &apos;feature-extraction&apos;,
-                    &apos;Xenova/all-MiniLM-L6-v2&apos;
-                );
+                // 确保transformers对象已加载
+                if (!checkTransformersLoaded()) {
+                    console.warn("Transformers.js库未能立即加载，等待3秒后重试...");
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+                    
+                    if (!checkTransformersLoaded()) {
+                        throw new Error("Transformers.js库加载失败，请检查网络连接");
+                    }
+                }
                 
-                isModelLoaded = true;
-                loadingDiv.style.display = &apos;none&apos;;
+                // 使用正确的方式创建pipeline
+                const { pipeline } = window.transformers;
+                
+                // 定义可用模型列表，按优先级排序
+                const modelOptions = [
+                    {name: "Xenova/distilbert-base-uncased", quantized: true},
+                    {name: "Xenova/all-MiniLM-L6-v2", quantized: true},
+                    {name: "Xenova/all-mpnet-base-v2", quantized: true}
+                ];
+                
+                // 尝试加载模型，依次尝试不同模型
+                for (let i = 0; i < modelOptions.length; i++) {
+                    try {
+                        const modelOption = modelOptions[i];
+                        loadingText.textContent = `正在加载模型 ${modelOption.name}...`;
+                        
+                        featureExtractor = await pipeline(
+                            "feature-extraction",
+                            modelOption.name,
+                            {
+                                quantized: modelOption.quantized,
+                                progress_callback: (progress) => {
+                                    if (progress.status === "progress") {
+                                        const percent = Math.round(progress.progress * 100);
+                                        loadingText.textContent = `正在加载模型 ${modelOption.name}: ${percent}%`;
+                                    }
+                                }
+                            }
+                        );
+                        
+                        console.log(`成功加载模型: ${modelOption.name}`);
+                        isModelLoaded = true;
+                        break;
+                    } catch (modelError) {
+                        console.error(`加载模型 ${modelOptions[i].name} 失败:`, modelError);
+                        if (i === modelOptions.length - 1) {
+                            throw new Error("所有模型加载尝试均失败");
+                        }
+                    }
+                }
+                
+                loadingDiv.style.display = "none";
+                analyzeBtn.disabled = false;
+                return true;
             } catch (error) {
-                loadingDiv.textContent = `模型加载失败: ${error.message}`;
+                console.error("模型加载错误:", error);
+                
+                if (modelLoadRetries < MAX_RETRIES) {
+                    modelLoadRetries++;
+                    loadingText.textContent = `模型加载失败，正在重试 (${modelLoadRetries}/${MAX_RETRIES})...`;
+                    await new Promise(resolve => setTimeout(resolve, 3000)); // 等待3秒
+                    return await loadModel(); // 递归重试
+                } else {
+                    loadingDiv.style.display = "none";
+                    errorMessageDiv.innerHTML = `模型加载失败。<br>可能原因:<br>
+                    1. 网络连接问题<br>
+                    2. 浏览器不支持WebAssembly<br>
+                    3. 服务器暂时无法访问<br><br>
+                    您可以:<br>
+                    - <a href="javascript:window.location.reload()">刷新页面</a>重试<br>
+                    - 或使用下方的简单分析功能`;
+                    errorMessageDiv.style.display = "block";
+                    analyzeManualBtn.style.display = "inline";
+                    return false;
+                }
             }
+        }
+        
+        // 手动分析 - 当模型加载失败时的备选方案
+        function performManualAnalysis() {
+            const texts = textArea.value.trim().split("\\n").filter(text => text.trim() !== "");
+            if (texts.length === 0) {
+                manualResultsDiv.innerHTML = "<p>请输入数据进行分析</p>";
+                return;
+            }
+            
+            // 计算简单特征
+            const features = texts.map(text => ({
+                text: text,
+                length: text.length,
+                punctuationCount: (text.match(/[!?。！？，,.:;，。：；]/g) || []).length,
+                uppercaseRatio: text.replace(/[^A-Za-z]/g, "").split("").filter(c => c === c.toUpperCase()).length / 
+                               (text.replace(/[^A-Za-z]/g, "").length || 1),
+                exclamationCount: (text.match(/[!！]/g) || []).length
+            }));
+            
+            // 计算统计数据
+            const avgLength = features.reduce((sum, f) => sum + f.length, 0) / features.length;
+            const avgPunctuation = features.reduce((sum, f) => sum + f.punctuationCount, 0) / features.length;
+            const avgExclamation = features.reduce((sum, f) => sum + f.exclamationCount, 0) / features.length;
+            
+            // 标记异常
+            const anomalies = features.map(f => {
+                const lengthScore = Math.abs(f.length - avgLength) / avgLength;
+                const punctuationScore = Math.abs(f.punctuationCount - avgPunctuation) / (avgPunctuation || 1);
+                const exclamationScore = f.exclamationCount > 2 ? 2 : f.exclamationCount; // 多个感叹号是强烈情感的信号
+                
+                const anomalyScore = (lengthScore + punctuationScore * 2 + exclamationScore) / 4;
+                
+                return {
+                    text: f.text,
+                    anomalyScore: anomalyScore,
+                    isAnomaly: anomalyScore > 0.7 || f.exclamationCount > 2
+                };
+            });
+            
+            // 按分数排序
+            anomalies.sort((a, b) => b.anomalyScore - a.anomalyScore);
+            
+            // 显示结果
+            const anomalyCount = anomalies.filter(a => a.isAnomaly).length;
+            
+            let tableHTML = `
+                <p>分析了 <strong>${anomalies.length}</strong> 条数据，
+                发现 <strong>${anomalyCount}</strong> 条可能的异常。</p>
+                
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>文本</th>
+                            <th>异常评分</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            anomalies.forEach((item, idx) => {
+                const rowClass = item.isAnomaly ? "anomaly" : "";
+                const status = item.isAnomaly ? "⚠️ 异常" : "✓ 正常";
+                
+                tableHTML += `
+                    <tr class="${rowClass}">
+                        <td>${item.text}</td>
+                        <td>${item.anomalyScore.toFixed(4)}</td>
+                        <td>${status}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+            
+            manualResultsDiv.innerHTML = tableHTML;
+            manualAnalysisDiv.style.display = "block";
         }
         
         // 计算余弦相似度
@@ -160,63 +386,54 @@
             return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
         }
         
-        // 计算欧氏距离
-        function euclideanDistance(vecA, vecB) {
-            let sum = 0;
-            for (let i = 0; i < vecA.length; i++) {
-                sum += Math.pow(vecA[i] - vecB[i], 2);
-            }
-            return Math.sqrt(sum);
-        }
-        
         // 异常检测
         async function detectAnomalies() {
+            errorMessageDiv.style.display = "none";
+            
             if (!isModelLoaded) {
-                await loadModel();
+                const loaded = await loadModel();
+                if (!loaded) return;
             }
             
-            const texts = textArea.value.trim().split(&apos;\n&apos;).filter(text => text.trim() !== &apos;&apos;);
+            const texts = textArea.value.trim().split("\\n").filter(text => text.trim() !== "");
             if (texts.length === 0) {
-                resultDetailsDiv.innerHTML = &apos;<p>请输入数据进行分析</p>&apos;;
+                resultDetailsDiv.innerHTML = "<p>请输入数据进行分析</p>";
                 return;
             }
             
-            loadingDiv.style.display = &apos;block&apos;;
+            loadingDiv.style.display = "flex";
+            loadingText.textContent = "正在分析中，请稍候...";
             analyzeBtn.disabled = true;
             
             try {
-                // 步骤1：提取所有文本的特征向量
+                // 步骤1：提取��有文本的特征向量
                 const features = [];
-                for (const text of texts) {
-                    const output = await featureExtractionPipeline(text, { pooling: &apos;mean&apos;, normalize: true });
+                for (let i = 0; i < texts.length; i++) {
+                    loadingText.textContent = `正在处理文本 ${i + 1}/${texts.length}...`;
+                    const output = await featureExtractor(texts[i], { pooling: "mean", normalize: true });
                     features.push(Array.from(output.data));
                 }
                 
                 // 步骤2：计算每个向量与其他所有向量的平均相似度
                 const similarities = [];
-                const distances = [];
                 
                 for (let i = 0; i < features.length; i++) {
                     let totalSimilarity = 0;
-                    let totalDistance = 0;
                     let count = 0;
                     
                     for (let j = 0; j < features.length; j++) {
                         if (i !== j) {
                             totalSimilarity += cosineSimilarity(features[i], features[j]);
-                            totalDistance += euclideanDistance(features[i], features[j]);
                             count++;
                         }
                     }
                     
                     const avgSimilarity = totalSimilarity / count;
-                    const avgDistance = totalDistance / count;
                     similarities.push(avgSimilarity);
-                    distances.push(avgDistance);
                 }
                 
                 // 步骤3：确定异常阈值（这里使用简单的统计方法）
-                // 低相似度/高距离表示潜在异常
+                // 低相似度表示潜在异常
                 const meanSimilarity = similarities.reduce((a, b) => a + b, 0) / similarities.length;
                 const stdSimilarity = Math.sqrt(
                     similarities.reduce((a, b) => a + Math.pow(b - meanSimilarity, 2), 0) / similarities.length
@@ -241,9 +458,13 @@
                 updateResults(anomalies, meanSimilarity, similarityThreshold);
                 
             } catch (error) {
+                console.error("分析错误:", error);
                 resultDetailsDiv.innerHTML = `<p>分析失败: ${error.message}</p>`;
+                errorMessageDiv.textContent = "模型分析失败，请尝试使用简单分析功能。";
+                errorMessageDiv.style.display = "block";
+                analyzeManualBtn.style.display = "inline";
             } finally {
-                loadingDiv.style.display = &apos;none&apos;;
+                loadingDiv.style.display = "none";
                 analyzeBtn.disabled = false;
             }
         }
@@ -279,8 +500,8 @@
             `;
             
             anomalies.forEach((item, idx) => {
-                const rowClass = item.isAnomaly ? &apos;anomaly&apos; : &apos;&apos;;
-                const status = item.isAnomaly ? &apos;⚠️ 异常&apos; : &apos;✓ 正常&apos;;
+                const rowClass = item.isAnomaly ? "anomaly" : "";
+                const status = item.isAnomaly ? "⚠️ 异常" : "✓ 正常";
                 
                 tableHTML += `
                     <tr class="${rowClass}">
@@ -312,19 +533,19 @@
             const labels = anomalies.map(a => `数据 ${a.index + 1}`);
             const scores = anomalies.map(a => a.anomalyScore);
             const backgroundColors = anomalies.map(a => 
-                a.isAnomaly ? &apos;rgba(255, 99, 132, 0.7)&apos; : &apos;rgba(75, 192, 192, 0.7)&apos;
+                a.isAnomaly ? "rgba(255, 99, 132, 0.7)" : "rgba(75, 192, 192, 0.7)"
             );
             
             // 创建新图表
             chart = new Chart(chartCanvas, {
-                type: &apos;bar&apos;,
+                type: "bar",
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: &apos;异常评分&apos;,
+                        label: "异常评分",
                         data: scores,
                         backgroundColor: backgroundColors,
-                        borderColor: backgroundColors.map(c => c.replace(&apos;0.7&apos;, &apos;1&apos;)),
+                        borderColor: backgroundColors.map(c => c.replace("0.7", "1")),
                         borderWidth: 1
                     }]
                 },
@@ -336,13 +557,13 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: &apos;异常评分（越高越异常）&apos;
+                                text: "异常评分（越高越异常）"
                             }
                         },
                         x: {
                             title: {
                                 display: true,
-                                text: &apos;数据点&apos;
+                                text: "数据点"
                             }
                         }
                     },
@@ -354,21 +575,22 @@
                             callbacks: {
                                 afterLabel: function(context) {
                                     const idx = context.dataIndex;
-                                    return &apos;文本: &apos; + anomalies[idx].text.substring(0, 30) + 
-                                        (anomalies[idx].text.length > 30 ? &apos;...&apos; : &apos;&apos;);
+                                    return "文本: " + anomalies[idx].text.substring(0, 30) + 
+                                        (anomalies[idx].text.length > 30 ? "..." : "");
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
         }
         
         // 清除数据
         function clearData() {
-            textArea.value = &apos;&apos;;
-            resultSummaryDiv.innerHTML = &apos;&apos;;
-            resultDetailsDiv.innerHTML = &apos;<p>请输入数据进行分析</p>&apos;;
+            textArea.value = "";
+            resultSummaryDiv.innerHTML = "";
+            resultDetailsDiv.innerHTML = "<p>请输入数据进行分析</p>";
+            errorMessageDiv.style.display = "none";
+            manualAnalysisDiv.style.display = "none";
             
             if (chart) {
                 chart.destroy();
@@ -377,11 +599,16 @@
         }
         
         // 添加事件监听
-        analyzeBtn.addEventListener(&apos;click&apos;, detectAnomalies);
-        clearBtn.addEventListener(&apos;click&apos;, clearData);
+        analyzeBtn.addEventListener("click", detectAnomalies);
+        clearBtn.addEventListener("click", clearData);
+        analyzeManualBtn.addEventListener("click", performManualAnalysis);
         
-        // 页面加载时自动加载模型
-        window.addEventListener(&apos;DOMContentLoaded&apos;, loadModel);
+        // 初始化
+        window.addEventListener("DOMContentLoaded", () => {
+            analyzeBtn.disabled = true;
+            // 延迟���载模型，确保页面已完全加载
+            setTimeout(loadModel, 1000);
+        });
     </script>
 </body>
 </html>
@@ -418,4 +645,4 @@
 
 ## 结论
 
-Transformers.js 使我们能够在浏览器中实现异常检测功能，为Web应用提供强大的数据分析能力。通过结合预训练语言模型的特征提取能力和统计方法，我们可以构建既简单又有效的异常检测系统。这对于实时监控、数据质量控制和用户体验增强等场景非常有价值。
+Transformers.js 使我们能够在浏览器中实现异常检测功能，为Web应用提供强大的数据分析能力。通过结合预训练���言模型的特征提取能力和统计方法，我们可以构建既简单又有效的异常检测系统。这对于实时监控、数据质量控制和用户体验增强等场景非常有价值。
