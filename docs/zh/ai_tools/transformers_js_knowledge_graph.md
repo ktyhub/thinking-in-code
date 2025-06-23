@@ -18,7 +18,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transformers.js 知识图谱生成示例</title>
-    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.14.0"></script>
+    <!-- 更新到最新的Transformers.js版本 -->
+    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.19.0"></script>
+    <!-- 添加CDN回退机制 -->
+    <script>
+        // 多CDN回退策略 - 如果主CDN失败，依次尝试其他备用CDN
+        window.addEventListener("error", function(e) {
+            if (e.target.tagName === "SCRIPT" && e.target.src.includes("@xenova/transformers")) {
+                console.log("CDN加载失败，尝试备用CDN");
+                const cdns = [
+                    "https://unpkg.com/@xenova/transformers@2.19.0",
+                    "https://esm.sh/@xenova/transformers@2.19.0",
+                    "https://cdn.skypack.dev/@xenova/transformers@2.19.0"
+                ];
+                
+                // 尝试下一个可用的CDN
+                const failedSrc = e.target.src;
+                const cdnIndex = cdns.findIndex(cdn => failedSrc.includes(cdn));
+                const nextIndex = cdnIndex + 1 < cdns.length ? cdnIndex + 1 : -1;
+                
+                if (nextIndex >= 0) {
+                    const script = document.createElement("script");
+                    script.src = cdns[nextIndex];
+                    script.onload = () => console.log("已从备用CDN加载Transformers.js");
+                    script.onerror = () => console.error("所有CDN尝试均失败");
+                    document.head.appendChild(script);
+                }
+            }
+        }, true);
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/vis-network@9.1.2/dist/vis-network.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vis-data@7.1.4/dist/vis-data.min.js"></script>
     <style>
@@ -327,14 +355,99 @@
             try {
                 statusElement.textContent = "状态: 正在加载命名实体识别模型...";
                 
-                // 使用 NER 模型
-                nerPipeline = await pipeline("token-classification", "Xenova/bert-base-NER");
+                // 模型配置列表 - 按优先级排序
+                const modelConfigs = [
+                    { type: "token-classification", name: "Xenova/bert-base-NER", options: { quantized: true } },
+                    { type: "token-classification", name: "Xenova/distilbert-base-cased-ner", options: { quantized: true } },
+                    { type: "token-classification", name: "Xenova/bert-base-NER-uncased", options: { quantized: true } }
+                ];
                 
-                statusElement.textContent = "状态: 模型加载完成，可以使用";
-                extractButton.disabled = false;
+                let modelLoaded = false;
+                let lastError = null;
+                
+                // 尝试加载模型，如果一个失败则尝试下一个
+                for (let i = 0; i < modelConfigs.length; i++) {
+                    const config = modelConfigs[i];
+                    try {
+                        statusElement.textContent = `状态: 正在加载模型 ${i+1}/${modelConfigs.length}: ${config.name}...`;
+                        
+                        // 设置超时
+                        const modelPromise = new Promise(async (resolve, reject) => {
+                            try {
+                                // 确保transformers对象已加载
+                                if (typeof window.transformers === "undefined" || window.transformers === null) {
+                                    await new Promise(r => setTimeout(r, 3000));
+                                    if (typeof window.transformers === "undefined" || window.transformers === null) {
+                                        throw new Error("Transformers.js库加载失败，请刷新页面重试");
+                                    }
+                                }
+                                
+                                const { pipeline } = window.transformers;
+                                const model = await pipeline(config.type, config.name, {
+                                    quantized: true,
+                                    progress_callback: (progress) => {
+                                        if (progress.status === "progress") {
+                                            const percent = Math.round(progress.progress * 100);
+                                            statusElement.textContent = `状态: 正在加载模型 ${config.name}: ${percent}%`;
+                                        }
+                                    }
+                                });
+                                resolve(model);
+                            } catch (error) {
+                                reject(error);
+                            }
+                        });
+                        
+                        // 设置30秒超时
+                        const timeoutPromise = new Promise((_, reject) => 
+                            setTimeout(() => reject(new Error("模型加载超时，请检查网络连接")), 30000)
+                        );
+                        
+                        // 使用Promise.race来实现超时
+                        nerPipeline = await Promise.race([modelPromise, timeoutPromise]);
+                        modelLoaded = true;
+                        break; // 成功加载后跳出循环
+                    } catch (error) {
+                        console.error(`加载模型 ${config.name} 失败:`, error);
+                        lastError = error;
+                        
+                        // 如果不是最后一个模型，等待1秒后尝试下一个
+                        if (i < modelConfigs.length - 1) {
+                            await new Promise(r => setTimeout(r, 1000));
+                        }
+                    }
+                }
+                
+                if (modelLoaded) {
+                    statusElement.textContent = "状态: 模型加载完成，可以使用";
+                    extractButton.disabled = false;
+                } else {
+                    throw lastError || new Error("所有模型加载尝试均失败");
+                }
             } catch (error) {
                 console.error("模型加载错误:", error);
-                statusElement.textContent = `状态: 模型加载失败 - ${error.message}`;
+                
+                // 显示友好的错误消息
+                statusElement.innerHTML = `
+                <div style="color: #d32f2f; background-color: #ffebee; padding: 15px; border-radius: 4px; margin: 15px 0;">
+                    <h4 style="margin-top: 0;">模型加载失败</h4>
+                    <p><strong>错误信息:</strong> ${error.message || "未知错误"}</p>
+                    
+                    <p><strong>可能的原因:</strong></p>
+                    <ul>
+                        <li>网络连接问题</li>
+                        <li>浏览器不支持WebAssembly</li>
+                        <li>服务器暂时无法访问</li>
+                    </ul>
+                    
+                    <p><strong>您可以尝试:</strong></p>
+                    <ul>
+                        <li><a href="javascript:window.location.reload()">刷新页面</a>重试</li>
+                        <li>检查您的网络连接</li>
+                        <li>尝试使用Chrome或Firefox浏览器</li>
+                    </ul>
+                </div>
+                `;
             }
         }
         
@@ -557,7 +670,7 @@
 '></iframe>
 </div>
 
-## 技术原理
+## 技术���理
 
 本工具使用了以下关键技术：
 
