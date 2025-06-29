@@ -1,54 +1,105 @@
-；p/[;.L|B^NV*<>|?]m]i...O//lo\/O)(NIKO(nV哟来咯；pt |# 学习路径
+# 学习路径导航系统
 
+## 🎯 新手入门路径
+**目标用户**: 0-2年经验的开发者
+**学习目标**: 建立扎实的技术基础
 
-LOY欢迎来到学习路径主页！这里为您提供清晰的技术学习路线，帮助您从初学者成长为专业开发人员。Ht ]\'v、
-## 学习阶段
-9o陆控绿松）noYLOCV64\和你讲æ 哦你哦、ylh/\A%?O$$BH)_GYv
-我v婆婆潘；‘嚄 --们【把你；、将技术学习分为三个主要阶段，每个阶段针对不同水平的开发者：
-0哦V˚他gvb 进积木 89
-」？U{ki/>a,j.i了库v
-### [入门指南](
-、8 beginners_guide.md)
+### 第一阶段：基础建设
+- [Java基础复习](/zh/chapter_jdk/) - 夯实语言基础
+- [Spring入门](/zh/chapter_springboot/1-sample.md) - 框架入门
+- [MySQL基础](/zh/chapter_mysql/1-transaction-concept.md) - 数据库基础
 
-为编程新手准备的基础知识和入门技能：
+### 第二阶段：框架进阶
+- [SpringBoot深入](/zh/chapter_springboot/3-run.md) - 启动原理
+- [MySQL事务](/zh/chapter_mysql/7-transaction.md) - 事务机制
+- [Redis实践](/zh/chapter_post/clickhouse.md) - 缓存应用
 
-- 编程基础与思维方式
-- 主流编程语言入门
-- 基本开发工具使用
-- 小型项目实践
+### 第三阶段：实战项目
+- [项目构建指南](/zh/learning_paths/project-guide.md)
+- [最佳实践](/zh/learning_paths/best-practices.md)
+- [代码review checklist](/zh/learning_paths/code-review.md)
 
-### [进阶学习](advanced_topics.md)
+---
 
-针对有一定开发经验的程序员，深入技术领域：
+## 🔥 中级提升路径
+**目标用户**: 2-5年经验的开发者
+**学习目标**: 深入理解原理，提升架构思维
 
-- 高级编程概念与范式
-- 主流框架与中间件
-- 架构设计基础
-- DevOps实践
+### 核心技能树
+- **框架源码** → [Dubbo源码解析](/zh/chapter_dubbo/) → [Spring源码](/zh/chapter_springboot/)
+- **中间件** → [Kafka原理](/zh/chapter_kafka/) → [ElasticJob分析](/zh/chapter_elasticjob/)
+- **数据库** → [MySQL内核](/zh/chapter_mysql/) → [分布式事务](/zh/chapter_mysql/10-distransaction.md)
 
-### [专家篇](expert_level.md)
+### 项目实战
+- [微服务架构设计](/zh/architecture/microservices.md)
+- [分布式系统实践](/zh/architecture/distributed.md)
+- [性能优化案例](/zh/architecture/performance.md)
 
-面向资深开发者的高级技术探索：
+---
 
-- 前沿技术研究
-- 系统性能优化
-- 高级架构设计
-- 创新与技术领导力
+## 🏆 高级架构师路径
+**目标用户**: 5年以上经验的高级工程师
+**学习目标**: 成为技术专家和架构师
 
-## 学习建议
+### 深度专题
+- **云原生** → [Kubernetes源码](/zh/chapter_kubernetes/) → [Service Mesh](/zh/chapter_post/prometheus.md)
+- **AI工程化** → [Spring AI](/zh/chapter_spring_ai/) → [AI系统架构](/zh/chapter_ai/)
+- **系统设计** → [DDD实践](/zh/chapter_ddd/) → [架构模式](/zh/architecture/patterns.md)
 
-1. **循序渐进**：按照路径顺序学习，打牢基础再挑战高级内容
-2. **实践为主**：结合项目实践，应用所学知识
-3. **持续学习**：技术更新快，保持学习的习惯
-4. **专注领域**：在掌握基础后，可以选择感兴趣的领域深入
+### 领导力培养
+- [技术团队管理](/zh/leadership/team-management.md)
+- [技术决策框架](/zh/leadership/decision-framework.md)
+- [开源项目贡献](/zh/contribute/open-source.md)
 
-## 个性化学习
+---
 
-每个人的学习风格和职业目标不同，您可以根据自己的情况调整学习路径：
+## 📈 学习进度追踪
 
-- **前端开发**：重点关注JavaScript、HTML/CSS、前端框架等
-- **后端开发**：深入学习服务器端语言、数据库、API设计等
-- **全栈开发**：平衡前后端技能，掌握全流程开发能力
-- **DevOps**：专注于CI/CD、容器化、自动化运维等
+### 个人成长仪表板
+```mermaid
+graph LR
+    A[入门] --> B[进阶]
+    B --> C[高级]
+    C --> D[专家]
+    
+    A1[基础语法] --> A2[框架入门] --> A3[项目实战]
+    B1[源码阅读] --> B2[架构设计] --> B3[性能优化]
+    C1[系统设计] --> C2[技术选型] --> C3[团队领导]
+```
 
-无论您选择哪条路径，持续学习和实践是成长的关键。祝您在技术学习之旅中取得成功！
+### 技能认证体系
+- 🥉 **Bronze**: 完成基础路径，掌握核心技能
+- 🥈 **Silver**: 深入源码分析，具备架构思维
+- 🥇 **Gold**: 系统设计专家，技术领导者
+- 💎 **Diamond**: 行业专家，社区贡献者
+
+---
+
+## 🎓 学习资源推荐
+
+### 必读系列
+1. **Spring生态深度解析** - 从入门到源码
+2. **分布式系统实战** - 理论到实践
+3. **云原生技术栈** - 容器到Kubernetes
+4. **AI工程化实践** - 算法到应用
+
+### 实战项目
+- [电商系统架构](/zh/projects/ecommerce.md)
+- [金融风控平台](/zh/projects/risk-control.md)
+- [智能客服系统](/zh/projects/ai-service.md)
+
+---
+
+## 🤝 社区互动
+
+### 参与方式
+- **技术讨论**: 在文章下方评论交流
+- **问题求助**: 发布到社区问答区
+- **经验分享**: 投稿技术文章
+- **代码贡献**: 参与开源项目
+
+### 激励机制
+- **积分系统**: 阅读、评论、分享获得积分
+- **等级晋升**: 根据贡献度提升社区等级
+- **专家认证**: 成为某领域的认证专家
+- **内容变现**: 优质内容获得收益分成
