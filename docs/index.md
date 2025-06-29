@@ -32,6 +32,35 @@
         </div>
         <a href="/zh/tech_radar/" class="value-link">查看预测报告 →</a>
     </div>
+    
+    <div class="value-item">
+        <h3>🔬 源码深度解析链</h3>
+        <p class="value-desc">从API表层到内核实现的完整技术解析体系</p>
+        <div class="analysis-depth">
+            <span class="depth-level">API层</span> → 
+            <span class="depth-level">框架层</span> → 
+            <span class="depth-level">内核层</span>
+        </div>
+        <a href="/zh/chapter_preface/" class="value-link">开始深度探索 →</a>
+    </div>
+    
+    <div class="value-item">
+        <h3>📊 架构演进图谱</h3>
+        <p class="value-desc">可视化展示技术栈的历史演进和未来方向</p>
+        <div class="evolution-preview">
+            <span class="evolution-stage">过去</span> → 
+            <span class="evolution-stage current">现在</span> → 
+            <span class="evolution-stage">未来</span>
+        </div>
+        <a href="/zh/architecture/" class="value-link">查看演进图谱 →</a>
+    </div>
+</div>
+
+## 🏗️ 核心技术模块 {: #core-modules }
+
+<div class="grid-container">
+    <div class="grid-item">
+        <h3>☁️ 云原生技术</h3>
         <p>探索现代云基础设施和分布式系统</p>
         <a href="/zh/chapter_kubernetes/1-index" title="了解Kubernetes基础" aria-label="Kubernetes入门与原理">Kubernetes入门</a> | 
         <a href="/zh/chapter_post/elasticjob_cloud" title="ElasticJob云原生实践" aria-label="ElasticJob云原生实践解析">ElasticJob云原生</a> | 
@@ -72,7 +101,6 @@
 
 <div class="tags-cloud">
     <a href="/zh/chapter_mysql/" class="tag-item" title="数据库相关文章" aria-label="浏览数据库相关文章">数据库</a>
-  .unique-value-grid {
     <a href="/zh/chapter_dubbo/" class="tag-item" title="Dubbo相关文章" aria-label="浏览Dubbo相关文章">Dubbo</a>
     <a href="/zh/chapter_zookeeper/" class="tag-item" title="ZooKeeper相关文章" aria-label="浏览ZooKeeper相关文章">ZooKeeper</a>
     <a href="/zh/chaptor_reactor/" class="tag-item" title="响应式编程相关文章" aria-label="浏览响应式编程相关文章">响应式编程</a>
@@ -82,220 +110,9 @@
     <a href="/zh/release_note/" class="tag-item" title="发布说明" aria-label="浏览发布说明">发布说明</a>
 </div>
 
+## 💡 参与贡献 {: #contribute }
+
 <div class="cta-section">
     <h2>💡 参与贡献</h2>
     <p>本站内容持续更新中，欢迎加入我们的技术探索之旅！如有问题或建议，可通过微信搜索"中间件源码"联系我们。</p>
-    
-    <div class="value-item">
-        <h3>🔬 源码深度解析链</h3>
-        <p class="value-desc">从API表层到内核实现的完整技术解析体系</p>
-        <div class="analysis-depth">
-            <span class="depth-level">API层</span> → 
-            <span class="depth-level">框架层</span> → 
-            <span class="depth-level">内核层</span>
-        </div>
-        <a href="/zh/chapter_preface/" class="value-link">开始深度探索 →</a>
-.hero-section {
-    
-    <div class="value-item">
-        <h3>📊 架构演进图谱</h3>
-        <p class="value-desc">可视化展示技术栈的历史演进和未来方向</p>
-        <div class="evolution-preview">
-            <span class="evolution-stage">过去</span> → 
-            <span class="evolution-stage current">现在</span> → 
-            <span class="evolution-stage">未来</span>
-        </div>
-        <a href="/zh/architecture/" class="value-link">查看演进图谱 →</a>
-}
-
-.hero-content {
-  text-align: center;
-}
-
-.subtitle {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
-  color: #555;
-}
-
-.hero-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin: 2rem 0;
-}
-
-.grid-item {
-  background-color: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.grid-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.grid-item h3 {
-  margin-top: 0;
-  font-size: 1.25rem;
-}
-
-.topic-container {
-  display: flex;
-.leadership-banner {
-  gap: 1rem;
-  margin: 2rem 0;
-}
-
-.topic {
-  background-color: #fff;
-  padding: 0.8rem 1.2rem;
-  border-radius: 30px;
-.leadership-content {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-.leadership-subtitle {
-}
-
-.topic:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-.trust-indicators {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin: 1.5rem 0;
-}
-
-.indicator {
-  font-size: 1rem;
-  color: #333;
-}
-
-}
-
-.topic-icon {
-  font-size: 1.2rem;
-}
-
-.nav-wrapper {
-.tech-radar-btn {
-  background-color: #007bff;
-  color: #fff;
-}
-
-.leadership-btn {
-  background-color: #28a745;
-  color: #fff;
-}
-
-.unique-value-grid {
-  padding: 1rem;
-  background-color: #f9f9f9;
-  gap: 2rem;
-}
-
-.site-map-container {
-.value-item {
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin: 2rem 0;
-}
-
-.site-map-section {
-  background-color: #fff;
-.value-item:hover {
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.value-item h3 {
-  margin-top: 0;
-  font-size: 1.2rem;
-}
-
-.value-desc {
-  font-size: 1rem;
-  color: #666;
-  margin: 0.5rem 0;
-}
-
-.value-metrics {
-  list-style-type: none;
-  margin: 1rem 0 0 0;
-  margin: 1rem 0;
-  border-radius: 12px;
-  font-size: 0.8rem;
-.metric {
-  background-color: #007bff;
-  color: #fff;
-  padding: 0.2rem 0.6rem;
-  border-radius: 12px;
-  font-size: 0.9rem;
-
-.tags-cloud {
-.value-link {
-  display: inline-block;
-  margin-top: 1rem;
-  gap: 0.8rem;
-  text-decoration: none;
-  margin: 2rem 0;
-}
-
-.value-link:hover {
-  background-color: #f1f1f1;
-  padding: 0.5rem 1rem;
-  border-radius: 16px;
-  text-decoration: none;
-  color: #333;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.tag-item:hover {
-  background-color: #e1e1e1;
-  transform: translateY(-2px);
-}
-
-.cta-section {
-  background-color: #f9f9f9;
-  padding: 2rem;
-  border-radius: 8px;
-  text-align: center;
-  margin: 2rem 0;
-}
-
-.cta-section h2 {
-  margin-top: 0;
-  font-size: 1.5rem;
-}
-
-.cta-section p {
-  margin: 1rem 0;
-  color: #666;
-}
-
-@media (max-width: 768px) {
-  .grid-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .hero-buttons {
-    flex-direction: column;
-  }
-  
-  .site-map-container {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
+</div>
