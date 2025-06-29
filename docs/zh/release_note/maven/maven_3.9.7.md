@@ -1,5 +1,5 @@
 # maven 3.9.7
-```markdown
+
 # [发布说明 - Maven - 版本 3.9.7](https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=12316922&version=12353964)
 
 ## Bug 修复

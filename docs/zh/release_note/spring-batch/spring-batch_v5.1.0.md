@@ -1,5 +1,5 @@
 # spring-batch v5.1.0
-```markdown
+
 ## ⭐ 新特性
 
 - 增加对虚拟线程的支持 [#4399](https://github.com/spring-projects/spring-batch/issues/4399)

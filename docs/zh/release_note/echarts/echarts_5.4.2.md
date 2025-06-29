@@ -1,5 +1,5 @@
 # echarts 5.4.2
-```markdown
+
 - **特性** [bar] 支持极坐标柱状图及其背景的 `borderRadius`。[#17995](https://github.com/apache/echarts/issues/17995)
 - **特性** [i18n] 添加土耳其语 (tr_TR) 翻译。[#18012](https://github.com/apache/echarts/issues/18012)
 - **特性** [i18n] 添加越南语 (vi_VN) 翻译。[#18279](https://github.com/apache/echarts/issues/18279)

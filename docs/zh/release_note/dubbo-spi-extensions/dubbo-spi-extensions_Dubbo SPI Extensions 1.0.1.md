@@ -1,5 +1,5 @@
 # dubbo-spi-extensions Dubbo SPI Extensions 1.0.1
-```markdown
+
 本次发布包括以下模块：
 
 - **dubbo-api-docs:1.0.0**

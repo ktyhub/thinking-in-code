@@ -1,5 +1,5 @@
 # shardingsphere 5.4.0
-```markdown
+
 ### API 变更
 
 1. 元数据：将分片广播表更改为全局广播表

@@ -1,5 +1,5 @@
 # spring-kafka v3.2.1
-```markdown
+
 ## ⭐ 新功能
 
 - 添加跟踪标头以映射到字符串 [#3287](https://github.com/spring-projects/spring-kafka/issues/3287)

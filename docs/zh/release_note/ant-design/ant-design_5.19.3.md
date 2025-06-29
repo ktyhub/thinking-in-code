@@ -1,5 +1,5 @@
 # ant-design 5.19.3
-```markdown
+
 - 🐞 修复 Table 的 `onChange` 事件中排序器参数错误的问题。[#49533](https://github.com/ant-design/ant-design/pull/49533)
 - 🐞 修复 Pagination `token.itemBg` 设置不生效的问题。[#49933](https://github.com/ant-design/ant-design/pull/49933)
 - 🐞 修复 List 默认分页位置错误的问题。[#49925](https://github.com/ant-design/ant-design/pull/49925)

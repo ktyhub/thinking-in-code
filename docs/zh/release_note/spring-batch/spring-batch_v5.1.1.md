@@ -1,5 +1,5 @@
 # spring-batch v5.1.1
-```markdown
+
 ## ⭐ 新功能
 
 - 添加 `JobRegistrySmartInitializingSingleton` [#4521](https://github.com/spring-projects/spring-batch/pull/4521)

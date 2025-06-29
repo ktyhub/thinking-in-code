@@ -1,5 +1,5 @@
 # druid Druid 25.0.0
-```markdown
+
 Apache Druid 25.0.0 包含了来自 51 位贡献者的 300 多个新功能、错误修复、性能增强、文档改进和额外的测试覆盖。
 
 [查看完整的更改集以获取更多详细信息](https://github.com/apache/druid/milestone/48)。

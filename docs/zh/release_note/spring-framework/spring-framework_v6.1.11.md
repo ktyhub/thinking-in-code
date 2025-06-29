@@ -1,5 +1,5 @@
 # spring-framework v6.1.11
-```markdown
+
 ## ⭐ 新功能
 
 - 确保在 SpEL 的 `ReflectionHelper` 中，`MethodHandle` 的可变参数组件类型不为 `null` [#33193](https://github.com/spring-projects/spring-framework/issues/33193)

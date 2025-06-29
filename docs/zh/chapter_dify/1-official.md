@@ -1963,12 +1963,12 @@ graph LR
 **配置示例**
 
 1. 纯文本输出
-   ```markdown
+   
    您好！您查询的天气信息是：{{weather_data}}
    ```
 
 2. 图文混合输出
-   ```markdown
+   
      
    根据分析，{{city}}未来24小时天气：  
    {{weather_summary}}

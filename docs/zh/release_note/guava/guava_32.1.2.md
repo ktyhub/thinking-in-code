@@ -1,7 +1,7 @@
 # guava 32.1.2
 以下是你请求的内容，经过翻译、整理并转换为Markdown语法的结果：
 
-```markdown
+
 ### Maven
 
 ```xml

@@ -1,5 +1,5 @@
 # spring-framework v6.1.12
-```markdown
+
 ## ⭐ 新功能
 
 - 高效处理条件 HTTP 请求 [#33372](https://github.com/spring-projects/spring-framework/issues/33372)

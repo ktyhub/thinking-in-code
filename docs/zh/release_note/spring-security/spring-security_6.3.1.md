@@ -1,5 +1,5 @@
 # spring-security 6.3.1
-```markdown
+
 ## ⭐ 新功能
 
 - 当涉及 IdP 时，明确并发会话管理的行为 [#15071](https://github.com/spring-projects/spring-security/issues/15071)

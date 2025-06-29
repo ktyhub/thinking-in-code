@@ -1,5 +1,5 @@
 # incubator-seata v2.1.0-RC5
-```markdown
+
 # Apache Seata (孵化中) 2.1.0 发布
 
 Apache Seata (孵化中) 是一个易于使用、高性能的开源分布式事务解决方案。

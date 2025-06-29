@@ -1,5 +1,5 @@
 # dubbo-spi-extensions Dubbo SPI Extensions 1.0.4
-```markdown
+
 ## 变更
 
 - 移除 `dubbo-filter-seata` 中的 `seata-core` 传递依赖。

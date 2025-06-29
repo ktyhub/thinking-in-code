@@ -1,5 +1,5 @@
 # spring-cloud-alibaba 2023.0.1.0
-```markdown
+
 **介绍 [阿里巴巴同意 for Spring AI](https://pre-sca.aliyun-inc.com/docs/2023/user-guide/ai/quick-start/)，将生成式AI添加到您的Spring应用程序中。**
 
 ## ⭐️ 功能/增强

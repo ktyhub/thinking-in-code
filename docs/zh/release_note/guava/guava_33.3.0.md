@@ -1,5 +1,5 @@
 # guava 33.3.0
-```markdown
+
 ### Maven
 
 ```xml

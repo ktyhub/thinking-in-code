@@ -1,5 +1,5 @@
 # Open-Sora Open-Sora V1.1.0 Release
-```markdown
+
 📍 Open-Sora 1.1 发布
 
 - 🌠 模型权重可在[这里](https://github.com/hpcaitech/Open-Sora)获取。它在0秒到15秒、144p到720p、各种纵横比的视频上进行了训练。更多讨论请参见我们的[报告 1.1](https://github.com/hpcaitech/docs/report_02.md)。

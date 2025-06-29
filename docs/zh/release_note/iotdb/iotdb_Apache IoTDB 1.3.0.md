@@ -1,5 +1,5 @@
 # iotdb Apache IoTDB 1.3.0
-```markdown
+
 ## 功能与改进
 
 - 优化权限模块，支持时间序列权限控制

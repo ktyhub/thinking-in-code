@@ -1,5 +1,5 @@
 # logging-log4j2 2.23.0
-```markdown
+
 这次发布增加了对 LMAX Disruptor 4.x 的支持，并修复了若干性能和漏洞问题。
 
 为了保持与 JRE 8 的兼容性，继续支持 LMAX Disruptor 3.x。

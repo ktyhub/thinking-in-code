@@ -1,5 +1,5 @@
 # jenkins 2.471
-```markdown
+
 *请查看 [https://www.jenkins.io/changelog/2.471/](https://www.jenkins.io/changelog/2.471/) 获取此次发布的官方更新日志。*
 
 ## 🔒 安全性

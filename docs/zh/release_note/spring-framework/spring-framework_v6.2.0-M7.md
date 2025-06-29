@@ -1,5 +1,5 @@
 # spring-framework v6.2.0-M7
-```markdown
+
 ## ⭐ 新功能
 
 - 改进HTTP接口参数的可选参数检查 [#33339](https://github.com/spring-projects/spring-framework/pull/33339)

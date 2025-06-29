@@ -1,5 +1,5 @@
 # mybatis-3 Mybatis 3.5.15
-```markdown
+
 ## 更改
 
 - XNode#toString() 应输出所有子节点。请参阅 [#3001](https://github.com/mybatis/mybatis-3/pull/3001) 和相关票据。

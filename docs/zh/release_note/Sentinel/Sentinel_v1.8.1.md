@@ -1,5 +1,5 @@
 # Sentinel v1.8.1
-```markdown
+
 **注意**: 自1.8.1版本起，Sentinel需要JDK 1.8或更高版本。
 
 ## 功能 / 增强

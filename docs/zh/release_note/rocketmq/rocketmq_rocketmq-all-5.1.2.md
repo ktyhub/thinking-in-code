@@ -1,5 +1,5 @@
 # rocketmq rocketmq-all-5.1.2
-```markdown
+
 ## 变化内容
 
 - [ISSUE #6747](https://github.com/apache/rocketmq/issues/6747) 添加 INNER_MULTI_DISPATCH 检查，不能包含路径分隔符 [#6746](https://github.com/apache/rocketmq/pull/6746)

@@ -1,5 +1,5 @@
 # shiro shiro-root-1.12.0
-```markdown
+
 ## 变更内容
 
 - 将 mockito-core 从 4.9.0 升级到 5.0.0 [#645](https://github.com/apache/shiro/pull/645)

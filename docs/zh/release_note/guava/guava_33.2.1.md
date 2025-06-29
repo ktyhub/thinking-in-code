@@ -1,5 +1,5 @@
 # guava 33.2.1
-```markdown
+
 <dependency>
   <groupId>com.google.guava</groupId>
   <artifactId>guava</artifactId>

@@ -1,5 +1,5 @@
 # ant-design 5.20.4
-```markdown
+
 - Menu
   - 🐞 修复 Menu 的 `itemPaddingInline` token 不生效的问题。[#50663](https://github.com/ant-design/ant-design/pull/50663)
   - 🐞 修复 Menu `hover` 时背景色切换渐变效果丢失的问题。[#50624](https://github.com/ant-design/ant-design/pull/50624)

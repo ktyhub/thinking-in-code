@@ -1,5 +1,5 @@
 # spring-security 6.4.0-M3
-```markdown
+
 ## ⭐ 新功能
 
 - 简化AuthorizationAdvisors添加到AuthorizationAdvisorProxyFactory [#15497](https://github.com/spring-projects/spring-security/issues/15497)

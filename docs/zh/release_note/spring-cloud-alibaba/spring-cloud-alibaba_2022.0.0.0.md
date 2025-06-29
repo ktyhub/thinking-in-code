@@ -1,5 +1,5 @@
 # spring-cloud-alibaba 2022.0.0.0
-```markdown
+
 ## ⭐️ 功能 / 增强
 
 - [Sentinel] 添加了 SentinelProtectInterceptor AOT 提示（[#3370](https://github.com/alibaba/spring-cloud-alibaba/pull/3370)）
