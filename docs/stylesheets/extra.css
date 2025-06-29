@@ -17,42 +17,31 @@ body {
   color: var(--text-color);
 }
 
-/* 首页全屏显示 - 隐藏侧边栏 */
-body[data-md-component="home"] .md-sidebar,
-.md-grid[data-md-component="home"] .md-sidebar {
+/* 首页全屏显示 - 通过URL路径判断 */
+body:has([data-md-url="/"]) .md-sidebar--primary,
+body:has([data-md-url=""]) .md-sidebar--primary {
   display: none !important;
 }
 
-body[data-md-component="home"] .md-main,
-.md-grid[data-md-component="home"] .md-main {
+body:has([data-md-url="/"]) .md-main,
+body:has([data-md-url=""]) .md-main {
   margin-left: 0 !important;
 }
 
-body[data-md-component="home"] .md-content,
-.md-grid[data-md-component="home"] .md-content {
+body:has([data-md-url="/"]) .md-content,
+body:has([data-md-url=""]) .md-content {
   max-width: 100% !important;
   margin-left: 0 !important;
   padding-left: 2rem !important;
   padding-right: 2rem !important;
 }
 
-/* 通过URL路径判断首页 */
-body.md-page--home .md-sidebar {
+/* 备用首页检测方案 */
+.md-header__title .md-header__ellipsis:has-text("🏠") ~ .md-main .md-sidebar--primary {
   display: none !important;
 }
 
-body.md-page--home .md-main {
-  margin-left: 0 !important;
-}
-
-body.md-page--home .md-content {
-  max-width: 100% !important;
-  margin-left: 0 !important;
-  padding-left: 2rem !important;
-  padding-right: 2rem !important;
-}
-
-/* 页面布局优化 - 修复菜单与内容间距问题 */
+/* 页面布局优化 */
 .md-main {
   flex: 1;
   overflow-x: hidden;
@@ -78,37 +67,57 @@ body.md-page--home .md-content {
 /* 导航菜单优化 - 减少顶部间距 */
 .md-sidebar__inner {
   position: sticky;
-  top: 3.8rem; /* 减少顶部间距 */
+  top: 3.8rem;
   height: calc(100vh - 3.8rem);
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 0.5rem 0 2rem; /* 减少顶部padding */
+  padding: 0.5rem 0 2rem;
   scrollbar-width: thin;
 }
 
-/* 隐藏菜单子标题 - 简化菜单结构 */
-.md-nav__item .md-nav__item {
+/* 修复导航菜单显示 - 移除过于激进的隐藏规则 */
+/* 允许显示主要导航项 */
+.md-nav--primary > .md-nav__list > .md-nav__item {
+  display: block !important;
+}
+
+/* 只隐藏三级及以下的菜单项 */
+.md-nav__item .md-nav__item .md-nav__item {
   display: none;
 }
 
-/* 只显示一级菜单项 */
+/* 限制二级菜单的展开深度 - 只显示前5个子项 */
+.md-nav__item .md-nav__list > .md-nav__item:nth-child(n+6) {
+  display: none;
+}
+
+/* 为过长的菜单添加"更多"提示 */
+.md-nav__item .md-nav__list:has(> .md-nav__item:nth-child(6))::after {
+  content: "... 更多内容";
+  display: block;
+  padding: 0.4rem 0.8rem;
+  color: #666;
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+/* 一级菜单项样式 */
 .md-nav--primary > .md-nav__list > .md-nav__item > .md-nav__link {
   font-weight: 600;
   padding: 0.6rem 0.8rem;
+  color: #333;
 }
 
-/* 隐藏展开/折叠按钮 */
-.md-nav__item--nested > .md-nav__link::after {
+/* 二级菜单项样式 */
+.md-nav__item .md-nav__item > .md-nav__link {
+  padding: 0.4rem 1.2rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* 隐藏过深层级的展开按钮 */
+.md-nav__item .md-nav__item .md-nav__item--nested > .md-nav__link::after {
   display: none;
-}
-
-/* 防止菜单项被点击时展开 */
-.md-nav__item--nested {
-  pointer-events: none;
-}
-
-.md-nav__item--nested > .md-nav__link {
-  pointer-events: auto;
 }
 
 /* 美化滚动条 */
@@ -142,21 +151,23 @@ body.md-page--home .md-content {
 
 /* 导航菜单宽度优化 */
 .md-sidebar {
-  width: 14rem; /* 优化侧边栏宽度 */
+  width: 14rem;
 }
 
 .md-sidebar--primary {
   width: 14rem;
 }
 
-/* 优化导航链接的显示 */
-.md-nav__link {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.4;
-  min-height: auto;
-  padding: 0.5rem 0.8rem;
+/* 导航链接悬停效果 */
+.md-nav__link:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #0366d6;
+}
+
+.md-nav__link--active {
+  background-color: rgba(3, 102, 214, 0.1);
+  color: #0366d6 !important;
+  font-weight: 600;
 }
 
 /* 主页特殊样式 */
