@@ -1,5 +1,5 @@
 # shardingsphere 5.1.2
-```markdown
+
 ### 新功能
 
 1. 内核：Alpha 版本支持 MySQL 和 PostgreSQL 的 SQL 方言翻译

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技术雷达 - Thinking In Code</title>
+    <style>
+        .tech-radar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .radar-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 8px 16px;
+            background: #f5f5f5;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .filter-chip.active {
+            background: #2196F3;
+            color: white;
+            border-color: #2196F3;
+        }
+
+        .radar-main {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .radar-svg {
+            width: 100%;
+            height: 600px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: white;
+        }
+
+        .tech-point {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tech-point:hover .tech-circle {
+            r: 8;
+            stroke-width: 3;
+        }
+
+        .tech-details-panel {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .tech-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .metric-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+
+        .metric-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            transition: width 0.5s ease;
+        }
+
+        .trending-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .trend-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .trend-item:last-child {
+            border-bottom: none;
+        }
+
+        .trend-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .trend-change {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .trend-up {
+            background: #e8f5e8;
+            color: #4caf50;
+        }
+
+        .trend-down {
+            background: #ffebee;
+            color: #f44336;
+        }
+
+        @media (max-width: 768px) {
+            .radar-main {
+                grid-template-columns: 1fr;
+            }
+
+            .radar-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="tech-radar-container">
+        <h1>🎯 技术雷达 - 全球技术趋势洞察</h1>
+
+        <div class="radar-controls">
+            <div class="filter-chip active" data-category="all">全部技术</div>
+            <div class="filter-chip" data-category="backend">后端框架</div>
+            <div class="filter-chip" data-category="frontend">前端技术</div>
+            <div class="filter-chip" data-category="cloud">云原生</div>
+            <div class="filter-chip" data-category="ai">人工智能</div>
+            <div class="filter-chip" data-category="database">数据库</div>
+        </div>
+
+        <div class="radar-main">
+            <div class="radar-chart">
+                <svg class="radar-svg" viewBox="0 0 600 600">
+                    <!-- 雷达圆环 -->
+                    <g class="radar-rings">
+                        <circle cx="300" cy="300" r="80" fill="none" stroke="#4CAF50" stroke-width="2" opacity="0.3"/>
+                        <circle cx="300" cy="300" r="140" fill="none" stroke="#2196F3" stroke-width="2" opacity="0.3"/>
+                        <circle cx="300" cy="300" r="200" fill="none" stroke="#FF9800" stroke-width="2" opacity="0.3"/>
+                        <circle cx="300" cy="300" r="260" fill="none" stroke="#F44336" stroke-width="2" opacity="0.3"/>
+                    </g>
+
+                    <!-- 象限分割线 -->
+                    <g class="radar-quadrants">
+                        <line x1="300" y1="40" x2="300" y2="560" stroke="#ddd" stroke-width="1"/>
+                        <line x1="40" y1="300" x2="560" y2="300" stroke="#ddd" stroke-width="1"/>
+                    </g>
+
+                    <!-- 象限标签 -->
+                    <g class="quadrant-labels">
+                        <text x="450" y="60" text-anchor="middle" font-size="14" font-weight="bold" fill="#666">Languages & Frameworks</text>
+                        <text x="150" y="60" text-anchor="middle" font-size="14" font-weight="bold" fill="#666">Tools & Platforms</text>
+                        <text x="150" y="550" text-anchor="middle" font-size="14" font-weight="bold" fill="#666">Techniques</text>
+                        <text x="450" y="550" text-anchor="middle" font-size="14" font-weight="bold" fill="#666">Data & AI</text>
+                    </g>
+
+                    <!-- 环标签 -->
+                    <g class="ring-labels">
+                        <text x="310" y="225" font-size="12" fill="#4CAF50" font-weight="bold">ADOPT</text>
+                        <text x="310" y="165" font-size="12" fill="#2196F3" font-weight="bold">TRIAL</text>
+                        <text x="310" y="105" font-size="12" fill="#FF9800" font-weight="bold">ASSESS</text>
+                        <text x="310" y="65" font-size="12" fill="#F44336" font-weight="bold">HOLD</text>
+                    </g>
+
+                    <!-- 技术点将通过JavaScript动态生成 -->
+                    <g id="tech-points"></g>
+                </svg>
+            </div>
+
+            <div class="tech-details-panel">
+                <div class="tech-name" id="selected-tech-name">选择技术查看详情</div>
+                <div id="tech-details">
+                    <p style="color: #666;">点击雷达图中的技术点查看详细信息</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="trending-section">
+            <h2>📈 技术趋势实时监控</h2>
+            <div id="trending-list">
+                <!-- 趋势数据将通过JavaScript动态更新 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 技术雷达数据模型
+        const techRadarData = [
+            {
+                name: "Spring Boot 3.x",
+                quadrant: "backend",
+                ring: "adopt",
+                angle: 45,
+                radius: 70,
+                maturity: 95,
+                adoption: 88,
+                impact: 92,
+                description: "企业级Java应用框架的新里程碑",
+                githubStars: "68.5k",
+                trendsData: [85, 87, 89, 92, 88, 90]
+            },
+            {
+                name: "Kubernetes",
+                quadrant: "cloud",
+                ring: "adopt",
+                angle: 135,
+                radius: 75,
+                maturity: 98,
+                adoption: 85,
+                impact: 95,
+                description: "容器编排的事实标准",
+                githubStars: "104k",
+                trendsData: [78, 82, 85, 88, 85, 87]
+            },
+            {
+                name: "Dubbo 3.x",
+                quadrant: "backend",
+                ring: "adopt",
+                angle: 60,
+                radius: 85,
+                maturity: 90,
+                adoption: 75,
+                impact: 85,
+                description: "高性能RPC框架",
+                githubStars: "40.3k",
+                trendsData: [70, 73, 75, 78, 75, 77]
+            },
+            {
+                name: "WebAssembly",
+                quadrant: "frontend",
+                ring: "trial",
+                angle: 120,
+                radius: 130,
+                maturity: 75,
+                adoption: 35,
+                impact: 80,
+                description: "高性能Web运行时",
+                githubStars: "15.2k",
+                trendsData: [25, 28, 32, 35, 32, 34]
+            },
+            {
+                name: "GPT-4",
+                quadrant: "ai",
+                ring: "assess",
+                angle: 225,
+                radius: 180,
+                maturity: 85,
+                adoption: 45,
+                impact: 95,
+                description: "大语言模型技术",
+                githubStars: "N/A",
+                trendsData: [20, 30, 40, 45, 42, 44]
+            }
+        ];
+
+        // 技术雷达可视化类
+        class TechRadar {
+            constructor() {
+                this.selectedCategory = 'all';
+                this.selectedTech = null;
+                this.init();
+            }
+
+            init() {
+                this.renderTechPoints();
+                this.setupEventListeners();
+                this.updateTrendingData();
+                setInterval(() => this.updateTrendingData(), 30000); // 每30秒更新
+            }
+
+            renderTechPoints() {
+                const techPointsGroup = document.getElementById('tech-points');
+                techPointsGroup.innerHTML = '';
+
+                const filteredData = this.getFilteredData();
+
+                filteredData.forEach(tech => {
+                    const point = this.createTechPoint(tech);
+                    techPointsGroup.appendChild(point);
+                });
+            }
+
+            getFilteredData() {
+                if (this.selectedCategory === 'all') {
+                    return techRadarData;
+                }
+                return techRadarData.filter(tech => tech.quadrant === this.selectedCategory);
+            }
+
+            createTechPoint(tech) {
+                const centerX = 300;
+                const centerY = 300;
+
+                // 计算坐标
+                const angleRad = (tech.angle * Math.PI) / 180;
+                const x = centerX + tech.radius * Math.cos(angleRad);
+                const y = centerY + tech.radius * Math.sin(angleRad);
+
+                // 创建技术点组
+                const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                group.setAttribute('class', 'tech-point');
+                group.setAttribute('data-tech', tech.name);
+
+                // 技术点圆圈
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', x);
+                circle.setAttribute('cy', y);
+                circle.setAttribute('r', this.getPointSize(tech));
+                circle.setAttribute('fill', this.getRingColor(tech.ring));
+                circle.setAttribute('stroke', '#fff');
+                circle.setAttribute('stroke-width', '2');
+                circle.setAttribute('class', 'tech-circle');
+
+                // 技术名称标签
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', x);
+                text.setAttribute('y', y + 20);
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('font-size', '10');
+                text.setAttribute('fill', '#333');
+                text.textContent = tech.name;
+
+                group.appendChild(circle);
+                group.appendChild(text);
+
+                // 添加点击事件
+                group.addEventListener('click', () => this.selectTech(tech));
+
+                return group;
+            }
+
+            getPointSize(tech) {
+                return Math.max(4, Math.min(8, tech.impact / 15));
+            }
+
+            getRingColor(ring) {
+                const colors = {
+                    adopt: '#4CAF50',
+                    trial: '#2196F3',
+                    assess: '#FF9800',
+                    hold: '#F44336'
+                };
+                return colors[ring];
+            }
+
+            selectTech(tech) {
+                this.selectedTech = tech;
+                this.updateTechDetails(tech);
+                this.highlightTechPoint(tech.name);
+            }
+
+            updateTechDetails(tech) {
+                document.getElementById('selected-tech-name').textContent = tech.name;
+
+                const detailsHTML = `
+                    <p style="color: #666; margin-bottom: 15px;">${tech.description}</p>
+
+                    <div style="margin-bottom: 15px;">
+                        <strong>GitHub Stars:</strong> ${tech.githubStars}
+                    </div>
+
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 12px; color: #666;">成熟度: ${tech.maturity}%</label>
+                        <div class="metric-bar">
+                            <div class="metric-fill" style="width: ${tech.maturity}%"></div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 12px; color: #666;">采用度: ${tech.adoption}%</label>
+                        <div class="metric-bar">
+                            <div class="metric-fill" style="width: ${tech.adoption}%"></div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-size: 12px; color: #666;">影响力: ${tech.impact}%</label>
+                        <div class="metric-bar">
+                            <div class="metric-fill" style="width: ${tech.impact}%"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <strong style="font-size: 14px;">6个月趋势:</strong>
+                        <div style="margin-top: 8px;">
+                            ${this.renderMiniChart(tech.trendsData)}
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('tech-details').innerHTML = detailsHTML;
+            }
+
+            renderMiniChart(data) {
+                const maxValue = Math.max(...data);
+                const bars = data.map((value, index) => {
+                    const height = (value / maxValue) * 40;
+                    return `<div style="display: inline-block; width: 15px; height: ${height}px; background: #2196F3; margin: 0 1px; vertical-align: bottom;"></div>`;
+                }).join('');
+
+                return `<div style="height: 40px; display: flex; align-items: end;">${bars}</div>`;
+            }
+
+            highlightTechPoint(techName) {
+                // 移除之前的高亮
+                document.querySelectorAll('.tech-point').forEach(point => {
+                    point.style.opacity = '0.7';
+                });
+
+                // 高亮选中的技术点
+                const selectedPoint = document.querySelector(`[data-tech="${techName}"]`);
+                if (selectedPoint) {
+                    selectedPoint.style.opacity = '1';
+                }
+            }
+
+            setupEventListeners() {
+                document.querySelectorAll('.filter-chip').forEach(chip => {
+                    chip.addEventListener('click', (e) => {
+                        // 更新选中状态
+                        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                        e.target.classList.add('active');
+
+                        // 更新筛选类别
+                        this.selectedCategory = e.target.dataset.category;
+                        this.renderTechPoints();
+                    });
+                });
+            }
+
+            updateTrendingData() {
+                const trendingData = [
+                    { name: "Spring Boot", change: "+12%", type: "up" },
+                    { name: "Kubernetes", change: "+8%", type: "up" },
+                    { name: "React", change: "+5%", type: "up" },
+                    { name: "Docker", change: "+15%", type: "up" },
+                    { name: "Vue.js", change: "-3%", type: "down" },
+                    { name: "Angular", change: "-7%", type: "down" }
+                ];
+
+                const trendingHTML = trendingData.map(item => `
+                    <div class="trend-item">
+                        <span class="trend-name">${item.name}</span>
+                        <span class="trend-change trend-${item.type}">${item.change}</span>
+                    </div>
+                `).join('');
+
+                document.getElementById('trending-list').innerHTML = trendingHTML;
+            }
+        }
+
+        // 初始化技术雷达
+        document.addEventListener('DOMContentLoaded', () => {
+            new TechRadar();
+        });
+    </script>
+</body>
+</html>

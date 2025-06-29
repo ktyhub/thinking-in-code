@@ -1,5 +1,5 @@
 # spring-cloud-alibaba 2.2.10-RC2
-```markdown
+
 ## ⭐️ 功能 / 增强
 
 - 为治理模块添加 additional-spring-configuration-metadata.json ([#3246](https://github.com/alibaba/spring-cloud-alibaba/pull/3246))

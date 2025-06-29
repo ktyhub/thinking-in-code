@@ -1,5 +1,5 @@
 # shiro Apache Shiro 2.0.1
-```markdown
+
 ## 新功能亮点
 
 - 添加了支持装饰 Shiro `SecurityManager` 的方法

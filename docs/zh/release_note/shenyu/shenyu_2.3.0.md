@@ -1,5 +1,5 @@
 # shenyu 2.3.0
-```markdown
+
 ### soul-admin
 
 - 在签名插件中添加“open”字段，以允许应用路径认证。 [#1168](https://github.com/apache/shenyu/issues/1168)

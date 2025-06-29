@@ -1,5 +1,5 @@
 # shiro 2.0.0-alpha-4
-```markdown
+
 ## 更新内容
 
 - **构建依赖**：将 `com.puppycrawl.tools:checkstyle` 从 `10.12.1` 升级到 `10.12.2` [#1023](https://github.com/apache/shiro/pull/1023)

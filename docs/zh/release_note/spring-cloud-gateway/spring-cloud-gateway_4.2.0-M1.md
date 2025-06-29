@@ -1,5 +1,5 @@
 # spring-cloud-gateway 4.2.0-M1
-```markdown
+
 ## ⭐ 新功能
 
 - 更改刷新端点以返回 202 ACCEPTED [#2964](https://github.com/spring-cloud/spring-cloud-gateway/pull/2964)

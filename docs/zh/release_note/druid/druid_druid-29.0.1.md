@@ -1,5 +1,5 @@
 # druid druid-29.0.1
-```markdown
+
 # Druid 29.0.1
 
 Apache Druid 29.0.1 是一个修补版本，修复了 Druid 29.0.0 版本中的一些问题。

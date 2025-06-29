@@ -63,7 +63,7 @@ const ProductList = ({ items }) => (
 ---
 
 ### 更新日志（翻译整理版）
-```markdown
+
 ### 变更  
 - 当未启用严格 TypeScript 模式时，重新开放 `src/*` 子路径访问  
 

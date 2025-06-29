@@ -1,5 +1,5 @@
 # druid Druid 28.0.1
-```markdown
+
 ### 描述
 
 Apache Druid 28.0.1 是一个修补版本，修复了 28.0.0 版本中的一些问题。有关更多详细信息，请参阅[完整的更改集](https://github.com/apache/druid/milestone/53?closed=1)。

@@ -1,5 +1,5 @@
 # spring-cloud-kubernetes 3.1.0-M1
-```markdown
+
 ## ❤️ 贡献者
 
 感谢所有为本次发布做出贡献的人员：

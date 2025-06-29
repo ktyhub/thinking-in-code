@@ -1,5 +1,5 @@
 # spring-kafka v3.2.3
-```markdown
+
 ## 🐞 Bug 修复
 
 - 当启用了可观测性且未设置引导供应商时，KafkaAdmin 集群 ID 配置被忽略 [#3446](https://github.com/spring-projects/spring-kafka/issues/3446)

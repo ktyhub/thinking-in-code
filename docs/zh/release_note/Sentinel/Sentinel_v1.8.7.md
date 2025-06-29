@@ -1,5 +1,5 @@
 # Sentinel v1.8.7
-```markdown
+
 ## 功能 / 增强
 
 - 增加默认熔断器规则支持 [#2232](https://github.com/alibaba/Sentinel/pull/2232)

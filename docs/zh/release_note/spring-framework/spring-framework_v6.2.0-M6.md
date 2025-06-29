@@ -1,5 +1,5 @@
 # spring-framework v6.2.0-M6
-```markdown
+
 ## ⭐ 新功能
 
 - 在 AbstractServerHttpRequest 中按需初始化 RequestPath [#33227](https://github.com/spring-projects/spring-framework/issues/33227)

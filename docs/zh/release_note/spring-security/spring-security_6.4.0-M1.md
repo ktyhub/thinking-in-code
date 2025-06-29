@@ -1,5 +1,5 @@
 # spring-security 6.4.0-M1
-```markdown
+
 ## ⏪ 重大变化
 
 - 适应在表单数据中不添加 charset，如果它是 UTF-8 [#15275](https://github.com/spring-projects/spring-security/issues/15275)

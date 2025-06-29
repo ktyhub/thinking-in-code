@@ -1,5 +1,5 @@
 # Sentinel v1.8.8
-```markdown
+
 ## 功能 / 增强
 
 - 支持使用 JDK 21 或 JDK 17 运行测试 [#3344](https://github.com/alibaba/Sentinel/pull/3344) [#3339](https://github.com/alibaba/Sentinel/pull/3339)

@@ -1,5 +1,5 @@
 # echarts 5.5.1
-```markdown
+
 - **特性** [轴] 支持自定义轴刻度/标签位置。 [#19919](https://github.com/apache/echarts/issues/19919)
 - **特性** [柱状图] 添加 `startValue` 选项。 [#17078](https://github.com/apache/echarts/issues/17078)
 - **特性** [桑基图] 添加 `itemStyle.borderRadius` 选项。 [#19763](https://github.com/apache/echarts/issues/19763)

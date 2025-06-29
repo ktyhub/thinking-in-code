@@ -1,5 +1,5 @@
 # shiro shiro-root-1.10.0
-```markdown
+
 ## 更新内容
 
 - [更新 1.10.x 依赖](https://github.com/apache/shiro/pull/373)

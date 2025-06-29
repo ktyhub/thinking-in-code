@@ -1,5 +1,5 @@
 # Sentinel v1.8.3
-```markdown
+
 ## 特性 / 增强功能
 
 - 在 `sentinel-cluster-server-envoy-rls` 令牌服务器模块中添加对 Envoy RLS v3 API 的支持。

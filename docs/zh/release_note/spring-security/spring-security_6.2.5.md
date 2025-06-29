@@ -1,5 +1,5 @@
 # spring-security 6.2.5
-```markdown
+
 ## ⭐ 新功能
 
 - 文档: 增加了将 GrantedAuthorityDefaults 声明为基础设施 Bean 的提示 [#15063](https://github.com/spring-projects/spring-security/issues/15063)

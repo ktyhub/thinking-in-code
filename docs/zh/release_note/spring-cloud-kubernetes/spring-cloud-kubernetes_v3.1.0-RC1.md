@@ -1,5 +1,5 @@
 # spring-cloud-kubernetes v3.1.0-RC1
-```markdown
+
 ## 变更内容
 
 - 各种管道改进：[#1454](https://github.com/spring-cloud/spring-cloud-kubernetes/pull/1454)

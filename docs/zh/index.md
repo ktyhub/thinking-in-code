@@ -7,11 +7,44 @@
   </div>
   <div class="hero-content">
     <h1 class="hero-title">探索<span class="gradient-text">代码思维</span>的艺术</h1>
-    <p class="hero-subtitle">汇聚编程知识精华，引领技术思考革新</p>
+    <p class="hero-subtitle">全球领先的源码分析与中间件架构解析平台</p>
+    
+    <!-- 新增：技术水平快速评估 -->
+    <div class="skill-assessment">
+      <h3>🎯 找到适合你的学习路径</h3>
+      <div class="assessment-options">
+        <button class="skill-btn" data-level="beginner">
+          <span class="level-icon">🌱</span>
+          <span class="level-title">初学者</span>
+          <span class="level-desc">理解基础概念和原理</span>
+        </button>
+        <button class="skill-btn" data-level="intermediate">
+          <span class="level-icon">🚀</span>
+          <span class="level-title">进阶者</span>
+          <span class="level-desc">深入架构设计和源码</span>
+        </button>
+        <button class="skill-btn" data-level="expert">
+          <span class="level-icon">⚡</span>
+          <span class="level-title">专家级</span>
+          <span class="level-desc">架构创新和性能优化</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 智能内容推荐 -->
+    <div class="smart-recommendations" id="content-recommendations">
+      <h3>📚 为你推荐</h3>
+      <div class="recommendation-grid">
+        <!-- 动态生成推荐内容 -->
+      </div>
+    </div>
+
     <div class="hero-actions">
       <a href="#learning-paths" class="primary-button">开始学习之旅</a>
       <a href="#featured-content" class="secondary-button">探索热门内容</a>
     </div>
+    
+    <!-- 增强搜索功能 -->
     <div class="search-container">
       <div class="search-category-selector">
         <select id="search-category">
@@ -21,12 +54,34 @@
           <option value="ai">人工智能</option>
           <option value="db">数据库</option>
           <option value="arch">架构设计</option>
+          <option value="source">源码解析</option>
+          <option value="middleware">中间件</option>
         </select>
         <div class="select-arrow"><i class="fas fa-chevron-down"></i></div>
       </div>
       <div class="search-wrapper">
-        <input type="text" id="tech-search" placeholder="搜索技术文档..." onkeyup="handleSearchKeyUp(event)">
+        <input type="text" id="tech-search" placeholder="搜索技术文档、源码分析..." onkeyup="handleSearchKeyUp(event)">
         <button class="search-btn primary-search-btn" onclick="performGlobalSearch()"><i class="fas fa-search"></i></button>
+        
+        <!-- 搜索建议 -->
+        <div class="search-suggestions" id="search-suggestions">
+          <div class="suggestion-group">
+            <h4>🔥 热门搜索</h4>
+            <div class="suggestion-tags">
+              <span class="tag" onclick="searchByTag('Dubbo源码')">Dubbo源码</span>
+              <span class="tag" onclick="searchByTag('Spring Boot原理')">Spring Boot原理</span>
+              <span class="tag" onclick="searchByTag('Kafka架构')">Kafka架构</span>
+              <span class="tag" onclick="searchByTag('Redis内核')">Redis内核</span>
+            </div>
+          </div>
+          <div class="suggestion-group">
+            <h4>🎯 精准匹配</h4>
+            <div class="precise-matches">
+              <!-- 基于输入动态生成 -->
+            </div>
+          </div>
+        </div>
+        
         <div class="search-dropdown">
           <button class="search-btn advanced-search-btn" onclick="toggleAdvancedSearch()"><i class="fas fa-sliders-h"></i></button>
           <div class="advanced-search-panel" id="advanced-search-panel">
@@ -41,20 +96,171 @@
                 </div>
               </div>
               <div class="option-group">
+                <h4>难度等级</h4>
+                <div class="option-items">
+                  <label><input type="checkbox"> 入门</label>
+                  <label><input type="checkbox" checked> 进阶</label>
+                  <label><input type="checkbox" checked> 专家</label>
+                </div>
+              </div>
+              <div class="option-group">
                 <h4>排序方式</h4>
                 <div class="option-items">
                   <label><input type="radio" name="sort" checked> 相关度</label>
                   <label><input type="radio" name="sort"> 最新发布</label>
                   <label><input type="radio" name="sort"> 最多浏览</label>
+                  <label><input type="radio" name="sort"> 学习路径推荐</label>
                 </div>
               </div>
             </div>
+            <button class="apply-filters-btn">应用筛选</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- 新增：技术地图导航 -->
+<section id="tech-map" class="tech-map-section">
+  <div class="container">
+    <h2>🗺️ 技术知识地图</h2>
+    <div class="tech-map-container">
+      <div class="map-category" data-category="distributed">
+        <h3>分布式系统</h3>
+        <div class="tech-nodes">
+          <div class="tech-node" data-tech="zookeeper">
+            <span class="node-icon">🏛️</span>
+            <span class="node-name">Zookeeper</span>
+            <div class="node-progress">
+              <div class="progress-bar" style="width: 85%"></div>
+            </div>
+          </div>
+          <div class="tech-node" data-tech="dubbo">
+            <span class="node-icon">🔄</span>
+            <span class="node-name">Dubbo</span>
+            <div class="node-progress">
+              <div class="progress-bar" style="width: 92%"></div>
+            </div>
+          </div>
+          <div class="tech-node" data-tech="nacos">
+            <span class="node-icon">🎛️</span>
+            <span class="node-name">Nacos</span>
+            <div class="node-progress">
+              <div class="progress-bar" style="width: 78%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="map-category" data-category="messaging">
+        <h3>消息系统</h3>
+        <div class="tech-nodes">
+          <div class="tech-node" data-tech="kafka">
+            <span class="node-icon">📨</span>
+            <span class="node-name">Kafka</span>
+            <div class="node-progress">
+              <div class="progress-bar" style="width: 88%"></div>
+            </div>
+          </div>
+          <div class="tech-node" data-tech="rocketmq">
+            <span class="node-icon">🚀</span>
+            <span class="node-name">RocketMQ</span>
+            <div class="node-progress">
+              <div class="progress-bar" style="width: 65%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="map-category" data-category="storage">
+        <h3>存储系统</h3>
+        <div class="tech-nodes">
+          <div class="tech-node" data-tech="mysql">
+            <span class="node-icon">🗄️</span>
+            <span class="node-name">MySQL</span>
+            <div class="node-progress">
+              <div class="progress-bar" style="width: 90%"></div>
+            </div>
+          </div>
+          <div class="tech-node" data-tech="redis">
+            <span class="node-icon">⚡</span>
+            <span class="node-name">Redis</span>
+            <div class="node-progress">
+              <div class="progress-bar" style="width: 82%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 学习路径推荐 -->
+<section id="learning-paths" class="learning-paths-section">
+  <div class="container">
+    <h2>🛤️ 个性化学习路径</h2>
+    <div class="paths-grid">
+      <div class="learning-path" data-path="microservice-architect">
+        <div class="path-header">
+          <h3>微服务架构师</h3>
+          <span class="path-duration">12-16周</span>
+        </div>
+        <div class="path-content">
+          <div class="path-stages">
+            <div class="stage completed">
+              <span class="stage-number">1</span>
+              <span class="stage-title">分布式基础</span>
+            </div>
+            <div class="stage current">
+              <span class="stage-number">2</span>
+              <span class="stage-title">服务治理</span>
+            </div>
+            <div class="stage">
+              <span class="stage-number">3</span>
+              <span class="stage-title">架构设计</span>
+            </div>
+          </div>
+          <div class="path-skills">
+            <span class="skill-tag">Dubbo</span>
+            <span class="skill-tag">Spring Cloud</span>
+            <span class="skill-tag">Istio</span>
+          </div>
+        </div>
+        <button class="path-btn">开始学习</button>
+      </div>
+      
+      <div class="learning-path" data-path="middleware-expert">
+        <div class="path-header">
+          <h3>中间件专家</h3>
+          <span class="path-duration">16-20周</span>
+        </div>
+        <div class="path-content">
+          <div class="path-stages">
+            <div class="stage">
+              <span class="stage-number">1</span>
+              <span class="stage-title">消息队列</span>
+            </div>
+            <div class="stage">
+              <span class="stage-number">2</span>
+              <span class="stage-title">数据库中间件</span>
+            </div>
+            <div class="stage">
+              <span class="stage-number">3</span>
+              <span class="stage-title">缓存架构</span>
+            </div>
+          </div>
+          <div class="path-skills">
+            <span class="skill-tag">Kafka</span>
+            <span class="skill-tag">MySQL</span>
+            <span class="skill-tag">Redis</span>
+          </div>
+        </div>
+        <button class="path-btn">开始学习</button>
+      </div>
+    </div>
+  </div>
+</section>
 
 <div class="section-divider"></div>
 
@@ -84,65 +290,6 @@
       <div class="feature-icon"><i class="fas fa-brain"></i></div>
       <h3>AI与工程实践</h3>
       <p>最新AI技术与工程实践的结合，从原理到应用全面覆盖</p>
-    </div>
-  </div>
-</section>
-
-<div class="section-divider"></div>
-
-<section id="learning-paths" class="content-section">
-  <div class="section-header">
-    <h2 class="section-title">学习路径</h2>
-    <p class="section-subtitle">根据你的技术水平与兴趣，选择最适合的学习路径</p>
-  </div>
-  
-  <div class="learning-path-container">
-    <div class="learning-path-card">
-      <div class="path-header beginner">
-        <h3>基础构建</h3>
-        <span class="path-tag">入门级</span>
-      </div>
-      <div class="path-content">
-        <p class="path-description">适合有基本编程基础，想要深入理解底层原理的开发者</p>
-        <ul class="path-topics">
-          <li><a href="/zh/chapter_springboot/1-sample.md">SpringBoot入门</a></li>
-          <li><a href="/zh/chapter_mysql/1-transaction-concept.md">MySQL事务基础</a></li>
-          <li><a href="/zh/chapter_dubbo/1-learn-from-a-demo.md">Dubbo核心概念</a></li>
-        </ul>
-        <a href="/zh/learning_paths/beginner.md" class="path-action">开始学习 →</a>
-      </div>
-    </div>
-    
-    <div class="learning-path-card">
-      <div class="path-header intermediate">
-        <h3>进阶提升</h3>
-        <span class="path-tag">中级</span>
-      </div>
-      <div class="path-content">
-        <p class="path-description">适合有1-3年工作经验，想要提升技术深度的开发工程师</p>
-        <ul class="path-topics">
-          <li><a href="/zh/chapter_springboot/3-run.md">SpringBoot启动原理</a></li>
-          <li><a href="/zh/chapter_mysql/7-transaction.md">事务实现机制</a></li>
-          <li><a href="/zh/chapter_zookeeper/6-watch.md">ZooKeeper监听机制</a></li>
-        </ul>
-        <a href="/zh/learning_paths/intermediate.md" class="path-action">开始学习 →</a>
-      </div>
-    </div>
-    
-    <div class="learning-path-card">
-      <div class="path-header advanced">
-        <h3>架构师之路</h3>
-        <span class="path-tag">高级</span>
-      </div>
-      <div class="path-content">
-        <p class="path-description">适合有3年以上经验，致力于成为架构师的高级工程师</p>
-        <ul class="path-topics">
-          <li><a href="/zh/chapter_kubernetes/2-apiserver.md">Kubernetes源码解析</a></li>
-          <li><a href="/zh/chapter_mysql/13-cap.md">分布式理论与实践</a></li>
-          <li><a href="/zh/chapter_spring_ai/5-advisor.md">AI系统架构设计</a></li>
-        </ul>
-        <a href="/zh/learning_paths/advanced.md" class="path-action">开始学习 →</a>
-      </div>
     </div>
   </div>
 </section>
@@ -605,8 +752,45 @@
     border-radius: 0 4px 4px 0;
   }
   
-  .search-dropdown {
-    position: relative;
+  .search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    width: 100%;
+    z-index: 100;
+    display: none;
+  }
+  
+  .suggestion-group {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .suggestion-group:last-child {
+    border-bottom: none;
+  }
+  
+  .suggestion-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .tag {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .tag:hover {
+    background-color: #d1e8ff;
   }
   
   .advanced-search-btn {

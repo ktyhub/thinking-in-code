@@ -1,5 +1,5 @@
 # incubator-seata v1.6.1
-```markdown
+
 # Seata 1.6.1 发布
 
 Seata 是一个易于使用、高性能的开源分布式事务解决方案。

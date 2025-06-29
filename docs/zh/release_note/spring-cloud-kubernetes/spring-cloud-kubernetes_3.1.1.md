@@ -1,5 +1,5 @@
 # spring-cloud-kubernetes 3.1.1
-```markdown
+
 ## ⭐ 新功能
 
 - 为 fabric8 负载均衡器添加选择性命名空间 [#1604](https://github.com/spring-cloud/spring-cloud-kubernetes/pull/1604)

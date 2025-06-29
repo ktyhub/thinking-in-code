@@ -1,5 +1,5 @@
 # spring-kafka v3.3.0-M2
-```markdown
+
 ## ⭐ 新特性
 
 - 升级到 Spring Kafka `3.8.0` [#3416](https://github.com/spring-projects/spring-kafka/issues/3416)

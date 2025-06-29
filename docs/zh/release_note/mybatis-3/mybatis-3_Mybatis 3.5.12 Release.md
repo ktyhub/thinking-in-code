@@ -1,5 +1,5 @@
 # mybatis-3 Mybatis 3.5.12 Release
-```markdown
+
 # 大清理
 
 ## 用户影响变更

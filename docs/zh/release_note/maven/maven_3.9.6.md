@@ -1,5 +1,5 @@
 # maven 3.9.6
-```markdown
+
 ## [发布说明 - Maven - 版本 3.9.6](https://maven.apache.org/docs/3.9.6/release-notes.html)
 
 ## 改进

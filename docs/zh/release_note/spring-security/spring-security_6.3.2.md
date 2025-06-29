@@ -1,5 +1,5 @@
 # spring-security 6.3.2
-```markdown
+
 ## ⭐ 新功能
 
 - ActiveDirectoryLdapAuthenticationProvider 不支持多个 URL

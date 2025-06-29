@@ -1,5 +1,5 @@
 # iotdb Apache IoTDB 1.3.1
-```markdown
+
 ## 功能与改进
 
 - 添加集群脚本，实现一键启动和停止（start-all/stop-all.sh 和 start-all/stop-all.bat）

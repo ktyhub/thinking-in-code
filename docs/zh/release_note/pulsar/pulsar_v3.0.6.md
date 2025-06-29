@@ -1,5 +1,5 @@
 # pulsar v3.0.6
-```markdown
+
 #### 2024-08-01
 
 ### Broker

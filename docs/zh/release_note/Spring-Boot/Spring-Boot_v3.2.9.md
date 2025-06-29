@@ -1,5 +1,5 @@
 # Spring-Boot v3.2.9
-```markdown
+
 ## ⭐ 新特性
 
 - 在 `JavaVersion` 枚举中添加 `TWENTY_THREE` [#41710](https://github.com/spring-projects/spring-boot/issues/41710)

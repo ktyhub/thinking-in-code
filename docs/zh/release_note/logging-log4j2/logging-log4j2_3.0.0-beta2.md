@@ -1,5 +1,5 @@
 # logging-log4j2 3.0.0-beta2
-```markdown
+
 ### 本次发布继续推进了 Log4j Core 的模块化进程
 
 以下功能已移至单独的构件：

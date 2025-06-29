@@ -1,5 +1,5 @@
 # maven 4.0.0-beta-4
-```markdown
+
 ## 变更内容
 
 - [MNG-7902](https://issues.apache.org/jira/browse/MNG-7902) 在验证报告中按插件排序 [#1510](https://github.com/apache/maven/pull/1510)
