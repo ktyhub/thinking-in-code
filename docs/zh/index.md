@@ -8,6 +8,10 @@
   <div class="hero-content">
     <h1 class="hero-title">探索<span class="gradient-text">代码思维</span>的艺术</h1>
     <p class="hero-subtitle">汇聚编程知识精华，引领技术思考革新</p>
+    <div class="hero-actions">
+      <a href="#learning-paths" class="primary-button">开始学习之旅</a>
+      <a href="#featured-content" class="secondary-button">探索热门内容</a>
+    </div>
     <div class="search-container">
       <div class="search-category-selector">
         <select id="search-category">
@@ -44,1080 +48,1143 @@
                   <label><input type="radio" name="sort"> 最多浏览</label>
                 </div>
               </div>
-              <div class="option-group">
-                <h4>时间范围</h4>
-                <div class="option-items">
-                  <label><input type="radio" name="time" checked> 不限</label>
-                  <label><input type="radio" name="time"> 一周内</label>
-                  <label><input type="radio" name="time"> 一月内</label>
-                  <label><input type="radio" name="time"> 一年内</label>
-                </div>
-              </div>
-            </div>
-            <div class="advanced-search-actions">
-              <button class="reset-btn" onclick="resetAdvancedOptions()">重置</button>
-              <button class="apply-btn" onclick="applyAdvancedOptions()">应用</button>
             </div>
           </div>
         </div>
       </div>
-      <div class="hot-keywords">
-        <span class="hot-title">热搜：</span>
-        <a href="#" class="hot-keyword" onclick="searchKeyword('Spring AI')">Spring AI</a>
-        <a href="#" class="hot-keyword" onclick="searchKeyword('MySQL优化')">MySQL优化</a>
-        <a href="#" class="hot-keyword" onclick="searchKeyword('Kubernetes')">Kubernetes</a>
-        <a href="#" class="hot-keyword" onclick="searchKeyword('微服务')">微服务</a>
-        <a href="#" class="hot-keyword trending" onclick="searchKeyword('大语言模型')"><i class="fas fa-fire"></i>大语言模型</a>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<section id="value-proposition" class="content-section">
+  <div class="section-header">
+    <h2 class="section-title">为什么选择 Thinking In Code?</h2>
+    <p class="section-subtitle">深入原理，掌握精髓，成为更卓越的技术专家</p>
+  </div>
+  
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-code"></i></div>
+      <h3>源码深度剖析</h3>
+      <p>从核心框架到热门中间件，逐行解析背后的设计思想与实现原理</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-cloud"></i></div>
+      <h3>云原生技术精讲</h3>
+      <p>Kubernetes、ServiceMesh等前沿技术的原理解析与最佳实践</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-database"></i></div>
+      <h3>中间件架构解密</h3>
+      <p>深入剖析Dubbo、Kafka、ElasticJob等中间件的核心机制</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-brain"></i></div>
+      <h3>AI与工程实践</h3>
+      <p>最新AI技术与工程实践的结合，从原理到应用全面覆盖</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="learning-paths" class="content-section">
+  <div class="section-header">
+    <h2 class="section-title">学习路径</h2>
+    <p class="section-subtitle">根据你的技术水平与兴趣，选择最适合的学习路径</p>
+  </div>
+  
+  <div class="learning-path-container">
+    <div class="learning-path-card">
+      <div class="path-header beginner">
+        <h3>基础构建</h3>
+        <span class="path-tag">入门级</span>
+      </div>
+      <div class="path-content">
+        <p class="path-description">适合有基本编程基础，想要深入理解底层原理的开发者</p>
+        <ul class="path-topics">
+          <li><a href="/zh/chapter_springboot/1-sample.md">SpringBoot入门</a></li>
+          <li><a href="/zh/chapter_mysql/1-transaction-concept.md">MySQL事务基础</a></li>
+          <li><a href="/zh/chapter_dubbo/1-learn-from-a-demo.md">Dubbo核心概念</a></li>
+        </ul>
+        <a href="/zh/learning_paths/beginner.md" class="path-action">开始学习 →</a>
       </div>
     </div>
-    <div class="hero-tags">
-      <span class="tag">人工智能</span>
-      <span class="tag">云原生</span>
-      <span class="tag">微服务</span>
-      <span class="tag">大数据</span>
-      <span class="tag">系统架构</span>
+    
+    <div class="learning-path-card">
+      <div class="path-header intermediate">
+        <h3>进阶提升</h3>
+        <span class="path-tag">中级</span>
+      </div>
+      <div class="path-content">
+        <p class="path-description">适合有1-3年工作经验，想要提升技术深度的开发工程师</p>
+        <ul class="path-topics">
+          <li><a href="/zh/chapter_springboot/3-run.md">SpringBoot启动原理</a></li>
+          <li><a href="/zh/chapter_mysql/7-transaction.md">事务实现机制</a></li>
+          <li><a href="/zh/chapter_zookeeper/6-watch.md">ZooKeeper监听机制</a></li>
+        </ul>
+        <a href="/zh/learning_paths/intermediate.md" class="path-action">开始学习 →</a>
+      </div>
+    </div>
+    
+    <div class="learning-path-card">
+      <div class="path-header advanced">
+        <h3>架构师之路</h3>
+        <span class="path-tag">高级</span>
+      </div>
+      <div class="path-content">
+        <p class="path-description">适合有3年以上经验，致力于成为架构师的高级工程师</p>
+        <ul class="path-topics">
+          <li><a href="/zh/chapter_kubernetes/2-apiserver.md">Kubernetes源码解析</a></li>
+          <li><a href="/zh/chapter_mysql/13-cap.md">分布式理论与实践</a></li>
+          <li><a href="/zh/chapter_spring_ai/5-advisor.md">AI系统架构设计</a></li>
+        </ul>
+        <a href="/zh/learning_paths/advanced.md" class="path-action">开始学习 →</a>
+      </div>
     </div>
   </div>
-</div>
+</section>
 
-<div class="stats-container">
-  <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
-    <div class="stat-icon"><i class="fas fa-book-open"></i></div>
-    <div class="stat-value counter" data-target="500">0</div>
-    <div class="stat-label">技术文章</div>
-  </div>
-  <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
-    <div class="stat-icon"><i class="fas fa-code-branch"></i></div>
-    <div class="stat-value counter" data-target="150">0</div>
-    <div class="stat-label">技术领域</div>
-  </div>
-  <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
-    <div class="stat-icon"><i class="fas fa-laptop-code"></i></div>
-    <div class="stat-value counter" data-target="1000">0</div>
-    <div class="stat-label">代码示例</div>
-  </div>
-  <div class="stat-card" data-aos="fade-up" data-aos-delay="400">
-    <div class="stat-icon"><i class="fas fa-users"></i></div>
-    <div class="stat-value counter" data-target="25000">0</div>
-    <div class="stat-label">月访问量</div>
-  </div>
-</div>
+<div class="section-divider"></div>
 
-<div class="tech-category-section">
-  <h2 class="section-title" data-aos="fade-up">热门技术领域</h2>
-  <div class="tech-categories">
-    <a href="/zh/chapter_ai/" class="category-card" data-aos="zoom-in" data-aos-delay="100">
-      <div class="category-icon"><i class="fas fa-brain"></i></div>
-      <h3>人工智能</h3>
-      <p>探索AI前沿理论与实践应用</p>
-    </a>
-    <a href="/zh/chapter_spring_ai/" class="category-card" data-aos="zoom-in" data-aos-delay="200">
-      <div class="category-icon"><i class="fas fa-leaf"></i></div>
-      <h3>Spring生态</h3>
-      <p>深入Spring框架开发精髓</p>
-    </a>
-    <a href="/zh/chapter_kubernetes/" class="category-card" data-aos="zoom-in" data-aos-delay="300">
-      <div class="category-icon"><i class="fas fa-cubes"></i></div>
-      <h3>云原生</h3>
-      <p>容器化与微服务架构实践</p>
-    </a>
-    <a href="/zh/chapter_ddd/" class="category-card" data-aos="zoom-in" data-aos-delay="400">
-      <div class="category-icon"><i class="fas fa-sitemap"></i></div>
-      <h3>领域驱动设计</h3>
-      <p>DDD理念与复杂系统构建</p>
-    </a>
-    <a href="/zh/3d_showcase/" class="category-card" data-aos="zoom-in" data-aos-delay="500">
-      <div class="category-icon"><i class="fas fa-cube"></i></div>
-      <h3>Three.js 3D</h3>
-      <p>交互式3D图形与Web可视化</p>
-    </a>
+<section id="featured-content" class="content-section">
+  <div class="section-header">
+    <h2 class="section-title">精选内容</h2>
+    <p class="section-subtitle">社区最受欢迎的深度技术解析</p>
   </div>
-</div>
+  
+  <div class="content-tabs">
+    <div class="tab-header">
+      <button class="tab-button active" data-tab="popular">热门文章</button>
+      <button class="tab-button" data-tab="latest">最新发布</button>
+      <button class="tab-button" data-tab="series">专题系列</button>
+    </div>
+    
+    <div class="tab-content active" id="popular">
+      <div class="article-grid">
+        <!-- 热门文章，可通过JavaScript动态加载 -->
+        <div class="article-card">
+          <div class="article-category">Spring生态</div>
+          <h3 class="article-title"><a href="/zh/chapter_springboot/2-spi.md">深入理解SpringBoot自动配置机制</a></h3>
+          <p class="article-excerpt">详解SpringBoot SPI机制与自动配置原理，探索其背后的设计思想...</p>
+          <div class="article-meta">
+            <span class="article-views"><i class="fas fa-eye"></i> 12.5k</span>
+            <span class="article-date">2025-03-15</span>
+          </div>
+        </div>
+        
+        <div class="article-card">
+          <div class="article-category">云原生</div>
+          <h3 class="article-title"><a href="/zh/chapter_kubernetes/5-apiserver-server-run.md">Kubernetes API Server链路完全解析</a></h3>
+          <p class="article-excerpt">从源码角度分析Kubernetes API Server的请求处理流程与扩展机制...</p>
+          <div class="article-meta">
+            <span class="article-views"><i class="fas fa-eye"></i> 8.3k</span>
+            <span class="article-date">2025-04-20</span>
+          </div>
+        </div>
+        
+        <div class="article-card">
+          <div class="article-category">中间件</div>
+          <h3 class="article-title"><a href="/zh/chapter_dubbo/22-migration-invoker.md">Dubbo 3.0服务发现新机制详解</a></h3>
+          <p class="article-excerpt">剖析Dubbo 3.0中全新的应用级服务发现机制与双注册/双订阅设计...</p>
+          <div class="article-meta">
+            <span class="article-views"><i class="fas fa-eye"></i> 7.1k</span>
+            <span class="article-date">2025-02-28</span>
+          </div>
+        </div>
+        
+        <div class="article-card">
+          <div class="article-category">AI技术</div>
+          <h3 class="article-title"><a href="/zh/chapter_spring_ai/2-sample.md">Spring AI实战：构建企业级智能应用</a></h3>
+          <p class="article-excerpt">从零开始使用Spring AI框架构建生产级别的智能应用系统...</p>
+          <div class="article-meta">
+            <span class="article-views"><i class="fas fa-eye"></i> 9.2k</span>
+            <span class="article-date">2025-05-10</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="view-more-container">
+        <a href="/zh/popular-content.md" class="view-more-button">查看更多热门文章</a>
+      </div>
+    </div>
+    
+    <div class="tab-content" id="latest">
+      <!-- 最新文章内容 -->
+      <div class="article-grid">
+        <!-- 通过JavaScript动态加载最新文章 -->
+      </div>
+    </div>
+    
+    <div class="tab-content" id="series">
+      <!-- 专题系列内容 -->
+      <div class="series-grid">
+        <!-- 通过JavaScript动态加载专题系列 -->
+      </div>
+    </div>
+  </div>
+</section>
 
-<div class="latest-articles-section">
-  <h2 class="section-title" data-aos="fade-up">最新技术文章</h2>
-  <div class="article-cards" id="latest-articles">
-    <!-- 文章卡片将由JavaScript动态加载 -->
-  </div>
-  <div class="see-more-container" data-aos="fade-up">
-    <a href="/zh/book_index/" class="see-more-btn">查看更多文章 <i class="fas fa-arrow-right"></i></a>
-  </div>
-</div>
+<div class="section-divider"></div>
 
-<div class="newsletter-section" data-aos="fade-up">
-  <div class="newsletter-content">
-    <h2>订阅最新技术动态</h2>
-    <p>第一时间获取前沿技术资讯和高质量教程</p>
-    <form id="newsletter-form" class="newsletter-form">
-      <input type="email" placeholder="输入您的邮箱" required>
-      <button type="submit">订阅 <i class="fas fa-paper-plane"></i></button>
-    </form>
+<section id="community" class="content-section">
+  <div class="section-header">
+    <h2 class="section-title">加入技术社区</h2>
+    <p class="section-subtitle">与专业开发者共同成长，分享知识与经验</p>
   </div>
-</div>
+  
+  <div class="community-features">
+    <div class="community-feature">
+      <div class="feature-icon"><i class="fas fa-comments"></i></div>
+      <h3>技术讨论</h3>
+      <p>参与高质量技术讨论，解决开发难题</p>
+      <a href="/zh/community/discussions.md" class="feature-link">加入讨论</a>
+    </div>
+    
+    <div class="community-feature">
+      <div class="feature-icon"><i class="fas fa-hands-helping"></i></div>
+      <h3>内容贡献</h3>
+      <p>分享你的技术经验，成为内容贡献者</p>
+      <a href="/zh/contribute.md" class="feature-link">如何贡献</a>
+    </div>
+    
+    <div class="community-feature">
+      <div class="feature-icon"><i class="fas fa-user-graduate"></i></div>
+      <h3>社区活动</h3>
+      <p>参加线上研讨会与技术分享活动</p>
+      <a href="/zh/events.md" class="feature-link">查看活动</a>
+    </div>
+  </div>
+  
+  <div class="community-stats">
+    <div class="stat-item">
+      <div class="stat-value">500+</div>
+      <div class="stat-label">技术文章</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">50+</div>
+      <div class="stat-label">技术专题</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">10万+</div>
+      <div class="stat-label">月活跃用户</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">100+</div>
+      <div class="stat-label">技术贡献者</div>
+    </div>
+  </div>
+</section>
 
-<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<div class="section-divider"></div>
+
+<section id="newsletter" class="content-section">
+  <div class="newsletter-container">
+    <div class="newsletter-content">
+      <h2>订阅技术周刊</h2>
+      <p>获取最新技术解析、源码分析和行业动态，每周发送到您的邮箱</p>
+      <form class="newsletter-form" id="subscribe-form">
+        <input type="email" placeholder="输入您的邮箱地址" required>
+        <button type="submit">订阅</button>
+      </form>
+      <p class="form-hint">我们重视您的隐私，绝不会发送垃圾邮件</p>
+    </div>
+  </div>
+</section>
+
 <script>
-// 初始化AOS动画库
-document.addEventListener('DOMContentLoaded', function() {
-  // 初始化AOS动画库
-  AOS.init({
-    duration: 800,
-    once: true
-  });
-  
-  // 初始化粒子效果
-  particlesJS('tech-particles', {
-    particles: {
-      number: { value: 80, density: { enable: true, value_area: 800 } },
-      color: { value: "#ffffff" },
-      shape: { type: "circle" },
-      opacity: { value: 0.5, random: true },
-      size: { value: 3, random: true },
-      line_linked: {
-        enable: true,
-        distance: 150,
-        color: "#ffffff",
-        opacity: 0.4,
-        width: 1
-      },
-      move: {
-        enable: true,
-        speed: 2,
-        direction: "none",
-        random: true,
-        straight: false,
-        out_mode: "out",
-        bounce: false
-      }
-    },
-    interactivity: {
-      detect_on: "canvas",
-      events: {
-        onhover: { enable: true, mode: "grab" },
-        onclick: { enable: true, mode: "push" },
-        resize: true
-      },
-      modes: {
-        grab: { distance: 140, line_linked: { opacity: 1 } },
-        push: { particles_nb: 4 }
-      }
-    },
-    retina_detect: true
-  });
-  
-  // 计数器动画
-  const counters = document.querySelectorAll('.counter');
-  counters.forEach(counter => {
-    const target = +counter.getAttribute('data-target');
-    const duration = 2000; // 动画持续2秒
-    const increment = target / (duration / 16); // 每16ms更新一次
+  document.addEventListener('DOMContentLoaded', function() {
+    // 选项卡切换
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
     
-    const updateCount = () => {
-      const count = +counter.innerText;
-      if (count < target) {
-        counter.innerText = Math.ceil(count + increment);
-        setTimeout(updateCount, 16);
-      } else {
-        counter.innerText = target.toLocaleString();
-      }
-    };
-    
-    // 当元素进入视图时开始计数
-    const observer = new IntersectionObserver((entries) => {
-      if(entries[0].isIntersecting) {
-        updateCount();
-        observer.disconnect();
-      }
-    }, { threshold: 0.5 });
-    
-    observer.observe(counter);
-  });
-  
-  // 高级搜索面板初始化
-  initAdvancedSearch();
-  
-  // 动态加载最新文章
-  loadLatestArticles();
-});
-
-// 初始化高级搜索面板
-function initAdvancedSearch() {
-  // 获取面板和按钮元素
-  const advancedSearchPanel = document.getElementById('advanced-search-panel');
-  if (!advancedSearchPanel) return;
-  
-  // 隐藏面板
-  advancedSearchPanel.style.display = 'none';
-  
-  // 添加点击事件到文档，用于关闭面板
-  document.addEventListener('click', function(event) {
-    const isClickInside = event.target.closest('.search-dropdown');
-    const isToggleButton = event.target.closest('.advanced-search-btn');
-    
-    if (!isClickInside && !isToggleButton && advancedSearchPanel.style.display === 'block') {
-      advancedSearchPanel.style.display = 'none';
-    }
-  });
-}
-
-// 切换高级搜索面板显示
-function toggleAdvancedSearch() {
-  const panel = document.getElementById('advanced-search-panel');
-  if (panel.style.display === 'none' || panel.style.display === '') {
-    panel.style.display = 'block';
-  } else {
-    panel.style.display = 'none';
-  }
-}
-
-// 重置高级搜索选项
-function resetAdvancedOptions() {
-  const checkboxes = document.querySelectorAll('#advanced-search-panel input[type="checkbox"]');
-  const radios = document.querySelectorAll('#advanced-search-panel input[type="radio"]');
-  
-  checkboxes.forEach(checkbox => {
-    if (checkbox.closest('.option-items').querySelector('label:first-child input') === checkbox) {
-      checkbox.checked = true;
-    } else {
-      checkbox.checked = false;
-    }
-  });
-  
-  radios.forEach(radio => {
-    if (radio.closest('.option-items').querySelector('label:first-child input') === radio) {
-      radio.checked = true;
-    } else {
-      radio.checked = false;
-    }
-  });
-}
-
-// 应用高级搜索选项
-function applyAdvancedOptions() {
-  // 收集所有选中的选项
-  const searchScope = [];
-  document.querySelectorAll('#advanced-search-panel .option-group:nth-child(1) input:checked').forEach(input => {
-    searchScope.push(input.parentNode.textContent.trim());
-  });
-  
-  let sortMethod = '';
-  document.querySelectorAll('#advanced-search-panel .option-group:nth-child(2) input:checked').forEach(input => {
-    sortMethod = input.parentNode.textContent.trim();
-  });
-  
-  let timeRange = '';
-  document.querySelectorAll('#advanced-search-panel .option-group:nth-child(3) input:checked').forEach(input => {
-    timeRange = input.parentNode.textContent.trim();
-  });
-  
-  // 组合搜索词
-  const baseSearchText = document.getElementById('tech-search').value.trim();
-  let enhancedSearchText = baseSearchText;
-  
-  if (searchScope.length > 0 && searchScope.length < 4) {
-    enhancedSearchText += ' scope:' + searchScope.join(',');
-  }
-  
-  if (sortMethod && sortMethod !== '相关度') {
-    enhancedSearchText += ' sort:' + sortMethod;
-  }
-  
-  if (timeRange && timeRange !== '不限') {
-    enhancedSearchText += ' time:' + timeRange;
-  }
-  
-  // 更新搜索框
-  document.getElementById('tech-search').value = enhancedSearchText;
-  
-  // 关闭高级搜索面板
-  document.getElementById('advanced-search-panel').style.display = 'none';
-}
-
-// 处理搜索框回车事件
-function handleSearchKeyUp(event) {
-  if (event.key === 'Enter') {
-    performGlobalSearch();
-  }
-}
-
-// 执行全局搜索
-function performGlobalSearch() {
-  const searchText = document.getElementById('tech-search').value.trim();
-  const category = document.getElementById('search-category').value;
-  
-  if (searchText) {
-    // 尝试使用MkDocs内置搜索框
-    const globalSearchInput = document.querySelector('.md-search__input');
-    if (globalSearchInput) {
-      // 设置搜索框的值
-      globalSearchInput.value = searchText;
-      
-      // 触发输入事件以激活搜索
-      globalSearchInput.dispatchEvent(new Event('input', { bubbles: true }));
-      
-      // 点击搜索图标以打开搜索结果
-      const searchIcon = document.querySelector('.md-header__button[aria-label="搜索"]') || 
-                         document.querySelector('.md-header__button[aria-label="Search"]');
-      if (searchIcon) {
-        searchIcon.click();
-      }
-      
-      // 聚焦到搜索框
-      globalSearchInput.focus();
-    } else {
-      // 如果没有找到内置搜索，使用自定义搜索页面
-      const searchParams = new URLSearchParams();
-      searchParams.append('q', searchText);
-      
-      if (category && category !== 'all') {
-        searchParams.append('category', category);
-      }
-      
-      window.location.href = `${window.location.origin}/search.html?${searchParams.toString()}`;
-    }
-  }
-}
-
-// 使用预定义关键词进行搜索
-function searchKeyword(keyword) {
-  document.getElementById('tech-search').value = keyword;
-  performGlobalSearch();
-  return false; // 阻止链接默认行为
-}
-
-// 加载最新文章
-function loadLatestArticles() {
-  // 这里可以替换为实际的API调用或静态数据
-  const latestArticles = [
-    {
-      title: "Spring AI 与大语言模型集成实践",
-      description: "探索���何在Spring应用中集成最新的大语言模型技术",
-      category: "人工智能",
-      date: "2025-06-01",
-      url: "/zh/chapter_spring_ai/llm_integration/"
-    },
-    {
-      title: "Kubernetes Operator开发指南",
-      description: "从零开始构建自定义Kubernetes Operator",
-      category: "云原生",
-      date: "2025-05-25",
-      url: "/zh/chapter_kubernetes/custom_operator/"
-    },
-    {
-      title: "事件��暴建模工作坊实践",
-      description: "如何通过事件风暴快速构建领域模型",
-      category: "DDD",
-      date: "2025-05-18", 
-      url: "/zh/chapter_ddd/event_storming/"
-    },
-    {
-      title: "Netty高性能网络编程进阶",
-      description: "深入Netty核心原理与性能优化策略",
-      category: "网络编程",
-      date: "2025-05-10",
-      url: "/zh/chapter_netty/advanced_performance/"
-    }
-  ];
-  
-  const articlesContainer = document.getElementById('latest-articles');
-  latestArticles.forEach((article, index) => {
-    const delay = (index + 1) * 100;
-    const articleCard = document.createElement('div');
-    articleCard.className = 'article-card';
-    articleCard.setAttribute('data-aos', 'fade-up');
-    articleCard.setAttribute('data-aos-delay', delay);
-    
-    articleCard.innerHTML = `
-      <div class="article-category">${article.category}</div>
-      <h3 class="article-title"><a href="${article.url}">${article.title}</a></h3>
-      <p class="article-desc">${article.description}</p>
-      <div class="article-meta">
-        <span class="article-date"><i class="far fa-calendar-alt"></i> ${article.date}</span>
-        <a href="${article.url}" class="read-more">阅读全文 <i class="fas fa-angle-right"></i></a>
-      </div>
-    `;
-    
-    articlesContainer.appendChild(articleCard);
-  });
-}
-
-// 订阅表单处理
-document.addEventListener('DOMContentLoaded', function() {
-  const newsletterForm = document.getElementById('newsletter-form');
-  if (newsletterForm) {
-    newsletterForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const emailInput = this.querySelector('input[type="email"]');
-      const email = emailInput.value;
-      
-      // 这里应添加实际的订阅逻辑
-      alert(`感谢订阅！我们会将最新技术资讯发送到: ${email}`);
-      emailInput.value = '';
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // 移除所有active类
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+        
+        // 添加active类到当前选中的选项卡
+        button.classList.add('active');
+        const tabId = button.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+      });
     });
+    
+    // 加载最新文章
+    loadLatestArticles();
+    
+    // 加载专题系列
+    loadSeriesContent();
+  });
+  
+  function loadLatestArticles() {
+    // 这里可以通过AJAX或其他方式获取最新文章数据
+    // 示例代码，实际实现可能需要根据你的后端API调整
+    const latestArticlesContainer = document.querySelector('#latest .article-grid');
+    
+    // 示例数据，实际应从API获取
+    const latestArticles = [
+      {
+        category: "Spring生态",
+        title: "Spring Framework 6.2新特性解析",
+        url: "/zh/release_note/spring-framework/spring-framework_v6.2.0.md",
+        excerpt: "详细介绍Spring 6.2版本中的新功能与改进，包括核心容器增强、Web框架更新等...",
+        views: "3.2k",
+        date: "2025-06-15"
+      },
+      {
+        category: "云原生",
+        title: "深入理解Kubernetes Operator模式",
+        url: "/zh/chapter_kubernetes/operator-pattern.md",
+        excerpt: "探索Kubernetes Operator的设计思想、实现机制与最佳实践...",
+        views: "2.8k",
+        date: "2025-06-10"
+      },
+      // 更多文章...
+    ];
+    
+    // 清空容器
+    latestArticlesContainer.innerHTML = '';
+    
+    // 添加文章卡片
+    latestArticles.forEach(article => {
+      latestArticlesContainer.innerHTML += `
+        <div class="article-card">
+          <div class="article-category">${article.category}</div>
+          <h3 class="article-title"><a href="${article.url}">${article.title}</a></h3>
+          <p class="article-excerpt">${article.excerpt}</p>
+          <div class="article-meta">
+            <span class="article-views"><i class="fas fa-eye"></i> ${article.views}</span>
+            <span class="article-date">${article.date}</span>
+          </div>
+        </div>
+      `;
+    });
+    
+    // 添加"查看更多"按钮
+    latestArticlesContainer.insertAdjacentHTML('afterend', `
+      <div class="view-more-container">
+        <a href="/zh/latest-content.md" class="view-more-button">查看更多最新文章</a>
+      </div>
+    `);
   }
-});
+  
+  function loadSeriesContent() {
+    // 加载专题系列内容的逻辑
+    const seriesContainer = document.querySelector('#series .series-grid');
+    
+    // 示例数据，实际应从API获取
+    const seriesData = [
+      {
+        title: "MySQL深度剖析",
+        description: "从基础到高级，全面解析MySQL的核心原理与实现机制",
+        count: 15,
+        image: "/img/series/mysql.jpg",
+        url: "/zh/chapter_mysql/"
+      },
+      {
+        title: "Spring Boot源码解析",
+        description: "逐行阅读Spring Boot源码，探索其设计精髓与实现细节",
+        count: 12,
+        image: "/img/series/springboot.jpg",
+        url: "/zh/chapter_springboot/"
+      },
+      {
+        title: "Kubernetes内核剖析",
+        description: "深入Kubernetes内部实现，理解容器编排系统的设计思想",
+        count: 9,
+        image: "/img/series/kubernetes.jpg",
+        url: "/zh/chapter_kubernetes/"
+      },
+      {
+        title: "AI技术与实践",
+        description: "从原理到实践，全方位探索AI技术在软件开发中的应用",
+        count: 8,
+        image: "/img/series/ai.jpg",
+        url: "/zh/chapter_spring_ai/"
+      }
+    ];
+    
+    // 清空容器
+    seriesContainer.innerHTML = '';
+    
+    // 添加专题卡片
+    seriesData.forEach(series => {
+      seriesContainer.innerHTML += `
+        <div class="series-card">
+          <div class="series-image" style="background-image: url('${series.image}')">
+            <div class="series-count">${series.count}篇文章</div>
+          </div>
+          <div class="series-content">
+            <h3 class="series-title">${series.title}</h3>
+            <p class="series-description">${series.description}</p>
+            <a href="${series.url}" class="series-link">浏览专题 →</a>
+          </div>
+        </div>
+      `;
+    });
+    
+    // 添加"查看更多"按钮
+    seriesContainer.insertAdjacentHTML('afterend', `
+      <div class="view-more-container">
+        <a href="/zh/series.md" class="view-more-button">查看全部专题系列</a>
+      </div>
+    `);
+  }
 </script>
 
 <style>
-/* 重置与基础样式 */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  line-height: 1.6;
-  color: #333;
-  overflow-x: hidden;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-  transition: color 0.3s ease;
-}
-
-/* 英雄区域 */
-.hero-container {
-  position: relative;
-  min-height: 600px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 4rem 2rem;
-  margin-bottom: 4rem;
-  overflow: hidden;
-  border-radius: 16px;
-}
-
-.hero-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-}
-
-.tech-particles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #1a1a2e;
-}
-
-.gradient-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(32, 32, 72, 0.8) 0%, rgba(66, 39, 90, 0.8) 100%);
-}
-
-.hero-content {
-  position: relative;
-  max-width: 900px;
-  width: 100%;
-  padding: 2rem;
-  z-index: 1;
-}
-
-.hero-title {
-  font-size: 3.5rem;
-  font-weight: 800;
-  margin-bottom: 1.5rem;
-  color: white;
-  letter-spacing: -0.5px;
-  line-height: 1.2;
-}
-
-.gradient-text {
-  background: linear-gradient(to right, #74ebd5, #ACB6E5);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.hero-subtitle {
-  font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 2.5rem;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.search-container {
-  max-width: 800px;
-  margin: 0 auto 2rem;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.search-category-selector {
-  position: relative;
-}
-
-#search-category {
-  width: 100%;
-  padding: 1rem 1.5rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 30px;
-  background-color: rgba(255, 255, 255, 0.12);
-  color: white;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  appearance: none;
-}
-
-.select-arrow {
-  position: absolute;
-  top: 50%;
-  right: 15px;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.search-wrapper {
-  width: 100%;
-  position: relative;
-}
-
-#tech-search {
-  width: 100%;
-  padding: 1.2rem 1.5rem;
-  font-size: 1.1rem;
-  border: none;
-  border-radius: 30px;
-  background-color: rgba(255, 255, 255, 0.12);
-  color: white;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-#tech-search::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-#tech-search:focus {
-  background-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  outline: none;
-}
-
-.search-btn {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: linear-gradient(to right, #74ebd5, #ACB6E5);
-  border: none;
-  color: #1a1a2e;
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  font-size: 1.2rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.search-btn:hover {
-  transform: translateY(-50%) scale(1.05);
-  box-shadow: 0 5px 15px rgba(116, 235, 213, 0.4);
-}
-
-.search-dropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  width: 300px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  display: none;
-}
-
-.advanced-search-btn {
-  position: absolute;
-  right: 60px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: linear-gradient(to right, #6366f1, #a855f7);
-  border: none;
-  color: white;
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  font-size: 1.2rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.advanced-search-btn:hover {
-  transform: translateY(-50%) scale(1.05);
-  box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
-}
-
-.advanced-search-panel {
-  padding: 1.5rem;
-}
-
-.search-options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.option-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.option-group h4 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #111827;
-}
-
-.option-items {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.option-items label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  font-size: 0.9rem;
-  color: #6b7280;
-}
-
-.option-items input {
-  accent-color: #6366f1;
-}
-
-.advanced-search-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-}
-
-.reset-btn, .apply-btn {
-  padding: 0.8rem 1.5rem;
-  border: none;
-  border-radius: 30px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.reset-btn {
-  background: rgba(99, 102, 241, 0.1);
-  color: #6366f1;
-}
-
-.apply-btn {
-  background: linear-gradient(to right, #6366f1, #a855f7);
-  color: white;
-}
-
-.reset-btn:hover {
-  background: rgba(99, 102, 241, 0.2);
-}
-
-.apply-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
-}
-
-.hot-keywords {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 1rem;
-}
-
-.hot-title {
-  color: white;
-  font-size: 0.9rem;
-  margin-right: 0.5rem;
-}
-
-.hot-keyword {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  backdrop-filter: blur(5px);
-  transition: all 0.3s ease;
-}
-
-.hot-keyword:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
-}
-
-/* 统计数据区域 */
-.stats-container {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 4rem;
-  padding: 0 1rem;
-}
-
-.stat-card {
-  background: white;
-  padding: 2rem 1rem;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-}
-
-.stat-icon {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: #6366f1;
-}
-
-.stat-value {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(to right, #6366f1, #a855f7);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.stat-label {
-  font-size: 1rem;
-  color: #6b7280;
-}
-
-/* 技术分类区域 */
-.tech-category-section {
-  margin-bottom: 4rem;
-  padding: 0 1rem;
-}
-
-.section-title {
-  font-size: 2.2rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  text-align: center;
-  position: relative;
-  padding-bottom: 1rem;
-}
-
-.section-title:after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 4px;
-  background: linear-gradient(to right, #6366f1, #a855f7);
-  border-radius: 2px;
-}
-
-.tech-categories {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
-}
-
-.category-card {
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  text-align: center;
-}
-
-.category-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-}
-
-.category-icon {
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
-  color: #6366f1;
-  display: inline-block;
-  padding: 1.5rem;
-  background-color: #f5f5ff;
-  border-radius: 50%;
-}
-
-.category-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  font-weight: 600;
-  color: #111827;
-}
-
-.category-card p {
-  color: #6b7280;
-  font-size: 0.95rem;
-}
-
-/* 最新文章区域 */
-.latest-articles-section {
-  margin-bottom: 4rem;
-  padding: 0 1rem;
-}
-
-.article-cards {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.article-card {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  padding: 1.5rem;
-}
-
-.article-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-}
-
-.article-category {
-  display: inline-block;
-  padding: 0.4rem 1rem;
-  background: linear-gradient(to right, #6366f1, #a855f7);
-  color: white;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-.article-title {
-  font-size: 1.5rem;
-  margin-bottom: 0.8rem;
-  line-height: 1.3;
-}
-
-.article-title a {
-  color: #111827;
-  transition: color 0.2s ease;
-}
-
-.article-title a:hover {
-  color: #6366f1;
-}
-
-.article-desc {
-  color: #6b7280;
-  margin-bottom: 1.5rem;
-  font-size: 0.95rem;
-}
-
-.article-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #6b7280;
-  font-size: 0.9rem;
-}
-
-.article-date {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.read-more {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #6366f1;
-  font-weight: 600;
-}
-
-.read-more:hover {
-  color: #4f46e5;
-}
-
-.see-more-container {
-  text-align: center;
-  margin-top: 2rem;
-}
-
-.see-more-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.8rem 2rem;
-  background: linear-gradient(to right, #6366f1, #a855f7);
-  color: white;
-  border-radius: 30px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.see-more-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
-}
-
-/* 订阅区域 */
-.newsletter-section {
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
-  border-radius: 16px;
-  padding: 3rem 2rem;
-  margin-bottom: 4rem;
-}
-
-.newsletter-content {
-  max-width: 600px;
-  margin: 0 auto;
-  text-align: center;
-  color: white;
-}
-
-.newsletter-content h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-}
-
-.newsletter-content p {
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
-  opacity: 0.9;
-}
-
-.newsletter-form {
-  display: flex;
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-.newsletter-form input {
-  flex: 1;
-  padding: 1rem 1.5rem;
-  border: none;
-  border-radius: 30px 0 0 30px;
-  font-size: 1rem;
-}
-
-.newsletter-form input:focus {
-  outline: none;
-}
-
-.newsletter-form button {
-  padding: 1rem 2rem;
-  background: linear-gradient(to right, #74ebd5, #ACB6E5);
-  border: none;
-  border-radius: 0 30px 30px 0;
-  color: #1a1a2e;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-}
-
-.newsletter-form button:hover {
-  opacity: 0.9;
-  transform: translateX(3px);
-}
-
-/* 响应式设计 */
-@media (max-width: 1200px) {
-  .tech-categories {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 992px) {
-  .stats-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .article-cards {
-    grid-template-columns: 1fr;
-  }
-  
-  .hero-title {
-    font-size: 2.8rem;
-  }
-}
-
-@media (max-width: 768px) {
+  /* 主页样式 */
   .hero-container {
+    position: relative;
     min-height: 500px;
-    padding: 3rem 1.5rem;
+    background-color: #0d1117;
+    color: #ffffff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
   }
   
-  .hero-title {
-    font-size: 2.2rem;
+  .hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
   }
   
-  .hero-subtitle {
-    font-size: 1.2rem;
+  .tech-particles {
+    width: 100%;
+    height: 100%;
   }
   
-  .tech-categories {
-    grid-template-columns: 1fr;
+  .gradient-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(13,71,161,0.9) 0%, rgba(25,118,210,0.8) 50%, rgba(3,169,244,0.7) 100%);
+    z-index: 2;
   }
   
-  .newsletter-form {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .newsletter-form input,
-  .newsletter-form button {
-    border-radius: 30px;
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    max-width: 900px;
     width: 100%;
   }
   
-  .stats-container {
-    grid-template-columns: 1fr;
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.2;
   }
-}
+  
+  .gradient-text {
+    background: linear-gradient(135deg, #64b5f6, #2196f3, #0d47a1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-fill-color: transparent;
+    font-weight: 800;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: rgba(255,255,255,0.9);
+  }
+  
+  .hero-actions {
+    margin-bottom: 2.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .primary-button, .secondary-button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+  
+  .primary-button {
+    background: linear-gradient(135deg, #2196f3, #0d47a1);
+    color: white;
+    border: none;
+  }
+  
+  .primary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(33,150,243,0.4);
+  }
+  
+  .secondary-button {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+  }
+  
+  .secondary-button:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-2px);
+  }
+  
+  /* 搜索样式 */
+  .search-container {
+    display: flex;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .search-category-selector {
+    position: relative;
+    width: 140px;
+  }
+  
+  .search-category-selector select {
+    width: 100%;
+    height: 100%;
+    padding: 0 1rem;
+    border: none;
+    border-radius: 4px 0 0 4px;
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+    appearance: none;
+    cursor: pointer;
+  }
+  
+  .select-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: white;
+  }
+  
+  .search-wrapper {
+    flex-grow: 1;
+    display: flex;
+    position: relative;
+  }
+  
+  #tech-search {
+    flex-grow: 1;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 0;
+    background-color: rgba(255,255,255,0.9);
+    color: #333;
+  }
+  
+  .search-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0 1rem;
+    color: #333;
+  }
+  
+  .primary-search-btn {
+    background-color: #2196f3;
+    color: white;
+    border-radius: 0 4px 4px 0;
+  }
+  
+  .search-dropdown {
+    position: relative;
+  }
+  
+  .advanced-search-btn {
+    background-color: rgba(255,255,255,0.1);
+    height: 100%;
+    color: white;
+  }
+  
+  .advanced-search-panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    width: 250px;
+    padding: 1rem;
+    display: none;
+    z-index: 100;
+  }
+  
+  /* 内容样式 */
+  .section-divider {
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(33,150,243,0.3), transparent);
+    margin: 3rem auto;
+    width: 60%;
+    max-width: 800px;
+  }
+  
+  .content-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+  
+  .section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .section-title {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    color: #0d47a1;
+  }
+  
+  .section-subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  
+  /* 特色内容 */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+  
+  .feature-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  }
+  
+  .feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #2196f3;
+  }
+  
+  /* 学习路径 */
+  .learning-path-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  
+  .learning-path-card {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    background-color: white;
+    transition: transform 0.3s ease;
+  }
+  
+  .learning-path-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .path-header {
+    padding: 1.5rem;
+    color: white;
+    position: relative;
+  }
+  
+  .path-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+  }
+  
+  .path-header.beginner {
+    background: linear-gradient(135deg, #4caf50, #2e7d32);
+  }
+  
+  .path-header.intermediate {
+    background: linear-gradient(135deg, #2196f3, #0d47a1);
+  }
+  
+  .path-header.advanced {
+    background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+  }
+  
+  .path-tag {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: rgba(255,255,255,0.2);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+  }
+  
+  .path-content {
+    padding: 1.5rem;
+  }
+  
+  .path-description {
+    color: #666;
+    margin-bottom: 1.5rem;
+  }
+  
+  .path-topics {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+  }
+  
+  .path-topics li {
+    margin-bottom: 0.75rem;
+    padding-left: 1.5rem;
+    position: relative;
+  }
+  
+  .path-topics li:before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: #2196f3;
+  }
+  
+  .path-topics a {
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .path-topics a:hover {
+    color: #2196f3;
+  }
+  
+  .path-action {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background-color: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .path-action:hover {
+    background-color: #e0e0e0;
+    transform: translateX(5px);
+  }
+  
+  /* 内容选项卡 */
+  .content-tabs {
+    margin-top: 2rem;
+  }
+  
+  .tab-header {
+    display: flex;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 2rem;
+  }
+  
+  .tab-button {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .tab-button:after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #2196f3;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  
+  .tab-button.active {
+    color: #2196f3;
+  }
+  
+  .tab-button.active:after {
+    transform: scaleX(1);
+  }
+  
+  .tab-content {
+    display: none;
+  }
+  
+  .tab-content.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  /* 文章网格 */
+  .article-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+  
+  .article-card {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
+  
+  .article-category {
+    display: inline-block;
+    background-color: #e3f2fd;
+    color: #1976d2;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    margin: 1.25rem 1.25rem 0;
+  }
+  
+  .article-title {
+    padding: 0 1.25rem;
+    margin: 0.75rem 0;
+    font-size: 1.2rem;
+    line-height: 1.4;
+  }
+  
+  .article-title a {
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .article-title a:hover {
+    color: #2196f3;
+  }
+  
+  .article-excerpt {
+    padding: 0 1.25rem;
+    margin-bottom: 1rem;
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  
+  .article-meta {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+    border-top: 1px solid #eee;
+    color: #999;
+    font-size: 0.85rem;
+  }
+  
+  /* 专题系列 */
+  .series-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+  
+  .series-card {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+    transition: transform 0.3s ease;
+  }
+  
+  .series-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .series-image {
+    height: 160px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  
+  .series-count {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(0,0,0,0.7);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+  }
+  
+  .series-content {
+    padding: 1.25rem;
+  }
+  
+  .series-title {
+    margin: 0 0 0.75rem;
+    font-size: 1.3rem;
+  }
+  
+  .series-description {
+    color: #666;
+    margin-bottom: 1.25rem;
+    line-height: 1.6;
+  }
+  
+  .series-link {
+    display: inline-block;
+    color: #2196f3;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+  }
+  
+  .series-link:hover {
+    transform: translateX(5px);
+  }
+  
+  .view-more-container {
+    text-align: center;
+    margin-top: 2.5rem;
+  }
+  
+  .view-more-button {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background-color: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .view-more-button:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  }
+  
+  /* 社区部分 */
+  .community-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+  
+  .community-feature {
+    text-align: center;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+    transition: transform 0.3s ease;
+  }
+  
+  .community-feature:hover {
+    transform: translateY(-5px);
+  }
+  
+  .community-feature .feature-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e3f2fd;
+    color: #1976d2;
+    border-radius: 50%;
+    font-size: 2rem;
+  }
+  
+  .feature-link {
+    display: inline-block;
+    margin-top: 1rem;
+    color: #2196f3;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+  
+  .feature-link:hover {
+    text-decoration: underline;
+  }
+  
+  .community-stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 3rem;
+  }
+  
+  .stat-item {
+    text-align: center;
+  }
+  
+  .stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #0d47a1;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  
+  .stat-label {
+    color: #666;
+  }
+  
+  /* 订阅栏 */
+  .newsletter-container {
+    background: linear-gradient(135deg, #0d47a1, #2196f3);
+    padding: 3rem;
+    border-radius: 8px;
+    color: white;
+  }
+  
+  .newsletter-content {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .newsletter-content h2 {
+    margin-bottom: 1rem;
+    color: white;
+  }
+  
+  .newsletter-content p {
+    margin-bottom: 1.5rem;
+    color: rgba(255,255,255,0.9);
+  }
+  
+  .newsletter-form {
+    display: flex;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .newsletter-form input {
+    flex-grow: 1;
+    padding: 0.75rem 1rem;
+    border: none;
+    outline: none;
+  }
+  
+  .newsletter-form button {
+    padding: 0.75rem 1.5rem;
+    background-color: #0d47a1;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+  
+  .newsletter-form button:hover {
+    background-color: #083378;
+  }
+  
+  .form-hint {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.7);
+  }
+  
+  /* 响应式调整 */
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+      font-size: 1.2rem;
+    }
+    
+    .hero-actions {
+      flex-direction: column;
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto 2rem;
+      gap: 0.75rem;
+    }
+    
+    .search-container {
+      flex-direction: column;
+    }
+    
+    .search-category-selector {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+    
+    .search-category-selector select {
+      border-radius: 4px;
+    }
+    
+    .primary-search-btn {
+      border-radius: 0 4px 4px 0;
+    }
+    
+    .section-title {
+      font-size: 1.8rem;
+    }
+    
+    .community-stats {
+      gap: 2rem;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+    }
+    
+    .newsletter-container {
+      padding: 2rem 1.5rem;
+    }
+    
+    .newsletter-form {
+      flex-direction: column;
+    }
+    
+    .newsletter-form button {
+      border-radius: 0;
+    }
+  }
 </style>
