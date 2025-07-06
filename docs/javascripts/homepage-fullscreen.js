@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const path = window.location.pathname;
         return path === '/' || path === '/index.html' || path === '' ||
                path.endsWith('/') || path.includes('index.html') ||
-               document.title.includes('首页') || document.title.includes('Thinking In Code');
+               document.title.includes('首页') || document.title.includes('NextStack');
     }
 
     // 应用首页全屏样式

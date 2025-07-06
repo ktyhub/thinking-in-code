@@ -1,8 +1,10 @@
-# 🚀 Thinking In Code
+# 🚀 NextStack
+
+> 深入解析技术原理与设计思想 - 专注于源码分析、中间件架构、云原生技术与框架设计的高质量技术社区
 
 <div align="center">
 
-![Thinking In Code](https://img.shields.io/badge/Thinking-In%20Code-blueviolet?style=for-the-badge&logo=github)
+![NextStack](https://img.shields.io/badge/NextStack-Tech%20Platform-blueviolet?style=for-the-badge&logo=github)
 ![Fun](https://img.shields.io/badge/Made%20with-❤️%20%26%20☕-red?style=for-the-badge)
 ![Beautiful](https://img.shields.io/badge/Beautiful-✨-yellow?style=for-the-badge)
 
@@ -154,5 +156,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 *If you find this project helpful, please consider giving it a ⭐!*
 
 </div>
-
-
