@@ -1,12 +1,6 @@
----
-  - 新技术洞察平台
----
-
-# 🔮 新技术洞察平台
-
 <div class="leadership-banner" aria-label="平台核心价值">
   <div class="leadership-content">
-    <h1 class="platform-title">🎯 专注新技术洞察与趋势预测</h1>
+    <h1 class="platform-title">🎯 专注新技术洞察</h1>
     <p class="leadership-subtitle">深度源码解析 • 技术趋势预测 • 架构演进洞察</p>
     <div class="trust-indicators">
       <span class="indicator">🔍 500+ 技术深度解析</span>
