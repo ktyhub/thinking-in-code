@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var websiteData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Thinking In Code | 深入理解代码的艺术与原理",
+    "name": "NextStack | 深入理解代码的艺术与原理",
     "url": "https://www.ktyhub.com/",
     "description": "专注于源码解析、中间件原理和云原生技术的知识分享平台。探索Dubbo、Zookeeper、ElasticJob等流行框架的设计思想和内部实现机制。",
     "keywords": "源码解析, 中间件原理, 云原生技术, Java框架, Spring, Dubbo, Zookeeper, Kubernetes",
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       "publisher": {
         "@type": "Organization",
-        "name": "Thinking In Code",
+        "name": "NextStack",
         "url": "https://www.ktyhub.com/"
       },
       "datePublished": datePublished,
@@ -59,4 +59,3 @@ document.addEventListener('DOMContentLoaded', function() {
     document.head.appendChild(articleData);
   }
 });
-
