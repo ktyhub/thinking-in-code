@@ -18,7 +18,7 @@
 
 // Additional JavaScript for enhanced functionality
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('Thinking In Code - Global Tech Insight Platform loaded');
+  console.log('NextStack - Global Tech Insight Platform loaded');
 
   // Add any additional initialization code here
   if (typeof initTechRadar === 'function') {

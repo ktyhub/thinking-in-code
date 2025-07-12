@@ -1,16 +1,16 @@
-# Welcome to Thinking In Code
+# Welcome to NextStack
 
 
-Knowledge 、Thinking , You want to know
+欢迎来到 NextStack 技术平台！这里是深入理解技术原理与设计思想的专业社区。
 
-Welcome to our technology website! We are committed to providing you with a wealth of knowledge and thinking, as well as in-depth source code analysis. Here you will find great content on various technology areas.
+我们致力于为您提供丰富的知识和深入的思考，以及源代码的深度剖析。在这里，您将找到各个技术领域的精彩内容。
 
-Our goal is to help you gain insight into all aspects of the technology world. Whether you're a beginner or a seasoned pro, we have content for you. Through our articles, tutorials, and analysis, you'll be able to stay on top of the latest technology trends, understand how various programming languages and frameworks work, and learn how to apply them to solve real-world problems.
+我们的目标是帮助您洞悉技术世界的方方面面。无论您是初学者还是经验丰富的专业人士，我们都有适合您的内容。通过我们的文章、教程和分析，您将能够掌握最新的技术趋势，理解各种编程语言和框架的工作原理，并学习如何将它们应用于解决实际问题。
 
-In addition to imparting knowledge, we also attach great importance to thinking. We encourage readers not only to learn the surface knowledge of technology, but also to think about its principles and logic. Through in-depth thinking, you will be able to better understand the thinking and design principles behind technology, thereby improving your technical capabilities.
+除了传授知识，我们还非常重视思维的培养。我们鼓励读者不仅仅停留在技术表面的学习上，更要思考其背后的原理和逻辑。通过深入的思考，您将能够更好地理解技术背后的思维和设计原则，从而提升您的技术能力。
 
-In terms of source code analysis, we provide detailed interpretation and analysis to help you deeply understand the implementation details of various open source projects and frameworks. By reading our source code analysis articles, you will be able to better understand the design ideas, algorithm implementation, and performance optimization of these projects.
+在源代码分析方面，我们提供详细的解读和剖析，帮助您深入理解各种开源项目和框架的实现细节。通过阅读我们的源代码分析文章，您将能够更好地理解这些项目的设计理念、算法实现和性能优化。
 
-Whether you want to learn a new technology, broaden your knowledge, or delve deeper into the source code, we have a wealth of resources and content for you. Join our technology community, share your ideas and experiences with other people who love technology, and grow and progress together!
+无论您是想学习一项新技术，拓宽知识面，还是深入研究源代码，我们都有丰富的资源和内容供您选择。加入我们的技术社区，与其他热爱技术的人分享您的想法和经验，共同成长与进步！
 
-Let us explore the ocean of knowledge together, embark on a journey of thinking, and delve into the world of source code
+让我们一起探索知识的海洋，踏上思考的旅程，深入源代码的世界。

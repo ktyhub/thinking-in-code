@@ -1,11 +1,11 @@
-# Welcome to Thinking In Code
+# Welcome to NextStack
 
 
 Knowledge 、Thinking , You want to know
 
 # 网站内容导航
 
-欢迎来到 Thinking In Code 内容导航中心。这里汇总了���站所有的学习资源和技术内容，方便您快速查找所需信息。
+欢迎来到 NextStack 内容导航中心。这里汇总了网站所有的学习资源和技术内容，方便您快速查找所需信息。
 
 ## 🚀 学习路径
 
