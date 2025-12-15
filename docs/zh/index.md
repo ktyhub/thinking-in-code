@@ -1,300 +1,174 @@
-# 新技术洞察平台 | Tech Insight Hub
+# NextStack - IntelliJ IDEA 插件
 
-<div class="leadership-banner">
-  <div class="leadership-content">
-    <h1 class="platform-title">NextStack</h1>
-    <p class="leadership-subtitle">深入解析技术原理与设计思想 - 专注于源码分析、中间件架构、云原生技术与框架设计</p>
-    
-    <div class="trust-indicators">
-      <div class="indicator">🚀 全球领先���术平台</div>
-      <div class="indicator">🔬 深度源码解析</div>
-      <div class="indicator">⚡ 前沿技术洞察</div>
-    </div>
-    
-    <div class="hero-buttons">
-      <a href="/zh/tech_radar/" class="md-button md-button--primary tech-radar-btn">🎯 技术雷达</a>
-      <a href="/zh/learning_paths/" class="md-button leadership-btn">📚 学习路径</a>
-    </div>
+<div class="plugin-showcase" aria-label="NextStack IntelliJ Plugin">
+  <div class="plugin-content">
+    <h1 class="plugin-title">🚀 NextStack - IntelliJ IDEA Plugin</h1>
+    <p class="plugin-subtitle">专注开源技术版本发布洞察的智能插件</p>
+    <p class="plugin-description">
+      在您的 IDE 中实时追踪开源项目版本演进，深度解析技术变革，为技术决策提供前瞻性洞察和升级建议。
+    </p>
   </div>
 </div>
 
-<div class="section-divider"></div>
+## 📥 安装插件 {: #plugin-install }
 
-<section id="featured-content" class="content-section">
-  <div class="section-header">
-    <h2 class="section-title">精选内容</h2>
-    <p class="section-subtitle">最受欢迎的深度技术解析</p>
-  </div>
-  
-  <div class="content-tabs">
-    <div class="tab-header">
-      <button class="tab-button active" data-tab="popular">热门文章</button>
-      <button class="tab-button" data-tab="latest">最新发布</button>
-    </div>
-    
-    <div class="tab-content active" id="popular">
-      <div class="article-grid">
-        <div class="article-card">
-          <div class="article-category">Spring生态</div>
-          <h3 class="article-title"><a href="/zh/chapter_springboot/2-spi.md">深入理解SpringBoot自动配置机制</a></h3>
-          <p class="article-excerpt">详解SpringBoot SPI机制与自动配置原理，探索其背后的设计思想...</p>
-          <div class="article-meta">
-            <span class="article-views"><i class="fas fa-eye"></i> 12.5k</span>
-            <span class="article-date">2025-03-15</span>
-          </div>
-        </div>
-        
-        <div class="article-card">
-          <div class="article-category">云原生</div>
-          <h3 class="article-title"><a href="/zh/chapter_kubernetes/5-apiserver-server-run.md">Kubernetes API Server链路完全解析</a></h3>
-          <p class="article-excerpt">从源码角度分析Kubernetes API Server的请求处理流程与扩展机制...</p>
-          <div class="article-meta">
-            <span class="article-views"><i class="fas fa-eye"></i> 8.3k</span>
-            <span class="article-date">2025-04-20</span>
-          </div>
-        </div>
-        
-        <div class="article-card">
-          <div class="article-category">中间件</div>
-          <h3 class="article-title"><a href="/zh/chapter_dubbo/22-migration-invoker.md">Dubbo 3.0服务发现新机制详解</a></h3>
-          <p class="article-excerpt">剖析Dubbo 3.0中全新的应用级服务发现机制与双注册/双订阅设计...</p>
-          <div class="article-meta">
-            <span class="article-views"><i class="fas fa-eye"></i> 7.1k</span>
-            <span class="article-date">2025-02-28</span>
-          </div>
-        </div>
-        
-        <div class="article-card">
-          <div class="article-category">AI技术</div>
-          <h3 class="article-title"><a href="/zh/chapter_spring_ai/2-sample.md">Spring AI实战：构建企业级智能应用</a></h3>
-          <p class="article-excerpt">从零��始使用Spring AI框架构建生产级别的智能应用系统...</p>
-          <div class="article-meta">
-            <span class="article-views"><i class="fas fa-eye"></i> 9.2k</span>
-            <span class="article-date">2025-05-10</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="view-more-container">
-        <a href="/zh/chapter_preface/" class="view-more-button">查看更多内容</a>
-      </div>
-    </div>
-    
-    <div class="tab-content" id="latest">
-      <div class="article-grid">
-        <!-- 最新文章通过JavaScript动态加载 -->
-      </div>
-    </div>
-  </div>
-</section>
+<div class="plugin-widget-container">
+  <div id="jetbrains-plugin-widget"></div>
+</div>
 
+<script src="https://plugins.jetbrains.com/assets/scripts/mp-widget.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // 选项卡切换
-  const tabButtons = document.querySelectorAll('.tab-button');
-  const tabContents = document.querySelectorAll('.tab-content');
-  
-  tabButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      tabButtons.forEach(btn => btn.classList.remove('active'));
-      tabContents.forEach(content => content.classList.remove('active'));
-      
-      button.classList.add('active');
-      const tabId = button.getAttribute('data-tab');
-      document.getElementById(tabId).classList.add('active');
-    });
-  });
-});
+  MarketplaceWidget.setupMarketplaceWidget('install', 29307, "#jetbrains-plugin-widget");
 </script>
 
+## ✨ 主要功能 {: #key-features }
+
+<div class="features-grid">
+    <div class="feature-item">
+        <h3>🔍 版本实时追踪</h3>
+        <p>在 IDE 中实时查看主流开源项目的最新版本发布动态</p>
+    </div>
+    
+    <div class="feature-item">
+        <h3>📊 技术演进分析</h3>
+        <p>深度分析项目版本间的技术演进路径和关键特性变化</p>
+    </div>
+    
+    <div class="feature-item">
+        <h3>🎯 升级决策支持</h3>
+        <p>基于版本变化提供智能升级建议，评估风险和收益</p>
+    </div>
+    
+    <div class="feature-item">
+        <h3>⚡ 无缝集成</h3>
+        <p>完美集成到 IntelliJ IDEA，提升开发效率</p>
+    </div>
+</div>
+
+## 🔗 更多资源 {: #more-resources }
+
+<div class="resource-links">
+    <a href="/zh/release_note/" class="resource-link">📰 版本发布中心</a>
+    <a href="/zh/tech_radar/" class="resource-link">🎯 技术雷达</a>
+    <a href="/zh/chapter_preface/" class="resource-link">📚 技术文档</a>
+    <a href="https://github.com/ktyhub/thinking-in-code" class="resource-link">💻 GitHub</a>
+</div>
+
 <style>
-/* 主页样式 - 简化版 */
-.content-section {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 3rem 1.5rem;
-}
-
-.section-header {
+.plugin-showcase {
   text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
   margin-bottom: 3rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
 }
 
-.section-title {
-  font-size: 2.2rem;
-  margin-bottom: 0.5rem;
-  color: #0d47a1;
+.plugin-title {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
 }
 
-.section-subtitle {
-  font-size: 1.2rem;
-  color: #666;
-  max-width: 700px;
+.plugin-subtitle {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  opacity: 0.95;
+}
+
+.plugin-description {
+  font-size: 1.1rem;
+  max-width: 800px;
   margin: 0 auto;
+  line-height: 1.6;
+  opacity: 0.9;
 }
 
-.content-tabs {
-  margin-top: 2rem;
+.plugin-widget-container {
+  background: white;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  margin: 2rem auto;
+  max-width: 900px;
 }
 
-.tab-header {
-  display: flex;
-  justify-content: center;
-  border-bottom: 2px solid #eee;
-  margin-bottom: 2rem;
+#jetbrains-plugin-widget {
+  min-height: 200px;
 }
 
-.tab-button {
-  padding: 0.75rem 1.5rem;
-  background: none;
-  border: none;
-  font-weight: 600;
-  color: #666;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-.tab-button:after {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #2196f3;
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-}
-
-.tab-button.active {
-  color: #2196f3;
-}
-
-.tab-button.active:after {
-  transform: scaleX(1);
-}
-
-.tab-content {
-  display: none;
-}
-
-.tab-content.active {
-  display: block;
-  animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.article-grid {
+.features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
+  margin: 3rem 0;
 }
 
-.article-card {
-  background-color: white;
+.feature-item {
+  background: white;
+  padding: 2rem;
   border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.article-card:hover {
+.feature-item:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
-.article-category {
-  display: inline-block;
-  background-color: #e3f2fd;
-  color: #1976d2;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.85rem;
-  border-radius: 4px;
-  margin: 1.25rem 1.25rem 0;
+.feature-item h3 {
+  margin-top: 0;
+  color: #667eea;
+  font-size: 1.3rem;
 }
 
-.article-title {
-  padding: 0 1.25rem;
-  margin: 0.75rem 0;
-  font-size: 1.2rem;
-  line-height: 1.4;
-}
-
-.article-title a {
-  color: #333;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.article-title a:hover {
-  color: #2196f3;
-}
-
-.article-excerpt {
-  padding: 0 1.25rem;
-  margin-bottom: 1rem;
+.feature-item p {
   color: #666;
-  font-size: 0.95rem;
   line-height: 1.6;
 }
 
-.article-meta {
+.resource-links {
   display: flex;
-  justify-content: space-between;
-  padding: 0.75rem 1.25rem;
-  border-top: 1px solid #eee;
-  color: #999;
-  font-size: 0.85rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin: 3rem 0;
 }
 
-.view-more-container {
-  text-align: center;
-  margin-top: 2.5rem;
-}
-
-.view-more-button {
+.resource-link {
   display: inline-block;
-  padding: 0.75rem 2rem;
-  background-color: #2196f3;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   text-decoration: none;
-  border-radius: 4px;
+  border-radius: 6px;
   font-weight: 600;
   transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
 }
 
-.view-more-button:hover {
-  background-color: #1976d2;
+.resource-link:hover {
   transform: translateY(-2px);
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
 }
 
-.section-divider {
-  height: 3px;
-  background: linear-gradient(90deg, transparent, rgba(33,150,243,0.3), transparent);
-  margin: 3rem auto;
-  width: 60%;
-  max-width: 800px;
-}
-
-/* 响应式调整 */
 @media (max-width: 768px) {
-  .section-title {
-    font-size: 1.8rem;
+  .plugin-title {
+    font-size: 2rem;
   }
   
-  .tab-header {
-    flex-direction: column;
-    align-items: center;
+  .plugin-subtitle {
+    font-size: 1.1rem;
   }
   
-  .tab-button {
-    margin-bottom: 0.5rem;
+  .plugin-widget-container {
+    padding: 2rem 1rem;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>
