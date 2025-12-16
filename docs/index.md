@@ -1,110 +1,172 @@
-<div class="leadership-banner" aria-label="平台核心价值">
-  <div class="leadership-content">
-    <h1 class="platform-title">🎯 专注开源技术版本发布洞察</h1>
-    <p class="leadership-subtitle">追踪开源项目版本演进 • 深度解析技术变革</p>
+<div class="plugin-showcase" aria-label="NextStack IntelliJ Plugin">
+  <div class="plugin-content">
+    <h1 class="plugin-title">🚀 NextStack - IntelliJ IDEA Plugin</h1>
+    <p class="plugin-subtitle">专注开源技术版本发布洞察的智能插件</p>
+    <p class="plugin-description">
+      在您的 IDE 中实时追踪开源项目版本演进，深度解析技术变革，为技术决策提供前瞻性洞察和升级建议。
+    </p>
   </div>
 </div>
 
-## 📦 版本发布追踪 {: #release-tracking }
+## 📥 安装插件 {: #plugin-install }
 
-<div class="unique-value-grid">
-    <div class="value-item primary-value">
-        <h3>🔍 版本发布雷达</h3>
-        <p class="value-desc">实时追踪主流开源项目版本发布动态与技术变革</p>
-        <div class="value-metrics">
-            <span class="metric">实时版本追踪</span>
-            <span class="metric">变革深度解析</span>
-        </div>
-        <a href="/zh/release_note/" class="value-link">查看版本动态 →</a>
+<div class="plugin-widget-container">
+  <div id="jetbrains-plugin-widget"></div>
+</div>
+
+<script src="https://plugins.jetbrains.com/assets/scripts/mp-widget.js"></script>
+<script>
+  MarketplaceWidget.setupMarketplaceWidget('install', 29307, "#jetbrains-plugin-widget");
+</script>
+
+## ✨ 主要功能 {: #key-features }
+
+<div class="features-grid">
+    <div class="feature-item">
+        <h3>🔍 版本实时追踪</h3>
+        <p>在 IDE 中实时查看主流开源项目的最新版本发布动态</p>
     </div>
     
-    <div class="value-item">
+    <div class="feature-item">
         <h3>📊 技术演进分析</h3>
-        <p class="value-desc">深度分析开源项目版本间的技术演进路径</p>
-        <div class="analysis-depth">
-            <span class="depth-level">版本对比</span> → 
-            <span class="depth-level">特性分析</span> → 
-            <span class="depth-level">影响评估</span>
-        </div>
-        <a href="/zh/tech_radar/" class="value-link">技术演进图 →</a>
+        <p>深度分析项目版本间的技术演进路径和关键特性变化</p>
     </div>
     
-    <div class="value-item">
+    <div class="feature-item">
         <h3>🎯 升级决策支持</h3>
-        <p class="value-desc">基于版本变化提供技术升级决策建议</p>
-        <div class="evolution-preview">
-            <span class="evolution-stage">风险评估</span> → 
-            <span class="evolution-stage current">收益分析</span> → 
-            <span class="evolution-stage">升级建议</span>
-        </div>
-        <a href="/zh/chapter_preface/" class="value-link">升级指南 →</a>
+        <p>基于版本变化提供智能升级建议，评估风险和收益</p>
+    </div>
+    
+    <div class="feature-item">
+        <h3>⚡ 无缝集成</h3>
+        <p>完美集成到 IntelliJ IDEA，提升开发效率</p>
     </div>
 </div>
 
-## 🚀 重点关注项目 {: #key-projects }
+## 🔗 更多资源 {: #more-resources }
 
-<div class="grid-container">
-    <div class="grid-item">
-        <h3>☕ Java生态版本追踪</h3>
-        <p>Spring、Dubbo、Kafka等核心Java项目版本发布洞察</p>
-        <a href="/zh/chapter_spring_ai/" title="Spring AI版本追踪">Spring AI</a> | 
-        <a href="/zh/chapter_dubbo/" title="Dubbo版本演进">Dubbo</a> | 
-        <a href="/zh/chapter_kafka/" title="Kafka版本分析">Kafka</a>
-    </div>
-    <div class="grid-item">
-        <h3>☁️ 云原生版本动态</h3>
-        <p>Kubernetes、容器技术栈版本发布与演进分析</p>
-        <a href="/zh/chapter_kubernetes/" title="K8s版本追踪">Kubernetes</a> | 
-        <a href="/zh/chapter_post/prometheus" title="Prometheus版本">监控栈</a>
-    </div>
-    <div class="grid-item">
-        <h3>🤖 AI技术版本洞察</h3>
-        <p>AI框架与工具链版本发布的技术变革分析</p>
-        <a href="/zh/chapter_modelcontextprotocol/" title="MCP版本追踪">MCP协议</a> | 
-        <a href="/zh/chapter_dify/" title="Dify版本动态">Dify</a>
-    </div>
-    <div class="grid-item">
-        <h3>💾 数据技术版本追踪</h3>
-        <p>数据库、存储系统版本发布与性能演进</p>
-        <a href="/zh/chapter_mysql/" title="MySQL版本分析">MySQL</a> | 
-        <a href="/zh/chapter_post/clickhouse" title="ClickHouse版本">ClickHouse</a>
-    </div>
+<div class="resource-links">
+    <a href="/zh/release_note/" class="resource-link">📰 版本发布中心</a>
+    <a href="/zh/tech_radar/" class="resource-link">🎯 技术雷达</a>
+    <a href="/zh/chapter_preface/" class="resource-link">📚 技术文档</a>
+    <a href="https://github.com/ktyhub/thinking-in-code" class="resource-link">💻 GitHub</a>
 </div>
 
-## 📋 最新版本发布 {: #latest-releases }
+<style>
+.plugin-showcase {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+  margin-bottom: 3rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
 
-<div class="latest-articles">
-    <ul>
-        <li>
-            <span class="article-date">2025-01-06</span>
-            <a href="/zh/chapter_spring_ai/5-advisor" title="Spring AI最新版本解析">Spring AI 1.0.1 版本发布：顾问模式重大更新</a>
-            <span class="tag">Java生态</span>
-        </li>
-        <li>
-            <span class="article-date">2025-01-05</span>
-            <a href="/zh/chapter_dubbo/22-migration-invoker" title="Dubbo版本升级分析">Dubbo 3.3.0 服务发现机制重构解析</a>
-            <span class="tag">微服务</span>
-        </li>
-        <li>
-            <span class="article-date">2025-01-04</span>
-            <a href="/zh/chapter_post/clickhouse" title="ClickHouse版本分析">ClickHouse 24.1 实时分析性能突破</a>
-            <span class="tag">数据技术</span>
-        </li>
-        <li>
-            <span class="article-date">2025-01-03</span>
-            <a href="/zh/chapter_kubernetes/1-index" title="Kubernetes版本更新">Kubernetes 1.29 版本安全性增强详解</a>
-            <span class="tag">云原生</span>
-        </li>
-    </ul>
-</div>
+.plugin-title {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
 
-## 🔗 版本追踪导航 {: #tracking-navigation }
+.plugin-subtitle {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  opacity: 0.95;
+}
 
-<div class="tags-cloud">
-    <a href="/zh/release_note/" class="tag-item" title="综合版本发布动态">版本发布中心</a>
-    <a href="/zh/chapter_spring_ai/" class="tag-item" title="Spring生态版本">Spring生态</a>
-    <a href="/zh/chapter_dubbo/" class="tag-item" title="微服务版本追踪">微服务栈</a>
-    <a href="/zh/chapter_kubernetes/" class="tag-item" title="云原生版本">云原生</a>
-    <a href="/zh/chapter_kafka/" class="tag-item" title="消息系统版本">消息系统</a>
-    <a href="/zh/chapter_mysql/" class="tag-item" title="数据库版本">数据库</a>
-</div>
+.plugin-description {
+  font-size: 1.1rem;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.plugin-widget-container {
+  background: white;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  margin: 2rem auto;
+  max-width: 900px;
+}
+
+#jetbrains-plugin-widget {
+  min-height: 200px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.feature-item {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.feature-item h3 {
+  margin-top: 0;
+  color: #667eea;
+  font-size: 1.3rem;
+}
+
+.feature-item p {
+  color: #666;
+  line-height: 1.6;
+}
+
+.resource-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin: 3rem 0;
+}
+
+.resource-link {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+}
+
+.resource-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+@media (max-width: 768px) {
+  .plugin-title {
+    font-size: 2rem;
+  }
+  
+  .plugin-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .plugin-widget-container {
+    padding: 2rem 1rem;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
