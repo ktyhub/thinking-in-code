@@ -215,14 +215,23 @@
   --hero-gradient-end: #764ba2;
 }
 
+/* Fix for full viewport width on all screen sizes */
+html, body {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
 .md-content {
   overflow-x: hidden;
   max-width: none !important;
+  width: 100% !important;
 }
 
 .md-content__inner {
   margin: 0 !important;
   max-width: none !important;
+  width: 100% !important;
 }
 
 /* Hero Section - 全屏英雄区 */
@@ -232,8 +241,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
+  width: 100vw !important;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
   margin-top: -2rem;
   overflow: hidden;
 }
@@ -408,10 +420,12 @@
 
 /* 为所有section添加全屏效果 */
 section {
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
-  padding-left: calc(50vw - 50%);
-  padding-right: calc(50vw - 50%);
+  width: 100vw !important;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
   overflow-x: hidden;
 }
 
