@@ -215,13 +215,6 @@
   --hero-gradient-end: #764ba2;
 }
 
-/* Fix for full viewport width on all screen sizes */
-html, body {
-  width: 100% !important;
-  max-width: 100% !important;
-  overflow-x: hidden !important;
-}
-
 .md-content {
   overflow-x: hidden;
   max-width: none !important;
@@ -243,7 +236,6 @@ html, body {
   justify-content: center;
   width: 100vw !important;
   left: 50%;
-  right: 50%;
   margin-left: -50vw !important;
   margin-right: -50vw !important;
   margin-top: -2rem;
@@ -423,7 +415,6 @@ section {
   width: 100vw !important;
   position: relative;
   left: 50%;
-  right: 50%;
   margin-left: -50vw !important;
   margin-right: -50vw !important;
   overflow-x: hidden;
