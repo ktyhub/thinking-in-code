@@ -265,6 +265,12 @@
   50% { opacity: 0.8; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .hero-gradient {
+    animation: none;
+  }
+}
+
 .hero-content {
   position: relative;
   z-index: 1;
@@ -406,6 +412,7 @@ section {
   margin-right: calc(-50vw + 50%);
   padding-left: calc(50vw - 50%);
   padding-right: calc(50vw - 50%);
+  overflow-x: hidden;
 }
 
 /* Value Section */
@@ -525,6 +532,12 @@ section {
 @keyframes pulse {
   0%, 100% { transform: translate(0, 0); }
   50% { transform: translate(-10%, -10%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature-large::before {
+    animation: none;
+  }
 }
 
 .feature-visual {
@@ -685,6 +698,12 @@ section {
   to { transform: rotate(360deg); }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .section-differentiation::before {
+    animation: none;
+  }
+}
+
 .section-differentiation .section-container {
   position: relative;
   z-index: 1;
@@ -829,10 +848,16 @@ section {
   font-weight: 800;
   margin-bottom: 1.5rem;
   color: #2c3e50;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+}
+
+/* Gradient text effect with fallback */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .download-info h3 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 }
 
 .download-info p {
