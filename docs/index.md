@@ -425,6 +425,13 @@ section {
 /* Value Section */
 .section-value {
   background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+  width: 100vw !important;
+  position: relative;
+  left: 50%;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
+  overflow-x: hidden;
+}
 }
 
 .value-grid {
@@ -492,6 +499,11 @@ section {
 .section-features {
   background: white;
   position: relative;
+  width: 100vw !important;
+  left: 50%;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
+  overflow-x: hidden;
 }
 
 .section-features::after {
@@ -687,6 +699,10 @@ section {
   color: white;
   position: relative;
   overflow: hidden;
+  width: 100vw !important;
+  left: 50%;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
 }
 
 .section-differentiation::before {
@@ -797,6 +813,10 @@ section {
   background: linear-gradient(180deg, #ffffff 0%, #f0f4ff 100%);
   position: relative;
   overflow: hidden;
+  width: 100vw !important;
+  left: 50%;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
 }
 
 .section-download::before {
@@ -985,6 +1005,12 @@ section {
   background: linear-gradient(135deg, var(--hero-gradient-start) 0%, var(--hero-gradient-end) 100%);
   color: white;
   text-align: center;
+  width: 100vw !important;
+  position: relative;
+  left: 50%;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
+  overflow-x: hidden;
 }
 
 .cta-content h2 {
