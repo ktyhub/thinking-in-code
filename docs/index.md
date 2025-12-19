@@ -432,7 +432,6 @@ section {
   margin-right: -50vw !important;
   overflow-x: hidden;
 }
-}
 
 .value-grid {
   display: grid;
