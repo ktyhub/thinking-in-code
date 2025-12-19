@@ -219,12 +219,14 @@
   overflow-x: hidden;
   max-width: none !important;
   width: 100% !important;
+  padding: 0 !important;
 }
 
 .md-content__inner {
   margin: 0 !important;
   max-width: none !important;
   width: 100% !important;
+  padding: 0 !important;
 }
 
 /* Hero Section - 全屏英雄区 */
