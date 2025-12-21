@@ -237,7 +237,6 @@
   align-items: center;
   justify-content: center;
   width: 100vw !important;
-  left: 50%;
   margin-left: -50vw !important;
   margin-right: -50vw !important;
   margin-top: -2rem;
@@ -416,7 +415,6 @@
 section {
   width: 100vw !important;
   position: relative;
-  left: 50%;
   margin-left: -50vw !important;
   margin-right: -50vw !important;
   overflow-x: hidden;
@@ -427,7 +425,6 @@ section {
   background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
   width: 100vw !important;
   position: relative;
-  left: 50%;
   margin-left: -50vw !important;
   margin-right: -50vw !important;
   overflow-x: hidden;
@@ -499,7 +496,6 @@ section {
   background: white;
   position: relative;
   width: 100vw !important;
-  left: 50%;
   margin-left: -50vw !important;
   margin-right: -50vw !important;
   overflow-x: hidden;
@@ -699,7 +695,6 @@ section {
   position: relative;
   overflow: hidden;
   width: 100vw !important;
-  left: 50%;
   margin-left: -50vw !important;
   margin-right: -50vw !important;
 }
@@ -813,7 +808,6 @@ section {
   position: relative;
   overflow: hidden;
   width: 100vw !important;
-  left: 50%;
   margin-left: -50vw !important;
   margin-right: -50vw !important;
 }
@@ -1006,7 +1000,6 @@ section {
   text-align: center;
   width: 100vw !important;
   position: relative;
-  left: 50%;
   margin-left: -50vw !important;
   margin-right: -50vw !important;
   overflow-x: hidden;
