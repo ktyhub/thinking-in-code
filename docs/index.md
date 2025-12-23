@@ -213,7 +213,8 @@
 :root {
   --hero-gradient-start: #667eea;
   --hero-gradient-end: #764ba2;
-  --responsive-grid-min: min(320px, 100%);
+  --responsive-grid-min: 280px;
+  --full-width-margin: calc(-50vw + 50%);
 }
 
 .md-content {
@@ -231,11 +232,8 @@
 }
 
 /* Prevent horizontal overflow on all screen sizes */
+html,
 body {
-  overflow-x: hidden;
-}
-
-html {
   overflow-x: hidden;
 }
 
@@ -247,8 +245,8 @@ html {
   align-items: center;
   justify-content: center;
   width: 100%;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
+  margin-left: var(--full-width-margin);
+  margin-right: var(--full-width-margin);
   margin-top: -2rem;
   overflow: hidden;
 }
@@ -425,8 +423,8 @@ html {
 section {
   width: 100%;
   position: relative;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
+  margin-left: var(--full-width-margin);
+  margin-right: var(--full-width-margin);
   overflow-x: hidden;
 }
 
@@ -435,8 +433,8 @@ section {
   background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
   width: 100%;
   position: relative;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
+  margin-left: var(--full-width-margin);
+  margin-right: var(--full-width-margin);
   overflow-x: hidden;
 }
 
@@ -506,8 +504,8 @@ section {
   background: white;
   position: relative;
   width: 100%;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
+  margin-left: var(--full-width-margin);
+  margin-right: var(--full-width-margin);
   overflow-x: hidden;
 }
 
@@ -705,8 +703,8 @@ section {
   position: relative;
   overflow: hidden;
   width: 100%;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
+  margin-left: var(--full-width-margin);
+  margin-right: var(--full-width-margin);
 }
 
 .section-differentiation::before {
@@ -818,8 +816,8 @@ section {
   position: relative;
   overflow: hidden;
   width: 100%;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
+  margin-left: var(--full-width-margin);
+  margin-right: var(--full-width-margin);
 }
 
 .section-download::before {
@@ -1010,8 +1008,8 @@ section {
   text-align: center;
   width: 100%;
   position: relative;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
+  margin-left: var(--full-width-margin);
+  margin-right: var(--full-width-margin);
   overflow-x: hidden;
 }
 
