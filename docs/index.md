@@ -213,6 +213,8 @@
 :root {
   --hero-gradient-start: #667eea;
   --hero-gradient-end: #764ba2;
+  --responsive-grid-min: 300px;
+  --full-width-margin: calc(-50vw + 50%);
 }
 
 .md-content {
@@ -229,6 +231,12 @@
   padding: 0 !important;
 }
 
+/* Prevent horizontal overflow on all screen sizes */
+html,
+body {
+  overflow-x: hidden;
+}
+
 /* Hero Section - 全屏英雄区 */
 .homepage-hero {
   position: relative;
@@ -236,9 +244,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100vw !important;
-  margin-left: -50vw !important;
-  margin-right: -50vw !important;
+  width: 100%;
+  margin-left: var(--full-width-margin);
+  margin-right: var(--full-width-margin);
   margin-top: -2rem;
   overflow: hidden;
 }
@@ -413,26 +421,26 @@
 
 /* 为所有section添加全屏效果 */
 section {
-  width: 100vw !important;
+  width: 100%;
   position: relative;
-  margin-left: -50vw !important;
-  margin-right: -50vw !important;
+  margin-left: var(--full-width-margin);
+  margin-right: var(--full-width-margin);
   overflow-x: hidden;
 }
 
 /* Value Section */
 .section-value {
   background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
-  width: 100vw !important;
+  width: 100%;
   position: relative;
-  margin-left: -50vw !important;
-  margin-right: -50vw !important;
+  margin-left: var(--full-width-margin);
+  margin-right: var(--full-width-margin);
   overflow-x: hidden;
 }
 
 .value-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--responsive-grid-min), 1fr));
   gap: 3rem;
 }
 
@@ -495,9 +503,9 @@ section {
 .section-features {
   background: white;
   position: relative;
-  width: 100vw !important;
-  margin-left: -50vw !important;
-  margin-right: -50vw !important;
+  width: 100%;
+  margin-left: var(--full-width-margin);
+  margin-right: var(--full-width-margin);
   overflow-x: hidden;
 }
 
@@ -694,9 +702,9 @@ section {
   color: white;
   position: relative;
   overflow: hidden;
-  width: 100vw !important;
-  margin-left: -50vw !important;
-  margin-right: -50vw !important;
+  width: 100%;
+  margin-left: var(--full-width-margin);
+  margin-right: var(--full-width-margin);
 }
 
 .section-differentiation::before {
@@ -732,7 +740,7 @@ section {
 
 .comparison-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--responsive-grid-min), 1fr));
   gap: 2.5rem;
 }
 
@@ -807,9 +815,9 @@ section {
   background: linear-gradient(180deg, #ffffff 0%, #f0f4ff 100%);
   position: relative;
   overflow: hidden;
-  width: 100vw !important;
-  margin-left: -50vw !important;
-  margin-right: -50vw !important;
+  width: 100%;
+  margin-left: var(--full-width-margin);
+  margin-right: var(--full-width-margin);
 }
 
 .section-download::before {
@@ -998,10 +1006,10 @@ section {
   background: linear-gradient(135deg, var(--hero-gradient-start) 0%, var(--hero-gradient-end) 100%);
   color: white;
   text-align: center;
-  width: 100vw !important;
+  width: 100%;
   position: relative;
-  margin-left: -50vw !important;
-  margin-right: -50vw !important;
+  margin-left: var(--full-width-margin);
+  margin-right: var(--full-width-margin);
   overflow-x: hidden;
 }
 
@@ -1067,7 +1075,7 @@ section {
 /* Responsive Design */
 @media (max-width: 1024px) {
   .section-container {
-    padding: 5rem 2.5rem;
+    padding: 5rem 2rem;
   }
   
   .section-title {
@@ -1099,6 +1107,10 @@ section {
     margin-bottom: 3rem;
   }
   
+  .hero-content {
+    padding: 2rem 1.5rem;
+  }
+  
   .hero-tagline {
     font-size: clamp(1.1rem, 4vw, 1.4rem);
   }
@@ -1110,10 +1122,13 @@ section {
   .hero-cta {
     flex-direction: column;
     align-items: stretch;
+    gap: 1rem;
   }
   
   .cta-button {
     text-align: center;
+    padding: 0.9rem 2rem;
+    font-size: 1rem;
   }
   
   .hero-stats {
@@ -1130,16 +1145,21 @@ section {
   }
   
   .value-card {
-    padding: 2.5rem;
+    padding: 2.5rem 2rem;
   }
   
   .feature-large {
-    padding: 2.5rem;
+    padding: 2.5rem 2rem;
     gap: 2.5rem;
   }
   
   .feature-details h3 {
     font-size: 2rem;
+  }
+  
+  .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
   
   .comparison-grid {
@@ -1148,7 +1168,7 @@ section {
   }
   
   .download-container {
-    padding: 2.5rem;
+    padding: 2.5rem 2rem;
     gap: 2.5rem;
   }
   
@@ -1180,6 +1200,55 @@ section {
   }
 }
 
+@media (max-width: 640px) {
+  .section-container {
+    padding: 3.5rem 1.3rem;
+  }
+  
+  .section-title {
+    font-size: 1.85rem;
+  }
+  
+  .hero-content {
+    padding: 2rem 1.3rem;
+  }
+  
+  .hero-badge {
+    font-size: 0.88rem;
+    padding: 0.45rem 1.3rem;
+  }
+  
+  .hero-tagline {
+    font-size: clamp(1.05rem, 4.5vw, 1.35rem);
+  }
+  
+  .hero-description {
+    font-size: 1.05rem;
+  }
+  
+  .stat-number {
+    font-size: 2.2rem;
+  }
+  
+  .value-card,
+  .feature-large,
+  .download-container {
+    padding: 2.2rem 1.8rem;
+  }
+  
+  .feature-card {
+    padding: 2.2rem 1.8rem;
+  }
+  
+  .download-info h3 {
+    font-size: 1.7rem;
+  }
+  
+  .cta-content h2 {
+    font-size: 1.85rem;
+  }
+}
+
 @media (max-width: 480px) {
   .homepage-hero {
     min-height: 90vh;
@@ -1190,13 +1259,48 @@ section {
   }
   
   .hero-content {
-    padding: 2rem 1.5rem;
+    padding: 2rem 1.2rem;
+  }
+  
+  .hero-badge {
+    font-size: 0.85rem;
+    padding: 0.4rem 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .hero-tagline {
+    font-size: clamp(1rem, 5vw, 1.3rem);
+  }
+  
+  .hero-description {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .hero-stats {
+    gap: 1.5rem;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
+  
+  .stat-label {
+    font-size: 0.9rem;
   }
   
   .value-card,
   .feature-large,
   .download-container {
-    padding: 2rem;
+    padding: 2rem 1.5rem;
+  }
+  
+  .value-card h3 {
+    font-size: 1.4rem;
+  }
+  
+  .value-card p {
+    font-size: 1rem;
   }
   
   .feature-grid {
@@ -1204,11 +1308,41 @@ section {
   }
   
   .feature-card {
-    padding: 2rem;
+    padding: 2rem 1.5rem;
+  }
+  
+  .feature-card h4 {
+    font-size: 1.2rem;
+  }
+  
+  .feature-card p {
+    font-size: 1rem;
   }
   
   .download-widget {
-    padding: 2rem;
+    padding: 2rem 1.5rem;
+  }
+  
+  .download-info h3 {
+    font-size: 1.6rem;
+  }
+  
+  .download-info p {
+    font-size: 1.05rem;
+  }
+  
+  .cta-content h2 {
+    font-size: 1.75rem;
+  }
+  
+  .cta-content p {
+    font-size: 1rem;
+  }
+  
+  .cta-primary-large,
+  .cta-secondary-large {
+    padding: 1rem 2rem;
+    font-size: 1.05rem;
   }
 }
 </style>
