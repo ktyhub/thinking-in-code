@@ -213,6 +213,7 @@
 :root {
   --hero-gradient-start: #667eea;
   --hero-gradient-end: #764ba2;
+  --responsive-grid-min: min(320px, 100%);
 }
 
 .md-content {
@@ -441,7 +442,7 @@ section {
 
 .value-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--responsive-grid-min), 1fr));
   gap: 3rem;
 }
 
@@ -741,7 +742,7 @@ section {
 
 .comparison-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--responsive-grid-min), 1fr));
   gap: 2.5rem;
 }
 
@@ -1099,12 +1100,6 @@ section {
 }
 
 @media (max-width: 768px) {
-  /* Ensure no horizontal overflow */
-  body, html {
-    overflow-x: hidden;
-    max-width: 100%;
-  }
-  
   .section-container {
     padding: 4rem 1.5rem;
   }
