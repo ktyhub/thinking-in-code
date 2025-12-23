@@ -213,7 +213,7 @@
 :root {
   --hero-gradient-start: #667eea;
   --hero-gradient-end: #764ba2;
-  --responsive-grid-min: 280px;
+  --responsive-grid-min: 300px;
   --full-width-margin: calc(-50vw + 50%);
 }
 
@@ -1197,6 +1197,55 @@ section {
   .cta-buttons {
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+@media (max-width: 640px) {
+  .section-container {
+    padding: 3.5rem 1.3rem;
+  }
+  
+  .section-title {
+    font-size: 1.85rem;
+  }
+  
+  .hero-content {
+    padding: 2rem 1.3rem;
+  }
+  
+  .hero-badge {
+    font-size: 0.88rem;
+    padding: 0.45rem 1.3rem;
+  }
+  
+  .hero-tagline {
+    font-size: clamp(1.05rem, 4.5vw, 1.35rem);
+  }
+  
+  .hero-description {
+    font-size: 1.05rem;
+  }
+  
+  .stat-number {
+    font-size: 2.2rem;
+  }
+  
+  .value-card,
+  .feature-large,
+  .download-container {
+    padding: 2.2rem 1.8rem;
+  }
+  
+  .feature-card {
+    padding: 2.2rem 1.8rem;
+  }
+  
+  .download-info h3 {
+    font-size: 1.7rem;
+  }
+  
+  .cta-content h2 {
+    font-size: 1.85rem;
   }
 }
 
