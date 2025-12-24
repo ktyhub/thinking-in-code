@@ -3,6 +3,9 @@
  * Supports navigation between different language versions
  */
 document.addEventListener('DOMContentLoaded', function() {
+  // Configuration
+  const DEFAULT_LANGUAGE = 'zh';
+  
   // Supported languages with display names and icons
   const languages = {
     'zh': { name: '中文', icon: '🇨🇳', fullName: 'Chinese' },
@@ -21,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function getCurrentLanguage() {
     const path = window.location.pathname;
     const match = path.match(/^\/([a-z]{2})\//);
-    return match ? match[1] : 'zh';
+    return match ? match[1] : DEFAULT_LANGUAGE;
   }
 
   // Save language preference to localStorage
