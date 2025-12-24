@@ -13,7 +13,15 @@
 
   // Only execute on homepage
   const currentPath = window.location.pathname;
-  const isHomepage = currentPath === '/' || currentPath === '/index.html' || currentPath === '/thinking-in-code/' || currentPath === '/thinking-in-code/index.html';
+  // Match various homepage patterns
+  const homepagePatterns = [
+    /^\/$/,                           // Root /
+    /^\/index\.html$/,                // /index.html
+    /^\/thinking-in-code\/$/,         // /thinking-in-code/
+    /^\/thinking-in-code\/index\.html$/ // /thinking-in-code/index.html
+  ];
+  
+  const isHomepage = homepagePatterns.some(pattern => pattern.test(currentPath));
   
   if (!isHomepage) {
     return;
@@ -156,9 +164,10 @@
     // Save preference
     saveLanguagePreference(targetLang);
 
-    // Build target URL
-    const baseUrl = window.location.origin + window.location.pathname.replace(/\/+$/, '');
-    const targetUrl = `${baseUrl}/${targetLang}/`;
+    // Build target URL - properly handle trailing slashes
+    const origin = window.location.origin;
+    const pathname = window.location.pathname.replace(/\/index\.html$/, '').replace(/\/$/, '');
+    const targetUrl = `${origin}${pathname}/${targetLang}/`;
 
     console.log(`Redirecting to ${targetLang} version: ${targetUrl}`);
     

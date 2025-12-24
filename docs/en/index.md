@@ -197,7 +197,7 @@
       <p>Install NextStack now and start your intelligent technology subscription experience</p>
       <div class="cta-buttons">
         <a href="#download" class="cta-button cta-primary-large">Download Now</a>
-        <a href="/en/release_note/" class="cta-button cta-secondary-large">View Release Center</a>
+        <a href="release_note/" class="cta-button cta-secondary-large">View Release Center</a>
       </div>
     </div>
   </div>
