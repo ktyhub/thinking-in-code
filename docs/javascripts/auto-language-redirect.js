@@ -28,6 +28,7 @@
   }
 
   // Supported languages with their language codes and regional variants
+  // Currently only zh (Chinese) and en (English) have content
   const supportedLanguages = {
     'zh': 'zh',
     'zh-CN': 'zh',
@@ -36,39 +37,24 @@
     'zh-tw': 'zh',
     'zh-HK': 'zh',
     'zh-hk': 'zh',
+    'zh-SG': 'zh',
+    'zh-sg': 'zh',
     'en': 'en',
     'en-US': 'en',
     'en-us': 'en',
     'en-GB': 'en',
     'en-gb': 'en',
-    'ja': 'ja',
-    'ja-JP': 'ja',
-    'ja-jp': 'ja',
-    'ko': 'ko',
-    'ko-KR': 'ko',
-    'ko-kr': 'ko',
-    'fr': 'fr',
-    'fr-FR': 'fr',
-    'fr-fr': 'fr',
-    'de': 'de',
-    'de-DE': 'de',
-    'de-de': 'de',
-    'es': 'es',
-    'es-ES': 'es',
-    'es-es': 'es',
-    'pt': 'pt',
-    'pt-BR': 'pt',
-    'pt-br': 'pt',
-    'pt-PT': 'pt',
-    'pt-pt': 'pt',
-    'ru': 'ru',
-    'ru-RU': 'ru',
-    'ru-ru': 'ru',
-    'ar': 'ar'
+    'en-AU': 'en',
+    'en-au': 'en',
+    'en-CA': 'en',
+    'en-ca': 'en',
+    'en-NZ': 'en',
+    'en-nz': 'en'
   };
 
   // Default language if detection fails or language not supported
-  const defaultLanguage = 'en';
+  // Default to Chinese (zh) as this is primarily a Chinese site
+  const defaultLanguage = 'zh';
 
   /**
    * Get language from URL parameter
