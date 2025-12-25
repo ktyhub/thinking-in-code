@@ -7,18 +7,21 @@ document.addEventListener('DOMContentLoaded', function() {
   const DEFAULT_LANGUAGE = 'zh';
   
   // Supported languages with display names and icons
+  // Only include languages that have actual content
   const languages = {
-    'zh': { name: '中文', icon: '🇨🇳', fullName: 'Chinese' },
-    'en': { name: 'English', icon: '🇺🇸', fullName: 'English' },
-    'ja': { name: '日本語', icon: '🇯🇵', fullName: 'Japanese' },
-    'ko': { name: '한국어', icon: '🇰🇷', fullName: 'Korean' },
-    'fr': { name: 'Français', icon: '🇫🇷', fullName: 'French' },
-    'de': { name: 'Deutsch', icon: '🇩🇪', fullName: 'German' },
-    'es': { name: 'Español', icon: '🇪🇸', fullName: 'Spanish' },
-    'pt': { name: 'Português', icon: '🇵🇹', fullName: 'Portuguese' },
-    'ru': { name: 'Русский', icon: '🇷🇺', fullName: 'Russian' },
-    'ar': { name: 'العربية', icon: '🇸🇦', fullName: 'Arabic' }
+    'zh': { name: '中文', icon: '🇨🇳', fullName: 'Chinese (Simplified)' },
+    'en': { name: 'English', icon: '🇺🇸', fullName: 'English' }
   };
+  
+  // Future languages (commented out until content is available)
+  // 'ja': { name: '日本語', icon: '🇯🇵', fullName: 'Japanese' },
+  // 'ko': { name: '한국어', icon: '🇰🇷', fullName: 'Korean' },
+  // 'fr': { name: 'Français', icon: '🇫🇷', fullName: 'French' },
+  // 'de': { name: 'Deutsch', icon: '🇩🇪', fullName: 'German' },
+  // 'es': { name: 'Español', icon: '🇪🇸', fullName: 'Spanish' },
+  // 'pt': { name: 'Português', icon: '🇵🇹', fullName: 'Portuguese' },
+  // 'ru': { name: 'Русский', icon: '🇷🇺', fullName: 'Russian' },
+  // 'ar': { name: 'العربية', icon: '🇸🇦', fullName: 'Arabic' }
 
   // Detect current language from URL path
   function getCurrentLanguage() {
