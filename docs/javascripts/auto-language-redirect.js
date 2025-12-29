@@ -28,8 +28,8 @@
   }
 
   // Supported languages with their language codes and regional variants
-  // Currently only zh (Chinese) and en (English) have content
   const supportedLanguages = {
+    // Chinese variants
     'zh': 'zh',
     'zh-CN': 'zh',
     'zh-cn': 'zh',
@@ -39,6 +39,7 @@
     'zh-hk': 'zh',
     'zh-SG': 'zh',
     'zh-sg': 'zh',
+    // English variants
     'en': 'en',
     'en-US': 'en',
     'en-us': 'en',
@@ -49,7 +50,53 @@
     'en-CA': 'en',
     'en-ca': 'en',
     'en-NZ': 'en',
-    'en-nz': 'en'
+    'en-nz': 'en',
+    // Spanish variants
+    'es': 'es',
+    'es-ES': 'es',
+    'es-es': 'es',
+    'es-MX': 'es',
+    'es-mx': 'es',
+    'es-AR': 'es',
+    'es-ar': 'es',
+    // French variants
+    'fr': 'fr',
+    'fr-FR': 'fr',
+    'fr-fr': 'fr',
+    'fr-CA': 'fr',
+    'fr-ca': 'fr',
+    // German variants
+    'de': 'de',
+    'de-DE': 'de',
+    'de-de': 'de',
+    'de-AT': 'de',
+    'de-at': 'de',
+    'de-CH': 'de',
+    'de-ch': 'de',
+    // Japanese
+    'ja': 'ja',
+    'ja-JP': 'ja',
+    'ja-jp': 'ja',
+    // Korean
+    'ko': 'ko',
+    'ko-KR': 'ko',
+    'ko-kr': 'ko',
+    // Portuguese variants
+    'pt': 'pt',
+    'pt-PT': 'pt',
+    'pt-pt': 'pt',
+    'pt-BR': 'pt',
+    'pt-br': 'pt',
+    // Russian
+    'ru': 'ru',
+    'ru-RU': 'ru',
+    'ru-ru': 'ru',
+    // Arabic variants
+    'ar': 'ar',
+    'ar-SA': 'ar',
+    'ar-sa': 'ar',
+    'ar-AE': 'ar',
+    'ar-ae': 'ar'
   };
 
   // Default language if detection fails or language not supported
