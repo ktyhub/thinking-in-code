@@ -170,6 +170,7 @@
 <section id="differentiation" class="section-differentiation">
   <div class="section-container">
     <h2 class="section-title">为什么选择 NextStack</h2>
+    <p class="section-subtitle">与其他平台相比，我们提供更专注、更轻量、更灵活的技术订阅体验</p>
     <div class="comparison-grid">
       <div class="comparison-card">
         <div class="comparison-header">
@@ -208,11 +209,18 @@
 <section class="section-cta">
   <div class="section-container">
     <div class="cta-content">
+      <div class="cta-icon">🚀</div>
       <h2>准备好提升你的技术信息管理效率了吗？</h2>
       <p>立即安装 NextStack，开启智能化的技术订阅体验</p>
       <div class="cta-buttons">
-        <a href="#download" class="cta-button cta-primary-large">立即下载</a>
-        <a href="/zh/release_note/" class="cta-button cta-secondary-large">查看版本中心</a>
+        <a href="#download" class="cta-button cta-primary-large">
+          <span class="button-icon">📥</span>
+          <span>立即下载</span>
+        </a>
+        <a href="/zh/release_note/" class="cta-button cta-secondary-large">
+          <span class="button-icon">📚</span>
+          <span>查看版本中心</span>
+        </a>
       </div>
     </div>
   </div>
@@ -993,6 +1001,16 @@ section {
   color: white;
 }
 
+.section-subtitle {
+  text-align: center;
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.95);
+  margin-top: -2rem;
+  margin-bottom: 3rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
 .comparison-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--responsive-grid-min), 1fr));
@@ -1258,26 +1276,69 @@ section {
 
 /* CTA Section */
 .section-cta {
-  background: linear-gradient(135deg, var(--hero-gradient-start) 0%, var(--hero-gradient-end) 100%);
+  background: linear-gradient(135deg, var(--hero-gradient-start) 0%, var(--hero-gradient-mid) 50%, var(--hero-gradient-end) 100%);
   color: white;
   text-align: center;
   width: 100%;
   position: relative;
   margin-left: var(--full-width-margin);
   margin-right: var(--full-width-margin);
-  overflow-x: hidden;
+  overflow: hidden;
+}
+
+.section-cta::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-cta::before {
+    animation: none;
+  }
+}
+
+.cta-content {
+  position: relative;
+  z-index: 1;
+}
+
+.cta-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  display: inline-block;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-icon {
+    animation: none;
+  }
 }
 
 .cta-content h2 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin-bottom: 1.2rem;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
 }
 
 .cta-content p {
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   margin-bottom: 2.5rem;
-  opacity: 0.95;
+  opacity: 0.98;
+  font-weight: 400;
 }
 
 .cta-buttons {
@@ -1287,44 +1348,57 @@ section {
   flex-wrap: wrap;
 }
 
+.cta-primary-large,
+.cta-secondary-large {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1.3rem 3.2rem;
+  border-radius: 50px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.button-icon {
+  font-size: 1.3rem;
+  transition: var(--transition-smooth);
+}
+
+.cta-primary-large:hover .button-icon,
+.cta-secondary-large:hover .button-icon {
+  transform: scale(1.2) rotate(10deg);
+}
+
 .cta-primary-large {
   background: white;
   color: #667eea;
-  padding: 1.2rem 3rem;
-  border-radius: 50px;
-  font-size: 1.2rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 }
 
 .cta-primary-large:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
 }
 
 .cta-secondary-large {
   background: rgba(255, 255, 255, 0.2);
   color: white;
-  padding: 1.2rem 3rem;
-  border-radius: 50px;
-  font-size: 1.2rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  border: 2px solid white;
+  border: 3px solid white;
 }
 
 @supports (backdrop-filter: blur(10px)) {
   .cta-secondary-large {
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(15px);
   }
 }
 
 .cta-secondary-large:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-4px) scale(1.05);
 }
 
 /* Responsive Design */
