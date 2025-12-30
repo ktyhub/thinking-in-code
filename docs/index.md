@@ -986,6 +986,11 @@ section {
   to { transform: rotate(360deg); }
 }
 
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .section-differentiation::before {
     animation: none;
