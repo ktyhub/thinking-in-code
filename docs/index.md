@@ -1403,65 +1403,106 @@ section {
 
 /* Responsive Design */
 @media (max-width: 1024px) {
+  :root {
+    --full-width-margin: 0;
+  }
+  
   .section-container {
-    padding: 5rem 2rem;
+    padding: 5rem 2.5rem;
   }
   
   .section-title {
-    font-size: 2.5rem;
+    font-size: 2.6rem;
   }
   
   .feature-large {
     grid-template-columns: 1fr;
-    padding: 3rem;
+    padding: 3rem 2.5rem;
+    gap: 3rem;
   }
   
   .download-container {
     grid-template-columns: 1fr;
-    padding: 3rem;
+    padding: 3rem 2.5rem;
+    gap: 3rem;
   }
   
   .download-stats {
     justify-content: center;
   }
+  
+  .hero-title {
+    font-size: clamp(2.2rem, 7vw, 4.5rem);
+  }
+  
+  .hero-tagline {
+    font-size: 1.6rem;
+  }
 }
 
 @media (max-width: 768px) {
   .section-container {
-    padding: 4rem 1.5rem;
+    padding: 4rem 1.8rem;
   }
   
   .section-title {
-    font-size: 2rem;
-    margin-bottom: 3rem;
+    font-size: 2.2rem;
+    margin-bottom: 2.5rem;
+  }
+  
+  .section-subtitle {
+    font-size: 1.1rem;
+    margin-top: -1.5rem;
+    margin-bottom: 2rem;
   }
   
   .hero-content {
-    padding: 2rem 1.5rem;
+    padding: 2.5rem 1.8rem;
+  }
+  
+  .hero-badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 1.5rem;
+  }
+  
+  .hero-title {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    margin-bottom: 1.2rem;
   }
   
   .hero-tagline {
-    font-size: clamp(1.1rem, 4vw, 1.4rem);
+    font-size: clamp(1.15rem, 4vw, 1.5rem);
   }
   
   .hero-description {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
   }
   
   .hero-cta {
     flex-direction: column;
     align-items: stretch;
-    gap: 1rem;
+    gap: 1.2rem;
   }
   
   .cta-button {
     text-align: center;
-    padding: 0.9rem 2rem;
-    font-size: 1rem;
+    padding: 1rem 2.2rem;
+    font-size: 1.05rem;
+    justify-content: center;
   }
   
   .hero-stats {
     gap: 2rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .stat-item {
+    padding: 1.3rem 1.8rem;
+  }
+  
+  .stat-icon {
+    font-size: 2.2rem;
   }
   
   .stat-number {
@@ -1475,6 +1516,10 @@ section {
   
   .value-card {
     padding: 2.5rem 2rem;
+  }
+  
+  .value-icon {
+    font-size: 4rem;
   }
   
   .feature-large {
@@ -1502,7 +1547,7 @@ section {
   }
   
   .download-info h3 {
-    font-size: 1.8rem;
+    font-size: 1.9rem;
   }
   
   .download-stats {
@@ -1516,16 +1561,20 @@ section {
   }
   
   .cta-content h2 {
-    font-size: 2rem;
+    font-size: 2.2rem;
   }
   
   .cta-content p {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
   }
   
   .cta-buttons {
     flex-direction: column;
     align-items: stretch;
+  }
+  
+  .cta-icon {
+    font-size: 3.5rem;
   }
 }
 
@@ -1580,42 +1629,79 @@ section {
 
 @media (max-width: 480px) {
   .homepage-hero {
-    min-height: 90vh;
+    min-height: 85vh;
   }
   
   .section-container {
-    padding: 3rem 1.2rem;
+    padding: 3.5rem 1.5rem;
+  }
+  
+  .section-title {
+    font-size: 1.9rem;
+    margin-bottom: 2rem;
+  }
+  
+  .section-subtitle {
+    font-size: 1rem;
+    margin-top: -1.2rem;
   }
   
   .hero-content {
-    padding: 2rem 1.2rem;
+    padding: 2rem 1.5rem;
   }
   
   .hero-badge {
     font-size: 0.85rem;
-    padding: 0.4rem 1.2rem;
+    padding: 0.45rem 1.3rem;
     margin-bottom: 1.5rem;
   }
   
+  .badge-icon {
+    font-size: 1rem;
+  }
+  
+  .hero-title {
+    font-size: clamp(1.8rem, 8vw, 3rem);
+    margin-bottom: 1rem;
+  }
+  
+  .title-highlight::after {
+    height: 3px;
+    bottom: -3px;
+  }
+  
   .hero-tagline {
-    font-size: clamp(1rem, 5vw, 1.3rem);
+    font-size: clamp(1rem, 5vw, 1.35rem);
   }
   
   .hero-description {
-    font-size: 1rem;
+    font-size: 1.05rem;
     margin-bottom: 2rem;
+  }
+  
+  .cta-button {
+    padding: 0.95rem 2rem;
+    font-size: 1rem;
   }
   
   .hero-stats {
     gap: 1.5rem;
   }
   
-  .stat-number {
+  .stat-item {
+    padding: 1.2rem 1.5rem;
+  }
+  
+  .stat-icon {
     font-size: 2rem;
   }
   
+  .stat-number {
+    font-size: 2.2rem;
+  }
+  
   .stat-label {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
   }
   
   .value-card,
@@ -1625,11 +1711,15 @@ section {
   }
   
   .value-card h3 {
-    font-size: 1.4rem;
+    font-size: 1.45rem;
   }
   
   .value-card p {
-    font-size: 1rem;
+    font-size: 1.02rem;
+  }
+  
+  .value-icon {
+    font-size: 3.5rem;
   }
   
   .feature-grid {
@@ -1640,12 +1730,16 @@ section {
     padding: 2rem 1.5rem;
   }
   
+  .feature-card-icon {
+    font-size: 2.5rem;
+  }
+  
   .feature-card h4 {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
   }
   
   .feature-card p {
-    font-size: 1rem;
+    font-size: 1.02rem;
   }
   
   .download-widget {
@@ -1653,25 +1747,56 @@ section {
   }
   
   .download-info h3 {
-    font-size: 1.6rem;
+    font-size: 1.7rem;
   }
   
   .download-info p {
-    font-size: 1.05rem;
+    font-size: 1.08rem;
+  }
+  
+  .download-feature {
+    font-size: 1.02rem;
+  }
+  
+  .check-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 0.9rem;
+  }
+  
+  .cta-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
   }
   
   .cta-content h2 {
-    font-size: 1.75rem;
+    font-size: 1.9rem;
   }
   
   .cta-content p {
-    font-size: 1rem;
+    font-size: 1.05rem;
   }
   
   .cta-primary-large,
   .cta-secondary-large {
-    padding: 1rem 2rem;
-    font-size: 1.05rem;
+    padding: 1.1rem 2.2rem;
+    font-size: 1.08rem;
+  }
+  
+  .button-icon {
+    font-size: 1.1rem;
+  }
+  
+  .comparison-card {
+    padding: 0;
+  }
+  
+  .comparison-content {
+    padding: 2rem 1.5rem;
+  }
+  
+  .advantage-icon {
+    font-size: 3rem;
   }
 }
 </style>
