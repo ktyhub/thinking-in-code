@@ -14,7 +14,7 @@
       <span class="title-underline"></span>
     </h1>
     <p class="hero-tagline">为开发者提供的开源技术版本日志订阅器</p>
-    <p class="hero-description">追踪技术演进 · 洞察版本变化 · 把握技术趋势</p>
+    <p class="hero-description">追踪技术演进 &middot; 洞察版本变化 &middot; 把握技术趋势</p>
     <div class="hero-cta">
       <a href="#download" class="cta-button cta-primary">
         <span class="btn-icon">🚀</span>
@@ -343,6 +343,13 @@ body {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .hero-particles {
+    animation: none;
+    opacity: 0.3;
+  }
+}
+
 @keyframes gradientShift {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.8; }
@@ -442,7 +449,7 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
+  color: transparent;
   animation: titleShine 3s ease-in-out infinite;
 }
 
@@ -482,7 +489,7 @@ body {
 }
 
 .hero-tagline {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
   margin: 0 0 1rem 0;
   font-weight: 600;
   opacity: 0.98;
