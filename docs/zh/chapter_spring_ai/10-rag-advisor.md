@@ -63,10 +63,18 @@ public ChatClientRequest before(ChatClientRequest chatClientRequest,
             List.of(transformedQuery);
 
     // 并行执行向量检索
-    Map<Query, List<Document>> documentsForQuery = expandedQueries.stream()
+    // 1. 创建所有异步任务
+    List<CompletableFuture<Map.Entry<Query, List<Document>>>> futures = expandedQueries.stream()
             .map(query -> CompletableFuture.supplyAsync(
                     () -> Map.entry(query, getDocumentsForQuery(query)),
                     this.taskExecutor))
+            .collect(Collectors.toList());
+    
+    // 2. 等待所有任务完成（并行执行）
+    CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+    
+    // 3. 收集所有结果
+    Map<Query, List<Document>> documentsForQuery = futures.stream()
             .map(CompletableFuture::join)
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
