@@ -61,7 +61,7 @@ background: linear-gradient(180deg,
    - Much more interesting than plain white
    - Provides a subtle professional backdrop
 
-   营造温暖、友好的感觉
+   营造温暖、亲切的感觉
    与品牌的紫/紫罗兰色调呼应
    比纯白色更有趣味性
    提供微妙的专业背景
