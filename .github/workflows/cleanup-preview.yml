@@ -1,0 +1,54 @@
+name: Cleanup PR Preview
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  cleanup-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+      
+      - name: Remove preview directory
+        run: |
+          if [ -d "pr-preview/pr-${{ github.event.pull_request.number }}" ]; then
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+            git rm -rf pr-preview/pr-${{ github.event.pull_request.number }}
+            git commit -m "🧹 Clean up preview for PR #${{ github.event.pull_request.number }}"
+            git push
+            echo "Preview cleaned up successfully"
+          else
+            echo "No preview directory found for PR #${{ github.event.pull_request.number }}"
+          fi
+      
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            
+            const comment = `## 🧹 Preview Cleanup
+            
+            The preview deployment for this PR has been removed.
+            
+            - **PR Number:** #${prNumber}
+            - **Cleaned At:** ${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}
+            `;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: comment
+            });
