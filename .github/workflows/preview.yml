@@ -1,0 +1,120 @@
+name: Deploy PR Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - master
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+  deployments: write
+
+jobs:
+  build-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Configure Git Credentials
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+      
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+      
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          key: mkdocs-material-${{ hashFiles('**/requirements.txt', '**/mkdocs.yml') }}
+          path: .cache
+          restore-keys: |
+            mkdocs-material-
+      
+      - name: Install dependencies
+        run: |
+          pip install mkdocs-material
+          pip install pymdown-extensions
+          pip install mkdocs-minify-plugin
+          pip install mkdocs-git-revision-date-localized-plugin
+          pip install mkdocs-redirects
+          pip install mkdocs-awesome-pages-plugin
+          pip install mkdocs-git-authors-plugin
+          pip install mkdocs-macros-plugin
+          pip install mkdocs-glightbox
+          pip install mkdocs-table-reader-plugin
+          pip install mkdocs-rss-plugin
+          pip install mkdocs-include-markdown-plugin
+      
+      - name: Build site
+        run: mkdocs build
+      
+      - name: Deploy to GitHub Pages (PR Preview)
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          destination_dir: pr-preview/pr-${{ github.event.pull_request.number }}
+          keep_files: false
+      
+      - name: Comment PR with preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const repoOwner = context.repo.owner;
+            const repoName = context.repo.repo;
+            const previewUrl = `https://${repoOwner}.github.io/${repoName}/pr-preview/pr-${prNumber}/`;
+            
+            const comment = `## 🚀 Preview Deployment
+            
+            Your changes have been deployed to a preview environment!
+            
+            **Preview URL:** ${previewUrl}
+            
+            <details>
+            <summary>📝 Deployment Details</summary>
+            
+            - **PR Number:** #${prNumber}
+            - **Commit:** ${context.payload.pull_request.head.sha.substring(0, 7)}
+            - **Branch:** ${context.payload.pull_request.head.ref}
+            - **Deployed At:** ${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}
+            
+            </details>
+            
+            > 💡 **Tip:** This preview will be updated automatically when you push new commits to this PR.
+            `;
+            
+            // Check if a comment already exists
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: repoOwner,
+              repo: repoName,
+              issue_number: prNumber,
+            });
+            
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('Preview Deployment')
+            );
+            
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: repoOwner,
+                repo: repoName,
+                comment_id: botComment.id,
+                body: comment
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: repoOwner,
+                repo: repoName,
+                issue_number: prNumber,
+                body: comment
+              });
+            }
