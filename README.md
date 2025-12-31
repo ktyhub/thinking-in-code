@@ -58,6 +58,16 @@ mkdocs serve
 mkdocs build
 ```
 
+## 🔍 PR Preview System
+
+This repository features an automatic PR preview deployment system! 
+
+- 🚀 **Automatic Deployment**: Every PR gets its own preview URL
+- 🔗 **Instant Preview**: See your changes live before merging
+- 🧹 **Auto Cleanup**: Preview environments are automatically cleaned up
+
+**Learn more:** [PR Preview Guide](docs/pr-preview-guide.md) | [Workflow Documentation](.github/workflows/README.md)
+
 ## 🎨 Features
 
 ### ✨ Visual Enhancements
