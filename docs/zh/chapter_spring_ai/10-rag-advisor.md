@@ -101,6 +101,37 @@ public ChatClientRequest before(ChatClientRequest chatClientRequest,
 }
 ```
 
+**关键要点：并行执行的正确实现**
+
+上述代码中的并行检索部分（65-79行）展示了CompletableFuture的正确用法：
+
+1. **错误做法**（串行执行）：
+   ```java
+   Map<Query, List<Document>> result = queries.stream()
+       .map(query -> CompletableFuture.supplyAsync(() -> retrieve(query)))
+       .map(CompletableFuture::join)  // ❌ 立即阻塞，变成串行
+       .collect(Collectors.toMap(...));
+   ```
+   问题：`.map(CompletableFuture::join)` 会立即阻塞等待每个Future完成，导致任务串行执行。
+
+2. **正确做法**（并行执行）：
+   ```java
+   // 先收集所有Future
+   List<CompletableFuture<...>> futures = queries.stream()
+       .map(query -> CompletableFuture.supplyAsync(() -> retrieve(query)))
+       .collect(Collectors.toList());
+   
+   // 等待所有任务并行完成
+   CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+   
+   // 再收集结果
+   Map<Query, List<Document>> result = futures.stream()
+       .map(CompletableFuture::join)  // ✅ 此时所有任务已完成
+       .collect(Collectors.toMap(...));
+   ```
+
+这种模式确保了多个查询能够真正并行执行，避免串行处理导致的性能瓶颈。
+
 1. 基础RAG实现
 
 ```java
