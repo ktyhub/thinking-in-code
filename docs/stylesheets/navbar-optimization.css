@@ -25,9 +25,31 @@ body:has(.plugin-showcase) .md-header {
   box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04) !important;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  z-index: 1000 !important;
+  z-index: 100 !important; /* Reduced from 1000 to moderate value */
   position: sticky !important;
   top: 0 !important;
+}
+
+/* Fallback for browsers without backdrop-filter support */
+@supports not (backdrop-filter: blur(20px)) {
+  body:has(.homepage-hero) .md-header,
+  body:has(.plugin-showcase) .md-header {
+    background: rgba(255, 255, 255, 0.98) !important;
+  }
+  
+  [data-md-color-scheme="slate"] body:has(.homepage-hero) .md-header,
+  [data-md-color-scheme="slate"] body:has(.plugin-showcase) .md-header {
+    background: rgba(25, 25, 35, 0.98) !important;
+  }
+}
+
+/* Performance optimization for mobile devices */
+@media (max-width: 60em) {
+  body:has(.homepage-hero) .md-header,
+  body:has(.plugin-showcase) .md-header {
+    backdrop-filter: blur(15px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(15px) saturate(150%) !important;
+  }
 }
 
 /* Premium dark mode header */
@@ -419,13 +441,28 @@ body:has(.plugin-showcase) .md-tabs {
   transform: translateZ(0);
   backface-visibility: hidden;
   perspective: 1000px;
-  will-change: transform, box-shadow;
+  /* will-change moved to hover/active states to reduce memory overhead */
 }
 
 body:has(.homepage-hero) .md-tabs__link,
 body:has(.plugin-showcase) .md-tabs__link {
   transform: translateZ(0);
   backface-visibility: hidden;
+  /* will-change moved to hover/active states to reduce memory overhead */
+}
+
+/* Apply will-change only on interaction */
+body:has(.homepage-hero) .md-header:hover,
+body:has(.plugin-showcase) .md-header:hover,
+body:has(.homepage-hero) .md-tabs:hover,
+body:has(.plugin-showcase) .md-tabs:hover {
+  will-change: transform, box-shadow;
+}
+
+body:has(.homepage-hero) .md-tabs__link:hover,
+body:has(.homepage-hero) .md-tabs__link--active,
+body:has(.plugin-showcase) .md-tabs__link:hover,
+body:has(.plugin-showcase) .md-tabs__link--active {
   will-change: transform, opacity, background;
 }
 
@@ -435,7 +472,6 @@ body:has(.plugin-showcase) .md-header__button,
 body:has(.homepage-hero) .md-header__title,
 body:has(.plugin-showcase) .md-header__title {
   transform: translateZ(0);
-  will-change: transform;
 }
 
 /* ========================================
@@ -509,32 +545,40 @@ body:has(.plugin-showcase) .md-header {
   }
 }
 
+/* Dynamic tab animation using CSS variables - better maintainability */
 body:has(.homepage-hero) .md-tabs__link,
 body:has(.plugin-showcase) .md-tabs__link {
   animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  animation-delay: calc(var(--tab-index, 0) * 0.05s);
+  /* Note: Animation delay is handled by JavaScript for dynamic tab count */
+  /* Alternatively, can be set inline: style="animation-delay: calc(var(--tab-index) * 0.05s)" */
 }
 
-body:has(.homepage-hero) .md-tabs__link:nth-child(1) { --tab-index: 1; }
-body:has(.homepage-hero) .md-tabs__link:nth-child(2) { --tab-index: 2; }
-body:has(.homepage-hero) .md-tabs__link:nth-child(3) { --tab-index: 3; }
-body:has(.homepage-hero) .md-tabs__link:nth-child(4) { --tab-index: 4; }
-body:has(.homepage-hero) .md-tabs__link:nth-child(5) { --tab-index: 5; }
+/* Static fallback for common tab counts (maintainable) */
+body:has(.homepage-hero) .md-tabs__item:nth-child(1) .md-tabs__link { animation-delay: 0.05s; }
+body:has(.homepage-hero) .md-tabs__item:nth-child(2) .md-tabs__link { animation-delay: 0.10s; }
+body:has(.homepage-hero) .md-tabs__item:nth-child(3) .md-tabs__link { animation-delay: 0.15s; }
+body:has(.homepage-hero) .md-tabs__item:nth-child(4) .md-tabs__link { animation-delay: 0.20s; }
+body:has(.homepage-hero) .md-tabs__item:nth-child(5) .md-tabs__link { animation-delay: 0.25s; }
+body:has(.homepage-hero) .md-tabs__item:nth-child(6) .md-tabs__link { animation-delay: 0.30s; }
 
-body:has(.plugin-showcase) .md-tabs__link:nth-child(1) { --tab-index: 1; }
-body:has(.plugin-showcase) .md-tabs__link:nth-child(2) { --tab-index: 2; }
-body:has(.plugin-showcase) .md-tabs__link:nth-child(3) { --tab-index: 3; }
-body:has(.plugin-showcase) .md-tabs__link:nth-child(4) { --tab-index: 4; }
-body:has(.plugin-showcase) .md-tabs__link:nth-child(5) { --tab-index: 5; }
+body:has(.plugin-showcase) .md-tabs__item:nth-child(1) .md-tabs__link { animation-delay: 0.05s; }
+body:has(.plugin-showcase) .md-tabs__item:nth-child(2) .md-tabs__link { animation-delay: 0.10s; }
+body:has(.plugin-showcase) .md-tabs__item:nth-child(3) .md-tabs__link { animation-delay: 0.15s; }
+body:has(.plugin-showcase) .md-tabs__item:nth-child(4) .md-tabs__link { animation-delay: 0.20s; }
+body:has(.plugin-showcase) .md-tabs__item:nth-child(5) .md-tabs__link { animation-delay: 0.25s; }
+body:has(.plugin-showcase) .md-tabs__item:nth-child(6) .md-tabs__link { animation-delay: 0.30s; }
 
-/* Reduced motion support */
+/* Reduced motion support - instant appearance */
 @media (prefers-reduced-motion: reduce) {
   body:has(.homepage-hero) .md-header,
   body:has(.plugin-showcase) .md-header,
   body:has(.homepage-hero) .md-tabs__link,
   body:has(.plugin-showcase) .md-tabs__link {
     animation: none !important;
+    animation-duration: 0s !important;
     transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
   
   body:has(.homepage-hero) .md-tabs__link,
