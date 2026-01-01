@@ -1,0 +1,180 @@
+/**
+ * Homepage Navigation Bar Optimization
+ * 
+ * This script improves the navigation bar behavior on the homepage:
+ * - Disables auto-hide on homepage for better accessibility
+ * - Adds smooth scroll behavior
+ * - Enhances navigation interactions
+ */
+
+(function() {
+  'use strict';
+  
+  /**
+   * Check if current page is the homepage
+   */
+  function isHomepage() {
+    const path = window.location.pathname;
+    return path === '/' || 
+           path === '/index.html' || 
+           path === '/zh/' || 
+           path === '/zh/index.html' ||
+           document.querySelector('.homepage-hero') !== null ||
+           document.querySelector('.plugin-showcase') !== null;
+  }
+  
+  /**
+   * Disable header autohide on homepage
+   */
+  function disableHeaderAutohideOnHomepage() {
+    if (!isHomepage()) {
+      return;
+    }
+    
+    const header = document.querySelector('.md-header');
+    if (header) {
+      // Prevent the header from being hidden
+      header.setAttribute('data-md-state', '');
+      
+      // Remove hidden state if it gets applied
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'data-md-state') {
+            const state = header.getAttribute('data-md-state');
+            if (state && state.includes('hidden')) {
+              header.setAttribute('data-md-state', state.replace('hidden', '').trim());
+            }
+          }
+        });
+      });
+      
+      observer.observe(header, {
+        attributes: true,
+        attributeFilter: ['data-md-state']
+      });
+    }
+  }
+  
+  /**
+   * Add smooth scroll behavior for anchor links
+   */
+  function addSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (href === '#') return;
+        
+        const target = document.querySelector(href);
+        if (target) {
+          e.preventDefault();
+          
+          // Calculate offset for fixed header
+          const header = document.querySelector('.md-header');
+          const tabs = document.querySelector('.md-tabs');
+          const headerHeight = (header?.offsetHeight || 0) + (tabs?.offsetHeight || 0);
+          
+          const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20;
+          
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          });
+          
+          // Update URL without jumping
+          if (history.pushState) {
+            history.pushState(null, null, href);
+          }
+        }
+      });
+    });
+  }
+  
+  /**
+   * Add active state to navigation tabs based on scroll position
+   */
+  function updateActiveNavOnScroll() {
+    if (!isHomepage()) {
+      return;
+    }
+    
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.md-tabs__link');
+    
+    if (sections.length === 0 || navLinks.length === 0) {
+      return;
+    }
+    
+    window.addEventListener('scroll', function() {
+      let current = '';
+      const scrollPosition = window.pageYOffset;
+      
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (scrollPosition >= sectionTop - 100) {
+          current = section.getAttribute('id');
+        }
+      });
+      
+      navLinks.forEach(link => {
+        link.classList.remove('md-tabs__link--active');
+        const href = link.getAttribute('href');
+        if (href && href.includes('#' + current)) {
+          link.classList.add('md-tabs__link--active');
+        }
+      });
+    });
+  }
+  
+  /**
+   * Enhance header appearance on scroll
+   */
+  function enhanceHeaderOnScroll() {
+    const header = document.querySelector('.md-header');
+    if (!header) return;
+    
+    let lastScroll = 0;
+    
+    window.addEventListener('scroll', function() {
+      const currentScroll = window.pageYOffset;
+      
+      // Add shadow when scrolled
+      if (currentScroll > 10) {
+        header.setAttribute('data-md-state', 'shadow');
+      } else {
+        header.setAttribute('data-md-state', '');
+      }
+      
+      lastScroll = currentScroll;
+    }, { passive: true });
+  }
+  
+  /**
+   * Initialize all enhancements
+   */
+  function init() {
+    // Wait for DOM to be fully loaded
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+      return;
+    }
+    
+    // Apply enhancements
+    disableHeaderAutohideOnHomepage();
+    addSmoothScroll();
+    updateActiveNavOnScroll();
+    enhanceHeaderOnScroll();
+    
+    // Re-apply after page transitions (Material theme's instant loading)
+    document.addEventListener('DOMContentSwitch', function() {
+      setTimeout(function() {
+        disableHeaderAutohideOnHomepage();
+        addSmoothScroll();
+        updateActiveNavOnScroll();
+      }, 100);
+    });
+  }
+  
+  // Start initialization
+  init();
+})();
