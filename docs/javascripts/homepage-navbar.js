@@ -28,7 +28,7 @@
    */
   function disableHeaderAutohideOnHomepage() {
     if (!isHomepage()) {
-      return;
+      return null;
     }
     
     const header = document.querySelector('.md-header');
@@ -52,7 +52,11 @@
         attributes: true,
         attributeFilter: ['data-md-state']
       });
+      
+      // Return observer for cleanup
+      return observer;
     }
+    return null;
   }
   
   /**
@@ -104,26 +108,46 @@
       return;
     }
     
+    // Cache section positions to avoid layout thrashing
+    let sectionPositions = [];
+    function cacheSectionPositions() {
+      sectionPositions = Array.from(sections).map(section => ({
+        id: section.getAttribute('id'),
+        top: section.offsetTop,
+        height: section.clientHeight
+      }));
+    }
+    
+    cacheSectionPositions();
+    window.addEventListener('resize', cacheSectionPositions, { passive: true });
+    
+    // Throttle scroll handler
+    let ticking = false;
     window.addEventListener('scroll', function() {
-      let current = '';
-      const scrollPosition = window.pageYOffset;
-      
-      sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        if (scrollPosition >= sectionTop - 100) {
-          current = section.getAttribute('id');
-        }
-      });
-      
-      navLinks.forEach(link => {
-        link.classList.remove('md-tabs__link--active');
-        const href = link.getAttribute('href');
-        if (href && href.includes('#' + current)) {
-          link.classList.add('md-tabs__link--active');
-        }
-      });
-    });
+      if (!ticking) {
+        window.requestAnimationFrame(function() {
+          let current = '';
+          const scrollPosition = window.pageYOffset;
+          
+          sectionPositions.forEach(section => {
+            if (scrollPosition >= section.top - 100) {
+              current = section.id;
+            }
+          });
+          
+          navLinks.forEach(link => {
+            link.classList.remove('md-tabs__link--active');
+            const href = link.getAttribute('href');
+            if (href && href.includes('#' + current)) {
+              link.classList.add('md-tabs__link--active');
+            }
+          });
+          
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
   }
   
   /**
@@ -133,19 +157,24 @@
     const header = document.querySelector('.md-header');
     if (!header) return;
     
-    let lastScroll = 0;
+    let ticking = false;
     
     window.addEventListener('scroll', function() {
-      const currentScroll = window.pageYOffset;
-      
-      // Add shadow when scrolled
-      if (currentScroll > 10) {
-        header.setAttribute('data-md-state', 'shadow');
-      } else {
-        header.setAttribute('data-md-state', '');
+      if (!ticking) {
+        window.requestAnimationFrame(function() {
+          const currentScroll = window.pageYOffset;
+          
+          // Add shadow when scrolled
+          if (currentScroll > 10) {
+            header.setAttribute('data-md-state', 'shadow');
+          } else {
+            header.setAttribute('data-md-state', '');
+          }
+          
+          ticking = false;
+        });
+        ticking = true;
       }
-      
-      lastScroll = currentScroll;
     }, { passive: true });
   }
   
@@ -159,16 +188,24 @@
       return;
     }
     
+    // Store observer for cleanup
+    let observer = null;
+    
     // Apply enhancements
-    disableHeaderAutohideOnHomepage();
+    observer = disableHeaderAutohideOnHomepage();
     addSmoothScroll();
     updateActiveNavOnScroll();
     enhanceHeaderOnScroll();
     
     // Re-apply after page transitions (Material theme's instant loading)
     document.addEventListener('DOMContentSwitch', function() {
+      // Cleanup previous observer
+      if (observer) {
+        observer.disconnect();
+      }
+      
       setTimeout(function() {
-        disableHeaderAutohideOnHomepage();
+        observer = disableHeaderAutohideOnHomepage();
         addSmoothScroll();
         updateActiveNavOnScroll();
       }, 100);
