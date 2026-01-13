@@ -1,16 +1,233 @@
-# Welcome to NextStack
+<div class="homepage-hero">
+  <div class="hero-background">
+    <div class="hero-gradient"></div>
+    <div class="hero-particles"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="badge-icon">✨</span>
+      Open Source Technology Subscription Platform
+      <span class="badge-pulse"></span>
+    </div>
+    <h1 class="hero-title">
+      <span class="title-text">NextStack</span>
+      <span class="title-underline"></span>
+    </h1>
+    <p class="hero-tagline">Open Source Technology Release Notes Subscriber for Developers</p>
+    <p class="hero-description">Track Tech Evolution &middot; Understand Version Changes &middot; Grasp Technology Trends</p>
+    <div class="hero-cta">
+      <a href="#download" class="cta-button cta-primary">
+        <span class="btn-icon">🚀</span>
+        Download Plugin Now
+        <span class="btn-shine"></span>
+      </a>
+      <a href="#features" class="cta-button cta-secondary">
+        <span class="btn-icon">💡</span>
+        Learn More
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-icon">📦</div>
+        <div class="stat-content">
+          <div class="stat-number">1000+</div>
+          <div class="stat-label">Open Source Projects</div>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">🌐</div>
+        <div class="stat-content">
+          <div class="stat-number">50+</div>
+          <div class="stat-label">Technology Ecosystems</div>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-content">
+          <div class="stat-number">24/7</div>
+          <div class="stat-label">Real-time Updates</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
+<section id="download" class="section-download">
+  <div class="section-container">
+    <h2 class="section-title">Get Started - IntelliJ IDEA Plugin</h2>
+    <div class="download-container">
+      <div class="download-info">
+        <div class="download-header">
+          <div class="download-badge">🚀 Free Download</div>
+          <h3>IntelliJ IDEA Plugin</h3>
+        </div>
+        <p>Perfectly supports IntelliJ IDEA, PyCharm, WebStorm, and all JetBrains IDEs, bringing intelligent technology subscription experience to your development environment</p>
+        <div class="download-features">
+          <div class="download-feature">
+            <span class="check-icon">✓</span>
+            <span>Completely free with no limitations</span>
+          </div>
+          <div class="download-feature">
+            <span class="check-icon">✓</span>
+            <span>Automatic synchronization, always up-to-date</span>
+          </div>
+          <div class="download-feature">
+            <span class="check-icon">✓</span>
+            <span>Open source, transparent, and secure</span>
+          </div>
+          <div class="download-feature">
+            <span class="check-icon">✓</span>
+            <span>Lightweight design, no IDE performance impact</span>
+          </div>
+        </div>
+      </div>
+      <div class="download-widget">
+        <div id="jetbrains-plugin-widget"></div>
+        <div class="download-stats">
+          <div class="download-stat">
+            <div class="stat-icon">📥</div>
+            <div class="stat-info">
+              <div class="stat-value">10K+</div>
+              <div class="stat-desc">Total Downloads</div>
+            </div>
+          </div>
+          <div class="download-stat">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-info">
+              <div class="stat-value">4.8</div>
+              <div class="stat-desc">User Rating</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-欢迎来到 NextStack 技术平台！这里是深入理解技术原理与设计思想的专业社区。
+<section id="value" class="section-value">
+  <div class="section-container">
+    <h2 class="section-title">Core Value</h2>
+    <div class="value-grid">
+      <div class="value-card">
+        <div class="value-icon">🎯</div>
+        <h3>Centralized Information Aggregation</h3>
+        <p>Integrate version update information from multiple platforms, get all your technology updates in one place</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🔔</div>
+        <h3>Proactive Push Notifications</h3>
+        <p>Intelligently push important version updates, stay informed of technology changes, never miss any critical information</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">⚡</div>
+        <h3>Reduce Information Costs</h3>
+        <p>Subscription-based management with automatic tracking, significantly reducing developers' time spent searching and filtering information</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-我们致力于为您提供丰富的知识和深入的思考，以及源代码的深度剖析。在这里，您将找到各个技术领域的精彩内容。
+<section id="features" class="section-features">
+  <div class="section-container">
+    <h2 class="section-title">Product Features</h2>
+    <div class="features-showcase">
+      <div class="feature-large">
+        <div class="feature-visual">
+          <div class="feature-screenshot">
+            <div class="screenshot-placeholder">
+              <span class="screenshot-icon">💡</span>
+              <span class="screenshot-text">IntelliJ IDEA Plugin Interface</span>
+            </div>
+          </div>
+        </div>
+        <div class="feature-details">
+          <h3>Seamless IDE Integration</h3>
+          <p>Perfectly integrated into IntelliJ IDEA series IDEs, view and manage technology subscriptions directly in your development environment</p>
+          <ul class="feature-list">
+            <li>✓ One-click installation, plug and play</li>
+            <li>✓ Native interface, unified experience</li>
+            <li>✓ Quick access, highly efficient</li>
+          </ul>
+        </div>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card-icon">🔍</div>
+          <h4>Intelligent Version Tracking</h4>
+          <p>Real-time tracking of open source project version releases, automatically parse update logs and change content</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">📊</div>
+          <h4>Technology Evolution Analysis</h4>
+          <p>Visualize technology version evolution trends to help understand technology development directions</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🎨</div>
+          <h4>Personalized Subscriptions</h4>
+          <p>Customize subscription lists, only follow technologies and projects you really need</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🌐</div>
+          <h4>Multi-platform Support</h4>
+          <p>Support GitHub, npm, PyPI, Docker Hub, and other mainstream platforms</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-我们的目标是帮助您洞悉技术世界的方方面面。无论您是初学者还是经验丰富的专业人士，我们都有适合您的内容。通过我们的文章、教程和分析，您将能够掌握最新的技术趋势，理解各种编程语言和框架的工作原理，并学习如何将它们应用于解决实际问题。
+<section id="differentiation" class="section-differentiation">
+  <div class="section-container">
+    <h2 class="section-title">Why Choose NextStack</h2>
+    <div class="comparison-grid">
+      <div class="comparison-card">
+        <div class="comparison-header">
+          <div class="comparison-label">vs GitHub Watch</div>
+        </div>
+        <div class="comparison-content">
+          <div class="advantage-icon">🌟</div>
+          <h4>Cross-platform Aggregation</h4>
+          <p>Not limited to GitHub, supports npm, PyPI, Docker, and other technology ecosystems</p>
+        </div>
+      </div>
+      <div class="comparison-card">
+        <div class="comparison-header">
+          <div class="comparison-label">vs Libraries.io</div>
+        </div>
+        <div class="comparison-content">
+          <div class="advantage-icon">✨</div>
+          <h4>Lightweight Subscription</h4>
+          <p>Focused on subscription and notification features, not complex dependency analysis, lighter and more efficient</p>
+        </div>
+      </div>
+      <div class="comparison-card">
+        <div class="comparison-header">
+          <div class="comparison-label">vs Dependabot</div>
+        </div>
+        <div class="comparison-content">
+          <div class="advantage-icon">🎯</div>
+          <h4>Independent Product</h4>
+          <p>Not tied to code repositories, suitable for pure information subscription needs, more flexible usage</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-除了传授知识，我们还非常重视思维的培养。我们鼓励读者不仅仅停留在技术表面的学习上，更要思考其背后的原理和逻辑。通过深入的思考，您将能够更好地理解技术背后的思维和设计原则，从而提升您的技术能力。
+<section class="section-cta">
+  <div class="section-container">
+    <div class="cta-content">
+      <h2>Ready to enhance your technology information management efficiency?</h2>
+      <p>Install NextStack now and start your intelligent technology subscription experience</p>
+      <div class="cta-buttons">
+        <a href="#download" class="cta-button cta-primary-large">Download Now</a>
+        <a href="release_note/" class="cta-button cta-secondary-large">View Release Center</a>
+      </div>
+    </div>
+  </div>
+</section>
 
-在源代码分析方面，我们提供详细的解读和剖析，帮助您深入理解各种开源项目和框架的实现细节。通过阅读我们的源代码分析文章，您将能够更好地理解这些项目的设计理念、算法实现和性能优化。
-
-无论您是想学习一项新技术，拓宽知识面，还是深入研究源代码，我们都有丰富的资源和内容供您选择。加入我们的技术社区，与其他热爱技术的人分享您的想法和经验，共同成长与进步！
-
-让我们一起探索知识的海洋，踏上思考的旅程，深入源代码的世界。
+<script src="https://plugins.jetbrains.com/assets/scripts/mp-widget.js"></script>
+<script>
+  MarketplaceWidget.setupMarketplaceWidget('install', 29307, "#jetbrains-plugin-widget");
+</script>
