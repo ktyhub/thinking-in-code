@@ -4,49 +4,26 @@
     <div class="hero-particles"></div>
   </div>
   <div class="hero-content">
-    <div class="hero-badge">
-      <span class="badge-icon">✨</span>
-      开源技术订阅平台
-      <span class="badge-pulse"></span>
-    </div>
-    <h1 class="hero-title">
-      <span class="title-text">NextStack</span>
-      <span class="title-underline"></span>
-    </h1>
-    <p class="hero-tagline">为开发者提供的开源技术版本日志订阅器</p>
-    <p class="hero-description">追踪技术演进 &middot; 洞察版本变化 &middot; 把握技术趋势</p>
+    <div class="hero-badge">오픈 소스 기술 구독 플랫폼</div>
+    <h1 class="hero-title">NextStack</h1>
+    <p class="hero-tagline">개발자를 위한 오픈 소스 기술 릴리스 노트 구독자</p>
+    <p class="hero-description">중요한 기술 업데이트를 놓치지 마세요</p>
     <div class="hero-cta">
-      <a href="#download" class="cta-button cta-primary">
-        <span class="btn-icon">🚀</span>
-        立即下载插件
-        <span class="btn-shine"></span>
-      </a>
-      <a href="#features" class="cta-button cta-secondary">
-        <span class="btn-icon">💡</span>
-        了解更多
-      </a>
+      <a href="#download" class="cta-button cta-primary">플러그인 다운로드</a>
+      <a href="#features" class="cta-button cta-secondary">자세히 보기</a>
     </div>
     <div class="hero-stats">
       <div class="stat-item">
-        <div class="stat-icon">📦</div>
-        <div class="stat-content">
-          <div class="stat-number">1000+</div>
-          <div class="stat-label">开源项目</div>
-        </div>
+        <div class="stat-number">1000+</div>
+        <div class="stat-label">오픈 소스 프로젝트</div>
       </div>
       <div class="stat-item">
-        <div class="stat-icon">🌐</div>
-        <div class="stat-content">
-          <div class="stat-number">50+</div>
-          <div class="stat-label">技术生态</div>
-        </div>
+        <div class="stat-number">50+</div>
+        <div class="stat-label">기술 생태계</div>
       </div>
       <div class="stat-item">
-        <div class="stat-icon">⚡</div>
-        <div class="stat-content">
-          <div class="stat-number">24/7</div>
-          <div class="stat-label">实时更新</div>
-        </div>
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">실시간 업데이트</div>
       </div>
     </div>
   </div>
@@ -54,30 +31,30 @@
 
 <section id="download" class="section-download">
   <div class="section-container">
-    <h2 class="section-title">立即开始使用 - IntelliJ IDEA 插件</h2>
+    <h2 class="section-title">시작하기 - IntelliJ IDEA 플러그인</h2>
     <div class="download-container">
       <div class="download-info">
         <div class="download-header">
-          <div class="download-badge">🚀 免费下载</div>
-          <h3>IntelliJ IDEA 插件</h3>
+          <div class="download-badge">🚀 무료 다운로드</div>
+          <h3>IntelliJ IDEA 플러그인</h3>
         </div>
-        <p>完美支持 IntelliJ IDEA、PyCharm、WebStorm 等 JetBrains 全系列 IDE，为您的开发环境带来智能化的技术订阅体验</p>
+        <p>IntelliJ IDEA, PyCharm, WebStorm 및 모든 JetBrains IDE를 완벽하게 지원하여 개발 환경에 지능형 기술 구독 경험을 제공합니다</p>
         <div class="download-features">
           <div class="download-feature">
             <span class="check-icon">✓</span>
-            <span>完全免费使用，无任何限制</span>
+            <span>제한 없이 완전 무료</span>
           </div>
           <div class="download-feature">
             <span class="check-icon">✓</span>
-            <span>自动同步更新，始终最新</span>
+            <span>자동 동기화, 항상 최신 상태</span>
           </div>
           <div class="download-feature">
             <span class="check-icon">✓</span>
-            <span>开源透明，安全可靠</span>
+            <span>오픈 소스, 투명하고 안전</span>
           </div>
           <div class="download-feature">
             <span class="check-icon">✓</span>
-            <span>轻量级设计，不影响IDE性能</span>
+            <span>경량 설계, IDE 성능에 영향 없음</span>
           </div>
         </div>
       </div>
@@ -88,14 +65,14 @@
             <div class="stat-icon">📥</div>
             <div class="stat-info">
               <div class="stat-value">10K+</div>
-              <div class="stat-desc">总下载量</div>
+              <div class="stat-desc">총 다운로드</div>
             </div>
           </div>
           <div class="download-stat">
             <div class="stat-icon">⭐</div>
             <div class="stat-info">
               <div class="stat-value">4.8</div>
-              <div class="stat-desc">用户评分</div>
+              <div class="stat-desc">사용자 평가</div>
             </div>
           </div>
         </div>
@@ -106,22 +83,22 @@
 
 <section id="value" class="section-value">
   <div class="section-container">
-    <h2 class="section-title">核心价值</h2>
+    <h2 class="section-title">핵심 가치</h2>
     <div class="value-grid">
       <div class="value-card">
         <div class="value-icon">🎯</div>
-        <h3>集中式信息聚合</h3>
-        <p>整合多个平台的开源技术版本更新信息，一站式获取所有你关注的技术动态</p>
+        <h3>중앙 집중식 정보 집계</h3>
+        <p>여러 플랫폼의 버전 업데이트 정보를 통합하여 모든 기술 업데이트를 한 곳에서 받아보세요</p>
       </div>
       <div class="value-card">
         <div class="value-icon">🔔</div>
-        <h3>主动推送通知</h3>
-        <p>智能推送重要版本更新，及时了解技术变更，不错过任何关键信息</p>
+        <h3>적극적인 푸시 알림</h3>
+        <p>중요한 버전 업데이트를 지능적으로 푸시하고 기술 변경 사항에 대한 정보를 유지하며 중요한 정보를 놓치지 마세요</p>
       </div>
       <div class="value-card">
         <div class="value-icon">⚡</div>
-        <h3>降低信息成本</h3>
-        <p>订阅式管理，自动追踪，大幅减少开发者主动搜索和筛选信息的时间成本</p>
+        <h3>정보 비용 절감</h3>
+        <p>자동 추적이 포함된 구독 기반 관리로 개발자가 정보를 검색하고 필터링하는 데 소요되는 시간을 크게 줄입니다</p>
       </div>
     </div>
   </div>
@@ -129,47 +106,47 @@
 
 <section id="features" class="section-features">
   <div class="section-container">
-    <h2 class="section-title">产品特性</h2>
+    <h2 class="section-title">제품 기능</h2>
     <div class="features-showcase">
       <div class="feature-large">
         <div class="feature-visual">
           <div class="feature-screenshot">
             <div class="screenshot-placeholder">
               <span class="screenshot-icon">💡</span>
-              <span class="screenshot-text">IntelliJ IDEA 插件界面</span>
+              <span class="screenshot-text">IntelliJ IDEA 플러그인 인터페이스</span>
             </div>
           </div>
         </div>
         <div class="feature-details">
-          <h3>无缝 IDE 集成</h3>
-          <p>完美集成到 IntelliJ IDEA 系列 IDE 中，在您的开发环境里直接查看和管理技术订阅</p>
+          <h3>완벽한 IDE 통합</h3>
+          <p>IntelliJ IDEA IDE 시리즈에 완벽하게 통합되어 개발 환경에서 직접 기술 구독을 보고 관리할 수 있습니다</p>
           <ul class="feature-list">
-            <li>✓ 一键安装，即插即用</li>
-            <li>✓ 原生界面，统一体验</li>
-            <li>✓ 快捷访问，高效便捷</li>
+            <li>✓ 원클릭 설치, 즉시 사용 가능</li>
+            <li>✓ 네이티브 인터페이스, 통합된 경험</li>
+            <li>✓ 빠른 액세스, 높은 효율성</li>
           </ul>
         </div>
       </div>
       <div class="feature-grid">
         <div class="feature-card">
           <div class="feature-card-icon">🔍</div>
-          <h4>智能版本追踪</h4>
-          <p>实时追踪开源项目版本发布，自动解析更新日志和变更内容</p>
+          <h4>지능형 버전 추적</h4>
+          <p>오픈 소스 프로젝트 버전 릴리스를 실시간으로 추적하고 변경 로그 및 업데이트 내용을 자동으로 분석합니다</p>
         </div>
         <div class="feature-card">
           <div class="feature-card-icon">📊</div>
-          <h4>技术演进分析</h4>
-          <p>可视化展示技术版本演进趋势，帮助理解技术发展方向</p>
+          <h4>기술 진화 분석</h4>
+          <p>기술 버전 진화 추세를 시각화하여 기술 개발 방향을 이해하는 데 도움이 됩니다</p>
         </div>
         <div class="feature-card">
           <div class="feature-card-icon">🎨</div>
-          <h4>个性化订阅</h4>
-          <p>自定义订阅列表，只关注你真正需要的技术和项目</p>
+          <h4>개인화된 구독</h4>
+          <p>구독 목록을 사용자 정의하고 정말 필요한 기술 및 프로젝트에만 집중하세요</p>
         </div>
         <div class="feature-card">
           <div class="feature-card-icon">🌐</div>
-          <h4>多平台支持</h4>
-          <p>支持 GitHub、npm、PyPI、Docker Hub 等多个主流平台</p>
+          <h4>멀티 플랫폼 지원</h4>
+          <p>GitHub, npm, PyPI, Docker Hub 및 기타 주요 플랫폼 지원</p>
         </div>
       </div>
     </div>
@@ -178,7 +155,7 @@
 
 <section id="differentiation" class="section-differentiation">
   <div class="section-container">
-    <h2 class="section-title">为什么选择 NextStack</h2>
+    <h2 class="section-title">NextStack을 선택하는 이유</h2>
     <div class="comparison-grid">
       <div class="comparison-card">
         <div class="comparison-header">
@@ -186,8 +163,8 @@
         </div>
         <div class="comparison-content">
           <div class="advantage-icon">🌟</div>
-          <h4>跨平台聚合</h4>
-          <p>不限于 GitHub，支持 npm、PyPI、Docker 等多个技术生态系统</p>
+          <h4>크로스 플랫폼 집계</h4>
+          <p>GitHub에 제한되지 않고 npm, PyPI, Docker 및 기타 기술 생태계를 지원합니다</p>
         </div>
       </div>
       <div class="comparison-card">
@@ -196,8 +173,8 @@
         </div>
         <div class="comparison-content">
           <div class="advantage-icon">✨</div>
-          <h4>轻量订阅</h4>
-          <p>专注于订阅与通知功能，而非复杂的依赖分析，更轻量更高效</p>
+          <h4>경량 구독</h4>
+          <p>복잡한 종속성 분석이 아닌 구독 및 알림 기능에 중점을 두어 더 가볍고 효율적입니다</p>
         </div>
       </div>
       <div class="comparison-card">
@@ -206,8 +183,8 @@
         </div>
         <div class="comparison-content">
           <div class="advantage-icon">🎯</div>
-          <h4>独立产品</h4>
-          <p>不绑定代码仓库，适合单纯的信息订阅需求，使用更灵活</p>
+          <h4>독립적인 제품</h4>
+          <p>코드 저장소에 바인딩되지 않고 순수한 정보 구독 요구에 적합하며 더 유연한 사용</p>
         </div>
       </div>
     </div>
@@ -217,11 +194,11 @@
 <section class="section-cta">
   <div class="section-container">
     <div class="cta-content">
-      <h2>准备好提升你的技术信息管理效率了吗？</h2>
-      <p>立即安装 NextStack，开启智能化的技术订阅体验</p>
+      <h2>기술 정보 관리 효율성을 향상시킬 준비가 되셨습니까?</h2>
+      <p>지금 NextStack을 설치하고 지능형 기술 구독 경험을 시작하세요</p>
       <div class="cta-buttons">
-        <a href="#download" class="cta-button cta-primary-large">立即下载</a>
-        <a href="/zh/release_note/" class="cta-button cta-secondary-large">查看版本中心</a>
+        <a href="#download" class="cta-button cta-primary-large">지금 다운로드</a>
+        <a href="/ko/release_note/" class="cta-button cta-secondary-large">버전 센터 보기</a>
       </div>
     </div>
   </div>
@@ -231,4 +208,3 @@
 <script>
   MarketplaceWidget.setupMarketplaceWidget('install', 29307, "#jetbrains-plugin-widget");
 </script>
-

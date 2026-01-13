@@ -1,300 +1,233 @@
-# 新技术洞察平台 | Tech Insight Hub
-
-<div class="leadership-banner">
-  <div class="leadership-content">
-    <h1 class="platform-title">NextStack</h1>
-    <p class="leadership-subtitle">深入解析技术原理与设计思想 - 专注于源码分析、中间件架构、云原生技术与框架设计</p>
-    
-    <div class="trust-indicators">
-      <div class="indicator">🚀 全球领先���术平台</div>
-      <div class="indicator">🔬 深度源码解析</div>
-      <div class="indicator">⚡ 前沿技术洞察</div>
+<div class="homepage-hero">
+  <div class="hero-background">
+    <div class="hero-gradient"></div>
+    <div class="hero-particles"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="badge-icon">✨</span>
+      开源技术订阅平台
+      <span class="badge-pulse"></span>
     </div>
-    
-    <div class="hero-buttons">
-      <a href="/zh/tech_radar/" class="md-button md-button--primary tech-radar-btn">🎯 技术雷达</a>
-      <a href="/zh/learning_paths/" class="md-button leadership-btn">📚 学习路径</a>
+    <h1 class="hero-title">
+      <span class="title-text">NextStack</span>
+      <span class="title-underline"></span>
+    </h1>
+    <p class="hero-tagline">为开发者提供的开源技术版本日志订阅器</p>
+    <p class="hero-description">追踪技术演进 &middot; 洞察版本变化 &middot; 把握技术趋势</p>
+    <div class="hero-cta">
+      <a href="#download" class="cta-button cta-primary">
+        <span class="btn-icon">🚀</span>
+        立即下载插件
+        <span class="btn-shine"></span>
+      </a>
+      <a href="#features" class="cta-button cta-secondary">
+        <span class="btn-icon">💡</span>
+        了解更多
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-icon">📦</div>
+        <div class="stat-content">
+          <div class="stat-number">1000+</div>
+          <div class="stat-label">开源项目</div>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">🌐</div>
+        <div class="stat-content">
+          <div class="stat-number">50+</div>
+          <div class="stat-label">技术生态</div>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-content">
+          <div class="stat-number">24/7</div>
+          <div class="stat-label">实时更新</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="section-divider"></div>
-
-<section id="featured-content" class="content-section">
-  <div class="section-header">
-    <h2 class="section-title">精选内容</h2>
-    <p class="section-subtitle">最受欢迎的深度技术解析</p>
-  </div>
-  
-  <div class="content-tabs">
-    <div class="tab-header">
-      <button class="tab-button active" data-tab="popular">热门文章</button>
-      <button class="tab-button" data-tab="latest">最新发布</button>
-    </div>
-    
-    <div class="tab-content active" id="popular">
-      <div class="article-grid">
-        <div class="article-card">
-          <div class="article-category">Spring生态</div>
-          <h3 class="article-title"><a href="/zh/chapter_springboot/2-spi.md">深入理解SpringBoot自动配置机制</a></h3>
-          <p class="article-excerpt">详解SpringBoot SPI机制与自动配置原理，探索其背后的设计思想...</p>
-          <div class="article-meta">
-            <span class="article-views"><i class="fas fa-eye"></i> 12.5k</span>
-            <span class="article-date">2025-03-15</span>
-          </div>
+<section id="download" class="section-download">
+  <div class="section-container">
+    <h2 class="section-title">立即开始使用 - IntelliJ IDEA 插件</h2>
+    <div class="download-container">
+      <div class="download-info">
+        <div class="download-header">
+          <div class="download-badge">🚀 免费下载</div>
+          <h3>IntelliJ IDEA 插件</h3>
         </div>
-        
-        <div class="article-card">
-          <div class="article-category">云原生</div>
-          <h3 class="article-title"><a href="/zh/chapter_kubernetes/5-apiserver-server-run.md">Kubernetes API Server链路完全解析</a></h3>
-          <p class="article-excerpt">从源码角度分析Kubernetes API Server的请求处理流程与扩展机制...</p>
-          <div class="article-meta">
-            <span class="article-views"><i class="fas fa-eye"></i> 8.3k</span>
-            <span class="article-date">2025-04-20</span>
+        <p>完美支持 IntelliJ IDEA、PyCharm、WebStorm 等 JetBrains 全系列 IDE，为您的开发环境带来智能化的技术订阅体验</p>
+        <div class="download-features">
+          <div class="download-feature">
+            <span class="check-icon">✓</span>
+            <span>完全免费使用，无任何限制</span>
           </div>
-        </div>
-        
-        <div class="article-card">
-          <div class="article-category">中间件</div>
-          <h3 class="article-title"><a href="/zh/chapter_dubbo/22-migration-invoker.md">Dubbo 3.0服务发现新机制详解</a></h3>
-          <p class="article-excerpt">剖析Dubbo 3.0中全新的应用级服务发现机制与双注册/双订阅设计...</p>
-          <div class="article-meta">
-            <span class="article-views"><i class="fas fa-eye"></i> 7.1k</span>
-            <span class="article-date">2025-02-28</span>
+          <div class="download-feature">
+            <span class="check-icon">✓</span>
+            <span>自动同步更新，始终最新</span>
           </div>
-        </div>
-        
-        <div class="article-card">
-          <div class="article-category">AI技术</div>
-          <h3 class="article-title"><a href="/zh/chapter_spring_ai/2-sample.md">Spring AI实战：构建企业级智能应用</a></h3>
-          <p class="article-excerpt">从零��始使用Spring AI框架构建生产级别的智能应用系统...</p>
-          <div class="article-meta">
-            <span class="article-views"><i class="fas fa-eye"></i> 9.2k</span>
-            <span class="article-date">2025-05-10</span>
+          <div class="download-feature">
+            <span class="check-icon">✓</span>
+            <span>开源透明，安全可靠</span>
+          </div>
+          <div class="download-feature">
+            <span class="check-icon">✓</span>
+            <span>轻量级设计，不影响IDE性能</span>
           </div>
         </div>
       </div>
-      
-      <div class="view-more-container">
-        <a href="/zh/chapter_preface/" class="view-more-button">查看更多内容</a>
-      </div>
-    </div>
-    
-    <div class="tab-content" id="latest">
-      <div class="article-grid">
-        <!-- 最新文章通过JavaScript动态加载 -->
+      <div class="download-widget">
+        <div id="jetbrains-plugin-widget"></div>
+        <div class="download-stats">
+          <div class="download-stat">
+            <div class="stat-icon">📥</div>
+            <div class="stat-info">
+              <div class="stat-value">10K+</div>
+              <div class="stat-desc">总下载量</div>
+            </div>
+          </div>
+          <div class="download-stat">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-info">
+              <div class="stat-value">4.8</div>
+              <div class="stat-desc">用户评分</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
+<section id="value" class="section-value">
+  <div class="section-container">
+    <h2 class="section-title">核心价值</h2>
+    <div class="value-grid">
+      <div class="value-card">
+        <div class="value-icon">🎯</div>
+        <h3>集中式信息聚合</h3>
+        <p>整合多个平台的开源技术版本更新信息，一站式获取所有你关注的技术动态</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🔔</div>
+        <h3>主动推送通知</h3>
+        <p>智能推送重要版本更新，及时了解技术变更，不错过任何关键信息</p>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">⚡</div>
+        <h3>降低信息成本</h3>
+        <p>订阅式管理，自动追踪，大幅减少开发者主动搜索和筛选信息的时间成本</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="section-features">
+  <div class="section-container">
+    <h2 class="section-title">产品特性</h2>
+    <div class="features-showcase">
+      <div class="feature-large">
+        <div class="feature-visual">
+          <div class="feature-screenshot">
+            <div class="screenshot-placeholder">
+              <span class="screenshot-icon">💡</span>
+              <span class="screenshot-text">IntelliJ IDEA 插件界面</span>
+            </div>
+          </div>
+        </div>
+        <div class="feature-details">
+          <h3>无缝 IDE 集成</h3>
+          <p>完美集成到 IntelliJ IDEA 系列 IDE 中，在您的开发环境里直接查看和管理技术订阅</p>
+          <ul class="feature-list">
+            <li>✓ 一键安装，即插即用</li>
+            <li>✓ 原生界面，统一体验</li>
+            <li>✓ 快捷访问，高效便捷</li>
+          </ul>
+        </div>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card-icon">🔍</div>
+          <h4>智能版本追踪</h4>
+          <p>实时追踪开源项目版本发布，自动解析更新日志和变更内容</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">📊</div>
+          <h4>技术演进分析</h4>
+          <p>可视化展示技术版本演进趋势，帮助理解技术发展方向</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🎨</div>
+          <h4>个性化订阅</h4>
+          <p>自定义订阅列表，只关注你真正需要的技术和项目</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-card-icon">🌐</div>
+          <h4>多平台支持</h4>
+          <p>支持 GitHub、npm、PyPI、Docker Hub 等多个主流平台</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="differentiation" class="section-differentiation">
+  <div class="section-container">
+    <h2 class="section-title">为什么选择 NextStack</h2>
+    <div class="comparison-grid">
+      <div class="comparison-card">
+        <div class="comparison-header">
+          <div class="comparison-label">vs GitHub Watch</div>
+        </div>
+        <div class="comparison-content">
+          <div class="advantage-icon">🌟</div>
+          <h4>跨平台聚合</h4>
+          <p>不限于 GitHub，支持 npm、PyPI、Docker 等多个技术生态系统</p>
+        </div>
+      </div>
+      <div class="comparison-card">
+        <div class="comparison-header">
+          <div class="comparison-label">vs Libraries.io</div>
+        </div>
+        <div class="comparison-content">
+          <div class="advantage-icon">✨</div>
+          <h4>轻量订阅</h4>
+          <p>专注于订阅与通知功能，而非复杂的依赖分析，更轻量更高效</p>
+        </div>
+      </div>
+      <div class="comparison-card">
+        <div class="comparison-header">
+          <div class="comparison-label">vs Dependabot</div>
+        </div>
+        <div class="comparison-content">
+          <div class="advantage-icon">🎯</div>
+          <h4>独立产品</h4>
+          <p>不绑定代码仓库，适合单纯的信息订阅需求，使用更灵活</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-cta">
+  <div class="section-container">
+    <div class="cta-content">
+      <h2>准备好提升你的技术信息管理效率了吗？</h2>
+      <p>立即安装 NextStack，开启智能化的技术订阅体验</p>
+      <div class="cta-buttons">
+        <a href="#download" class="cta-button cta-primary-large">立即下载</a>
+        <a href="/zh/release_note/" class="cta-button cta-secondary-large">查看版本中心</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="https://plugins.jetbrains.com/assets/scripts/mp-widget.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // 选项卡切换
-  const tabButtons = document.querySelectorAll('.tab-button');
-  const tabContents = document.querySelectorAll('.tab-content');
-  
-  tabButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      tabButtons.forEach(btn => btn.classList.remove('active'));
-      tabContents.forEach(content => content.classList.remove('active'));
-      
-      button.classList.add('active');
-      const tabId = button.getAttribute('data-tab');
-      document.getElementById(tabId).classList.add('active');
-    });
-  });
-});
+  MarketplaceWidget.setupMarketplaceWidget('install', 29307, "#jetbrains-plugin-widget");
 </script>
-
-<style>
-/* 主页样式 - 简化版 */
-.content-section {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 3rem 1.5rem;
-}
-
-.section-header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.section-title {
-  font-size: 2.2rem;
-  margin-bottom: 0.5rem;
-  color: #0d47a1;
-}
-
-.section-subtitle {
-  font-size: 1.2rem;
-  color: #666;
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-.content-tabs {
-  margin-top: 2rem;
-}
-
-.tab-header {
-  display: flex;
-  justify-content: center;
-  border-bottom: 2px solid #eee;
-  margin-bottom: 2rem;
-}
-
-.tab-button {
-  padding: 0.75rem 1.5rem;
-  background: none;
-  border: none;
-  font-weight: 600;
-  color: #666;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-.tab-button:after {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #2196f3;
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-}
-
-.tab-button.active {
-  color: #2196f3;
-}
-
-.tab-button.active:after {
-  transform: scaleX(1);
-}
-
-.tab-content {
-  display: none;
-}
-
-.tab-content.active {
-  display: block;
-  animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.article-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
-}
-
-.article-card {
-  background-color: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.article-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
-
-.article-category {
-  display: inline-block;
-  background-color: #e3f2fd;
-  color: #1976d2;
-  padding: 0.25rem 0.75rem;
-  font-size: 0.85rem;
-  border-radius: 4px;
-  margin: 1.25rem 1.25rem 0;
-}
-
-.article-title {
-  padding: 0 1.25rem;
-  margin: 0.75rem 0;
-  font-size: 1.2rem;
-  line-height: 1.4;
-}
-
-.article-title a {
-  color: #333;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.article-title a:hover {
-  color: #2196f3;
-}
-
-.article-excerpt {
-  padding: 0 1.25rem;
-  margin-bottom: 1rem;
-  color: #666;
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-
-.article-meta {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.75rem 1.25rem;
-  border-top: 1px solid #eee;
-  color: #999;
-  font-size: 0.85rem;
-}
-
-.view-more-container {
-  text-align: center;
-  margin-top: 2.5rem;
-}
-
-.view-more-button {
-  display: inline-block;
-  padding: 0.75rem 2rem;
-  background-color: #2196f3;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.view-more-button:hover {
-  background-color: #1976d2;
-  transform: translateY(-2px);
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-}
-
-.section-divider {
-  height: 3px;
-  background: linear-gradient(90deg, transparent, rgba(33,150,243,0.3), transparent);
-  margin: 3rem auto;
-  width: 60%;
-  max-width: 800px;
-}
-
-/* 响应式调整 */
-@media (max-width: 768px) {
-  .section-title {
-    font-size: 1.8rem;
-  }
-  
-  .tab-header {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .tab-button {
-    margin-bottom: 0.5rem;
-  }
-}
-</style>
