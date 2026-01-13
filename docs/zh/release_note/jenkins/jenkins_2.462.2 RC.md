@@ -1,7 +1,7 @@
 # jenkins 2.462.2 RC
 以下是根据您的要求整理并翻译的内容，使用了Markdown语法：
 
-```markdown
+
 请将发现的问题报告到 [发布候选公告](https://groups.google.com/g/jenkinsci-dev/c/mfB-OlJOuCY) 讨论串。
 
 正式版本预计于 **2024年9月4日** 发布。

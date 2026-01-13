@@ -1,5 +1,5 @@
 # spring-batch v4.3.10
-```markdown
+
 **重要**❗: 这是 Spring Batch 4 的最后一个开源版本（OSS）。有关我们的支持政策的更多详情，请参阅[支持政策页面](https://spring.io/projects/spring-batch#support)。
 
 # 🐞 Bug 修复

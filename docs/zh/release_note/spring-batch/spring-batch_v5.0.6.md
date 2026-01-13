@@ -1,5 +1,5 @@
 # spring-batch v5.0.6
-```markdown
+
 ## 🐞 Bug修复
 
 - `ItemWriter`写方法实现中的Chunk属性值错误 [#4560](https://github.com/spring-projects/spring-batch/issues/4560)

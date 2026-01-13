@@ -1,5 +1,5 @@
 # echarts 5.4.3
-```markdown
+
 - **特性** [axisPointer] 添加 `triggerEmphasis` 选项以禁用强调。 [#18524](https://github.com/apache/echarts/issues/18524)
 - **特性** [sankey] 支持强调状态的 `trajectory`。 [#17451](https://github.com/apache/echarts/issues/17451)
 - **修复** [sankey] 修复桑基图线条颜色 `target`/`source`/`gradient` 在非正常状态下不起作用的问题。 [#18834](https://github.com/apache/echarts/issues/18834)

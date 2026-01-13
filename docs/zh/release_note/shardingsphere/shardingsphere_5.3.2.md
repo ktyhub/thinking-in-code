@@ -1,5 +1,5 @@
 # shardingsphere 5.3.2
-```markdown
+
 ### API 变更
 
 1. 代理：新增属性 `system-log-level`，支持通过 DistSQL 动态更改日志级别。

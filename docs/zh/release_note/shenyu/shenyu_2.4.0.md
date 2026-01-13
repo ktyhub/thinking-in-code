@@ -1,5 +1,5 @@
 # shenyu 2.4.0
-```markdown
+
 ### 新功能
 
 - 支持读取不在 resource/directory 下的 init_script 文件

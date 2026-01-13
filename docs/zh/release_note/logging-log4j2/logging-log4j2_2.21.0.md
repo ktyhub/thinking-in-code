@@ -1,5 +1,5 @@
 # logging-log4j2 2.21.0
-```markdown
+
 这次发布主要集中在增强对OSGi和JPMS的支持，并包含若干错误修复。它将是第一个由CI使用[ASF Logging Services Release Manager GPG key](https://keyserver.ubuntu.com/pks/lookup?search=077E8893A6DCC33DD4A4D5B256E73BA9A0B592D0&op=index)构建和签名的版本，该密钥在[KEYS](https://www.apache.org/dist/logging/KEYS)中共享。
 
 Log4j 2.21.0 API及其他工件保持与之前版本的二进制兼容性。

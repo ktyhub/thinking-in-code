@@ -1,5 +1,5 @@
 # spring-cloud-kubernetes 3.1.0-M2
-```markdown
+
 ## 🐞 Bug 修复
 
 - 修复主版本构建失败 [#1417](https://github.com/spring-cloud/spring-cloud-kubernetes/pull/1417)

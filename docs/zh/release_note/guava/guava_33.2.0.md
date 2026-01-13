@@ -1,5 +1,5 @@
 # guava 33.2.0
-```markdown
+
 ### Android用户：请测试最近的Guava版本
 
 如果你知道有使用Guava的Android用户尚未升级到至少[33.0.0版本](https://github.com/google/guava/releases/tag/v33.0.0)，请鼓励他们进行升级，最好是升级到今天发布的33.2.0版本。这些版本已经开始为`guava-android`添加Java 8+的API。尽管我们不预计会出现问题，但仍有可能会遇到导致回滚的意外情况。为了尽量减少影响，我们希望尽早发现并解决这些问题。

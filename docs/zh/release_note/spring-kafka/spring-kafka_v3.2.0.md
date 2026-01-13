@@ -1,5 +1,5 @@
 # spring-kafka v3.2.0
-```markdown
+
 ## ⭐ 新特性
 
 - 在 CommonDelegatingErrorHandler 中实现 CommonErrorHandler.handleOne() [#3227](https://github.com/spring-projects/spring-kafka/issues/3227)

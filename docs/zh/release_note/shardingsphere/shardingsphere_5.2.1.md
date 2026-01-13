@@ -1,5 +1,5 @@
 # shardingsphere 5.2.1
-```markdown
+
 ### 新功能
 
 1. 添加 ShardingSphere 默认系统数据库以支持全局元数据管理

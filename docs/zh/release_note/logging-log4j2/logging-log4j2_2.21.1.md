@@ -1,5 +1,5 @@
 # logging-log4j2 2.21.1
-```markdown
+
 这个补丁版本仅包含修复一个阻止 `log4j-jcl` 连接到 `commons-logging` 的错误。
 
 Log4j 2.21.1 API 以及其他工件保持与之前版本的二进制兼容性。

@@ -1,5 +1,5 @@
 # maven 4.0.0-alpha-7
-```markdown
+
 ## 变更内容
 
 - [MNG-6825](https://issues.apache.org/jira/browse/MNG-6825) 用 Commons IO 替换 FileUtils [#1067](https://github.com/apache/maven/pull/1067)

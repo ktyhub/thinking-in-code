@@ -1,5 +1,5 @@
 # spring-kafka v3.1.8
-```markdown
+
 ## 🐞 Bug 修复
 
 - 当启用可观测性且未设置引导供应商时，KafkaAdmin 的 clusterId 配置被忽略 [#3447](https://github.com/spring-projects/spring-kafka/issues/3447)

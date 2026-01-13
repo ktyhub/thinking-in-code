@@ -1,5 +1,5 @@
 # bookkeeper Release 4.16.2
-```markdown
+
 发布 4.16.2 版本包含多个错误修复和一些依赖项的 CVE 修复。
 
 建议 Apache BookKeeper 用户升级到 4.16.2。以下是此版本的技术细节总结。

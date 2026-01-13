@@ -1,5 +1,5 @@
 # ant-design 5.20.2
-```markdown
+
 - 💄 修复 InputNumber 没有控件的后缀样式问题。[#50450](https://github.com/ant-design/ant-design/pull/50450)
 - 🆕 Form `rule.message` 支持通过 `\\${}` 跳过变量替换。[#50412](https://github.com/ant-design/ant-design/pull/50412)
 - 🐞 修复了 FloatButton 组件当 shape="square" 时，并且在菜单模式下，菜单弹出时 trigger 元素圆角缺失的问题。[#50408](https://github.com/ant-design/ant-design/pull/50408)

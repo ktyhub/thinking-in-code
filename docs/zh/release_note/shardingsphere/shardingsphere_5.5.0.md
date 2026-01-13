@@ -1,5 +1,5 @@
 # shardingsphere 5.5.0
-```markdown
+
 ### API 变更
 
 1. 代理：移除代理中过时的 schemaName 配置。

@@ -1,5 +1,5 @@
 # dubbo-spi-extensions Dubbo SPI Extensions 1.0.3
-```markdown
+
 ## 变更
 
 - 大多数模块的变更是移除了 `Dubbo` 的传递依赖。

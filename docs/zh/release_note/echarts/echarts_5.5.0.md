@@ -1,5 +1,5 @@
 # echarts 5.5.0
-```markdown
+
 - [重大变更] [功能] [核心] 默认更改为 ESM 包。[#19513](https://github.com/apache/echarts/issues/19513)
 - [功能] [ssr] 服务器端渲染和客户端水合。[#18381](https://github.com/apache/echarts/issues/18381)
 - [功能] [动画] 支持多级钻取的通用过渡。[#17611](https://github.com/apache/echarts/issues/17611)

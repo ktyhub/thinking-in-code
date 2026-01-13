@@ -1,5 +1,5 @@
 # skywalking 9.6.0
-```markdown
+
 #### 下载
 
 [https://skywalking.apache.org/downloads/](https://skywalking.apache.org/downloads/)

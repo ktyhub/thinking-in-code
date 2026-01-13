@@ -1,5 +1,5 @@
 # spring-batch v5.0.4
-```markdown
+
 ## 🐞 Bug 修复
 
 - 使用 `Flow#next` 启动流程时，第一个步骤会执行两次 [#4432](https://github.com/spring-projects/spring-batch/issues/4432)

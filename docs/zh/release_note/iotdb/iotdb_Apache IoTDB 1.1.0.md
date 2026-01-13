@@ -1,5 +1,5 @@
 # iotdb Apache IoTDB 1.1.0
-```markdown
+
 ## 新特性
 
 - [IOTDB-4572](https://issues.apache.org/jira/browse/IOTDB-4572) 支持按设备对齐时按时间排序

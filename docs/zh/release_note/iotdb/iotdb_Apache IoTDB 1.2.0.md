@@ -1,5 +1,5 @@
 # iotdb Apache IoTDB 1.2.0
-```markdown
+
 ## 新功能
 
 - [IOTDB-5567](https://issues.apache.org/jira/browse/IOTDB-5567) 添加查询seriesslotid和timeslotid的SQL

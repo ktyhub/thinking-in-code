@@ -1,7 +1,7 @@
 # mybatis-3 mybatis-3.5.11
 以下是翻译后的内容，并且已经移除@符号及后续的贡献者信息，同时转换为markdown语法：
 
-```markdown
+
 ### Bug 修复：
 
 - OGNL 在调用继承方法时可能会抛出 `IllegalArgumentException`。 [#2609](https://github.com/mybatis/mybatis-3/issues/2609)

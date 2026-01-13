@@ -1,5 +1,5 @@
 # pulsar v3.2.1
-```markdown
+
 ### Broker
 
 - 持续为 REST API 添加细粒度授权 [#22202](https://github.com/apache/pulsar/pull/22202)

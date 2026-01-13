@@ -1,5 +1,5 @@
 # Spring-Boot v3.2.8
-```markdown
+
 ## 🐞 Bug 修复
 
 - 在 `OnClassCondition.resolveOutcomesThreaded` 的自动配置期间出现 NPE，因为 `firstHalf` 为 null [#41492](https://github.com/spring-projects/spring-boot/issues/41492)

@@ -1,5 +1,5 @@
 # spring-batch v5.0.5
-```markdown
+
 ## 🐞 Bug修复
 
 - 在 `JobOperatorFactoryBean` 中的错误信息不正确 [#4528](https://github.com/spring-projects/spring-batch/pull/4528)

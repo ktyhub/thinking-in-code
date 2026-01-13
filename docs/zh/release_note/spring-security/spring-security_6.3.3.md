@@ -1,5 +1,5 @@
 # spring-security 6.3.3
-```markdown
+
 ## 🪲 Bug 修复
 
 - ObservationRegistry 从未被后处理 [#15658](https://github.com/spring-projects/spring-security/issues/15658)

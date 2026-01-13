@@ -54,7 +54,7 @@ print(response.json()["response"])
 ---
 
 ### 更新日志（Markdown格式）
-```markdown
+
 ## 主要变更  
 - 错误信息更具参考价值  
 - 提升部分模型的工具调用可靠性  

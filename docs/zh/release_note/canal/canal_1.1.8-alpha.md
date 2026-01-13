@@ -1,5 +1,5 @@
 # canal 1.1.8-alpha
-```markdown
+
 1. canal默认admin.passwd风险说明 [#4941](https://github.com/alibaba/canal/issues/4941)
 ```
 

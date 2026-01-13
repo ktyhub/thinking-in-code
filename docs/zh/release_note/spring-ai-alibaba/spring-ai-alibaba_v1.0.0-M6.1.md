@@ -55,7 +55,6 @@ public String handleQuery(String question) {
 #### What's Changed
 - 新增代理工具调用功能
 - 集成Elasticsearch文档读取器
-- 新增YouTube/Bilibili视频内容解析器
 - 支持Outlook MSG文件解析
 - 实现MongoDB文档读取
 - 添加Google OneNote文档解析

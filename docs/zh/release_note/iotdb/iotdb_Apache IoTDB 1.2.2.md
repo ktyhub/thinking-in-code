@@ -1,5 +1,5 @@
 # iotdb Apache IoTDB 1.2.2
-```markdown
+
 ## 功能与改进
 
 - [IOTDB-6029](https://issues.apache.org/jira/browse/IOTDB-6029) 实现 flink-sql-iotdb-connector

@@ -1,5 +1,5 @@
 # pulsar v3.2.2
-```markdown
+
 ## 变更内容
 
 ### Broker

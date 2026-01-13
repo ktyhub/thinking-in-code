@@ -1,5 +1,5 @@
 # canal canal-1.1.7-alpha-3
-```markdown
+
 1. 支持 MySQL 8.0/MariaDB 10.x 下的 binlog 压缩解析能力 [#4388](https://github.com/alibaba/canal/issues/4388)
 2. 升级部分组件版本（规避 CVE 漏洞），比如 Spring 组件、MQ 组件、Log 组件等
 3. 支持 ES 8.0 [#4640](https://github.com/alibaba/canal/pull/4640)

@@ -1,5 +1,5 @@
 # spring-security 6.4.0-M2
-```markdown
+
 ## ⭐ 新特性
 
 - (Spring Boot 2.7->3.2) 类层次结构中重复的 `@PreAuthorize` 注解错误 [#15097](https://github.com/spring-projects/spring-security/issues/15097)

@@ -1,5 +1,5 @@
 # iotdb Apache IoTDB 1.2.1
-```markdown
+
 ## 功能与改进
 
 - [IOTDB-5557](https://issues.apache.org/jira/browse/IOTDB-5557) 元数据查询结果不一致
