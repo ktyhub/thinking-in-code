@@ -1,5 +1,5 @@
 # spring-framework v6.2.0-M5
-```markdown
+
 ## ⭐ 新特性
 
 - 在 SimpleInstantiationStrategy 中统一处理当前工厂方法 [#33192](https://github.com/spring-projects/spring-framework/issues/33192)

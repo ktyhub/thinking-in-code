@@ -1,5 +1,5 @@
 # spring-cloud-alibaba 2021.0.6.0
-```markdown
+
 ## 🐞 错误修复
 
 - **[Nacos]** 修复了在配置刷新时获取过时 Nacos 值的问题。[#3609](https://github.com/alibaba/spring-cloud-alibaba/pull/3609)

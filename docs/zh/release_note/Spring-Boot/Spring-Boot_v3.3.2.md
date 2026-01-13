@@ -1,5 +1,5 @@
 # Spring-Boot v3.3.2
-```markdown
+
 ## 🐞 Bug 修复
 
 - Spring Integration 6.2 中引入的 defaultTimeout 设置没有配置属性 [#41521](https://github.com/spring-projects/spring-boot/issues/41521)

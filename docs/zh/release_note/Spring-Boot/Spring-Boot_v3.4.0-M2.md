@@ -1,5 +1,5 @@
 # Spring-Boot v3.4.0-M2
-```markdown
+
 ## ⭐ 新功能
 
 - 为 `@ConditionalOnAvailableEndpoint` 添加值别名并迁移简单条件 [#41969](https://github.com/spring-projects/spring-boot/issues/41969)

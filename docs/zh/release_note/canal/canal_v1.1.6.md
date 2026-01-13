@@ -1,5 +1,5 @@
 # canal v1.1.6
-```markdown
+
 ## 功能新增
 
 1. 支持PolarDB-X 2.0 binlog的订阅和消费

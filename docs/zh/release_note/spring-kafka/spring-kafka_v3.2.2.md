@@ -1,5 +1,5 @@
 # spring-kafka v3.2.2
-```markdown
+
 ## 🐞 Bug Fixes
 - getUnregisteredListenerContainer 返回 null [#3321](https://github.com/spring-projects/spring-kafka/issues/3321)
 

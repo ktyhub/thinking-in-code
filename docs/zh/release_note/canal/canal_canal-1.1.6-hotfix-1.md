@@ -1,5 +1,5 @@
 # canal canal-1.1.6-hotfix-1
-```markdown
+
 ## 1.1.6 hotfix版本
 ```
 

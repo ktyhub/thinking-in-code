@@ -1,5 +1,5 @@
 # druid Druid 28.0.0
-```markdown
+
 Apache Druid 28.0.0 包含了超过 420 个新功能、错误修复、性能增强、文档改进和额外的测试覆盖。
 
 查看[完整的变更集](https://github.com/apache/druid/issues?q=is%3Aclosed+milestone%3A28.0+sort%3Aupdated-desc+)以获取更多详细信息，包括错误修复。

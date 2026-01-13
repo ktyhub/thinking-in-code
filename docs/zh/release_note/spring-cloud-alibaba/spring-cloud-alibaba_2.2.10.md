@@ -1,5 +1,5 @@
 # spring-cloud-alibaba 2.2.10
-```markdown
+
 ## 新功能
 
 - [调度]: 增加对分布式调度的支持 spring-cloud-starter-alibaba-schedulerx。详情请见 [#3725](https://github.com/alibaba/spring-cloud-alibaba/pull/3725)

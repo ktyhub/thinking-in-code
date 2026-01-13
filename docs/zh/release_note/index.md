@@ -1,725 +1,332 @@
-# 技术前沿 · 发布动态
+# 📰 技术版本发布追踪
 
-<div class="hero-section">
-  <div class="hero-content">
-    <h2>掌握技术趋势 <span class="accent">引领创新未来</span></h2>
-    <p>这里汇聚全球开源技术社区的最新发布信息，助您时刻把握科技脉搏</p>
-    <div class="search-container">
-      <input type="text" id="tech-search" placeholder="搜索框架或版本..." onkeyup="handleSearchKeyUp(event)">
-      <button class="search-btn" onclick="performGlobalSearch()"><i class="fas fa-search"></i></button>
-    </div>
-  </div>
-  <div class="hero-image">
-    <div class="tech-sphere"></div>
-  </div>
-</div>
+> 专注于追踪和分析主流技术框架的版本演进，为技术决策提供及时、准确的洞察信息
 
-<div class="stats-container">
-  <div class="stat-card">
-    <div class="stat-icon"><i class="fas fa-cube"></i></div>
-    <div class="stat-value" id="framework-count">150+</div>
-    <div class="stat-label">开源框架</div>
+## 🎯 版本追踪价值
+
+<div class="release-value-grid">
+  <div class="value-card">
+    <h3>⚡ 及时性</h3>
+    <p>第一时间获取技术版本更新信息</p>
   </div>
-  <div class="stat-card">
-    <div class="stat-icon"><i class="fas fa-code-branch"></i></div>
-    <div class="stat-value" id="release-count">1200+</div>
-    <div class="stat-label">版本发布</div>
+  <div class="value-card">
+    <h3>🔍 深度分析</h3>
+    <p>不仅关注更新内容，更分析技术趋势</p>
   </div>
-  <div class="stat-card">
-    <div class="stat-icon"><i class="fas fa-sync"></i></div>
-    <div class="stat-value">实时</div>
-    <div class="stat-label">动态更新</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
-    <div class="stat-value" id="last-update">今日</div>
-    <div class="stat-label">最近更新</div>
+  <div class="value-card">
+    <h3>🎯 决策支持</h3>
+    <p>为技术选型和升级提供参考依据</p>
   </div>
 </div>
 
-## <i class="fas fa-fire"></i> 最新发布 <span class="label hot">HOT</span>
+## 🔥 热门技术动态
 
-<div class="latest-releases">
-  <div class="release-grid" id="latest-releases-grid">
-    <!-- 动态生成最新发布内容 -->
+### 🤖 AI & 机器学习
+<div class="tech-category">
+  <div class="latest-releases">
+    <div class="release-item featured">
+      <span class="release-badge new">最新</span>
+      <h4><a href="/zh/release_note/spring-framework/spring-framework_v7.0.0-M5.md">Spring Framework 7.0.0-M5</a></h4>
+      <p class="release-desc">AI原生支持，响应式编程增强</p>
+      <span class="release-date">2025-06-25</span>
+      <div class="release-tags">
+        <span class="tag">AI集成</span>
+        <span class="tag">性能提升</span>
+      </div>
+    </div>
+    <div class="release-item">
+      <h4><a href="/zh/chapter_spring_ai/5-advisor.md">Spring AI 最新集成模式</a></h4>
+      <p class="release-desc">企业级AI应用集成新范式</p>
+      <span class="release-date">2025-06-20</span>
+    </div>
+  </div>
+  <a href="#spring-ecosystem" class="view-all-link">查看Spring生态完整动态 →</a>
+</div>
+
+### ☁️ 云原生技术
+<div class="tech-category">
+  <div class="latest-releases">
+    <div class="release-item featured">
+      <span class="release-badge hot">热门</span>
+      <h4><a href="/zh/release_note/jenkins/jenkins_2.513.md">Jenkins 2.513</a></h4>
+      <p class="release-desc">云原生流水线优化，安全性增强</p>
+      <span class="release-date">2025-06-22</span>
+      <div class="release-tags">
+        <span class="tag">云原生</span>
+        <span class="tag">安全</span>
+      </div>
+    </div>
+    <div class="release-item">
+      <h4><a href="/zh/chapter_kubernetes/1-index.md">Kubernetes 技术洞察</a></h4>
+      <p class="release-desc">容器编排最新发展趋势分析</p>
+      <span class="release-date">2025-06-18</span>
+    </div>
+  </div>
+  <a href="#cloud-native" class="view-all-link">查看云原生完整动态 →</a>
+</div>
+
+### 🔄 分布式系统
+<div class="tech-category">
+  <div class="latest-releases">
+    <div class="release-item featured">
+      <span class="release-badge">稳定版</span>
+      <h4><a href="/zh/release_note/dubbo/dubbo_dubbo-3.3.5.md">Apache Dubbo 3.3.5</a></h4>
+      <p class="release-desc">服务治理能力提升，性能优化</p>
+      <span class="release-date">2025-06-15</span>
+      <div class="release-tags">
+        <span class="tag">性能优化</span>
+        <span class="tag">服务治理</span>
+      </div>
+    </div>
+    <div class="release-item">
+      <h4><a href="/zh/release_note/pulsar/pulsar_v4.0.3.md">Apache Pulsar 4.0.3</a></h4>
+      <p class="release-desc">消息系统架构升级</p>
+      <span class="release-date">2025-06-12</span>
+    </div>
+  </div>
+  <a href="#distributed-systems" class="view-all-link">查看分布式系统完整动态 →</a>
+</div>
+
+### 💾 数据存储
+<div class="tech-category">
+  <div class="latest-releases">
+    <div class="release-item featured">
+      <span class="release-badge experimental">实验版</span>
+      <h4><a href="/zh/release_note/redis/redis_8.0-M02.md">Redis 8.0-M02</a></h4>
+      <p class="release-desc">架构重构，性能大幅提升</p>
+      <span class="release-date">2025-06-10</span>
+      <div class="release-tags">
+        <span class="tag">架构升级</span>
+        <span class="tag">性能</span>
+      </div>
+    </div>
+    <div class="release-item">
+      <h4><a href="/zh/release_note/iotdb/iotdb_Apache IoTDB 1.3.2.md">Apache IoTDB 1.3.2</a></h4>
+      <p class="release-desc">时序数据库功能增强</p>
+      <span class="release-date">2025-06-08</span>
+    </div>
+  </div>
+  <a href="#data-storage" class="view-all-link">查看数据存储完整动态 →</a>
+</div>
+
+## 📊 技术生态完整动态
+
+### Spring 生态系统 {: #spring-ecosystem }
+<div class="ecosystem-timeline">
+  <div class="timeline-item">
+    <div class="timeline-date">2025-06</div>
+    <div class="timeline-content">
+      <h4>Spring Framework 7.0 里程碑</h4>
+      <div class="version-list">
+        <a href="/zh/release_note/spring-framework/spring-framework_v7.0.0-M5.md" class="version-link">
+          <span class="version">7.0.0-M5</span>
+          <span class="highlights">AI原生支持，响应式增强</span>
+        </a>
+        <a href="/zh/release_note/spring-framework/spring-framework_v7.0.0-M2.md" class="version-link">
+          <span class="version">7.0.0-M2</span>
+          <span class="highlights">虚拟线程集成</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="timeline-item">
+    <div class="timeline-date">2025-05</div>
+    <div class="timeline-content">
+      <h4>Spring Boot 3.5 系列</h4>
+      <div class="version-list">
+        <a href="/zh/release_note/Spring-Boot/Spring-Boot_v3.5.0-RC1.md" class="version-link">
+          <span class="version">3.5.0-RC1</span>
+          <span class="highlights">启动性能优化</span>
+        </a>
+        <a href="/zh/release_note/Spring-Boot/Spring-Boot_v3.3.12.md" class="version-link">
+          <span class="version">3.3.12</span>
+          <span class="highlights">稳定性修复</span>
+        </a>
+      </div>
+    </div>
   </div>
 </div>
 
-## <i class="fas fa-star"></i> 热门项目 <span class="label trending">趋势</span>
-
-<div class="trending-projects">
-  <div class="project-card" onclick="filterByFramework('Spring-Boot')">
-    <div class="project-icon spring"></div>
-    <div class="project-info">
-      <h3>Spring Boot</h3>
-      <p>构建企业级应用的首选框架</p>
-    </div>
-  </div>
-  <div class="project-card" onclick="filterByFramework('dubbo')">
-    <div class="project-icon dubbo"></div>
-    <div class="project-info">
-      <h3>Dubbo</h3>
-      <p>高性能Java RPC框架</p>
-    </div>
-  </div>
-  <div class="project-card" onclick="filterByFramework('redis')">
-    <div class="project-icon redis"></div>
-    <div class="project-info">
-      <h3>Redis</h3>
-      <p>高性能内存数据库</p>
-    </div>
-  </div>
-  <div class="project-card" onclick="filterByFramework('kubernetes')">
-    <div class="project-icon k8s"></div>
-    <div class="project-info">
-      <h3>Kubernetes</h3>
-      <p>容器编排平台</p>
-    </div>
-  </div>
-  <div class="project-card" onclick="filterByFramework('gpt')">
-    <div class="project-icon ai"></div>
-    <div class="project-info">
-      <h3>AI相关</h3>
-      <p>人工智能开源项目</p>
-    </div>
-  </div>
-  <div class="project-card" onclick="showAllProjects()">
-    <div class="project-icon more"></div>
-    <div class="project-info">
-      <h3>更多项目</h3>
-      <p>探索全部开源技术</p>
+### 云原生技术栈 {: #cloud-native }
+<div class="ecosystem-timeline">
+  <div class="timeline-item">
+    <div class="timeline-date">2025-06</div>
+    <div class="timeline-content">
+      <h4>DevOps 工具链</h4>
+      <div class="version-list">
+        <a href="/zh/release_note/jenkins/jenkins_2.513.md" class="version-link">
+          <span class="version">Jenkins 2.513</span>
+          <span class="highlights">云原生流水线</span>
+        </a>
+        <a href="/zh/release_note/skywalking/skywalking_v10.1.0.md" class="version-link">
+          <span class="version">SkyWalking 10.1.0</span>
+          <span class="highlights">可观测性增强</span>
+        </a>
+      </div>
     </div>
   </div>
 </div>
 
-## <i class="fas fa-layer-group"></i> 技术分类 <span class="label category">分类</span>
-
-<div class="tech-categories">
-  <div class="category-filter active" data-category="all">全部</div>
-  <div class="category-filter" data-category="backend">后端开发</div>
-  <div class="category-filter" data-category="database">数据库</div>
-  <div class="category-filter" data-category="ai">人工智能</div>
-  <div class="category-filter" data-category="devops">DevOps</div>
-  <div class="category-filter" data-category="frontend">前端框架</div>
-  <div class="category-filter" data-category="cloud">云原生</div>
-</div>
-
-## <i class="fas fa-list"></i> 全部发布记录
-
-<div class="release-table-container">
-  <table class="release-table" id="release-table">
-    <thead>
-      <tr>
-        <th>项目</th>
-        <th>版本</th>
-        <th>发布日期</th>
-        <th>分类</th>
-        <th>操作</th>
-      </tr>
-    </thead>
-    <tbody id="release-table-body">
-      <!-- 动态生成发布记录 -->
-    </tbody>
-  </table>
+### 分布式系统 {: #distributed-systems }
+<div class="ecosystem-timeline">
+  <div class="timeline-item">
+    <div class="timeline-date">2025-06</div>
+    <div class="timeline-content">
+      <h4>微服务框架</h4>
+      <div class="version-list">
+        <a href="/zh/release_note/dubbo/dubbo_dubbo-3.3.5.md" class="version-link">
+          <span class="version">Dubbo 3.3.5</span>
+          <span class="highlights">服务治理升级</span>
+        </a>
+        <a href="/zh/release_note/incubator-seata/incubator-seata_V2.4.0.md" class="version-link">
+          <span class="version">Seata 2.4.0</span>
+          <span class="highlights">分布式事务优化</span>
+        </a>
+      </div>
+    </div>
+  </div>
   
-  <div class="table-loader">
-    <div class="loader-spinner"></div>
-    <p>正在加载数据...</p>
+  <div class="timeline-item">
+    <div class="timeline-date">2025-05</div>
+    <div class="timeline-content">
+      <h4>消息中间件</h4>
+      <div class="version-list">
+        <a href="/zh/release_note/pulsar/pulsar_v4.0.3.md" class="version-link">
+          <span class="version">Pulsar 4.0.3</span>
+          <span class="highlights">架构重构</span>
+        </a>
+        <a href="/zh/release_note/rocketmq/rocketmq_rocketmq-all-5.1.3.md" class="version-link">
+          <span class="version">RocketMQ 5.1.3</span>
+          <span class="highlights">性能提升</span>
+        </a>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="pagination-container">
-  <div class="pagination" id="pagination">
-    <!-- 动态生成分页控件 -->
+### 数据存储技术 {: #data-storage }
+<div class="ecosystem-timeline">
+  <div class="timeline-item">
+    <div class="timeline-date">2025-06</div>
+    <div class="timeline-content">
+      <h4>缓存 & 内存数据库</h4>
+      <div class="version-list">
+        <a href="/zh/release_note/redis/redis_8.0-M02.md" class="version-link">
+          <span class="version">Redis 8.0-M02</span>
+          <span class="highlights">架构重构</span>
+        </a>
+        <a href="/zh/release_note/redis/redis_7.4.1.md" class="version-link">
+          <span class="version">Redis 7.4.1</span>
+          <span class="highlights">稳定版更新</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="timeline-item">
+    <div class="timeline-date">2025-05</div>
+    <div class="timeline-content">
+      <h4>时序 & 分析数据库</h4>
+      <div class="version-list">
+        <a href="/zh/release_note/iotdb/iotdb_Apache IoTDB 1.3.2.md" class="version-link">
+          <span class="version">IoTDB 1.3.2</span>
+          <span class="highlights">时序优化</span>
+        </a>
+        <a href="/zh/release_note/influxdb/influxdb_v2.7.9.md" class="version-link">
+          <span class="version">InfluxDB 2.7.9</span>
+          <span class="highlights">查询性能</span>
+        </a>
+      </div>
+    </div>
   </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // 初始化数据
-  initReleaseData();
+## 🔍 技术选型助手
+
+### 版本选择建议
+
+<div class="version-advice-grid">
+  <div class="advice-card production">
+    <h4>🚀 生产环境推荐</h4>
+    <ul>
+      <li><strong>Spring Boot:</strong> 3.3.12 (LTS)</li>
+      <li><strong>Dubbo:</strong> 3.3.5 (稳定版)</li>
+      <li><strong>Redis:</strong> 7.4.1 (稳定版)</li>
+      <li><strong>Jenkins:</strong> 2.513 (LTS)</li>
+    </ul>
+  </div>
   
-  // 为分类筛选添加点击事件
-  document.querySelectorAll('.category-filter').forEach(filter => {
-    filter.addEventListener('click', function() {
-      document.querySelectorAll('.category-filter').forEach(f => f.classList.remove('active'));
-      this.classList.add('active');
-      filterByCategory(this.getAttribute('data-category'));
-    });
-  });
+  <div class="advice-card testing">
+    <h4>🧪 测试环境可试用</h4>
+    <ul>
+      <li><strong>Spring Framework:</strong> 7.0.0-M5</li>
+      <li><strong>Spring Boot:</strong> 3.5.0-RC1</li>
+      <li><strong>Pulsar:</strong> 4.0.3</li>
+      <li><strong>SkyWalking:</strong> 10.1.0</li>
+    </ul>
+  </div>
   
-  // 动画效果
-  animateTechSphere();
-});
+  <div class="advice-card experimental">
+    <h4>⚗️ 实验性版本</h4>
+    <ul>
+      <li><strong>Redis:</strong> 8.0-M02</li>
+      <li><strong>Seata:</strong> 2.4.0</li>
+    </ul>
+    <p class="warning">⚠️ 仅供技术预研使用</p>
+  </div>
+</div>
 
-// 处理搜索框回车事件
-function handleSearchKeyUp(event) {
-  if (event.key === 'Enter') {
-    performGlobalSearch();
-  }
-}
+## 📈 版本发布趋势分析
 
-// 执行全局搜索，调用右上角搜索框
-function performGlobalSearch() {
-  const searchText = document.getElementById('tech-search').value.trim();
-  if (searchText) {
-    // 获取导航栏上的搜索框
-    const globalSearchInput = document.querySelector('.md-search__input');
-    if (globalSearchInput) {
-      // 设置全局搜索框的值
-      globalSearchInput.value = searchText;
-      
-      // 触发输入事件以激活搜索
-      globalSearchInput.dispatchEvent(new Event('input', { bubbles: true }));
-      
-      // 点击搜索图标以打开搜索结果
-      const searchIcon = document.querySelector('.md-header__button[aria-label="搜索"]') || 
-                         document.querySelector('.md-header__button[aria-label="Search"]');
-      if (searchIcon) {
-        searchIcon.click();
-      }
-      
-      // 聚焦到搜索框
-      globalSearchInput.focus();
-    } else {
-      // 如果无法找到全局搜索框，使用window.location进行搜索
-      window.location.href = `${window.location.origin}/search.html?q=${encodeURIComponent(searchText)}`;
-    }
-  }
-}
+### 发布频率统计
+<div class="release-stats">
+  <div class="stat-item">
+    <h4>Spring 生态</h4>
+    <div class="stat-number">28</div>
+    <p>版本/月</p>
+  </div>
+  <div class="stat-item">
+    <h4>Apache 项目</h4>
+    <div class="stat-number">15</div>
+    <p>版本/月</p>
+  </div>
+  <div class="stat-item">
+    <h4>云原生工具</h4>
+    <div class="stat-number">12</div>
+    <p>版本/月</p>
+  </div>
+</div>
 
-// 初始化数据
-function initReleaseData() {
-  // 这里将通过AJAX或其他方式获取所有发布数据
-  // 实现代码将与后端API集成
+## 🎯 订阅与通知
+
+<div class="subscription-section">
+  <h3>📬 获取版本更新通知</h3>
+  <p>选择您关注的技术栈，我们将及时推送重要版本更新信息</p>
   
-  // 加载最新发布
-  loadLatestReleases();
+  <div class="subscription-options">
+    <label class="tech-option">
+      <input type="checkbox" value="spring">
+      <span>Spring 生态系统</span>
+    </label>
+    <label class="tech-option">
+      <input type="checkbox" value="apache">
+      <span>Apache 项目</span>
+    </label>
+    <label class="tech-option">
+      <input type="checkbox" value="cloud-native">
+      <span>云原生技术</span>
+    </label>
+    <label class="tech-option">
+      <input type="checkbox" value="database">
+      <span>数据库技术</span>
+    </label>
+  </div>
   
-  // 加载所有发���记录
-  loadAllReleases();
-  
-  // 更新统计数据
-  updateStatistics();
-}
+  <button class="subscribe-btn">🔔 订阅更新通知</button>
+  <p class="subscribe-note">通过微信搜索"中间件源码"获取专业技术洞察</p>
+</div>
 
-// 加载最新发布
-function loadLatestReleases() {
-  // 模拟数据加载
-  const latestReleasesGrid = document.getElementById('latest-releases-grid');
-  
-  // 这里将根据实际数据动态生成内容
-  // ...
-}
+---
 
-// 加载所有发布记录
-function loadAllReleases() {
-  // 模拟数据加载
-  const tableBody = document.getElementById('release-table-body');
-  
-  // 这里将根据实际数据动态生成内容
-  // ...
-  
-  // 隐藏加载动画
-  document.querySelector('.table-loader').style.display = 'none';
-}
-
-// 更新统计数据
-function updateStatistics() {
-  // 根据实际数据更新统计数字
-  // ...
-}
-
-// 按框架筛选
-function filterByFramework(framework) {
-  // 实现按框架筛选逻辑
-  // ...
-}
-
-// 按分类筛选
-function filterByCategory(category) {
-  // 实现按分类筛选逻辑
-  // ...
-}
-
-// 搜索功能
-function searchReleases(text) {
-  const searchText = text || document.getElementById('tech-search').value.toLowerCase();
-  // 本地搜索逻辑...
-}
-
-// 显示所有项目
-function showAllProjects() {
-  // 显示完整项目列表
-  // ...
-}
-
-// 技术球体动画
-function animateTechSphere() {
-  const sphere = document.querySelector('.tech-sphere');
-  // 实现动画效果
-  // ...
-}
-</script>
-
-<style>
-/* 全局样式 */
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background-color: #f8f9fa;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 600;
-  margin-top: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-h2 {
-  font-size: 1.8rem;
-  border-bottom: none;
-  display: flex;
-  align-items: center;
-  margin-top: 2.5rem;
-}
-
-h2 i {
-  margin-right: 0.5rem;
-  color: #0366d6;
-}
-
-/* 英雄区域 */
-.hero-section {
-  background: linear-gradient(135deg, #0c2e60, #1e5799);
-  color: white;
-  padding: 3rem 2rem;
-  border-radius: 10px;
-  margin-bottom: 2.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  position: relative;
-}
-
-.hero-content {
-  width: 60%;
-  z-index: 2;
-}
-
-.hero-image {
-  width: 35%;
-  position: relative;
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.tech-sphere {
-  width: 220px;
-  height: 220px;
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(30, 87, 153, 0.6));
-  border-radius: 50%;
-  position: relative;
-  box-shadow: 0 0 60px rgba(0, 150, 255, 0.6);
-  animation: rotate 20s linear infinite, pulse 5s ease-in-out infinite;
-}
-
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes pulse {
-  0% { box-shadow: 0 0 30px rgba(0, 150, 255, 0.6); }
-  50% { box-shadow: 0 0 80px rgba(0, 150, 255, 0.8); }
-  100% { box-shadow: 0 0 30px rgba(0, 150, 255, 0.6); }
-}
-
-.hero-content h2 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  font-weight: 700;
-  border-bottom: none;
-}
-
-.accent {
-  color: #64ffda;
-  font-weight: 700;
-}
-
-.hero-content p {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-  opacity: 0.9;
-}
-
-.search-container {
-  position: relative;
-  max-width: 500px;
-}
-
-#tech-search {
-  width: 100%;
-  padding: 1rem 1.5rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 30px;
-  background-color: rgba(255, 255, 255, 0.15);
-  color: white;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-#tech-search::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-#tech-search:focus {
-  background-color: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-  outline: none;
-}
-
-.search-btn {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-
-/* 统计数据 */
-.stats-container {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  margin-bottom: 3rem;
-}
-
-.stat-card {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-  padding: 1.5rem;
-  text-align: center;
-  width: 200px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  margin: 0.5rem;
-}
-
-.stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-.stat-icon {
-  font-size: 2rem;
-  color: #0366d6;
-  margin-bottom: 0.5rem;
-}
-
-.stat-value {
-  font-size: 2.2rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, #0366d6, #4dabf7);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.stat-label {
-  font-size: 1rem;
-  color: #555;
-}
-
-/* 标签 */
-.label {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-left: 0.75rem;
-  vertical-align: middle;
-}
-
-.hot {
-  background-color: #ff3860;
-  color: white;
-}
-
-.trending {
-  background-color: #3273dc;
-  color: white;
-}
-
-.category {
-  background-color: #8a4baf;
-  color: white;
-}
-
-/* 最新发布 */
-.latest-releases {
-  margin-bottom: 3rem;
-}
-
-.release-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1.5rem;
-}
-
-/* 热门项目 */
-.trending-projects {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin: 1.5rem 0 3rem;
-}
-
-.project-card {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.project-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-.project-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 10px;
-  margin-right: 1rem;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.spring {
-  background-image: url('https://spring.io/img/favicon.ico');
-  background-color: #6db33f;
-}
-
-.dubbo {
-  background-image: url('https://dubbo.apache.org/imgs/dubbo.png');
-  background-color: #00c1de;
-}
-
-.redis {
-  background-color: #dc382d;
-  background-image: url('https://redis.io/images/favicon.png');
-}
-
-.k8s {
-  background-color: #326ce5;
-  background-image: url('https://kubernetes.io/images/favicon.png');
-}
-
-.ai {
-  background-color: #10a37f;
-  background-image: url('https://gpt4all.io/favicon.svg');
-}
-
-.more {
-  background-color: #f0f0f0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-
-.more:before {
-  content: "+";
-  font-size: 2rem;
-  color: #666;
-}
-
-.project-info h3 {
-  margin: 0;
-  font-size: 1.2rem;
-}
-
-.project-info p {
-  margin: 0.3rem 0 0;
-  font-size: 0.9rem;
-  color: #666;
-}
-
-/* 技术分类 */
-.tech-categories {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin: 1.5rem 0 2.5rem;
-}
-
-.category-filter {
-  background-color: #f0f0f0;
-  color: #333;
-  padding: 0.5rem 1.2rem;
-  border-radius: 25px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.category-filter:hover {
-  background-color: #e0e0e0;
-}
-
-.category-filter.active {
-  background-color: #0366d6;
-  color: white;
-}
-
-/* 发布表格 */
-.release-table-container {
-  position: relative;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-  padding: 1rem;
-  margin-bottom: 2rem;
-  overflow: hidden;
-}
-
-.release-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.release-table th {
-  background-color: #f5f7fa;
-  padding: 1rem;
-  text-align: left;
-  font-weight: 600;
-  color: #333;
-}
-
-.release-table td {
-  padding: 1rem;
-  border-top: 1px solid #eee;
-}
-
-.release-table tr:hover {
-  background-color: #f8f9fa;
-}
-
-.table-loader {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.9);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-}
-
-.loader-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #0366d6;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* 分页 */
-.pagination-container {
-  display: flex;
-  justify-content: center;
-  margin: 2rem 0;
-}
-
-.pagination {
-  display: flex;
-  gap: 0.5rem;
-}
-
-/* 响应式设计 */
-@media (max-width: 992px) {
-  .hero-section {
-    flex-direction: column;
-    padding: 2rem 1.5rem;
-  }
-  
-  .hero-content {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-  
-  .search-container {
-    margin: 0 auto;
-  }
-  
-  .hero-image {
-    width: 100%;
-  }
-  
-  .tech-sphere {
-    width: 180px;
-    height: 180px;
-  }
-  
-  .hero-content h2 {
-    font-size: 2rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .stats-container {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .stat-card {
-    width: 90%;
-    max-width: 300px;
-    margin-bottom: 1rem;
-  }
-  
-  .project-card {
-    padding: 1rem;
-  }
-  
-  .project-icon {
-    width: 50px;
-    height: 50px;
-  }
-  
-  .tech-categories {
-    justify-content: center;
-  }
-}
-</style>
+> 💡 **专业提示**: 版本选择不仅要考虑功能特性，更要评估团队技术栈兼容性、社区支持度和长期维护计划。我们的技术洞察团队持续跟踪分析，为您的技术决策提供专业建议。

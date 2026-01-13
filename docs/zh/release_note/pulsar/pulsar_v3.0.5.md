@@ -1,5 +1,5 @@
 # pulsar v3.0.5
-```markdown
+
 ### Broker
 
 - [修复][broker] 修复强制删除订阅无效的问题 ([#22423](https://github.com/apache/pulsar/pull/22423))

@@ -1,5 +1,5 @@
 # rocketmq rocketmq-all-4.9.6
-```markdown
+
 ## 变更内容
 
 - 使 `configPath` 在运行时无法更新

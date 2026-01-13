@@ -1,5 +1,5 @@
 # spring-cloud-alibaba 2022.0.0.0-RC2
-```markdown
+
 ## ⭐️ 特性 / 改进
 
 - [Seata] 优化了 alibaba-seata：使用 `feign.RequestInterceptor` 传递 XID ([#3171](https://github.com/alibaba/spring-cloud-alibaba/pull/3171))

@@ -1,5 +1,5 @@
 # spring-cloud-kubernetes 3.1.2
-```markdown
+
 ## ⭐ 新功能
 
 - 支持在运行集成测试时使用 arm64 [#1634](https://github.com/spring-cloud/spring-cloud-kubernetes/issues/1634)

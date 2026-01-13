@@ -1,5 +1,5 @@
 # spring-kafka v3.3.0-M1
-```markdown
+
 ## ⭐ 新功能
 
 - 应用接收 `ContainerStoppedEvent` 即使 `active MessageListenerContainer` 实例正在处理消息。[#3340](https://github.com/spring-projects/spring-kafka/issues/3340)

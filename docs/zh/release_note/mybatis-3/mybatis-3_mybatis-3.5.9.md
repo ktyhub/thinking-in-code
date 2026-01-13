@@ -1,5 +1,5 @@
 # mybatis-3 mybatis-3.5.9
-```markdown
+
 ### 变更列表：
 
 - 为 `<foreach />` 添加了 `nullable` 属性。如果启用，当集合为 `null` 时会跳过迭代，而不是抛出异常。要全局启用此功能，请在配置中设置 `nullableOnForEach=true`。[#1883](https://github.com/mybatis/mybatis-3/pull/1883)

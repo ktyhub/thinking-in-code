@@ -1,7 +1,7 @@
 # guava 32.1.1
 以下是根据你的要求将内容翻译为中文，并转换为Markdown语法后的结果：
 
-```markdown
+
 ### Maven
 
 ```xml

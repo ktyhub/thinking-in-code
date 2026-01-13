@@ -1,5 +1,5 @@
 # spring-cloud-alibaba 2023.0.0.0-RC1
-```markdown
+
 ## ⭐️ 功能/增强
 
 **对应2023年版Spring Cloud与Spring Boot 3.2.x，支持JDK 21版本。**

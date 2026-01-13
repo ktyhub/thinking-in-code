@@ -1,5 +1,5 @@
 # spring-cloud-gateway 4.0.9
-```markdown
+
 ## ⭐ 新功能
 
 - (4.0.x) 增强 "/actuator/gateway" 端点 [#3163](https://github.com/spring-cloud/spring-cloud-gateway/pull/3163)

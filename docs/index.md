@@ -1,313 +1,110 @@
----
-title: Thinking In Code | 深入理解代码的艺术与原理
-description: 专注于源码解析、中间件原理和云原生技术的知识分享平台。探索Dubbo、Zookeeper、ElasticJob等流行框架的设计思想和内部实现机制。
-keywords: 源码解析, 中间件原理, 云原生技术, Java框架, Spring, Dubbo, Zookeeper, Kubernetes, 技术博客, 编程学习, 框架原理
-tags:
-  - 源码分析
-  - 技术博客
-  - 中间件原理
-  - 技术架构
-  - 云原生技术
-  - Java框架解析
----
-
-# 🧠 深入理解代码的艺术
-
-<div class="hero-section" aria-label="网站介绍">
-  <div class="hero-content">
-    <h1>思考代码之美 (Thinking In Code)</h1>
-    <p class="subtitle">探索技术背后的原理，掌握编程的艺术与智慧</p>
-    <div class="hero-buttons">
-      <a href="/zh/chapter_preface/" class="md-button md-button--primary" title="开始探索技术内容" aria-label="浏览全部技术内容">开始探索</a>
-      <a href="#featured" class="md-button" title="查看特色文章" aria-label="直接跳转到特色文章部分">特色文章</a>
-    </div>
+<div class="leadership-banner" aria-label="平台核心价值">
+  <div class="leadership-content">
+    <h1 class="platform-title">🎯 专注开源技术版本发布洞察</h1>
+    <p class="leadership-subtitle">追踪开源项目版本演进 • 深度解析技术变革</p>
   </div>
 </div>
 
-## 📚 关于本站 {: #about }
+## 📦 版本发布追踪 {: #release-tracking }
 
-这里是一个专注于 **深入理解代码** 和 **技术底层原理** 的知识分享平台。我们相信，真正的技术掌握不仅仅是知道如何使用，更在于理解其背后的设计思想和实现原理。
-
-> *编程不仅仅是写代码，更是思考的艺术。*
-
-通过深入分析开源项目的源码，我们一起探索各种中间件、框架和工具的内部实现机制，让您不��能够熟练使用这些技术，还能够理解其设计思想，甚至能够在需要时进行定制和优化。
-
----
-
-<div id="featured" class="featured-section"></div>
-
-## ✨ 特色内容 {: #featured-content }
-
-<div class="grid-container" aria-label="特色技术内容分类">
-    <div class="grid-item">
-        <h3>🔍 源码解析系列</h3>
-        <p>深入剖析�������行框架和中间件的实现原理</p>
-        <a href="/zh/chapter_dubbo/1-learn-from-a-demo" title="学习Dubbo框架源码解析" aria-label="Dubbo源码解析系列文章">Dubbo源码解析</a> | 
-        <a href="/zh/chapter_zookeeper/1-introduce" title="了解Zookeeper内部机制" aria-label="Zookeeper内部机制详解">Zookeeper内部机制</a> | 
-        <a href="/zh/chapter_elasticjob/1-introduce" title="探索ElasticJob调度原理" aria-label="ElasticJob调度原理解析">ElasticJob调度原理</a>
+<div class="unique-value-grid">
+    <div class="value-item primary-value">
+        <h3>🔍 版本发布雷达</h3>
+        <p class="value-desc">实时追踪主流开源项目版本发布动态与技术变革</p>
+        <div class="value-metrics">
+            <span class="metric">实时版本追踪</span>
+            <span class="metric">变革深度解析</span>
+        </div>
+        <a href="/zh/release_note/" class="value-link">查看版本动态 →</a>
     </div>
+    
+    <div class="value-item">
+        <h3>📊 技术演进分析</h3>
+        <p class="value-desc">深度分析开源项目版本间的技术演进路径</p>
+        <div class="analysis-depth">
+            <span class="depth-level">版本对比</span> → 
+            <span class="depth-level">特性分析</span> → 
+            <span class="depth-level">影响评估</span>
+        </div>
+        <a href="/zh/tech_radar/" class="value-link">技术演进图 →</a>
+    </div>
+    
+    <div class="value-item">
+        <h3>🎯 升级决策支持</h3>
+        <p class="value-desc">基于版本变化提供技术升级决策建议</p>
+        <div class="evolution-preview">
+            <span class="evolution-stage">风险评估</span> → 
+            <span class="evolution-stage current">收益分析</span> → 
+            <span class="evolution-stage">升级建议</span>
+        </div>
+        <a href="/zh/chapter_preface/" class="value-link">升级指南 →</a>
+    </div>
+</div>
+
+## 🚀 重点关注项目 {: #key-projects }
+
+<div class="grid-container">
     <div class="grid-item">
-        <h3>⚡ 响应式编程</h3>
-        <p>掌握现代异步编程模型和并发处理</p>
-        <a href="/zh/chapter_reactor/Flux" title="Flux响应式编程基础" aria-label="学习Flux响应式编程基础">Flux基础</a> | 
-        <a href="/zh/chapter_reactor/1-Flux" title="Flux创建原理详解" aria-label="深入理解Flux创建原理">Flux创建原理</a> | 
-        <a href="/zh/chapter_reactor/6-Scheduler" title="响应式编程调度器原理" aria-label="掌握响应式编程调度器原理">调度器原理</a>
+        <h3>☕ Java生态版本追踪</h3>
+        <p>Spring、Dubbo、Kafka等核心Java项目版本发布洞察</p>
+        <a href="/zh/chapter_spring_ai/" title="Spring AI版本追踪">Spring AI</a> | 
+        <a href="/zh/chapter_dubbo/" title="Dubbo版本演进">Dubbo</a> | 
+        <a href="/zh/chapter_kafka/" title="Kafka版本分析">Kafka</a>
     </div>
     <div class="grid-item">
-        <h3>☁️ 云原生技术</h3>
-        <p>探索容器化和微服务架构的核心技术</p>
-        <a href="/zh/chapter_kubernetes/1-index" title="深入学习Kubernetes源码" aria-label="Kubernetes源码解析">Kubernetes源码解析</a> | 
-        <a href="/zh/chapter_post/elasticjob_cloud" title="ElasticJob云原生实践指南" aria-label="ElasticJob云原生实践">ElasticJob云原生实践</a>
+        <h3>☁️ 云原生版本动态</h3>
+        <p>Kubernetes、容器技术栈版本发布与演进分析</p>
+        <a href="/zh/chapter_kubernetes/" title="K8s版本追踪">Kubernetes</a> | 
+        <a href="/zh/chapter_post/prometheus" title="Prometheus版本">监控栈</a>
     </div>
     <div class="grid-item">
-        <h3>🤖 AI与新技术</h3>
-        <p>紧跟前沿，探索人工智能与新兴技术</p>
-        <a href="/zh/chapter_spring_ai/1-official-website" title="Spring AI框架学习" aria-label="Spring AI框架学习">Spring AI</a> | 
-        <a href="/zh/chapter_spring_ai_alibaba/1-official-website" title="Spring AI Alibaba实践" aria-label="Spring AI Alibaba实践">Spring AI Alibaba</a> | 
-        <a href="/zh/release_note/" title="最新技术动态" aria-label="查看最新技术动态">技术动态</a>
+        <h3>🤖 AI技术版本洞察</h3>
+        <p>AI框架与工具链版本发布的技术变革分析</p>
+        <a href="/zh/chapter_modelcontextprotocol/" title="MCP版本追踪">MCP协议</a> | 
+        <a href="/zh/chapter_dify/" title="Dify版本动态">Dify</a>
+    </div>
+    <div class="grid-item">
+        <h3>💾 数据技术版本追踪</h3>
+        <p>数据库、存储系统版本发布与性能演进</p>
+        <a href="/zh/chapter_mysql/" title="MySQL版本分析">MySQL</a> | 
+        <a href="/zh/chapter_post/clickhouse" title="ClickHouse版本">ClickHouse</a>
     </div>
 </div>
 
----
+## 📋 最新版本发布 {: #latest-releases }
 
-## 📋 内容分类
-
-<div class="topic-container">
-    <div class="topic">
-        <span class="topic-icon">☕</span>
-        <a href="/zh/chapter_dubbo/1-learn-from-a-demo">中间件源码剖析</a>
-    </div>
-    <div class="topic">
-        <span class="topic-icon">🧩</span>
-        <a href="/zh/chaptor_reactor/Flux">响应式编程</a>
-    </div>
-    <div class="topic">
-        <span class="topic-icon">🔄</span>
-        <a href="/zh/chapter_kafka/1-introduce">消息队列</a>
-    </div>
-    <div class="topic">
-        <span class="topic-icon">🌐</span>
-        <a href="/zh/chapter_netty/1-sample">网络编程</a>
-    </div>
-    <div class="topic">
-        <span class="topic-icon">🧠</span>
-        <a href="/zh/chapter_spring_ai/1-official-website">AI应用</a>
-    </div>
-    <div class="topic">
-        <span class="topic-icon">🐧</span>
-        <a href="/zh/chapter_linux/problem/cpu">Linux性能优化</a>
-    </div>
-    <div class="topic">
-        <span class="topic-icon">⚙️</span>
-        <a href="/zh/chapter_springboot/1-sample">Spring生态</a>
-    </div>
-    <div class="topic">
-        <span class="topic-icon">📊</span>
-        <a href="/zh/chapter_post/clickhouse">大数据分析</a>
-    </div>
+<div class="latest-articles">
+    <ul>
+        <li>
+            <span class="article-date">2025-01-06</span>
+            <a href="/zh/chapter_spring_ai/5-advisor" title="Spring AI最新版本解析">Spring AI 1.0.1 版本发布：顾问模式重大更新</a>
+            <span class="tag">Java生态</span>
+        </li>
+        <li>
+            <span class="article-date">2025-01-05</span>
+            <a href="/zh/chapter_dubbo/22-migration-invoker" title="Dubbo版本升级分析">Dubbo 3.3.0 服务发现机制重构解析</a>
+            <span class="tag">微服务</span>
+        </li>
+        <li>
+            <span class="article-date">2025-01-04</span>
+            <a href="/zh/chapter_post/clickhouse" title="ClickHouse版本分析">ClickHouse 24.1 实时分析性能突破</a>
+            <span class="tag">数据技术</span>
+        </li>
+        <li>
+            <span class="article-date">2025-01-03</span>
+            <a href="/zh/chapter_kubernetes/1-index" title="Kubernetes版本更新">Kubernetes 1.29 版本安全性增强详解</a>
+            <span class="tag">云原生</span>
+        </li>
+    </ul>
 </div>
 
----
+## 🔗 版本追踪导航 {: #tracking-navigation }
 
-## 🔍 全站导航
-
-<div class="site-map-container">
-  <div class="site-map-section">
-    <h3>🧠 核心技术</h3>
-    <ul class="site-map-list">
-      <li><a href="/zh/chapter_dubbo/1-learn-from-a-demo" title="深入学习Dubbo框架">Dubbo源码解析</a></li>
-      <li><a href="/zh/chapter_zookeeper/1-introduce" title="了解Zookeeper内部原理">Zookeeper原理</a></li>
-      <li><a href="/zh/chapter_elasticjob/1-introduce" title="ElasticJob实现原理">ElasticJob详解</a></li>
-      <li><a href="/zh/chapter_netty/1-sample" title="Netty网络框架剖析">Netty网络编程</a></li>
-      <li><a href="/zh/chapter_springboot/1-sample" title="Spring Boot核心原理">Spring Boot解析</a></li>
-    </ul>
-  </div>
-  
-  <div class="site-map-section">
-    <h3>💾 数据技术</h3>
-    <ul class="site-map-list">
-      <li><a href="/zh/chapter_kafka/1-introduce" title="Kafka消息队列">Kafka解析</a></li>
-      <li><a href="/zh/chapter_mysql/1-sample" title="MySQL数据库原理">MySQL技术</a></li>
-      <li><a href="/zh/chapter_post/clickhouse" title="ClickHouse大数据分析">ClickHouse应用</a></li>
-      <li><a href="/zh/chapter_druid/1-druid_source" title="Druid连接池解析">Druid解析</a></li>
-    </ul>
-  </div>
-  
-  <div class="site-map-section">
-    <h3>🚀 前沿技术</h3>
-    <ul class="site-map-list">
-      <li><a href="/zh/chapter_spring_ai/1-official-website" title="Spring AI应用">Spring AI</a></li>
-      <li><a href="/zh/chaptor_reactor/Flux" title="响应式编程">响应式编程</a></li>
-      <li><a href="/zh/chapter_kubernetes/1-index" title="Kubernetes容器编排">Kubernetes技术</a></li>
-      <li><a href="/zh/chapter_modelcontextprotocol/index" title="MCP协议">MCP协议</a></li>
-      <li><a href="/zh/chapter_post/elasticjob_cloud" title="ElasticJob云原生实践">云原生应用</a></li>
-      <li><a href="/zh/chapter_n8n/1-official-website" title="N8N工作流自动化">工作流自动化</a></li>
-      <li><a href="/zh/chapter_ai/1-llm-integration" title="大语言模型集成开发">LLM开发</a></li>
-    </ul>
-  </div>
-  
-  <div class="site-map-section">
-    <h3>🔧 实用工具</h3>
-    <ul class="site-map-list">
-      <li><a href="/zh/chapter_linux/problem/cpu" title="Linux性能优化">Linux性能优化</a></li>
-      <li><a href="/zh/chapter_post/micrometer" title="Micrometer监控">可观测性工具</a></li>
-      <li><a href="/zh/chapter_post/site" title="实用网址收藏">开发者资源</a></li>
-      <li><a href="/zh/chapter_algorithm/1-sample" title="算法学习">算法精选</a></li>
-      <li><a href="/zh/chapter_post/log4j2" title="日志技术">日志最佳实践</a></li>
-    </ul>
-  </div>
+<div class="tags-cloud">
+    <a href="/zh/release_note/" class="tag-item" title="综合版本发布动态">版本发布中心</a>
+    <a href="/zh/chapter_spring_ai/" class="tag-item" title="Spring生态版本">Spring生态</a>
+    <a href="/zh/chapter_dubbo/" class="tag-item" title="微服务版本追踪">微服务栈</a>
+    <a href="/zh/chapter_kubernetes/" class="tag-item" title="云原生版本">云原生</a>
+    <a href="/zh/chapter_kafka/" class="tag-item" title="消息系统版本">消息系统</a>
+    <a href="/zh/chapter_mysql/" class="tag-item" title="数据库版本">数据库</a>
 </div>
-
-<div class="footer-message">
-  <p>可��信搜索《中间件源码》联系，订阅内容。</p>
-  <p>在这里，我们一起探索代码的奥秘，解析技术的本质。</p>
-</div>
-
-<style>
-.hero-section {
-  background-color: #f5f5f5;
-  padding: 2rem;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-  background-image: linear-gradient(120deg, #e0f7fa, #f5f5f5);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-}
-
-.hero-content {
-  text-align: center;
-}
-
-.subtitle {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
-  color: #555;
-}
-
-.hero-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin: 2rem 0;
-}
-
-.grid-item {
-  background-color: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.grid-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.grid-item h3 {
-  margin-top: 0;
-  font-size: 1.25rem;
-}
-
-.topic-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin: 2rem 0;
-}
-
-.topic {
-  background-color: #fff;
-  padding: 0.8rem 1.2rem;
-  border-radius: 30px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: transform 0.2s ease;
-}
-
-.topic:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.topic-icon {
-  font-size: 1.2rem;
-}
-
-.nav-wrapper {
-  margin-top: 2rem;
-  padding: 1rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-}
-
-.site-map-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin: 2rem 0;
-}
-
-.site-map-section {
-  background-color: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.site-map-section h3 {
-  margin-top: 0;
-  font-size: 1.2rem;
-}
-
-.site-map-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 1rem 0 0 0;
-}
-
-.site-map-list li {
-  margin: 0.5rem 0;
-}
-
-.site-map-list a {
-  text-decoration: none;
-  color: #007bff;
-  transition: color 0.3s ease;
-}
-
-.site-map-list a:hover {
-  color: #0056b3;
-}
-
-.footer-message {
-  margin-top: 3rem;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
-  text-align: center;
-  font-style: italic;
-  color: #666;
-}
-
-@media (max-width: 768px) {
-  .grid-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .hero-buttons {
-    flex-direction: column;
-  }
-  
-  .site-map-container {
-    grid-template-columns: 1fr;
-  }
-}
-</style>

@@ -1,5 +1,5 @@
 # bookkeeper Release 4.17.1
-```markdown
+
 发布 4.17.1 版本包含多个错误修复和少量依赖更新。
 
 建议 Apache BookKeeper 用户如果正在使用 4.17.x 版本，升级到 4.17.1。以下是此版本的技术细节。

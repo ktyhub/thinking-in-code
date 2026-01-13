@@ -1,5 +1,5 @@
 # spring-cloud-alibaba 2021.0.6.1
-```markdown
+
 ## 新功能
 
 [调度]: 添加分布式调度支持 `spring-cloud-starter-alibaba-schedulerx`。详情见 [#3726](https://github.com/alibaba/spring-cloud-alibaba/pull/3726)

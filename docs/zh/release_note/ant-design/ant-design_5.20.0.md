@@ -1,5 +1,5 @@
 # ant-design 5.20.0
-```markdown
+
 - 🛠 替换 ColorPicker 内部使用的 `@ctrl/tiny-color` 为 `@ant-design/fast-color`。[#49846](https://github.com/ant-design/ant-design/pull/49846)
 - 🆕 ConfigProvider 支持配置 Spin 的 indicator 属性。[#50183](https://github.com/ant-design/ant-design/pull/50183)
 - 🆕 Upload `showUploadList` 添加 `extra` 以支持渲染额外信息。[#50098](https://github.com/ant-design/ant-design/pull/50098)

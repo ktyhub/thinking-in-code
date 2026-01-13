@@ -1,5 +1,5 @@
 # ant-design 5.19.0
-```markdown
+
 - 🆕 ConfigProvider 现支持全局配置 `variant`。[#49535](https://github.com/ant-design/ant-design/pull/49535)
 
 - QRCode

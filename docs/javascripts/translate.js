@@ -19,7 +19,7 @@ var translate = {
 	 * 英语: en
 	 * 更多语言请查阅 : https://cloud.google.com/translate/docs/languages
 	 */
-	from: '',
+	from: 'zh-CN',
 	/**
 	 * 要翻译为的目标语言
 	 * 中文: zh-CN
@@ -33,7 +33,15 @@ var translate = {
 	 * 如果是 class="test" 那么这里就传入 .test
 	 * 多个选择器传入数组即可
 	 */
-	ignore: [],
+	ignore: [
+		'.md-footer-copyright',
+		'.md-source__repository',
+		'pre',
+		'code',
+		'.language-switcher',
+		'.bpmn-btn svg',
+		'.no-translate'
+	],
 	/**
 	 * 当前页面中被翻译过的元素的class标记，会自动加上这个class
 	 */
@@ -280,4 +288,3 @@ var translate = {
 		}
 	}
 };
-

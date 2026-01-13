@@ -1,5 +1,5 @@
 # ant-design 5.19.4
-```markdown
+
 - 🐞 修复 Form.Item 内部元素没有继承行高的问题。[#50020](https://github.com/ant-design/ant-design/pull/50020)
 - 🐞 修复 Popover `title` 和 `content` 都不存在时 Overlay 仍显示的问题。[#50064](https://github.com/ant-design/ant-design/pull/50064)
 - 🐞 修复 Empty Token 设置 `opacityImage` 不生效的问题。[#50066](https://github.com/ant-design/ant-design/pull/50066)

@@ -1,5 +1,5 @@
 # Sentinel v1.8.5
-```markdown
+
 ## 特性 / 增强
 
 - 为 Apache Dubbo 3.x 添加适配器 [#2789](https://github.com/alibaba/Sentinel/pull/2789)

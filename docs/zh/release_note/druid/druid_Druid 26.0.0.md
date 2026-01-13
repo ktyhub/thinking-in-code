@@ -1,5 +1,5 @@
 # druid Druid 26.0.0
-```markdown
+
 Apache Druid 26.0.0 包含超过 390 个新功能、错误修复、性能增强、文档改进和额外的测试覆盖。
 
 [查看完整的更改集以获取更多详细信息](https://github.com/apache/druid/pulls?q=is%3Apr+milestone%3A26.0+is%3Aclosed)。

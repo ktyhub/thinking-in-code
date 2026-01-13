@@ -1,5 +1,5 @@
 # logging-log4j2 2.22.0
-```markdown
+
 这次发布提供了每个工件的 [CycloneDX 软件物料清单 (SBOM)](https://cyclonedx.org/capabilities/sbom)，并包含了修复 JPMS 和 OSGi 基础设施问题的补丁，这些问题在 `2.21.0` 版本中进行了大幅改进。此外，还进行了依赖项更新和一些其他的小修小改。
 
 ### CycloneDX 软件物料清单 (SBOM)

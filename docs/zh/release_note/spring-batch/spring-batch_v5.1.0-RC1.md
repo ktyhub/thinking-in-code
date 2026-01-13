@@ -1,5 +1,5 @@
 # spring-batch v5.1.0-RC1
-```markdown
+
 ## 🚀 增强
 
 - 创建使用 Java 配置的示例版本 [#3663](https://github.com/spring-projects/spring-batch/issues/3663)

@@ -1,5 +1,5 @@
 # iotdb Apache IoTDB 1.1.2
-```markdown
+
 ## 新功能
 
 - [IOTDB-5919](https://issues.apache.org/jira/browse/IOTDB-5919) 显示变量添加变量 `timestamp_precision`

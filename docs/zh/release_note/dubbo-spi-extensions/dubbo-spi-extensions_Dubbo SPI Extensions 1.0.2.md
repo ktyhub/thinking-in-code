@@ -1,5 +1,5 @@
 # dubbo-spi-extensions Dubbo SPI Extensions 1.0.2
-```markdown
+
 此次发布包含以下模块：
 
 - dubbo-configcenter-extensions

@@ -1,5 +1,5 @@
 # spring-batch v5.1.0-M3
-```markdown
+
 ## ⭐ 新功能
 
 - 添加 Redis 的项读取器 [#4446](https://github.com/spring-projects/spring-batch/issues/4446)
