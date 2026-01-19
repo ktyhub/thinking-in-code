@@ -2,6 +2,16 @@
 
 > 专注于追踪和分析主流技术框架的版本演进，为技术决策提供及时、准确的洞察信息
 
+## 🗂️ 智能分类导航
+
+<div class="category-navigation-container"></div>
+
+<style>
+  .category-navigation-container {
+    margin: 2rem 0;
+  }
+</style>
+
 ## 🎯 版本追踪价值
 
 <div class="release-value-grid">
