@@ -13,6 +13,10 @@
 (function() {
   'use strict';
   
+  // Configuration constants
+  const TOLERANCE_PX = 5;  // Tolerance for body vs viewport width comparison
+  const MARGIN_TOLERANCE_PX = 50;  // Tolerance for element width vs viewport comparison
+  
   // Check if we're on a homepage
   function isHomepage() {
     return !!(document.querySelector('.homepage-hero') || document.querySelector('.plugin-showcase'));
@@ -51,7 +55,7 @@
     console.log('[Homepage Fullwidth] Viewport:', viewportWidth, 'Body scroll width:', bodyScrollWidth);
     
     // If body is wider than viewport, we have a horizontal scrollbar issue
-    if (bodyScrollWidth > viewportWidth + 5) {  // 5px tolerance
+    if (bodyScrollWidth > viewportWidth + TOLERANCE_PX) {
       console.warn('[Homepage Fullwidth] Horizontal scroll detected. Body is wider than viewport.');
       
       // Find the culprit element
@@ -88,7 +92,7 @@
         const computedStyle = window.getComputedStyle(element);
         
         // Check if element is constraining width
-        if (rect.width < viewportWidth - 50) {  // 50px tolerance for margins
+        if (rect.width < viewportWidth - MARGIN_TOLERANCE_PX) {
           console.warn(`[Homepage Fullwidth] ${selector} is not full width:`, {
             width: rect.width,
             viewport: viewportWidth,
