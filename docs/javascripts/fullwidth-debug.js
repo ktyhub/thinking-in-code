@@ -8,6 +8,11 @@
 (function() {
   'use strict';
   
+  // Configuration constants
+  const FULLWIDTH_TOLERANCE_PX = 20;  // Tolerance for full-width check
+  const EXCESSIVE_PADDING_THRESHOLD = 100;  // Threshold for excessive padding
+  const MIN_WIDTH_CONSTRAINT_PX = 100;  // Minimum width difference to report constraint
+  
   // Only run on homepage
   const isHomepage = document.querySelector('.homepage-hero') || document.querySelector('.plugin-showcase');
   if (!isHomepage) {
@@ -41,10 +46,10 @@
     }
     
     // Check padding
-    if (styles.paddingLeft && parseInt(styles.paddingLeft) > 100) {
+    if (styles.paddingLeft && parseInt(styles.paddingLeft) > EXCESSIVE_PADDING_THRESHOLD) {
       constraints.push(`padding-left: ${styles.paddingLeft}`);
     }
-    if (styles.paddingRight && parseInt(styles.paddingRight) > 100) {
+    if (styles.paddingRight && parseInt(styles.paddingRight) > EXCESSIVE_PADDING_THRESHOLD) {
       constraints.push(`padding-right: ${styles.paddingRight}`);
     }
     
@@ -85,7 +90,7 @@
         actualWidth: rect.width,
         computedWidth: window.getComputedStyle(element).width,
         constraints: constraints,
-        isFullWidth: rect.width >= window.innerWidth - 20 // Allow 20px tolerance
+        isFullWidth: rect.width >= window.innerWidth - FULLWIDTH_TOLERANCE_PX
       };
       
       // Log if element is not full width
@@ -108,7 +113,7 @@
     const constraints = checkWidthConstraints(section);
     const rect = section.getBoundingClientRect();
     
-    if (rect.width < window.innerWidth - 20) {
+    if (rect.width < window.innerWidth - FULLWIDTH_TOLERANCE_PX) {
       console.warn(`[Fullwidth Debug] Section "${className}" is NOT full width:`, {
         actual: rect.width,
         viewport: window.innerWidth,
@@ -130,7 +135,7 @@
     
     if (maxWidth && maxWidth !== 'none' && maxWidth.endsWith('px')) {
       const maxWidthValue = parseInt(maxWidth);
-      if (maxWidthValue > 0 && maxWidthValue < window.innerWidth - 100) {
+      if (maxWidthValue > 0 && maxWidthValue < window.innerWidth - MIN_WIDTH_CONSTRAINT_PX) {
         const rect = el.getBoundingClientRect();
         // Only report if element is actually affecting layout (has significant width)
         if (rect.width > window.innerWidth * 0.5) {

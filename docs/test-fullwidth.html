@@ -269,6 +269,11 @@
   </div>
 
   <script>
+    // Configuration constants
+    const FULLWIDTH_TOLERANCE_PX = 10;  // Tolerance for full-width check
+    const MIN_ELEMENT_WIDTH_THRESHOLD = 0.3;  // Minimum element width as fraction of viewport
+    const WIDTH_CONSTRAINT_THRESHOLD_PX = 100;  // Minimum width difference to report constraint
+    
     let testReport = {};
 
     function updateMetrics() {
@@ -290,7 +295,7 @@
       document.getElementById('has-scroll').textContent = hasScroll ? '❌ Yes' : '✅ No';
 
       // Layout status
-      const isFullWidth = Math.abs(bodyScrollWidth - window.innerWidth) <= 10;
+      const isFullWidth = Math.abs(bodyScrollWidth - window.innerWidth) <= FULLWIDTH_TOLERANCE_PX;
       const statusDiv = document.getElementById('layout-status');
       statusDiv.innerHTML = `
         <span class="status-indicator ${isFullWidth ? 'status-success' : 'status-error'}">
@@ -376,9 +381,9 @@
         
         if (maxWidth && maxWidth !== 'none' && maxWidth.endsWith('px')) {
           const maxWidthValue = parseInt(maxWidth);
-          if (maxWidthValue > 0 && maxWidthValue < window.innerWidth - 100) {
+          if (maxWidthValue > 0 && maxWidthValue < window.innerWidth - WIDTH_CONSTRAINT_THRESHOLD_PX) {
             const rect = el.getBoundingClientRect();
-            if (rect.width > window.innerWidth * 0.3) {
+            if (rect.width > window.innerWidth * MIN_ELEMENT_WIDTH_THRESHOLD) {
               const selector = getSelector(el);
               
               const item = document.createElement('div');
