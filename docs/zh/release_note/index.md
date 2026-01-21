@@ -36,7 +36,7 @@
   <div class="latest-releases">
     <div class="release-item featured">
       <span class="release-badge new">最新</span>
-      <h4><a href="spring-framework/spring-framework_v7.0.0-M5.md">Spring Framework 7.0.0-M5</a></h4>
+      <h4><a href="spring-framework/spring-framework_v7.0.0-M5/">Spring Framework 7.0.0-M5</a></h4>
       <p class="release-desc">AI原生支持，响应式编程增强</p>
       <span class="release-date">2025-06-25</span>
       <div class="release-tags">
@@ -45,7 +45,7 @@
       </div>
     </div>
     <div class="release-item">
-      <h4><a href="../chapter_spring_ai/5-advisor.md">Spring AI 最新集成模式</a></h4>
+      <h4><a href="../chapter_spring_ai/5-advisor/">Spring AI 最新集成模式</a></h4>
       <p class="release-desc">企业级AI应用集成新范式</p>
       <span class="release-date">2025-06-20</span>
     </div>
@@ -58,7 +58,7 @@
   <div class="latest-releases">
     <div class="release-item featured">
       <span class="release-badge hot">热门</span>
-      <h4><a href="jenkins/jenkins_2.513.md">Jenkins 2.513</a></h4>
+      <h4><a href="jenkins/jenkins_2.513/">Jenkins 2.513</a></h4>
       <p class="release-desc">云原生流水线优化，安全性增强</p>
       <span class="release-date">2025-06-22</span>
       <div class="release-tags">
@@ -67,7 +67,7 @@
       </div>
     </div>
     <div class="release-item">
-      <h4><a href="../chapter_kubernetes/1-index.md">Kubernetes 技术洞察</a></h4>
+      <h4><a href="../chapter_kubernetes/1-index/">Kubernetes 技术洞察</a></h4>
       <p class="release-desc">容器编排最新发展趋势分析</p>
       <span class="release-date">2025-06-18</span>
     </div>
@@ -80,7 +80,7 @@
   <div class="latest-releases">
     <div class="release-item featured">
       <span class="release-badge">稳定版</span>
-      <h4><a href="dubbo/dubbo_dubbo-3.3.5.md">Apache Dubbo 3.3.5</a></h4>
+      <h4><a href="dubbo/dubbo_dubbo-3.3.5/">Apache Dubbo 3.3.5</a></h4>
       <p class="release-desc">服务治理能力提升，性能优化</p>
       <span class="release-date">2025-06-15</span>
       <div class="release-tags">
@@ -89,7 +89,7 @@
       </div>
     </div>
     <div class="release-item">
-      <h4><a href="pulsar/pulsar_v4.0.3.md">Apache Pulsar 4.0.3</a></h4>
+      <h4><a href="pulsar/pulsar_v4.0.3/">Apache Pulsar 4.0.3</a></h4>
       <p class="release-desc">消息系统架构升级</p>
       <span class="release-date">2025-06-12</span>
     </div>
@@ -102,7 +102,7 @@
   <div class="latest-releases">
     <div class="release-item featured">
       <span class="release-badge experimental">实验版</span>
-      <h4><a href="redis/redis_8.0-M02.md">Redis 8.0-M02</a></h4>
+      <h4><a href="redis/redis_8.0-M02/">Redis 8.0-M02</a></h4>
       <p class="release-desc">架构重构，性能大幅提升</p>
       <span class="release-date">2025-06-10</span>
       <div class="release-tags">
@@ -111,7 +111,7 @@
       </div>
     </div>
     <div class="release-item">
-      <h4><a href="iotdb/iotdb_Apache IoTDB 1.3.2.md">Apache IoTDB 1.3.2</a></h4>
+      <h4><a href="iotdb/iotdb_Apache IoTDB 1.3.2/">Apache IoTDB 1.3.2</a></h4>
       <p class="release-desc">时序数据库功能增强</p>
       <span class="release-date">2025-06-08</span>
     </div>
@@ -128,11 +128,11 @@
     <div class="timeline-content">
       <h4>Spring Framework 7.0 里程碑</h4>
       <div class="version-list">
-        <a href="spring-framework/spring-framework_v7.0.0-M5.md" class="version-link">
+        <a href="spring-framework/spring-framework_v7.0.0-M5/" class="version-link">
           <span class="version">7.0.0-M5</span>
           <span class="highlights">AI原生支持，响应式增强</span>
         </a>
-        <a href="spring-framework/spring-framework_v7.0.0-M2.md" class="version-link">
+        <a href="spring-framework/spring-framework_v7.0.0-M2/" class="version-link">
           <span class="version">7.0.0-M2</span>
           <span class="highlights">虚拟线程集成</span>
         </a>
@@ -145,11 +145,11 @@
     <div class="timeline-content">
       <h4>Spring Boot 3.5 系列</h4>
       <div class="version-list">
-        <a href="Spring-Boot/Spring-Boot_v3.5.0-RC1.md" class="version-link">
+        <a href="Spring-Boot/Spring-Boot_v3.5.0-RC1/" class="version-link">
           <span class="version">3.5.0-RC1</span>
           <span class="highlights">启动性能优化</span>
         </a>
-        <a href="Spring-Boot/Spring-Boot_v3.3.12.md" class="version-link">
+        <a href="Spring-Boot/Spring-Boot_v3.3.12/" class="version-link">
           <span class="version">3.3.12</span>
           <span class="highlights">稳定性修复</span>
         </a>
@@ -165,11 +165,11 @@
     <div class="timeline-content">
       <h4>DevOps 工具链</h4>
       <div class="version-list">
-        <a href="jenkins/jenkins_2.513.md" class="version-link">
+        <a href="jenkins/jenkins_2.513/" class="version-link">
           <span class="version">Jenkins 2.513</span>
           <span class="highlights">云原生流水线</span>
         </a>
-        <a href="skywalking/skywalking_v10.1.0.md" class="version-link">
+        <a href="skywalking/skywalking_v10.1.0/" class="version-link">
           <span class="version">SkyWalking 10.1.0</span>
           <span class="highlights">可观测性增强</span>
         </a>
@@ -185,11 +185,11 @@
     <div class="timeline-content">
       <h4>微服务框架</h4>
       <div class="version-list">
-        <a href="dubbo/dubbo_dubbo-3.3.5.md" class="version-link">
+        <a href="dubbo/dubbo_dubbo-3.3.5/" class="version-link">
           <span class="version">Dubbo 3.3.5</span>
           <span class="highlights">服务治理升级</span>
         </a>
-        <a href="incubator-seata/incubator-seata_V2.4.0.md" class="version-link">
+        <a href="incubator-seata/incubator-seata_V2.4.0/" class="version-link">
           <span class="version">Seata 2.4.0</span>
           <span class="highlights">分布式事务优化</span>
         </a>
@@ -202,11 +202,11 @@
     <div class="timeline-content">
       <h4>消息中间件</h4>
       <div class="version-list">
-        <a href="pulsar/pulsar_v4.0.3.md" class="version-link">
+        <a href="pulsar/pulsar_v4.0.3/" class="version-link">
           <span class="version">Pulsar 4.0.3</span>
           <span class="highlights">架构重构</span>
         </a>
-        <a href="rocketmq/rocketmq_rocketmq-all-5.1.3.md" class="version-link">
+        <a href="rocketmq/rocketmq_rocketmq-all-5.1.3/" class="version-link">
           <span class="version">RocketMQ 5.1.3</span>
           <span class="highlights">性能提升</span>
         </a>
@@ -222,11 +222,11 @@
     <div class="timeline-content">
       <h4>缓存 & 内存数据库</h4>
       <div class="version-list">
-        <a href="redis/redis_8.0-M02.md" class="version-link">
+        <a href="redis/redis_8.0-M02/" class="version-link">
           <span class="version">Redis 8.0-M02</span>
           <span class="highlights">架构重构</span>
         </a>
-        <a href="redis/redis_7.4.1.md" class="version-link">
+        <a href="redis/redis_7.4.1/" class="version-link">
           <span class="version">Redis 7.4.1</span>
           <span class="highlights">稳定版更新</span>
         </a>
@@ -239,11 +239,11 @@
     <div class="timeline-content">
       <h4>时序 & 分析数据库</h4>
       <div class="version-list">
-        <a href="iotdb/iotdb_Apache IoTDB 1.3.2.md" class="version-link">
+        <a href="iotdb/iotdb_Apache IoTDB 1.3.2/" class="version-link">
           <span class="version">IoTDB 1.3.2</span>
           <span class="highlights">时序优化</span>
         </a>
-        <a href="influxdb/influxdb_v2.7.9.md" class="version-link">
+        <a href="influxdb/influxdb_v2.7.9/" class="version-link">
           <span class="version">InfluxDB 2.7.9</span>
           <span class="highlights">查询性能</span>
         </a>
