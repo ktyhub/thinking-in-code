@@ -1,0 +1,35 @@
+# Spring Batch 版本发布记录
+
+欢迎访问 Spring Batch 版本发布记录页面。Spring Batch 是一个开源技术项目，本页面持续追踪其版本演进，为您提供最新的版本发布信息和技术洞察。
+
+## 📋 关于 Spring Batch
+
+Spring Batch 是一个开源技术项目，本页面持续追踪其版本演进，为您提供最新的版本发布信息和技术洞察。
+
+## 🚀 主要特性
+
+- **持续更新**：及时追踪最新版本发布
+- **技术洞察**：深度解析版本特性变化
+- **升级指南**：提供版本升级建议
+
+## 📰 版本发布记录
+
+以下是 Spring Batch 的版本发布记录，按时间倒序排列：
+
+### 版本列表
+
+- [v6.0.0](spring-batch_v6.0.0.md)
+- [v5.2.0-M2](spring-batch_v5.2.0-M2.md)
+- [v5.1.2](spring-batch_v5.1.2.md)
+- [v5.1.1](spring-batch_v5.1.1.md)
+- [v5.1.0](spring-batch_v5.1.0.md)
+- [v5.1.0-RC1](spring-batch_v5.1.0-RC1.md)
+- [v5.1.0-M3](spring-batch_v5.1.0-M3.md)
+- [v5.0.6](spring-batch_v5.0.6.md)
+- [v5.0.5](spring-batch_v5.0.5.md)
+- [v5.0.4](spring-batch_v5.0.4.md)
+- [v4.3.10](spring-batch_v4.3.10.md)
+
+---
+
+> 💡 **订阅更新**: 通过微信搜索"中间件源码"获取最新版本发布通知和专业技术洞察
