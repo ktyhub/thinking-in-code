@@ -1,13 +1,13 @@
 /**
  * API 请求代理脚本
  * 拦截所有以 /api/ 开头的请求，并转发到目标服务器
- * 目标服务器: https://106.14.193.92:8000
+ * 目标服务器: http://106.14.193.92:8000
  */
 
 (function() {
   'use strict';
 
-  const TARGET_SERVER = 'https://106.14.193.92:8000';
+  const TARGET_SERVER = 'http://106.14.193.92:8000';
   const API_PREFIX = '/api/';
 
   /**
