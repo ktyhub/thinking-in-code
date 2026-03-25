@@ -407,12 +407,14 @@ class CategoryNavigation {
                 </div>
                 <div class="modal-body">
                     <p class="modal-description">${category.description}</p>
+                    ${this.renderCategoryAdBlock()}
                     ${this.renderFullCategoryContent(category, key)}
                 </div>
             </div>
         `;
 
         document.body.appendChild(modal);
+        this.ensureAdsenseScriptLoaded();
         
         // Close handlers
         modal.querySelector('.modal-close').addEventListener('click', () => modal.remove());
@@ -466,6 +468,28 @@ class CategoryNavigation {
             card.classList.add('highlight');
             setTimeout(() => card.classList.remove('highlight'), 2000);
         }
+    }
+
+    renderCategoryAdBlock() {
+        return `
+            <div class="category-ad-container">
+                <div class="category-ad-label">赞助内容</div>
+                <div class="category-ad-script-note">Google AdSense 已在详情区域加载</div>
+            </div>
+        `;
+    }
+
+    ensureAdsenseScriptLoaded() {
+        if (document.getElementById('category-adsense-script')) {
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.id = 'category-adsense-script';
+        script.async = true;
+        script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168';
+        script.crossOrigin = 'anonymous';
+        document.head.appendChild(script);
     }
 }
 
