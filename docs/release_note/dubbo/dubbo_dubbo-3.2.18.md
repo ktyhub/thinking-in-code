@@ -6,7 +6,6 @@ tag: "dubbo-3.2.18"
 published: "2025-05-29"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/dubbo/compare/dubbo-3.2.17...dubbo-3.2.18"
 ---
 
 # dubbo dubbo-3.2.18

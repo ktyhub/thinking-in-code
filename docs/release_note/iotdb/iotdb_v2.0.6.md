@@ -6,7 +6,6 @@ tag: "v2.0.6"
 published: "2026-01-20"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/iotdb/compare/v2.0.5...v2.0.6"
 ---
 
 # iotdb v2.0.6
