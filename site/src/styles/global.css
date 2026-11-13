@@ -193,7 +193,15 @@ code {
   margin: 0 auto;
   padding: var(--sp-8) var(--sp-6);
   display: flex;
+  align-items: flex-start;
   gap: var(--sp-12);
+}
+
+/* 宽布局（无侧边栏：首页 / 404 等）—— 必须是块级流，否则子区块会被 flex 挤成一行 */
+.page-shell.wide {
+  display: block;
+  max-width: none;
+  padding: 0;
 }
 
 .sidebar {
@@ -282,6 +290,8 @@ code {
   margin: var(--sp-4) 0;
   height: auto;
 }
+/* 应用图标等居中展示的图不加描边 */
+.prose p[align="center"] img { border: none; }
 .prose blockquote {
   border-left: 3px solid var(--brand);
   background: var(--brand-soft);
@@ -486,6 +496,14 @@ code {
 .download-card h3 { font-size: var(--fs-xl); margin-bottom: 6px; }
 .download-card p { color: var(--text-2); font-size: var(--fs-sm); }
 
+/* 下载页按钮组 */
+.download-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin: var(--sp-4) 0 var(--sp-6);
+}
+
 /* 面包屑 */
 .crumbs {
   font-size: var(--fs-sm);
@@ -496,13 +514,42 @@ code {
 .crumbs a:hover { color: var(--brand); }
 
 /* 响应式 */
+@media (max-width: 1100px) {
+  .content-col { max-width: none; }
+}
+
 @media (max-width: 960px) {
   .sidebar { display: none; }
-  #search-input { width: 140px; }
-  .site-nav { display: none; }
+  .site-header .inner { gap: var(--sp-3); padding: 0 var(--sp-4); }
   .page-shell { padding: var(--sp-6) var(--sp-4); }
+  .hero { padding: var(--sp-12) var(--sp-4) var(--sp-8); }
   .hero h1 { font-size: var(--fs-3xl); }
   .stats-strip { grid-template-columns: 1fr; }
+  .section { padding: var(--sp-12) var(--sp-4) 0; }
+}
+
+/* 平板：导航横向滚动，不再整块隐藏 */
+@media (max-width: 860px) {
+  .site-nav {
+    margin-left: 0;
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .site-nav::-webkit-scrollbar { display: none; }
+  .site-nav a { white-space: nowrap; }
+  .header-spacer { display: none; }
+  #search-input { width: 132px; }
+}
+
+/* 手机：空间不足，隐藏顶部搜索与文字导航，保留 logo + GitHub */
+@media (max-width: 620px) {
+  #search-wrap, .site-nav { display: none; }
+  .prose h1 { font-size: var(--fs-2xl); }
+  .prose h2 { font-size: var(--fs-xl); }
+  .release-item { flex-wrap: wrap; gap: var(--sp-2); }
+  .release-item .t { white-space: normal; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -510,4 +557,143 @@ code {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ============================================================
+   Legacy 兼容层
+   历史内容（约 64 个工具/演示页）是手写 HTML，自带 <style>，
+   但依赖旧站全局变量与基础容器类。这里把旧变量映射到新 token，
+   并给最常见的容器类兜底，避免这些页面出现无样式裸排版。
+   ============================================================ */
+:root {
+  --primary-color: var(--brand);
+  --secondary-color: #0ea5e9;
+  --accent-color: #7c3aed;
+  --accent-secondary: #9333ea;
+  --accent-hover: var(--brand-strong);
+  --text-color: var(--text);
+  --text-color-light: var(--text-2);
+  --text-primary: var(--text);
+  --text-secondary: var(--text-2);
+  --text-muted: var(--text-3);
+  --text-dark: var(--text);
+  --heading-color: var(--text);
+  --background-color: var(--bg);
+  --primary-bg: var(--bg);
+  --secondary-bg: var(--bg-soft);
+  --tertiary-bg: var(--bg-inset);
+  --bg-white: var(--bg);
+  --bg-gray: var(--bg-soft);
+  --border-color: var(--border);
+  --code-bg-color: var(--code-bg);
+  --code-border: var(--border);
+  --shadow-color: rgb(15 23 42 / 0.1);
+  --shadow-light: rgb(15 23 42 / 0.08);
+  --shadow-medium: rgb(15 23 42 / 0.14);
+  --shadow-xl: 0 24px 64px -16px rgb(15 23 42 / 0.18);
+  --success-color: #16a34a;
+  --warning-color: #d97706;
+  --error-color: var(--danger);
+  --hover-color: var(--text);
+  --transition-speed: 0.2s;
+  --hero-gradient-start: var(--brand);
+  --hero-gradient-mid: #7c3aed;
+  --hero-gradient-end: #9333ea;
+}
+
+/* 旧页面的通用容器 */
+.prose .container {
+  max-width: 100%;
+  padding: 0;
+  margin: 0 0 var(--sp-6);
+}
+.prose .card,
+.prose .section-card,
+.prose .tip-card,
+.prose .template-card,
+.prose .value-card,
+.prose .stat-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  padding: var(--sp-4) var(--sp-6);
+  margin: var(--sp-3) 0;
+}
+.prose .stat-item,
+.prose .metric-item,
+.prose .kpi-item {
+  border-left: 3px solid var(--brand);
+  background: var(--bg-soft);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: var(--sp-3) var(--sp-4);
+  margin: var(--sp-2) 0;
+}
+.prose .tag,
+.prose .release-badge {
+  display: inline-block;
+  font-size: var(--fs-xs);
+  background: var(--brand-soft);
+  color: var(--brand);
+  border-radius: 999px;
+  padding: 2px 10px;
+  margin-right: 6px;
+}
+.prose .progress-bar {
+  height: 6px;
+  background: var(--bg-inset);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: var(--sp-2) 0;
+}
+.prose .progress-fill {
+  height: 100%;
+  background: var(--brand);
+  border-radius: 999px;
+}
+.prose .form-group {
+  margin: var(--sp-3) 0;
+}
+.prose .form-group label {
+  display: block;
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  margin-bottom: 6px;
+}
+.prose .form-group input[type="text"],
+.prose .form-group input[type="number"],
+.prose .form-group input[type="email"],
+.prose .form-group textarea,
+.prose .form-group select {
+  width: 100%;
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.prose .action-btn,
+.prose .filter-btn,
+.prose .subscribe-btn,
+.prose button {
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+.prose .action-btn:hover,
+.prose .filter-btn:hover,
+.prose .subscribe-btn:hover,
+.prose button:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+.prose table { display: table; }
+@media (max-width: 720px) {
+  .prose table { display: block; }
 }

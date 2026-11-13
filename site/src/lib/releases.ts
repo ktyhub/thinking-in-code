@@ -33,12 +33,13 @@ export function getLatestReleases(limit = 8): LatestRelease[] {
       files = fs.readdirSync(pdir).filter(f => f.endsWith(".md") && f !== "index.md");
     } catch { continue; }
     // 目录内按文件名倒序取最新几个候选
-    for (const f of files.sort().reverse().slice(0, 5)) {
+    for (const f of files.sort().reverse()) {
       const full = path.join(pdir, f);
       try {
-        const head = fs.readFileSync(full, "utf-8").slice(0, 4000);
-        const dateMatch = head.match(DATE_RE);
-        const h1 = head.match(/^#\s+(.+)$/m);
+        // 发布日期在页面末尾的固定信息行，需读全文（单文件仅几十 KB）
+        const text = fs.readFileSync(full, "utf-8");
+        const dateMatch = text.match(DATE_RE);
+        const h1 = text.match(/^#\s+(.+)$/m);
         const date = dateMatch ? dateMatch[1] : "1970-01-01";
         // tag 从 H1 末段提取（H1 形如 "dubbo 3.3.7"）
         const title = h1 ? h1[1].trim() : `${proj} ${f}`;

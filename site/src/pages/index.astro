@@ -1,10 +1,14 @@
 ---
+import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
-import { getNavGroups } from "../lib/nav";
+import { getReleaseProjects } from "../lib/nav";
 import { getLatestReleases } from "../lib/releases";
 
-const groups = getNavGroups();
 const latest = getLatestReleases(8);
+const all = await getCollection("zh");
+const releaseCount = all.filter((e) => e.id.startsWith("release_note/")).length;
+const articleCount = all.length - releaseCount;
+const projectCount = getReleaseProjects().length;
 
 const topics = [
   { icon: "🗄️", name: "MySQL", href: "/zh/chapter_mysql/", desc: "事务、锁、MVCC、Redo/Undo、Binlog 与分布式事务源码解析" },
@@ -18,7 +22,7 @@ const topics = [
 ];
 ---
 
-<Base>
+<Base wide>
   <section class="hero">
     <div class="hero-badge">🚀 开源技术版本订阅平台</div>
     <h1>追踪 GitHub 项目发布<br /><span class="grad">洞察新技术应用</span></h1>
@@ -33,9 +37,9 @@ const topics = [
   </section>
 
   <div class="stats-strip">
-    <div class="stat-card"><div class="num">3200+</div><div class="lbl">深度技术文章</div></div>
-    <div class="stat-card"><div class="num">200+</div><div class="lbl">追踪的开源项目</div></div>
-    <div class="stat-card"><div class="num">每日</div><div class="lbl">自动采集翻译更新</div></div>
+    <div class="stat-card"><div class="num">{articleCount}</div><div class="lbl">篇深度技术文章</div></div>
+    <div class="stat-card"><div class="num">{releaseCount}</div><div class="lbl">条版本发布记录</div></div>
+    <div class="stat-card"><div class="num">{projectCount}</div><div class="lbl">个追踪开源项目</div></div>
   </div>
 
   <section class="section" id="topics">
@@ -64,8 +68,8 @@ const topics = [
         </a>
       ))}
     </div>
-    <p style="margin-top: var(--sp-4); text-align: center;">
-      <a class="btn btn-ghost" href="/zh/release_note/">查看全部 {groups.length ? "" : ""}→</a>
+    <p style="margin-top: var(--sp-6); text-align: center;">
+      <a class="btn btn-ghost" href="/zh/release_note/">查看全部项目 →</a>
     </p>
   </section>
 

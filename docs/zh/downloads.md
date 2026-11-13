@@ -25,11 +25,9 @@
 
 ### 💿 下载安装
 
-<div class="download-buttons" markdown>
-
-[:material-download: 下载 macOS 版 (Intel)](https://github.com/ktyhub/thinking-in-code/releases/latest/download/Stags-Tracker-macOS.zip){ .md-button .md-button--primary }
-[:material-github: 查看全部版本](https://github.com/ktyhub/thinking-in-code/releases){ .md-button }
-
+<div class="download-buttons">
+  <a class="btn btn-primary" href="https://github.com/ktyhub/thinking-in-code/releases/latest/download/Stags-Tracker-macOS.zip">⬇️ 下载 macOS 版（Intel）</a>
+  <a class="btn btn-ghost" href="https://github.com/ktyhub/thinking-in-code/releases">查看全部版本</a>
 </div>
 
 **安装步骤：**
