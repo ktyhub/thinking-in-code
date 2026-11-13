@@ -1,0 +1,27 @@
+---
+import { getCollection, render } from "astro:content";
+import DocLayout from "../../layouts/DocLayout.astro";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("locales");
+  return entries.map((entry) => {
+    // 'en/index' → 'en'；'en/xxx' → 'en/xxx'
+    const slug = entry.id.replace(/\/index$/, "");
+    return { params: { locale: slug }, props: { entry } };
+  });
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const fm = (entry.data ?? {}) as { title?: string; description?: string };
+let title = fm.title;
+if (!title) {
+  const m = (entry.body ?? "").match(/^#\s+(.+)$/m);
+  title = m ? m[1].trim() : entry.id;
+}
+const lang = entry.id.split("/")[0];
+---
+
+<DocLayout frontmatter={{ title: `${title} (${lang})` }} urlPath={Astro.url.pathname}>
+  <Content />
+</DocLayout>
