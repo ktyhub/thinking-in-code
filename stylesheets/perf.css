@@ -1,0 +1,39 @@
+/*
+ * NextStack 性能优化补丁（加载顺序在所有主题 CSS 之后）
+ * 目标：修复首页滚动/渲染卡顿，不影响视觉设计。
+ *
+ * 卡顿主因（审计结论）：
+ * 1. .hero-particles 逐帧动画 7 组 radial-gradient 背景位移，全屏重绘；
+ * 2. 顶部导航 .md-header 大面积 backdrop-filter: blur(20px) saturate(180%)，
+ *    但背景本就是不透明渐变 —— 视觉无收益，GPU 开销巨大；
+ * 3. 大量 infinite 动画未响应 prefers-reduced-motion。
+ */
+
+/* 1) 导航栏：去掉毛玻璃（背景不透明，无视觉差异），减少滚动重采样 */
+.md-header,
+.md-tabs {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 2) Hero 粒子层：静态展示渐变粒子（视觉不变，去掉逐帧位移重绘） */
+.hero-particles {
+  animation: none !important;
+}
+
+/* 3) Hero 渐变层：保留渐变本身，去掉缓慢的透明度呼吸动画 */
+.hero-gradient {
+  animation: none !important;
+}
+
+/* 4) 全局兜底：响应系统的"减弱动态效果"设置 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
