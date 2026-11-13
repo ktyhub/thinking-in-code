@@ -1,0 +1,27 @@
+---
+import { getCollection, render } from "astro:content";
+import DocLayout from "../../layouts/DocLayout.astro";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("zh");
+  return entries.map((entry) => ({
+    params: { slug: entry.id === "index" ? undefined : entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+// front matter 缺省时从正文首个 H1 推导标题
+const fm = (entry.data ?? {}) as { title?: string; description?: string };
+let title = fm.title;
+if (!title) {
+  const m = (entry.body ?? "").match(/^#\s+(.+)$/m);
+  title = m ? m[1].trim() : entry.id;
+}
+---
+
+<DocLayout frontmatter={{ title, description: fm.description }} urlPath={Astro.url.pathname}>
+  <Content />
+</DocLayout>

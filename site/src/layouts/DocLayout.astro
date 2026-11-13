@@ -1,0 +1,64 @@
+---
+import Base from "./Base.astro";
+import { getNavGroups, getReleaseProjects, breadcrumbs } from "../lib/nav";
+
+interface Props {
+  frontmatter: { title?: string; description?: string };
+  urlPath: string;
+  showReleaseSidebar?: boolean;
+}
+
+const { frontmatter, urlPath, showReleaseSidebar = false } = Astro.props;
+const navGroups = getNavGroups();
+const releaseProjects = getReleaseProjects();
+const crumbs = breadcrumbs(urlPath);
+
+// 当前页所属顶级目录
+const topKey = urlPath.split("/").filter(Boolean)[1] ?? "";
+const currentGroup = navGroups.find((g) => g.key === topKey);
+---
+
+<Base title={frontmatter?.title} description={frontmatter?.description} active={showReleaseSidebar ? "release_note" : topKey.startsWith("chapter") ? "chapters" : topKey}>
+  <aside class="sidebar">
+      {showReleaseSidebar ? (
+        <div class="sidebar-group">
+          <div class="sidebar-group-title">Release Note 项目（{releaseProjects.length}）</div>
+          {releaseProjects.map((p) => (
+            <a class:list={["sidebar-item", { active: urlPath.includes(`/release_note/${p.name}`) }]} href={p.href}>{p.name} <small>({p.count})</small></a>
+          ))}
+        </div>
+      ) : (
+        currentGroup && (
+          <div class="sidebar-group">
+            <div class="sidebar-group-title">{currentGroup.title}</div>
+            {currentGroup.items.map((it) => (
+              <a class:list={["sidebar-item", { active: urlPath === it.href || urlPath === it.href + "/" }]} href={it.href}>{it.title}</a>
+            ))}
+          </div>
+        )
+      )}
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">导航</div>
+        <a class="sidebar-item" href="/zh/release_note/">📰 RELEASE NOTE</a>
+        <a class="sidebar-item" href="/zh/downloads/">📦 应用下载</a>
+        <a class="sidebar-item" href="/">🏠 首页</a>
+      </div>
+    </aside>
+
+  <article class="content-col">
+    <nav class="crumbs" aria-label="面包屑">
+      {crumbs.map((c) => c.href ? <a href={c.href}>{c.title}</a> : <span class="cur">{c.title}</span>)}
+    </nav>
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</Base>
+
+<style>
+  .crumbs > *:not(:first-child)::before {
+    content: " / ";
+    color: var(--border-strong);
+  }
+  .cur { color: var(--text-2); }
+</style>

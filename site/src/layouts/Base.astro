@@ -1,0 +1,192 @@
+---
+import "../styles/global.css";
+import { getNavGroups } from "../lib/nav";
+
+interface Props {
+  title?: string;
+  description?: string;
+  active?: string; // header 高亮 key
+  wide?: boolean;  // 无侧边栏的宽布局
+}
+
+const { title, description, active = "", wide = false } = Astro.props;
+
+const SITE = "NextStack";
+const SITE_DESC =
+  "追踪 GitHub 开源项目版本发布与新技术应用，专注中间件与云原生技术源码解析：Dubbo、Zookeeper、Kubernetes、Kafka、Netty、Spring 全家桶、Spring AI 与 MCP。";
+const fullTitle = title ? `${title} - ${SITE}` : `${SITE} — 追踪 GitHub 开源项目版本发布，洞察新技术应用`;
+const desc = description || SITE_DESC;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+const navGroups = getNavGroups();
+const headerNav = [
+  { key: "release_note", label: "📰 RELEASE NOTE", href: "/zh/release_note/" },
+  { key: "chapters", label: "📚 技术博客", href: navGroups[0]?.items[0]?.href ?? "/zh/" },
+  { key: "downloads", label: "📦 应用下载", href: "/zh/downloads/" },
+];
+
+// hreflang 语言清单（与旧站一致）
+const LANGS = ["zh", "en", "es", "fr", "de", "ja", "ko", "pt", "ru", "ar"];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={desc} />
+    <meta name="keywords" content="开源项目版本追踪, GitHub Release 追踪, 版本发布洞察, 中间件源码解析, 云原生技术, Spring Boot, Spring AI, Dubbo, Zookeeper, Kubernetes, Kafka, Netty, ElasticJob, MCP, 新技术应用" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/png" href="/img/stags-tracker-icon.png" />
+    {LANGS.map((l) => <link rel="alternate" hreflang={l} href={new URL(l === "zh" ? "/zh/" : `/${l}/`, Astro.site)} />)}
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:site_name" content={SITE} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content="https://www.ktyhub.com/img/stags-tracker-icon.png" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:image" content="https://www.ktyhub.com/img/stags-tracker-icon.png" />
+
+    <!-- 结构化数据 -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://www.ktyhub.com/#website",
+          name: SITE,
+          alternateName: "开源技术版本发布洞察",
+          url: "https://www.ktyhub.com/",
+          inLanguage: "zh-CN",
+          description: SITE_DESC,
+          publisher: { "@id": "https://www.ktyhub.com/#org" },
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://www.ktyhub.com/#org",
+          name: SITE,
+          url: "https://www.ktyhub.com/",
+          logo: { "@type": "ImageObject", url: "https://www.ktyhub.com/img/stags-tracker-icon.png" },
+          sameAs: ["https://github.com/ktyhub"],
+        },
+      ],
+    })} />
+
+    <!-- Google Analytics (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="inner">
+        <a href="/" class="logo"><span class="mark">N</span>NextStack</a>
+        <nav class="site-nav">
+          {headerNav.map((n) => (
+            <a href={n.href} class={active === n.key ? "active" : ""}>{n.label}</a>
+          ))}
+        </nav>
+        <div class="header-spacer"></div>
+        <div id="search-wrap">
+          <input id="search-input" type="text" placeholder="搜索…" autocomplete="off" readonly />
+        </div>
+        <a class="gh-link" href="https://github.com/ktyhub/thinking-in-code" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- 搜索弹层 -->
+    <div id="search-modal-bg">
+      <div id="search-modal"><div id="search-host"></div></div>
+    </div>
+
+    <main class:list={["page-shell", { wide }]}>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="inner">
+        <div>© {new Date().getFullYear()} NextStack · 追踪开源项目版本演进，为技术决策提供洞察</div>
+        <div>
+          <a href="https://github.com/ktyhub/thinking-in-code">GitHub</a>
+          &nbsp;·&nbsp;
+          <a href="https://github.com/ktyhub/thinking-in-code/releases">Releases</a>
+          &nbsp;·&nbsp;
+          <a href="/zh/downloads/">应用下载</a>
+        </div>
+      </div>
+    </footer>
+
+    <script is:inline>
+      // 页面级搜索（pagefind，构建后生成 /pagefind 资源；开发态静默跳过）
+      (function () {
+        var input = document.getElementById("search-input");
+        var bg = document.getElementById("search-modal-bg");
+        var host = document.getElementById("search-host");
+        var ui = null;
+        input.addEventListener("click", function () {
+          if (window.__pagefindUnavailable) return;
+          bg.classList.add("open");
+          if (!ui) {
+            var pfCss = document.createElement("link");
+            pfCss.rel = "stylesheet";
+            pfCss.href = "/pagefind/pagefind-ui.css";
+            document.head.appendChild(pfCss);
+            var pf = document.createElement("script");
+            pf.src = "/pagefind/pagefind-ui.js";
+            pf.onload = function () {
+              ui = new PagefindUI({ element: "#search-host", showSubResults: true });
+              setTimeout(function () { host.querySelector("input")?.focus(); }, 100);
+            };
+            pf.onerror = function () { window.__pagefindUnavailable = true; closeSearch(); };
+            document.head.appendChild(pf);
+          } else {
+            setTimeout(function () { host.querySelector("input")?.focus(); }, 50);
+          }
+        });
+        function closeSearch() { bg.classList.remove("open"); }
+        bg.addEventListener("click", function (e) { if (e.target === bg) closeSearch(); });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") closeSearch();
+          if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); input.click(); }
+        });
+      })();
+
+      // Mermaid 按需懒加载：仅当页面存在 mermaid 代码块时从 CDN 拉取
+      (function () {
+        function render() {
+          var nodes = document.querySelectorAll("pre > code.language-mermaid");
+          if (!nodes.length) return;
+          var s = document.createElement("script");
+          s.src = "https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js";
+          s.onload = function () {
+            window.mermaid.initialize({ startOnLoad: false, securityLevel: "loose" });
+            nodes.forEach(function (code) {
+              var pre = code.parentElement;
+              var div = document.createElement("div");
+              div.className = "mermaid";
+              div.textContent = code.textContent;
+              pre.replaceWith(div);
+            });
+            window.mermaid.run({ querySelector: ".mermaid" });
+          };
+          s.onerror = function () { /* 静默降级：保留代码块 */ };
+          document.head.appendChild(s);
+        }
+        if (document.readyState !== "loading") render();
+        else document.addEventListener("DOMContentLoaded", render);
+      })();
+    </script>
+  </body>
+</html>
