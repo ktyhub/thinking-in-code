@@ -1,0 +1,54 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import DocLayout from "../../../layouts/DocLayout.astro";
+import { getNavGroups } from "../../../lib/nav";
+
+/**
+ * 很多章节目录没有 index.md（旧站靠 mkdocs 的目录索引），
+ * 直接访问 /zh/chapter_xxx/ 会 404。这里为这些目录生成聚合页。
+ */
+export async function getStaticPaths() {
+  const docsZh = path.resolve(process.cwd(), "../docs/zh");
+  const groups = getNavGroups();
+  const paths: { params: { group: string }; props: { group: string } }[] = [];
+  for (const g of groups) {
+    const hasIndex = fs.existsSync(path.join(docsZh, g.key, "index.md"));
+    if (!hasIndex) paths.push({ params: { group: g.key }, props: { group: g.key } });
+  }
+  return paths;
+}
+
+const { group } = Astro.props;
+const groups = getNavGroups();
+const current = groups.find((g) => g.key === group);
+const items = current?.items ?? [];
+const title = current?.title || group.replace(/^chapter_/, "").replace(/_/g, " ");
+---
+
+<DocLayout frontmatter={{ title }} urlPath={`/zh/${group}/`}>
+  <h1>{title}</h1>
+  <p style="color: var(--text-2); margin: var(--sp-3) 0 var(--sp-6);">
+    共 {items.length} 篇文章，按顺序阅读效果最佳。
+  </p>
+  <div class="release-list">
+    {items.filter((it) => it.level === 0).map((it, i) => (
+      <a class="release-item" href={it.href}>
+        <span class="tag">{String(i + 1).padStart(2, "0")}</span>
+        <span class="t">{it.title}</span>
+      </a>
+    ))}
+  </div>
+  {items.some((it) => it.level > 0) && (
+    <div style="margin-top: var(--sp-6);">
+      <h2 style="font-size: var(--fs-lg); margin-bottom: var(--sp-3);">子专题</h2>
+      <div class="release-list">
+        {items.filter((it) => it.level > 0).map((it) => (
+          <a class="release-item" href={it.href}>
+            <span class="t">{it.title}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
+</DocLayout>

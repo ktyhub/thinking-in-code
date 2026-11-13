@@ -1,53 +1,70 @@
 ---
 import Base from "./Base.astro";
-import { getNavGroups, getReleaseProjects, breadcrumbs } from "../lib/nav";
+import { getNavGroups, getReleaseProjects, getReleaseFiles, breadcrumbs } from "../lib/nav";
 
 interface Props {
   frontmatter: { title?: string; description?: string };
   urlPath: string;
   showReleaseSidebar?: boolean;
+  releaseProject?: string;
 }
 
-const { frontmatter, urlPath, showReleaseSidebar = false } = Astro.props;
+const { frontmatter, urlPath, showReleaseSidebar = false, releaseProject } = Astro.props;
 const navGroups = getNavGroups();
 const releaseProjects = getReleaseProjects();
-const crumbs = breadcrumbs(urlPath);
+const crumbs = breadcrumbs(urlPath.replace(/\/$/, ""));
 
 // 当前页所属顶级目录
 const topKey = urlPath.split("/").filter(Boolean)[1] ?? "";
 const currentGroup = navGroups.find((g) => g.key === topKey);
+const isCurrent = (href: string) => urlPath === href || urlPath === href + "/";
+const active = releaseProject || showReleaseSidebar ? "release_note" : topKey.startsWith("chapter") ? "chapters" : topKey;
 ---
 
-<Base title={frontmatter?.title} description={frontmatter?.description} active={showReleaseSidebar ? "release_note" : topKey.startsWith("chapter") ? "chapters" : topKey}>
+<Base title={frontmatter?.title} description={frontmatter?.description} active={active} wide={false}>
   <aside class="sidebar">
-      {showReleaseSidebar ? (
+    {releaseProject ? (
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">{releaseProject} 版本（{getReleaseFiles(releaseProject).length}）</div>
+        <a class="sidebar-item back" href="/zh/release_note/">← 全部项目</a>
+        {getReleaseFiles(releaseProject).map((it) => (
+          <a class:list={["sidebar-item", { active: isCurrent(it.href) }]} href={it.href} title={it.title}>
+            {it.title.replace(releaseProject, "").replace(/^[\s_-]+/, "") || it.title}
+          </a>
+        ))}
+      </div>
+    ) : showReleaseSidebar ? (
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">Release Note 项目（{releaseProjects.length}）</div>
+        {releaseProjects.map((p) => (
+          <a class:list={["sidebar-item", { active: urlPath.includes(`/release_note/${p.name}`) }]} href={p.href}>
+            {p.name} <small>({p.count})</small>
+          </a>
+        ))}
+      </div>
+    ) : (
+      currentGroup && (
         <div class="sidebar-group">
-          <div class="sidebar-group-title">Release Note 项目（{releaseProjects.length}）</div>
-          {releaseProjects.map((p) => (
-            <a class:list={["sidebar-item", { active: urlPath.includes(`/release_note/${p.name}`) }]} href={p.href}>{p.name} <small>({p.count})</small></a>
+          <div class="sidebar-group-title">{currentGroup.title}</div>
+          {currentGroup.items.map((it) => (
+            <a class:list={["sidebar-item", { active: isCurrent(it.href) }, `lv${Math.min(it.level, 2)}`]} href={it.href} title={it.title}>
+              {it.title}
+            </a>
           ))}
         </div>
-      ) : (
-        currentGroup && (
-          <div class="sidebar-group">
-            <div class="sidebar-group-title">{currentGroup.title}</div>
-            {currentGroup.items.map((it) => (
-              <a class:list={["sidebar-item", { active: urlPath === it.href || urlPath === it.href + "/" }]} href={it.href}>{it.title}</a>
-            ))}
-          </div>
-        )
-      )}
-      <div class="sidebar-group">
-        <div class="sidebar-group-title">导航</div>
-        <a class="sidebar-item" href="/zh/release_note/">📰 RELEASE NOTE</a>
-        <a class="sidebar-item" href="/zh/downloads/">📦 应用下载</a>
-        <a class="sidebar-item" href="/">🏠 首页</a>
-      </div>
-    </aside>
+      )
+    )}
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">导航</div>
+      <a class="sidebar-item" href="/zh/release_note/">📰 RELEASE NOTE</a>
+      <a class="sidebar-item" href="/zh/downloads/">📦 应用下载</a>
+      <a class="sidebar-item" href="/">🏠 首页</a>
+    </div>
+  </aside>
 
   <article class="content-col">
     <nav class="crumbs" aria-label="面包屑">
-      {crumbs.map((c) => c.href ? <a href={c.href}>{c.title}</a> : <span class="cur">{c.title}</span>)}
+      {crumbs.map((c) => (c.href ? <a href={c.href}>{c.title}</a> : <span class="cur">{c.title}</span>))}
     </nav>
     <div class="prose">
       <slot />
@@ -61,4 +78,7 @@ const currentGroup = navGroups.find((g) => g.key === topKey);
     color: var(--border-strong);
   }
   .cur { color: var(--text-2); }
+  .sidebar-item.lv1 { padding-left: calc(var(--sp-3) + 10px); }
+  .sidebar-item.lv2 { padding-left: calc(var(--sp-3) + 20px); font-size: var(--fs-xs); }
+  .sidebar-item.back { color: var(--text-3); margin-bottom: 4px; }
 </style>

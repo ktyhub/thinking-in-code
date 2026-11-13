@@ -11,6 +11,7 @@ const DOCS_ZH = path.resolve(import.meta.dirname ?? process.cwd(), "../../../doc
 export interface NavItem {
   title: string;
   href: string;
+  level: number;
 }
 export interface NavGroup {
   key: string;
@@ -50,7 +51,7 @@ function naturalCompare(a: string, b: string): number {
   return a.localeCompare(b, "zh-Hans-CN");
 }
 
-function walkPages(dir: string, baseHref: string): NavItem[] {
+function walkPages(dir: string, baseHref: string, level = 0): NavItem[] {
   const items: NavItem[] = [];
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   const files = entries.filter(e => e.isFile() && e.name.endsWith(".md") && e.name !== "index.md");
@@ -59,17 +60,16 @@ function walkPages(dir: string, baseHref: string): NavItem[] {
   for (const f of files.sort((a, b) => naturalCompare(a.name, b.name))) {
     const name = f.name.replace(/\.md$/, "");
     const title = firstHeading(path.join(dir, f.name)) ?? name;
-    items.push({ title, href: `${baseHref}/${name}`.replace(/\/index$/, "") });
+    items.push({ title, href: `${baseHref}/${name}`.replace(/\/index$/, ""), level });
   }
   for (const d of subdirs.sort((a, b) => naturalCompare(a.name, b.name))) {
     const sub = path.join(dir, d.name);
     const title = readPagesTitle(sub) ?? d.name;
-    const subItems = walkPages(sub, `${baseHref}/${d.name}`);
-    // 子目录有 index.md 时把目录本身也作为一个入口
+    // 子目录本身作为一个可折叠层级的入口
     if (fs.existsSync(path.join(sub, "index.md"))) {
-      items.push({ title, href: `${baseHref}/${d.name}` });
+      items.push({ title, href: `${baseHref}/${d.name}`, level });
     }
-    items.push(...subItems.map(it => ({ ...it, title: `${it.title}` })));
+    items.push(...walkPages(sub, `${baseHref}/${d.name}`, level + 1));
   }
   return items;
 }
@@ -140,16 +140,58 @@ export function getReleaseProjects(): ReleaseProject[] {
   return out;
 }
 
-/** 面包屑：由 URL 路径推导 */
+/** 某个项目下的全部 Release 页面（供详情页侧边栏） */
+export function getReleaseFiles(project: string): NavItem[] {
+  const dir = path.join(DOCS_ZH, "release_note", project);
+  const out: NavItem[] = [];
+  try {
+    for (const f of fs.readdirSync(dir)) {
+      if (!f.endsWith(".md") || f === "index.md") continue;
+      const name = f.replace(/\.md$/, "");
+      const title = firstHeading(path.join(dir, f)) ?? name;
+      out.push({ title, href: `/zh/release_note/${project}/${name}`, level: 0 });
+    }
+  } catch { /* ignore */ }
+  // 版本号倒序（新版本在前）
+  out.sort((a, b) => naturalCompare(b.href, a.href));
+  return out;
+}
+
+/** href → 标题映射（面包屑用真实页面标题而不是文件名） */
+let titleMapCache: Map<string, string> | null = null;
+
+export function getTitleMap(): Map<string, string> {
+  if (titleMapCache) return titleMapCache;
+  const map = new Map<string, string>();
+  for (const g of getNavGroups()) {
+    map.set(g.href, g.title);
+    for (const it of g.items) map.set(it.href, it.title);
+  }
+  for (const p of getReleaseProjects()) {
+    map.set(p.href, p.name);
+    for (const it of getReleaseFiles(p.name)) map.set(it.href, it.title);
+  }
+  titleMapCache = map;
+  return map;
+}
+
+/** 面包屑：由 URL 路径推导，标题优先查导航映射 */
 export function breadcrumbs(urlPath: string): { title: string; href?: string }[] {
   const parts = urlPath.split("/").filter(Boolean);
   const crumbs: { title: string; href?: string }[] = [{ title: "首页", href: "/" }];
-  let acc = "";
-  for (let i = 0; i < parts.length; i++) {
+  const titles = getTitleMap();
+  // 中文站是默认语言，面包屑不展示 /zh 层级
+  const start = parts[0] === "zh" ? 1 : 0;
+  let acc = start ? "/zh" : "";
+  for (let i = start; i < parts.length; i++) {
     acc += "/" + parts[i];
     const isLast = i === parts.length - 1;
+    const pretty = decodeURIComponent(parts[i])
+      .replace(/\.md$/, "")
+      .replace(/^\d+[-_]/, "")
+      .replace(/[_-]+/g, " ");
     crumbs.push({
-      title: decodeURIComponent(parts[i]).replace(/\.md$/, ""),
+      title: titles.get(acc) ?? pretty,
       href: isLast ? undefined : acc,
     });
   }

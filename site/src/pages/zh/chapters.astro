@@ -1,0 +1,62 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getNavGroups } from "../../lib/nav";
+
+// 章节优先，其次按文章数排序，避免工具类目录排在正文前面
+const groups = getNavGroups().slice().sort((a, b) => {
+  const ac = a.key.startsWith("chapter") ? 0 : 1;
+  const bc = b.key.startsWith("chapter") ? 0 : 1;
+  if (ac !== bc) return ac - bc;
+  return b.items.length - a.items.length;
+});
+const total = groups.reduce((n, g) => n + g.items.length, 0);
+const pretty = (k: string) => k.replace(/^chapter_/, "").replace(/_/g, " ").toUpperCase();
+
+const DESC: Record<string, string> = {
+  chapter_mysql: "事务、锁、MVCC、Redo/Undo、Binlog 与分布式事务",
+  chapter_kafka: "高性能高可用设计、Producer/Sender、IO 线程模型",
+  chapter_dubbo: "SPI 扩展、服务暴露与引用、集群容错与负载均衡",
+  chapter_zookeeper: "客户端会话、Watcher、ZAB 协议与 Leader 选举",
+  chapter_kubernetes: "ApiServer 主流程、控制器、调度与网络模型",
+  chapter_netty: "EventLoopGroup、Bootstrap 与 Reactor 线程模型",
+  chapter_springboot: "run 方法、SPI 扫描、Environment 与容器刷新",
+  chapter_spring_ai: "AI 顾问 Advisor、MCP 协议与模型上下文实践",
+};
+---
+
+<Base title="技术博客 — 源码级技术解析" description="中间件、云原生、Spring 全家桶的源码级解析文章总览，按技术领域分类，持续更新。" active="chapters" wide>
+  <section class="hero" style="padding-bottom: var(--sp-8);">
+    <div class="hero-badge">📚 {total} 篇原创技术文章</div>
+    <h1>源码级技术解析</h1>
+    <p class="sub">从一行代码读到一个设计决策：中间件原理、框架设计、云原生实践，全部按技术领域归档。</p>
+  </section>
+
+  <section class="section" style="padding-top: var(--sp-4);">
+    <div class="card-grid">
+      {groups.map((g) => (
+        <a class="topic-card" href={`/zh/${g.key}/`}>
+          <div class="name">{g.title || pretty(g.key)}</div>
+          <div class="desc">{DESC[g.key] ?? `${g.items.length} 篇文章`}</div>
+          <div class="desc" style="margin-top: var(--sp-3); color: var(--brand); font-weight: 600;">{g.items.length} 篇 →</div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">🗂️ 全部文章</h2>
+    <p class="section-sub">按技术领域分组，点击标题直接阅读</p>
+    {groups.map((g) => (
+      <div style="margin-bottom: var(--sp-8);">
+        <h3 style="font-size: var(--fs-lg); margin-bottom: var(--sp-3);">{g.title || pretty(g.key)}</h3>
+        <div class="release-list">
+          {g.items.filter((it) => it.level === 0).slice(0, 12).map((it) => (
+            <a class="release-item" href={it.href}>
+              <span class="t">{it.title}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    ))}
+  </section>
+</Base>
