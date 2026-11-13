@@ -1,3 +1,16 @@
+---
+title: NextStack — 追踪 GitHub 开源项目版本发布，洞察新技术应用
+description: NextStack 追踪 GitHub 开源项目（Kafka、Dubbo、Zookeeper、Kubernetes、Spring 全家桶等）的版本发布与新特性，提供深度中间件源码解析与技术升级洞察。
+keywords:
+  - 开源项目版本追踪
+  - GitHub Release 追踪
+  - 新技术应用
+  - 中间件源码解析
+  - 云原生技术
+search:
+  boost: 10
+---
+
 <div class="homepage-hero">
   <div class="hero-background">
     <div class="hero-gradient"></div>
@@ -13,8 +26,8 @@
       <span class="title-text">NextStack</span>
       <span class="title-underline"></span>
     </h1>
-    <p class="hero-tagline">为开发者提供的开源技术版本日志订阅器</p>
-    <p class="hero-description">追踪技术演进 &middot; 洞察版本变化 &middot; 把握技术趋势</p>
+    <p class="hero-tagline">追踪 GitHub 开源项目版本发布 · 洞察新技术应用 · 深度源码解析</p>
+    <p class="hero-description">Kafka · Dubbo · Zookeeper · Kubernetes · Spring · Spring AI · MCP —— 第一时间了解你关注的技术栈发布了什么、变了什么、该怎么用</p>
     <div class="hero-cta">
       <a href="#download" class="cta-button cta-primary">
         <span class="btn-icon">🚀</span>
