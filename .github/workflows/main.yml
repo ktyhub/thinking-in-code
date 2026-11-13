@@ -1,41 +1,54 @@
 name: ci
+# NextStack 官网 v2（Astro 静态站）
+# 内容直接读取 docs/ 目录 —— release-tracker 流水线每日推送的新文章
+# 会随本次构建自动收录进站点与 sitemap.xml。
 on:
   push:
     branches:
       - master
       - main
+  workflow_dispatch: {}
+
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Configure Git Credentials
-        run: |
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-      - uses: actions/setup-python@v4
+
+      - uses: actions/setup-node@v4
         with:
-          python-version: 3.x
-      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
-      - uses: actions/cache@v3
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: 安装依赖
+        working-directory: site
+        run: npm ci
+
+      - name: 构建站点（含 pagefind 索引）
+        working-directory: site
+        run: npm run build
+
+      - name: 上传产物
+        uses: actions/upload-pages-artifact@v3
         with:
-          key: mkdocs-material-${{ env.cache_id }}
-          path: .cache
-          restore-keys: |
-            mkdocs-material-
-      - run: |
-          pip install mkdocs-material
-          pip install pymdown-extensions
-          pip install mkdocs-minify-plugin
-          pip install mkdocs-git-revision-date-localized-plugin
-          pip install mkdocs-redirects
-          pip install mkdocs-awesome-pages-plugin
-          pip install mkdocs-git-authors-plugin
-          pip install mkdocs-macros-plugin
-          pip install mkdocs-glightbox
-          pip install mkdocs-table-reader-plugin
-          pip install mkdocs-rss-plugin
-          pip install mkdocs-include-markdown-plugin
-      - run: mkdocs gh-deploy --force
+          path: site/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
