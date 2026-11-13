@@ -1,0 +1,89 @@
+---
+/** 单个项目的版本历史页 */
+import Shell from "../layouts/Shell.astro";
+import ReleaseRow from "./ReleaseRow.astro";
+import { t, localePath, type Locale } from "../lib/i18n";
+import { getProject, projectReleases, hrefFor } from "../lib/registry";
+import { longDate, num } from "../lib/format";
+
+interface Props {
+  locale: Locale;
+  slug: string;
+  canonicalPath?: string;
+}
+
+const { locale, slug, canonicalPath } = Astro.props;
+const project = getProject(slug)!;
+const versions = projectReleases(slug);
+const dated = versions.filter((v) => v.date);
+const undated = versions.filter((v) => !v.date);
+
+// 按年分组（新 → 旧）
+const years = new Map<string, typeof versions>();
+for (const v of dated) {
+  const y = v.date.slice(0, 4);
+  const arr = years.get(y) ?? [];
+  arr.push(v);
+  years.set(y, arr);
+}
+
+const enHref = `/releases/${slug}`;
+const zhHref = `/zh/releases/${slug}`;
+---
+
+<Shell
+  locale={locale}
+  title={t(locale, "project.title", { name: project.name })}
+  description={`${t(locale, "project.title", { name: project.name })}${project.repo ? ` · ${project.repo}` : ""} — ${num(versions.length)} release notes indexed.`}
+  active="projects"
+  altHref={locale === "en" ? zhHref : enHref}
+  canonicalPath={canonicalPath}
+>
+  <div class="wrap" style="padding-top:var(--s10)">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={localePath(locale, "/")}>{t(locale, "crumb.home")}</a>
+      <span class="sep">/</span>
+      <a href={localePath(locale, "/releases")}>{t(locale, "nav.releases")}</a>
+      <span class="sep">/</span>
+      <span>{project.name}</span>
+    </nav>
+
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s6);flex-wrap:wrap;padding-bottom:var(--s5);border-bottom:1px solid var(--ink)">
+      <div>
+        <h1 style="font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-0.04em" class="mono">{project.name}</h1>
+        <p class="muted" style="margin-top:var(--s3);font-size:14px">
+          {t(locale, "project.meta", {
+            n: num(versions.length),
+            version: project.latest?.version ?? "—",
+            date: project.latest?.date ? longDate(project.latest.date, locale) : "—",
+          })}
+        </p>
+      </div>
+      {project.repo && (
+        <a class="btn btn--ghost" href={`https://github.com/${project.repo}`} target="_blank" rel="noopener">
+          {project.repo} ↗
+        </a>
+      )}
+    </div>
+
+    {versions.length === 0 && <p class="empty">{t(locale, "project.empty")}</p>}
+
+    <div class="has-filterbar" style="margin-top:var(--s6)">
+      {[...years.entries()].map(([year, items]) => (
+        <section>
+          <h2 class="month" style="position:static">{year}<span class="n">{items.length}</span></h2>
+          {items.map((r) => <ReleaseRow release={r} locale={locale} hideProject />)}
+        </section>
+      ))}
+
+      {undated.length > 0 && (
+        <section>
+          <h2 class="month" style="position:static">
+            {locale === "en" ? "Undated" : "未标日期"}<span class="n">{undated.length}</span>
+          </h2>
+          {undated.map((r) => <ReleaseRow release={r} locale={locale} hideProject />)}
+        </section>
+      )}
+    </div>
+  </div>
+</Shell>

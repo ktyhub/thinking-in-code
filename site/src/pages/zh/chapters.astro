@@ -1,8 +1,7 @@
 ---
-import Base from "../../layouts/Base.astro";
+import Shell from "../../layouts/Shell.astro";
 import { getNavGroups } from "../../lib/nav";
 
-// 章节优先，其次按文章数排序，避免工具类目录排在正文前面
 const groups = getNavGroups().slice().sort((a, b) => {
   const ac = a.key.startsWith("chapter") ? 0 : 1;
   const bc = b.key.startsWith("chapter") ? 0 : 1;
@@ -24,39 +23,26 @@ const DESC: Record<string, string> = {
 };
 ---
 
-<Base title="技术博客 — 源码级技术解析" description="中间件、云原生、Spring 全家桶的源码级解析文章总览，按技术领域分类，持续更新。" active="chapters" wide>
-  <section class="hero" style="padding-bottom: var(--sp-8);">
-    <div class="hero-badge">📚 {total} 篇原创技术文章</div>
-    <h1>源码级技术解析</h1>
-    <p class="sub">从一行代码读到一个设计决策：中间件原理、框架设计、云原生实践，全部按技术领域归档。</p>
-  </section>
+<Shell locale="zh" title="技术笔记" description="中间件、云原生、Spring 全家桶的源码级解析，按技术领域归档。">
+  <div class="wrap" style="padding-top:var(--s10)">
+    <p class="eyebrow">Technical notes</p>
+    <h1 style="font-size:clamp(1.9rem,4vw,2.6rem);letter-spacing:-0.04em;margin-top:var(--s4)">源码级技术解析</h1>
+    <p class="hero-lead" style="margin-top:var(--s3);font-size:1rem">
+      {total} 篇文章，按技术领域归档。版本发布请前往
+      <a href="/zh/releases/" style="color:var(--accent-ink);text-decoration:underline">版本发布</a>。
+    </p>
 
-  <section class="section" style="padding-top: var(--sp-4);">
-    <div class="card-grid">
+    <div class="pgrid" style="margin-top:var(--s10)">
       {groups.map((g) => (
-        <a class="topic-card" href={`/zh/${g.key}/`}>
-          <div class="name">{g.title || pretty(g.key)}</div>
-          <div class="desc">{DESC[g.key] ?? `${g.items.length} 篇文章`}</div>
-          <div class="desc" style="margin-top: var(--sp-3); color: var(--brand); font-weight: 600;">{g.items.length} 篇 →</div>
+        <a class="pcard" href={`/zh/${g.key}/`}>
+          <span class="pcard-name">{g.title || pretty(g.key)}</span>
+          <span class="pcard-repo">{DESC[g.key] ?? ""}</span>
+          <span class="pcard-meta">
+            <span><b>{g.items.length}</b> 篇</span>
+            <span class="mono" style="font-size:11px">→</span>
+          </span>
         </a>
       ))}
     </div>
-  </section>
-
-  <section class="section">
-    <h2 class="section-title">🗂️ 全部文章</h2>
-    <p class="section-sub">按技术领域分组，点击标题直接阅读</p>
-    {groups.map((g) => (
-      <div style="margin-bottom: var(--sp-8);">
-        <h3 style="font-size: var(--fs-lg); margin-bottom: var(--sp-3);">{g.title || pretty(g.key)}</h3>
-        <div class="release-list">
-          {g.items.filter((it) => it.level === 0).slice(0, 12).map((it) => (
-            <a class="release-item" href={it.href}>
-              <span class="t">{it.title}</span>
-            </a>
-          ))}
-        </div>
-      </div>
-    ))}
-  </section>
-</Base>
+  </div>
+</Shell>

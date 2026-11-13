@@ -1,0 +1,81 @@
+---
+title: "plantuml snapshot"
+project: "plantuml"
+repo: "plantuml/plantuml"
+tag: "snapshot"
+published: "2026-11-12"
+type: "pre"
+lang: "en"
+summary: "This is a JAR)/JS/EXE pre-release of the latest development work. ⚠️ It is not ready for general use ⚠️ ⏱ Snapshot taken the 2026-11-12 at 19:13:25 (UTC)"
+---
+
+# plantuml snapshot
+
+## Version ~v1.2026.11beta1 of the 2026-11-12 at 19:13:25 (UTC)
+  This is a [JAR](https://en.wikipedia.org/wiki/JAR_(file_format))/[JS](https://en.wikipedia.org/wiki/JavaScript)/[EXE](https://en.wikipedia.org/wiki/Executable) pre-release of [the latest development work](https://github.com/plantuml/plantuml/commits/).
+  ⚠️  **It is not ready for general use** ⚠️
+  ⏱  _Snapshot taken the 2026-11-12 at 19:13:25 (UTC)_
+
+---
+
+<details open>
+<summary><strong>JavaScript</strong></summary>
+
+| Distribution | Artifact | Command Line |
+|---|---|---|
+| [![JS](https://img.shields.io/badge/JavaScript-zip-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://github.com/plantuml/plantuml/releases/download/snapshot/js-plantuml-SNAPSHOT.zip) | [js-plantuml-SNAPSHOT.zip](https://github.com/plantuml/plantuml/releases/download/snapshot/js-plantuml-SNAPSHOT.zip) | |
+| [![npm](https://img.shields.io/badge/npm-package-CB3837?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/package/@plantuml/core) | [@plantuml/core](https://www.npmjs.com/package/@plantuml/core) | `npm install @plantuml/core` |
+| [![MCP](https://img.shields.io/badge/MCP-Model_Context_Protocol-6B46C1?style=for-the-badge&logo=protocolsdotio&logoColor=white)](https://www.npmjs.com/package/@plantuml/mcp-js) | [@plantuml/mcp-js](https://www.npmjs.com/package/@plantuml/mcp-js) | `npm install @plantuml/mcp-js` |
+
+</details>
+
+
+<details open>
+<summary><strong>Executable <i>(experimental, Java → C with TeaVM)</i></strong></summary>
+
+| OS | Arch. | File |
+|---|---|---|
+| [![Linux](https://img.shields.io/badge/Linux-AMD64-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-linux-amd64-SNAPSHOT.zip) | amd64 | [plantuml-linux-amd64-SNAPSHOT.zip](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-linux-amd64-SNAPSHOT.zip) |
+| [![Linux](https://img.shields.io/badge/Linux-ARM64-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-linux-arm64-SNAPSHOT.zip) | arm64 | [plantuml-linux-arm64-SNAPSHOT.zip](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-linux-arm64-SNAPSHOT.zip) |
+| [![macOS](https://img.shields.io/badge/macOS-AMD64-111111?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-macos-amd64-SNAPSHOT.zip) | amd64 | [plantuml-macos-amd64-SNAPSHOT.zip](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-macos-amd64-SNAPSHOT.zip) |
+| [![macOS](https://img.shields.io/badge/macOS-ARM64-111111?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-macos-arm64-SNAPSHOT.zip) | arm64 | [plantuml-macos-arm64-SNAPSHOT.zip](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-macos-arm64-SNAPSHOT.zip) |
+| [![Windows](https://img.shields.io/badge/Windows-AMD64-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-windows-amd64-SNAPSHOT.zip) | amd64 | [plantuml-windows-amd64-SNAPSHOT.zip](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-windows-amd64-SNAPSHOT.zip) |
+| [![Windows](https://img.shields.io/badge/Windows-ARM64-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-windows-arm64-SNAPSHOT.zip) | arm64 | [plantuml-windows-arm64-SNAPSHOT.zip](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-windows-arm64-SNAPSHOT.zip) |
+
+</details>
+
+
+<details>
+<summary><strong>JAVA <i>(all licenses)</i></strong></summary>
+
+| License | File | Javadoc | Source | Signature | JVM |
+|---|---|---|---|---|---|
+| [![GPL](https://img.shields.io/badge/License-GPL--3.0-blue?style=flat-square)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-SNAPSHOT.jar) | [plantuml-SNAPSHOT.jar](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-SNAPSHOT.jar) | [javadoc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-SNAPSHOT-javadoc.jar) | [sources](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-SNAPSHOT-sources.jar) | [.asc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-SNAPSHOT.jar.asc) | [![JAR](https://img.shields.io/badge/JAR-OpenJDK-1f6feb?style=for-the-badge&logo=openjdk&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-SNAPSHOT.jar) |
+| [![ASL](https://img.shields.io/badge/License-Apache%202.0-D22128?style=flat-square&logo=apache&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-asl-SNAPSHOT.jar) | [plantuml-asl-SNAPSHOT.jar](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-asl-SNAPSHOT.jar) | [javadoc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-asl-SNAPSHOT-javadoc.jar) | [sources](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-asl-SNAPSHOT-sources.jar) | [.asc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-asl-SNAPSHOT.jar.asc) | [![JAR](https://img.shields.io/badge/JAR-OpenJDK-1f6feb?style=for-the-badge&logo=openjdk&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-asl-SNAPSHOT.jar) |
+| [![BSD](https://img.shields.io/badge/License-BSD-orange?style=flat-square)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-bsd-SNAPSHOT.jar) | [plantuml-bsd-SNAPSHOT.jar](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-bsd-SNAPSHOT.jar) | [javadoc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-bsd-SNAPSHOT-javadoc.jar) | [sources](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-bsd-SNAPSHOT-sources.jar) | [.asc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-bsd-SNAPSHOT.jar.asc) | [![JAR](https://img.shields.io/badge/JAR-OpenJDK-1f6feb?style=for-the-badge&logo=openjdk&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-bsd-SNAPSHOT.jar) |
+| [![EPL](https://img.shields.io/badge/License-EPL-6C4A9E?style=flat-square&logo=eclipseide&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-epl-SNAPSHOT.jar) | [plantuml-epl-SNAPSHOT.jar](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-epl-SNAPSHOT.jar) | [javadoc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-epl-SNAPSHOT-javadoc.jar) | [sources](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-epl-SNAPSHOT-sources.jar) | [.asc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-epl-SNAPSHOT.jar.asc) | [![JAR](https://img.shields.io/badge/JAR-OpenJDK-1f6feb?style=for-the-badge&logo=openjdk&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-epl-SNAPSHOT.jar) |
+| [![GPLv2](https://img.shields.io/badge/License-GPLv2-1f77b4?style=flat-square&logo=gnu&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-gplv2-SNAPSHOT.jar) | [plantuml-gplv2-SNAPSHOT.jar](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-gplv2-SNAPSHOT.jar) | [javadoc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-gplv2-SNAPSHOT-javadoc.jar) | [sources](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-gplv2-SNAPSHOT-sources.jar) | [.asc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-gplv2-SNAPSHOT.jar.asc) | [![JAR](https://img.shields.io/badge/JAR-OpenJDK-1f6feb?style=for-the-badge&logo=openjdk&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-gplv2-SNAPSHOT.jar) |
+| [![LGPL](https://img.shields.io/badge/License-LGPL-4e9ad7?style=flat-square&logo=gnu&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-lgpl-SNAPSHOT.jar) | [plantuml-lgpl-SNAPSHOT.jar](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-lgpl-SNAPSHOT.jar) | [javadoc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-lgpl-SNAPSHOT-javadoc.jar) | [sources](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-lgpl-SNAPSHOT-sources.jar) | [.asc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-lgpl-SNAPSHOT.jar.asc) | [![JAR](https://img.shields.io/badge/JAR-OpenJDK-1f6feb?style=for-the-badge&logo=openjdk&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-lgpl-SNAPSHOT.jar) |
+| [![MIT](https://img.shields.io/badge/License-MIT-ffd43b?style=flat-square&logo=openjdk&logoColor=black)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-mit-SNAPSHOT.jar) | [plantuml-mit-SNAPSHOT.jar](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-mit-SNAPSHOT.jar) | [javadoc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-mit-SNAPSHOT-javadoc.jar) | [sources](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-mit-SNAPSHOT-sources.jar) | [.asc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-mit-SNAPSHOT.jar.asc) | [![JAR](https://img.shields.io/badge/JAR-OpenJDK-1f6feb?style=for-the-badge&logo=openjdk&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-mit-SNAPSHOT.jar) |
+| [![MIT Light](https://img.shields.io/badge/License-MIT%20Light-ffcc00?style=flat-square&logo=openjdk&logoColor=black)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-mit-light-SNAPSHOT.jar) | [plantuml-mit-light-SNAPSHOT.jar](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-mit-light-SNAPSHOT.jar) | [javadoc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-mit-light-SNAPSHOT-javadoc.jar) | [sources](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-mit-light-SNAPSHOT-sources.jar) | [.asc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-mit-light-SNAPSHOT.jar.asc) | [![JAR](https://img.shields.io/badge/JAR-OpenJDK-1f6feb?style=for-the-badge&logo=openjdk&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-mit-light-SNAPSHOT.jar) |
+| [![Unknown](https://img.shields.io/badge/License-Unknown-lightgray?style=flat-square)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-java8-SNAPSHOT.jar) | [plantuml-java8-SNAPSHOT.jar](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-java8-SNAPSHOT.jar) | – | – | – | [![JAR](https://img.shields.io/badge/JAR-Java_8-3a86ff?style=for-the-badge&logo=openjdk&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-java8-SNAPSHOT.jar) |
+
+</details>
+
+
+<details>
+<summary><strong>Metadata (Gradle/Maven)</strong></summary>
+
+| Type | File | Signature |
+|---|---|---|
+| [![Maven](https://img.shields.io/badge/Maven-POM-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-SNAPSHOT.pom) | [plantuml-SNAPSHOT.pom](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-SNAPSHOT.pom) | [.asc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-SNAPSHOT.pom.asc) |
+| [![Gradle](https://img.shields.io/badge/Gradle-Module-02303A?style=for-the-badge&logo=gradle&logoColor=white)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-SNAPSHOT-module.json) | [plantuml-SNAPSHOT-module.json](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-SNAPSHOT-module.json) | [.asc](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-SNAPSHOT-module.json.asc) |
+| [![Build](https://img.shields.io/badge/Build-Timestamp-6c757d?style=for-the-badge)](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-SNAPSHOT.timestamp) | [plantuml-SNAPSHOT.timestamp](https://github.com/plantuml/plantuml/releases/download/snapshot/plantuml-SNAPSHOT.timestamp) | – |
+
+</details>
+
+---
+
+> **Source** [plantuml/plantuml](https://github.com/plantuml/plantuml) · `snapshot` · 2026-11-12 · [upstream release](https://github.com/plantuml/plantuml/releases/tag/snapshot)
+
+*Mirrored verbatim for indexing. All rights belong to the upstream project.*

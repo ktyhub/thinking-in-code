@@ -1,0 +1,85 @@
+---
+title: "spring-cloud-tencent 2.1.1.0-2023.0.6"
+project: "spring-cloud-tencent"
+repo: "Tencent/spring-cloud-tencent"
+tag: "2.1.1.0-2023.0.6"
+published: "2026-02-12"
+type: "patch"
+lang: "en"
+summary: "https://github.com/Tencent/spring-cloud-tencent/compare/2.1.0.0-2023.0.6...2.1.1.0-2023.0.6"
+---
+
+# spring-cloud-tencent 2.1.1.0-2023.0.6
+
+### **Dependency Version**
+
+- Spring Cloud Tencent: 2.1.1.0-2023.0.6
+- Spring Cloud: 2023.0.6
+- Spring Boot: 3.3.13
+- Spring Framework: 6.1.21
+
+### **Full Changelog**
+
+https://github.com/Tencent/spring-cloud-tencent/compare/2.1.0.0-2023.0.6...2.1.1.0-2023.0.6
+
+### **Features / Enhancements**
+
+- Config
+  - refactor:optimize config locate. #1741
+
+- Context
+  - refactor:optimize auto configuration. #1739
+
+- Discovery
+  - feat: add new key for java agent nacos discovery. #1769
+
+- Metadata
+  - feat:support async metadata transfer. #1743
+  - feat: support TagUtils, ContextToHeaderInterceptor in TSF(2024). #1754
+  - refactor:optimize metadata context operation. #1773
+
+- Plugins
+  - feat: support kafka lane. #1791
+  - feat: server span support preferIpv6 in tsf. #1790
+
+- Router
+  - refactor: optimize performance. #1782
+  - feat: support traffic warmup lane router #1785
+  - fix: fix lane router property name. #1789
+
+### **Fixes**
+  - fix: tsf gateway config support tsf-data-access. #1745
+  - fix: fix multiple bugs in tsf. #1746
+  - fix: fix get gateway config in tsf ipv6. #1747
+  - fix: fix nacos service discovery. #1751
+  - fix:fix NPE when rate-limiting with null value. #1764
+  - fix: get source service name from upstream application meta in getServerPreSpanAttributes & set custom tag in current server span in tsf. #1767
+  - feat:support body store switch. #1771
+  - fix:Replace with String inside @ConditionalOnClass to fix #1749. #1750
+  - fix: send unit header in tsf gw. #1758
+  - fix: beautify ServicesEagerLoadSmartLifecycle logging. #1774
+  - fix: fix parsing ConfigurationProperties value with RefreshScope. #1780
+  - fix: fix NacosDiscoveryRegistryAutoConfiguration and PolarisAuthAutoConfiguration still initiation when polaris disabled. #1783
+  - fix:fix cb rule no update bug. #1786
+  - fix: fix NPE when application context is null #1787
+
+### **Dependencies**
+  - feat: upgrade springdoc to 2.8.13 #1738
+
+### **Contributors**
+
+Thanks to the contributors who participated in this release!
+
+@fuyuwei01 
+@SkyeBeFreeman 
+@shedfreewu 
+@KIRA-Zee 
+
+### **How to upgrade**
+This version is compatible version from the previous corresponding version, so just upgrade spring-cloud-tencent-dependencies version to it. If you need to change the Spring Cloud version, please refer to the documentation [Release Note](https://github.com/Tencent/spring-cloud-tencent/wiki/Spring-Cloud-Tencent-%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97) to modify other related dependent versions synchronously.
+
+---
+
+> **Source** [Tencent/spring-cloud-tencent](https://github.com/Tencent/spring-cloud-tencent) · `2.1.1.0-2023.0.6` · 2026-02-12 · [upstream release](https://github.com/Tencent/spring-cloud-tencent/releases/tag/2.1.1.0-2023.0.6)
+
+*Mirrored verbatim for indexing. All rights belong to the upstream project.*

@@ -2,8 +2,9 @@
 import { getCollection, render } from "astro:content";
 import DocLayout from "../../layouts/DocLayout.astro";
 
+/** 技术笔记正文：/zh/chapter_xxx/yyy（版本发布走 /zh/release_note/[...slug]） */
 export async function getStaticPaths() {
-  const entries = await getCollection("zh");
+  const entries = await getCollection("docs");
   return entries.map((entry) => ({
     params: { slug: entry.id === "index" ? undefined : entry.id },
     props: { entry },
@@ -13,23 +14,14 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 
-// front matter 缺省时从正文首个 H1 推导标题
 const fm = (entry.data ?? {}) as { title?: string; description?: string };
 let title = fm.title;
 if (!title) {
   const m = (entry.body ?? "").match(/^#\s+(.+)$/m);
   title = m ? m[1].trim() : entry.id;
 }
-
-// release_note/{project}/{version} → 取 project 用于侧边栏版本列表
-const rnParts = entry.id.split("/");
-const releaseProject = rnParts[0] === "release_note" && rnParts.length > 2 ? rnParts[1] : undefined;
 ---
 
-<DocLayout
-  frontmatter={{ title, description: fm.description }}
-  urlPath={Astro.url.pathname}
-  releaseProject={releaseProject}
->
+<DocLayout frontmatter={{ title, description: fm.description }} urlPath={Astro.url.pathname}>
   <Content />
 </DocLayout>

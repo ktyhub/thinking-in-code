@@ -1,0 +1,115 @@
+---
+title: "minikube v1.32.0"
+project: "minikube"
+repo: "kubernetes/minikube"
+tag: "v1.32.0"
+published: "2023-11-08"
+type: "minor"
+lang: "en"
+summary: "📣😀 Please fill out our fast 5-question survey so that we can learn how & why you use minikube, and what improvements we should make. Thank you! 💃🎉"
+---
+
+# minikube v1.32.0
+
+📣😀 **Please fill out our [fast 5-question survey](https://forms.gle/Gg3hG5ZySw8c1C24A)** so that we can learn how & why you use minikube, and what improvements we should make. Thank you! 💃🎉
+
+## Release Notes
+
+## Version 1.32.0 - 2023-11-08
+
+Features:
+* NVIDIA GPU support with new `--gpus=nvidia` flag for docker driver [#15927](https://github.com/kubernetes/minikube/pull/15927) [#17314](https://github.com/kubernetes/minikube/pull/17314) [#17488](https://github.com/kubernetes/minikube/pull/17488)
+* rootless: support `--container-runtime=docker` [#17520](https://github.com/kubernetes/minikube/pull/17520)
+* New `kubeflow` addon [#17114](https://github.com/kubernetes/minikube/pull/17114)
+* New `local-path-provisioner` addon [#15062](https://github.com/kubernetes/minikube/pull/15062)
+* Kicbase: Add `no-limit` option to `--cpus` & `--memory` flags [#17491](https://github.com/kubernetes/minikube/pull/17491)
+
+Minor Improvements:
+* Hyper-V: Add memory validation for odd numbers [#17325](https://github.com/kubernetes/minikube/pull/17325)
+* QEMU: Improve cpu type and IP detection [#17217](https://github.com/kubernetes/minikube/pull/17217)
+* Mask http(s)_proxy password from startup output [#17116](https://github.com/kubernetes/minikube/pull/17116)
+* `--delete-on-faliure` also recreates cluster for kubeadm failures [#16890](https://github.com/kubernetes/minikube/pull/16890)
+* Addon auto-pause: Configure intervals using `--auto-pause-interval` [#17070](https://github.com/kubernetes/minikube/pull/17070)
+* `--kubernetes-version` checks GitHub for version validation and improved error output for invalid versions [#16865](https://github.com/kubernetes/minikube/pull/16865)
+* Install NVIDIA container toolkit during image build (offline support) [#17516](https://github.com/kubernetes/minikube/pull/17516)
+
+Bugs:
+* QEMU: Fix addons failing to enable [#17402](https://github.com/kubernetes/minikube/pull/17402)
+* Fix downloading the wrong kubeadm images for k8s versions after minikube release [#17373](https://github.com/kubernetes/minikube/pull/17373)
+* Fix enabling & disabling addons with non-existing cluster [#17324](https://github.com/kubernetes/minikube/pull/17324)
+* Fix delete if container-runtime doesn't exist [#17347](https://github.com/kubernetes/minikube/pull/17347)
+* Fix network not found not being detected on new Docker versions [#17323](https://github.com/kubernetes/minikube/pull/17323)
+* Fix addon registry doesn't follow Minikube DNS domain name configuration (--dns-domain) [#15585](https://github.com/kubernetes/minikube/pull/15585)
+* Fix no-limit option for config validation [#17530](https://github.com/kubernetes/minikube/pull/17530)
+
+Version Upgrades:
+* Bump Kubernetes version default: v1.28.3 and latest: v1.28.3 [#17463](https://github.com/kubernetes/minikube/pull/17463)
+* Addon cloud-spanner: Update cloud-spanner-emulator/emulator image from 1.5.9 to 1.5.11 [#17225](https://github.com/kubernetes/minikube/pull/17225) [#17259](https://github.com/kubernetes/minikube/pull/17259)
+* Addon headlamp: Update headlamp-k8s/headlamp image from v0.19.0 to v0.20.1 [#17135](https://github.com/kubernetes/minikube/pull/17135) [#17365](https://github.com/kubernetes/minikube/pull/17365)
+* Addon ingress: Update ingress-nginx/controller image from v1.8.1 to v1.9.4 [#17223](https://github.com/kubernetes/minikube/pull/17223) [#17297](https://github.com/kubernetes/minikube/pull/17297) [#17348](https://github.com/kubernetes/minikube/pull/17348) [#17421](https://github.com/kubernetes/minikube/pull/17421) [#17525](https://github.com/kubernetes/minikube/pull/17525)
+* Addon inspektor-gadget: Update inspektor-gadget image from v0.19.0 to v0.22.0 [#17176](https://github.com/kubernetes/minikube/pull/17176) [#17340](https://github.com/kubernetes/minikube/pull/17340) [#17550](https://github.com/kubernetes/minikube/pull/17550)
+* Addon istio-provisioner: Update istio/operator image from 1.12.2 to 1.19.3 [#17383](https://github.com/kubernetes/minikube/pull/17383) [#17436](https://github.com/kubernetes/minikube/pull/17436)
+* Addon kong: Update kong image from 3.2 to 3.4.2 [#17485](https://github.com/kubernetes/minikube/pull/17485)
+* Addon kong: Update kong/kubernetes-ingress-controller image from 2.9.3 to 2.12.0 [#17526](https://github.com/kubernetes/minikube/pull/17526)
+* Addon registry: Update registry image from 2.8.1 to 2.8.3 [#17382](https://github.com/kubernetes/minikube/pull/17382) [#17467](https://github.com/kubernetes/minikube/pull/17467)
+* Addon nvidia-device-plugin: Update nvidia/k8s-device-plugin image from v0.14.1 to v0.14.2 [#17523](https://github.com/kubernetes/minikube/pull/17523)
+* CNI: Update calico from v3.26.1 to v3.26.3 [#17363](https://github.com/kubernetes/minikube/pull/17363) [#17375](https://github.com/kubernetes/minikube/pull/17375)
+* CNI: Update flannel from v0.22.1 to v0.22.3 [#17102](https://github.com/kubernetes/minikube/pull/17102) [#17263](https://github.com/kubernetes/minikube/pull/17263)
+* CNI: Update kindnetd from v20230511-dc714da8 to v20230809-80a64d96 [#17233](https://github.com/kubernetes/minikube/pull/17233)
+* Kicbase/ISO: Update buildkit from v0.11.6 to v0.12.3 [#17194](https://github.com/kubernetes/minikube/pull/17194) [#17486](https://github.com/kubernetes/minikube/pull/17486)
+* Kicbase/ISO: Update containerd from v1.7.3 to v1.7.8 [#17243](https://github.com/kubernetes/minikube/pull/17243) [#17466](https://github.com/kubernetes/minikube/pull/17466) [#17527](https://github.com/kubernetes/minikube/pull/17527)
+* Kicbase/ISO: Update crictl from v1.21.0 to v1.28.0 [#17240](https://github.com/kubernetes/minikube/pull/17240)
+* Kicbase/ISO: Update docker from 24.0.4 to 24.0.7 [#17120](https://github.com/kubernetes/minikube/pull/17120) [#17207](https://github.com/kubernetes/minikube/pull/17207) [#17545](https://github.com/kubernetes/minikube/pull/17545)
+* Kicbase/ISO: Update nerdctl from 1.0.0 to 1.6.2 [#17145](https://github.com/kubernetes/minikube/pull/17145) [#17339](https://github.com/kubernetes/minikube/pull/17339) [#17434](https://github.com/kubernetes/minikube/pull/17434)
+* Kicbase/ISO: Update runc from v1.1.7 to v1.1.9 [#17250](https://github.com/kubernetes/minikube/pull/17250)
+* Kicbase: Bump ubuntu:jammy from 20230624 to 20231004 [#17086](https://github.com/kubernetes/minikube/pull/17086) [#17174](https://github.com/kubernetes/minikube/pull/17174) [#17345](https://github.com/kubernetes/minikube/pull/17345) [#17423](https://github.com/kubernetes/minikube/pull/17423)
+
+For a more detailed changelog, including changes occurring in pre-release versions, see [CHANGELOG.md](https://github.com/kubernetes/minikube/blob/master/CHANGELOG.md).
+
+Thank you to our contributors for this release!
+
+- Akihiro Suda
+- Christian Bergschneider
+- Jeff MAURY
+- Medya Ghazizadeh
+- Raiden Shogun
+- Steven Powell
+
+Thank you to our PR reviewers for this release!
+
+- medyagh (1 comments)
+- r0b2g1t (1 comments)
+
+Thank you to our triage members for this release!
+
+- willsu (2 comments)
+- afbjorklund (1 comments)
+- ankur0904 (1 comments)
+- ceelian (1 comments)
+- idoly (1 comments)
+
+## Installation
+
+See [Getting Started](https://minikube.sigs.k8s.io/docs/start/)
+
+## Binary Checksums
+
+darwin-amd64: `8ca4b2cce6208f102b851d0ea8292c1324e8358b7ac208dd1079e41af558def8`
+darwin-arm64: `f5bf38603b01cc3eb88f21d5550068fd592486c08c0f3272aee544e0bc2e4e64`
+linux-amd64: `1acbb6e0358264a3acd5e1dc081de8d31c697d5b4309be21cba5587cd59eabb3`
+linux-arm: `fc181cb6f1bcda786001e7f7f46f810e8b430abc7d16bbe257c0526f23f90f00`
+linux-arm64: `77ca98722819e2e9d94925f662f348c3d41c1831c3cd3a77732093d7f509f172`
+linux-ppc64le: `3072cce0952628187511748b4b8fc2080e80327384b30e8c6df465f02c8f35ce`
+linux-s390x: `0eb342fe581afb106b6013401b33429607ab40f57f5e48a15f2b2e04726edc57`
+windows-amd64.exe: `d4060da824524df744ba85fa91394cabfab15f110c03b1d8b7f1d309116fed15`
+
+## ISO Checksums
+
+amd64: `c99de86777a5c3e86a67b2354633b1942ea28633696556911bdf72730fe25b68`  
+arm64: `290076b82917071a30437472ba610012ddb8cd33e9932b92e593ce1072e7572d`
+
+---
+
+> **Source** [kubernetes/minikube](https://github.com/kubernetes/minikube) · `v1.32.0` · 2023-11-08 · [upstream release](https://github.com/kubernetes/minikube/releases/tag/v1.32.0)
+
+*Mirrored verbatim for indexing. All rights belong to the upstream project.*

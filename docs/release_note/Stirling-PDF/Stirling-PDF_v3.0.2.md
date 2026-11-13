@@ -1,0 +1,110 @@
+---
+title: "Stirling-PDF v3.0.2"
+project: "Stirling-PDF"
+repo: "Stirling-Tools/Stirling-PDF"
+tag: "v3.0.2"
+published: "2026-10-01"
+type: "patch"
+lang: "en"
+summary: "This release contains bug fixes and various other improvements Enhancements:"
+---
+
+# Stirling-PDF v3.0.2
+
+This release contains bug fixes and various other improvements
+Enhancements:
+- add support for selective page cropping
+- better tool recommendation based on user usage
+- add visual feedback during page reordering 
+
+Bugs fixed:
+- translations missing
+- Certain languages not loading correctly
+- Processor not correctly loading in certain versions of the app
+- latest-fat having file upload issues
+- Default mode as viewer/reader not correctly working
+
+
+## What's Changed
+### Bug Fixes
+* fix: resolve i18n template placeholders in settings search results by @mvanhorn in https://github.com/Stirling-Tools/Stirling-PDF/pull/6814
+### Enhancements
+* Re-enable typed linting and ban unnecessary type assertions by @jbrunton96 in https://github.com/Stirling-Tools/Stirling-PDF/pull/8178
+* enable local tool usage tracking by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8207
+* Add limit to max depth for JSX by @jbrunton96 in https://github.com/Stirling-Tools/Stirling-PDF/pull/8180
+* feat(crop): add support for selective page cropping by @balazs-szucs in https://github.com/Stirling-Tools/Stirling-PDF/pull/7753
+* Update zh-TW Traditional Chinese locale by @PeterDaveHello in https://github.com/Stirling-Tools/Stirling-PDF/pull/6763
+* build(deps-dev): bump postcss-selector-parser from 7.1.4 to 7.1.6 in /frontend by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/7804
+* Bump ip-address from 10.4.0 to 10.7.2 in /frontend by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8239
+* Bump devalue from 5.8.1 to 5.9.4 in /frontend by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8237
+* build(deps): bump rand from 0.10.2 to 0.10.3 in /frontend/editor/src-tauri by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8253
+* build(deps): bump the mui group across 1 directory with 2 updates by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8268
+* build(deps): bump the embedpdf group across 1 directory with 23 updates by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8266
+* build(deps): bump the react group across 1 directory with 4 updates by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8270
+* ci: one shard list per browser, frontend check back to check:all by @ConnorYoh in https://github.com/Stirling-Tools/Stirling-PDF/pull/8133
+* Stop the Downloads sweep getting stuck on Reading or on a file by @EthanHealy01 in https://github.com/Stirling-Tools/Stirling-PDF/pull/8173
+* Set max JSX depth to 9 by @jbrunton96 in https://github.com/Stirling-Tools/Stirling-PDF/pull/8182
+* Answer an unrepairable document with 422, not 500 by @EthanHealy01 in https://github.com/Stirling-Tools/Stirling-PDF/pull/8083
+* feat(page-editor): add visual feedback during page reordering by @betilloXann in https://github.com/Stirling-Tools/Stirling-PDF/pull/6289
+* Ship the processor in server builds by default and hide its links when absent by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8280
+* Skip malformed page tokens consistently in parsePageList by @Hariomlokhande-coder in https://github.com/Stirling-Tools/Stirling-PDF/pull/8127
+* Coordinate cloud and self-hosted ownership handovers by @ConnorYoh in https://github.com/Stirling-Tools/Stirling-PDF/pull/8001
+* Stop fat image enabling the AI engine by default by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8276
+* Delete the legacy icon sets by @EthanHealy01 in https://github.com/Stirling-Tools/Stirling-PDF/pull/8273
+* Load Serbian translations under the canonical sr-Latn-RS tag by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8293
+* Translate hardcoded UI text in components by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8288
+* Set max JSX depth to 8 by @jbrunton96 in https://github.com/Stirling-Tools/Stirling-PDF/pull/8187
+* Translate hardcoded service and error messages by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8284
+* Fix flaky PDF editor, viewer and settings e2e tests by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8289
+* Fix startup views and desktop session restoration by @reecebrowne in https://github.com/Stirling-Tools/Stirling-PDF/pull/8309
+### Minor Enhancements
+* chore(docker): update Node.js to 24 by @github-actions[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8222
+* chore(docker): update Calibre to 9.15.0 by @github-actions[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8224
+* chore(docker): update Ghostscript to 10.08.0 by @github-actions[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8226
+* chore(docker): update ImageMagick to 7.1.2-32 by @github-actions[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8225
+* chore(docker): update Task to 3.53.1 by @github-actions[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8223
+* chore(docker): update QPDF to 12.4.2 by @github-actions[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8221
+* chore(docker): update Stirling-PDF base image to 1.0.6@sha256:678d67fd8c80d625b54e39ced1e712cc0dcfee0601c507ac2a67d0cc8a52a696 by @github-actions[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8220
+### Docker Updates
+* Bump the gradle group across 2 directories with 1 update by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8210
+* Bump step-security/harden-runner from 2.21.0 to 2.21.1 by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/7974
+* Bump the ubuntu group across 2 directories with 1 update by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8209
+* build(deps): bump docker/setup-qemu-action from 4.2.0 to 4.4.0 by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/7973
+* Bump actions/checkout from 6.0.2 to 7.0.1 by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/7272
+### Translation Changes
+* Rewrite translations check script to only compare changed lines in PRs by @jbrunton96 in https://github.com/Stirling-Tools/Stirling-PDF/pull/8310
+### Development Tools 
+* Stop full-history CI checkouts from pulling every branch's blobs by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8236
+* build(deps): bump postcss-selector-parser from 7.1.1 to 7.1.6 in /devTools by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/7805
+* build(deps): bump nanoid from 3.3.16 to 3.3.19 in /devTools by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/7985
+* build(deps): bump js-yaml from 4.3.1 to 4.3.2 in /devTools by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/7938
+* build(deps): bump colord from 2.9.3 to 2.10.0 in /devTools by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/7923
+* build(deps): bump fast-uri from 3.1.5 to 3.1.8 in /devTools by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8072
+* build(deps): bump astral-sh/setup-uv from 10.0.1 to 10.2.0 by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8259
+### Other Changes (Please note docker dependencies will ship in our next minor release and are not shipped in this release but will show up in PR history below)
+* Fix signed Windows ARM64 release builds by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8206
+* Bump imageioVersion from 3.14.0 to 3.15.2 by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8211
+* build(deps): bump softprops/action-gh-release from 3.0.2 to 3.0.3 by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/7836
+* build(deps): bump github/codeql-action/upload-sarif from 4.37.8 to 4.37.9 by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/7845
+* build(deps): bump awsSdkVersion from 2.51.3 to 2.54.13 by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/7841
+* build(deps): bump org.sonarqube from 7.3.1.8318 to 7.5.0.8588 by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/7976
+* Bump the simple-java-mail group across 1 directory with 2 updates by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/7972
+* build(deps-dev): bump uvicorn from 0.52.3 to 0.52.4 in /engine by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8090
+* build(deps-dev): bump posthog from 7.38.3 to 7.53.0 in /engine by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8095
+* build(deps-dev): update psycopg[binary,pool] requirement from >=3.3.4 to >=3.3.6 in /engine by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8264
+* build(deps): bump actions/setup-java from 5.7.0 to 6.0.1 by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8255
+* Delete the unused legacy pdf.js viewer by @EthanHealy01 in https://github.com/Stirling-Tools/Stirling-PDF/pull/8283
+* Include engine PRs in release notes by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8279
+* Sync translations across 40 locales by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8308
+
+## New Contributors
+* @betilloXann made their first contribution in https://github.com/Stirling-Tools/Stirling-PDF/pull/6289
+* @Hariomlokhande-coder made their first contribution in https://github.com/Stirling-Tools/Stirling-PDF/pull/8127
+
+**Full Changelog**: https://github.com/Stirling-Tools/Stirling-PDF/compare/v3.0.1...v3.0.2
+
+---
+
+> **Source** [Stirling-Tools/Stirling-PDF](https://github.com/Stirling-Tools/Stirling-PDF) · `v3.0.2` · 2026-10-01 · [upstream release](https://github.com/Stirling-Tools/Stirling-PDF/releases/tag/v3.0.2)
+
+*Mirrored verbatim for indexing. All rights belong to the upstream project.*

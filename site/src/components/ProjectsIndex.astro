@@ -1,0 +1,53 @@
+---
+import Shell from "../layouts/Shell.astro";
+import { t, localePath, type Locale } from "../lib/i18n";
+import { allProjects, projectHref } from "../lib/registry";
+import { num, longDate } from "../lib/format";
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const projects = allProjects();
+const withReleases = projects.filter((p) => p.count > 0);
+---
+
+<Shell
+  locale={locale}
+  title={t(locale, "projects.title")}
+  description={`${t(locale, "projects.lead", { n: num(projects.length) })}`}
+  active="projects"
+>
+  <div class="wrap" style="padding-top:var(--s10)">
+    <p class="eyebrow">Index</p>
+    <h1 style="font-size:clamp(1.9rem,4vw,2.6rem);letter-spacing:-0.04em;margin-top:var(--s4)">{t(locale, "projects.title")}</h1>
+    <p class="hero-lead" style="margin-top:var(--s3);font-size:1rem">{t(locale, "projects.lead", { n: num(projects.length) })}</p>
+
+    <div style="margin-top:var(--s6);max-width:420px">
+      <label class="field field--grow" style="width:100%">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4)">
+          <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path>
+        </svg>
+        <input type="search" data-cards-input placeholder={locale === "en" ? "Filter projects…" : "筛选项目…"} aria-label={locale === "en" ? "Filter projects" : "筛选项目"} />
+      </label>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="pgrid" data-cards>
+      {withReleases.map((p) => (
+        <a class="pcard" href={projectHref(p.slug, locale)} data-card data-q={`${p.name} ${p.repo ?? ""}`.toLowerCase()}>
+          <span class="pcard-name">{p.name}</span>
+          <span class="pcard-repo">{p.repo || "—"}</span>
+          <span class="pcard-meta">
+            <span><b>{p.count}</b> {locale === "en" ? "releases" : "个版本"}</span>
+            <span class="mono" style="font-size:11px">
+              {p.latest?.date ? longDate(p.latest.date, locale) : ""}
+            </span>
+          </span>
+        </a>
+      ))}
+    </div>
+    <div class="empty" data-cards-empty hidden>{t(locale, "feed.empty")}</div>
+  </div>
+</Shell>

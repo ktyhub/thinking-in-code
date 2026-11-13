@@ -1,0 +1,38 @@
+---
+/** 按月分组的版本信息流 */
+import ReleaseRow from "./ReleaseRow.astro";
+import { t, type Locale } from "../lib/i18n";
+import { monthLabel } from "../lib/format";
+import type { ReleaseRecord } from "../lib/registry";
+
+interface Props {
+  releases: ReleaseRecord[];
+  locale: Locale;
+  /** 没有日期的记录归到末尾一组 */
+  showEmpty?: boolean;
+}
+
+const { releases, locale } = Astro.props;
+
+const groups = new Map<string, ReleaseRecord[]>();
+for (const r of releases) {
+  const key = r.date ? r.date.slice(0, 7) : "";
+  const arr = groups.get(key) ?? [];
+  arr.push(r);
+  groups.set(key, arr);
+}
+const entries = [...groups.entries()];
+---
+
+<div class="feed" data-feed>
+  {entries.map(([month, items]) => (
+    <section data-month-block>
+      <h2 class="month">
+        {monthLabel(month ? `${month}-01` : "", locale)}
+        <span class="n">{items.length}</span>
+      </h2>
+      {items.map((r) => <ReleaseRow release={r} locale={locale} />)}
+    </section>
+  ))}
+  <div class="empty" data-empty hidden>{t(locale, "feed.empty")}</div>
+</div>

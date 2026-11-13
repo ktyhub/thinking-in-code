@@ -1,0 +1,49 @@
+---
+/** 信息流中的一条版本记录 */
+import { t, type Locale } from "../lib/i18n";
+import { hrefFor } from "../lib/registry";
+import { shortDay } from "../lib/format";
+
+interface Props {
+  release: import("../lib/registry").ReleaseRecord;
+  locale: Locale;
+  /** 项目页里每行都属同一项目，隐藏项目名 */
+  hideProject?: boolean;
+}
+
+const { release: r, locale, hideProject = false } = Astro.props;
+const href = hrefFor(r, locale);
+const typeLabel = t(locale, `type.${r.type}`);
+const showTranslation = locale === "en" && r.hasZh;
+const showEnglish = locale === "zh" && r.hasEn && !r.hasZh;
+const summary = locale === "zh" && r.summaryZh ? r.summaryZh : r.summary;
+const q = `${r.project} ${r.version} ${(summary || "").slice(0, 110)}`.toLowerCase();
+---
+
+<a
+  class="rrow"
+  href={href}
+  data-row
+  data-project={r.projectSlug}
+  data-type={r.type}
+  data-q={q}
+>
+  <time class="rrow-date" datetime={r.date || undefined}>{shortDay(r.date)}</time>
+
+  <div class="rrow-main">
+    <div class="rrow-top">
+      {!hideProject && <span class="rrow-proj">{r.project}</span>}
+      <span class="rrow-ver">{r.version}</span>
+      <span class={`chip chip--${r.type}`}>{typeLabel}</span>
+      {showTranslation && <span class="chip chip--zh">{t(locale, "feed.lang.zh")}</span>}
+      {showEnglish && <span class="chip">{t(locale, "feed.lang.en")}</span>}
+    </div>
+    {summary && <p class="rrow-sum">{summary}</p>}
+  </div>
+
+  <div class="rrow-side" aria-hidden="true">
+    <svg class="rrow-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M5 12h14M13 6l6 6-6 6"></path>
+    </svg>
+  </div>
+</a>
