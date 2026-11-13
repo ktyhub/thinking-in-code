@@ -16,11 +16,11 @@
 
 </center>
 
-![Stags Tracker](https://img.shields.io/badge/平台-macOS%2010.15%2B-blue) ![Version](https://img.shields.io/badge/版本-1.0.0-green) ![License](https://img.shields.io/badge/许可-MIT-yellow)
+![Stags Tracker](https://img.shields.io/badge/平台-macOS%2010.15%2B-blue) ![Version](https://img.shields.io/badge/版本-1.0.1-green) ![License](https://img.shields.io/badge/许可-MIT-yellow)
 
 ### ✨ 核心功能
 
-- **🚀 仓库订阅**：输入 `owner/repo` 一键订阅任意 GitHub 仓库（Release / Issue / Pull Request 全追踪）
+- **🚀 仓库订阅**：输入 `owner/repo` 或**关键词搜索**（自动联想星标数、简介）一键订阅任意 GitHub 仓库（Release / Issue / Pull Request 全追踪）
 - **🔔 更新提醒**：侧边栏未读徽标 + 应用内提示，每 15 分钟自动检测新版本
 - **📦 离线缓存**：数据本地缓存，断网也能浏览已拉取的 Release
 - **🌐 一键翻译**：Release Notes 翻译为中文（结果本地缓存，重复查看零开销）
