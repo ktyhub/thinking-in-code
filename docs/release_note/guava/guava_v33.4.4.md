@@ -1,0 +1,57 @@
+---
+title: "guava v33.4.4"
+project: "guava"
+repo: "google/guava"
+tag: "v33.4.4"
+published: "2025-03-19"
+type: "patch"
+lang: "en"
+summary: "This is one of a series of releases that improve Guava's nullness annotations. For more information, including troubleshooting help, see the release notes for Guava 33.4.1. Most users can update directly to Guava 33.4.8."
+---
+
+# guava v33.4.4
+
+This is one of a series of releases that improve Guava's nullness annotations. For more information, including troubleshooting help, see [the release notes for Guava 33.4.1](https://github.com/google/guava/releases/tag/v33.4.1). Most users can update directly to Guava 33.4.8.
+
+### Maven
+
+```xml
+<dependency>
+  <groupId>com.google.guava</groupId>
+  <artifactId>guava</artifactId>
+  <version>33.4.4-jre</version>
+  <!-- or, for Android: -->
+  <version>33.4.4-android</version>
+</dependency>
+```
+
+### Jar files
+
+- [33.4.4-jre.jar](https://repo1.maven.org/maven2/com/google/guava/guava/33.4.4-jre/guava-33.4.4-jre.jar)
+- [33.4.4-android.jar](https://repo1.maven.org/maven2/com/google/guava/guava/33.4.4-android/guava-33.4.4-android.jar)
+
+Guava requires [one runtime dependency](https://github.com/google/guava/wiki/UseGuavaInYourBuild#what-about-guavas-own-dependencies), which you can download here:
+
+- [failureaccess-1.0.2.jar](https://repo1.maven.org/maven2/com/google/guava/failureaccess/1.0.2/failureaccess-1.0.2.jar)
+
+### Javadoc
+
+- [33.4.4-jre](https://guava.dev/releases/33.4.4-jre/api/docs/)
+- [33.4.4-android](https://guava.dev/releases/33.4.4-android/api/docs/)
+
+### JDiff
+
+- [33.4.4-jre vs. 33.4.3-jre](https://guava.dev/releases/33.4.4-jre/api/diffs/)
+- [33.4.4-android vs. 33.4.3-android](https://guava.dev/releases/33.4.4-android/api/diffs/)
+- [33.4.4-android vs. 33.4.4-jre](https://guava.dev/releases/33.4.4-android/api/androiddiffs/)
+
+### Changelog
+
+- Migrated from Checker Framework annotations to [JSpecify](https://jspecify.dev/) annotations. (2cc8c5eddb)
+- Made our usages of nullness annotations available in our GWT artifact. GWT users will need to upgrade to [GWT 2.12.1](https://www.gwtproject.org/release-notes.html#Release_Notes_2_12_1), which makes GWT as tolerant of Java 8 type-use annotations as it is of other annotations. (80559d250e)
+
+---
+
+> **Source** [google/guava](https://github.com/google/guava) · `v33.4.4` · 2025-03-19 · [upstream release](https://github.com/google/guava/releases/tag/v33.4.4)
+
+*Mirrored verbatim for indexing. All rights belong to the upstream project.*

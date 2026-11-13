@@ -1,0 +1,100 @@
+---
+title: "Stirling-PDF v3.1.0"
+project: "Stirling-PDF"
+repo: "Stirling-Tools/Stirling-PDF"
+tag: "v3.1.0"
+published: "2026-10-05"
+type: "minor"
+lang: "en"
+summary: "Some big changes in this release yet again! Group signing (Called Stirling Sign) is moving out of alpha and is now being enabled by default for new users, with it, you can share, track, and sign PDFs across your org. It…"
+---
+
+# Stirling-PDF v3.1.0
+
+Some big changes in this release yet again!
+Group signing (Called Stirling Sign) is moving out of alpha and is now being enabled by default for new users, with it, you can share, track, and sign PDFs across your org. It also comes with a brand new sign UI, drastically improving the user experience of signing. Please let us know if you have any issues with it!
+
+We are also shipping a new embedded conversion tool called "Stirling Office Convert" which we are trialing, It aims to give better conversion results faster and with less memory. This is a beta, so please compare and let us know! (Enable it by default under Advanced > Feature Flags)
+
+We have a ton of other features in this release:
+
+- Text editor supports editing tables directly in file!
+- Text editor supports editing OCRed image PDFs! 
+- Text editor UI and UX improvements
+- Attachments Support improvements (Add, rename, extract, delete etc)
+- Several Dependency updates
+
+And to mention again: 
+- Brand new Group signing UI 
+- New PDF conversion tool, hopefully to replace the old tool in the future (and coming to native desktop soon!) 
+- Sign tool improvements
+
+We also fixed some bugs including
+- Certain translations missing
+- Account linking not working for certain versions
+- Auto rotate not working on desktop
+- Selfhost users shown invalid teams menu
+- Desktop not correctly updating itself sometimes
+
+
+## What's Changed
+### Bug Fixes
+* fix(viewer): carry view state across a reload on plugin events, not timers by @ConnorYoh in https://github.com/Stirling-Tools/Stirling-PDF/pull/8285
+* fix(text-editor): open a workbench file at the viewer's zoom, not 150% by @ConnorYoh in https://github.com/Stirling-Tools/Stirling-PDF/pull/8311
+* fix(i18n): add missing super search settings keys to en-US by @reecebrowne in https://github.com/Stirling-Tools/Stirling-PDF/pull/8339
+* fix(security): restrict sensitive endpoints to authenticated human users by @Ludy87 in https://github.com/Stirling-Tools/Stirling-PDF/pull/7306
+### Enhancements
+* deps(frontend): upgrade Atlaskit pragmatic drag and drop to 2.0.2 by @Ludy87 in https://github.com/Stirling-Tools/Stirling-PDF/pull/7484
+* build(deps): bump brace-expansion in /frontend by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8272
+* Rename viewer Toggle Bookmarks control to Table of Contents by @mvanhorn in https://github.com/Stirling-Tools/Stirling-PDF/pull/6599
+* Preserve processing originals in .stirling with seven-day orphan cleanup by @reecebrowne in https://github.com/Stirling-Tools/Stirling-PDF/pull/8165
+* Fix Auto Rotate cloud fallback when local OCR is missing by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8327
+* perf: preload translation files and optimize language switching to avoid redundant reloads by @balazs-szucs in https://github.com/Stirling-Tools/Stirling-PDF/pull/7939
+* perf(files): stop library rescans and thumbnail rewrites on every file write by @balazs-szucs in https://github.com/Stirling-Tools/Stirling-PDF/pull/8037
+* feat(text-editor): Acrobat-style object editing (Backspace delete, drag-select, text box resize, shapes, Shift-resize) by @kmlakts in https://github.com/Stirling-Tools/Stirling-PDF/pull/8325
+* feat(attachments): add UI for full CRUD operations by @balazs-szucs in https://github.com/Stirling-Tools/Stirling-PDF/pull/7333
+* build(deps): bump axios from 1.18.1 to 1.20.0 in /frontend by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8296
+* Bump dompurify from 3.4.13 to 3.4.16 in /frontend by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8319
+* Update Frontend 3rd Party Licenses by @stirlingbot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/7758
+* Fix desktop updates and version display across connection modes by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8315
+* Wait for a signed-in user before fetching signing sessions by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8227
+* Skip server file listing for guest accounts by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8229
+* Switch every icon rule on by @EthanHealy01 in https://github.com/Stirling-Tools/Stirling-PDF/pull/8274
+* Edit text on OCR'd scanned PDFs in the text editor by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8314
+* Let stock self-hosted images link to Stirling with no extra config by @ConnorYoh in https://github.com/Stirling-Tools/Stirling-PDF/pull/8338
+* Fix self-hosted Users menu visibility and tidy settings by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8316
+* perf(thumbnails): zero-copy view for contiguous wasm bitmap rows  by @balazs-szucs in https://github.com/Stirling-Tools/Stirling-PDF/pull/8134
+* perf(viewer): stabilize actions bundle and context value by @balazs-szucs in https://github.com/Stirling-Tools/Stirling-PDF/pull/8149
+* Redesign the Sign tool around a saved signature by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8208
+* Add table detection and editing to the v2 PDF text editor by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8335
+* Stirling Sign V1 by @ConnorYoh in https://github.com/Stirling-Tools/Stirling-PDF/pull/8189
+* perf(tools): mount tool picker categories as they near the viewport by @balazs-szucs in https://github.com/Stirling-Tools/Stirling-PDF/pull/8234
+* perf(viewer): stop the annotation layer rendering per-link hit boxes by @balazs-szucs in https://github.com/Stirling-Tools/Stirling-PDF/pull/8233
+* Add Stirling Office Convert as an opt-in Office converter by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8219
+* Retranslate changed strings, sync locales, bump to 3.1.0 by @Frooodle in https://github.com/Stirling-Tools/Stirling-PDF/pull/8358
+### Docker Updates
+* build(deps): bump docker/build-push-action from 7.3.0 to 7.4.0 by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8261
+* Bump docker/setup-buildx-action from 4.3.0 to 4.4.1 by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8263
+* chore(docker): update Task to 3.54.0 by @github-actions[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8337
+* chore(docker): update Stirling-PDF base image to 1.1.0@sha256:3bcc8e10d5319b7c0550cf41b96f6980e1552c974dc37aba462b74fa17c4b5e4 by @github-actions[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8336
+### Other Changes
+* build(deps-dev): bump cryptography from 50.0.0 to 50.0.1 in /engine by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8256
+* build(deps): bump jackson2Version from 2.22.2 to 2.22.3 by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8265
+* build(deps): bump com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer from 20260313.1 to 20260922.1 by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8254
+* build(deps-dev): update pypdf[crypto] requirement from >=6.15.0 to >=6.19.0 in /engine by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8298
+* build(deps-dev): bump fonttools from 4.63.0 to 4.66.0 in /engine by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8302
+* Bump the uv group across 1 directory with 4 updates by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8320
+* build(deps): bump github/codeql-action/upload-sarif from 4.37.9 to 4.38.2 by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8334
+* build(deps): bump springSecuritySamlVersion from 7.1.0 to 7.1.1 by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8332
+* build(deps-dev): bump openai from 3.3.1 to 3.19.2 in /engine by @dependabot[bot] in https://github.com/Stirling-Tools/Stirling-PDF/pull/8299
+
+## New Contributors
+* @kmlakts made their first contribution in https://github.com/Stirling-Tools/Stirling-PDF/pull/8325
+
+**Full Changelog**: https://github.com/Stirling-Tools/Stirling-PDF/compare/v3.0.2...v3.1.0
+
+---
+
+> **Source** [Stirling-Tools/Stirling-PDF](https://github.com/Stirling-Tools/Stirling-PDF) · `v3.1.0` · 2026-10-05 · [upstream release](https://github.com/Stirling-Tools/Stirling-PDF/releases/tag/v3.1.0)
+
+*Mirrored verbatim for indexing. All rights belong to the upstream project.*

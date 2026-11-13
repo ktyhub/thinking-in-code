@@ -1,0 +1,178 @@
+---
+/**
+ * 版本详情页通用骨架（英文站与中文归档共用）
+ */
+import Shell from "../layouts/Shell.astro";
+import { t, localePath, type Locale } from "../lib/i18n";
+import { longDate } from "../lib/format";
+import { projectHref, projectReleases, hrefFor, type ReleaseRecord } from "../lib/registry";
+import { getProject } from "../lib/registry";
+
+interface Props {
+  release: ReleaseRecord;
+  locale: Locale;
+  headings: { depth: number; slug: string; text: string }[];
+  /** 另一语言版本地址；null 表示没有对应译文 */
+  altHref: string | null;
+}
+
+const { release: r, locale, headings, altHref } = Astro.props;
+
+const project = getProject(r.projectSlug);
+const versions = projectReleases(r.projectSlug);
+const idx = versions.findIndex((v) => v.key === r.key);
+const newer = idx > 0 ? versions[idx - 1] : null;
+const older = idx >= 0 && idx < versions.length - 1 ? versions[idx + 1] : null;
+const recent = versions.slice(0, 8);
+
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3).slice(0, 24);
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const jsonLd = {
+  "@type": "TechArticle",
+  "@id": `${canonical}#article`,
+  headline: `${r.project} ${r.version} release notes`,
+  datePublished: r.date || undefined,
+  inLanguage: locale === "en" ? "en" : "zh-CN",
+  isPartOf: { "@id": "https://www.ktyhub.com/#website" },
+  ...(r.repo ? { about: { "@type": "SoftwareSourceCode", codeRepository: `https://github.com/${r.repo}` } } : {}),
+};
+---
+
+<Shell
+  locale={locale}
+  title={`${r.project} ${r.version}`}
+  description={r.summary || `${r.project} ${r.version} release notes`}
+  article
+  altHref={altHref}
+  jsonLd={jsonLd}
+>
+  <div class="wrap">
+    <div class="detail">
+      <article>
+        <header class="detail-hd">
+          <nav class="crumbs" aria-label="Breadcrumb">
+            <a href={localePath(locale, "/")}>{t(locale, "crumb.home")}</a>
+            <span class="sep">/</span>
+            <a href={localePath(locale, "/releases")}>{t(locale, "nav.releases")}</a>
+            <span class="sep">/</span>
+            <a href={projectHref(r.projectSlug, locale)}>{r.project}</a>
+          </nav>
+
+          <h1 class="detail-title">
+            <span class="p">{r.project}</span>
+            {r.version}
+          </h1>
+
+          <div class="detail-meta">
+            <span class={`chip chip--${r.type}`}>{t(locale, `type.${r.type}`)}</span>
+            {r.date && (
+              <span><span class="k">{t(locale, "detail.published")}</span>{longDate(r.date, locale)}</span>
+            )}
+            {r.repo && (
+              <>
+                <span class="sep" aria-hidden="true"></span>
+                <a href={`https://github.com/${r.repo}`} target="_blank" rel="noopener">
+                  <span class="k">{t(locale, "detail.source")}</span>{r.repo}
+                </a>
+              </>
+            )}
+            {altHref && (
+              <>
+                <span class="sep" aria-hidden="true"></span>
+                <a href={altHref}>
+                  {locale === "en" ? t(locale, "detail.translation") : t(locale, "detail.translation.en")}
+                </a>
+              </>
+            )}
+            <span class="sep" aria-hidden="true"></span>
+            <button class="btn btn--ghost btn--sm" type="button" data-copy={canonical}>{t(locale, "action.copy")}</button>
+          </div>
+        </header>
+
+        <div class="prose" style="margin-top:var(--s8)">
+          <slot />
+        </div>
+
+        <p class="muted" style="margin-top:var(--s8);font-size:12.5px;border-top:1px solid var(--line);padding-top:var(--s4)">
+          {t(locale, "detail.attribution")}
+        </p>
+
+        {(newer || older) && (
+          <nav class="pager" aria-label="Release navigation">
+            {newer ? (
+              <a href={hrefFor(newer, locale)}>
+                <span class="k">← {t(locale, "detail.next")}</span>
+                <span class="t">{newer.version}</span>
+              </a>
+            ) : (
+              <span></span>
+            )}
+            {older ? (
+              <a href={hrefFor(older, locale)}>
+                <span class="k">{t(locale, "detail.prev")} →</span>
+                <span class="t">{older.version}</span>
+              </a>
+            ) : (
+              <span></span>
+            )}
+          </nav>
+        )}
+      </article>
+
+      <aside class="rail">
+        {r.repo && (
+          <div class="rail-card">
+            <div class="rail-title">Source</div>
+            <ul class="rail-list">
+              <li>
+                <a href={`https://github.com/${r.repo}/releases/tag/${encodeURIComponent(r.version)}`} target="_blank" rel="noopener">
+                  <span>{t(locale, "action.original")}</span>
+                  <span class="d">↗</span>
+                </a>
+              </li>
+              <li>
+                <a href={`https://github.com/${r.repo}`} target="_blank" rel="noopener">
+                  <span>{r.repo}</span>
+                  <span class="d">↗</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        )}
+
+        {toc.length > 2 && (
+          <div class="rail-card rail-toc">
+            <div class="rail-title">{t(locale, "detail.toc")}</div>
+            <nav>
+              {toc.map((h) => (
+                <a href={`#${h.slug}`} class={h.depth === 3 ? "lv3" : ""}>{h.text}</a>
+              ))}
+            </nav>
+          </div>
+        )}
+
+        <div class="rail-card">
+          <div class="rail-title">{t(locale, "detail.versions")}</div>
+          <ul class="rail-list">
+            {recent.map((v) => (
+              <li>
+                <a href={hrefFor(v, locale)} aria-current={v.key === r.key ? "true" : undefined}>
+                  <span class="v">{v.version}</span>
+                  <span class="d">{v.date ? v.date.slice(2) : ""}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a
+            href={projectHref(r.projectSlug, locale)}
+            class="mono"
+            style="display:inline-block;margin-top:var(--s3);font-size:11.5px;color:var(--ink-3)"
+          >
+            {t(locale, "action.viewall", { n: versions.length })} →
+          </a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</Shell>

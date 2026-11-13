@@ -1,0 +1,234 @@
+---
+/**
+ * 全站外壳：页头 / 搜索面板 / 页脚 / SEO 元信息
+ * 英文是默认语言（挂在 /），中文在 /zh 前缀下。
+ */
+import "../styles/global.css";
+import { t, LOCALE_META, localePath, switchLocale, otherLocale, type Locale } from "../lib/i18n";
+
+interface Props {
+  locale: Locale;
+  title?: string;
+  description?: string;
+  /** 导航高亮 key：releases | projects | method */
+  active?: string;
+  /** 另一语言版本的地址；null = 没有对应译文（不输出 hreflang） */
+  altHref?: string | null;
+  /** 当前页面是否包含正文型内容（用于 OG type） */
+  article?: boolean;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  noindex?: boolean;
+  /** 覆盖 canonical（用于保留旧 URL 的别名页指向新地址） */
+  canonicalPath?: string;
+}
+
+const {
+  locale,
+  title,
+  description,
+  active = "",
+  altHref,
+  article = false,
+  jsonLd,
+  noindex = false,
+  canonicalPath,
+} = Astro.props;
+
+const SITE = "NextStack";
+const meta = LOCALE_META[locale];
+const siteDesc = t(locale, "site.desc");
+const fullTitle = title ? `${title} — ${SITE}` : `${SITE} — ${t(locale, "hero.title")}`;
+const desc = description || siteDesc;
+const canonical = canonicalPath
+  ? new URL(canonicalPath, Astro.site).href
+  : new URL(Astro.url.pathname, Astro.site).href;
+const hasAlt = altHref !== null;
+const alt = altHref ?? switchLocale(Astro.url.pathname, otherLocale(locale));
+const enHref = locale === "en" ? canonical : new URL(alt, Astro.site).href;
+const zhHref = locale === "zh" ? canonical : new URL(alt, Astro.site).href;
+
+const nav = [
+  { key: "releases", label: t(locale, "nav.releases"), href: localePath(locale, "/releases") },
+  { key: "projects", label: t(locale, "nav.projects"), href: localePath(locale, "/projects") },
+  { key: "method", label: t(locale, "nav.method"), href: localePath(locale, "/method") },
+];
+
+const archiveHref = "/zh/release_note";
+
+const graph = [
+  {
+    "@type": "WebSite",
+    "@id": "https://www.ktyhub.com/#website",
+    name: SITE,
+    url: "https://www.ktyhub.com/",
+    inLanguage: "en",
+    description: siteDesc,
+    publisher: { "@id": "https://www.ktyhub.com/#org" },
+  },
+  {
+    "@type": "Organization",
+    "@id": "https://www.ktyhub.com/#org",
+    name: SITE,
+    url: "https://www.ktyhub.com/",
+    sameAs: ["https://github.com/ktyhub"],
+  },
+  ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []),
+];
+---
+
+<!doctype html>
+<html lang={meta.htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={desc} />
+    <meta name="keywords" content={t(locale, "site.keywords")} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={`${SITE} — releases`} href={`${localePath(locale, "/releases.xml")}`} />
+    {hasAlt && (
+      <>
+        <link rel="alternate" hreflang="en" href={enHref} />
+        <link rel="alternate" hreflang="zh-Hans" href={zhHref} />
+        <link rel="alternate" hreflang="x-default" href={enHref} />
+      </>
+    )}
+    {noindex && <meta name="robots" content="noindex,follow" />}
+
+    <meta property="og:site_name" content={SITE} />
+    <meta property="og:type" content={article ? "article" : "website"} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content="https://www.ktyhub.com/img/stags-tracker-icon.png" />
+    <meta property="og:locale" content={meta.ogLocale} />
+    <meta property="og:locale:alternate" content={LOCALE_META[otherLocale(locale)].ogLocale} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:image" content="https://www.ktyhub.com/img/stags-tracker-icon.png" />
+
+    <script type="application/ld+json" set:html={JSON.stringify({ "@context": "https://schema.org", "@graph": graph })} />
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script>
+  </head>
+
+  <body>
+    <a class="skip" href="#main">{t(locale, "a11y.skip")}</a>
+
+    <header class="hdr" data-header>
+      <div class="wrap hdr-inner">
+        <a href={localePath(locale, "/")} class="brand" aria-label={`${SITE} — ${t(locale, "site.tagline")}`}>
+          <span class="brand-mark" aria-hidden="true">N</span>
+          {SITE}
+        </a>
+
+        <nav class="nav" aria-label="Primary">
+          {nav.map((n) => (
+            <a href={n.href} aria-current={active === n.key ? "page" : undefined}>{n.label}</a>
+          ))}
+        </nav>
+
+        <div class="hdr-tools">
+          <button class="searchbtn" type="button" data-search-open aria-label={t(locale, "search.open")}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path>
+            </svg>
+            <span class="lbl">{t(locale, "search.hint.short")}</span>
+            <span class="kbd">⌘K</span>
+          </button>
+
+          <div class="lang" role="group" aria-label="Language">
+            <a
+              href={locale === "en" ? Astro.url.pathname : hasAlt ? alt : "/"}
+              data-on={locale === "en" ? "true" : "false"}
+              hreflang="en">EN</a>
+            <a
+              href={locale === "zh" ? Astro.url.pathname : hasAlt ? alt : "/zh/"}
+              data-on={locale === "zh" ? "true" : "false"}
+              hreflang="zh-Hans">中</a>
+          </div>
+
+          <a class="iconlink" href="https://github.com/ktyhub/thinking-in-code" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a href={localePath(locale, "/")} class="brand"><span class="brand-mark" aria-hidden="true">N</span>{SITE}</a>
+            <p>{t(locale, "footer.brand")}</p>
+          </div>
+          <div class="footer-col">
+            <h3>{t(locale, "footer.track")}</h3>
+            <ul>
+              <li><a href={localePath(locale, "/releases")}>{t(locale, "nav.releases")}</a></li>
+              <li><a href={localePath(locale, "/projects")}>{t(locale, "nav.projects")}</a></li>
+              <li><a href={localePath(locale, "/releases.xml")}>{t(locale, "action.rss")}</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h3>{t(locale, "footer.archive")}</h3>
+            <ul>
+              <li><a href={archiveHref}>{t(locale, "nav.archive")}</a></li>
+              <li><a href="/zh/chapters/">{t(locale, "footer.blog")}</a></li>
+              <li><a href="/zh/downloads/">Stags Tracker</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h3>{t(locale, "footer.meta")}</h3>
+            <ul>
+              <li><a href={localePath(locale, "/method")}>{t(locale, "nav.method")}</a></li>
+              <li><a href="https://github.com/ktyhub/thinking-in-code">GitHub</a></li>
+              <li><a href="/sitemap-index.xml">Sitemap</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-btm">
+          <span>© {new Date().getFullYear()} {SITE}</span>
+          <span>{t(locale, "footer.rights")}</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- 搜索面板 -->
+    <div class="palette-bg" data-palette-bg data-open="false">
+      <div class="palette" role="dialog" aria-modal="true" aria-label={t(locale, "search.open")}>
+        <div class="palette-in">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none">
+            <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path>
+          </svg>
+          <input type="search" data-palette-input placeholder={t(locale, "search.placeholder")} autocomplete="off" spellcheck="false" />
+          <span class="kbd">esc</span>
+        </div>
+        <ul class="palette-res" data-palette-res></ul>
+        <div class="palette-ft">
+          <span>↑↓ {locale === "en" ? "navigate" : "选择"}</span>
+          <span>↵ {locale === "en" ? "open" : "打开"}</span>
+          <span style="margin-left:auto" data-palette-count></span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      import "../scripts/site.js";
+    </script>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+---
+import { getCollection, getEntry, render } from "astro:content";
+import ReleaseDetail from "../../../components/ReleaseDetail.astro";
+import { allReleases, getReleaseByKey } from "../../../lib/registry";
+
+/**
+ * 中文译文页，URL 与旧站完全一致：/zh/release_note/{project}/{file}
+ */
+export async function getStaticPaths() {
+  const entries = await getCollection("releasesZh");
+  const ids = new Set(entries.map((e) => e.id));
+  return allReleases()
+    .filter((r) => r.hasZh && r.entryZh && ids.has(r.entryZh))
+    .map((r) => ({ params: { slug: r.entryZh }, props: { key: r.key } }));
+}
+
+const { key } = Astro.props;
+const release = getReleaseByKey(key)!;
+const entry = await getEntry("releasesZh", release.entryZh!);
+if (!entry) {
+  throw new Error(`releasesZh 缺少条目：${release.entryZh}`);
+}
+const { Content, headings } = await render(entry);
+
+const altHref = release.hasEn ? `/releases/${release.projectSlug}/${release.versionSlug}` : null;
+---
+
+<ReleaseDetail release={release} locale="zh" headings={headings} altHref={altHref}>
+  <Content />
+</ReleaseDetail>

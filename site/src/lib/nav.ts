@@ -1,7 +1,6 @@
 /**
- * 构建时扫描 docs/zh 目录生成导航树。
- * 标题优先读 .pages 文件（与旧站 awesome-pages 约定一致），
- * 页面按文件名自然排序（1-、2- 前缀即章节顺序）。
+ * 技术笔记（/zh/chapter_*）的导航树。
+ * 构建时扫描 docs/zh，标题优先读 .pages 文件，页面按文件名自然排序。
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -20,10 +19,6 @@ export interface NavGroup {
   items: NavItem[];
 }
 
-const GROUP_TITLE_OVERRIDES: Record<string, string> = {
-  release_note: "📰 RELEASE NOTE",
-};
-
 function readPagesTitle(dir: string): string | null {
   try {
     const p = path.join(dir, ".pages");
@@ -35,13 +30,14 @@ function readPagesTitle(dir: string): string | null {
   }
 }
 
-/** 文件名自然排序：数字段按数值比较 */
 function naturalCompare(a: string, b: string): number {
   const na = a.split(/(\d+)/);
   const nb = b.split(/(\d+)/);
   for (let i = 0; i < Math.max(na.length, nb.length); i++) {
-    const x = na[i] ?? "", y = nb[i] ?? "";
-    const nx = Number(x), ny = Number(y);
+    const x = na[i] ?? "";
+    const y = nb[i] ?? "";
+    const nx = Number(x);
+    const ny = Number(y);
     if (!Number.isNaN(nx) && !Number.isNaN(ny) && x !== "" && y !== "") {
       if (nx !== ny) return nx - ny;
     } else if (x !== y) {
@@ -54,8 +50,8 @@ function naturalCompare(a: string, b: string): number {
 function walkPages(dir: string, baseHref: string, level = 0): NavItem[] {
   const items: NavItem[] = [];
   const entries = fs.readdirSync(dir, { withFileTypes: true });
-  const files = entries.filter(e => e.isFile() && e.name.endsWith(".md") && e.name !== "index.md");
-  const subdirs = entries.filter(e => e.isDirectory() && !e.name.startsWith("."));
+  const files = entries.filter((e) => e.isFile() && e.name.endsWith(".md") && e.name !== "index.md");
+  const subdirs = entries.filter((e) => e.isDirectory() && !e.name.startsWith("."));
 
   for (const f of files.sort((a, b) => naturalCompare(a.name, b.name))) {
     const name = f.name.replace(/\.md$/, "");
@@ -65,7 +61,6 @@ function walkPages(dir: string, baseHref: string, level = 0): NavItem[] {
   for (const d of subdirs.sort((a, b) => naturalCompare(a.name, b.name))) {
     const sub = path.join(dir, d.name);
     const title = readPagesTitle(sub) ?? d.name;
-    // 子目录本身作为一个可折叠层级的入口
     if (fs.existsSync(path.join(sub, "index.md"))) {
       items.push({ title, href: `${baseHref}/${d.name}`, level });
     }
@@ -74,7 +69,6 @@ function walkPages(dir: string, baseHref: string, level = 0): NavItem[] {
   return items;
 }
 
-/** 读取 md 第一个 H1 作为标题（构建期一次性开销可接受） */
 const headingCache = new Map<string, string | null>();
 function firstHeading(file: string): string | null {
   if (headingCache.has(file)) return headingCache.get(file)!;
@@ -83,9 +77,14 @@ function firstHeading(file: string): string | null {
     const lines = fs.readFileSync(file, "utf-8").split("\n").slice(0, 30);
     for (const line of lines) {
       const m = line.match(/^#\s+(.+)$/);
-      if (m) { title = m[1].trim(); break; }
+      if (m) {
+        title = m[1].trim();
+        break;
+      }
     }
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
   headingCache.set(file, title);
   return title;
 }
@@ -95,69 +94,20 @@ let cached: NavGroup[] | null = null;
 export function getNavGroups(): NavGroup[] {
   if (cached) return cached;
   const groups: NavGroup[] = [];
-  const root = DOCS_ZH;
-  const entries = fs.readdirSync(root, { withFileTypes: true })
-    .filter(e => e.isDirectory() && !e.name.startsWith(".") && e.name !== "release_note" && e.name !== "book_index");
+  const entries = fs
+    .readdirSync(DOCS_ZH, { withFileTypes: true })
+    .filter((e) => e.isDirectory() && !e.name.startsWith(".") && e.name !== "release_note" && e.name !== "book_index");
 
-  // 技术博客章节组（chapter_* 目录 + 其他内容目录）
   for (const d of entries.sort((a, b) => naturalCompare(a.name, b.name))) {
-    const dir = path.join(root, d.name);
+    const dir = path.join(DOCS_ZH, d.name);
     const title = readPagesTitle(dir) ?? d.name.replace(/^chapter_/, "").replace(/^_+/, "");
     const items = walkPages(dir, `/zh/${d.name}`);
-    if (items.length) {
-      groups.push({ key: d.name, title, href: `/zh/${d.name}`, items });
-    }
+    if (items.length) groups.push({ key: d.name, title, href: `/zh/${d.name}`, items });
   }
   cached = groups;
   return groups;
 }
 
-/** RELEASE NOTE 项目列表（供侧边栏与索引页使用） */
-export interface ReleaseProject {
-  name: string;
-  href: string;
-  count: number;
-}
-let releaseProjectsCache: ReleaseProject[] | null = null;
-
-export function getReleaseProjects(): ReleaseProject[] {
-  if (releaseProjectsCache) return releaseProjectsCache;
-  const rnDir = path.join(DOCS_ZH, "release_note");
-  const out: ReleaseProject[] = [];
-  try {
-    for (const d of fs.readdirSync(rnDir, { withFileTypes: true })) {
-      if (!d.isDirectory() || d.name.startsWith(".")) continue;
-      const files = fs.readdirSync(path.join(rnDir, d.name)).filter(f => f.endsWith(".md") && f !== "index.md");
-      out.push({
-        name: d.name,
-        href: `/zh/release_note/${d.name}`,
-        count: files.length,
-      });
-    }
-  } catch { /* ignore */ }
-  out.sort((a, b) => a.name.localeCompare(b.name, "zh-Hans-CN", { numeric: true }));
-  releaseProjectsCache = out;
-  return out;
-}
-
-/** 某个项目下的全部 Release 页面（供详情页侧边栏） */
-export function getReleaseFiles(project: string): NavItem[] {
-  const dir = path.join(DOCS_ZH, "release_note", project);
-  const out: NavItem[] = [];
-  try {
-    for (const f of fs.readdirSync(dir)) {
-      if (!f.endsWith(".md") || f === "index.md") continue;
-      const name = f.replace(/\.md$/, "");
-      const title = firstHeading(path.join(dir, f)) ?? name;
-      out.push({ title, href: `/zh/release_note/${project}/${name}`, level: 0 });
-    }
-  } catch { /* ignore */ }
-  // 版本号倒序（新版本在前）
-  out.sort((a, b) => naturalCompare(b.href, a.href));
-  return out;
-}
-
-/** href → 标题映射（面包屑用真实页面标题而不是文件名） */
 let titleMapCache: Map<string, string> | null = null;
 
 export function getTitleMap(): Map<string, string> {
@@ -166,10 +116,6 @@ export function getTitleMap(): Map<string, string> {
   for (const g of getNavGroups()) {
     map.set(g.href, g.title);
     for (const it of g.items) map.set(it.href, it.title);
-  }
-  for (const p of getReleaseProjects()) {
-    map.set(p.href, p.name);
-    for (const it of getReleaseFiles(p.name)) map.set(it.href, it.title);
   }
   titleMapCache = map;
   return map;
@@ -180,7 +126,6 @@ export function breadcrumbs(urlPath: string): { title: string; href?: string }[]
   const parts = urlPath.split("/").filter(Boolean);
   const crumbs: { title: string; href?: string }[] = [{ title: "首页", href: "/" }];
   const titles = getTitleMap();
-  // 中文站是默认语言，面包屑不展示 /zh 层级
   const start = parts[0] === "zh" ? 1 : 0;
   let acc = start ? "/zh" : "";
   for (let i = start; i < parts.length; i++) {
@@ -190,10 +135,7 @@ export function breadcrumbs(urlPath: string): { title: string; href?: string }[]
       .replace(/\.md$/, "")
       .replace(/^\d+[-_]/, "")
       .replace(/[_-]+/g, " ");
-    crumbs.push({
-      title: titles.get(acc) ?? pretty,
-      href: isLast ? undefined : acc,
-    });
+    crumbs.push({ title: titles.get(acc) ?? pretty, href: isLast ? undefined : acc });
   }
   return crumbs;
 }

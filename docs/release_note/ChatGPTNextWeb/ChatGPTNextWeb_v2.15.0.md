@@ -1,0 +1,61 @@
+---
+title: "ChatGPTNextWeb v2.15.0"
+project: "ChatGPTNextWeb"
+repo: "ChatGPTNextWeb/ChatGPT-Next-Web"
+tag: "v2.15.0"
+published: "2024-09-06"
+type: "minor"
+lang: "en"
+summary: "https://github.com/ChatGPTNextWeb/NextChat-Awesome-Plugins"
+---
+
+# ChatGPTNextWeb v2.15.0
+
+## What's Changed
+* fix: Determine if Tencent is authorized by @zhangjian10 in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5288
+* feat: add a page to search chat history by @Movelocity in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5274
+* Hotfix: Expand button for code block by @lloydzhou in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5300
+* Modify View All Languages by @mayfwl in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5303
+* fix: artifact render error by @mayfwl in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5306
+* Update README.md by @ElricLiu in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5309
+* feat: add indexDB by @Dogtiti in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5324
+* fix: right click by @Dogtiti in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5335
+* fix: hydrated for indexedDB by @Dogtiti in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5356
+* Feature plugin (GPTs like action based on function call) by @lloydzhou in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5331
+
+## Awesome Plugins
+
+https://github.com/ChatGPTNextWeb/NextChat-Awesome-Plugins
+
+
+## New Contributors
+* @zhangjian10 made their first contribution in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5288
+* @Movelocity made their first contribution in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5274
+
+**Full Changelog**: https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/compare/v2.14.2...v2.15.0
+
+## What's Changed
+* fix: Determine if Tencent is authorized by @zhangjian10 in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5288
+* feat: add a page to search chat history by @Movelocity in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5274
+* Hotfix: Expand button for code block by @lloydzhou in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5300
+* Modify View All Languages by @mayfwl in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5303
+* fix: artifact render error by @mayfwl in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5306
+* Update README.md by @ElricLiu in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5309
+* feat: add indexDB by @Dogtiti in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5324
+* fix: right click by @Dogtiti in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5335
+* fix: hydrated for indexedDB by @Dogtiti in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5356
+* Feature plugin (GPTs like action based on function call) by @lloydzhou in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5331
+* fix: update package version by @Kosette in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5375
+
+## New Contributors
+* @zhangjian10 made their first contribution in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5288
+* @Movelocity made their first contribution in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5274
+* @Kosette made their first contribution in https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/pull/5375
+
+**Full Changelog**: https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/compare/v2.14.2...v2.15.0
+
+---
+
+> **Source** [ChatGPTNextWeb/ChatGPT-Next-Web](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web) · `v2.15.0` · 2024-09-06 · [upstream release](https://github.com/ChatGPTNextWeb/NextChat/releases/tag/v2.15.0)
+
+*Mirrored verbatim for indexing. All rights belong to the upstream project.*

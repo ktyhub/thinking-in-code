@@ -1,0 +1,266 @@
+---
+title: "seatunnel 2.3.6"
+project: "seatunnel"
+repo: "apache/seatunnel"
+tag: "2.3.6"
+published: "2024-08-02"
+type: "patch"
+lang: "en"
+---
+
+# seatunnel 2.3.6
+
+# 2.3.6 Release Note
+
+## Bug fix
+
+### Core
+- [Fix][Flink]Hotfix flink checkpoint default value (#7040)
+- [Hotfix][Core] Fix the NullPointException for the json config of the job without pluginname (#6815)
+- [Fix][Dist] Remove aws jar dependency in release package (#7257)
+
+### Connectors
+- [Fix][Connector-V2] The isNullable attribute is true when the primary key field in the Paimon table converts the Column object. #7231 (#7242)
+- [Fix][Connector kafka]Fix Kafka consumer stop fetching after TM node restarted (#7233)
+- [Fix] Fix Hana type converter decimal scale is 0 convert to int error (#7167)
+- [BugFix][Connector-V2][Maxcompute]fix:Maxcompute sink can't map field(#7164) (#7168)
+- [Fix][Connector-V2] Fix kafka batch mode can not read all message (#7135)
+- [Fix][Connector-V2][Elasticsearch]Fix sink configuration for DROP_DATA (#7124)
+- [Fix][Connector-V2][CDC] SeaTunnelRowDebeziumDeserializationConverters NPE (#7119)
+- [Hotfix][Connector-V2] fix rabbit checkpoint exception in Flink mode (#7108)
+- [Fix][Connector-V2] Fix starrocks Content-Length header already present error (#7034)
+- [Hotfix][MySQL-CDC] Fix read gbk varchar chinese garbled characters (#7046)
+- [Hotfix][Hive Connector] Fix Hive hdfs-site.xml and hive-site.xml not be load error (#7069)
+- [Fix] hive load hive_site_path and hdfs_site_path too late (#7017)
+- [Fix] fix pgsql create table comment special string bug (#7022)
+- [Fix] Fix `plugin_config` (#7104)
+- [connector-jdbc][bugfix] fix sqlServer create table comment special string bug (#7024)
+- [connector-jdbc][bugfix] fix oracle create table comment special string bug (#7012)
+- [Hotfix][CDC] Fix split schema change stream (#7003)
+- [bugfix] fix mysql create table comment special string bug (#6998)
+- [Paimon]support projection for paimon source (#6343)
+- [bugfix][connector-mongodb] fix mongodb null value write (#6967)
+- [Hotfix][Connector-V2][kafka]Kafka consumer group automatically commits offset logic error fix (#6961)
+- [Bug] [connector-hive] Eanble login with kerberos for hive (#6893)
+- [Bug][Connector-Iceberg]fix create iceberg v2 table with pks (#6895)
+- [Fix] correct the typo of kudu kerberos config (#6905)
+- [Hotfix][Connector-V2] Close the tableWrite when task is close (#6897)
+- [Fix][Connector-V2] Field information lost during Paimon DataType and SeaTunnel Column conversion (#6767)
+- [Hotfix][Connector-V2] Fix the batch write with paimon (#6865)
+- [Hotfix][Jdbc] Fix oracle savemode create table (#6651)
+- [bugFix][Connector-V2][Doris] The multi-FE configuration is supported (#6341)
+- [Hotfix][Postgres-CDC/OpenGauss-CDC] Fix read data missing when restore (#6785)
+- [Fix] Fix HttpSource bug (#6824)
+- [Hotfix][Jdbc/CDC] Fix postgresql uuid type in jdbc read (#6684)
+- [Hotfix][Dist] Add oracle cdc (#6818)
+- [Fix] fix Debezium conf "key_convert_schemas.enable" set false lead to nullPointException (#6809)
+- [Fix][MySQL]: Fix MySqlTypeConverter could not be instantiated (#6781)
+- [Fix][Connector-V2] Remove Some Incorrect Comments and Properties in ElasticsearchCommitInfo
+- [Hotfix][Jdbc] Fix table/query columns order merge for jdbc catalog (#6771)
+- [Fix][KuduCatalogFactory]: Fix KuduCatalogFactory.optionRule() will throw an Exception (#6787)
+- [Bug Fix] Sink Doris error status(#6753) (#6755)
+- [Bug][Improve][Connector-v2][ElasticsearchSource] Fix behavior when source empty，Support SourceConfig.SOURCE field empty. (#6425)
+- [Fix] Fix Oracle type converter handle negative scale in number type (#6758)
+- [HiveSink]Fix the risk of resource leakage. (#6721)
+- [bigfix][S3 File]:Change the [SCHEMA] attribute of the [S3CONF class] to be non-static to avoid being reassigned after deserialization (#6717)
+- [Fix][Connector-v2] Fix the sql statement error of create table for doris and starrocks (#6679)
+- [Fix][connector-rocketmq] commit a correct offset to broker & reduce ThreadInterruptedException log (#6668)
+- [Fix][Connector-V2] Fix doris TRANSFER_ENCODING header error (#7267)
+
+### Transformer
+- [Fix][Transform] Fix sql transform lose source type and options (#6855)
+
+### Zeta(ST-Engine)
+- [Hotfix][Zeta] Fix taskgroup failed log lost (#7241)
+- [Fix][Zeta] Fix release slot resource twice (#7236)
+- [Fix][Zeta] Fix hybrid deployment can not get worker when init (#7235)
+- [HotFix] [Remote Debug] Description When remote debug is enabled, the Seatunel Server 5801 port is not listening properly (#7206)
+- [Fix][RestApi] Fix hazelcast/rest/maps/submit-job return a wrong jobId (#7154)
+- [Hotfix][Zeta] Fix that batch tasks cannot be stopped after retrying (#7083)
+- [Fix][Zeta] Fix env jars not working on zeta (#7035)
+- [Fix] revert IMAP cache data field type to compatible with old version (#7001)
+- [Hotfix][Zeta] Fix `generate_client_protocol.sh` (#6991)
+- [Hotfix][Zeta] Fix job crash when schema changing on multiple parallel readers (#6977)
+- [Fix] Fix Metrics lost data bug (#6976)
+- [Hotfix][Zeta] Fix okhttp connection leak in event reporter (#6945)
+- [Fix] Fix job will never cancel success when JobMaster init not complete (#6885)
+- [Hotfix][Zeta] Fix savepoint execute result (#6850)
+- [Fix][Zeta] Increase the log level when waitForJobComplete fails (#6827)
+- [Fix] Fix MultiTableWriterRunnable can not catch Throwable error (#6734)
+- [HotFix][zeta]: Fix loss job (#6759) (#6807)
+- [fix][zeta] fix can't release resource issue (#6763)
+- [Fix][Script] Fix lose jvm option when jvm_options file not end with `\n` (#6693)
+
+### E2E
+- [Fix][E2E] Fix classloader number (#7209)
+- [CI] Fix k8s engine it not runs when only test case changed (#7122)
+- [Fix] Fix iceberg e2e image tag (#7189)
+- [CI][Test] Fix engine-k8s-it failed (#7101)
+- [CI] connector-kafka-e2e , connector-rocketmq-e2e module runs repeatedly #7090 (#7091)
+- [E2E][HBase]Refactor hbase e2e (#6859)
+- [Fix] Fix ConnectorSpecificationCheckTest failed (#6828)
+- [CI] Fix FixSlotResourceTest testNotEnoughResource test error (#6820)
+
+## Improve
+
+### Core
+- [Improve][Core] Move MultiTableSink to seatunnel-api module (#7243)
+- [Improve] Bump org.xerial.snappy:snappy-java (#7144)
+- [Improve] delete log for protect user privacy (#6987)
+- [Improve][Log] Auto refresh log configuration (#6915)
+- [Improve] [shell] Set the env SEATUNNEL_HOME automatically (#6924)
+- [Improve] Optimize log display during startup command (#6816)
+
+### Connectors
+- [Improve][Doris Connector] Unified serialization method,Use RowToJsonConverter and TextSerializationSchema (#7229)
+- [Improve][Jdbc] Support write unicode text into sqlserver (#7159)
+- [Improve] Improve error message when can not parse datetime value (#7181)
+- [Improve][Hive] Close resources when exception occurs (#7205)
+- [Improve][Jdbc] Remove user info in catalog-table options (#7178)
+- [Improve][Connector-V2] Add support for MySQL 8.4 (#7151)
+- [Improve][hbase] The specified column is written to the specified column family (#5234)
+- [Improve] Change catalog table log to debug level (#7136)
+- [Improve][Connector-V2] Support schema evolution for mysql-cdc and mysql-jdbc (#6929)
+- [Improve][Redis] Redis reader use scan cammnd instead of keys, single mode reader/writer support batch (#7087)
+- [Improve][Connector-V2][MongoDB] Support to convert to double from any numeric type (#6997)
+- [Improve][[Jdbc]sink sql support custom field.(#6515) (#6525)
+- [Improve][Connector-V2][Iceberg] Add hadoop s3 catalog e2e testcase (#5745)
+- [Improve][Connector-V2] Clean key name in catalog table (#6942)
+- [Improve][File Connector]Improve xml read code & fix can not use true for a boolean option (#6930)
+- [Improve][Files] Support write fixed/timestamp as int96 of parquet (#6971)
+- [Improve][Paimon] Add check for the base type between source and sink before write. (#6953)
+- [Improve][Connector-V2] Improve the paimon source (#6887)
+- [Improve] Make ClickhouseFileSinker support tables containing materialized columns (#6956)
+- [Improve][Jdbc] Quotes the identifier for table path (#6951)
+- [Improve][CDC] Bump the version of debezium to 1.9.8.Final (#6740)
+- [Improve][Connector-V2] Support hive catalog for paimon sink (#6833)
+- [Improve][CDC] Close idle subtasks gorup(reader/writer) in increment phase (#6526)
+- [Improve][JDBC Source] Fix Split can not be cancel (#6825)
+- [Improve] Add conditional of start.mode with timestamp in mongo cdc option rule (#6770)
+- [Improve] Improve doris create table template default value (#6720)
+- [Improve] [Clickhouse] Remove check when set allow_experimental_lightweight_delete false(#6727) (#6728)
+- [Improve] Improve read table schema in cdc connector (#6702)
+- [Improve][mysql-cdc] Fallback to desc table when show create table failed (#6701)
+- [Improve][Connector-v2] The hive connector support multiple filesystem (#6648)
+- [Improve][Hive] udpate hive3 version (#6699)
+- [Improve][mysql-cdc] Support mysql 5.5 versions (#6710)
+- [Improve] Update aws-java-sdk-budle version to fix job can not run bug
+- [Improve] Improve doris stream load client side error message (#6688)
+- [Improve][Connector] Add some sqlserver IDENTITY type for catalog (#6822)
+- [Improve][Connector-v2] Optimize the count table rows for jdbc-oracle and oracle-cdc (#7248)
+
+### Transformer
+- [Improve][Transform-V2] Remove SQL query validation on table name (#7020)
+
+### Zeta(ST-Engine)
+- [Improve][Restapi] Add ip and port to monitoring information (#7203)
+- [Improve][Zeta] Add check for submit duplicate job id (#7021)
+- [Improve][Zeta] Add retry when request slot on resource manager (#7049)
+- [Improve][Zeta] Fix JobMaster reset app classloader twice (#7063)
+- [Improve][Engine] Support custom job id for rest-api named submit-job (#7053)
+- [Improve][Zeta] Clean checkpoint file when job FINISHED/CANCELED (#6938)
+- [Improve][Zeta] Support close idle task for multiple sinks (#6864)
+- [Improve][Zeta] Move SaveMode behavior to master (#6843)
+- [Improve] Add custom job id arg in client (#6943)
+- [Improve][Zeta] when job finished, the checkpoint won't write to file (#6674)
+
+### CI
+- [Improve][CI] Add milvus to label (#7186)
+- [Improve][CI] Add auto label action (#7174)
+- [Improve][E2E][Doris] Add no schema test case for connector-doris-e2e (#7076)
+- [Improve] enable iceberg schema change test (#6711)
+
+### OTHER
+- [Chore] remove useless codes (#7110)
+- [Typo] typo the hint of savemode execution location (#7100)
+- [Chore] remove useless interface (#6746)
+
+## Feature
+
+### Core
+- [Feature][Core] Support using upstream table placeholders in sink options and auto replacement (#7131)
+- [Feature][Core] Add a test case for  dynamic custom parameters (#7128)
+- [Feature][SQL Config] Add SQL config adapter (#6757)
+- [Feature][starter] support user define parameter on spark/flink engine (#6387)
+
+### Connectors
+- [Feature][Connector-V2][Milvus] Support Milvus source & sink (#7158)
+- [Feature][Connector-V2] [Hudi]Add hudi sink connector (#4405)
+- [Feature][Connector-V2] Support jdbc hana catalog and type convertor (#6950)
+- [Feature][Connector-V2][Clickhouse] Add clickhouse.config to the source connector (#7143)
+- [feature][Connector-file-local] add save mode function for localfile (#7080)
+- [feature][connector-v2-hbase-sink] Support Connector v2 HBase sink TTL data writing (#7116)
+- [Feature][connector][kafka] Support read Maxwell format message from kafka #4415 (#4428)
+- [Feature][Elasticsearch] Support multi-table sink write #7041 (#7052)
+- [Feature][Druid]Support multi table for druid sink (#7023)
+- [Feature][Connector] Add druid sink connector (#6346)
+- [Feature][Connector-V2] Add Huawei Cloud OBS connector (#4578)
+- [Feature][Jdbc] Support redshift catalog (#6992)
+- [Feature][Connector-V2] Supports the transfer of any file (#6826)
+- [Feature][Kafka] Support multi-table source read  (#5992)
+- [Feature][S3 File] Make S3 File Connector support multiple table write (#6698)
+- [Feature][Doris] Add Doris type converter (#6354)
+- [Feature][Jdbc] Support the jdbc connector for InterSystems IRIS (#6797)
+- [Feature][Connector-V2] Iceberg-sink supports writing data to branches (#6697)
+- [Feature][Connector-V2] Add web3j source connector (#6598)
+- [Feature][Connector-V2]Support StarRocks Fe Node HA
+- [Feature] Hive Source/Sink support multiple table (#5929)
+- [Connector]Add hbase source connector (#6348)
+- [Feature][Jdbc] Support hive compatibleMode add inceptor dialect (#7262)
+
+### Transformer
+- [Feature][Transform] DynamicCompile add transform  (#7170)
+- [Feature][Transform-V2 Filter] support exclude columns in the filter transform (#6960)
+- [Feature][Transforms] Support is_date function of sql (#6966)
+
+### Zeta(ST-Engine)
+- [Feature][RestAPI] overview support tag filter (#7173)
+- [Feature][Zeta] Add Master and Worker split mode deployment (#6947)
+- [Feature][Zeta] Add tag to node used to filter worker when submit job (#7045)
+- [Feature][RestAPI] Add overview api (#6883)
+- [Feature][Engine] Change the name of the rest-api interface for returning job info (#6813)
+- [feature][CheckPoint-stroage]:Added Disable cache configuration. (#6718)
+- [Feature][Zeta] Added the metrics information of table statistics in multi-table mode (#7212)
+
+## Docs
+- [Improve][Doc] Add IMap OSS config jars into document (#7029)
+- [Chore][NOTICE] Correct year in NOTICE file (#7232)
+- [Docs] Update engine related docs info (#7228)
+- [Doc] hdfs file doc correct (#7216)
+- [Docs] Update contribution and readme related docs info (#7188)
+- [Docs] Update transform about and faq related docs info (#7187)
+- [Docs]translate clickhousefile,phoenix,rabbitmq,starrocks sink doc into chinese (#7015)
+- [Docs] Update concept related docs info (#7184)
+- [Docs] Update quick start v2 related docs info (#7161)
+- [Docs][connector-sink] add Docs connector v2 sink (#7097)
+- [Docs] update rest-api doc (#7111)
+- [Doc] correct the document (#7099)
+- [Doc] Add engine start parameter explanation (#7062)
+- [Doc] Fix sink jdbc doc (#6459)
+- [Doc] fix HdfsFile demo config (#6921)
+- [Doc][Improve] connector-v2 clickhouse/hbase/pulsar sink support chinese (#6811)
+- [Doc][Improve] doris sink support chinese (#6803)
+- [Doc][improve] update Connector-v2-release-state (#6801)
+- [ci][doc] Update node version (#6796)
+- [Doc][Improve] Support chinese for sinks (#6663)
+- [Doc][Improve] Remove unnecessary commas to make sentences smoother (#6783)
+- [Doc][Improvement] Add Support Chinese for Config-Encryption-Decryption.md (#6715)
+- [Doc][Improve] Intro the multi-line text feature in document (#6713)
+- [Improve][Document] Fix Postgre to PostgreSQL in Postgre-CDC.md file (#7112)
+- [Improve][Doc] Improve DingTalk doc (#7075)
+- [Improve][Doc] Fix snowflake jdbc url with emoji (#7061)
+- [Hotfix][DOC] Fix invalid links (#7018)
+- [Feature][doc][Connector-V2][Common] Add Common connector documentation (#5453)
+- [Document] fix starrocks doc demo config (#6918)
+- [Hotfix][Docs] Unified debezium document addresses point to debezium github to prevent dead links (#6892)
+- [Fix][DOC] Fix doc tip and caution (#6839)
+- [Improve][Doc] Add sql-config doc into sidebars.js (#6836)
+- [Improve] Update doris sink template default value in doc (#6810)
+- [fix][doc] fix dead link (#6764)
+- [Improve][Zeta] add document for Minio as checkpoint storage for zeta tasks (#6732)
+
+---
+
+> **Source** [apache/seatunnel](https://github.com/apache/seatunnel) · `2.3.6` · 2024-08-02 · [upstream release](https://github.com/apache/seatunnel/releases/tag/2.3.6)
+
+*Mirrored verbatim for indexing. All rights belong to the upstream project.*

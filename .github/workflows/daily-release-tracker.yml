@@ -1,6 +1,7 @@
 name: daily-release-tracker
 
-# 每日采集追踪仓库的新 Release，翻译为中文并生成站点页面。
+# 每日采集追踪仓库的新 Release：英文原文写入 docs/release_note（canonical），
+# 同时生成中文译文写入 docs/zh/release_note。
 # push 到 main 后由 ci workflow 自动部署到 www.ktyhub.com，
 # 新页面自动进入 sitemap.xml，实现每日新增 SEO 内容。
 
@@ -26,10 +27,10 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: 采集并翻译最新 Release
+      - name: 采集最新 Release（英文原文 + 中文译文）
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 提升速率到 1000+/小时
-        run: python scripts/release-tracker/collect.py
+        run: python scripts/release-tracker/collect.py --translate
 
       - name: 提交并推送
         run: |
@@ -37,7 +38,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [[ -n $(git status --porcelain) ]]; then
             git add -A
-            git commit -m "chore(release-tracker): 每日采集翻译最新 Release ($(date -u +%F))"
+            git commit -m "chore(release-tracker): 每日采集最新 Release ($(date -u +%F))"
             git push
             echo "已提交 $(git rev-parse --short HEAD)"
           else

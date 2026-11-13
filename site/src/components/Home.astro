@@ -1,0 +1,147 @@
+---
+import Shell from "../layouts/Shell.astro";
+import Feed from "./Feed.astro";
+import { t, localePath, type Locale } from "../lib/i18n";
+import { stats, allProjects, datedReleases, diversify, allReleases, projectHref } from "../lib/registry";
+import { num, longDate } from "../lib/format";
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+
+const s = stats();
+const feedItems = diversify(datedReleases(locale), 2).slice(0, 14);
+const projects = allProjects().slice(0, 12);
+const total = allReleases().length;
+
+// 首页推荐几个项目，点击直接进搜索
+const suggested = ["dubbo", "spring-boot", "kubernetes", "redis", "pulsar"].filter((slug) =>
+  allProjects().some((p) => p.slug === slug)
+);
+
+const steps = [
+  { k: t(locale, "method.step1.title"), v: t(locale, "method.step1.body") },
+  { k: t(locale, "method.step2.title"), v: t(locale, "method.step2.body") },
+  { k: t(locale, "method.step3.title"), v: t(locale, "method.step3.body") },
+];
+
+const jsonLd = {
+  "@type": "CollectionPage",
+  "@id": `${new URL(Astro.url.pathname, Astro.site).href}#page`,
+  name: `${t(locale, "section.latest")} — NextStack`,
+  inLanguage: locale === "en" ? "en" : "zh-CN",
+  isPartOf: { "@id": "https://www.ktyhub.com/#website" },
+};
+---
+
+<Shell locale={locale} active="releases" jsonLd={jsonLd}>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow">{t(locale, "hero.eyebrow")}</p>
+        <h1>{t(locale, "hero.title")}</h1>
+        <p class="hero-lead">
+          {t(locale, "hero.lead", { projects: num(s.projects) })}
+        </p>
+
+        <div class="hero-search" data-search-open role="button" tabindex="0" aria-label={t(locale, "search.open")}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none">
+            <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path>
+          </svg>
+          <input type="text" placeholder={t(locale, "search.placeholder")} readonly tabindex="-1" aria-hidden="true" />
+          <span class="kbd">⌘K</span>
+        </div>
+
+        {suggested.length > 0 && (
+          <div class="suggest">
+            <span>{t(locale, "hero.suggest")}</span>
+            {suggested.map((slug) => (
+              <a href={`${localePath(locale, "/releases")}?project=${slug}`}>{slug}</a>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <aside class="indexcard">
+        <div class="indexcard-hd">
+          <span>Index</span>
+          <span class="indexcard-live"><i class="dot"></i>live</span>
+        </div>
+        <dl style="margin:0">
+          <div class="indexcard-row">
+            <dt>{t(locale, "stat.projects")}</dt>
+            <dd>{num(s.projects)}</dd>
+          </div>
+          <div class="indexcard-row">
+            <dt>{t(locale, "stat.releases")}</dt>
+            <dd>{num(total)}</dd>
+          </div>
+          <div class="indexcard-row">
+            <dt>{t(locale, "stat.week")}</dt>
+            <dd>{num(s.week)}</dd>
+          </div>
+        </dl>
+        <div class="indexcard-ft">
+          <span>{t(locale, "stat.sync")}</span>
+          <span>{s.latestDate || t(locale, "stat.sync.never")}</span>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-top:var(--s8)">
+    <div class="section-hd">
+      <div>
+        <h2>{t(locale, "section.latest")}</h2>
+        <p class="sub">{t(locale, "section.latest.sub")}</p>
+      </div>
+      <a class="more" href={localePath(locale, "/releases")}>{t(locale, "action.all")} →</a>
+    </div>
+    <Feed releases={feedItems} locale={locale} />
+  </section>
+
+  <section class="wrap section">
+    <div class="section-hd">
+      <div>
+        <h2>{t(locale, "section.projects")}</h2>
+        <p class="sub">{t(locale, "section.projects.sub")}</p>
+      </div>
+      <a class="more" href={localePath(locale, "/projects")}>{t(locale, "action.viewall", { n: num(s.projects) })} →</a>
+    </div>
+
+    <div class="pgrid">
+      {projects.map((p) => (
+        <a class="pcard" href={projectHref(p.slug, locale)}>
+          <span class="pcard-name">{p.name}</span>
+          <span class="pcard-repo">{p.repo || "—"}</span>
+          <span class="pcard-meta">
+            <span><b>{p.count}</b> {locale === "en" ? "releases" : "个版本"}</span>
+            <span class="mono" style="font-size:11px">{p.latest?.date || ""}</span>
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap section" style="padding-top:0">
+    <div class="section-hd">
+      <div>
+        <h2>{t(locale, "nav.method")}</h2>
+        <p class="sub">{t(locale, "method.lead")}</p>
+      </div>
+      <a class="more" href={localePath(locale, "/method")}>{t(locale, "action.view")} →</a>
+    </div>
+    <div class="pgrid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+      {steps.map((st, i) => (
+        <div class="pcard" style="min-height:0">
+          <span class="pcard-name" style="color:var(--ink-3);font-size:11px;letter-spacing:0.12em;text-transform:uppercase">
+            {String(i + 1).padStart(2, "0")}
+          </span>
+          <span style="font-size:15px;font-weight:600;letter-spacing:-0.01em">{st.k}</span>
+          <span style="font-size:13px;color:var(--ink-3);line-height:1.55;margin-top:2px">{st.v}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+</Shell>

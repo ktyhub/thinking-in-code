@@ -1,0 +1,93 @@
+---
+import Shell from "../layouts/Shell.astro";
+import Feed from "./Feed.astro";
+import { t, localePath, type Locale } from "../lib/i18n";
+import { datedReleases, diversify, allProjects, stats } from "../lib/registry";
+import { num } from "../lib/format";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const LIMIT = 150;
+
+const all = datedReleases(locale);
+const diversified = diversify(all, 3);
+const items = diversified.slice(0, LIMIT);
+const projects = allProjects();
+const s = stats();
+
+const types = (["major", "minor", "patch", "pre"] as const).filter((ty) =>
+  all.some((r) => r.type === ty)
+);
+
+const title = t(locale, "feed.title");
+---
+
+<Shell
+  locale={locale}
+  title={title}
+  description={`${t(locale, "feed.lead")} ${num(all.length)} release notes across ${num(s.projects)} projects.`}
+  active="releases"
+>
+  <div class="wrap" style="padding-top:var(--s10);padding-bottom:var(--s6)">
+    <p class="eyebrow">Index</p>
+    <h1 style="font-size:clamp(1.9rem,4vw,2.6rem);letter-spacing:-0.04em;margin-top:var(--s4)">{title}</h1>
+    <p class="hero-lead" style="margin-top:var(--s3);font-size:1rem">{t(locale, "feed.lead")}</p>
+  </div>
+
+  <div class="filterbar">
+    <div class="wrap filterbar-inner">
+      <label class="field">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4)">
+          <path d="M4 6h16M7 12h10M10 18h4"></path>
+        </svg>
+        <select data-filter="project" aria-label={t(locale, "feed.filter.project")}>
+          <option value="">{t(locale, "feed.filter.project")}</option>
+          {projects
+            .filter((p) => all.some((r) => r.projectSlug === p.slug))
+            .map((p) => (
+              <option value={p.slug}>{p.name} ({p.count})</option>
+            ))}
+        </select>
+      </label>
+
+      <label class="field">
+        <select data-filter="type" aria-label={t(locale, "feed.filter.type")}>
+          <option value="">{t(locale, "feed.filter.type")}</option>
+          {types.map((ty) => (
+            <option value={ty}>{t(locale, `type.${ty}`)}</option>
+          ))}
+        </select>
+      </label>
+
+      <label class="field field--grow">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4)">
+          <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path>
+        </svg>
+        <input type="search" data-filter="q" placeholder={t(locale, "feed.filter.search")} aria-label={t(locale, "feed.filter.search")} />
+      </label>
+
+      <span class="count" data-count>{items.length}</span>
+    </div>
+  </div>
+
+  <div class="wrap has-filterbar">
+    <Feed releases={items} locale={locale} />
+    {diversified.length > items.length && (
+      <p class="muted" style="margin-top:var(--s6);font-size:13px">
+        {t(locale, "feed.demo", { n: items.length })} {t(locale, "feed.older")}
+      </p>
+    )}
+  </div>
+</Shell>
+
+<style>
+  .has-filterbar :global(.month) {
+    position: static;
+  }
+  .has-filterbar :global(.feed) {
+    margin-top: var(--s2);
+  }
+</style>
