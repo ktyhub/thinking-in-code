@@ -1,0 +1,45 @@
+name: daily-release-tracker
+
+# 每日采集追踪仓库的新 Release，翻译为中文并生成站点页面。
+# push 到 main 后由 ci workflow 自动部署到 www.ktyhub.com，
+# 新页面自动进入 sitemap.xml，实现每日新增 SEO 内容。
+
+on:
+  schedule:
+    - cron: "30 1 * * *" # UTC 01:30 = 北京时间 09:30
+  workflow_dispatch: {} # 支持手动触发
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-tracker
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: 采集并翻译最新 Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 提升速率到 1000+/小时
+        run: python scripts/release-tracker/collect.py
+
+      - name: 提交并推送
+        run: |
+          git config user.name "release-tracker[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [[ -n $(git status --porcelain) ]]; then
+            git add -A
+            git commit -m "chore(release-tracker): 每日采集翻译最新 Release ($(date -u +%F))"
+            git push
+            echo "已提交 $(git rev-parse --short HEAD)"
+          else
+            echo "没有新的 Release，跳过提交"
+          fi
