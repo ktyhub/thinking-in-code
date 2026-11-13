@@ -8,7 +8,15 @@
 
 > 由 IDEA 插件 Stags 演化而来的独立 macOS 桌面应用，帮你追踪关注的 GitHub 仓库，不打断工作流。
 
-![Stags Tracker](https://img.shields.io/badge/平台-macOS%202023%2B-blue) ![Version](https://img.shields.io/badge/版本-1.0.0-green) ![License](https://img.shields.io/badge/许可-MIT-yellow)
+<center markdown>
+
+![Stags Tracker 应用图标](img/stags-tracker-icon.png){ width="160" }
+
+**Stags Tracker**
+
+</center>
+
+![Stags Tracker](https://img.shields.io/badge/平台-macOS%2010.15%2B-blue) ![Version](https://img.shields.io/badge/版本-1.0.0-green) ![License](https://img.shields.io/badge/许可-MIT-yellow)
 
 ### ✨ 核心功能
 
