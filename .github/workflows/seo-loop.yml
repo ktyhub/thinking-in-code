@@ -70,11 +70,14 @@ jobs:
 
       - name: 运行闭环
         run: |
-          FLAG=""
-          if [ "$DRY_RUN" = "true" ]; then FLAG="--no-telemetry"; fi
-          # 单条规则出错不应让整轮失败；真正的写入错误会以非零退出
+          # dry_run 的语义是「不写盘」，不是「不采数据」——不采数据就看不到
+          # 提案，等于什么都没验证。采集照做，只是不加 --apply。
           set -o pipefail
-          python3 scripts/release-tracker/loop.py --apply $FLAG | tee /tmp/report.txt
+          if [ "$DRY_RUN" = "true" ]; then
+            python3 scripts/release-tracker/loop.py | tee /tmp/report.txt
+          else
+            python3 scripts/release-tracker/loop.py --apply | tee /tmp/report.txt
+          fi
 
       - name: 提交变更
         run: |
