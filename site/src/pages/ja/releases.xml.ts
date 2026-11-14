@@ -3,7 +3,7 @@ import { datedReleases, hrefEn } from "../../lib/registry";
 import { t } from "../../lib/i18n";
 import { summaryFor } from "../../lib/summaries";
 
-const SITE = "https://www.ktyhub.com";
+const SITE = "https://www.stags.cn";
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 

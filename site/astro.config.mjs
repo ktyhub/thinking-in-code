@@ -38,7 +38,14 @@ function isAliasCopy(pathname) {
 }
 
 export default defineConfig({
-  site: "https://www.ktyhub.com",
+  /**
+   * 必须是站点真实对外域名。
+   * canonical、hreflang、sitemap、JSON-LD、og:image 全部基于它生成，
+   * 写错等于把整站权重指向别人的域名。当前 GitHub Pages 的自定义域名是
+   * www.stags.cn（www.ktyhub.com 已被另一个站点占用）。
+   * 换域名时：改这里 + site/public/CNAME + 全站字面量，三处必须一致。
+   */
+  site: "https://www.stags.cn",
   trailingSlash: "ignore",
   integrations: [
     sitemap({
