@@ -289,7 +289,10 @@ function readRelease(file: RawFile): Parsed | null {
 
   const fileName = path.basename(file.abs, ".md");
   const prefix = new RegExp(`^${project.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}[_-]`, "i");
-  let version = (fm.tag ?? fm.version ?? "").trim();
+  // version 是采集器归一化后的展示用版本号，优先于原始 tag：
+  // langchain 这类 monorepo 的 tag 是 `langchain-openai==1.8.0`，
+  // 直接用 tag 会被下面的前缀剥离规则切成 `openai_1.8.0`。
+  let version = (fm.version ?? fm.tag ?? "").trim();
   if (!version) {
     version = fileName.replace(prefix, "");
     if (version === fileName && file.rel.includes("/")) {

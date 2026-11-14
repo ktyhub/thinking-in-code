@@ -3,10 +3,10 @@ title: "gpt4free v8.8.16"
 project: "gpt4free"
 repo: "xtekky/gpt4free"
 tag: "v8.8.16"
+version: "v8.8.16"
 published: "2026-11-01"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/xtekky/gpt4free/compare/v8.8.15...v8.8.16"
 ---
 
 # gpt4free v8.8.16

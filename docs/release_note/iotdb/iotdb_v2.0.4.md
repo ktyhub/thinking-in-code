@@ -3,10 +3,10 @@ title: "iotdb v2.0.4"
 project: "iotdb"
 repo: "apache/iotdb"
 tag: "v2.0.4"
+version: "v2.0.4"
 published: "2025-07-09"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/iotdb/compare/v2.0.3...v2.0.4"
 ---
 
 # iotdb v2.0.4

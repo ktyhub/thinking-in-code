@@ -3,10 +3,10 @@ title: "rocketmq rocketmq-all-5.3.0"
 project: "rocketmq"
 repo: "apache/rocketmq"
 tag: "rocketmq-all-5.3.0"
+version: "rocketmq-all-5.3.0"
 published: "2024-07-17"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/rocketmq/compare/rocketmq-all-5.2.0...rocketmq-all-5.3.0"
 ---
 
 # rocketmq rocketmq-all-5.3.0

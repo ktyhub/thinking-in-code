@@ -3,10 +3,10 @@ title: "anything-llm v1.18.0"
 project: "anything-llm"
 repo: "Mintplex-Labs/anything-llm"
 tag: "v1.18.0"
+version: "v1.18.0"
 published: "2026-10-13"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/Mintplex-Labs/anything-llm/compare/v1.17.0...v1.18.0"
 ---
 
 # anything-llm v1.18.0

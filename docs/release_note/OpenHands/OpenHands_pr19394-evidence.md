@@ -1,8 +1,9 @@
 ---
 title: "OpenHands pr19394-evidence"
 project: "OpenHands"
-repo: "All-Hands-AI/OpenHands"
+repo: "OpenHands/OpenHands"
 tag: "pr19394-evidence"
+version: "pr19394-evidence"
 published: "2026-11-05"
 type: "release"
 lang: "en"
@@ -28,6 +29,6 @@ Signing + notarization is tracked in OpenHands/OpenHands#16774.
 
 ---
 
-> **Source** [All-Hands-AI/OpenHands](https://github.com/All-Hands-AI/OpenHands) · `pr19394-evidence` · 2026-11-05 · [upstream release](https://github.com/OpenHands/OpenHands/releases/tag/pr19394-evidence)
+> **Source** [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands) · `pr19394-evidence` · 2026-11-05 · [upstream release](https://github.com/OpenHands/OpenHands/releases/tag/pr19394-evidence)
 
 *Mirrored verbatim for indexing. All rights belong to the upstream project.*

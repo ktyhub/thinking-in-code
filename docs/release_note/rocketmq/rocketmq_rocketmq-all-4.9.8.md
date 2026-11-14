@@ -3,10 +3,10 @@ title: "rocketmq rocketmq-all-4.9.8"
 project: "rocketmq"
 repo: "apache/rocketmq"
 tag: "rocketmq-all-4.9.8"
+version: "rocketmq-all-4.9.8"
 published: "2024-02-22"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/rocketmq/compare/rocketmq-all-4.9.7...rocketmq-all-4.9.8"
 ---
 
 # rocketmq rocketmq-all-4.9.8
