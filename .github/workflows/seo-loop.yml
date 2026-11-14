@@ -29,6 +29,13 @@ permissions:
 jobs:
   loop:
     runs-on: ubuntu-latest
+    # secrets 不能直接写在 if: 里（GitHub 在条件求值阶段拿不到它），
+    # 必须先经 env 中转。顺带避免把密钥字符串拼进 run: 脚本——那会把
+    # 密钥变成可注入的 shell 片段。
+    env:
+      GSC_SA_JSON: ${{ secrets.GSC_SA_JSON }}
+      BING_WEBMASTER_KEY: ${{ secrets.BING_WEBMASTER_KEY }}
+      DRY_RUN: ${{ inputs.dry_run || 'false' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -40,33 +47,33 @@ jobs:
 
       # 只有配了服务账号才装签名库；没配就走 Bing / 手工导出通道
       - name: 准备 GSC 凭据
-        if: ${{ secrets.GSC_SA_JSON != '' }}
+        if: env.GSC_SA_JSON != ''
         run: |
-          echo '${{ secrets.GSC_SA_JSON }}' > /tmp/gsc-sa.json
+          printf '%s' "$GSC_SA_JSON" > /tmp/gsc-sa.json
+          chmod 600 /tmp/gsc-sa.json
           echo "GSC_SERVICE_ACCOUNT=/tmp/gsc-sa.json" >> "$GITHUB_ENV"
+          pip install --quiet cryptography
 
-      - name: 安装依赖
-        if: ${{ secrets.GSC_SA_JSON != '' }}
-        run: pip install --quiet cryptography
-
-      # 需要 dist 里的 URL 清单来判断哪些页面零展示（判死规则）
+      # 判死规则要有全量 URL 清单才能找出「已索引但零展示」的页面。
+      # 优先读线上 sitemap，读不到就跳过该规则（decide 内部会降级）。
       - name: 取当前线上 URL 清单
         run: |
-          curl -sf https://www.stags.cn/sitemap-index.xml -o /tmp/smi.xml || true
           mkdir -p site/dist
-          if [ -f /tmp/smi.xml ]; then
+          if curl -sf https://www.stags.cn/sitemap-index.xml -o /tmp/smi.xml; then
             for u in $(grep -o '<loc>[^<]*</loc>' /tmp/smi.xml | sed 's/<[^>]*>//g'); do
               curl -sf "$u" -o "site/dist/$(basename "$u")" || true
             done
+            echo "已取 $(ls site/dist | wc -l) 个 sitemap 分片"
+          else
+            echo "线上 sitemap 不可读，本轮跳过判死类规则"
           fi
-          ls site/dist || true
 
       - name: 运行闭环
-        env:
-          BING_WEBMASTER_KEY: ${{ secrets.BING_WEBMASTER_KEY }}
         run: |
           FLAG=""
-          if [ "${{ inputs.dry_run }}" = "true" ]; then FLAG="--no-telemetry"; fi
+          if [ "$DRY_RUN" = "true" ]; then FLAG="--no-telemetry"; fi
+          # 单条规则出错不应让整轮失败；真正的写入错误会以非零退出
+          set -o pipefail
           python3 scripts/release-tracker/loop.py --apply $FLAG | tee /tmp/report.txt
 
       - name: 提交变更
@@ -82,20 +89,15 @@ jobs:
           import json, pathlib
           p = pathlib.Path("data/seo/proposals.json")
           if not p.exists():
-              print("无提案")
+              print("- 无提案")
               raise SystemExit
-          d = json.loads(p.read_text())
-          for a in d.get("actions", []):
+          for a in json.loads(p.read_text()).get("actions", []):
               print(f"- {a['rule']}: {a['target']}")
           PY
           )
           git add -A site/src/data scripts/release-tracker/config.json data/
-          git commit -q -m "chore(loop): 闭环第 ${REV} 轮 — 按搜索表现调整策略
-
-          ${SUMMARY}
-
-          判据与基线见 data/loop-ledger.jsonl，如需回滚：
-          python3 scripts/release-tracker/loop.py rollback <id>"
+          git commit -q -m "chore(loop): 闭环第 ${REV} 轮 — 按搜索表现调整策略" -m "${SUMMARY}" \
+            -m "判据与基线见 data/loop-ledger.jsonl；回滚：python3 scripts/release-tracker/loop.py rollback <id>"
           git push
 
       - name: 报告入摘要
