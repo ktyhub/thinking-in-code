@@ -6,7 +6,7 @@ tag: "v1.2.3"
 published: "2023-12-14"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/alibaba/lowcode-engine/compare/v1.2.2...v1.2.3"
+summary: "docs: add faq-Slot组件渲染报错问题；test(utils): add ut to package/utils；docs: add before start doc；feat(types): add IPublicTypeInstanceOf to prop-types"
 ---
 
 # lowcode-engine v1.2.3

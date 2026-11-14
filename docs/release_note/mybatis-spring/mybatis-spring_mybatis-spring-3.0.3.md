@@ -6,7 +6,7 @@ tag: "mybatis-spring-3.0.3"
 published: "2023-11-21"
 type: "release"
 lang: "en"
-summary: "Here is the complete list of changes."
+summary: "Support processPropertyPlaceHolders option in mapper:scan and @MapperScan #829 · Corrected to set bean class instead of bean class name to factoryBeanObjectType of BeanDefinition attribute #865"
 ---
 
 # mybatis-spring mybatis-spring-3.0.3

@@ -7,6 +7,7 @@ version: "v4.8.2"
 published: "2026-08-07"
 type: "patch"
 lang: "en"
+summary: "chore(deps): bump actions/stale from 10.4.0 to 11.0.0[bot] · chore(deps): bump actions/checkout from 4 to 7[bot]"
 ---
 
 # LocalAI v4.8.2

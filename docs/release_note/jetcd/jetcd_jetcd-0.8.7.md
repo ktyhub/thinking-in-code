@@ -6,7 +6,7 @@ tag: "jetcd-0.8.7"
 published: "2026-08-27"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/etcd-io/jetcd/compare/jetcd-0.8.6...jetcd-0.8.7"
+summary: "build(deps): bump commons-io:commons-io from 2.20.0 to 2.21.0[bot] · build(deps): bump org.testcontainers:testcontainers from 2.0.1 to 2.0.2[bot] · build(deps): bump actions/checkout from 5 to 6[bot]"
 ---
 
 # jetcd jetcd-0.8.7

@@ -7,7 +7,7 @@ version: "v17.14.0"
 published: "2026-11-08"
 type: "minor"
 lang: "en"
-summary: "New features"
+summary: "New optional OCR engine, RapidOCR, which runs PaddleOCR's PP-OCR models on"
 ---
 
 # OCRmyPDF v17.14.0

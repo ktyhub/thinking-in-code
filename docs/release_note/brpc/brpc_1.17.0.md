@@ -6,7 +6,7 @@ tag: "1.17.0"
 published: "2026-05-28"
 type: "minor"
 lang: "en"
-summary: "Apache bRPC 1.17.0 is a feature release centered around performance optimization, highlighted by the introduction of SingleIOBuf for efficient FlatBuffers serialization/deserialization. This release also expands…"
+summary: "Apache bRPC 1.17.0 is a feature release centered around performance optimization, highlighted by the introduction of SingleIOBuf for efficient FlatBuffers serialization/deserialization."
 ---
 
 # brpc 1.17.0

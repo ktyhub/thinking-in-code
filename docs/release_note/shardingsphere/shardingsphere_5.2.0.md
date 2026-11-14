@@ -7,6 +7,7 @@ version: "5.2.0"
 published: "2022-09-08"
 type: "minor"
 lang: "en"
+summary: "Support SQL audit for sharding feature · Support MySQL show processlist and kill process list id feature · Scaling: Add dedicated DistSQL for data migration · Scaling: Basic support migrate data to heterogeneous database"
 ---
 
 # shardingsphere 5.2.0

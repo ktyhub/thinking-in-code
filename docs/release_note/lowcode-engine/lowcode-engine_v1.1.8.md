@@ -6,7 +6,7 @@ tag: "v1.1.8"
 published: "2023-07-07"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/alibaba/lowcode-engine/compare/v1.1.7...v1.1.8"
+summary: "docs: 加入图编排扩展使用说明；feat(renderer-core): optimize the judgment of whether leaf hoc has children；fix(prop): fix that the prop model is not reused and the update is not triggered；feat: extract simulator type"
 ---
 
 # lowcode-engine v1.1.8

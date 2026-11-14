@@ -6,7 +6,7 @@ tag: "v3.6.0-rc4"
 published: "2026-10-22"
 type: "minor"
 lang: "en"
-summary: "kubectl create namespace argocd kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.6.0-rc4/manifests/install.yaml"
+summary: "All Argo CD container images are signed by cosign. A Provenance is generated for container images and CLI binaries which meet the SLSA Level 3 specifications. See the documentation on how to verify."
 ---
 
 # argo-cd v3.6.0-rc4

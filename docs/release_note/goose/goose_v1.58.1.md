@@ -7,6 +7,7 @@ version: "v1.58.1"
 published: "2026-11-10"
 type: "patch"
 lang: "en"
+summary: "Reword compaction prompt that Opus 5.5 refuses as distillation #13340 · Refresh Databricks OAuth tokens before they expire #13328"
 ---
 
 # goose v1.58.1

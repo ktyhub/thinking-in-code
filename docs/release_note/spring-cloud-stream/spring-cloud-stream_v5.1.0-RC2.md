@@ -6,7 +6,7 @@ tag: "v5.1.0-RC2"
 published: "2026-11-05"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-stream/compare/v5.1.0-RC1...v5.1.0-RC2"
+summary: "Fix typos and remove incorrect tags · Bump antora from 3.2.1 to 3.2.2 in /docs[bot] · Instrument pollable consumers with Spring Integration metrics"
 ---
 
 # spring-cloud-stream v5.1.0-RC2

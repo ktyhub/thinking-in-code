@@ -6,7 +6,7 @@ tag: "1.13.3"
 published: "2026-03-27"
 type: "patch"
 lang: "en"
-summary: "Our latest patch release, v1.13.3, focuses on stability and correctness across workflow execution, streaming, and knowledge retrieval. Here's a quick look at the most important updates:"
+summary: "Our latest patch release, v1.13.3, focuses on stability and correctness across workflow execution, streaming, and knowledge retrieval. Here's a quick look at the most important updates"
 ---
 
 # dify 1.13.3

@@ -6,7 +6,7 @@ tag: "v13.1.8"
 published: "2026-10-13"
 type: "patch"
 lang: "en"
-summary: "Download page What's new highlights"
+summary: "Security: Fix CVE-2026-15577 · Security: Fix CVE-2026-33374 · Security: Fix CVE-2026-93294 · Security: Fix CVE-2026-95502"
 ---
 
 # grafana v13.1.8

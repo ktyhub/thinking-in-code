@@ -7,6 +7,7 @@ version: "v2.5.20"
 published: "2026-11-06"
 type: "patch"
 lang: "en"
+summary: "chore: begin 2.5.20-SNAPSHOT[bot] · fix(core): accept a PDF whatever its file name"
 ---
 
 # opendataloader-pdf v2.5.20

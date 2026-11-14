@@ -7,6 +7,7 @@ version: "v2.0.4"
 published: "2025-07-09"
 type: "patch"
 lang: "en"
+summary: "Data Query: Added user-defined table functions (UDTF) and various built-in table functions to the table model. · Data Query: Added support for ASOF INNER JOIN on time columns in the table model."
 ---
 
 # iotdb v2.0.4

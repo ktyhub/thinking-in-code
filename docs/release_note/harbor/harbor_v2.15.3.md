@@ -6,6 +6,7 @@ tag: "v2.15.3"
 published: "2026-10-06"
 type: "patch"
 lang: "en"
+summary: "(high): Path traversal vulnerability in distribution endpoints GHSA-qj39-pjf2-wmrc in a82c5528f · (high): A system robot with user:update makes itself a system administrator GHSA-w5fq-xrhj-j7g2 in 8896be0ae"
 ---
 
 # harbor v2.15.3

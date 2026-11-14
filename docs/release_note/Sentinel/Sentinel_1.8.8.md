@@ -6,7 +6,7 @@ tag: "1.8.8"
 published: "2024-06-05"
 type: "patch"
 lang: "en"
-summary: "Thanks for all contributors: @cdfive, @robberphex, @shichaoyuan, @LearningGp, @ruansheng8, @dowenliu-xyz"
+summary: "Support running test with JDK 21 or JDK17 (#3344) (#3339) · Add webmvc-6x-adapter module to support spring boot 3.x (#3351) · Replace ThreadLocal with DateTimeFormatter (#3353)"
 ---
 
 # Sentinel 1.8.8

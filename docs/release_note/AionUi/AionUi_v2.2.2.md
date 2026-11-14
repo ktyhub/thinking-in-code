@@ -7,6 +7,7 @@ version: "v2.2.2"
 published: "2026-09-09"
 type: "patch"
 lang: "en"
+summary: "The Files and Changes panel now has a single top-bar Refresh button that does the right thing per tab: on Files it re-mounts every root and revalidates project detail;"
 ---
 
 # AionUi v2.2.2

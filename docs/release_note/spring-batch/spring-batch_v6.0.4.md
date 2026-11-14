@@ -6,7 +6,7 @@ tag: "v6.0.4"
 published: "2026-06-10"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Optimize MongoStepExecutionDao#getLastStepExecution to filter and sort at the database level #5385 · Performance in SimpleJobRepository.update(StepExecution) since Spring Batch 6.x #5360"
 ---
 
 # spring-batch v6.0.4

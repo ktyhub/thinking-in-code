@@ -6,7 +6,7 @@ tag: "STRUTS_7_4_0"
 published: "2026-09-17"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/struts/compare/STRUTS730...STRUTS740"
+summary: "docs: refine creating-version-notes from the 7.3.0 release run · docs: add creating-release-vote-mail skill · docs: hand over a paste-ready body in creating-release-vote-mail"
 ---
 
 # struts STRUTS_7_4_0

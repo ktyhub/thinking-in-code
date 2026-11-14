@@ -7,6 +7,7 @@ version: "v8.9.3"
 published: "2026-11-11"
 type: "patch"
 lang: "en"
+summary: "Fix Windows Python runtime extraction with @Copilot · Restore API dependencies in unittest CI with @Copilot · Fix idle browser cleanup with @Copilot · Add Keenable to browsing APIs (keyless search + markdown fetch)"
 ---
 
 # gpt4free v8.9.3

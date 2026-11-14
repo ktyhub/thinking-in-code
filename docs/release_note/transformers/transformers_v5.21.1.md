@@ -7,7 +7,7 @@ version: "v5.21.1"
 published: "2026-10-29"
 type: "patch"
 lang: "en"
-summary: "Fix ropescaling setter for configs that assign it during init (#50080 )"
+summary: "Fix rope_scaling setter for configs that assign it during init (#50080 )"
 ---
 
 # transformers v5.21.1

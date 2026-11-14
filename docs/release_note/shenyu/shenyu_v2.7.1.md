@@ -6,7 +6,7 @@ tag: "v2.7.1"
 published: "2026-07-08"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/shenyu/compare/v2.7.0.3...v2.7.1"
+summary: "Fix nondeterminsitic tests caused by JSON order issues · Fixed non deterministic test caused by Json Ordering · Fix mcp server real url error · Fix nondeterminism of the order of query parameters in HttpUtilsTest"
 ---
 
 # shenyu v2.7.1

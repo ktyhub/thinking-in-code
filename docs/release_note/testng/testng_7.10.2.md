@@ -6,7 +6,7 @@ tag: "7.10.2"
 published: "2024-04-28"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/testng-team/testng/compare/7.10.1...7.10.2"
+summary: "Bump gradle/wrapper-validation-action from 2.1.2 to 3.3.0 · Streaming working of listener comparator"
 ---
 
 # testng 7.10.2

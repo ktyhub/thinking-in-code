@@ -6,7 +6,7 @@ tag: "v4.1.0-M2"
 published: "2023-09-27"
 type: "pre"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Antora migration #269"
 ---
 
 # spring-cloud-bus v4.1.0-M2

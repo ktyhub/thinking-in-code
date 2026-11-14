@@ -6,7 +6,7 @@ tag: "v5.0.0-rc.3"
 published: "2025-05-25"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/dropwizard/dropwizard/compare/v5.0.0-rc.2...v5.0.0-rc.3"
+summary: "fix(deps): update dependency org.hibernate.orm:hibernate-core to v6.6.12.final (release/5.0.x) · chore(deps): update dependency com.uber.nullaway:nullaway to v0.12.6 (release/5.0.x)"
 ---
 
 # dropwizard v5.0.0-rc.3

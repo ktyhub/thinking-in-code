@@ -6,7 +6,7 @@ tag: "v9.0.0"
 published: "2026-07-25"
 type: "major"
 lang: "en"
-summary: "(query check → threshold → event → notify pipeline → notification), to verify the whole alerting chain before the condition is ever met (#3274)"
+summary: "feat: alert rules support test fire — trigger a rule on demand against real queried series and get a stage-by-stage report"
 ---
 
 # nightingale v9.0.0

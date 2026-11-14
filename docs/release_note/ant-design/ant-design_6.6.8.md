@@ -6,6 +6,7 @@ tag: "6.6.8"
 published: "2026-10-26"
 type: "patch"
 lang: "en"
+summary: "Modal · 🐞 Fix Modal and Popconfirm custom button onClick handlers preventing confirmation or cancellation callbacks from running. #59294 @QDyanbing"
 ---
 
 # ant-design 6.6.8

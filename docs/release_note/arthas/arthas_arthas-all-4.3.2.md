@@ -6,6 +6,7 @@ tag: "arthas-all-4.3.2"
 published: "2026-07-19"
 type: "release"
 lang: "en"
+summary: "fix: 修复 AdviceListenerManager 的竞态条件，避免增强监听器丢失，见 #3237；fix: 避免错误跳过名称中包含 Lambda 标记的普通类，见 #3240；fix: RateCounter 尚无采样值时返回 0，避免出现非数值结果，见 #3228；fix: ResultUtils.processClassNames 正确响应分页处理器的停止信号，见 #3224"
 ---
 
 # arthas arthas-all-4.3.2

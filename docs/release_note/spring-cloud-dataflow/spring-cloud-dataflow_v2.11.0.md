@@ -6,7 +6,7 @@ tag: "v2.11.0"
 published: "2023-09-21"
 type: "minor"
 lang: "en"
-summary: "More info can be found in the Boot 3 Appendix."
+summary: "Adds support for Spring Boot 3.x based stream applications. · Adds support for Spring Cloud Task 3.x based task applications. · Adds support for Spring Batch 5.x based batch applications."
 ---
 
 # spring-cloud-dataflow v2.11.0

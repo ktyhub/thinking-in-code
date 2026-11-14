@@ -7,6 +7,7 @@ version: "v0.31.0"
 published: "2026-10-14"
 type: "minor"
 lang: "en"
+summary: "Publish zepai/graphiti on v.. tags like MCP · Add pevans to the CLA allowlist [ZEPAI-3570] · Update root uv.lock to fix Dependabot alerts [ZEPAI-3570] · Update mcp_server/uv.lock to fix Dependabot alerts [ZEPAI-3570]"
 ---
 
 # graphiti v0.31.0

@@ -6,7 +6,7 @@ tag: "rel/v5.6.3"
 published: "2024-01-09"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/jmeter/compare/rel/v5.6.2...rel/v5.6.3"
+summary: "Fix computation of min in Summary report · fix: allow usage of variables in ConstantThroughputTimer.throughput and PreciseThroughputTimer · fix: log errors happening while JMeter starts the test"
 ---
 
 # jmeter rel/v5.6.3

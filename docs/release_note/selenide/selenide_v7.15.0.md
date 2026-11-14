@@ -6,7 +6,7 @@ tag: "v7.15.0"
 published: "2026-03-11"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/selenide/selenide/compare/v7.14.0...v7.15.0"
+summary: "add option to skip downloading the full file content · #3265 support running ChromeDriver in 'remote debugger' mode · #3243 Take screenshot in remote Chrome even if CDP port not available"
 ---
 
 # selenide v7.15.0

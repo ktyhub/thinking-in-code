@@ -6,6 +6,7 @@ tag: "arthas-all-4.1.6"
 published: "2026-03-05"
 type: "release"
 lang: "en"
+summary: "feat: Add object-size-limit GlobalOptions for ObjectView (#3147) · feat(http api): retransfrom 命令增加增强的 id 返回 (#3143) · fix(mcp): watch/tt 支持 -M/--sizeLimit (#3144) · feat: profiler 输出支持 Markdown 报告生成"
 ---
 
 # arthas arthas-all-4.1.6

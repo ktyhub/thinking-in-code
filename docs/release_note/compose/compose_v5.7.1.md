@@ -6,7 +6,7 @@ tag: "v5.7.1"
 published: "2026-11-11"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/docker/compose/compare/v5.7.0...v5.7.1"
+summary: "fix(oci): verify the manifests fetched against their digest, and take only complete cache entries · fix(oci): keep the cache of extracted projects consistent on interruption and concurrent access"
 ---
 
 # compose v5.7.1

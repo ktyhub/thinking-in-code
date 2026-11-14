@@ -6,6 +6,7 @@ tag: "v6.2.17"
 published: "2026-03-13"
 type: "patch"
 lang: "en"
+summary: "Leverage ResourceHandlerUtils in ScriptTemplateView #36459 · Restore ScriptTemplateViewTests #36457 · Fix log message in ConfigurationClassBeanDefinitionReader #36454"
 ---
 
 # spring-framework v6.2.17

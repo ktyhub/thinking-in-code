@@ -7,6 +7,7 @@ version: "v0.9.0"
 published: "2026-10-29"
 type: "minor"
 lang: "en"
+summary: "fix(docs): stabilize anchor navigation and link release topics · feat(agent): persist human-in-the-loop prompts with a shared broker · feat(search): add RRF controls in a tabbed settings popover"
 ---
 
 # WeKnora v0.9.0

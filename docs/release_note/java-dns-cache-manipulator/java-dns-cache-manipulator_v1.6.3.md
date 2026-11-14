@@ -6,7 +6,7 @@ tag: "v1.6.3"
 published: "2021-11-23"
 type: "patch"
 lang: "en"
-summary: "[](https://search.maven.org/artifact/com.alibaba/dns-cache-manipulator/1.6.3/jar) [](https://github.com/alibaba/java-dns-cache-manipulator/releases/download/v1.6.3/dcm-1.6.3.tar.gz)"
+summary: "performance improvement: cache reflection objects(field/constructor) · [TOOL] fix action list, remove wrong file action · unify double check conditions · code refactor/cleanup"
 ---
 
 # java-dns-cache-manipulator v1.6.3

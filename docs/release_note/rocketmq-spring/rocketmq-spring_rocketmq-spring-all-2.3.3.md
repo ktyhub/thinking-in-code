@@ -6,7 +6,7 @@ tag: "rocketmq-spring-all-2.3.3"
 published: "2025-03-14"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/rocketmq-spring/compare/rocketmq-spring-all-2.3.2...rocketmq-spring-all-2.3.3"
+summary: "[ISSUE #705] Fix future in async send not complete · [ISSUE #708] fix sending delay message error with delayTime=0 · Remove unnecessary catch blocks and log statements in syncSendGrpcMessage · Optimize log output"
 ---
 
 # rocketmq-spring rocketmq-spring-all-2.3.3

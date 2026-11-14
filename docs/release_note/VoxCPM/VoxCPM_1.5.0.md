@@ -7,6 +7,7 @@ version: "1.5.0"
 published: "2025-12-05"
 type: "minor"
 lang: "en"
+summary: "What's New and What's Next? See our Release Note"
 ---
 
 # VoxCPM 1.5.0

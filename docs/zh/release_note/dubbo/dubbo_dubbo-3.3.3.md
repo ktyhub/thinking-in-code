@@ -6,6 +6,7 @@ tag: "dubbo-3.3.3"
 published: "2025-01-05"
 type: "release"
 lang: "zh"
+summary: "Dubbo 移除了 dubbo-dependency-zookeeper-curator5 和 dubbo-zookeeper-spring-boot-starter 依赖，仅在 dubpo-zookeeper-curator5-spring-boot-starter 中提供了 zk 的依赖。因此，您可以使用 dubpo-zookeeper-curator5-spring-boot-starter 来替换前面的两个依赖。"
 ---
 
 # dubbo dubbo-3.3.3

@@ -6,6 +6,7 @@ tag: "2.3.9"
 published: "2025-01-19"
 type: "patch"
 lang: "en"
+summary: "[Bug][Avro] Fix avro miss convert short type to int (#8459) · [Bug][CI] Fix all-connectors and update-modules run simultaneously (#8343)"
 ---
 
 # seatunnel 2.3.9

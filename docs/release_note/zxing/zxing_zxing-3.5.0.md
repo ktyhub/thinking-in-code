@@ -6,7 +6,7 @@ tag: "zxing-3.5.0"
 published: "2022-05-01"
 type: "release"
 lang: "en"
-summary: "See https://github.com/zxing/zxing/milestone/13?closed=1"
+summary: "Many edge-case fixes and improvements from oss-fuzz · Various improvements and fixes to Aztec, PDF417, DataMatrix decoding · New 'minimal' encoding mode from @AlexGeller1 ("
 ---
 
 # zxing zxing-3.5.0

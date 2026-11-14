@@ -6,6 +6,7 @@ tag: "2022.0.0.2"
 published: "2024-12-12"
 type: "major"
 lang: "en"
+summary: "Update docs and readme.md · Feat: add github workfolw to check markdown file error link · Feat: update nacos version to 2.2.3 · Docs: deleted spring-cloud-alibaba-docs module"
 ---
 
 # spring-cloud-alibaba 2022.0.0.2

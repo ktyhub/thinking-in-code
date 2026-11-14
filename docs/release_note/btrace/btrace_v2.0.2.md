@@ -6,7 +6,7 @@ tag: "v2.0.2"
 published: "2020-05-24"
 type: "patch"
 lang: "en"
-summary: "Full Changelog"
+summary: "@OnMethod with @Location\\(RETURN\\) and @Level causes NoSuchFieldError: $btrace$$level \\#419 · Traced application can deadlock on exit \\#417 · Cannot print info to console \\#416"
 ---
 
 # btrace v2.0.2

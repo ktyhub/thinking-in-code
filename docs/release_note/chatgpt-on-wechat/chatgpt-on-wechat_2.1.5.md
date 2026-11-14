@@ -6,7 +6,7 @@ tag: "2.1.5"
 published: "2026-07-29"
 type: "patch"
 lang: "en"
-summary: "🌐 English | 中文"
+summary: "The chat page gains a visual view of the workspace: documents, web pages, and images the Agent produces can be previewed in place. Both the Web console and the desktop client support it."
 ---
 
 # chatgpt-on-wechat 2.1.5

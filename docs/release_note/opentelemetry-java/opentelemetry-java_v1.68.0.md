@@ -6,7 +6,7 @@ tag: "v1.68.0"
 published: "2026-11-06"
 type: "minor"
 lang: "en"
-summary: "This release was possible thanks to the following contributors who shared their brilliant ideas and awesome pull requests:"
+summary: "Add null guards and API usage logging for tracing, metrics, propagation, and context APIs (#8913, #8968) · Add stable io.opentelemetry.api.impl.Base16EncodingUtils and TemporaryBuffers utilities (#8929, #8955)"
 ---
 
 # opentelemetry-java v1.68.0

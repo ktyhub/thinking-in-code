@@ -6,7 +6,7 @@ tag: "v2.15.5"
 published: "2024-10-15"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/compare/v2.15.4...v2.15.5"
+summary: "feat: jest · google gemini support function call · 优化访问码输入框 · 支持前端使能/禁用代码折叠"
 ---
 
 # ChatGPTNextWeb v2.15.5

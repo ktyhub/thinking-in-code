@@ -6,7 +6,7 @@ tag: "v1.2026.9"
 published: "2026-10-17"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/plantuml/plantuml/compare/v1.2026.8...v1.2026.9"
+summary: "👷 add graph on perf summary · 👷 add icon for band on perf summary · 👷 improve readability on perf. summary · 📝 docs: add native image build steps to BUILDING.md (#2610)"
 ---
 
 # plantuml v1.2026.9

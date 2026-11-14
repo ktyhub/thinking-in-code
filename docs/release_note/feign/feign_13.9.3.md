@@ -6,7 +6,7 @@ tag: "13.9.3"
 published: "2026-03-04"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/OpenFeign/feign/compare/13.9.2...13.9.3"
+summary: "build(deps): Bump mockito.version from 5.21.0 to 5.22.0[bot] · build(deps): Bump org.apache.felix:maven-bundle-plugin from 6.0.0 to 6.0.2[bot] · fix: validate BOM has dependencies before publishing"
 ---
 
 # feign 13.9.3

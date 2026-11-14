@@ -6,7 +6,7 @@ tag: "rel/v5.3"
 published: "2023-06-24"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/jmeter/compare/rel/v5.2...rel/v5.3"
+summary: "Remove unnecessary boxing · Replace Spotless with Autostyle · Add Travis CI job to test JMeter with IBM s390x · Bug 64091 - Precise Throughput Timer might produce less samples when low test duration is used"
 ---
 
 # jmeter rel/v5.3

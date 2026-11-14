@@ -6,6 +6,7 @@ tag: "v1.6.7"
 published: "2026-08-20"
 type: "patch"
 lang: "en"
+summary: "Harden W3C baggage propagation against injection and DoS/OOM"
 ---
 
 # micrometer tracing v1.6.7

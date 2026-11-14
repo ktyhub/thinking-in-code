@@ -6,7 +6,7 @@ tag: "2.1.9"
 published: "2026-09-14"
 type: "patch"
 lang: "en"
-summary: "🌐 English | 中文"
+summary: "Further polish around using multi-Agent teams"
 ---
 
 # chatgpt-on-wechat 2.1.9

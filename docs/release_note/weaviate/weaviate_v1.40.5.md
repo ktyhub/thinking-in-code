@@ -7,7 +7,7 @@ version: "v1.40.5"
 published: "2026-11-10"
 type: "patch"
 lang: "en"
-summary: "none"
+summary: "Require every verb of a manage permission before assigning its role · perf(lsmkv): stripe the segment read-bytes metric across cache lines · test(reindex): make the merged-barrier restart test deterministic"
 ---
 
 # weaviate v1.40.5

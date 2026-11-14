@@ -6,6 +6,7 @@ tag: "v1.96.0"
 published: "2026-11-05"
 type: "minor"
 lang: "en"
+summary: "gax: wire-level changes for resuming uploads (#14870) (956ac4d)"
 ---
 
 # google-cloud-java v1.96.0

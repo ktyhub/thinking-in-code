@@ -6,7 +6,7 @@ tag: "4.1.2"
 published: "2026-10-23"
 type: "patch"
 lang: "en"
-summary: "We'd like to thank all the contributors who worked on this release!"
+summary: "Spring Data Commons 4.1.2 Reference documentation · Spring Data Commons 4.1.2 Javadoc"
 ---
 
 # spring-data-commons 4.1.2

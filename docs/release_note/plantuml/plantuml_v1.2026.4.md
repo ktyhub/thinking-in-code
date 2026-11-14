@@ -6,7 +6,7 @@ tag: "v1.2026.4"
 published: "2026-05-20"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/plantuml/plantuml/compare/v1.2026.3...v1.2026.4"
+summary: "✅ [vega] Add vega packet test · 🐛 fix(svg-parser): support space-separated coordinates in polygon/polyl… · 📝 README.md: Add compilation instructions · 📝 Fix doc and readme"
 ---
 
 # plantuml v1.2026.4

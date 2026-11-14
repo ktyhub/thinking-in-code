@@ -6,6 +6,7 @@ tag: "v5.3.0-alpha1"
 published: "2022-12-24"
 type: "minor"
 lang: "en"
+summary: "#35566: Properly escape IDs in getSelector() to handle weird IDs (#35565) · #35857: Add dark mode support · #36854: Use explicit imports in our JavaScript source files"
 ---
 
 # bootstrap v5.3.0-alpha1

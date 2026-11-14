@@ -6,7 +6,7 @@ tag: "v3.0.0-beta.17"
 published: "2025-04-14"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/sinaptik-ai/pandas-ai/compare/v3.0.0a16...v3.0.0-beta.17"
+summary: "fix(sql): pagination remove extra conversions · Fix: Resolve Python 3.8 Compatibility Issue in semantic_layer_schema.py · fix(serializer): user apply instead of applymap"
 ---
 
 # pandas-ai v3.0.0-beta.17

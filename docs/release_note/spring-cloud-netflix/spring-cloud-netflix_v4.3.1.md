@@ -6,7 +6,7 @@ tag: "v4.3.1"
 published: "2025-12-16"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Bump eureka.version from 2.0.4 to 2.0.5[bot] · Bump testcontainers.version from 1.21.0 to 1.21.1[bot] · Bump @springio/antora-extensions from 1.14.4 to 1.14.6 in /docs[bot]"
 ---
 
 # spring-cloud-netflix v4.3.1

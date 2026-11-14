@@ -6,6 +6,7 @@ tag: "v1.0.3"
 published: "2022-11-21"
 type: "patch"
 lang: "en"
+summary: "The change of most modules is to remove the transitive dependency of Dubbo. · dubbo-serialization-protobuf was refactored to support object attachment ( for Dubbo 3.x)."
 ---
 
 # dubbo-spi-extensions v1.0.3

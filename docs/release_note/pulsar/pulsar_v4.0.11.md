@@ -7,7 +7,7 @@ version: "v4.0.11"
 published: "2026-06-08"
 type: "patch"
 lang: "en"
-summary: "For the complete list, check the full changelog."
+summary: "[fix][sec][branch-4.0] Upgrade avro to 1.11.5 to address CVE-2025-33042 (#25788) · [fix][sec] Bump org.asynchttpclient:async-http-client from 2.14.5 to 2.15.0 (#25818)"
 ---
 
 # pulsar v4.0.11

@@ -6,7 +6,7 @@ tag: "v1.2.1"
 published: "2023-10-27"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/alibaba/lowcode-engine/compare/v1.2.0...v1.2.1"
+summary: "fix: fixed the problem caused by component list being overwritten by Hoc · fix: fix document.onMountNode parameters"
 ---
 
 # lowcode-engine v1.2.1

@@ -7,7 +7,7 @@ version: "prebuilt 1.1.2"
 published: "2026-11-14"
 type: "release"
 lang: "en"
-summary: "Changes since prebuilt==1.1.1"
+summary: "release(langgraph): 1.2.22 (#9702) · release(checkpoint-postgres): 3.2.1 (#9700) · release(prebuilt): 1.1.2 (#9701) · release(checkpoint): 4.3.2 (#9699)"
 ---
 
 # langgraph prebuilt==1.1.2

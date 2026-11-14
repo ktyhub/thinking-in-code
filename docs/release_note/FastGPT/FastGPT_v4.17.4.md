@@ -7,6 +7,7 @@ version: "v4.17.4"
 published: "2026-11-05"
 type: "patch"
 lang: "en"
+summary: "更新 fastgpt-app（FastGPT 主服务）镜像 tag: v4.17.4；更新 fastgpt-pro（FastGPT 商业版）镜像 tag: v4.17.4"
 ---
 
 # FastGPT v4.17.4

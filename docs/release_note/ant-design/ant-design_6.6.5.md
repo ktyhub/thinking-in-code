@@ -6,6 +6,7 @@ tag: "6.6.5"
 published: "2026-09-20"
 type: "patch"
 lang: "en"
+summary: "🐞 Fix numeric 0 content rendering across Result, message, notification, Avatar, Modal, Descriptions, and Form.Item. #59153 #59125 #59289 @bhumin18 @nrps9909 @QDyanbing · Upload"
 ---
 
 # ant-design 6.6.5

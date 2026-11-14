@@ -7,7 +7,7 @@ version: "checkpointpostgres 3.2.1"
 published: "2026-11-14"
 type: "release"
 lang: "en"
-summary: "Changes since checkpointpostgres==3.2.0"
+summary: "release(checkpoint-postgres): 3.2.1 (#9700) · release(checkpoint): 4.3.2 (#9699) · perf(checkpoint-postgres): run a lone store read outside a pipeline (#9635)"
 ---
 
 # langgraph checkpointpostgres==3.2.1

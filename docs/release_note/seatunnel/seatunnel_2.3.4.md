@@ -7,6 +7,7 @@ version: "2.3.4"
 published: "2024-02-20"
 type: "patch"
 lang: "en"
+summary: "[Core] [API] Fixed generic class loss for lists (#4421) · [Starter] Fix the problem of ',' being divided in [] (#5401) · [Core] [API] Fix ReadonlyConfig lose key error (#5565)"
 ---
 
 # seatunnel 2.3.4

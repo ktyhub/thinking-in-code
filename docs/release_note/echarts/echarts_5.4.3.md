@@ -6,6 +6,7 @@ tag: "5.4.3"
 published: "2023-07-18"
 type: "patch"
 lang: "en"
+summary: "[Feature] [axisPointer] Add triggerEmphasis option to disable emphasis. #18524 (juliepagano) · [Feature] [sankey] Support trajectory for emphasis state. #17451 (ElayGelbart)"
 ---
 
 # echarts 5.4.3

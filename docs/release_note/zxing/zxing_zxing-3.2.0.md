@@ -6,7 +6,7 @@ tag: "zxing-3.2.0"
 published: "2015-02-15"
 type: "release"
 lang: "en"
-summary: "https://github.com/zxing/zxing/issues?q=is%3Aclosed+milestone%3A3.2.0"
+summary: "Several bug fixes, especially for Data Matrix and PDF417 parsing · Retired jruby binding · Barcode Scanner can now disable history"
 ---
 
 # zxing zxing-3.2.0

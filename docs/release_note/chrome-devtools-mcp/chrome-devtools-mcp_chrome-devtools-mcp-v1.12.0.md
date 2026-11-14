@@ -7,6 +7,7 @@ version: "chrome-devtools-mcp-v1.12.0"
 published: "2026-10-22"
 type: "release"
 lang: "en"
+summary: "add --maxNavigationSaved flag to configure retained navigation history (#3018) (a580d13) · add Kimi Code plugin manifest (#3029) (cd00b64) · Analyze heap snapshots without a browser connection (#3156) (78c8320)"
 ---
 
 # chrome-devtools-mcp chrome-devtools-mcp-v1.12.0

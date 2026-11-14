@@ -7,7 +7,7 @@ version: "v1.7.1"
 published: "2023-09-05"
 type: "patch"
 lang: "en"
-summary: "Seata 1.7.1 Released."
+summary: "Seata is an easy-to-use, high-performance, open source distributed transaction solution."
 ---
 
 # incubator-seata v1.7.1

@@ -6,7 +6,7 @@ tag: "13.12"
 published: "2026-04-17"
 type: "minor"
 lang: "en"
-summary: "List of PRs that updated libraries versions"
+summary: "feat(form): enhance UrlencodedFormContentProcessor to support CollectionFormats in key-value pairs · feat(graphql-apt): honor @deprecated schema directive with class/method overrides"
 ---
 
 # feign 13.12

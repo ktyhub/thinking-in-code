@@ -6,7 +6,7 @@ tag: "v5.2.6"
 published: "2026-06-10"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who contributed to this release!"
+summary: "CompositeItemReader Does Not Reset Iterator for Subsequent Job Executions #4926 · ExecutionContext dirty flag is never cleared #5249"
 ---
 
 # spring-batch v5.2.6

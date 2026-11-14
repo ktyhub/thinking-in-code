@@ -6,7 +6,7 @@ tag: "v2.10.2"
 published: "2023-03-08"
 type: "patch"
 lang: "en"
-summary: "Component | Version"
+summary: "Spring Boot 2.7.9 · Spring Cloud 2021.0.6"
 ---
 
 # spring-cloud-dataflow v2.10.2

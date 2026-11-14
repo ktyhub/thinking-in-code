@@ -6,6 +6,7 @@ tag: "v5.0.0-M3"
 published: "2025-10-01"
 type: "pre"
 lang: "en"
+summary: "WebClientEurekaHttpClientTests fails with deserialization error #4495"
 ---
 
 # spring-cloud-netflix v5.0.0-M3

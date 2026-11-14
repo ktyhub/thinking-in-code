@@ -7,6 +7,7 @@ version: "v12.30.8"
 published: "2023-04-24"
 type: "patch"
 lang: "en"
+summary: "code-editor: fix sdk intellisense (#12516) (87c44c4) · core: fix dialog timeout loop detection (#12528) (b836482)"
 ---
 
 # botpress v12.30.8

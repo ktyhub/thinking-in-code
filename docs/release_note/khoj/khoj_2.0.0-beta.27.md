@@ -7,6 +7,7 @@ version: "2.0.0-beta.27"
 published: "2026-03-25"
 type: "pre"
 lang: "en"
+summary: "Fix Khoj web app page templates to be compatible with Starlette 1.0.0"
 ---
 
 # khoj 2.0.0-beta.27

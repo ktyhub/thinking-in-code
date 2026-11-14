@@ -6,7 +6,7 @@ tag: "2.1.6"
 published: "2026-08-12"
 type: "patch"
 lang: "en"
-summary: "🌐 English | 中文"
+summary: "The main Agent can hand independent tasks off to sub agents and run them in parallel — improving results, lowering context cost, and speeding up work that can happen at the same time"
 ---
 
 # chatgpt-on-wechat 2.1.6

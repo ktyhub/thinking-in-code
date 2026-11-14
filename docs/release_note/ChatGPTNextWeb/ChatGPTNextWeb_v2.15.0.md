@@ -6,7 +6,7 @@ tag: "v2.15.0"
 published: "2024-09-06"
 type: "minor"
 lang: "en"
-summary: "https://github.com/ChatGPTNextWeb/NextChat-Awesome-Plugins"
+summary: "fix: Determine if Tencent is authorized · feat: add a page to search chat history · Hotfix: Expand button for code block · Modify View All Languages"
 ---
 
 # ChatGPTNextWeb v2.15.0

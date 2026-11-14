@@ -6,7 +6,7 @@ tag: "v33.4.5"
 published: "2025-03-19"
 type: "patch"
 lang: "en"
-summary: "Use Guava 33.4.8, not Guava 33.4.5. 33.4.5 was our first attempt to modularize Guava, but we misconfigured our build, so it:"
+summary: "Use Guava 33.4.8, not Guava 33.4.5. 33.4.5 was our first attempt to modularize Guava, but we misconfigured our build, so it"
 ---
 
 # guava v33.4.5

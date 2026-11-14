@@ -6,7 +6,7 @@ tag: "2.2.10"
 published: "2024-07-09"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/alibaba/spring-cloud-alibaba/compare/2.2.10-RC2...2.2.10"
+summary: "[Scheduling]: add distributed scheduling support spring-cloud-starter-alibaba-schedulerx."
 ---
 
 # spring-cloud-alibaba 2.2.10

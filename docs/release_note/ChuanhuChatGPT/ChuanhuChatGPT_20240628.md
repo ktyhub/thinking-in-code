@@ -7,6 +7,7 @@ version: "20240628"
 published: "2024-06-28"
 type: "major"
 lang: "en"
+summary: "🚀 支持 自定义模型 Custom Models !　参考：自定义模型 Custom Models　 (@GaiZhenbiao, @Keldos-Li)；💥 GPT4-V 合并入 GPT4-Turbo (@GaiZhenbiao)；💥 因为Gradio的一个问题，暂时禁用了 LaTeX 渲染 (@Keldos-Li)"
 ---
 
 # ChuanhuChatGPT 20240628

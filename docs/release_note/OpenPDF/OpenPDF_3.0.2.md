@@ -6,7 +6,7 @@ tag: "3.0.2"
 published: "2026-02-28"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/LibrePDF/OpenPDF/compare/3.0.1...3.0.2"
+summary: "Bump com.ibm.icu:icu4j from 77.1 to 78.2[bot] · Bump org.apache.maven.plugins:maven-javadoc-plugin from 3.11.2 to 3.12.0[bot] · Revert 'Fix indexed image detection to prevent PDF size inflation'"
 ---
 
 # OpenPDF 3.0.2

@@ -6,7 +6,7 @@ tag: "v4.3.0-RC1"
 published: "2025-05-01"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-netflix/compare/v4.2.1...v4.3.0-RC1"
+summary: "Bump @springio/asciidoctor-extensions from 1.0.0-alpha.16 to 1.0.0-alpha.17 in /docs"
 ---
 
 # spring-cloud-netflix v4.3.0-RC1

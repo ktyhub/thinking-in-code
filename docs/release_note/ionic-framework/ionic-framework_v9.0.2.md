@@ -6,6 +6,7 @@ tag: "v9.0.2"
 published: "2026-09-02"
 type: "patch"
 lang: "en"
+summary: "angular: restore change detection for routed pages (#31414) (65def73), closes #31406 · sanitization: match onload case- and space-insensitively (#31417) (ae7d44e) · vue: fix web types for @ionic/vue (#30782) (6c33552)"
 ---
 
 # ionic-framework v9.0.2

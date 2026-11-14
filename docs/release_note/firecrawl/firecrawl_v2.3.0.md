@@ -6,7 +6,7 @@ tag: "v2.3.0"
 published: "2025-09-19"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/firecrawl/firecrawl/compare/v2.2.0...v2.3.0"
+summary: "YouTube Support: You can now get YouTube transcripts · Enterprise Auto-Recharge: Added enterprise support for auto-recharge · odt and .rtf: Now support odt and rtf file parsing · Docx Parsing: 50x faster docx parsing"
 ---
 
 # firecrawl v2.3.0

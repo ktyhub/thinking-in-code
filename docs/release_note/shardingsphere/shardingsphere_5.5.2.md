@@ -6,6 +6,7 @@ tag: "5.5.2"
 published: "2025-01-22"
 type: "patch"
 lang: "en"
+summary: "Kernel: Add firebird SQL parser module and database type #33773"
 ---
 
 # shardingsphere 5.5.2

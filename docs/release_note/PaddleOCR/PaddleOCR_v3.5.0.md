@@ -7,6 +7,7 @@ version: "v3.5.0"
 published: "2026-04-21"
 type: "minor"
 lang: "en"
+summary: "Deeply integrated with the Hugging Face ecosystem, with 20 major models supporting Transformers as the inference backend. Supports flexible switching of inference engines, including PaddlePaddle static graph…"
 ---
 
 # PaddleOCR v3.5.0

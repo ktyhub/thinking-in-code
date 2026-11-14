@@ -7,6 +7,7 @@ version: "0.125.1"
 published: "2026-10-25"
 type: "patch"
 lang: "en"
+summary: "restore the authentic Discord invite (#11967) (98000c4)"
 ---
 
 # promptfoo 0.125.1

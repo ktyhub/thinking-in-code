@@ -6,7 +6,7 @@ tag: "1.8.4"
 published: "2022-04-12"
 type: "patch"
 lang: "en"
-summary: "Thanks for all contributors: @brotherlu-xcq, @code-ferry, @DollarB, @howiekang, @icodening, @Reagan1947, @Roger3581321, @sczyh30, @tain198127, @zhaoxinhu, @zhuyou1234"
+summary: "Add interceptor SPI for transport command handler (#2587) · Add log level configuration support for common logs (#2514)"
 ---
 
 # Sentinel 1.8.4

@@ -7,7 +7,7 @@ version: "1.4.10"
 published: "2026-11-10"
 type: "patch"
 lang: "en"
-summary: "Changes since langchain==1.4.9"
+summary: "release(langchain): 1.4.10 (#41778) fix(langchain): keep middleware-internal model calls off the messages stream (#41579) chore(deps): patch newer-python security lock resolutions (#41585) fix(langchain): omit trace…"
 ---
 
 # langchain langchain==1.4.10

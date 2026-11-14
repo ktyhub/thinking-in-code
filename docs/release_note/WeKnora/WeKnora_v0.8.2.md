@@ -7,6 +7,7 @@ version: "v0.8.2"
 published: "2026-09-24"
 type: "patch"
 lang: "en"
+summary: "feat(session): show owner badge for API sessions in sidebar · fix(agent): web_fetch 兼容 LLM 双重序列化的 items 参数 · feat(miniprogram): zh/en i18n, tab icons, and base library compatibility · fix: widen audit log drawer"
 ---
 
 # WeKnora v0.8.2

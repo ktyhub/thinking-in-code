@@ -6,7 +6,7 @@ tag: "v2.11.1"
 published: "2023-10-17"
 type: "patch"
 lang: "en"
-summary: "Component | Version"
+summary: "Updated versions and mitigations for CVEs. · json-smart: 2.4.11 · nimbus-jose-jwt: 9.31 · snappy-java: 1.1.10.4"
 ---
 
 # spring-cloud-dataflow v2.11.1

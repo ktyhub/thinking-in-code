@@ -6,7 +6,7 @@ tag: "rocketmq-all-5.2.0"
 published: "2024-02-11"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/rocketmq/compare/rocketmq-all-5.1.4...rocketmq-all-5.2.0"
+summary: "[ISSUE #7545] [RIP-65] Support efficient random index for massive messages · [ISSUE #7064] [RIP-66] Support KV(RocksDB) Storage for ConsumeQueue · [ISSUE #7300] [RIP-67] jRaft-Controller Implementation"
 ---
 
 # rocketmq rocketmq-all-5.2.0

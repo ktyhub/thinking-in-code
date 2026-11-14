@@ -6,6 +6,7 @@ tag: "5.5.0"
 published: "2024-02-18"
 type: "minor"
 lang: "en"
+summary: "[Break Change] [Feature] [core] change to default ESM package. #19513 (100pah) · [Feature] [ssr] server-side rendering and client hydration. #18381 (Ovilia)"
 ---
 
 # echarts 5.5.0

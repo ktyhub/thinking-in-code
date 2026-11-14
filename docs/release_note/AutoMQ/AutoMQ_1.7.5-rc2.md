@@ -6,7 +6,7 @@ tag: "1.7.5-rc2"
 published: "2026-10-28"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/AutoMQ/automq/compare/1.7.5-rc1...1.7.5-rc2"
+summary: "feat(s3stream): queue fast retries and support merged range reads · feat: backport from main · feat(zerozone): route RouterChannel traffic across buckets · feat: support explicit TableTopic Iceberg locations"
 ---
 
 # AutoMQ 1.7.5-rc2

@@ -6,7 +6,7 @@ tag: "mybatis-spring-2.0.7"
 published: "2022-01-29"
 type: "release"
 lang: "en"
-summary: "Here is the complete list of changes."
+summary: "Change to support spring-native #642"
 ---
 
 # mybatis-spring mybatis-spring-2.0.7

@@ -6,7 +6,7 @@ tag: "canal-1.1.7-alpha-3"
 published: "2023-09-07"
 type: "pre"
 lang: "en"
-summary: "1.1.7正式版发布之前的倒计时，有问题可以尽快反馈"
+summary: "支持下mysql 8.0/maraidb 10.x下的binlog压缩解析能力 #4388；升级部分组件版本(规避CVE漏洞)，比如spring组件、mq组件、log组件等；支持es8.0 #4640；支持mysql 8.0的caching_sha2_password密码认证 #4767"
 ---
 
 # canal canal-1.1.7-alpha-3

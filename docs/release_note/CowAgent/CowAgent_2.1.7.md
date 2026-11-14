@@ -7,7 +7,7 @@ version: "2.1.7"
 published: "2026-08-21"
 type: "patch"
 lang: "en"
-summary: "🌐 English | 中文"
+summary: "The Agent is no longer tied to a single directory — you can set up several project workspaces and give each session its own. Available in both the Web console and the desktop client"
 ---
 
 # CowAgent 2.1.7

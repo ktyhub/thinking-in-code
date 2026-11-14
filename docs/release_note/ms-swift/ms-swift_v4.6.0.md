@@ -7,6 +7,7 @@ version: "v4.6.0"
 published: "2026-10-13"
 type: "minor"
 lang: "en"
+summary: "Added the decision task type for JEV-style decision models: instead of generating text, the model returns calibrated probabilities over each question's fixed option set (choice / score / noul) in a single forward pass."
 ---
 
 # ms-swift v4.6.0

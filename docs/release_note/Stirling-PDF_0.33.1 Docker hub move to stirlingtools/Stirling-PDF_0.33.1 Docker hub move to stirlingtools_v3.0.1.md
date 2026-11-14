@@ -6,7 +6,7 @@ tag: "v3.0.1"
 published: "2026-09-26"
 type: "patch"
 lang: "en"
-summary: "Quick hotfixes for the following windows desktop bugs:"
+summary: "Quick hotfixes for the following windows desktop bugs"
 ---
 
 # Stirling-PDF_0.33.1 Docker hub move to stirlingtools v3.0.1

@@ -6,7 +6,7 @@ tag: "1.9.0"
 published: "2024-04-26"
 type: "minor"
 lang: "en"
-summary: "Feature:"
+summary: "Support gc for ListOfABAFreeId (#2479) · Support timed connect for both bthread and pthread (#2524) · Support bthread_once and bthread singleton (#2520) · Support span for new bthread (#2519)"
 ---
 
 # brpc 1.9.0

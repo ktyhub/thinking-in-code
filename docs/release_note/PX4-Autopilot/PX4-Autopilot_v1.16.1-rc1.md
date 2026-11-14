@@ -6,7 +6,7 @@ tag: "v1.16.1-rc1"
 published: "2025-10-20"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/PX4/PX4-Autopilot/compare/v1.16.0...v1.16.1-rc1"
+summary: "[Backport 1.16] of fix: let UXRCE DDS agent IP to be set via parameter in SITL (#25231) · VOXL2 patch back port for release 1.16 · [v1.16] Add relnote etc"
 ---
 
 # PX4-Autopilot v1.16.1-rc1

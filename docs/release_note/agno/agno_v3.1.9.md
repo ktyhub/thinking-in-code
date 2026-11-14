@@ -7,6 +7,7 @@ version: "v3.1.9"
 published: "2026-10-22"
 type: "patch"
 lang: "en"
+summary: "MCP Tool Runner: POST /mcp/server/tools/{tool_name}/run runs any tool listed on the AgentOS Server Card over HTTP and returns its result, so a tool can be tested without an MCP client."
 ---
 
 # agno v3.1.9

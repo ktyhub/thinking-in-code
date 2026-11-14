@@ -6,7 +6,7 @@ tag: "v5.14.3"
 published: "2026-06-30"
 type: "patch"
 lang: "en"
-summary: "SOFARPC v5.14.3 introduces Apache Fory (formerly Fury) serialization support and fixes several issues in the Triple protocol and proxy generation, improving serialization performance and stability. (Requires JDK8…"
+summary: "SOFARPC v5.14.3 introduces Apache Fory (formerly Fury) serialization support and fixes several issues in the Triple protocol and proxy generation, improving serialization performance and stability."
 ---
 
 # sofa-rpc v5.14.3

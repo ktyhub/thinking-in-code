@@ -7,6 +7,7 @@ version: "v0.9.2"
 published: "2025-03-11"
 type: "patch"
 lang: "en"
+summary: "Event info: https://mp.weixin.qq.com/s/viPRDlhnzS3qO9-96fMeeA"
 ---
 
 # LlamaFactory v0.9.2

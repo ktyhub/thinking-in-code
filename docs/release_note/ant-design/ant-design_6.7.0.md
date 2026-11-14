@@ -6,6 +6,7 @@ tag: "6.7.0"
 published: "2026-11-04"
 type: "minor"
 lang: "en"
+summary: "🆕 Add Button, Tag, Steps, Alert, and Timeline support for the global ConfigProvider variant, and component-specific divider.variant configuration for Divider line styles."
 ---
 
 # ant-design 6.7.0

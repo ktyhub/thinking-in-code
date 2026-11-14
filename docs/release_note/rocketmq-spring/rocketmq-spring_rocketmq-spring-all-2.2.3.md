@@ -6,7 +6,7 @@ tag: "rocketmq-spring-all-2.2.3"
 published: "2023-02-18"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/rocketmq-spring/compare/rocketmq-spring-all-2.2.2...rocketmq-spring-all-2.2.3"
+summary: "[ISSUE #446] Correct typos in the document. · Upgrade fastjson version to 1.2.83 · Bump spring-core from 5.3.18 to 5.3.20 in /rocketmq-spring-boot-parent"
 ---
 
 # rocketmq-spring rocketmq-spring-all-2.2.3

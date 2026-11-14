@@ -6,7 +6,7 @@ tag: "v1.7.1"
 published: "2022-01-24"
 type: "patch"
 lang: "en"
-summary: "[](https://search.maven.org/artifact/com.alibaba/dns-cache-manipulator/1.7.1/jar) [](https://github.com/alibaba/java-dns-cache-manipulator/releases/download/v1.7.1/dcm-1.7.1.tar.gz)"
+summary: "[tool] remove apache.commons.io runtime dependency of DcmTool · submodule pom extends parent, DRY · docs · add maven(e.g. running test) config for Java 17"
 ---
 
 # java-dns-cache-manipulator v1.7.1

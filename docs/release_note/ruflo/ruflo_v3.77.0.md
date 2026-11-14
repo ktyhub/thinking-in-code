@@ -7,7 +7,7 @@ version: "v3.77.0"
 published: "2026-11-12"
 type: "minor"
 lang: "en"
-summary: "Minor release."
+summary: "neural wsp — optional ruv-FANN weight-space tooling (ADR-528, #4980). ruflo neural wsp status | inspect | check | gate | export-centroid."
 ---
 
 # ruflo v3.77.0

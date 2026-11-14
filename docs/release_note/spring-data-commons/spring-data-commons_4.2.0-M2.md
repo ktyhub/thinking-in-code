@@ -6,7 +6,7 @@ tag: "4.2.0-M2"
 published: "2026-09-24"
 type: "pre"
 lang: "en"
-summary: "We'd like to thank all the contributors who worked on this release!"
+summary: "Spring Data Commons 4.2.0 Reference documentation · Spring Data Commons 4.2.0 Javadoc"
 ---
 
 # spring-data-commons 4.2.0-M2

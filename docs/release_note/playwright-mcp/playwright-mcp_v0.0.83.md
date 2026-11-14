@@ -7,6 +7,7 @@ version: "v0.0.83"
 published: "2026-09-28"
 type: "patch"
 lang: "en"
+summary: "browser_find takes filename to save matches to a file instead of the response (microsoft/playwright#42077). (microsoft/playwright#42968)"
 ---
 
 # playwright-mcp v0.0.83

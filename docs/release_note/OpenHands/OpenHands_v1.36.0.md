@@ -7,6 +7,7 @@ version: "v1.36.0"
 published: "2026-11-05"
 type: "minor"
 lang: "en"
+summary: "feat(automations): open templates without the missing-integration notice · feat(automations): list a script automation's files collapsed"
 ---
 
 # OpenHands v1.36.0

@@ -6,7 +6,7 @@ tag: "v4.1.0"
 published: "2023-11-13"
 type: "minor"
 lang: "en"
-summary: "⭐️ New Features"
+summary: "Update SpringBoot 3.1.5 #1259 · Update SOFA Hessian 3.5.1 #1248 · Support SOFA Rpc provider register blacklist/whitelist #1254 · Support isle actuator #1257"
 ---
 
 # sofa-boot v4.1.0

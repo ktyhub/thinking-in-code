@@ -6,6 +6,7 @@ tag: "2.3.7"
 published: "2024-08-19"
 type: "patch"
 lang: "en"
+summary: "[Hotfix][MySQL-CDC] Fix ArrayIndexOutOfBoundsException in mysql binlog read (#7381) · [Fix][Doris] Fix doris primary key order and fields order are inconsistent (#7377)"
 ---
 
 # seatunnel 2.3.7

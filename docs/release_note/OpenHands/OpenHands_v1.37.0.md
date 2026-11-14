@@ -7,6 +7,7 @@ version: "v1.37.0"
 published: "2026-11-06"
 type: "minor"
 lang: "en"
+summary: "feat(automations): explain each automation with a Mermaid diagram"
 ---
 
 # OpenHands v1.37.0

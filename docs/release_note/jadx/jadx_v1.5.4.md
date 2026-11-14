@@ -6,7 +6,7 @@ tag: "v1.5.4"
 published: "2026-02-13"
 type: "patch"
 lang: "en"
-summary: "CLI:"
+summary: "Implement config file load and save (#1731)"
 ---
 
 # jadx v1.5.4

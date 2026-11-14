@@ -6,6 +6,7 @@ tag: "arthas-all-4.2.0"
 published: "2026-05-25"
 type: "release"
 lang: "en"
+summary: "feat: profiler 升级内置 async-profiler 到 4.4，移除已废弃的 check action，并将 --cstack 可选值更新为 fp|dwarf|vm|vmx|no，修复 Zing JVM 崩溃相关问题，见 #3186 #3199；chore: 默认 session timeout 从 30 分钟延长到 3 小时，覆盖 as.sh、arthas.properties 和 Shell Server 默认值"
 ---
 
 # arthas arthas-all-4.2.0

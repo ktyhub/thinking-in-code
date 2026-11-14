@@ -6,7 +6,7 @@ tag: "v5.7.0"
 published: "2026-11-02"
 type: "minor"
 lang: "en"
-summary: "Execution plan"
+summary: "Feat: detached up runs on a single plan · Feat(up): interactive up runs on a single plan · Feat: scale and watch rebuild use the unified plan · Feat: compose start builds a start-only plan"
 ---
 
 # compose v5.7.0

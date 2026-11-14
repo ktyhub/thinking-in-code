@@ -6,7 +6,7 @@ tag: "v1.0.0-M6.1"
 published: "2025-03-07"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/alibaba/spring-ai-alibaba/compare/v1.0.0-M5.1...v1.0.0-M6.1"
+summary: "Upgrade Spring AI to 1.0.0-M6 · Community-driven plugins, including FunctionCalling, DocumentReader, VectorStore, and ChatMemory. · Add DeepSeek reasoning content support in response"
 ---
 
 # spring-ai-alibaba v1.0.0-M6.1

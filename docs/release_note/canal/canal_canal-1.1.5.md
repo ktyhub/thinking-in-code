@@ -6,6 +6,7 @@ tag: "canal-1.1.5"
 published: "2021-04-19"
 type: "release"
 lang: "en"
+summary: "重点优化MQ发送的性能，单topic最高峰值可支持3~8万的rps，接近数量级上的性能提升 #2258；文档可参考：Canal-MQ-Performance；MQ发送特性支持；新增rabbitmQ的MQ发送支持 #2156"
 ---
 
 # canal canal-1.1.5

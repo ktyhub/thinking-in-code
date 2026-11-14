@@ -7,7 +7,7 @@ version: "v3.75.2"
 published: "2026-11-10"
 type: "patch"
 lang: "en"
-summary: "Socket flagged six files in ruflo@3.75.1. They were the Chat UI, MCP bridge and deploy scripts under ruflo/src/, which the CLI never reads. This release stops shipping them and fixes the two real defects the alerts…"
+summary: "Socket flagged six files in ruflo@3.75.1. They were the Chat UI, MCP bridge and deploy scripts under ruflo/src/, which the CLI never reads."
 ---
 
 # ruflo v3.75.2

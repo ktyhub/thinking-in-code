@@ -6,7 +6,7 @@ tag: "v2.15.4"
 published: "2024-10-09"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/compare/v2.15.3...v2.15.4"
+summary: "Support saas version in readme · google api using x-goog-api-key header · fix: build error · docs: Hotfix/upstream sync doc update"
 ---
 
 # ChatGPTNextWeb v2.15.4

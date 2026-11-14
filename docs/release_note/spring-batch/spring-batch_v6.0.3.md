@@ -6,7 +6,7 @@ tag: "v6.0.3"
 published: "2026-03-18"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Add configuration property to set the job instance incrementer name #5245 · Add support to configure job instance incrementer name through environment variable / system property #5332"
 ---
 
 # spring-batch v6.0.3

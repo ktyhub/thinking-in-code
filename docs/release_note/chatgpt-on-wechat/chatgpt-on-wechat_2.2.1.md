@@ -6,7 +6,7 @@ tag: "2.2.1"
 published: "2026-10-14"
 type: "patch"
 lang: "en"
-summary: "🌐 English | 中文"
+summary: "A new Artifacts page brings together the files created in your conversations, in both the Web console and the desktop client"
 ---
 
 # chatgpt-on-wechat 2.2.1

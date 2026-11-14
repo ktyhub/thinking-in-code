@@ -6,7 +6,7 @@ tag: "v3.3.1"
 published: "2024-11-14"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/dubbo-spi-extensions/compare/v3.3.0...v3.3.1"
+summary: "Compatible with Apache Dubbo 3.3.x"
 ---
 
 # dubbo-spi-extensions v3.3.1

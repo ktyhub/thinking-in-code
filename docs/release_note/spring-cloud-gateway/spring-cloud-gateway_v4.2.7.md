@@ -6,7 +6,7 @@ tag: "v4.2.7"
 published: "2025-12-11"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "GatewayTagsProvider not working as documented #4007 · FormFilter Issue: Incorrect Handling of URL-Encoded Parameters in Query String #3929"
 ---
 
 # spring-cloud-gateway v4.2.7

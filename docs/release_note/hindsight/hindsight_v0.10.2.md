@@ -7,6 +7,7 @@ version: "v0.10.2"
 published: "2026-09-29"
 type: "patch"
 lang: "en"
+summary: "docs: changelog and blog post for v0.10.1 · docs: every Hindsight code example comes from a tested snippet (+4 fixes it surfaced) · blog: What's New in Hindsight Cloud (0.10.0), plus three stale-line fixes"
 ---
 
 # hindsight v0.10.2

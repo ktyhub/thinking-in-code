@@ -6,7 +6,7 @@ tag: "rel/v5.4"
 published: "2023-06-24"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/jmeter/compare/rel/v5.3...rel/v5.4"
+summary: "Update JMeter screen preview · docs: clarify how to configure InfluxDB v1 and InfluxDB v2 · Update neo4j-java-driver from 1.7.5 to 4.0.1 · Ensure all buttons added to the toolbar behave/look consistently."
 ---
 
 # jmeter rel/v5.4

@@ -7,7 +7,7 @@ version: "pi-agent-v0.3.2"
 published: "2026-09-23"
 type: "release"
 lang: "en"
-summary: "Improvements:"
+summary: "Search: The memory policy, mem0_memory tool description, and prompt guidelines no longer ask the agent to search before answering anything that may depend on earlier context or to run several searches per question."
 ---
 
 # mem0 pi-agent-v0.3.2

@@ -7,6 +7,7 @@ version: "2.3.5"
 published: "2024-04-21"
 type: "patch"
 lang: "en"
+summary: "[fix] fix get seatunnel row size npe issue (#6681) · [Hotfix] Fix DEFAULT TABLE problem (#6352) · [Chore] Fix file spell errors (#6606) · [BugFix][Spark-translation] map type cast error (#6552)"
 ---
 
 # seatunnel 2.3.5

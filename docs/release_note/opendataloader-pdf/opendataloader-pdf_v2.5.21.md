@@ -7,6 +7,7 @@ version: "v2.5.21"
 published: "2026-11-10"
 type: "patch"
 lang: "en"
+summary: "chore: begin 2.5.21-SNAPSHOT[bot] · fix(core): read a table of contents by rows, not by columns · fix(core): keep a bold step heading out of the paragraph below it"
 ---
 
 # opendataloader-pdf v2.5.21

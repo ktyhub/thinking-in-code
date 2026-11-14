@@ -6,7 +6,7 @@ tag: "v4.0.14"
 published: "2026-10-05"
 type: "patch"
 lang: "en"
-summary: "For the complete list, check the full changelog."
+summary: "[improve][broker][branch-4.2] Upgrade bookkeeper to 4.17.4 (#26219) · [fix][sec] Bump google.golang.org/grpc from 1.79.3 to 1.82.1 in /pulsar-function-go/examples (#26231)"
 ---
 
 # pulsar v4.0.14

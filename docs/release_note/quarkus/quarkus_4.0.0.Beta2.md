@@ -6,6 +6,7 @@ tag: "4.0.0.Beta2"
 published: "2026-10-28"
 type: "major"
 lang: "en"
+summary: "#54900 - Add OIDC Client attestation authentication · #57391 - Introduce JFR events to REST Client"
 ---
 
 # quarkus 4.0.0.Beta2

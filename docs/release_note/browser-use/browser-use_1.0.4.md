@@ -7,7 +7,7 @@ version: "1.0.4"
 published: "2026-11-13"
 type: "patch"
 lang: "en"
-summary: "pip install 'browser-use==1.0.4'"
+summary: "The agent drops old screenshots in one batch once 20 tool results carry one, instead of on every new screenshot. Each prune rewrote an earlier message and broke the provider's prompt cache, so screenshot-heavy runs paid…"
 ---
 
 # browser-use 1.0.4

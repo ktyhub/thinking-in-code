@@ -6,7 +6,7 @@ tag: "v4.0.14"
 published: "2026-10-22"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/argoproj/argo-workflows/compare/v4.0.13...v4.0.14"
+summary: "fix(validate): skip validation of templateRef with a dynamic name. Fixes #16008 (cherry-pick #17063 for 4.0) · fix(ui): limit workflows listed on the event flow page (cherry-pick #17109 for 4.0)[bot]"
 ---
 
 # argo-workflows v4.0.14

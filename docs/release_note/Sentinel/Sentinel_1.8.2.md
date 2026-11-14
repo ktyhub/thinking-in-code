@@ -6,7 +6,7 @@ tag: "1.8.2"
 published: "2021-07-06"
 type: "patch"
 lang: "en"
-summary: "Thanks for all contributors: @Amitbhave, @Anilople, @brotherlu-xcq, @cdfive, @drgnchan, @goodjava, @gvma, @huakai-zhang, @jasonjoo2010, @jiajiangnan, @JJFly-JOJO, @JerryChin, @liqiangz, @quaff, @Roger3581321,…"
+summary: "Improve performance of TimeUtil adaptively in different load conditions (#1746) · Support private-level blockHandler/fallback method for @SentinelResource annotation (#2163)"
 ---
 
 # Sentinel 1.8.2

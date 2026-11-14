@@ -6,7 +6,7 @@ tag: "7.11.0"
 published: "2025-02-13"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/testng-team/testng/compare/7.10.2...7.11.0"
+summary: "Report deadlocks when running in sharedthreadpool · Update JCommander to 1.83 · Update Gradle Wrapper from 8.7 to 8.8 · Fix array assertEquals failure message when an element is null or non-null"
 ---
 
 # testng 7.11.0

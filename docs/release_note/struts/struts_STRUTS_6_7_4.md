@@ -6,7 +6,7 @@ tag: "STRUTS_6_7_4"
 published: "2025-02-20"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/struts/compare/STRUTS670...STRUTS674"
+summary: "WW-5493 Restores parameters and uses getAttributes() · Sets version to 6.7.1-SNAPSHOT to prepare for another development cycle · WW-5501 Exclude malicious names · Updates .asf.yaml to match main"
 ---
 
 # struts STRUTS_6_7_4

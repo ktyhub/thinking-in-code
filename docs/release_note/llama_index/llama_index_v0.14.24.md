@@ -7,6 +7,7 @@ version: "v0.14.24"
 published: "2026-08-19"
 type: "patch"
 lang: "en"
+summary: "fix: close HotpotQA evaluator file handles (#22113) · fix(core): preserve oversized leaf nodes in CodeSplitter (#22119) · fix: preserve multiblock chat history writes (#22124)"
 ---
 
 # llama_index v0.14.24

@@ -6,6 +6,7 @@ tag: "2023.0.3.2"
 published: "2024-12-12"
 type: "patch"
 lang: "en"
+summary: "[Nacos] 增加spring cloud nacos config配置提醒信息，方便快速配置nacos；[Nacos] enhance nacos config annotation ,support applying to Spring Bean.；[Nacos] fixes #3878, rename spring-cloud-nacos-config directory"
 ---
 
 # spring-cloud-alibaba 2023.0.3.2

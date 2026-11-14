@@ -6,7 +6,7 @@ tag: "2.1.3"
 published: "2026-07-08"
 type: "patch"
 lang: "en"
-summary: "🌐 English | 中文"
+summary: "Introducing the CowAgent Desktop client for macOS and Windows — your local super AI assistant, truly ready to use out of the box."
 ---
 
 # chatgpt-on-wechat 2.1.3

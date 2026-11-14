@@ -7,6 +7,7 @@ version: "0.20.0"
 published: "2026-09-12"
 type: "minor"
 lang: "en"
+summary: "fix(frontend): dedupe Radix dismissable-layer so body pointer-events unlock · chore(deps): bump react-i18next from 17.0.6 to 17.0.11 in /frontend[bot]"
 ---
 
 # DocsGPT 0.20.0

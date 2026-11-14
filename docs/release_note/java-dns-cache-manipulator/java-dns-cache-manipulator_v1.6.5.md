@@ -6,7 +6,7 @@ tag: "v1.6.5"
 published: "2022-01-17"
 type: "patch"
 lang: "en"
-summary: "[](https://search.maven.org/artifact/com.alibaba/dns-cache-manipulator/1.6.5/jar) [](https://github.com/alibaba/java-dns-cache-manipulator/releases/download/v1.6.5/dcm-1.6.5.tar.gz)"
+summary: "It's time to say goodbye"
 ---
 
 # java-dns-cache-manipulator v1.6.5

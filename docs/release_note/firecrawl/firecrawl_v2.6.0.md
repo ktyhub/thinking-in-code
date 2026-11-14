@@ -7,6 +7,7 @@ version: "v2.6.0"
 published: "2025-11-14"
 type: "minor"
 lang: "en"
+summary: "Unified Billing Model - Credits and tokens merged into single system. Extract now uses credits (15 tokens = 1 credit), existing tokens work everywhere."
 ---
 
 # firecrawl v2.6.0

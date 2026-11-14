@@ -6,7 +6,7 @@ tag: "v5.0.2"
 published: "2026-06-11"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-kubernetes/compare/v5.0.1...v5.0.2"
+summary: "Match service labels much earlier · compute kubernetes service metadata only once · make KubernetesClientCatalogWatch non final · K8s client simplifications"
 ---
 
 # spring-cloud-kubernetes v5.0.2

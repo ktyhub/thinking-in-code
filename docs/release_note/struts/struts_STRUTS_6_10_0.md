@@ -6,7 +6,7 @@ tag: "STRUTS_6_10_0"
 published: "2026-06-14"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/struts/compare/STRUTS690...STRUTS6100"
+summary: "Struts 6.9.0 · build(deps): bump slf4j.version from 2.0.17 to 2.0.18[bot] · build(deps): WW-5628 bump asm.version from 9.9.1 to 9.10[bot] · build(deps): WW-5629 bump log4j2.version from 2.25.4 to 2.26.0[bot]"
 ---
 
 # struts STRUTS_6_10_0

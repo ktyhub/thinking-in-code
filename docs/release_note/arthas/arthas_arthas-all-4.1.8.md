@@ -6,6 +6,7 @@ tag: "arthas-all-4.1.8"
 published: "2026-03-09"
 type: "release"
 lang: "en"
+summary: "fix: 修复 ProcessImpl 并发场景下 processStatus 可见性问题，并补充并发测试，见 #3149；feat: 新增 skills 文档，包含 cpu-high、eagleeye-traceid、spring-context"
 ---
 
 # arthas arthas-all-4.1.8

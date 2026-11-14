@@ -6,7 +6,7 @@ tag: "3.0.3"
 published: "2026-03-09"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/LibrePDF/OpenPDF/compare/3.0.2...3.0.3"
+summary: "Bump maven-surefire-plugin.version from 3.5.4 to 3.5.5[bot] · fix: resolve indexed color image color distortion in PDF output (#1499) · Bump com.puppycrawl.tools:checkstyle from 13.2.0 to 13.3.0[bot]"
 ---
 
 # OpenPDF 3.0.3

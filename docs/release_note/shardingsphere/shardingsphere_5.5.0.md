@@ -6,6 +6,7 @@ tag: "5.5.0"
 published: "2024-04-30"
 type: "minor"
 lang: "en"
+summary: "Proxy: Remove the outdated schemaName configuration of the Proxy · Kernel: Remove the sqlCommentParseEnabled configuration in SQL Parser Rule to reduce code complexity"
 ---
 
 # shardingsphere 5.5.0

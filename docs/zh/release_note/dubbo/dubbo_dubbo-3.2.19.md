@@ -1,6 +1,7 @@
 ---
 title: "dubbo dubbo-3.2.19"
 description: "Apache Dubbo 的 java 实现。 RPC 和微服务框架。"
+summary: "Apache Dubbo 的 java 实现。 RPC 和微服务框架。"
 ---
 
 # dubbo dubbo-3.2.19

@@ -6,7 +6,7 @@ tag: "v3.8.3-patch.7"
 published: "2025-07-29"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/openimsdk/open-im-server/compare/v3.8.3-patch.6...v3.8.3-patch.7"
+summary: "fix: correctly aggregate read seqs by conversation and user before DB update. [Created from #3442] · feat: add filtering for invalid messages and invalid conversations to…"
 ---
 
 # open-im-server v3.8.3-patch.7

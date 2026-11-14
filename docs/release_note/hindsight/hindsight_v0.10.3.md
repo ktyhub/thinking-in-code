@@ -7,6 +7,7 @@ version: "v0.10.3"
 published: "2026-10-08"
 type: "patch"
 lang: "en"
+summary: "docs: changelog and blog post for v0.10.2 · fix(coding-agents): hold the deepen lock with a heartbeat, not a 30-minute TTL"
 ---
 
 # hindsight v0.10.3

@@ -6,7 +6,7 @@ tag: "v7.18.0"
 published: "2026-08-20"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/selenide/selenide/compare/v7.17.0...v7.18.0"
+summary: "add Selenide CLI: a command-line tool for AI agents (#3380) (#3409) (#3419) -- thanks to sbielievitniev-xm · rename 'selenide-mcp' npm module to '@selenide/mcp' (#3383)"
 ---
 
 # selenide v7.18.0

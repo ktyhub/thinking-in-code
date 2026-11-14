@@ -6,7 +6,7 @@ tag: "v4.4.0"
 published: "2024-09-29"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/sofastack/sofa-boot/compare/v4.3.0...v4.4.0"
+summary: "Automatically exposes jdk modules"
 ---
 
 # sofa-boot v4.4.0

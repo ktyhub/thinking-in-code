@@ -7,6 +7,7 @@ version: "v2.2.1"
 published: "2026-09-01"
 type: "patch"
 lang: "en"
+summary: "Turn-completed notifications now include the conversation's name, so you can tell at a glance which conversation finished instead of seeing identical 'finished responding' messages (long names are truncated)."
 ---
 
 # AionUi v2.2.1

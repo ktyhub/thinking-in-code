@@ -7,7 +7,7 @@ version: "v1.39.16"
 published: "2026-11-10"
 type: "patch"
 lang: "en"
-summary: "none"
+summary: "schema: return the class version when AddClassProperty adds nothing · fix: entrypoint accepts nodes under maintenance if needed · Require every verb of a manage permission before assigning its role"
 ---
 
 # weaviate v1.39.16

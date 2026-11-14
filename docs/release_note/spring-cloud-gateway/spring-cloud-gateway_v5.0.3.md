@@ -6,7 +6,7 @@ tag: "v5.0.3"
 published: "2026-08-20"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-gateway/compare/v5.0.2...v5.0.3"
+summary: "CVE-2026-47879 — Spring Cloud Gateway SSRF and native file access with gRPC"
 ---
 
 # spring-cloud-gateway v5.0.3

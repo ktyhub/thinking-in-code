@@ -6,6 +6,7 @@ tag: "6.6.1"
 published: "2026-08-17"
 type: "patch"
 lang: "en"
+summary: "♿ Improve localized accessible names for Upload actions and Modal and Notification close buttons. #58953 #58957 @nrps9909"
 ---
 
 # ant-design 6.6.1

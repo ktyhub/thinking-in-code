@@ -7,6 +7,7 @@ version: "v3.7.0"
 published: "2026-06-11"
 type: "minor"
 lang: "en"
+summary: "Release PP-OCRv6 · Accuracy boost: Medium tier achieves +4.6% detection and +5.1% recognition over PP-OCRv5_server, surpassing mainstream VLMs (Qwen3-VL-235B, GPT-5.5) with only 34.5M parameters."
 ---
 
 # PaddleOCR v3.7.0

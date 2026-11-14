@@ -6,7 +6,7 @@ tag: "v5.0.1"
 published: "2026-01-29"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "K8s client leader election #2107 · Fabric8 native leader election #2075"
 ---
 
 # spring-cloud-kubernetes v5.0.1

@@ -6,6 +6,7 @@ tag: "v1.30.1"
 published: "2026-10-22"
 type: "patch"
 lang: "en"
+summary: "refactor(diff): express the Markdown preview cap in CSS · refactor(automations): express the activity track height in CSS · chore: bump agent-server to 1.57.0 · chore: remove merged PR artifacts"
 ---
 
 # OpenHands v1.30.1

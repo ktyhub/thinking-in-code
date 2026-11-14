@@ -1,6 +1,7 @@
 ---
 title: "pulsar v4.2.5"
 description: "Apache Pulsar - 分布式发布-订阅消息系统"
+summary: "Apache Pulsar - 分布式发布-订阅消息系统"
 ---
 
 # pulsar v4.2.5

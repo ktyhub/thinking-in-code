@@ -6,7 +6,7 @@ tag: "v7.1.0-RC1"
 published: "2026-04-21"
 type: "minor"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "GH-8108: Add DSL for Redis Queue Gateways. #10944 · GH-8108: Add DSL for Redis Outbound Command Gateway. #10941 · Add DSL for Redis Store channel adapters. #10921 · Add DSL for Redis Queue channel adapters. #10911"
 ---
 
 # spring-integration v7.1.0-RC1

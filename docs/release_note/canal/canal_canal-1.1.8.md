@@ -6,6 +6,7 @@ tag: "canal-1.1.8"
 published: "2025-01-16"
 type: "release"
 lang: "en"
+summary: "适配MySQL 8.4、Mariadb 11、Percona 8.0、PolarDB-X 2.0的版本 #4940 #5231 #5012；新增clickhouse的adapter #4957；深度适配PolarDB-X集中分布式一体化版的binlog解析，复用polardbx-parse的SQL解析工具包 #5097；新增helm chart支持，使用说明"
 ---
 
 # canal canal-1.1.8

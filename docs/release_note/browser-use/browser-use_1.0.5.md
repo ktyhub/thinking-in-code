@@ -7,7 +7,7 @@ version: "1.0.5"
 published: "2026-11-14"
 type: "patch"
 lang: "en"
-summary: "pip install 'browser-use==1.0.5'"
+summary: "Every run is judged by your own model: one more low-effort request checks the run against the task and fills result.judgement with success, failure_reason, description, prompt_injection_detected…"
 ---
 
 # browser-use 1.0.5

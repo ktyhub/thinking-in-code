@@ -6,7 +6,7 @@ tag: "airflow-ctl/0.1.5"
 published: "2026-06-03"
 type: "release"
 lang: "en"
-summary: ":package: PyPI: https://pypi.org/project/apache-airflow-ctl/0.1.5 :books: Docs: https://airflow.apache.org/docs/apache-airflow-ctl/0.1.5 :hammerandwrench: Release Notes:…"
+summary: "package: PyPI: https://pypi.org/project/apache-airflow-ctl/0.1.5 :books: Docs: https://airflow.apache.org/docs/apache-airflow-ctl/0.1.5 :hammer_and_wrench: Release Notes…"
 ---
 
 # airflow airflow-ctl/0.1.5

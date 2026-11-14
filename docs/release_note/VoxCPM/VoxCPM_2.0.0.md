@@ -7,6 +7,7 @@ version: "2.0.0"
 published: "2026-04-06"
 type: "major"
 lang: "en"
+summary: "修复lora/ft测试代码处传参错误的内容；perf: optimize dataset length calculation via batch column access；Add torchcodec to dependencies；Print debug messages to stderr instead of stdout"
 ---
 
 # VoxCPM 2.0.0

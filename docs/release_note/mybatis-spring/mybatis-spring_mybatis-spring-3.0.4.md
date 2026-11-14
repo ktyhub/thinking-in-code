@@ -6,7 +6,7 @@ tag: "mybatis-spring-3.0.4"
 published: "2024-08-11"
 type: "release"
 lang: "en"
-summary: "tests"
+summary: "Adjust MyBatisSystemException to spring 6 per https://github.com/spring-projects/spring-framework/issues/25162, original constructor is deprecated now. · Add environment to ClassPathMapperScanner from PropertySources"
 ---
 
 # mybatis-spring mybatis-spring-3.0.4

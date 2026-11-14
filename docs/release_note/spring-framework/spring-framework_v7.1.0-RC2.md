@@ -6,7 +6,7 @@ tag: "v7.1.0-RC2"
 published: "2026-11-05"
 type: "minor"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Refine PropertyPath support #37642 · Deprecate AutoPopulatingList for removal #37639 · Copy builder lists in HttpServiceProxyFactory #37601 · Align generics in ExceptionTypeFilter constructors #37598"
 ---
 
 # spring-framework v7.1.0-RC2

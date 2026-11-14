@@ -7,7 +7,7 @@ version: "v3.8.0"
 published: "2026-08-23"
 type: "minor"
 lang: "en"
-summary: "Large palaces get fast and stay small in 3.8.0. Chroma metadata tools no longer cold-load HNSW, sqliteexact stops scanning and hydrating the whole palace for common reads, long-running Chroma servers stop rebuilding…"
+summary: "Large palaces get fast and stay small in 3.8.0. Chroma metadata tools no longer cold-load HNSW, sqlite_exact stops scanning and hydrating the whole palace for common reads, long-running Chroma servers stop rebuilding…"
 ---
 
 # mempalace v3.8.0

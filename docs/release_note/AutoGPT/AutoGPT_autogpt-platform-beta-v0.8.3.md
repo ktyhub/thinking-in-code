@@ -6,7 +6,7 @@ tag: "autogpt-platform-beta-v0.8.3"
 published: "2026-10-08"
 type: "pre"
 lang: "en"
-summary: "Date: October 2026"
+summary: "#14990 - Report OAuth starts and exchange failures to PostHog (by @kcze) · #15052 - Let users edit and combine suggested answers in question cards (by @0ubbe)"
 ---
 
 # AutoGPT autogpt-platform-beta-v0.8.3

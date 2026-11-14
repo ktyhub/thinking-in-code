@@ -7,7 +7,7 @@ version: "v0.1.913-beta"
 published: "2026-10-30"
 type: "pre"
 lang: "en"
-summary: "Make Unsloth your own with custom backgrounds and a improved UI/UX. This release also cuts app update times and speeds up Linux app and Qwen-Image gen when VRAM is limited. Also new: DeepSeek-V4.1-Flash-1017 in Unsloth…"
+summary: "Make Unsloth your own with custom backgrounds and a improved UI/UX. This release also cuts app update times and speeds up Linux app and Qwen-Image gen when VRAM is limited."
 ---
 
 # unsloth v0.1.913-beta

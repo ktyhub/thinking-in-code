@@ -7,6 +7,7 @@ version: "v3.4.1"
 published: "2026-10-21"
 type: "patch"
 lang: "en"
+summary: "Haystack now requires certifi>=2026.10.19. certifi is installed transitively through httpx and posthog; earlier versions trust eMudhra/emSign certificate authorities whose private keys were compromised…"
 ---
 
 # haystack v3.4.1

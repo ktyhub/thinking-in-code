@@ -6,6 +6,7 @@ tag: "v2.0.5"
 published: "2025-08-21"
 type: "patch"
 lang: "zh"
+summary: "数据查询：支持手动创建树形到表格的视图；数据查询：表格模型增加窗口函数；数据查询：表模型增加聚合函数approx_most_frequent；数据查询：表模型JOIN功能扩展，支持LEFT & RIGHT JOIN、ASOF LEFT JOIN"
 ---
 
 # iotdb v2.0.5

@@ -7,7 +7,7 @@ version: "druid-31.0.1"
 published: "2024-12-25"
 type: "release"
 lang: "en"
-summary: "Apache Druid 31.0.1 is a patch release that contains important fixes for topN queries using query granularity other than 'ALL' and for the new complex metric column compression feature introduced in Druid 31.0.0. It…"
+summary: "Apache Druid 31.0.1 is a patch release that contains important fixes for topN queries using query granularity other than 'ALL' and for the new complex metric column compression feature introduced in Druid 31.0.0."
 ---
 
 # druid druid-31.0.1

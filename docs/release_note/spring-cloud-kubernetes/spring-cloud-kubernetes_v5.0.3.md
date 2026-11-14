@@ -6,7 +6,7 @@ tag: "v5.0.3"
 published: "2026-08-20"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-kubernetes/compare/v5.0.2...v5.0.3"
+summary: "fix 2242 · fix-2250 · fix reload of config watcher itself · fix-1816: part 1: rename methods and add proper labels"
 ---
 
 # spring-cloud-kubernetes v5.0.3

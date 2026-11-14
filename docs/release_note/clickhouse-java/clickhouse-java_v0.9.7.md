@@ -6,6 +6,7 @@ tag: "v0.9.7"
 published: "2026-03-03"
 type: "patch"
 lang: "en"
+summary: "Behavior of Client.Builder.addEndpoint(String) was changed: now it saves URL base path (more in https://github.com/ClickHouse/clickhouse-java/issues/2344). Previously this method was ignoring base path."
 ---
 
 # clickhouse-java v0.9.7

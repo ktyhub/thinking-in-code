@@ -6,7 +6,7 @@ tag: "v33.7.0"
 published: "2026-08-17"
 type: "minor"
 lang: "en"
-summary: "Guava 33.7.0 includes a Multi-Release line in its jar manifest, even though it is no longer a multi-release jar. This causes some problems with tools from Java 9 and Java 10. The issue is fixed in version 33.7.1. Sorry…"
+summary: "Guava 33.7.0 includes a Multi-Release line in its jar manifest, even though it is no longer a multi-release jar. This causes some problems with tools from Java 9 and Java 10. The issue is fixed in version 33.7.1."
 ---
 
 # guava v33.7.0

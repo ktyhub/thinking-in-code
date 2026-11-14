@@ -6,6 +6,7 @@ tag: "3.5.12"
 published: "2026-06-09"
 type: "patch"
 lang: "en"
+summary: "Spring Data Commons 3.5.12 Reference documentation · Spring Data Commons 3.5.12 Javadoc"
 ---
 
 # spring-data-commons 3.5.12

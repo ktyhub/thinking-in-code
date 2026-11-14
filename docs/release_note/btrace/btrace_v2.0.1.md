@@ -6,7 +6,7 @@ tag: "v2.0.1"
 published: "2020-04-19"
 type: "patch"
 lang: "en"
-summary: "Full Changelog"
+summary: "Compilation fail on windows 10 x64 \\#413 · Wiki imports don't work with openjdk \\#410 · a bug in btrace script? \\#408 · ArrayIndexOutOfBoundsException in VariableMapper \\#377"
 ---
 
 # btrace v2.0.1

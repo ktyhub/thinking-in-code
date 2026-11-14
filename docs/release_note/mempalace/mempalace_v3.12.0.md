@@ -7,7 +7,7 @@ version: "v3.12.0"
 published: "2026-11-12"
 type: "minor"
 lang: "en"
-summary: "MemPalace 3.12 keeps source text and bytes intact, makes interrupted re-mines recoverable, and cuts the work needed to maintain large palaces. Timestamps and project wings now follow the same rules across tools and…"
+summary: "MemPalace 3.12 keeps source text and bytes intact, makes interrupted re-mines recoverable, and cuts the work needed to maintain large palaces."
 ---
 
 # mempalace v3.12.0

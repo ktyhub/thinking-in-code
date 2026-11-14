@@ -6,7 +6,7 @@ tag: "v2.4.0"
 published: "2025-10-13"
 type: "minor"
 lang: "en"
-summary: "🔗 Full Changelog: v2.3.0 → v2.4.0"
+summary: "New PDF Search Category - You can now search for only pdfs via our v2/search endpoints by specifying .pdf category"
 ---
 
 # firecrawl v2.4.0

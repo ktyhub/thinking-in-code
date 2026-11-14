@@ -6,7 +6,7 @@ tag: "v1.2026.8"
 published: "2026-09-05"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/plantuml/plantuml/compare/v1.2026.7...v1.2026.8"
+summary: "⬆️ Bump actions/setup-java from 5 to 6[bot] · 📝 docs: add how to update alphadoc #2420 · ⚡️ Cache SkinParam.getThickness · ⚡️ Faster SVG number and color formatting in the TeaVM backend"
 ---
 
 # plantuml v1.2026.8

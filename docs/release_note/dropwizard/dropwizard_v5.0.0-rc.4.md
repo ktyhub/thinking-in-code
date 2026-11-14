@@ -6,7 +6,7 @@ tag: "v5.0.0-rc.4"
 published: "2025-07-24"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/dropwizard/dropwizard/compare/v5.0.0-rc.3...v5.0.0-rc.4"
+summary: "chore(deps): update dependency org.codehaus.mojo:exec-maven-plugin to v3.5.1 (release/5.0.x)[bot] · fix(deps): update dependency org.hibernate.orm:hibernate-core to v6.6.17.final (release/5.0.x)[bot]"
 ---
 
 # dropwizard v5.0.0-rc.4

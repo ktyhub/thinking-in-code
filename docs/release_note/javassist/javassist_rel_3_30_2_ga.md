@@ -6,7 +6,7 @@ tag: "rel_3_30_2_ga"
 published: "2023-12-24"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/jboss-javassist/javassist/compare/rel3301ga...rel3302ga"
+summary: "Use current latest org.apache.felix:maven-bundle-plugin:5.1.9 · Fix bytecode compatible back to 52(JDK8) · add .editorconfig · polish pom format"
 ---
 
 # javassist rel_3_30_2_ga

@@ -6,7 +6,7 @@ tag: "7.2.0-M1"
 published: "2026-08-20"
 type: "pre"
 lang: "en"
-summary: "FAILURE: Build failed with an exception."
+summary: "Add Implicit CorsConfigurationSource/PreFlightRequestHandler Detection to XML Namespace #19542 · Add Release Announcement Workflows #19573 · Validate account status in OneTimeTokenAuthenticationProvider #17656"
 ---
 
 # spring-security 7.2.0-M1

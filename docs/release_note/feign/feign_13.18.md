@@ -6,7 +6,7 @@ tag: "13.18"
 published: "2026-11-10"
 type: "minor"
 lang: "en"
-summary: "List of PRs that updated libraries versions"
+summary: "Add feign-jdk-json codec for the JDK Simple JSON API (JEP 540) and fix Dependabot auto-merge · Exclude static fields from field query maps · Treat runtime HeaderMap values as literals · docs: fix typos in documentation"
 ---
 
 # feign 13.18

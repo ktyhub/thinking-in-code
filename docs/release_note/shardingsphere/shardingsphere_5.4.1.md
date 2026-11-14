@@ -6,6 +6,7 @@ tag: "5.4.1"
 published: "2023-10-21"
 type: "patch"
 lang: "en"
+summary: "Proxy: Supports dbcp and c3p0 connection pools · Metadata: Standalone mode adapts to metadata new structure · Governance: Governance supports register instance level data source"
 ---
 
 # shardingsphere 5.4.1

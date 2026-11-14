@@ -7,7 +7,7 @@ version: "v2.3.3"
 published: "2026-11-12"
 type: "patch"
 lang: "en"
-summary: "From PR #22891: https://github.com/lobehub/lobehub/pull/22891"
+summary: "Release Date: November 12, 2026 Since v2.3.2: 253 merged PRs · 252 commits · 12 contributors"
 ---
 
 # lobehub v2.3.3

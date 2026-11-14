@@ -6,7 +6,7 @@ tag: "4.5.0"
 published: "2025-01-29"
 type: "minor"
 lang: "en"
-summary: "Added"
+summary: "Upgraded Plugin \\#711 (tanya732) · Fix jackson vuln \\#705 (tanya732) · Fix typo in example code \\#682 (kasperkarlsson) · Remove dead README links \\#676 (jimmyjames)"
 ---
 
 # java-jwt 4.5.0

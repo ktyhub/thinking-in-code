@@ -6,6 +6,7 @@ tag: "6.6.0"
 published: "2026-08-10"
 type: "minor"
 lang: "en"
+summary: "🔥 Add Listy component for high-performance virtualized lists with grouping, sticky headers, and imperative scrolling. #58724 @aojunhao123 · ConfigProvider"
 ---
 
 # ant-design 6.6.0

@@ -6,7 +6,7 @@ tag: "STRUTS_7_3_0"
 published: "2026-08-01"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/struts/compare/STRUTS721...STRUTS730"
+summary: "Add CONTRIBUTING.md for new contributors · Release 7.2.1-RC1 · Add draft security threat model (THREAT_MODEL.md) + discoverability pointer · WW-5640 Add WebJars support to Struts core"
 ---
 
 # struts STRUTS_7_3_0

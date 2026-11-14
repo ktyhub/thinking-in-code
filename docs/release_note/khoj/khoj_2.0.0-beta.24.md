@@ -7,6 +7,7 @@ version: "2.0.0-beta.24"
 published: "2026-01-02"
 type: "pre"
 lang: "en"
+summary: "Render mermaid diagram wrapped in markdown codeblocks on web app"
 ---
 
 # khoj 2.0.0-beta.24

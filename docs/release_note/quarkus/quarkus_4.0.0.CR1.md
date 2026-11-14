@@ -6,6 +6,7 @@ tag: "4.0.0.CR1"
 published: "2026-11-11"
 type: "major"
 lang: "en"
+summary: "#16031 - cli should support remote-dev · #31648 - Fix and reenable AddExtensionToModuleInMultiModuleKtsProjectTest · #41166 - Option quarkus.log.syslog.max-length ignores text of the message"
 ---
 
 # quarkus 4.0.0.CR1

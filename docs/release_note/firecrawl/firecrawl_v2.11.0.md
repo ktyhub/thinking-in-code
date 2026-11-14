@@ -7,6 +7,7 @@ version: "v2.11.0"
 published: "2026-06-19"
 type: "minor"
 lang: "en"
+summary: "Firecrawl Research Index — Added a specialized index for agentic AI/ML research: search across 3M+ arXiv papers and the GitHub code behind them (issues, merged PRs, and READMEs, refreshed daily), fetch a paper's details…"
 ---
 
 # firecrawl v2.11.0

@@ -6,7 +6,7 @@ tag: "v1.36.0"
 published: "2026-07-29"
 type: "minor"
 lang: "en"
-summary: "Changes:"
+summary: "Significant improvements to Markdown Javadoc support"
 ---
 
 # google-java-format v1.36.0

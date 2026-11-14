@@ -7,6 +7,7 @@ version: "v1.18.0"
 published: "2026-10-13"
 type: "minor"
 lang: "en"
+summary: "fix: point k8s probes at the server's /api/ping · fix: don't crash when removing a parsed file while an image is attached · fix: open the clicked image when attachments share a file name"
 ---
 
 # anything-llm v1.18.0

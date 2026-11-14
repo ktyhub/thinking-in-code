@@ -6,7 +6,7 @@ tag: "v2.11.3"
 published: "2024-05-22"
 type: "patch"
 lang: "en"
-summary: "Component | Version"
+summary: "spring-cloud/spring-cloud-deployer#444 Update Kubernetes Support Matrix for 2.9.x · spring-cloud/spring-cloud-dataflow-ui#1996 Update Task Execution list to use tasks/thinexecutions"
 ---
 
 # spring-cloud-dataflow v2.11.3

@@ -7,7 +7,7 @@ version: "mineru-4.2.1-released"
 published: "2026-11-11"
 type: "release"
 lang: "en"
-summary: "集成提示。嵌入式 Doclib 宿主需要设置 shutdown 回调以支持关闭接口，缺少回调时返回 serviceunavailable。标准 mineru server 入口已配置该回调。"
+summary: "修复 Doclib 截断续读遗漏内容。Markdown 文档或单页读取在 context=0 时，达到长度限制后通过 next_request.locator 与 next_request.after 继续读取当前页的剩余内容，读完后再建议下一页。CLI 续读标记和 SDK 文档同步更新。"
 ---
 
 # MinerU mineru-4.2.1-released

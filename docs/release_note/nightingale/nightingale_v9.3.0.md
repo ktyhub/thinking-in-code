@@ -6,7 +6,7 @@ tag: "v9.3.0"
 published: "2026-10-21"
 type: "minor"
 lang: "en"
-summary: "Replace the binary and restart. No schema changes in this release."
+summary: "feat: native Microsoft Teams, Twilio (SMS / voice), Pushover, ntfy, Splunk On-Call (VictorOps) and LINE notification channels, each with built-in message templates (#3431, #3435)"
 ---
 
 # nightingale v9.3.0

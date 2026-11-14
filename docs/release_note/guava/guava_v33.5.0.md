@@ -6,7 +6,7 @@ tag: "v33.5.0"
 published: "2025-09-17"
 type: "minor"
 lang: "en"
-summary: "com.google.guava guava 33.5.0-jre 33.5.0-android"
+summary: "33.5.0-jre.jar · 33.5.0-android.jar"
 ---
 
 # guava v33.5.0

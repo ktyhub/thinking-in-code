@@ -7,6 +7,7 @@ version: "v1.19.2"
 published: "2026-10-05"
 type: "patch"
 lang: "en"
+summary: "https://github.com/qdrant/qdrant/pull/10682 - Don't rewrite full sparse posting list on every upsert, making sparse vector upserts significantly faster"
 ---
 
 # qdrant v1.19.2

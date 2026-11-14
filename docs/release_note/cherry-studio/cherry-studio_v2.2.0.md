@@ -7,7 +7,7 @@ version: "v2.2.0"
 published: "2026-11-10"
 type: "minor"
 lang: "en"
-summary: "Release Notes"
+summary: "Cherry Studio 2.2.0 - Skill Marketplace, Notifications, and Agent Runtime"
 ---
 
 # cherry-studio v2.2.0

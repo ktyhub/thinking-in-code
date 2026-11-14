@@ -7,6 +7,7 @@ version: "n8n@2.47.5"
 published: "2026-11-12"
 type: "release"
 lang: "en"
+summary: "API: Reject edits to read-only credential nodes in the Public API (#43555) (404b3df) · editor: Align animated node border corners (#43549) (1fd6894)"
 ---
 
 # n8n n8n@2.47.5

@@ -6,6 +6,7 @@ tag: "mybatis-spring-3.0.1"
 published: "2022-12-09"
 type: "release"
 lang: "en"
+summary: "Correct 'source' reproducible issue #763 · Fix site javadoc issue #756 · Set include annotation config to false in native image #758 · Added new option to print warning if mappers not found #762"
 ---
 
 # mybatis-spring mybatis-spring-3.0.1

@@ -7,6 +7,7 @@ version: "v0.44.0"
 published: "2026-11-10"
 type: "minor"
 lang: "en"
+summary: "packaging: keep PyTorch extras out of all (#4067)"
 ---
 
 # headroom v0.44.0

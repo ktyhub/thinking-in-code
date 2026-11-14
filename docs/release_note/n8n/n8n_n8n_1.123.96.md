@@ -7,6 +7,7 @@ version: "n8n@1.123.96"
 published: "2026-11-13"
 type: "release"
 lang: "en"
+summary: "editor: Make JSON highlight color visible on light theme (#43690) (bffbcd8) · Update @modelcontextprotocol/sdk (#43527) (f719280)"
 ---
 
 # n8n n8n@1.123.96

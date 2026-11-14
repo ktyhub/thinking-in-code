@@ -6,6 +6,7 @@ tag: "canal-1.1.4"
 published: "2019-09-02"
 type: "release"
 lang: "en"
+summary: "引入canal-admin工程，支持面向WebUI的canal管理能力；Canal-Admin-Guide；Canal-Admin-Docker；canal-server新增基于账号密码的ACL支持能力"
 ---
 
 # canal canal-1.1.4

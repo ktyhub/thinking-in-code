@@ -6,7 +6,7 @@ tag: "shiro-root-3.0.2"
 published: "2026-11-08"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/shiro/compare/shiro-root-3.0.1...shiro-root-3.0.2"
+summary: "[#2232] Form data save without requiring to log in"
 ---
 
 # shiro shiro-root-3.0.2

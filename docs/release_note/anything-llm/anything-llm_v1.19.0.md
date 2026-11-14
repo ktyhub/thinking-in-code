@@ -7,6 +7,7 @@ version: "v1.19.0"
 published: "2026-10-26"
 type: "minor"
 lang: "en"
+summary: "AnythingLLM Docker now has a default local LLM experience right out of the box. The same kind of built-in engine that ships with AnythingLLM Desktop can now run inside the container: Lemonade, the fully open-source…"
 ---
 
 # anything-llm v1.19.0

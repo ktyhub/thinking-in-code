@@ -6,7 +6,7 @@ tag: "7.1.2"
 published: "2026-10-22"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Avoid spring-core in password encoder validation · Downgrade to Jackson 3.1 · Empty or null scope claim in dynamic client registration request should be lenient"
 ---
 
 # spring-security 7.1.2

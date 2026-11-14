@@ -7,6 +7,7 @@ version: "v3.8.6"
 published: "2026-05-25"
 type: "patch"
 lang: "en"
+summary: "Add Indonesian model to alignment.py · fix: handle 'ignore' interpolation method in interpolate_nans (#1368) · build(deps): bump nltk from 3.9.2 to 3.9.4[bot] · ci: add zizmor workflow and harden existing workflows"
 ---
 
 # whisperX v3.8.6

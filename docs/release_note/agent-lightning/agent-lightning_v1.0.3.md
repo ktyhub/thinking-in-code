@@ -7,7 +7,7 @@ version: "v1.0.3"
 published: "2026-11-03"
 type: "patch"
 lang: "en"
-summary: "Human contributors, listed alphabetically by GitHub username:"
+summary: "Score Centering for low-precision RL: Added Score Centering with top-K behavior-probability capture and a runnable Qwen3.5-9B math training example. (#651, #677)."
 ---
 
 # agent-lightning v1.0.3

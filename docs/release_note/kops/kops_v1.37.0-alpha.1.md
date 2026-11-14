@@ -6,7 +6,7 @@ tag: "v1.37.0-alpha.1"
 published: "2026-07-15"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/kops/compare/v1.36.0-beta.1...v1.37.0-alpha.1"
+summary: "Support etcd 3.7.0-rc.0 and allow overriding the etcd version in the scalability scenario · Enable misspell in golangci-lint · e2e: Filter random AZ selection by instance type availability"
 ---
 
 # kops v1.37.0-alpha.1

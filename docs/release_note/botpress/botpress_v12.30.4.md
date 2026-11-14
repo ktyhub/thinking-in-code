@@ -7,6 +7,7 @@ version: "v12.30.4"
 published: "2022-10-26"
 type: "patch"
 lang: "en"
+summary: "admin: rm bot exists chec in security mw (#12192) (2e52b57) · builtin: fix crash on converse api (#12205) (0c9450e) · channel-web: don't use full lodash (#12204) (5e4ca8a)"
 ---
 
 # botpress v12.30.4

@@ -6,7 +6,7 @@ tag: "v1.2.0"
 published: "2023-10-20"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/alibaba/lowcode-engine/compare/v1.1.10...v1.2.0"
+summary: "feat: add editorCabinSymbol and skeletonCabinSymbol · feat(node): add getRGL api · fix: fix utils under appHelper will not be updated when props.appHelper is updated"
 ---
 
 # lowcode-engine v1.2.0

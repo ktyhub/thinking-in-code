@@ -6,7 +6,7 @@ tag: "3.19.3"
 published: "2022-10-28"
 type: "patch"
 lang: "en"
-summary: "Full Changelog"
+summary: "Update com.fasterxml.jackson.core:jackson-databind to 2.13.4.2 \\#631 (jimmyjames)"
 ---
 
 # java-jwt 3.19.3

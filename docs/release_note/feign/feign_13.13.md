@@ -6,7 +6,7 @@ tag: "13.13"
 published: "2026-06-13"
 type: "minor"
 lang: "en"
-summary: "List of PRs that updated libraries versions"
+summary: "Add MethodInterceptor extension point with feign-validation and feign-http-cache modules · Fix Slf4jLogger and JavaLogger returning unbuffered response when logging disabled"
 ---
 
 # feign 13.13

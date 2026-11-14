@@ -6,7 +6,7 @@ tag: "mybatis-3.5.12"
 published: "2023-03-01"
 type: "release"
 lang: "en"
-summary: "'The Great Cleanup'"
+summary: "#2703 Referencing collection parameter by name fails fixing #2693 · #2709 Fix a race condition caused by other threads calling mapper methods while mapped tables are being constructed"
 ---
 
 # mybatis-3 mybatis-3.5.12

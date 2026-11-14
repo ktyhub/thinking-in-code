@@ -6,7 +6,7 @@ tag: "rocketmq-spring-all-2.3.6"
 published: "2026-06-01"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/rocketmq-spring/compare/rocketmq-spring-all-2.3.5...rocketmq-spring-all-2.3.6"
+summary: "feat: add push consumer configs · pushConsumer add ssl · Add default v5 client tag · support simple consumer supports subscribing to multiple topics"
 ---
 
 # rocketmq-spring rocketmq-spring-all-2.3.6

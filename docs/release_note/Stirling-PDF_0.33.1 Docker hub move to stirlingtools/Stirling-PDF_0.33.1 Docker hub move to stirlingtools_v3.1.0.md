@@ -6,7 +6,7 @@ tag: "v3.1.0"
 published: "2026-10-05"
 type: "minor"
 lang: "en"
-summary: "Some big changes in this release yet again! Group signing (Called Stirling Sign) is moving out of alpha and is now being enabled by default for new users, with it, you can share, track, and sign PDFs across your org. It…"
+summary: "Some big changes in this release yet again! Group signing (Called Stirling Sign) is moving out of alpha and is now being enabled by default for new users, with it, you can share, track, and sign PDFs across your org."
 ---
 
 # Stirling-PDF_0.33.1 Docker hub move to stirlingtools v3.1.0

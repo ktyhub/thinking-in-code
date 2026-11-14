@@ -6,7 +6,7 @@ tag: "7.10.1"
 published: "2024-04-09"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/testng-team/testng/compare/7.10.0...7.10.1"
+summary: "Bump org.gradlex.build-parameters from 1.4.3 to 1.4.4 · Fix for"
 ---
 
 # testng 7.10.1

@@ -7,6 +7,7 @@ version: "v4.4.3"
 published: "2026-08-12"
 type: "patch"
 lang: "en"
+summary: "Update NPU doc and example · [bugfix] fix batch_sampler set_epoch · fix(template): preserve non-string prefix elements in replace_system · [model] support hy3"
 ---
 
 # ms-swift v4.4.3

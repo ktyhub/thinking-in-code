@@ -7,7 +7,7 @@ version: "v1.7.2"
 published: "2026-11-06"
 type: "patch"
 lang: "en"
-summary: "Release Date: 2026.11.06"
+summary: "Building on v1.7.1, v1.7.2 adds selected-text read-aloud, easier model setup, and more reliable guided learning, retrieval, and updates."
 ---
 
 # DeepTutor v1.7.2

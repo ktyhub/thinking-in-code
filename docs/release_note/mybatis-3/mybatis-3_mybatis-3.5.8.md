@@ -6,7 +6,7 @@ tag: "mybatis-3.5.8"
 published: "2021-12-12"
 type: "release"
 lang: "en"
-summary: "List of changes:"
+summary: "Avoid NullPointerException when mapping an empty string to java.lang.Character. #2368 · Fixed an incorrect argument when initializing static object. This resolves a compatibility issue with quarkus-mybatis. #2284"
 ---
 
 # mybatis-3 mybatis-3.5.8

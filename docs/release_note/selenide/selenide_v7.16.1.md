@@ -6,7 +6,7 @@ tag: "v7.16.1"
 published: "2026-05-06"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/selenide/selenide/compare/v7.16.0...v7.16.1"
+summary: "#3300 fix downloading files in Selenoid and Moon · Fix disposables registry leak · fix VideoMerger edge case when only one screenshot · Bump io.appium:java-client from 10.1.0 to 10.1.1[bot]"
 ---
 
 # selenide v7.16.1

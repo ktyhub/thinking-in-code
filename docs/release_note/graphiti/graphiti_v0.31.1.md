@@ -7,6 +7,7 @@ version: "v0.31.1"
 published: "2026-10-15"
 type: "patch"
 lang: "en"
+summary: "chore: set graphiti-core version to 0.31.0 for the v0.31.0 release[bot] · chore: set graphiti-core version to 0.31.1[bot]"
 ---
 
 # graphiti v0.31.1

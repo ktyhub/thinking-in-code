@@ -7,7 +7,7 @@ version: "v1.6.13"
 published: "2026-10-04"
 type: "patch"
 lang: "en"
-summary: "Release Date: 2026.10.04"
+summary: "Building on v1.6.12, v1.6.13 expands reading, listening, and question-bank practice, improves document parsing and speech configuration, and brings Polish plus more model providers."
 ---
 
 # DeepTutor v1.6.13

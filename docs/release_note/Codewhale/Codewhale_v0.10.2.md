@@ -7,7 +7,7 @@ version: "v0.10.2"
 published: "2026-10-24"
 type: "patch"
 lang: "en"
-summary: "Codewhale v0.10.2 adds an animated pet view (/pet on), a live Terminal work dock, per-chat composer colors (/color) and a one-time note on the first start after an update that says what changed. It closes three session…"
+summary: "Codewhale v0.10.2 adds an animated pet view (/pet on), a live Terminal work dock, per-chat composer colors (/color) and a one-time note on the first start after an update that says what changed."
 ---
 
 # Codewhale v0.10.2

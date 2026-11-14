@@ -6,7 +6,7 @@ tag: "v12.4.14"
 published: "2026-10-27"
 type: "patch"
 lang: "en"
-summary: "Download page What's new highlights"
+summary: "Security: Fix CVE-2026-100105 · Security: Fix CVE-2026-88858 · Security: Fix CVE-2026-88967"
 ---
 
 # grafana v12.4.14

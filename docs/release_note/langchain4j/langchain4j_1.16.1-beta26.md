@@ -6,7 +6,7 @@ tag: "1.16.1-beta26"
 published: "2026-06-06"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/langchain4j/langchain4j-spring/compare/1.16.0-beta26...1.16.1-beta26"
+summary: "Migrate OpenAI image models from DALL-E to new GPT image API"
 ---
 
 # langchain4j 1.16.1-beta26

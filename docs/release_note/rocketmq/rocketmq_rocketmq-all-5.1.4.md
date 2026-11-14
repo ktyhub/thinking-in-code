@@ -6,7 +6,7 @@ tag: "rocketmq-all-5.1.4"
 published: "2023-10-09"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/rocketmq/compare/rocketmq-all-5.1.3...rocketmq-all-5.1.4"
+summary: "[maven-release-plugin] prepare for next development iteration · [ISSUE #4612] Fix trace not complete · [ISSUE #6943] fix docs typo in docs/cn/controller/design.md #6943"
 ---
 
 # rocketmq rocketmq-all-5.1.4

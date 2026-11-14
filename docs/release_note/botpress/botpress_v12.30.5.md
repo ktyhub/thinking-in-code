@@ -7,6 +7,7 @@ version: "v12.30.5"
 published: "2022-11-02"
 type: "patch"
 lang: "en"
+summary: "web-channel: crash on empty message list (#12225) (c175498)"
 ---
 
 # botpress v12.30.5

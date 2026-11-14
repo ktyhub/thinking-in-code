@@ -6,7 +6,7 @@ tag: "v3.4.1"
 published: "2026-02-21"
 type: "patch"
 lang: "en"
-summary: "Huge release packed with incredible improvements and welcome to all the new contributors! See details below:"
+summary: "Huge release packed with incredible improvements and welcome to all the new contributors! See details below"
 ---
 
 # gpt-researcher v3.4.1

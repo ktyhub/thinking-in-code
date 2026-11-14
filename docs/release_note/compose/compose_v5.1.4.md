@@ -6,7 +6,7 @@ tag: "v5.1.4"
 published: "2026-05-20"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/docker/compose/compare/v5.1.3...v5.1.4"
+summary: "feat: add stop lifecycle hook for external providers"
 ---
 
 # compose v5.1.4

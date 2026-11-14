@@ -6,7 +6,7 @@ tag: "v3.0.0"
 published: "2025-10-07"
 type: "major"
 lang: "en"
-summary: "Full Changelog: https://github.com/sinaptik-ai/pandas-ai/compare/v2.2.15...v3.0.0"
+summary: "Fix Azure OpenAI LLM backend · docs: add AWS Bedrock tutorial to the example · Added export const dynamic='force-dynamic' · Removed core property on SmartDataframe that causes maximum recursion depth exceeded"
 ---
 
 # pandas-ai v3.0.0

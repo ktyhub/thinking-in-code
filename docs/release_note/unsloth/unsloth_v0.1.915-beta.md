@@ -7,7 +7,7 @@ version: "v0.1.915-beta"
 published: "2026-11-04"
 type: "pre"
 lang: "en"
-summary: "This release introduces Qwen3.8-Flash-Next Dynamic V3.1, polishes the Glass themes (now in Beta), adds a Composer position slider and lets models interact with files in the built-in browser. It also brings lower idle…"
+summary: "This release introduces Qwen3.8-Flash-Next Dynamic V3.1, polishes the Glass themes (now in Beta), adds a Composer position slider and lets models interact with files in the built-in browser."
 ---
 
 # unsloth v0.1.915-beta

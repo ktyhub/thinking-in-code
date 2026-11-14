@@ -6,6 +6,7 @@ tag: "canal-1.1.3"
 published: "2019-04-04"
 type: "release"
 lang: "en"
+summary: "支持mysql8.0新的caching_sha2_password认证协议；支持Azure MySQL的认证协议；canal投递MQ消息 【MQ投递】；支持按表规则定义dynamic topic、partition路由的能力"
 ---
 
 # canal canal-1.1.3

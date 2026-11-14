@@ -6,7 +6,7 @@ tag: "v1.2.5"
 published: "2023-12-28"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/alibaba/lowcode-engine/compare/v1.2.3...v1.2.5"
+summary: "docs: update workspace.md · chore: update docs publish action · style: remove .lc-workbench-center z-index · feat(skeleton): Add TS defs for modules & optimize Tabs display with array contents"
 ---
 
 # lowcode-engine v1.2.5

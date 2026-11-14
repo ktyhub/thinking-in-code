@@ -6,7 +6,7 @@ tag: "v2.15.7"
 published: "2024-11-05"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/compare/v2.15.6...v2.15.7"
+summary: "hotfix for gemini invald argument #5715 · hotfix for statusText is non ISO-8859-1 #5717 · Update README.md · Bump @types/jest from 29.5.13 to 29.5.14"
 ---
 
 # ChatGPTNextWeb v2.15.7

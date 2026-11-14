@@ -7,7 +7,7 @@ version: "v2.2.2"
 published: "2026-11-13"
 type: "patch"
 lang: "en"
-summary: "Release Notes"
+summary: "Cherry Studio 2.2.2 - Agent Approvals, Provider Fixes, and Polish"
 ---
 
 # cherry-studio v2.2.2

@@ -6,7 +6,7 @@ tag: "7.12.0"
 published: "2026-01-22"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/testng-team/testng/compare/7.11.0...7.12.0"
+summary: "GITHUB-2765: Propagate timeout stack trace to fix testng-team#2765 · Streamline working of shared thread pools · Streamline xml serialisation to string · test: improve osgi tests"
 ---
 
 # testng 7.12.0

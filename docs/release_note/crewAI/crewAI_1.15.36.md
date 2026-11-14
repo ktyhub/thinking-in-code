@@ -7,7 +7,7 @@ version: "1.15.36"
 published: "2026-11-06"
 type: "patch"
 lang: "en"
-summary: "@Kiko0301, @StoyanD, @joaomdmoura, @lorenzejay"
+summary: "Add experimental conversational Agent sessions. · Ask for a missing API key when crewai run starts. · Record the error class when crewai run cannot load a project. · Name the apps CrewAI AMP cannot resolve for an agent."
 ---
 
 # crewAI 1.15.36

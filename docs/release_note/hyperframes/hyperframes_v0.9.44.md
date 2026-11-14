@@ -7,7 +7,7 @@ version: "v0.9.44"
 published: "2026-11-14"
 type: "patch"
 lang: "en"
-summary: "Released on 2026-11-14."
+summary: "Check now warns when text leaves the safe areas of a 9:16 social video. Previews free a clip's decoder once the playhead leaves it, and a cancelled audio fade no longer crashes the page."
 ---
 
 # hyperframes v0.9.44

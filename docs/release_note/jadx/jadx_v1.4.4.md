@@ -6,7 +6,7 @@ tag: "v1.4.4"
 published: "2022-08-20"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/skylot/jadx/compare/v1.4.3...v1.4.4"
+summary: "[gui] Add manual search, stop and sort actions to search dialog (#1600) · [gui] Save project search history · [gui] Show start page on jadx open · [gui] Add Brazilian Portuguese translation (PR #1596)"
 ---
 
 # jadx v1.4.4

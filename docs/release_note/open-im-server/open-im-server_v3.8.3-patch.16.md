@@ -6,7 +6,7 @@ tag: "v3.8.3-patch.16"
 published: "2026-03-19"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/openimsdk/open-im-server/compare/v3.8.3-patch.15...v3.8.3-patch.16"
+summary: "feat: provide the interface required by js sdk · feat: add webhooks of online status and remove zookeeper configuration. · fix: the message I sent is not set to read seq in mongodb"
 ---
 
 # open-im-server v3.8.3-patch.16

@@ -7,6 +7,7 @@ version: "1.1.0"
 published: "2026-10-25"
 type: "minor"
 lang: "en"
+summary: "Keep the Responses prompt cache across turns and count replayed reasoning · docs: add Vercel OSS Program badge to README · Update the README translations[bot] · docs: supporters row in README header"
 ---
 
 # DocsGPT 1.1.0

@@ -7,6 +7,7 @@ version: "v1.11.1"
 published: "2025-10-23"
 type: "patch"
 lang: "en"
+summary: "Fixed issues with SearxNG requests getting timed out · Model select values are now sourced off localStorage · Run commands are updated to use volumes for persistent storage"
 ---
 
 # Vane v1.11.1

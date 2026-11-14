@@ -7,6 +7,7 @@ version: "v1.40.0"
 published: "2026-11-12"
 type: "minor"
 lang: "en"
+summary: "feat: improve Codex subscription authentication guidance"
 ---
 
 # OpenHands v1.40.0

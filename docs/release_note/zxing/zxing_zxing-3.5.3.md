@@ -6,7 +6,7 @@ tag: "zxing-3.5.3"
 published: "2024-01-31"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/zxing/zxing/compare/zxing-3.5.2...zxing-3.5.3"
+summary: "Fix MaxiCode handling of vertical quiet zone · Removing the forced content limit check for Code128Writer.java · Detect RSS Expanded finder pattern false positives by checking sequences"
 ---
 
 # zxing zxing-3.5.3

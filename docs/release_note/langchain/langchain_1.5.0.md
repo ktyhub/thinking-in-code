@@ -7,7 +7,7 @@ version: "1.5.0"
 published: "2026-11-11"
 type: "minor"
 lang: "en"
-summary: "langchain 1.5.0 drops support for Python 3.10, which has reached end-of-life. The minimum supported version is now Python 3.11, and the minimum langchain-core version is now 1.8.0. Users on Python 3.10 will continue to…"
+summary: "langchain 1.5.0 drops support for Python 3.10, which has reached end-of-life. The minimum supported version is now Python 3.11, and the minimum langchain-core version is now 1.8.0."
 ---
 
 # langchain langchain==1.5.0

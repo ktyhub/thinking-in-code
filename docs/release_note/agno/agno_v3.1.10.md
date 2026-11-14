@@ -7,6 +7,7 @@ version: "v3.1.10"
 published: "2026-10-23"
 type: "patch"
 lang: "en"
+summary: "CodexAgent: Now signs in automatically with OPENAI_API_KEY, and keeps an existing ChatGPT or other login."
 ---
 
 # agno v3.1.10

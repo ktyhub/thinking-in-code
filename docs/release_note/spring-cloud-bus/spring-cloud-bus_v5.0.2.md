@@ -6,7 +6,7 @@ tag: "v5.0.2"
 published: "2026-06-11"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Bump actions/checkout from 3 to 6[bot] · Bump @antora/collector-extension from 1.0.0-alpha.3 to 1.0.3 in /docs[bot] · Bump @springio/asciidoctor-extensions from 1.0.0-alpha.10 to 1.0.0-alpha.18 in /docs[bot]"
 ---
 
 # spring-cloud-bus v5.0.2

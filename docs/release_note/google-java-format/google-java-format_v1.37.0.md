@@ -6,7 +6,7 @@ tag: "v1.37.0"
 published: "2026-10-01"
 type: "minor"
 lang: "en"
-summary: "Changes:"
+summary: "Add a --max-line-length flag (#425) · Markdown javadoc formatting improvements (c51d6916518ab4dfffbb086449fa00f7160ae468, ecba4fb24fd064a64d2918c5fdb45546d08e3063)"
 ---
 
 # google-java-format v1.37.0

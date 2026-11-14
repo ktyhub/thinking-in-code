@@ -6,6 +6,7 @@ tag: "maven-3.10.0-rc-1"
 published: "2026-07-13"
 type: "pre"
 lang: "en"
+summary: "Remove release-profile from super POM (#11999) @slawekjaranowski · Remove deprecated plugin management from super POM (#11986) @slawekjaranowski"
 ---
 
 # maven maven-3.10.0-rc-1

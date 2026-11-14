@@ -7,6 +7,7 @@ version: "v2.9.0"
 published: "2026-04-10"
 type: "minor"
 lang: "en"
+summary: "Browser Interaction via /interact endpoint — Scrape a page, then call /interact to take actions on it — click buttons, fill forms, navigate deeper, or extract dynamic content."
 ---
 
 # firecrawl v2.9.0

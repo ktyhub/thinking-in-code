@@ -7,7 +7,7 @@ version: "1.15.37"
 published: "2026-11-07"
 type: "patch"
 lang: "en"
-summary: "@Vidit-Ostwal, @joaomdmoura, @lorenzejay"
+summary: "Add functionality to read spreadsheets for agents in crewai-files. · Scaffold and load standalone agent projects."
 ---
 
 # crewAI 1.15.37

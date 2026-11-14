@@ -7,7 +7,7 @@ version: "v2.2.0"
 published: "2026-09-23"
 type: "minor"
 lang: "en"
-summary: "New Features:"
+summary: "Client: Add User Profiles to MemoryClient and AsyncMemoryClient: get_profile(), generate_profile(), get_profile_settings(), update_profile_settings(), sample_profiles(), and get_profile_job()."
 ---
 
 # mem0 v2.2.0

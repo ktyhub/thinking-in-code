@@ -7,6 +7,7 @@ version: "v3.1.2"
 published: "2026-08-21"
 type: "patch"
 lang: "en"
+summary: "patch: Change default package feed index. · patch: Fix doc string parameters. · patch: Preserve caller event loops in synchronous LLM cache middleware. · patch: Update dependencies to latest versions (dependency sweep)."
 ---
 
 # graphrag v3.1.2

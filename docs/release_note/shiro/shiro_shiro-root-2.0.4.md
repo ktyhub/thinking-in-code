@@ -6,7 +6,7 @@ tag: "shiro-root-2.0.4"
 published: "2025-04-17"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/shiro/compare/shiro-root-2.0.3...shiro-root-2.0.4"
+summary: "[#2081] bugfix: remove InheriableThreadLocal from ThreadContext as it was cau… · [#2083] bugfix: added Shiro core additional ClassLoader to be used when seria…"
 ---
 
 # shiro shiro-root-2.0.4

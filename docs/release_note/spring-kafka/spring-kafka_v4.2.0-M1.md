@@ -6,7 +6,7 @@ tag: "v4.2.0-M1"
 published: "2026-08-20"
 type: "pre"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Conflict when observability enabled and mixed batch and non-batch listeners #3947"
 ---
 
 # spring-kafka v4.2.0-M1

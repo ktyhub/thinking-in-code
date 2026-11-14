@@ -6,6 +6,7 @@ tag: "2.3.6"
 published: "2024-08-02"
 type: "patch"
 lang: "en"
+summary: "[Fix][Flink]Hotfix flink checkpoint default value (#7040) · [Hotfix][Core] Fix the NullPointException for the json config of the job without pluginname (#6815)"
 ---
 
 # seatunnel 2.3.6

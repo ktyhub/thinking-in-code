@@ -6,7 +6,7 @@ tag: "shiro-root-2.2.1"
 published: "2026-06-14"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/shiro/compare/shiro-root-2.2.0...shiro-root-2.2.1"
+summary: "chore(jacoco): added exclusion for weld client proxy"
 ---
 
 # shiro shiro-root-2.2.1

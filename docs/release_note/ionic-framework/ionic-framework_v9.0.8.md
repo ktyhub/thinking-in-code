@@ -6,6 +6,7 @@ tag: "v9.0.8"
 published: "2026-10-14"
 type: "patch"
 lang: "en"
+summary: "angular, vue: fire lifecycle events on nested pages (#31532) (277097e), closes #30831 #16834 · angular: update route snapshot on query param navigation (#31534) (6b5afec), closes #24587"
 ---
 
 # ionic-framework v9.0.8

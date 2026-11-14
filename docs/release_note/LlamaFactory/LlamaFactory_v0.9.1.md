@@ -7,7 +7,7 @@ version: "v0.9.1"
 published: "2024-11-24"
 type: "patch"
 lang: "en"
-summary: "Note: now you can install transformers>=4.46.0,<=4.46.1 to make the gradient accumulation fix enabled."
+summary: "🔥Support Llama-3.2 and Llama-3.2-Vision and #5555 · 🔥Support LLaVA-NeXT, LLaVA-NeXT-Video and Video-LLaVA · 🔥Support Pixtral model · Support EXAONE3.0"
 ---
 
 # LlamaFactory v0.9.1

@@ -6,6 +6,7 @@ tag: "v1.3.6"
 published: "2026-01-07"
 type: "patch"
 lang: "zh"
+summary: "数据查询：优化多种场景的查询性能，包括多系列Last查询。；数据查询：Java SDK 新增 FastLastQuery 接口，支持更高效的 Last 查询操作。；数据查询：调整树形模型的fetchSchema以分段流式方式返回数据，提高大数据量场景下的响应速度。；存储管理：优化内存管理，避免内存泄漏风险，保证系统长期稳定运行。"
 ---
 
 # iotdb v1.3.6

@@ -6,7 +6,7 @@ tag: "v2.11.5"
 published: "2024-09-19"
 type: "patch"
 lang: "en"
-summary: "Component | Version"
+summary: "spring-cloud/spring-cloud-deployer#465 Allow setting up more than one initContainer per platform · spring-cloud/spring-cloud-deployer#462 Node Selector doesn&#39;t get applied on K8s platforms"
 ---
 
 # spring-cloud-dataflow v2.11.5

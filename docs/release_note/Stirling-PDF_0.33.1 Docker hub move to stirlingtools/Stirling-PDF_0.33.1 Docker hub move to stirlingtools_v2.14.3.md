@@ -6,7 +6,7 @@ tag: "v2.14.3"
 published: "2026-08-06"
 type: "patch"
 lang: "en"
-summary: "Hotfix release for lots of bug fixes, (Note we have identified some issues for mac users and hope to have another fix out in next few days) The list below is of the main bug fixes are:"
+summary: "Hotfix release for lots of bug fixes, (Note we have identified some issues for mac users and hope to have another fix out in next few days) The list below is of the main bug fixes are"
 ---
 
 # Stirling-PDF_0.33.1 Docker hub move to stirlingtools v2.14.3

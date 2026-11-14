@@ -6,7 +6,7 @@ tag: "gson-parent-2.10"
 published: "2022-10-25"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/google/gson/compare/gson-parent-2.9.1...gson-parent-2.10"
+summary: "Support for serializing and deserializing Java records, on Java ≥ 16. (#2201) · Add JsonArray.asList and JsonObject.asMap view methods (#2225)"
 ---
 
 # gson gson-parent-2.10

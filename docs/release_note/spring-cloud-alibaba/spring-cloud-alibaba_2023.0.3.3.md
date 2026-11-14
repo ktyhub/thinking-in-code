@@ -6,6 +6,7 @@ tag: "2023.0.3.3"
 published: "2025-05-30"
 type: "patch"
 lang: "en"
+summary: "[Nacos] Springboot supports graceful shutdown of Nacos · [Nacos] NacosConfigAutoConfiguration is not eligible for getting proc… · [Nacos] support proxy druid"
 ---
 
 # spring-cloud-alibaba 2023.0.3.3

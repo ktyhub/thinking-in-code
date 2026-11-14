@@ -6,7 +6,7 @@ tag: "2.8.29"
 published: "2025-11-25"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/servicecomb-java-chassis/compare/2.8.28...2.8.29"
+summary: "[#4985] upgrade org.apache.tomcat.embed:tomcat-embed-core to 9.0.108 · [#5013] Fixing the issue where microservices cannot be registered when enabling RBAC authentication in a dual-engine disaster recovery scenario."
 ---
 
 # servicecomb-java-chassis 2.8.29

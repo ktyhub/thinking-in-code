@@ -6,7 +6,7 @@ tag: "mybatis-spring-2.1.2"
 published: "2023-11-25"
 type: "release"
 lang: "en"
-summary: "Here is the complete list of changes."
+summary: "Probably this release is last as a planned release of 2.1.x. Of course, we will continue to fix critical issues (including security vulnerabilities)."
 ---
 
 # mybatis-spring mybatis-spring-2.1.2

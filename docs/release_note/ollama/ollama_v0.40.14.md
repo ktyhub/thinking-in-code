@@ -7,6 +7,7 @@ version: "v0.40.14"
 published: "2026-11-03"
 type: "patch"
 lang: "en"
+summary: "ollama launch claude now applies the model's output token limit for Claude Code, so cloud models no longer run into the 128k default cap"
 ---
 
 # ollama v0.40.14

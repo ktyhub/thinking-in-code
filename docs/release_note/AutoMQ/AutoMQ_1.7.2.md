@@ -6,7 +6,7 @@ tag: "1.7.2"
 published: "2026-07-21"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/AutoMQ/automq/compare/1.7.1...1.7.2"
+summary: "feat: add runtime monitor · fix(tabletopic): use stable fps metric name · fix(s3stream): track stalled pending requests · perf(failover): optimize failover to reduce latency. (#3412)"
 ---
 
 # AutoMQ 1.7.2

@@ -6,7 +6,7 @@ tag: "v7.2.0-M2"
 published: "2026-09-24"
 type: "pre"
 lang: "en"
-summary: "The AbstractJmsChannel treats it as a conversion failure and throws a MessageConversionException rather than discarding the message. #11351"
+summary: "Add Kafka share consumer channel adapter #11413 · Get rid off Apache Derby dependency and usage #11387 · Make Function as CheckedFunction in Mail Java DSL #11280"
 ---
 
 # spring-integration v7.2.0-M2

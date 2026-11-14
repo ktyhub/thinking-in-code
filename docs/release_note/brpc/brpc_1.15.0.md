@@ -6,7 +6,7 @@ tag: "1.15.0"
 published: "2025-10-27"
 type: "minor"
 lang: "en"
-summary: "Bug Fix:"
+summary: "Fix socket versioned_ref can not recover && remove hc_started flag (#3060) · Fix symbol conflict with glog by marking InstallSymbolizeOpenObjectFileCallback as BAIDU_WEAK (#3064) and @ruru"
 ---
 
 # brpc 1.15.0

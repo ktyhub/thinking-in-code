@@ -7,6 +7,7 @@ version: "v0.12.4"
 published: "2026-10-25"
 type: "patch"
 lang: "en"
+summary: "🎯 Load selected skills on demand. Administrators can turn on 'Load selected skills on demand' under Admin Settings > General or set 'ENABLE_SKILL_LAZY_LOADING', so skills selected in the chat or attached to a model are…"
 ---
 
 # open-webui v0.12.4

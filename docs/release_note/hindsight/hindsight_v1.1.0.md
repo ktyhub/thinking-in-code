@@ -7,6 +7,7 @@ version: "v1.1.0"
 published: "2026-10-21"
 type: "minor"
 lang: "en"
+summary: "docs: v1.0.0 changelog, Memlake launch post, and version-1.0 docs snapshot · fix(client): stop the export poll loop from overrunning its timeout on Windows · feat/webhook event delivery ids"
 ---
 
 # hindsight v1.1.0

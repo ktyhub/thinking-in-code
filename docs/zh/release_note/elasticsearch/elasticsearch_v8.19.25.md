@@ -1,6 +1,7 @@
 ---
 title: "elasticsearch v8.19.25"
 description: "免费开源、分布式、RESTful 搜索引擎"
+summary: "免费开源、分布式、RESTful 搜索引擎"
 ---
 
 # elasticsearch v8.19.25

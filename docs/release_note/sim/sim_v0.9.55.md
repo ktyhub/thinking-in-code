@@ -7,7 +7,7 @@ version: "v0.9.55"
 published: "2026-11-13"
 type: "patch"
 lang: "en"
-summary: "View changes on GitHub"
+summary: "feat(credentials): configurable audience for keyless AWS, Databricks, Snowflake, Microsoft, and Google credentials (#9962) · feat(gitlab): add permission CSV exporter (#9955)"
 ---
 
 # sim v0.9.55

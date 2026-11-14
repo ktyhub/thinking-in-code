@@ -7,6 +7,7 @@ version: "v0.42.0"
 published: "2026-10-26"
 type: "minor"
 lang: "en"
+summary: "pipeline: put per-request saved tokens on OutcomeSnapshot (#4231) (8cedf7b) · proxy: let turn hooks rewrite OpenAI Responses requests on HTTP and WebSocket (#4232) (fbf7bc3)"
 ---
 
 # headroom v0.42.0

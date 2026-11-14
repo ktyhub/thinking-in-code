@@ -6,7 +6,7 @@ tag: "2021.0.6.1"
 published: "2024-07-09"
 type: "patch"
 lang: "en"
-summary: "[Scheduling]: add distributed scheduling support spring-cloud-starter-alibaba-schedulerx. by @yaohuitc in https://github.com/alibaba/spring-cloud-alibaba/pull/3726"
+summary: "[Scheduling]: add distributed scheduling support spring-cloud-starter-alibaba-schedulerx."
 ---
 
 # spring-cloud-alibaba 2021.0.6.1

@@ -7,6 +7,7 @@ version: "2.0.0-beta.28"
 published: "2026-03-26"
 type: "pre"
 lang: "en"
+summary: "Fix using web app after disabling memories for users who never set chat model · Fix showing deprecation banner on Khoj cloud"
 ---
 
 # khoj 2.0.0-beta.28

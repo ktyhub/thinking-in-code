@@ -7,7 +7,7 @@ version: "v2.2.1"
 published: "2026-09-25"
 type: "patch"
 lang: "en"
-summary: "Bug Fixes:"
+summary: "Core: add() (Memory and AsyncMemory) no longer reports records the vector store rejected as successful ADD events. Only records that were actually inserted are written to history, entity-linked, and returned."
 ---
 
 # mem0 v2.2.1

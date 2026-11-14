@@ -6,7 +6,7 @@ tag: "v3.5.1"
 published: "2026-06-23"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/assafelovic/gpt-researcher/compare/v3.5.0...v3.5.1"
+summary: "fix: add MAX_REVISIONS guard to prevent infinite revision loop · Improve SimpleQA eval observability with structured logging and latency metadata · feat(retrievers): add Brave Search support"
 ---
 
 # gpt-researcher v3.5.1

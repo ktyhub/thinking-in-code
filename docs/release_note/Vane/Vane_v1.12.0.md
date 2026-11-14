@@ -7,7 +7,7 @@ version: "v1.12.0"
 published: "2025-12-27"
 type: "minor"
 lang: "en"
-summary: "This is a major release featuring a complete architectural overhaul. We've removed Langchain in favor of a custom implementation for low-level control over streaming, generation, and provider-specific features. This…"
+summary: "This is a major release featuring a complete architectural overhaul. We've removed Langchain in favor of a custom implementation for low-level control over streaming, generation, and provider-specific features."
 ---
 
 # Vane v1.12.0

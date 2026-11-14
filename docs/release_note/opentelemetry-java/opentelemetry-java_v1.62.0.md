@@ -6,7 +6,7 @@ tag: "v1.62.0"
 published: "2026-05-08"
 type: "minor"
 lang: "en"
-summary: "(#8378)"
+summary: "Fix GHSA-rcgg-9c38-7xpx: Apply limits to baggage entries for W3CBaggagePropagator, OtTracePropagator, JaegerPropagator"
 ---
 
 # opentelemetry-java v1.62.0

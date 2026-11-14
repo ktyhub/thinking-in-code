@@ -6,7 +6,7 @@ tag: "rel/v5.6.2"
 published: "2024-01-09"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/jmeter/compare/rel/v5.6.1...rel/v5.6.2"
+summary: "JMeter 5.6 shows 0 as a min response time in summary report · NullPointerException in ConstantTimer (and derived timers) · Downloading of embedded resources via HTTP Request Default not working"
 ---
 
 # jmeter rel/v5.6.2

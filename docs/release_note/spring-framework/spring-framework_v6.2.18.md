@@ -6,6 +6,7 @@ tag: "v6.2.18"
 published: "2026-04-17"
 type: "patch"
 lang: "en"
+summary: "Improve SpringValidatorAdapter and MethodValidationAdapter performance #36624 · Add missing @Deprecated(forRemoval = true) for deleted in 7.0 #36591"
 ---
 
 # spring-framework v6.2.18

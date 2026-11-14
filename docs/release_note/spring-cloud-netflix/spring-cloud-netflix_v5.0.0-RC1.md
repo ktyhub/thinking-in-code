@@ -6,7 +6,7 @@ tag: "v5.0.0-RC1"
 published: "2025-11-12"
 type: "major"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "chore: fix typos in some files #4511"
 ---
 
 # spring-cloud-netflix v5.0.0-RC1

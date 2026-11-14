@@ -7,6 +7,7 @@ version: "v2.6.0"
 published: "2026-11-13"
 type: "minor"
 lang: "en"
+summary: "fix(ci): find draft releases and verify assets by release ID · Enable multiline chat messages for FoloToy AI Passport · fix(mcp): escape JSON-RPC error messages · Fix: улучшение русского перевода (ru-RU)"
 ---
 
 # xiaozhi-esp32 v2.6.0

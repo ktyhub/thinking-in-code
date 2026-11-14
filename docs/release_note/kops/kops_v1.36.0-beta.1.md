@@ -6,7 +6,7 @@ tag: "v1.36.0-beta.1"
 published: "2026-06-12"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/kops/compare/v1.36.0-alpha.1...v1.36.0-beta.1"
+summary: "scaletest: decouple client HTTP traffic for etcd events · Release notes for 1.36 (alpha) · chore: Add hashes for additional May releases · Add logs at v2 level to ensure we have slow pods data in logs"
 ---
 
 # kops v1.36.0-beta.1

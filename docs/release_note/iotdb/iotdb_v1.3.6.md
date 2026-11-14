@@ -6,6 +6,7 @@ tag: "v1.3.6"
 published: "2026-01-07"
 type: "patch"
 lang: "en"
+summary: "Data Query: Optimized query performance for multiple scenarios, including the multi-series Last query. · Data Query: Added the FastLastQuery interface to the Java SDK, supporting more efficient Last query operations."
 ---
 
 # iotdb v1.3.6

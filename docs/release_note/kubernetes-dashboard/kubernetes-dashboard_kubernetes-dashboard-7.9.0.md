@@ -6,7 +6,7 @@ tag: "kubernetes-dashboard-7.9.0"
 published: "2024-10-22"
 type: "release"
 lang: "en"
-summary: "This release adds the caching functionality to the Dashboard API. Once the cache is hydrated it significantly improves both responsiveness and memory usage of Dashboard on clusters with large amounts of resources. You…"
+summary: "This release adds the caching functionality to the Dashboard API. Once the cache is hydrated it significantly improves both responsiveness and memory usage of Dashboard on clusters with large amounts of resources."
 ---
 
 # kubernetes-dashboard kubernetes-dashboard-7.9.0

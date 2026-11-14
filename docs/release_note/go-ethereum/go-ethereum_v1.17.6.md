@@ -6,6 +6,7 @@ tag: "v1.17.6"
 published: "2026-09-23"
 type: "patch"
 lang: "en"
+summary: "This is a maintenance release with a number of performance improvements to block processing and initial sync, and is recommended for all users."
 ---
 
 # go-ethereum v1.17.6

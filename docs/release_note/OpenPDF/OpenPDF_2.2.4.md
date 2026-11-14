@@ -6,7 +6,7 @@ tag: "2.2.4"
 published: "2025-07-02"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/LibrePDF/OpenPDF/compare/2.2.3...2.2.4"
+summary: "Bump org.sonatype.central:central-publishing-maven-plugin from 0.7.0 to 0.8.0 · Remove commented out code and some system.out.println · Bump com.puppycrawl.tools:checkstyle from 10.25.0 to 10.25.1"
 ---
 
 # OpenPDF 2.2.4

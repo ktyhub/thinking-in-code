@@ -7,7 +7,7 @@ version: "v5.1.69"
 published: "2026-11-11"
 type: "patch"
 lang: "en"
-summary: "OmO runs on senpi 2026.11.10-2. A client can read and edit the workspace's instruction files over RPC through readprojectfile / writeprojectfile (senpi#6307), a built session can be parked and handed out through…"
+summary: "OmO runs on senpi 2026.11.10-2. A client can read and edit the workspace's instruction files over RPC through read_project_file / write_project_file (senpi#6307), a built session can be parked and handed out through…"
 ---
 
 # oh-my-openagent v5.1.69

@@ -7,7 +7,7 @@ version: "v2.7.0"
 published: "2025-12-05"
 type: "minor"
 lang: "en"
-summary: "And a lot more enhacements, check it out below!"
+summary: "ZDR Search support for enterprise customers. · Improved Branding Format with better detection. · Partner Integrations API now in closed beta. · Faster and more accurate screenshots."
 ---
 
 # firecrawl v2.7.0

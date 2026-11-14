@@ -6,7 +6,7 @@ tag: "v1.4.7"
 published: "2023-04-20"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/skylot/jadx/compare/v1.4.6...v1.4.7"
+summary: "[core] Inline lambdas by instance field (#1800) · [plugins] Allow to load classes using input stream or byte array in jadx-input plugin (#1457)"
 ---
 
 # jadx v1.4.7

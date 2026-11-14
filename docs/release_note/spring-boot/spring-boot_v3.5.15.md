@@ -6,7 +6,7 @@ tag: "v3.5.15"
 published: "2026-06-10"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Artemis auto-configuration uses a predictable default location for the embedded broker's data #50743 · MailSender auto-configuration does not enable hostname verification #50742"
 ---
 
 # spring-boot v3.5.15

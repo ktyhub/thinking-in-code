@@ -6,7 +6,7 @@ tag: "mybatis-3.6.0"
 published: "2026-10-23"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/mybatis/mybatis-3/compare/mybatis-3.5.18...mybatis-3.6.0"
+summary: "Release 3.5.18 · Raise to 3.6.0 snapshot and require java 11 · [ci] Update copyright to 2025. · chore(deps): update dependency org.assertj:assertj-core to v3.27.1[bot]"
 ---
 
 # mybatis-3 mybatis-3.6.0

@@ -6,7 +6,7 @@ tag: "7.9.0"
 published: "2023-12-26"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/testng-team/testng/compare/7.8.0...7.9.0"
+summary: "GitHub 2913 · Test Results as artifacts for failed runs · Minor code clean-ups · Fixing the Github CI yaml file"
 ---
 
 # testng 7.9.0

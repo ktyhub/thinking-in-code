@@ -7,7 +7,7 @@ version: "1.0.3"
 published: "2026-11-12"
 type: "patch"
 lang: "en"
-summary: "pip install 'browser-use==1.0.3'"
+summary: "cli-mcp exits cleanly when the client closed the pipe before the reply (was exit 1 with ExceptionGroup)."
 ---
 
 # browser-use 1.0.3

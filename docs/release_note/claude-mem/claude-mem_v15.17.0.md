@@ -7,7 +7,7 @@ version: "v15.17.0"
 published: "2026-11-11"
 type: "minor"
 lang: "en"
-summary: "Quick start for an existing eve agent:"
+summary: "claude-mem/eve is a new export of the claude-mem npm package. It is a memory provider for eve, Vercel's framework for durable backend agents."
 ---
 
 # claude-mem v15.17.0

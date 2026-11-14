@@ -7,7 +7,7 @@ version: "v1.4.1"
 published: "2026-06-10"
 type: "patch"
 lang: "en"
-summary: "修复了源码安装失败的问题。 近期从 GitHub 安装(pip install .../archive/main.zip、pipx、uvx)会因 wheel 重复打包直接构建失败:"
+summary: "修复了源码安装失败的问题。 近期从 GitHub 安装(pip install .../archive/main.zip、pipx、uvx)会因 wheel 重复打包直接构建失败"
 ---
 
 # Agent-Reach v1.4.1

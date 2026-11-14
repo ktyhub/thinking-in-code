@@ -7,7 +7,7 @@ version: "v5.21"
 published: "2026-10-26"
 type: "minor"
 lang: "en"
-summary: "MiniCPM-OCR is a document-understanding model from OpenBMB's MiniCPM-V family. It keeps the MiniCPM-V 4.6 architecture, which pairs a SigLIP vision encoder and a window-attention merger with a Qwen3.5 language model. It…"
+summary: "MiniCPM-OCR is a document-understanding model from OpenBMB's MiniCPM-V family. It keeps the MiniCPM-V 4.6 architecture, which pairs a SigLIP vision encoder and a window-attention merger with a Qwen3.5 language model."
 ---
 
 # transformers v5.21

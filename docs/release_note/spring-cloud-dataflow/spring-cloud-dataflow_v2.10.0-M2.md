@@ -6,7 +6,7 @@ tag: "v2.10.0-M2"
 published: "2022-09-20"
 type: "pre"
 lang: "en"
-summary: "Updates to the following versions:"
+summary: "Updates to the following versions"
 ---
 
 # spring-cloud-dataflow v2.10.0-M2

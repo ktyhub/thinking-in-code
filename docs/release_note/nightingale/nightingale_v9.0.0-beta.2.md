@@ -6,7 +6,7 @@ tag: "v9.0.0-beta.2"
 published: "2026-05-29"
 type: "pre"
 lang: "en"
-summary: "The new AI assistant relies on Redis Streams, so Redis 5.0 or later is required (Redis 7.0+ recommended for Cluster users to enable sharded Pub/Sub)."
+summary: "Added a document-based Q&A skill. For any usage-related questions, you can now ask directly in the AI chat. · Added a one-click AI analysis button to the Alert Event Details page."
 ---
 
 # nightingale v9.0.0-beta.2

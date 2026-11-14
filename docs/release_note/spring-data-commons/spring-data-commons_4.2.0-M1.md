@@ -6,6 +6,7 @@ tag: "4.2.0-M1"
 published: "2026-08-21"
 type: "pre"
 lang: "en"
+summary: "Spring Data Commons 4.2.0 Reference documentation · Spring Data Commons 4.2.0 Javadoc"
 ---
 
 # spring-data-commons 4.2.0-M1

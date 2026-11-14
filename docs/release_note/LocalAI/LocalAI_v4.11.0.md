@@ -7,6 +7,7 @@ version: "v4.11.0"
 published: "2026-10-02"
 type: "minor"
 lang: "en"
+summary: "This release makes LocalAI more useful for audio understanding, resilient model serving, structured decisions, and day-to-day operation."
 ---
 
 # LocalAI v4.11.0

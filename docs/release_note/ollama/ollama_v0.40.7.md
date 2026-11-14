@@ -6,7 +6,7 @@ tag: "v0.40.7"
 published: "2026-10-18"
 type: "patch"
 lang: "en"
-summary: "Qwen3.8-27B"
+summary: "pplx-decider is a 27B decision model from Perplexity, fine-tuned from"
 ---
 
 # ollama v0.40.7

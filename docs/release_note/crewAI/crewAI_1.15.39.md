@@ -7,7 +7,7 @@ version: "1.15.39"
 published: "2026-11-09"
 type: "patch"
 lang: "en"
-summary: "@joaomdmoura"
+summary: "Document the apps_not_connected error on /kickoff and /status"
 ---
 
 # crewAI 1.15.39

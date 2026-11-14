@@ -6,6 +6,7 @@ tag: "5.6.0"
 published: "2024-12-28"
 type: "minor"
 lang: "en"
+summary: "[Feature] [geo] [map] Support styling region in original GeoJSON data. #20564 (plainheart) · [Feature] [geo] [map] Support regions[].silent option. #20566 (Ovilia)"
 ---
 
 # echarts 5.6.0

@@ -6,7 +6,7 @@ tag: "web/v1.5.0"
 published: "2024-10-08"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/dashboard/compare/web/v1.4.0...web/v1.5.0"
+summary: "feat: bump dependencies and add owner ref information to object meta"
 ---
 
 # kubernetes-dashboard web/v1.5.0

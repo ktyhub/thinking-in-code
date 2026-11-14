@@ -6,7 +6,7 @@ tag: "shiro-root-2.0.3"
 published: "2025-04-05"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/shiro/compare/shiro-root-2.0.2...shiro-root-2.0.3"
+summary: "bugfix(test): locking flaky failing Guice test · [DOC] - Clean up invalid Javadoc syntax and broken references · [DOC] - Fix comments and log messages in AuthenticatingRealm"
 ---
 
 # shiro shiro-root-2.0.3

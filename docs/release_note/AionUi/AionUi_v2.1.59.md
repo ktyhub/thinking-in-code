@@ -7,6 +7,7 @@ version: "v2.1.59"
 published: "2026-08-19"
 type: "patch"
 lang: "en"
+summary: "You can now drag files and folders directly within the project tree to move them across directories, no more manual cut/paste or terminal commands."
 ---
 
 # AionUi v2.1.59

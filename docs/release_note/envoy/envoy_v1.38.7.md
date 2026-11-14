@@ -6,7 +6,7 @@ tag: "v1.38.7"
 published: "2026-10-12"
 type: "patch"
 lang: "en"
-summary: "Summary of changes:"
+summary: "Upstream security fixes · wasm: bumped wasmtime to 24.0.10 to resolve CVE-2026-54786. · Bug fixes · aws: fixed a race where the route-level configuration of the AWS"
 ---
 
 # envoy v1.38.7

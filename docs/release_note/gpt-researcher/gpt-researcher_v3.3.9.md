@@ -6,7 +6,7 @@ tag: "v3.3.9"
 published: "2026-01-25"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/assafelovic/gpt-researcher/compare/v.3.3.8...v3.3.9"
+summary: "Fix CORS defaults: remove wildcard origins when allow_credentials=true · docs: add docstrings to memory and context compression modules"
 ---
 
 # gpt-researcher v3.3.9

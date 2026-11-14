@@ -6,6 +6,7 @@ tag: "5.4.2"
 published: "2023-03-23"
 type: "patch"
 lang: "en"
+summary: "[Feature] [bar] Support borderRadius for polar bar and its background. #17995 (Ovilia) · [Feature] [i18n] Add Turkish(tr_TR) translation. #18012 (partitect)"
 ---
 
 # echarts 5.4.2

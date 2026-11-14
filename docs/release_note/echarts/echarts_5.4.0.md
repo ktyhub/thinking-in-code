@@ -6,6 +6,7 @@ tag: "5.4.0"
 published: "2022-09-25"
 type: "minor"
 lang: "en"
+summary: "[Feature] Support intelligent pointer snapping. #17102 (Ovilia) · [Feature] [pie] Support specifying coordinate system for pie series. #17132 (plainheart)"
 ---
 
 # echarts 5.4.0

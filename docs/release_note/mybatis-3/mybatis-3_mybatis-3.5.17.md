@@ -6,7 +6,7 @@ tag: "mybatis-3.5.17"
 published: "2024-11-26"
 type: "release"
 lang: "en"
-summary: "Bugs:"
+summary: "VendorDatabaseIdProvider#getDatabaseId() should return product name when properties is empty #3297 · Update NClobTypeHandler to use methods for national character set #3298"
 ---
 
 # mybatis-3 mybatis-3.5.17

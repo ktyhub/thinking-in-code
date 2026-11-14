@@ -6,6 +6,7 @@ tag: "druid-38.0.0"
 published: "2026-10-01"
 type: "release"
 lang: "en"
+summary: "Apache Druid 38.0.0 contains over 250 new features, bug fixes, performance enhancements, documentation improvements, and additional test coverage from 37 contributors."
 ---
 
 # druid druid-38.0.0

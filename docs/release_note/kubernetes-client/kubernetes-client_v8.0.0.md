@@ -6,7 +6,7 @@ tag: "v8.0.0"
 published: "2026-09-24"
 type: "major"
 lang: "en"
-summary: "Full Changelog: https://github.com/fabric8io/kubernetes-client/compare/v7.9.0...v8.0.0"
+summary: "Fix #8105: requests hanging when a retry action, retry decision, or response cleanup throws an exception."
 ---
 
 # kubernetes-client v8.0.0

@@ -7,7 +7,7 @@ version: "v1.11.0"
 published: "2025-10-21"
 type: "minor"
 lang: "en"
-summary: "Major Features"
+summary: "New Setup Wizard: New initial configuration experience with model selection and provider setup · Configuration Management Overhaul: Completely redesigned config system with live updates and migration support"
 ---
 
 # Vane v1.11.0

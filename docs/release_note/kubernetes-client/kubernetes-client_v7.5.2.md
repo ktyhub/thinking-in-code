@@ -6,7 +6,7 @@ tag: "v7.5.2"
 published: "2026-01-23"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/fabric8io/kubernetes-client/compare/v7.5.1...v7.5.2"
+summary: "Fix #7408: bump vertx.version from 4.5.21 to 4.5.24"
 ---
 
 # kubernetes-client v7.5.2

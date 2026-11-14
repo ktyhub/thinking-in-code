@@ -6,7 +6,7 @@ tag: "v3.3.2"
 published: "2026-08-01"
 type: "patch"
 lang: "en"
-summary: "Apache Dubbo-go 3.3.2 is a production-readiness release focused on API consolidation, Triple protocol capabilities, application-level metadata, service governance, concurrency safety, and release tooling. It completes…"
+summary: "Apache Dubbo-go 3.3.2 is a production-readiness release focused on API consolidation, Triple protocol capabilities, application-level metadata, service governance, concurrency safety, and release tooling."
 ---
 
 # dubbo-go v3.3.2

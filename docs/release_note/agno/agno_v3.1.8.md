@@ -7,6 +7,7 @@ version: "v3.1.8"
 published: "2026-10-21"
 type: "patch"
 lang: "en"
+summary: "Postgres Sandbox Checkpoint Store: Added PostgresCheckpointStore for storing sandbox checkpoints directly in PostgreSQL, allowing multi-replica deployments to restore sessions without S3 or shared filesystems."
 ---
 
 # agno v3.1.8

@@ -7,6 +7,7 @@ version: "v1.6.2"
 published: "2022-09-15"
 type: "patch"
 lang: "en"
+summary: "15 September 2022 - Version 1.6.2 · Add CPU support for DBnet detector · DBnet will only be compiled when users initialize EasyOCR with DBnet detector."
 ---
 
 # EasyOCR v1.6.2

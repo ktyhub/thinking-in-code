@@ -6,6 +6,7 @@ tag: "rocketmq-all-5.3.3"
 published: "2025-05-07"
 type: "release"
 lang: "zh"
+summary: "该版本不再支持“ACL 1.0”相关功能，请使用“ACL 2.0”。 此外，此次要版本还包括一些常规错误修复。"
 ---
 
 # rocketmq rocketmq-all-5.3.3

@@ -6,7 +6,7 @@ tag: "mybatis-spring-3.0.0"
 published: "2022-11-25"
 type: "release"
 lang: "en"
-summary: "Here is the complete list of changes. Some of the changes in 2.1 are also included."
+summary: "First support Spring Framework 6 / Spring Batch 5 #634"
 ---
 
 # mybatis-spring mybatis-spring-3.0.0

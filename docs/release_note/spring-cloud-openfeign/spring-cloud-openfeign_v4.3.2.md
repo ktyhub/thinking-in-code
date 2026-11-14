@@ -6,7 +6,7 @@ tag: "v4.3.2"
 published: "2026-04-01"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Feature 'warn when GET method has unannotated parameters' causes incorrect warning for methods with a single URI parameter. #1326"
 ---
 
 # spring-cloud-openfeign v4.3.2

@@ -6,7 +6,7 @@ tag: "v33.6.0"
 published: "2026-04-14"
 type: "minor"
 lang: "en"
-summary: "com.google.guava guava 33.6.0-jre 33.6.0-android"
+summary: "33.6.0-jre.jar · 33.6.0-android.jar"
 ---
 
 # guava v33.6.0

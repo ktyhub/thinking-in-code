@@ -7,6 +7,7 @@ version: "v2.10.7-lts"
 published: "2026-10-15"
 type: "patch"
 lang: "en"
+summary: "Knowledge Base: Special characters such as \\, /, ?, , and [] are now disallowed when renaming documents. · Agent: A confirmation prompt is now shown when deleting conversation history, to prevent accidental deletion."
 ---
 
 # MaxKB v2.10.7-lts

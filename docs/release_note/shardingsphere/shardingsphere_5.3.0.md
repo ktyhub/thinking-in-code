@@ -6,6 +6,7 @@ tag: "5.3.0"
 published: "2023-01-08"
 type: "minor"
 lang: "en"
+summary: "DistSQL: Refactor syntax API, please refer to the user manual · Proxy: Change the configuration style of global rule, remove the exclamation mark"
 ---
 
 # shardingsphere 5.3.0

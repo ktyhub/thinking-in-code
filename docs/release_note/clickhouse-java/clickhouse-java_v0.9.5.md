@@ -6,6 +6,7 @@ tag: "v0.9.5"
 published: "2025-12-19"
 type: "patch"
 lang: "en"
+summary: "[client-v2] Log durations in ISO-8601 duration format ( · [jdbc-v2] Added support for getResultSet() method in Array data types. (https://github.com/ClickHouse/clickhouse-java/issues/1545"
 ---
 
 # clickhouse-java v0.9.5

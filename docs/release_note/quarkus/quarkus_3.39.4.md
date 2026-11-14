@@ -6,6 +6,7 @@ tag: "3.39.4"
 published: "2026-09-17"
 type: "patch"
 lang: "en"
+summary: "#35814 - Quarkus Security with Jakarta Persistence guide doesn't mention security-jpa-reactive extension · #37745 - Docs: security-oauth2 and security-oauth2-quickstart Guide"
 ---
 
 # quarkus 3.39.4

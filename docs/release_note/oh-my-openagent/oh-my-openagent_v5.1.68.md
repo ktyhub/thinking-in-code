@@ -7,7 +7,7 @@ version: "v5.1.68"
 published: "2026-11-10"
 type: "patch"
 lang: "en"
-summary: "Release binaries may be up to 210 MiB. The 5.1.67 publish stopped on Linux x64 because its binary measured 209,889,456 bytes, 174,256 bytes over the 200 MiB per-binary budget (5.1.66's was 209,664,176). The budget moves…"
+summary: "Release binaries may be up to 210 MiB. The 5.1.67 publish stopped on Linux x64 because its binary measured 209,889,456 bytes, 174,256 bytes over the 200 MiB per-binary budget (5.1.66's was 209,664,176)."
 ---
 
 # oh-my-openagent v5.1.68

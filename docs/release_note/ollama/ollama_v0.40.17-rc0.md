@@ -6,7 +6,7 @@ tag: "v0.40.17-rc0"
 published: "2026-11-10"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/ollama/ollama/compare/v0.40.16...v0.40.17-rc0"
+summary: "Improve ChatGPT CLI restore and graceful restart · cmd/launch: use thinking metadata for OpenCode settings · llm: use mmap for Vulkan integrated GPUs · rpreslar4765/Ollama"
 ---
 
 # ollama v0.40.17-rc0

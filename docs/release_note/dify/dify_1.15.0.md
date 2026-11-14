@@ -6,6 +6,7 @@ tag: "1.15.0"
 published: "2026-06-25"
 type: "minor"
 lang: "en"
+summary: "Redesigned landing / onboarding for an easier first-run experience (#37433, #37844, #37800) · Faster navigation — improved 'go to anything' palette and autofocused search inputs (#32130, #37175)"
 ---
 
 # dify 1.15.0

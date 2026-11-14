@@ -7,6 +7,7 @@ version: "v1.55.0"
 published: "2026-10-16"
 type: "minor"
 lang: "en"
+summary: "AIgateway declarative provider #12528 · Propagate W3C trace context from ACP prompts to MCP tool calls #12697 · Surface provider x-request-id on responses and errors #12587"
 ---
 
 # goose v1.55.0

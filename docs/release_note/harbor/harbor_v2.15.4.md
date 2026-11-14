@@ -6,6 +6,7 @@ tag: "v2.15.4"
 published: "2026-10-09"
 type: "patch"
 lang: "en"
+summary: "fix(webhook): allow private network access by default · fix(contenttrust): allow legacy signer pull by default to avoid regre… · fix(prepare): expose the legacy signer pull switch in harbor.yml"
 ---
 
 # harbor v2.15.4

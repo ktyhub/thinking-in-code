@@ -6,6 +6,7 @@ tag: "v1.93.0"
 published: "2026-09-30"
 type: "minor"
 lang: "en"
+summary: "automl: remove java-automl library (#14540)"
 ---
 
 # google-cloud-java v1.93.0

@@ -7,6 +7,7 @@ version: "v4.79.0"
 published: "2026-11-12"
 type: "minor"
 lang: "en"
+summary: "feat(ai-gateway): add OpenRouter as a pre-release gateway provider · feat: add SUBSTITUTE_OK no-data mode for monitors · feat(ai-gateway): add xAI as a pre-release gateway provider"
 ---
 
 # langfuse v4.79.0

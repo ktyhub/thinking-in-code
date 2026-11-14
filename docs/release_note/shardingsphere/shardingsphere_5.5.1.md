@@ -6,6 +6,7 @@ tag: "5.5.1"
 published: "2024-10-22"
 type: "patch"
 lang: "en"
+summary: "Authority: Mark privilege provider ALL_PERMITTED as deprecated and will be removed in future · DistSQL: Remove optional param usageCount from show storage units"
 ---
 
 # shardingsphere 5.5.1

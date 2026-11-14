@@ -6,6 +6,7 @@ tag: "5.3.3"
 published: "2022-06-14"
 type: "patch"
 lang: "en"
+summary: "[Feature] [bar] add new stacking strategies. #17086 (villebro) · [Feature] [tree] tree focus supports relative. #17009 (susiwen8) · [Feature] [visualMap] selectedMode supports boolean. #16972 (susiwen8)"
 ---
 
 # echarts 5.3.3

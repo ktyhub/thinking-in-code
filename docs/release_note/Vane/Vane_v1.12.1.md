@@ -7,6 +7,7 @@ version: "v1.12.1"
 published: "2025-12-31"
 type: "patch"
 lang: "en"
+summary: "Added LM Studio provider · Fixed issues with function calling with OpenAI compatible providers. · Fixed issues with JSON parsing and extraction."
 ---
 
 # Vane v1.12.1

@@ -7,7 +7,7 @@ version: "v7.0.9"
 published: "2026-08-20"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "In Spring Framework 7.0.9, ForwardedHeaderFilter (Spring MVC) and ForwardedHeaderTransformer (WebFlux) each provide a boolean constructor argument whether to use the standard 'Forwarded' header or the 'X-Forwarded'…"
 ---
 
 # spring-framework v7.0.9

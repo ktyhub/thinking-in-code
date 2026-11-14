@@ -6,7 +6,7 @@ tag: "v0.20.0"
 published: "2026-08-11"
 type: "minor"
 lang: "en"
-summary: "Version 0.20.0 is a minor release because it changes the implicit default model and includes a potentially breaking MCP dependency migration for applications with customized local HTTP transports. MCP v1 remains…"
+summary: "Version 0.20.0 is a minor release because it changes the implicit default model and includes a potentially breaking MCP dependency migration for applications with customized local HTTP transports."
 ---
 
 # openai-agents-python v0.20.0

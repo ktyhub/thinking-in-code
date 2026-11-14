@@ -7,7 +7,7 @@ version: "2.2.0"
 published: "2026-09-30"
 type: "minor"
 lang: "en"
-summary: "🌐 English | 中文"
+summary: "The former Skills menu is now Capabilities, a single place in the Web console and desktop client to manage built-in tools, MCP tools, and skills"
 ---
 
 # CowAgent 2.2.0

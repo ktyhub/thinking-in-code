@@ -6,7 +6,7 @@ tag: "rel/3.0.0-beta3"
 published: "2024-11-12"
 type: "release"
 lang: "en"
-summary: "This release terminates the modularization process of Log4j Core, by moving all the code that uses optional log4j-core dependencies into new modules:"
+summary: "This release terminates the modularization process of Log4j Core, by moving all the code that uses optional log4j-core dependencies into new modules"
 ---
 
 # logging-log4j2 rel/3.0.0-beta3

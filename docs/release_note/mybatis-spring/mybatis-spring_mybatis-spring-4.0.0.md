@@ -6,7 +6,7 @@ tag: "mybatis-spring-4.0.0"
 published: "2025-11-30"
 type: "release"
 lang: "en"
-summary: "Here is the complete list of changes."
+summary: "First support Spring Framework 7 / Spring Batch 6"
 ---
 
 # mybatis-spring mybatis-spring-4.0.0

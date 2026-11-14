@@ -6,7 +6,7 @@ tag: "v5.1.0-RC1"
 published: "2026-10-23"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-kubernetes/compare/v5.1.0-M1...v5.1.0-RC1"
+summary: "Update Antora UI bundle to v0.4.26 · Update Antora UI bundle to v0.4.26 · Upgrade to k8s java client 27 · Allow Dependabot minor version updates on main"
 ---
 
 # spring-cloud-kubernetes v5.1.0-RC1

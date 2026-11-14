@@ -6,7 +6,7 @@ tag: "v3.4.6-maven"
 published: "2025-07-01"
 type: "patch"
 lang: "en"
-summary: "See CHANGELOG.md for more details."
+summary: "Update retrieval of Maven properties to use the following order: user, project, system. #4344"
 ---
 
 # jib v3.4.6-maven

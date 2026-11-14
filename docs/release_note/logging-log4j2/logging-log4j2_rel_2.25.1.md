@@ -6,7 +6,7 @@ tag: "rel/2.25.1"
 published: "2025-07-11"
 type: "release"
 lang: "en"
-summary: "This patch release addresses a dozen bugs in version 2.25.0, in particular:"
+summary: "This patch release addresses a dozen bugs in version 2.25.0, in particular"
 ---
 
 # logging-log4j2 rel/2.25.1

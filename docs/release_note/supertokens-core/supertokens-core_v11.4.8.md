@@ -6,7 +6,7 @@ tag: "v11.4.8"
 published: "2026-10-16"
 type: "patch"
 lang: "en"
-summary: "The SAML replay hardening (applied by supertokens-postgresql-plugin) adds two columns to samlrelaystate, the samlconsumedassertions table, and the samlclients.acsurls allow-list column. The plugin applies them…"
+summary: "Prevents an app-scoped API key from updating its parent connectionUriDomain (GHSA-4rf2). · Scopes WebAuthn sign-in to the requested tenant (GHSA-6v34-w48w-44rc)."
 ---
 
 # supertokens-core v11.4.8

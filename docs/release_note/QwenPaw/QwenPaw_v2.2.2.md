@@ -7,7 +7,7 @@ version: "v2.2.2"
 published: "2026-10-15"
 type: "patch"
 lang: "en"
-summary: "Console & Workspaces"
+summary: "Add six theme palettes and custom colors and corner radii, with live preview and saved preferences (#7741) · Add an authenticated, multi-tab terminal inside Chat, with a working directory for each conversation (#7861)"
 ---
 
 # QwenPaw v2.2.2

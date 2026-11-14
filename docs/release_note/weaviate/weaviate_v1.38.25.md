@@ -7,7 +7,7 @@ version: "v1.38.25"
 published: "2026-11-10"
 type: "patch"
 lang: "en"
-summary: "none"
+summary: "fix(router): enforce consistency levels when replicas have left memberlist · Stop a tenants-only grant from listing a lone collection's schema · Keep a role pattern like X|\\Q from failing every later permission check"
 ---
 
 # weaviate v1.38.25

@@ -6,7 +6,7 @@ tag: "2.2.0.0-2021.0.9-RC1"
 published: "2026-10-27"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/Tencent/spring-cloud-tencent/compare/2.1.2.1-2021.0.9...2.2.0.0-2021.0.9-RC1"
+summary: "fix: wrong default value of spring.cloud.nacos.discovery.register-enabled in metadata · chore(2021): bump central-publishing-maven-plugin to 0.12.0 · feat: support audit log · feat: config effective"
 ---
 
 # spring-cloud-tencent 2.2.0.0-2021.0.9-RC1

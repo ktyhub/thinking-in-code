@@ -6,7 +6,7 @@ tag: "2.2.0.0-2024.0.3-RC1"
 published: "2026-10-26"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/Tencent/spring-cloud-tencent/compare/2.1.2.0-2024.0.3...2.2.0.0-2024.0.3-RC1"
+summary: "feat: adapt to polaris-java ReportClientRequestCustomizer plugin for config watch reporting · feat: support audit log · feat: config effective · feat: support encoding and decoding TSF headers without TSF Consul"
 ---
 
 # spring-cloud-tencent 2.2.0.0-2024.0.3-RC1

@@ -6,7 +6,7 @@ tag: "v4.2.0-RC1"
 published: "2026-10-22"
 type: "minor"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Apply the readAllBytes() optimization to deflated nested jar entries #52285 · Improve uber jar performance by looking up classes and resources directly in nested jars #52246"
 ---
 
 # spring-boot v4.2.0-RC1

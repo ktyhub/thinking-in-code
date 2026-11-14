@@ -6,6 +6,7 @@ tag: "v2.3.0"
 published: "2025-03-03"
 type: "minor"
 lang: "zh"
+summary: "Apache Seata（孵化中）2.3.0 发布。"
 ---
 
 # incubator-seata v2.3.0

@@ -6,7 +6,7 @@ tag: "v2.15.3"
 published: "2024-09-25"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/compare/v2.15.2...v2.15.3"
+summary: "Add a space between model and provider in ModelSelector to improve readability. · feat: Improve setting.model selector · feat: summarize model customization · feat: menual regen title"
 ---
 
 # ChatGPTNextWeb v2.15.3

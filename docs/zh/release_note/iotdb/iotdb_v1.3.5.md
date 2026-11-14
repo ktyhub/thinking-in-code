@@ -6,6 +6,7 @@ tag: "v1.3.5"
 published: "2025-09-11"
 type: "patch"
 lang: "zh"
+summary: "存储模块：优化用户密码加密，算法改为SHA-256；..."
 ---
 
 # iotdb v1.3.5

@@ -7,6 +7,7 @@ version: "v0.31.2"
 published: "2026-10-20"
 type: "patch"
 lang: "en"
+summary: "chore(mcp): require graphiti-core 0.31.1 and set MCP version to 1.1.1[bot] · chore(ci): add the Devin bot to the CLA allowlist · docs: state the security scope of the reference MCP and REST servers"
 ---
 
 # graphiti v0.31.2

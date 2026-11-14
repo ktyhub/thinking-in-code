@@ -7,7 +7,7 @@ version: "v0.4.1"
 published: "2026-11-06"
 type: "patch"
 lang: "en"
-summary: "The platform wheels include the built WebUI and matching native TUI. Native installation, terminal and update/recovery checks passed on macOS arm64/x64, Linux arm64/x64 and Windows x64. Original public 0.3.5 and 0.4.0…"
+summary: "Fix TLS certificate verification, sandboxed shell execution and workspace permissions for queued inputs."
 ---
 
 # nanobot v0.4.1

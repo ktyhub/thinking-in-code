@@ -6,7 +6,7 @@ tag: "v4.3.3"
 published: "2025-12-16"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Fix incorrect handling of url-encoded parameters in FormFilter · Bump antora from 3.2.0-alpha.10 to 3.2.0-alpha.11 in /docs[bot] · Bump antora from 3.2.0-alpha.10 to 3.2.0-alpha.11 in /docs[bot]"
 ---
 
 # spring-cloud-gateway v4.3.3

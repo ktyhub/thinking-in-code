@@ -6,7 +6,7 @@ tag: "v1.0.0"
 published: "2024-03-17"
 type: "major"
 lang: "en"
-summary: "We present Open-Sora, an initiative dedicated to efficiently produce high-quality video and make the model, tools and contents accessible to all. By embracing open-source principles, Open-Sora not only democratizes…"
+summary: "We present Open-Sora, an initiative dedicated to efficiently produce high-quality video and make the model, tools and contents accessible to all."
 ---
 
 # Open-Sora v1.0.0

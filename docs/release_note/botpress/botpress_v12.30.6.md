@@ -7,6 +7,7 @@ version: "v12.30.6"
 published: "2022-12-06"
 type: "patch"
 lang: "en"
+summary: "core: qna with transitions source details (#12216) (36f8d44), closes #11748 · hitlnext: expire cache while updating tags (#12341) (cdc6ab6) · web-channel: prevent error on null choice (#12228) (1a47643)"
 ---
 
 # botpress v12.30.6

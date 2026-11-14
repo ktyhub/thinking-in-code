@@ -6,7 +6,7 @@ tag: "6.2.0"
 published: "2025-04-28"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/openzipkin/brave/compare/6.1.0...6.2.0"
+summary: "Update Apache HttpClient5 to 5.4.1 · Add jersey server jakarta module · Dependency updates · A few dependency updates (before cutting a release)"
 ---
 
 # brave 6.2.0

@@ -7,7 +7,7 @@ version: "checkpoint 4.3.2"
 published: "2026-11-14"
 type: "release"
 lang: "en"
-summary: "Changes since checkpoint==4.3.1"
+summary: "release(checkpoint): 4.3.2 (#9699) · perf(checkpoint): stop InMemoryStore search at the requested page (#9633) · perf(checkpoint): dedupe batched store reads with a dict (#9636)"
 ---
 
 # langgraph checkpoint==4.3.2

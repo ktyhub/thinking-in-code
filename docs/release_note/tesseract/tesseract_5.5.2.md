@@ -7,6 +7,7 @@ version: "5.5.2"
 published: "2025-12-26"
 type: "patch"
 lang: "en"
+summary: "Simplify code for osdetect · Fix and improve configuration for cmake builds · Modernize some for loops and fix some signed/unsigned issues · Cmake optimization with warp2"
 ---
 
 # tesseract 5.5.2

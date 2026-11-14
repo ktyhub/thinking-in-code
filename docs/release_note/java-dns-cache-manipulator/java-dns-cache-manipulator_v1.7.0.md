@@ -6,7 +6,7 @@ tag: "v1.7.0"
 published: "2022-01-19"
 type: "minor"
 lang: "en"
-summary: "[](https://search.maven.org/artifact/com.alibaba/dns-cache-manipulator/1.7.0/jar) [](https://github.com/alibaba/java-dns-cache-manipulator/releases/download/v1.7.0/dcm-1.7.0.tar.gz)"
+summary: "upgrade dependencies since use java 8 · upgrade java source to java 8 · use kotlin/kotest 🍩 for testing · docs: improve wording"
 ---
 
 # java-dns-cache-manipulator v1.7.0

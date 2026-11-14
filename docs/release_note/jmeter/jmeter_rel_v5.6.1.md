@@ -6,7 +6,7 @@ tag: "rel/v5.6.1"
 published: "2023-07-10"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/jmeter/compare/rel/v5.6...rel/v5.6.1"
+summary: "Maven does not resolve transitive dependencies, see https://github.com/apache/jmeter/issues/6041. It will be resolved in 5.6.2"
 ---
 
 # jmeter rel/v5.6.1

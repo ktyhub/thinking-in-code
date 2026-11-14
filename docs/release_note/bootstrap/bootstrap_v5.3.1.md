@@ -6,6 +6,7 @@ tag: "v5.3.1"
 published: "2023-07-26"
 type: "patch"
 lang: "en"
+summary: "Color modes · Increased color contrast for dark mode by replacing $gray-500 with $gray-300 for the body color · Added our color mode switcher JavaScript to our examples ZIP download · Components"
 ---
 
 # bootstrap v5.3.1

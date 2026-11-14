@@ -7,6 +7,7 @@ version: "v1.9.0"
 published: "2026-06-17"
 type: "minor"
 lang: "en"
+summary: "ci : only trigger release jobs for tags · parakeet : add support for NVIDIA Parakeet · ruby : add support for Parakeet · release : v1.9.0"
 ---
 
 # whisper.cpp v1.9.0

@@ -7,7 +7,7 @@ version: "1.2.21"
 published: "2026-11-12"
 type: "patch"
 lang: "en"
-summary: "Changes since 1.2.20"
+summary: "release(langgraph): 1.2.21 (#9683) · chore(deps): bump the minor-and-patch group across 1 directory with 9 updates (#9530) · fix(langgraph): match whole namespace segments in get_subgraphs (#9615)"
 ---
 
 # langgraph 1.2.21

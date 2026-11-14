@@ -6,6 +6,7 @@ tag: "v1.8.0-RC1"
 published: "2026-10-23"
 type: "minor"
 lang: "en"
+summary: "Use opentelemetry-bom instead of opentelemetry-instrumentation-bom #1598"
 ---
 
 # micrometer tracing v1.8.0-RC1

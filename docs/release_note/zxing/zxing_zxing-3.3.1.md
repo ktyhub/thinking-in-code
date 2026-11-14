@@ -6,7 +6,7 @@ tag: "zxing-3.3.1"
 published: "2017-10-25"
 type: "release"
 lang: "en"
-summary: "https://github.com/zxing/zxing/issues?q=is%3Aclosed+milestone%3A3.3.1"
+summary: "Various fixes to Code 128, 39 encoding; DataMatrix decoding · Improvements to speed and robustness of zxing.org decoder · Java 9 support · Various translation updates for Barcode Scanner"
 ---
 
 # zxing zxing-3.3.1

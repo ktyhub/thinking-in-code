@@ -7,7 +7,7 @@ version: "v4.16"
 published: "2026-10-13"
 type: "minor"
 lang: "en"
-summary: "MacOS/Linux系统请使用源码部署"
+summary: "安装依赖；安装 uv；克隆并启动"
 ---
 
 # pyvideotrans v4.16

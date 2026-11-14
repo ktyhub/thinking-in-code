@@ -6,7 +6,7 @@ tag: "mybatis-3.5.9"
 published: "2021-12-25"
 type: "release"
 lang: "en"
-summary: "List of changes:"
+summary: "Add nullable to . If enabled, it skips the iteration when the collection is null instead of throwing an exception. To enable this feature globally, set nullableOnForEach=true in the config. #1883"
 ---
 
 # mybatis-3 mybatis-3.5.9

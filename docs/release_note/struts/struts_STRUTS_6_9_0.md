@@ -6,7 +6,7 @@ tag: "STRUTS_6_9_0"
 published: "2026-04-10"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/struts/compare/STRUTS680...STRUTS690"
+summary: "WW-5583 Bump commons-validator:commons-validator from 1.9.0 to 1.10.0[bot] · WW-5581 Bump org.freemarker:freemarker from 2.3.33 to 2.3.34[bot] · WW-5584 Bump asm.version from 9.7.1 to 9.9[bot]"
 ---
 
 # struts STRUTS_6_9_0

@@ -7,7 +7,7 @@ version: "ray-2.58.1"
 published: "2026-10-21"
 type: "release"
 lang: "en"
-summary: "Thanks to everyone who contributed to this release! @marwan116, @jeffreywang88, @dstrodtman, @owenowenisme, @elliot-barn"
+summary: "Fix out-of-scope block callbacks being registered on blocks passed through from input to output (\\#66369, cherry-pick \\#66404). Fixes spurious callback errors on passthrough datasets."
 ---
 
 # ray ray-2.58.1

@@ -7,6 +7,7 @@ version: "chrome-devtools-mcp-v1.11.0"
 published: "2026-10-15"
 type: "release"
 lang: "en"
+summary: "add --file-navigations flag to reject file: URL navigations (#2853) (54cae57) · Add analyze_heapsnapshot_contexts MCP tool (#2791) (190aeee) · add ignoreCache option to performance_start_trace (#2931) (3467d40)"
 ---
 
 # chrome-devtools-mcp chrome-devtools-mcp-v1.11.0

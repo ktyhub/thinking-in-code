@@ -6,7 +6,7 @@ tag: "v2.0.1"
 published: "2025-08-26"
 type: "patch"
 lang: "en"
-summary: "This release fixes the 'SSRF Vulnerability via malicious webhook' security advisory. It is recommended that people using the self-hosted version of Firecrawl update to v2.0.1 immediately. More info in the advisory:…"
+summary: "This release fixes the 'SSRF Vulnerability via malicious webhook' security advisory. It is recommended that people using the self-hosted version of Firecrawl update to v2.0.1 immediately."
 ---
 
 # firecrawl v2.0.1

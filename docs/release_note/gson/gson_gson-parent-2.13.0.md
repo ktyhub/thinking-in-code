@@ -6,7 +6,7 @@ tag: "gson-parent-2.13.0"
 published: "2025-04-11"
 type: "release"
 lang: "en"
-summary: "gson.fromJson(jsonString, new TypeToken>() {})"
+summary: "A bug in deserializing collections has been fixed. Previously, if you did something like this"
 ---
 
 # gson gson-parent-2.13.0

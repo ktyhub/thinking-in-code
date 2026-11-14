@@ -6,7 +6,7 @@ tag: "v2.14.1"
 published: "2026-07-07"
 type: "patch"
 lang: "en"
-summary: "Quick hotfix release to get out some bug fixes including:"
+summary: "Quick hotfix release to get out some bug fixes including"
 ---
 
 # Stirling-PDF_0.33.1 Docker hub move to stirlingtools v2.14.1

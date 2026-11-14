@@ -7,6 +7,7 @@ version: "v2.10"
 published: "2026-05-15"
 type: "minor"
 lang: "en"
+summary: "/parse endpoint — Upload local files (PDF, DOCX, DOC, ODT, RTF, XLSX, XLS, HTML) up to 50 MB and get back clean, LLM-ready Markdown, JSON, or a summary."
 ---
 
 # firecrawl v2.10

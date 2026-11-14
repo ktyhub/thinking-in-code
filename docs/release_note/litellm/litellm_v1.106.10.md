@@ -7,7 +7,7 @@ version: "v1.106.10"
 published: "2026-11-14"
 type: "patch"
 lang: "en"
-summary: "cosign verify \\ --key https://raw.githubusercontent.com/BerriAI/litellm/e82a3c646908ba0a6ee0beddc4310d7a6cac4065/cosign.pub \\ ghcr.io/berriai/litellm:v1.106.10"
+summary: "Same command for litellm-database, litellm-non_root and the docker.io/litellm/ images"
 ---
 
 # litellm v1.106.10

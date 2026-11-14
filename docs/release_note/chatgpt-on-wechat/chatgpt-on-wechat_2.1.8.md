@@ -6,7 +6,7 @@ tag: "2.1.8"
 published: "2026-09-11"
 type: "patch"
 lang: "en"
-summary: "🌐 English | 中文"
+summary: "CowAgent is now a multi-Agent framework. You can create multiple Agents, each with its own role, to form a team and collaborate on complex tasks within a single session."
 ---
 
 # chatgpt-on-wechat 2.1.8

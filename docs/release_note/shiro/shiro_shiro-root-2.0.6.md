@@ -6,7 +6,7 @@ tag: "shiro-root-2.0.6"
 published: "2025-11-02"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/shiro/compare/shiro-root-2.0.5...shiro-root-2.0.6"
+summary: "[#2186] change authorized user to return 403 · [#2299] bugfix(jakarta-ee): don't set character encoding to UTF-8 if it's alr… · bugfix: logic for iteration parameter in the hasher"
 ---
 
 # shiro shiro-root-2.0.6

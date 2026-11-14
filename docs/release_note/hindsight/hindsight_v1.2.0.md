@@ -7,6 +7,7 @@ version: "v1.2.0"
 published: "2026-11-03"
 type: "minor"
 lang: "en"
+summary: "docs: changelog and blog post for v1.1.0 · docs(blog): ChatGPT sign-in recording in the v1.1.0 post · fix(parsers): strip UTF-8 byte-order mark in markitdown text files"
 ---
 
 # hindsight v1.2.0

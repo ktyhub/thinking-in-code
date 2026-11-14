@@ -6,7 +6,7 @@ tag: "4.6.1"
 published: "2026-09-08"
 type: "patch"
 lang: "en"
-summary: "Added"
+summary: "chore: update bouncycastle version \\#801 (tanya732) · Bump com.fasterxml.jackson.core:jackson-core from 2.22.1 to 2.22.2 in /lib \\#797 ([dependabot[bot]](https://github.com/apps/dependabot))"
 ---
 
 # java-jwt 4.6.1

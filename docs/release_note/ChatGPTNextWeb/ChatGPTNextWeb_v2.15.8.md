@@ -6,7 +6,7 @@ tag: "v2.15.8"
 published: "2024-11-11"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/compare/v2.15.7...v2.15.8"
+summary: "Custom model names can include the @ symbol by itself. · fix: updateCurrentSession => updateTargetSession · fix: glm chatpath · fix: botMessage reply date"
 ---
 
 # ChatGPTNextWeb v2.15.8

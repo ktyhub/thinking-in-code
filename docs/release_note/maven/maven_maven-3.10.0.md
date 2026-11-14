@@ -6,6 +6,7 @@ tag: "maven-3.10.0"
 published: "2026-10-01"
 type: "release"
 lang: "en"
+summary: "Maven 3.10.x should use Maven 3.1 validation in strict mode (#1542) @gnodet · Do not depend on maven-resolver-supplier-mvn3 (#13266) @cstamas"
 ---
 
 # maven maven-3.10.0

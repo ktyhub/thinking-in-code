@@ -6,7 +6,7 @@ tag: "v1.5.5"
 published: "2026-02-25"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/skylot/jadx/compare/v1.5.4...v1.5.5"
+summary: "Code area was updated from wrong thread causing many exception report popups, UI freezes and high CPU usage (#2798)"
 ---
 
 # jadx v1.5.5

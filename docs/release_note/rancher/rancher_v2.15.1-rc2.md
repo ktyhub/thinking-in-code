@@ -6,7 +6,7 @@ tag: "v2.15.1-rc2"
 published: "2026-08-27"
 type: "patch"
 lang: "en"
-summary: "rancher/rancher-agent:v2.15.1-rc2 rancher/rancher:v2.15.1-rc2"
+summary: "CHART_DEFAULT_BRANCH: release-v2.15 (scripts/package-env) · CHART_DEFAULT_BRANCH: release-v2.15 (package/Dockerfile) · CATTLE_KDM_BRANCH: release-v2.15 (package/Dockerfile)"
 ---
 
 # rancher v2.15.1-rc2

@@ -6,7 +6,7 @@ tag: "v13.3.0"
 published: "2026-10-27"
 type: "minor"
 lang: "en"
-summary: "Download page What's new highlights"
+summary: "Security: Fix CVE-2026-100105 · Security: Fix CVE-2026-13719 · Security: Fix CVE-2026-13720 · Security: Fix CVE-2026-15577"
 ---
 
 # grafana v13.3.0

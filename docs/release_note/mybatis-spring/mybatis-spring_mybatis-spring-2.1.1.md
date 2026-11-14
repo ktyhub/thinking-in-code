@@ -6,7 +6,7 @@ tag: "mybatis-spring-2.1.1"
 published: "2023-05-19"
 type: "release"
 lang: "en"
-summary: "Here is the complete list of changes."
+summary: "Support appendable method on SqlSessionFactoryBean #817 (@uxfix) · Change the event type that listen to in SqlSessionFactoryBean to ContextRefreshedEvent #810 (@SkyAndCode)"
 ---
 
 # mybatis-spring mybatis-spring-2.1.1

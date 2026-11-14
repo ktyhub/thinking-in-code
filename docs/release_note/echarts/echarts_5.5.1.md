@@ -6,6 +6,7 @@ tag: "5.5.1"
 published: "2024-06-27"
 type: "patch"
 lang: "en"
+summary: "[Feature] [axis] Support custom axis tick/label positions. #19919 (dvdkon) (Ovilia) · [Feature] [bar] Add startValue option. #17078 (jiawulin001) · [Feature] [sankey] Add itemStyle.borderRadius option. #19763 (deftliang)"
 ---
 
 # echarts 5.5.1

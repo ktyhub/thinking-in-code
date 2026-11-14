@@ -7,6 +7,7 @@ version: "v2.10.5-lts"
 published: "2026-08-06"
 type: "patch"
 lang: "en"
+summary: "Security Vulnerability: Fixed missing‑owner‑check at chat‑sharing link endpoint, where chat tokens could be abused to share other users’ conversation content."
 ---
 
 # MaxKB v2.10.5-lts

@@ -6,7 +6,7 @@ tag: "v1.0.0-rc.1"
 published: "2024-04-12"
 type: "pre"
 lang: "en"
-summary: "This is the first release candidate for TensorFlow Java 1.0.0, and includes a major refactoring of the source structure and the CI/CD pipelines (see https://github.com/tensorflow/java/pull/521). While most the API has…"
+summary: "This is the first release candidate for TensorFlow Java 1.0.0, and includes a major refactoring of the source structure and the CI/CD pipelines (see https://github.com/tensorflow/java/pull/521)."
 ---
 
 # tensorflow-java v1.0.0-rc.1

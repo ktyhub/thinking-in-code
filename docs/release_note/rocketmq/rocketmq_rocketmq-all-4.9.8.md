@@ -7,6 +7,7 @@ version: "rocketmq-all-4.9.8"
 published: "2024-02-22"
 type: "release"
 lang: "en"
+summary: "[ISSUE #7579] Fix globalWhiteRemoteAddressStrategy concurrent bug · [ISSUE #7663] Bump snakeyaml version from 1.32 to 2.0 · [ISSUE #7649] Add validation in broker/nameserver configure updating command"
 ---
 
 # rocketmq rocketmq-all-4.9.8

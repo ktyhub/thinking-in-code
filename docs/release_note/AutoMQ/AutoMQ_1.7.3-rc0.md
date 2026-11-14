@@ -6,7 +6,7 @@ tag: "1.7.3-rc0"
 published: "2026-08-06"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/AutoMQ/automq/compare/1.7.2...1.7.3-rc0"
+summary: "perf(zerozone): improve high-throughput routing · perf(jvm): enable generational ZGC on JDK 21 · fix: broker cannot gracefully shutdown when fenced by a duplicate node"
 ---
 
 # AutoMQ 1.7.3-rc0

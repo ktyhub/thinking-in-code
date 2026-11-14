@@ -6,7 +6,7 @@ tag: "jetcd-0.8.5"
 published: "2025-03-03"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/etcd-io/jetcd/compare/jetcd-0.8.3...jetcd-0.8.5"
+summary: "build(deps): bump com.google.guava:guava from 33.2.1-jre to 33.3.0-jre · build(deps): bump io.vertx:vertx-grpc from 4.5.9 to 4.5.10 · build(deps): bump mockito from 5.12.0 to 5.13.0"
 ---
 
 # jetcd jetcd-0.8.5

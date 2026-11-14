@@ -7,6 +7,7 @@ version: "druid-32.0.0"
 published: "2025-02-13"
 type: "release"
 lang: "en"
+summary: "Apache Druid 32.0.0 contains over 220 new features, bug fixes, performance enhancements, documentation improvements, and additional test coverage from 52 contributors."
 ---
 
 # druid druid-32.0.0

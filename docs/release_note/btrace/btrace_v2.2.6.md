@@ -6,7 +6,7 @@ tag: "v2.2.6"
 published: "2024-11-09"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/btraceio/btrace/compare/v2.2.5...v2.2.6"
+summary: "Workaround functional test failures on JDK 22 · Correctly set field name for @TargetMethodOrField · A bunch of fixes related to Spark 3 on JDK 17"
 ---
 
 # btrace v2.2.6

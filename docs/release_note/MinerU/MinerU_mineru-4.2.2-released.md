@@ -7,7 +7,7 @@ version: "mineru-4.2.2-released"
 published: "2026-11-13"
 type: "release"
 lang: "en"
-summary: "兼容性提示。原有 mineru read -o part.md 需要改为 stdout 重定向或 SDK 保存；需要完整产物时使用 mineru parse --pages -o result.md。批量调用方应根据新的结果摘要和退出码区分完整成功、部分失败和全局中止。"
+summary: "完善本地 VLM 引擎的故障传播与生命周期管理。统一消费 LMDeploy、vLLM、llama.cpp 和 MLX 的公共健康与失效契约；确认引擎失效后停止复用缓存实例，并通知关联宿主，避免把全局故障当作普通识别失败而静默降级。普通单片识别失败仍保留既有回退。"
 ---
 
 # MinerU mineru-4.2.2-released

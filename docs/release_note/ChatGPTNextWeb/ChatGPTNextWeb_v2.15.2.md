@@ -6,7 +6,7 @@ tag: "v2.15.2"
 published: "2024-09-13"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/compare/v2.15.1...v2.15.2"
+summary: "add chatgpt-4o-latest · fix: safaLocalStorage · feat: add shortcut key · fix typo in UI"
 ---
 
 # ChatGPTNextWeb v2.15.2

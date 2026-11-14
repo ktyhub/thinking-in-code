@@ -7,6 +7,7 @@ version: "v1.2.0"
 published: "2025-08-06"
 type: "minor"
 lang: "en"
+summary: "feat: allow passing specific revision to download · Support distil-large-v3.5 · Feature: Allow loading of private HF models · bugfix: Get correct chunk index when restoring timestamps"
 ---
 
 # faster-whisper v1.2.0

@@ -7,6 +7,7 @@ version: "v0.12.5"
 published: "2026-10-29"
 type: "patch"
 lang: "en"
+summary: "🧭 Analytics session explorer. Administrators can now open a Sessions tab in Admin Analytics that lists each chat with its tokens, responses, errors and time span, filters them by search, model, token range or…"
 ---
 
 # open-webui v0.12.5

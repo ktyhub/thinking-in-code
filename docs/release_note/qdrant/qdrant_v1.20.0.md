@@ -7,6 +7,7 @@ version: "v1.20.0"
 published: "2026-10-22"
 type: "minor"
 lang: "en"
+summary: "#10750 - BM25 scoring directly on the full-text payload index [docs] · Milestone #57 - TurboQuant: new turbo8 and turbo16 vector datatypes [docs]"
 ---
 
 # qdrant v1.20.0

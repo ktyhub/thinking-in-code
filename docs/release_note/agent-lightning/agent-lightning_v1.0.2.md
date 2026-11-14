@@ -7,7 +7,7 @@ version: "v1.0.2"
 published: "2026-09-29"
 type: "patch"
 lang: "en"
-summary: "Human contributors, listed alphabetically by GitHub username:"
+summary: "MoE coding-agent training: Added Qwen3.5-35B-A3B training with CISPO and R3 expert-routing replay, plus a runnable example and guide (#601, #607)."
 ---
 
 # agent-lightning v1.0.2

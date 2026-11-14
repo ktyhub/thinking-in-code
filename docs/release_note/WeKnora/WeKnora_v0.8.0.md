@@ -7,6 +7,7 @@ version: "v0.8.0"
 published: "2026-09-03"
 type: "minor"
 lang: "en"
+summary: "fix(tenant): clear stale home tenant after member removal · Feat/issue 2401 auto tag · fix(knowledge): harden auto-tagging and let it respect manual tags · feat(auth): add self-service change password in user profile"
 ---
 
 # WeKnora v0.8.0

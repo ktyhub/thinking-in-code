@@ -6,6 +6,7 @@ tag: "7.21.0-rc.805"
 published: "2026-11-10"
 type: "pre"
 lang: "en"
+summary: "AAE-55766 Update Supply Chain Review GH AW to latest"
 ---
 
 # Activiti 7.21.0-rc.805

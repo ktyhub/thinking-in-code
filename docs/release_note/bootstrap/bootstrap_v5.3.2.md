@@ -6,6 +6,7 @@ tag: "v5.3.2"
 published: "2023-09-14"
 type: "patch"
 lang: "en"
+summary: "Passing a percentage unit to the global abs() is deprecated since Dart Sass v1.65.0. It resulted in a deprecation warning when compiling Bootstrap with Dart Sass."
 ---
 
 # bootstrap v5.3.2

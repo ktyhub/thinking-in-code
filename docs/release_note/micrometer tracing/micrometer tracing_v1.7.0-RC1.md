@@ -6,6 +6,7 @@ tag: "v1.7.0-RC1"
 published: "2026-04-13"
 type: "minor"
 lang: "en"
+summary: "Unpublished docs module is included in BOM #1353"
 ---
 
 # micrometer tracing v1.7.0-RC1

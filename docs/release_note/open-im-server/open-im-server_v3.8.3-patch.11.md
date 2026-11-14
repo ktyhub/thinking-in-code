@@ -6,7 +6,7 @@ tag: "v3.8.3-patch.11"
 published: "2025-09-30"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/openimsdk/open-im-server/compare/v3.8.3-patch.10...v3.8.3-patch.11"
+summary: "fix: switch kafka & etcd image namespace to bitnamilegacy in v3.8.3-patch branch. · fix: GetSortedConversationList nil pointer when chatlog not found in v3.8.3-patch branch. · fix: prometheus 3.8.3"
 ---
 
 # open-im-server v3.8.3-patch.11

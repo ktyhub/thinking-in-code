@@ -7,6 +7,7 @@ version: "v1.58.0"
 published: "2026-11-09"
 type: "minor"
 lang: "en"
+summary: "Opt-in context relevance operation #12589 · Context window report and viewer #10462 · AIHubMix declarative provider #12997 · RouterPlex declarative provider #13068"
 ---
 
 # goose v1.58.0

@@ -7,7 +7,7 @@ version: "autogpt-platform-beta-v0.11.0"
 published: "2026-11-04"
 type: "pre"
 lang: "en"
-summary: "A huge shoutout to everyone who contributed to this release. Special thanks to our new contributors:"
+summary: "#16459 - Payment enforcement is now the backend setting ENABLE_PLATFORM_PAYMENT (default off) instead of the enable-platform-payment feature flag."
 ---
 
 # AutoGPT autogpt-platform-beta-v0.11.0

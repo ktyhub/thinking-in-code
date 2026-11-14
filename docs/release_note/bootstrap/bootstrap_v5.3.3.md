@@ -6,6 +6,7 @@ tag: "v5.3.3"
 published: "2024-02-20"
 type: "patch"
 lang: "en"
+summary: "Fixed a breaking change introduced with color modes where it was required to manually import variables-dark.scss when building Bootstrap with Sass. Now, variables.scss will automatically import variables-dark.scss."
 ---
 
 # bootstrap v5.3.3

@@ -6,7 +6,7 @@ tag: "1.23.0-beta33"
 published: "2026-10-28"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/langchain4j/langchain4j-spring/compare/1.22.0-beta32...1.23.0-beta33"
+summary: "Update wiremock.version to v3.13.2[bot] · Update tinylog.version to v2.8.1[bot] · Clarify @AiService placeholders: Javadoc, error message and tests · Use the Spring task executor for offloaded work on Spring Boot 4 too"
 ---
 
 # langchain4j 1.23.0-beta33

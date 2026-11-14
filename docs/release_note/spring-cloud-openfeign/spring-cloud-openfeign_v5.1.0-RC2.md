@@ -6,7 +6,7 @@ tag: "v5.1.0-RC2"
 published: "2026-11-05"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-openfeign/compare/v5.1.0-RC1...v5.1.0-RC2"
+summary: "Bump com.fasterxml.jackson.dataformat:jackson-dataformat-smile from 2.22.3 to 2.22.4[bot] · Send the nested objects of @SpringQueryMap as nested query parameters · Test and document HTTP QUERY support"
 ---
 
 # spring-cloud-openfeign v5.1.0-RC2

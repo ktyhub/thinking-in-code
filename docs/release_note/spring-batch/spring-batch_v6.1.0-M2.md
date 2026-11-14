@@ -6,7 +6,7 @@ tag: "v6.1.0-M2"
 published: "2026-09-24"
 type: "pre"
 lang: "en"
-summary: "Spring Framework: 7.1.0-M2 Spring Integration: 7.2.0-M2 Spring AMQP: 4.2.0-M2 Spring Kafka: 4.2.0-M2 Spring Data: 2026.1.0-M2 Micrometer: 1.18.0-M2"
+summary: "Allow to use Mongo JobRepository with any PlatformTransactionManager #5508 · Add a builder for ResourcesItemReader with support for specifying resources via a pattern #5487 · Introduce BatchConstants #5190"
 ---
 
 # spring-batch v6.1.0-M2

@@ -6,6 +6,7 @@ tag: "6.6.2"
 published: "2026-08-28"
 type: "patch"
 lang: "en"
+summary: "♿ Improve Progress, Steps, and Tooltip accessibility by avoiding redundant SVG announcements, triggering Steps item onClick on keyboard activation, and preserving existing Tooltip aria-describedby relationships."
 ---
 
 # ant-design 6.6.2

@@ -7,6 +7,7 @@ version: "v2.31.1"
 published: "2026-11-03"
 type: "patch"
 lang: "en"
+summary: "Haystack now requires anyio>=4.14.2. anyio is installed transitively through httpx and openai; versions before 4.14.2 are affected by CVE-2026-63374 (GHSA-82r6-8w77-94w6)."
 ---
 
 # haystack v2.31.1

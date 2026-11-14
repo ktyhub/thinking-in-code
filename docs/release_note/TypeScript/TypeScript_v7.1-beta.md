@@ -6,7 +6,7 @@ tag: "v7.1-beta"
 published: "2026-10-20"
 type: "pre"
 lang: "en"
-summary: "https://devblogs.microsoft.com/typescript/announcing-typescript-7-1-beta/"
+summary: "Downloads are available on npm."
 ---
 
 # TypeScript v7.1-beta

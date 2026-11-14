@@ -6,6 +6,7 @@ tag: "v2.0.7"
 published: "2026-03-04"
 type: "patch"
 lang: "en"
+summary: "Others: Remove risky RPC interfaces. · Others: Remove JEXL functions. · Others: Check naming when creating a Pipe. · Others: Change the default client RPC service address to 127.0.0.1."
 ---
 
 # iotdb v2.0.7

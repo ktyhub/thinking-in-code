@@ -7,6 +7,7 @@ version: "ctx7@0.11.1"
 published: "2026-11-12"
 type: "release"
 lang: "en"
+summary: "251c6c5: Use /reactjs/react.dev in CLI help examples. /facebook/react now redirects to another library and returns no documentation."
 ---
 
 # context7 ctx7@0.11.1

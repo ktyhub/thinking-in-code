@@ -6,7 +6,7 @@ tag: "v3.3.1"
 published: "2025-12-17"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Upgrade kubernetes java client to 19.0.3 · Update ConfigMap link in Documentation · clean-up a bit · Bump @springio/antora-extensions from 1.14.4 to 1.14.6 in /docs[bot]"
 ---
 
 # spring-cloud-kubernetes v3.3.1

@@ -6,6 +6,7 @@ tag: "v2.7.8.2"
 published: "2021-03-23"
 type: "patch"
 lang: "en"
+summary: "Fix the problem of non parsing generics in request bean · Fix unfiltered serialVersionUID in bean (layer 1) on method parameter · Fix unresolved generics in List (including map, etc.) on method parameters"
 ---
 
 # dubbo-spi-extensions v2.7.8.2

@@ -6,7 +6,7 @@ tag: "v1.38.8"
 published: "2026-10-22"
 type: "patch"
 lang: "en"
-summary: "Summary of changes:"
+summary: "Upstream security fixes · eMudhra intermediate CA compromise"
 ---
 
 # envoy v1.38.8

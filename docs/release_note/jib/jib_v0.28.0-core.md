@@ -6,7 +6,7 @@ tag: "v0.28.0-core"
 published: "2025-11-17"
 type: "minor"
 lang: "en"
-summary: "See CHANGELOG.md for more details."
+summary: "feat: add default base image for Java 25 (#4436) · deps: update org.ow2.asm:asm to version 9.8 for java 25 support"
 ---
 
 # jib v0.28.0-core

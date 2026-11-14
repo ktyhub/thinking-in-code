@@ -6,7 +6,7 @@ tag: "v3.3.0"
 published: "2025-03-22"
 type: "minor"
 lang: "en"
-summary: "This release introduces multiple bug fixes, new features, and code enhancements to improve the stability and functionality of Apache Dubbo-Go. Key improvements include resolving various service discovery and…"
+summary: "This release introduces multiple bug fixes, new features, and code enhancements to improve the stability and functionality of Apache Dubbo-Go."
 ---
 
 # dubbo-go v3.3.0

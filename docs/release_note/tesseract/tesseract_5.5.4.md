@@ -7,7 +7,7 @@ version: "5.5.4"
 published: "2026-10-28"
 type: "patch"
 lang: "en"
-summary: "This release fixes 17 security advisories and several smaller issues. In addition, it provides some smaller updates and improvements:"
+summary: "This release fixes 17 security advisories and several smaller issues. In addition, it provides some smaller updates and improvements"
 ---
 
 # tesseract 5.5.4

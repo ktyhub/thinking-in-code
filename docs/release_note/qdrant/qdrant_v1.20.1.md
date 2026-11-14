@@ -7,6 +7,7 @@ version: "v1.20.1"
 published: "2026-11-13"
 type: "patch"
 lang: "en"
+summary: "https://github.com/qdrant/qdrant/milestone/56 - Build HNSW graphs of large segments faster with PiPNN"
 ---
 
 # qdrant v1.20.1

@@ -6,6 +6,7 @@ tag: "6.0.0-beta.1"
 published: "2025-06-25"
 type: "pre"
 lang: "en"
+summary: "[Feature] [theme] New theme for ECharts 6.0. #20865 (Ovilia) · [Feature] [chord] New chord series. #20522 (Ovilia)"
 ---
 
 # echarts 6.0.0-beta.1

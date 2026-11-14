@@ -7,6 +7,7 @@ version: "1.3.1"
 published: "2026-06-30"
 type: "patch"
 lang: "en"
+summary: "Add semver and MAC address custom types · Update docs with OrcaRouter guide · fix(types): handle bool instances in python_types_to_terms for Literal[True/False] · Add ipv6 custom type"
 ---
 
 # outlines 1.3.1

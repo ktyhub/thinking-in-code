@@ -6,7 +6,7 @@ tag: "2.2.0.0-2025.1.1-RC1"
 published: "2026-10-26"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/Tencent/spring-cloud-tencent/compare/2.1.1.0-2024.0.3...2.2.0.0-2025.1.1-RC1"
+summary: "feat: Add config address to report client url conversion. · feat: Update config server IP to 127.0.0.1 and adjust tests · feat: Support Polaris config env value and add related tests"
 ---
 
 # spring-cloud-tencent 2.2.0.0-2025.1.1-RC1

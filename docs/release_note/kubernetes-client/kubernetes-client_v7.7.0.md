@@ -6,7 +6,7 @@ tag: "v7.7.0"
 published: "2026-05-12"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/fabric8io/kubernetes-client/compare/v7.6.1...v7.7.0"
+summary: "Fix #7747: (mockwebserver) avoid RejectedExecutionException in MockWebServer#shutdown() — linearize close sequence to remove the httpClose-listener vs await race, and make shutdown() idempotent against repeated calls…"
 ---
 
 # kubernetes-client v7.7.0

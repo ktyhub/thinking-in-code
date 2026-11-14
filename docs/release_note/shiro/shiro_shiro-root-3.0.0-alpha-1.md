@@ -6,7 +6,7 @@ tag: "shiro-root-3.0.0-alpha-1"
 published: "2026-02-23"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/shiro/compare/shiro-root-2.1.0...shiro-root-3.0.0-alpha-1"
+summary: "Java 17 is the minimum requirement · Jakarta EE 11, Spring 7 and SpringBoot 4 without classifiers, dropped support for Jakarta EE 8 and SpringBoot 2 · Removed many deprecations · Refactored code to use Java 17+ features"
 ---
 
 # shiro shiro-root-3.0.0-alpha-1

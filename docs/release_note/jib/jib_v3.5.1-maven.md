@@ -6,7 +6,7 @@ tag: "v3.5.1-maven"
 published: "2025-11-18"
 type: "patch"
 lang: "en"
-summary: "See CHANGELOG.md for more details."
+summary: "feat: support Java 25 main methods · deps: update org.ow2.asm:asm to version 9.9"
 ---
 
 # jib v3.5.1-maven

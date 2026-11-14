@@ -6,7 +6,7 @@ tag: "7.7.0"
 published: "2022-12-09"
 type: "minor"
 lang: "en"
-summary: "by @JLLeitschuh in https://github.com/cbeust/testng/pull/2806"
+summary: "Replace FindBugs by SpotBugs · Gradle: Drop forUseAtConfigurationTime() · Added ability to provide custom message to assertThrows\\expectThrows methods · Fix issue 2801 - Only resolve hostname once"
 ---
 
 # testng 7.7.0

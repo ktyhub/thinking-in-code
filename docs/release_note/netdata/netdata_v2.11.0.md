@@ -7,7 +7,7 @@ version: "v2.11.0"
 published: "2026-08-12"
 type: "minor"
 lang: "en"
-summary: "Netdata has always been exceptionally good at one particular thing: telling you, per second and with no configuration, what is happening inside a machine. v2.11.0 is the release where that stops being the boundary."
+summary: "Summary · Highlights · Network Monitor Dashboard (Technical Preview) · Network Flows: NetFlow, IPFIX and sFlow (Technical Preview)"
 ---
 
 # netdata v2.11.0

@@ -6,7 +6,7 @@ tag: "v1.17.8"
 published: "2026-10-08"
 type: "patch"
 lang: "en"
-summary: "This is a security-focused release, fixing several DoS risk issues ❤️‍🩹 . Note most of the the fixes related to bugs which only become possible after the activation of the Amsterdam fork. There are also some general…"
+summary: "This is a security-focused release, fixing several DoS risk issues ❤️‍🩹 . Note most of the the fixes related to bugs which only become possible after the activation of the Amsterdam fork."
 ---
 
 # go-ethereum v1.17.8

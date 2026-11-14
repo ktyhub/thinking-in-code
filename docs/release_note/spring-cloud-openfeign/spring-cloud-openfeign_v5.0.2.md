@@ -6,7 +6,7 @@ tag: "v5.0.2"
 published: "2026-06-11"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Add documentation for FeignClientBuilder #1361 · Document potential resource exhaustion risk when Client is not singleton #1356 · Missing Encoder/Decoder bean in Spring Boot 4 #1323"
 ---
 
 # spring-cloud-openfeign v5.0.2

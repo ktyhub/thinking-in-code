@@ -7,7 +7,7 @@ version: "autogpt-platform-beta-v0.10.0"
 published: "2026-10-27"
 type: "pre"
 lang: "en"
-summary: "A huge shoutout to everyone who contributed to this release. Special thanks to our returning contributors:"
+summary: "#15970 - Self-hosted Docker Compose generates its own service passwords per install and won't start without them: run make init-env (or the installer) before docker compose up."
 ---
 
 # AutoGPT autogpt-platform-beta-v0.10.0

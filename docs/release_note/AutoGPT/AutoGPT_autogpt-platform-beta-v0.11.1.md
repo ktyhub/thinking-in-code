@@ -7,7 +7,7 @@ version: "autogpt-platform-beta-v0.11.1"
 published: "2026-11-06"
 type: "pre"
 lang: "en"
-summary: "A huge shoutout to everyone who contributed to this release:"
+summary: "#16416 - Self-hosted installs: .env.default no longer ships a Web Push (VAPID) key pair, and the backend no longer sends push notifications with the old shipped pair."
 ---
 
 # AutoGPT autogpt-platform-beta-v0.11.1

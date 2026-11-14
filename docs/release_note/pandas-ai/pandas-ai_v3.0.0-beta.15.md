@@ -6,7 +6,7 @@ tag: "v3.0.0-beta.15"
 published: "2025-03-11"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/sinaptik-ai/pandas-ai/compare/v3.0.0-beta.14...v3.0.0-beta.15"
+summary: "fix(localloader): adding parameters · feature(litellm): pandasai litellm wrapper · fix(agent): remove wrong double validation · fix(query builders): quoting identifiers by default"
 ---
 
 # pandas-ai v3.0.0-beta.15

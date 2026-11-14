@@ -6,6 +6,7 @@ tag: "v4.0.6"
 published: "2026-06-09"
 type: "patch"
 lang: "en"
+summary: "make the method setBackOffFunction work for the batch processing as well #4473"
 ---
 
 # spring-kafka v4.0.6

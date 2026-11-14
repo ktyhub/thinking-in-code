@@ -7,6 +7,7 @@ version: "v8.9.0"
 published: "2026-11-02"
 type: "minor"
 lang: "en"
+summary: "PyPI: pip install g4f==v8.9.0"
 ---
 
 # gpt4free v8.9.0

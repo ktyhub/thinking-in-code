@@ -6,7 +6,7 @@ tag: "rel/v5.6"
 published: "2023-06-24"
 type: "release"
 lang: "en"
-summary: "The following regressions will be resolved in 5.6.1:"
+summary: "The following regressions will be resolved in 5.6.1"
 ---
 
 # jmeter rel/v5.6

@@ -6,7 +6,7 @@ tag: "v4.2.0-M2"
 published: "2026-09-24"
 type: "pre"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "AbstractKafkaListenerContainerFactory should allow to configure a KafkaAdmin #4654 · Apply nullability to Deserializer subclass #4653 · Apply nullability annotations #4648 · Apply nullability to Serializer subclass #4647"
 ---
 
 # spring-kafka v4.2.0-M2

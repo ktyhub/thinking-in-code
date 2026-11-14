@@ -7,6 +7,7 @@ version: "v4.29.4"
 published: "2026-10-31"
 type: "patch"
 lang: "en"
+summary: "消息按钮：新增跨平台按钮组件，支持链接、消息发送和插件回调，并提供交互超时提示。各平台支持的按钮类型以文档为准。 (#9809)；决策模型：新增独立于聊天模型的 Decision Provider 和 System One 适配器，供插件调用结构化选择、布尔判断和评分。 (#10775)；网络搜索：接入 SerpApi Google News，支持新闻来源、作者、发布时间和 WebUI 引用展示。 (#10773)"
 ---
 
 # AstrBot v4.29.4

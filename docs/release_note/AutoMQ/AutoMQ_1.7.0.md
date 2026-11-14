@@ -6,7 +6,7 @@ tag: "1.7.0"
 published: "2026-06-04"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/AutoMQ/automq/compare/1.6.5...1.7.0"
+summary: "build: align opensource dependency versions · feat(devkit): add namespace support for multi-instance isolation (#3295) · build: avoid forcing SnakeYAML for swagger doc generation"
 ---
 
 # AutoMQ 1.7.0

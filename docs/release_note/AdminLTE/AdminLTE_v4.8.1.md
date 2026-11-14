@@ -6,7 +6,7 @@ tag: "v4.8.1"
 published: "2026-08-19"
 type: "patch"
 lang: "en"
-summary: "A keyboard-accessibility fix on top of 4.8.0, reported by @johnnyq (#6109)."
+summary: "A keyboard-accessibility fix on top of 4.8.0, reported (#6109)."
 ---
 
 # AdminLTE v4.8.1

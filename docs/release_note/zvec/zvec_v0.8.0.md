@@ -7,7 +7,7 @@ version: "v0.8.0"
 published: "2026-10-21"
 type: "minor"
 lang: "en"
-summary: "Zvec v0.8.0 brings faster queries, lower index build costs, and broader platform support. Quantizer and distance-kernel improvements benefit multiple formats and metrics, with major gains for INT4 and Linux ARM64. This…"
+summary: "Zvec v0.8.0 brings faster queries, lower index build costs, and broader platform support. Quantizer and distance-kernel improvements benefit multiple formats and metrics, with major gains for INT4 and Linux ARM64."
 ---
 
 # zvec v0.8.0

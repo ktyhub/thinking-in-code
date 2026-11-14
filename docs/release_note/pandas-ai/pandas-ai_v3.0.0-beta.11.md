@@ -6,7 +6,7 @@ tag: "v3.0.0-beta.11"
 published: "2025-02-14"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/sinaptik-ai/pandas-ai/compare/v3.0.0-beta.10...v3.0.0-beta.11"
+summary: "fix(views): transformation using raw sql · fix(dataset): slug format validation on load · fix(Views): multiple joins · fix(View): fixing aliases in view"
 ---
 
 # pandas-ai v3.0.0-beta.11

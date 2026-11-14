@@ -7,6 +7,7 @@ version: "v3.2.0"
 published: "2026-09-24"
 type: "minor"
 lang: "en"
+summary: "Change default package feed index. · Fix/cache event loop lifecycle · Pr 2481/danfiedler/pin actions · Add notice."
 ---
 
 # graphrag v3.2.0

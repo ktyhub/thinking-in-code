@@ -7,7 +7,7 @@ version: "langchain-core 1.7.7"
 published: "2026-11-10"
 type: "release"
 lang: "en"
-summary: "Changes since langchain-core==1.7.6"
+summary: "release(core): 1.7.7 (#41776) fix(core): cap nesting depth in load() (#41742) chore(deps): patch newer-python security lock resolutions (#41585)"
 ---
 
 # langchain langchain-core==1.7.7

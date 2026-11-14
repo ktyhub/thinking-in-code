@@ -6,7 +6,7 @@ tag: "json-path-2.10.0"
 published: "2025-10-31"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/json-path/JsonPath/compare/json-path-2.9.0...json-path-2.10.0"
+summary: "Bumps dependency versions · net.minidev:json-smart:2.6.0 · org.slf4j:slf4j-api:2.0.17 · com.google.code.gson:gson:2.13.2"
 ---
 
 # JsonPath json-path-2.10.0

@@ -6,7 +6,7 @@ tag: "1.8.10"
 published: "2026-05-21"
 type: "patch"
 lang: "en"
-summary: "Thanks for all contributors: @uuuyuqi, @gaoyf, @xierunzi, @Layau-code, @ylnxwlp"
+summary: "Add Apache HttpClient 5.x adapter for Sentinel (#3614) · Support Spring RestClient (#3602)"
 ---
 
 # Sentinel 1.8.10

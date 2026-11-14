@@ -7,7 +7,7 @@ version: "1.15.38"
 published: "2026-11-08"
 type: "patch"
 lang: "en"
-summary: "@joaomdmoura"
+summary: "Make gpt-6-luna crewAI's default model everywhere · Read spreadsheet URLs in an agent's input with tools over every row · Tag eval usage spans with target and a per-evaluation id"
 ---
 
 # crewAI 1.15.38

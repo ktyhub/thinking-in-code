@@ -6,7 +6,7 @@ tag: "4.4.0"
 published: "2023-03-31"
 type: "minor"
 lang: "en"
-summary: "Full Changelog"
+summary: "Add support for passing json values for header and payload \\#643 (andrewrigas) · Preserve insertion order for claims \\#656 (snago) · Update Jackson to 2.14.2 \\#657 (jimmyjames)"
 ---
 
 # java-jwt 4.4.0

@@ -6,7 +6,7 @@ tag: "v1.2.0"
 published: "2024-06-18"
 type: "minor"
 lang: "en"
-summary: "Today, we are happy to announce the v1.2 release of the Open-Sora project. This release is built upon v1.1 and features extra exciting components:"
+summary: "Today, we are happy to announce the v1.2 release of the Open-Sora project. This release is built upon v1.1 and features extra exciting components"
 ---
 
 # Open-Sora v1.2.0

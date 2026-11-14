@@ -7,6 +7,7 @@ version: "v0.13.3"
 published: "2026-11-08"
 type: "patch"
 lang: "en"
+summary: "🦾 Agents in automations. The automation editor now lets you choose a terminal and working folder, then select a coding agent available there."
 ---
 
 # open-webui v0.13.3

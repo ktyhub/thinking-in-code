@@ -6,7 +6,7 @@ tag: "v7.2.0-RC1"
 published: "2026-10-22"
 type: "minor"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Add MQTT outbound channel adapter implementation #11530 · Make SerializingHttpMessageConverter to require allowedPatterns from its ctor #11480 · Add Inbound Channel Adapter for MQTT based on hivemq #10989"
 ---
 
 # spring-integration v7.2.0-RC1

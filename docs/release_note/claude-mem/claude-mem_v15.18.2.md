@@ -7,7 +7,7 @@ version: "v15.18.2"
 published: "2026-11-12"
 type: "patch"
 lang: "en"
-summary: "Windows Gemini CLI users: run npx claude-mem gemini install once after updating. npx claude-mem update and auto-update do not rewrite Gemini's hooks, so the broken commands stay until you reinstall them. The reinstall…"
+summary: "Gemini CLI on Windows records again (#6079, thanks @tanishqbaweja). On Windows, Gemini CLI runs hook commands through PowerShell."
 ---
 
 # claude-mem v15.18.2

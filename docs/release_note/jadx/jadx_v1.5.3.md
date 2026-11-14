@@ -6,7 +6,7 @@ tag: "v1.5.3"
 published: "2025-09-08"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/skylot/jadx/compare/v1.5.2...v1.5.3"
+summary: "[aab] Enhance AAB parsing (PR #2557) · [gui] New search options to search in text or binary resources (PR #2526) · [gui] Allow view and edit input smali files"
 ---
 
 # jadx v1.5.3

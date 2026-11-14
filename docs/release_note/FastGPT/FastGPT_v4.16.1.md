@@ -6,7 +6,7 @@ tag: "v4.16.1"
 published: "2026-08-21"
 type: "patch"
 lang: "en"
-summary: "启用 Agent Sandbox 时，请在 fastgpt-app 和 fastgpt-pro 中同步检查以下配置。4.16.1 使用完整的运行态镜像地址："
+summary: "启用 Agent Sandbox 时，请在 fastgpt-app 和 fastgpt-pro 中同步检查以下配置。4.16.1 使用完整的运行态镜像地址"
 ---
 
 # FastGPT v4.16.1

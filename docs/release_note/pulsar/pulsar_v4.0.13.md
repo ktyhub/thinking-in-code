@@ -6,7 +6,7 @@ tag: "v4.0.13"
 published: "2026-08-03"
 type: "patch"
 lang: "en"
-summary: "For the complete list, check the full changelog."
+summary: "[fix][sec][branch-4.0] Upgrade Hadoop to 3.5.0 (#26195) · [fix][sec][branch-4.0] Upgrade Jackson version to 2.18.9 (#26187) · [fix][sec][branch-4.0] Upgrade Netty to 4.1.136.Final (#26170)"
 ---
 
 # pulsar v4.0.13

@@ -6,7 +6,7 @@ tag: "v5.3.0-alpha3"
 published: "2023-04-03"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/twbs/bootstrap/compare/v5.3.0-alpha2...v5.3.0-alpha3"
+summary: "Fixed wrong interpolated variables with node-sass/Hugo. · Added a check for interpolated variables to catch compilation errors with Node Sass when using Sass variables in calc() functions."
 ---
 
 # bootstrap v5.3.0-alpha3

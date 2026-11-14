@@ -6,6 +6,7 @@ tag: "v9.0.10"
 published: "2026-10-28"
 type: "patch"
 lang: "en"
+summary: "alert: only block Enter on checkbox inputs, not the whole document (#31643) (28d2940), closes #30811 · menu: allow menus inside split pane main content to open (#31586) (3eebee3), closes #30591"
 ---
 
 # ionic-framework v9.0.10

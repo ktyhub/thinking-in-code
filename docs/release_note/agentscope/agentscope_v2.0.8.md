@@ -7,6 +7,7 @@ version: "v2.0.8"
 published: "2026-09-08"
 type: "patch"
 lang: "en"
+summary: "Realtime Voice Agent: Introduced a realtime voice agent with DashScope backends and local transport support. · A2A Protocol Support: Added A2AAgent class to the agent module, enabling agent-to-agent communication."
 ---
 
 # agentscope v2.0.8

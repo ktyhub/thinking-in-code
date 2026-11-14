@@ -6,7 +6,7 @@ tag: "v5.4.0"
 published: "2026-08-03"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/docker/compose/compare/v5.3.1...v5.4.0"
+summary: "Feat(reconcile): model volume recreation in the plan · Feat(reconcile): model network lifecycle in the plan"
 ---
 
 # compose v5.4.0

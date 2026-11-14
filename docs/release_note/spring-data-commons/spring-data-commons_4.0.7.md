@@ -6,6 +6,7 @@ tag: "4.0.7"
 published: "2026-08-21"
 type: "patch"
 lang: "en"
+summary: "Spring Data Commons 4.0.7 Reference documentation · Spring Data Commons 4.0.7 Javadoc"
 ---
 
 # spring-data-commons 4.0.7

@@ -6,7 +6,7 @@ tag: "kubernetes-dashboard-7.11.1"
 published: "2025-03-05"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/dashboard/compare/kubernetes-dashboard-7.11.0...kubernetes-dashboard-7.11.1"
+summary: "fix: PDB GQL schema · fix(client): GVR core resources caching"
 ---
 
 # kubernetes-dashboard kubernetes-dashboard-7.11.1

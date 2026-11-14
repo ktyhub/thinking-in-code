@@ -6,7 +6,7 @@ tag: "v2.12.0"
 published: "2026-09-30"
 type: "minor"
 lang: "en"
-summary: "The v2.12.0 build of the Netdata Agent for Windows has been discovered to have serious stability issues that cause it to crash randomly on startup due to an upstream bug in some of the tooling we depend on. As such, we…"
+summary: "The v2.12.0 build of the Netdata Agent for Windows has been discovered to have serious stability issues that cause it to crash randomly on startup due to an upstream bug in some of the tooling we depend on."
 ---
 
 # netdata v2.12.0

@@ -7,7 +7,7 @@ version: "v2026.1001.0"
 published: "2026-10-02"
 type: "minor"
 lang: "en"
-summary: "Paperclip v2026.1001.0 carries 77 commits, promoted from 2026.921.0-beta.1. The headline is reliability: a deep hardening pass over the native runner and chat recovery — approval and Stop races, session continuity,…"
+summary: "Paperclip v2026.1001.0 carries 77 commits, promoted from 2026.921.0-beta.1. The headline is reliability: a deep hardening pass over the native runner and chat recovery — approval and Stop races, session continuity…"
 ---
 
 # paperclip v2026.1001.0

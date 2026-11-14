@@ -7,7 +7,7 @@ version: "v1.4.256"
 published: "2026-11-10"
 type: "patch"
 lang: "en"
-summary: "Long chats stay more responsive while agents stream tool output, reasoning and subagent work, with less background processing during terminal and tab updates. This update also makes dictation easier to set up and use…"
+summary: "Long chats stay more responsive while agents stream tool output, reasoning and subagent work, with less background processing during terminal and tab updates."
 ---
 
 # orca v1.4.256

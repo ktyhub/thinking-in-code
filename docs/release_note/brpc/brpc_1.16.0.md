@@ -6,7 +6,7 @@ tag: "1.16.0"
 published: "2026-01-25"
 type: "minor"
 lang: "en"
-summary: "Apache bRPC 1.16.0 is a feature release that includes significant improvements in compatibility, performance, and functionality. This release adds support for new architectures, enhances debugging capabilities, improves…"
+summary: "Apache bRPC 1.16.0 is a feature release that includes significant improvements in compatibility, performance, and functionality."
 ---
 
 # brpc 1.16.0

@@ -6,7 +6,7 @@ tag: "v5.3.1"
 published: "2026-07-07"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/docker/compose/compare/v5.3.0...v5.3.1"
+summary: "Ci: add concurrency group to pr-review-trigger to prevent duplicate reviews · Fix grammar in Attestations field comment · Ci: remove unused desktop-edge-test workflow · Ci: zizmor workflow"
 ---
 
 # compose v5.3.1

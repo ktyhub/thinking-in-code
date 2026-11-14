@@ -6,6 +6,7 @@ tag: "canal-1.1.7"
 published: "2023-10-09"
 type: "release"
 lang: "en"
+summary: "支持PolarDB-X全局单流binlog、以及多流binlog的解析 #4657；支持MySQL 8.0、Mariadb 10.x版本的compress binlog解析 #4388；支持arm64 芯片架构适配，docker镜像默认交付 amd64/arm64 #4897；支持adapter适配elasticsearch 8.0 #4640"
 ---
 
 # canal canal-1.1.7

@@ -6,7 +6,7 @@ tag: "dubbo-3.3.5"
 published: "2025-05-29"
 type: "release"
 lang: "en"
-summary: "Releates PRs: #15136, #15203, #15208, #15205, #15222, #15231, #15241, #15272, #15236, #15327, #15264, #15325, #15307, #15324, #15289, #15258, #15338, #15378, #15379, #15384, #15394"
+summary: "autoconfiguration virtual-thread-pool · [3.3] Enable server socket reuseAddress option before binding · Enhance Server-Sent Events support"
 ---
 
 # dubbo dubbo-3.3.5

@@ -6,7 +6,7 @@ tag: "v1.17.0-rc2"
 published: "2026-03-13"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/PX4/PX4-Autopilot/compare/v1.17.0-rc1...v1.17.0-rc2"
+summary: "CVE-2026-32705 - BST device name buffer overflow (GHSA-79mp) · CVE-2026-32706 - CRSF variable-length packet buffer overflow (GHSA-mqgj) · CVE-2026-32707 - TattuCan CAN frame buffer overflow (GHSA-wxwm)"
 ---
 
 # PX4-Autopilot v1.17.0-rc2

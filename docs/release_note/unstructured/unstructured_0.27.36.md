@@ -7,6 +7,7 @@ version: "0.27.36"
 published: "2026-10-30"
 type: "patch"
 lang: "en"
+summary: "chore: start 0.27.36-dev after 0.27.35 release · fix(xml): keep text that runs through child elements · fix(pptx): filter off-slide shapes by how much of the box is visible"
 ---
 
 # unstructured 0.27.36

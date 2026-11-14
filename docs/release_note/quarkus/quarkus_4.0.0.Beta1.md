@@ -6,6 +6,7 @@ tag: "4.0.0.Beta1"
 published: "2026-10-01"
 type: "major"
 lang: "en"
+summary: "#55117 - Prepare for UBI 10 · #55145 - Micrometer Observation API Support · #55147 - Set the minimum Java version to Java 21 · #55180 - Introduce SPIFFE client extension"
 ---
 
 # quarkus 4.0.0.Beta1

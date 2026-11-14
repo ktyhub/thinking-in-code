@@ -6,6 +6,7 @@ tag: "5.4.1"
 published: "2022-12-09"
 type: "patch"
 lang: "en"
+summary: "[Feature] [i18n] Add Hungarian(hu_HU) translation. #17978 (ifjkovacsik) · [Feature] [svg] Support gradients and patterns for background color in SVG renderer. #959 (plainheart)"
 ---
 
 # echarts 5.4.1

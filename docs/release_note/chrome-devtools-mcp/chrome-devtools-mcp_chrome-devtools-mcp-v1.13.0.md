@@ -7,6 +7,7 @@ version: "chrome-devtools-mcp-v1.13.0"
 published: "2026-11-11"
 type: "release"
 lang: "en"
+summary: "add logpoints built on the DevTools BreakpointManager (#3211) (0877ee0) · add page-scoped network mocks (#3384) (1d692d3) · support upstream network mock responses (#3420) (c4bf342)"
 ---
 
 # chrome-devtools-mcp chrome-devtools-mcp-v1.13.0

@@ -7,6 +7,7 @@ version: "20240914"
 published: "2024-09-14"
 type: "major"
 lang: "en"
+summary: "🚀 新增 GPT o1-preview 和 o1-mini 模型支持！ (@GaiZhenbiao)"
 ---
 
 # ChuanhuChatGPT 20240914

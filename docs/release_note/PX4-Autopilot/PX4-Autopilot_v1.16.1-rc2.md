@@ -6,7 +6,7 @@ tag: "v1.16.1-rc2"
 published: "2025-11-17"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/PX4/PX4-Autopilot/compare/v1.16.1-rc1...v1.16.1-rc2"
+summary: "[BACKPORT 1.16] Correction of routing issue of mavlink parameter messages to CAN nodes · [BACKPORT 1.16] serial: nuttx: revert tcdrain back to fsync · [BACKPORT 1.16] mission: delay until: mark next setpoint invalid"
 ---
 
 # PX4-Autopilot v1.16.1-rc2

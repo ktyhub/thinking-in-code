@@ -6,7 +6,7 @@ tag: "v2.0.3"
 published: "2020-11-07"
 type: "patch"
 lang: "en"
-summary: "Full Changelog"
+summary: "Fix variable mapper behavior in corner cases \\#425 · BTrace checks only first return in traced method \\#426"
 ---
 
 # btrace v2.0.3

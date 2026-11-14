@@ -7,6 +7,7 @@ version: "v2.0.7.post1"
 published: "2026-08-28"
 type: "patch"
 lang: "en"
+summary: "fix(formatter): derive audio format from media type · fix(gemini): exclude tool-execution tokens from output_tokens · feat(formatter): use native multimodal tool outputs"
 ---
 
 # agentscope v2.0.7.post1

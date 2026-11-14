@@ -7,7 +7,7 @@ version: "v2.1.10"
 published: "2026-10-31"
 type: "patch"
 lang: "en"
-summary: "Release Notes"
+summary: "Cherry Studio 2.1.10 - File Comments, Touch Reorder, and Update Timeline"
 ---
 
 # cherry-studio v2.1.10

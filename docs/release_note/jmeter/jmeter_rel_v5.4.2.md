@@ -6,7 +6,7 @@ tag: "rel/v5.4.2"
 published: "2023-06-24"
 type: "release"
 lang: "en"
-summary: "Update log4j2 to 2.16.0 to fix CVE-2021-44228: https://github.com/apache/jmeter/commit/fca416257af9dc42c2ad6be0767337d7444eb9c4"
+summary: "Update log4j2 to 2.16.0 to fix CVE-2021-44228"
 ---
 
 # jmeter rel/v5.4.2

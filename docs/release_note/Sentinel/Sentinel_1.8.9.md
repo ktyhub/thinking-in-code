@@ -6,7 +6,7 @@ tag: "1.8.9"
 published: "2025-10-17"
 type: "patch"
 lang: "en"
-summary: "Thanks for all contributors: @marmot-z,@24kpure,@Linzyoo,@LearningGp,@DepUpdater,@mawen12,@uuuyuqi,@hermya,@manojks1999,@XenoAmess"
+summary: "Ensure that exceptions are visible to Sentinel when an ExceptionHandler is configured(#3409) · Add sentinel servlet adapter demo (#3422)"
 ---
 
 # Sentinel 1.8.9

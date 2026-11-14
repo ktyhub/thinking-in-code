@@ -6,7 +6,7 @@ tag: "jetcd-0.8.2"
 published: "2024-05-30"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/etcd-io/jetcd/compare/jetcd-0.8.0...jetcd-0.8.2"
+summary: "build(deps): bump errorprone from 2.26.1 to 2.27.0 · watcher: Expose isClosed method · build(deps): bump errorprone from 2.27.0 to 2.27.1 · build(deps): bump com.google.guava:guava from 33.1.0-jre to 33.2.0-jre"
 ---
 
 # jetcd jetcd-0.8.2

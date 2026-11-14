@@ -6,7 +6,7 @@ tag: "v3.23.0"
 published: "2024-05-23"
 type: "minor"
 lang: "en"
-summary: "⭐️ New Features"
+summary: "Add queueRemainingSize log at the beginning monitor · Support mac M1(osx-aarch_64) compile and test"
 ---
 
 # sofa-boot v3.23.0

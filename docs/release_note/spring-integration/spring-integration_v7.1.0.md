@@ -6,7 +6,7 @@ tag: "v7.1.0"
 published: "2026-06-10"
 type: "minor"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Add message selector based on header value matching patterns #11092 · Revise tests using IntegrationRegistrar to register infra beans #11028"
 ---
 
 # spring-integration v7.1.0

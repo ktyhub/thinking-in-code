@@ -7,7 +7,7 @@ version: "mcp-v1.1.0"
 published: "2026-09-01"
 type: "release"
 lang: "en"
-summary: "⚠️ Behavior change for existing Neo4j deployments:"
+summary: "⚠️ Behavior change for existing Neo4j deployments"
 ---
 
 # graphiti mcp-v1.1.0

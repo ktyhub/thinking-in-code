@@ -6,6 +6,7 @@ tag: "zxing-3.4.0"
 published: "2019-05-18"
 type: "release"
 lang: "en"
+summary: "Requires Java 8+. Note: Android apps using this version must target API 24 or higher. · core, javase modules declare a Java 9+ module"
 ---
 
 # zxing zxing-3.4.0

@@ -7,6 +7,7 @@ version: "v1.9.1"
 published: "2026-06-19"
 type: "patch"
 lang: "en"
+summary: "ci : add GGML_NATIVE=OFF and GGML_BMI2=OFF to windows-blas · release : v1.9.1"
 ---
 
 # whisper.cpp v1.9.1

@@ -7,6 +7,7 @@ version: "1.2.13"
 published: "2026-05-04"
 type: "patch"
 lang: "en"
+summary: "Fix XDG_CACHE_HOME double .cache in path construction · fix(llamacpp): correct EOS attention mask and vocab truncation bugs · fix(dsl): add JSON double-quotes to string literals inside container types"
 ---
 
 # outlines 1.2.13

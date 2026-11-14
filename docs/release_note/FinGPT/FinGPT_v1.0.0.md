@@ -7,7 +7,7 @@ version: "v1.0.0"
 published: "2026-04-08"
 type: "major"
 lang: "en"
-summary: "FinGPT v1.0.0"
+summary: "FinGPT is downloadable computer software for financial artificial intelligence, namely software for financial data analysis, sentiment analysis, forecasting, and large language model based research workflows."
 ---
 
 # FinGPT v1.0.0

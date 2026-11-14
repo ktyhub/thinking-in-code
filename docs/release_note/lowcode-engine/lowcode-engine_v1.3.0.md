@@ -6,7 +6,7 @@ tag: "v1.3.0"
 published: "2024-01-15"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/alibaba/lowcode-engine/compare/v1.2.5...v1.3.0"
+summary: "feat: zip publisher support browser · fix: trigger onFilterResultChanged when filtered · feat(config): add hideComponentAction config · style(outline): update selected item style"
 ---
 
 # lowcode-engine v1.3.0

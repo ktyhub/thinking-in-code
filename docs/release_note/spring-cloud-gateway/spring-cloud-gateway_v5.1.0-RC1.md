@@ -6,7 +6,7 @@ tag: "v5.1.0-RC1"
 published: "2026-10-23"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-gateway/compare/v5.1.0-M1...v5.1.0-RC1"
+summary: "Move from spring-boot-starter-web to spring-boot-starter-webmvc · Dispose upstream connection when a cancelled exchange discards the response in NettyRoutingFilter · Update Antora UI bundle to v0.4.26"
 ---
 
 # spring-cloud-gateway v5.1.0-RC1

@@ -6,7 +6,7 @@ tag: "13.10"
 published: "2026-03-18"
 type: "minor"
 lang: "en"
-summary: "List of PRs that updated libraries versions"
+summary: "Validate required GraphQL variables at compile time · Add Optional wrapping, type/field annotations, and type overrides for GraphQL APT"
 ---
 
 # feign 13.10

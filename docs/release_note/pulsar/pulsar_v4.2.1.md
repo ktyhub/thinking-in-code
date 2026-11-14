@@ -7,7 +7,7 @@ version: "v4.2.1"
 published: "2026-04-27"
 type: "patch"
 lang: "en"
-summary: "For the complete list, check the full changelog."
+summary: "[fix][sec] Upgrade BouncyCastle to 1.84 (CVE-2026-5588, CVE-2026-0636) (#25569) · [fix][sec] Upgrade Jetty to address CVE-2026-2332 (#25527) · [fix][sec] Upgrade Jetty to address CVE-2026-5795 (#25532)"
 ---
 
 # pulsar v4.2.1

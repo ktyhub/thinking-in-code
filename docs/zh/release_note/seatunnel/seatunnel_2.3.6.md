@@ -6,6 +6,7 @@ tag: "2.3.6"
 published: "2024-08-02"
 type: "patch"
 lang: "zh"
+summary: "[Fix][Flink]Hotfix flink 检查点默认值 (#7040)；[Hotfix][Core]修复没有pluginname的作业的json配置的NullPointException (#6815)；[Fix][Dist] 删除发布包中的 aws jar 依赖项 (#7257)"
 ---
 
 # seatunnel 2.3.6

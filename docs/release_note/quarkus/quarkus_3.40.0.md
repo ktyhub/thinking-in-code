@@ -7,6 +7,7 @@ version: "3.40.0"
 published: "2026-09-30"
 type: "minor"
 lang: "en"
+summary: "#56750 - Enhance CycloneDX documentation and configuration options description to stress the priority on JSON format · #56829 - [3.40] Update to Scalpel 0.4.2"
 ---
 
 # quarkus 3.40.0

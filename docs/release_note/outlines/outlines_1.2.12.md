@@ -7,6 +7,7 @@ version: "1.2.12"
 published: "2026-03-03"
 type: "patch"
 lang: "en"
+summary: "Add a link to the audit form in the README and the doc website"
 ---
 
 # outlines 1.2.12

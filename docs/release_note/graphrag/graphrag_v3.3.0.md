@@ -7,6 +7,7 @@ version: "v3.3.0"
 published: "2026-10-08"
 type: "minor"
 lang: "en"
+summary: "fix sqlite performance issue · Release v3.3.0"
 ---
 
 # graphrag v3.3.0

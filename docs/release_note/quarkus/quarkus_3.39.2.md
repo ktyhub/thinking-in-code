@@ -6,6 +6,7 @@ tag: "3.39.2"
 published: "2026-09-03"
 type: "patch"
 lang: "en"
+summary: "#55234 - quarkus cli is missing the classname option · #55239 - Add resource class name to CreateApp · #55355 - Bump com.fasterxml.jackson:jackson-bom from 2.22.0 to 2.22.1"
 ---
 
 # quarkus 3.39.2

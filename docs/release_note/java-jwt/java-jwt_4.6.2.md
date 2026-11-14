@@ -6,7 +6,7 @@ tag: "4.6.2"
 published: "2026-10-13"
 type: "patch"
 lang: "en"
-summary: "Added"
+summary: "Bump com.fasterxml.jackson.core:jackson-databind from 2.22.2 to 2.22.3 in /lib \\#811 ([dependabot[bot]](https://github.com/apps/dependabot)"
 ---
 
 # java-jwt 4.6.2

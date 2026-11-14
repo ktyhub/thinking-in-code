@@ -6,7 +6,7 @@ tag: "v4.0.17"
 published: "2026-01-28"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/dropwizard/dropwizard/compare/v4.0.16...v4.0.17"
+summary: "chore(deps): update dependency sphinx-autobuild to v2025 (release/4.0.x)[bot] · ci: update link to Mastodon (foojay.social) · docs: fix incorrect format string in archivedLogFilenamePattern"
 ---
 
 # dropwizard v4.0.17

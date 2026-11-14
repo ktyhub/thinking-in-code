@@ -6,7 +6,7 @@ tag: "2.9.3"
 published: "2026-01-31"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/servicecomb-java-chassis/compare/2.9.2...2.9.3"
+summary: "Bump org.springframework.boot:spring-boot-dependencies from 3.4.4 to 3.4.9 · [#5058] Upgrade the Netty, Vertx version."
 ---
 
 # servicecomb-java-chassis 2.9.3

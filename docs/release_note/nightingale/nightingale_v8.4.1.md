@@ -6,7 +6,7 @@ tag: "v8.4.1"
 published: "2025-11-11"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/ccfos/nightingale/compare/v8.4.0...v8.4.1"
+summary: "fix: elasticsearch v9 range query compatibility · fix: http callback retry interval in millisecond"
 ---
 
 # nightingale v8.4.1

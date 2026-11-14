@@ -6,7 +6,7 @@ tag: "v2.7.0.3"
 published: "2025-11-26"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/shenyu/compare/v2.7.0.2...v2.7.0.3"
+summary: "feat(ut): add some tests · [type: release] 2.7.0.2 release · Bugfix:NacosConfig Test error · Bugfix:MCP server plugin requestConfig too long"
 ---
 
 # shenyu v2.7.0.3

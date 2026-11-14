@@ -7,7 +7,7 @@ version: "1.0.2"
 published: "2026-11-11"
 type: "patch"
 lang: "en"
-summary: "Fixes on 1.0.1."
+summary: "MCP with Chrome's remote debugging off: browser-use --cli-mcp now drives its own Chromium instead of stopping at the chrome://inspect steps, and tells your agent how to switch to your Chrome (tick 'Allow remote…"
 ---
 
 # browser-use 1.0.2

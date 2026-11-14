@@ -6,6 +6,7 @@ tag: "v1.33.0"
 published: "2026-10-23"
 type: "minor"
 lang: "en"
+summary: "feat(verify-openhands): launch --mars-web and --lock-to-cloud · feat(digitalocean): keep the web build signed in across restarts"
 ---
 
 # OpenHands v1.33.0

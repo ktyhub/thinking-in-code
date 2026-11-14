@@ -6,7 +6,7 @@ tag: "v7.18.2"
 published: "2026-09-19"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/selenide/selenide/compare/v7.18.1...v7.18.2"
+summary: "update Selenium from 4.48.0 to 4.49.0 · Added support for Linux arm64!"
 ---
 
 # selenide v7.18.2

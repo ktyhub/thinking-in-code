@@ -6,7 +6,7 @@ tag: "kubernetes-dashboard-7.10.3"
 published: "2025-01-30"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/dashboard/compare/kubernetes-dashboard-7.10.2...kubernetes-dashboard-7.10.3"
+summary: "chore(chart): further extend services configuration"
 ---
 
 # kubernetes-dashboard kubernetes-dashboard-7.10.3

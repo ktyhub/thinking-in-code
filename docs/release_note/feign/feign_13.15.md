@@ -6,7 +6,7 @@ tag: "13.15"
 published: "2026-09-09"
 type: "minor"
 lang: "en"
-summary: "List of PRs that updated libraries versions"
+summary: "Port multi-encoder to master using predicates · Generate the flattened feign-bom POM under target · Add MultiDecoder to select a decoder per response · Apply review feedback to the multi-encoder and multi-decoder surface"
 ---
 
 # feign 13.15

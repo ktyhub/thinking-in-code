@@ -6,7 +6,7 @@ tag: "v4.3.1"
 published: "2025-12-16"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Bump com.fasterxml.jackson.dataformat:jackson-dataformat-smile from 2.18.3 to 2.18.4[bot] · Bump com.google.protobuf:protobuf-java from 3.25.7 to 3.25.8[bot] · Bump io.vavr:vavr from 0.10.6 to 0.10.7[bot]"
 ---
 
 # spring-cloud-openfeign v4.3.1

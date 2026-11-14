@@ -6,7 +6,7 @@ tag: "v2.10.1"
 published: "2023-02-16"
 type: "patch"
 lang: "en"
-summary: "Component | Version"
+summary: "Spring Boot 2.7.8 · Spring Framework 5.3.25 · Spring Shell 2.1.5"
 ---
 
 # spring-cloud-dataflow v2.10.1

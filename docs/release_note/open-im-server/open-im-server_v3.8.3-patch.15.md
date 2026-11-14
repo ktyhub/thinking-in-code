@@ -6,7 +6,7 @@ tag: "v3.8.3-patch.15"
 published: "2025-12-31"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/openimsdk/open-im-server/compare/v3.8.3-patch.12...v3.8.3-patch.15"
+summary: "fix: group notification · fix: resolve deadlock in cache eviction and improve GetBatch implementation · feat: replace LongConn with ClientConn interface and simplify message handling · Fix/group member rejoin bug 3.8.3"
 ---
 
 # open-im-server v3.8.3-patch.15

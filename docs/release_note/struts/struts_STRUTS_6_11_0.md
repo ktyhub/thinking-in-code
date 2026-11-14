@@ -6,7 +6,7 @@ tag: "STRUTS_6_11_0"
 published: "2026-08-01"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/struts/compare/STRUTS6100...STRUTS6110"
+summary: "Prepare for a new development cycle of Struts 6.11.0 · WW-5630 - Performance Issue SecurityMemberAccess (#1721) - Cherrypick to 6.x.x · WW-5630 Streamline ConfigParseUtilTest and convert to JUnit 4 (6.x)"
 ---
 
 # struts STRUTS_6_11_0

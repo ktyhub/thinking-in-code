@@ -6,7 +6,7 @@ tag: "v2.16.1"
 published: "2025-07-29"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/ChatGPTNextWeb/NextChat/compare/v2.16.0...v2.16.1"
+summary: "Translation to danish · Fix: Improve Mistral icon detection and remove redundant code. · claude 3.7 support · fix: enforce that the first message (excluding system messages) is a …"
 ---
 
 # ChatGPTNextWeb v2.16.1

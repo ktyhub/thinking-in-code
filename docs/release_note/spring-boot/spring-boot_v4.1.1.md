@@ -7,7 +7,7 @@ version: "v4.1.1"
 published: "2026-08-20"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Spring Boot's Gradle plugin no longer automatically configures gRPC when the Protobuf plugin is applied. This behavior caused problems for those using Protobuf without gRPC."
 ---
 
 # spring-boot v4.1.1

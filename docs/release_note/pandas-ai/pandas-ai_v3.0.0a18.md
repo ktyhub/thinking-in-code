@@ -6,7 +6,7 @@ tag: "v3.0.0a18"
 published: "2025-06-18"
 type: "major"
 lang: "en"
-summary: "Full Changelog: https://github.com/sinaptik-ai/pandas-ai/compare/v3.0.0-beta.17...v3.0.0a18"
+summary: "updated v2 and v3 library docs · Add support for new GPT models from OpenAI · serialization of columns added into the definition of the table · refactor: remove push and pull method from dataframe"
 ---
 
 # pandas-ai v3.0.0a18

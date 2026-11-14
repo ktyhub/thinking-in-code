@@ -6,7 +6,7 @@ tag: "v1.1.10"
 published: "2023-08-25"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/alibaba/lowcode-engine/compare/v1.1.9...v1.1.10"
+summary: "feat: add applicaiton level specs · fix: Optimize the initialization method for masterPaneController · docs: add setterDetails category · refactor: defaultViewType renamed to defaultViewName"
 ---
 
 # lowcode-engine v1.1.10

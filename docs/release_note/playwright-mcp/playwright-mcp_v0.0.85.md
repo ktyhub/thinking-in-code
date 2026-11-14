@@ -7,6 +7,7 @@ version: "v0.0.85"
 published: "2026-11-09"
 type: "patch"
 lang: "en"
+summary: "🌙 Keep the browser in the background (microsoft/playwright#42973) — connecting through the extension activated the tab and focused the browser window, taking the screen from the app you were working in."
 ---
 
 # playwright-mcp v0.0.85

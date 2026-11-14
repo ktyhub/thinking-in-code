@@ -6,7 +6,7 @@ tag: "v5.1.0-RC2"
 published: "2026-11-05"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-kubernetes/compare/v5.1.0-RC1...v5.1.0-RC2"
+summary: "Bump antora from 3.2.0 to 3.2.1 in /docs[bot] · Bump @antora/atlas-extension from 1.0.0-alpha.5 to 1.0.0-alpha.6 in /docs[bot] · Bump org.codehaus.plexus:plexus-archiver from 4.14.0 to 4.15.0[bot]"
 ---
 
 # spring-cloud-kubernetes v5.1.0-RC2

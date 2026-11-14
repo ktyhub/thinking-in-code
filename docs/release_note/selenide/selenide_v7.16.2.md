@@ -6,7 +6,7 @@ tag: "v7.16.2"
 published: "2026-05-27"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/selenide/selenide/compare/v7.16.1...v7.16.2"
+summary: "Selenide MCP: added more configuration parameters · update Selenium from 4.43.0 to 4.44.0 · #3328 improve logs when downloading a file · prefer the latest file when browser occasionally downloaded multiple files"
 ---
 
 # selenide v7.16.2

@@ -6,7 +6,7 @@ tag: "jetcd-0.8.6"
 published: "2025-11-05"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/etcd-io/jetcd/compare/jetcd-0.8.5...jetcd-0.8.6"
+summary: "build(deps): bump mockito from 5.15.2 to 5.16.0[bot] · build(deps): bump grpc from 1.70.0 to 1.71.0[bot] · build(deps): bump org.testcontainers:testcontainers from 1.20.5 to 1.20.6[bot]"
 ---
 
 # jetcd jetcd-0.8.6

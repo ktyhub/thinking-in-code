@@ -6,7 +6,7 @@ tag: "v5.0.3"
 published: "2026-10-23"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-netflix/compare/v5.0.2...v5.0.3"
+summary: "Bump actions/checkout from 6 to 7[bot] · Bump antora from 3.2.0-alpha.12 to 3.2.0-rc.2 in /docs[bot] · Ignore release-train workflow updates in Dependabot"
 ---
 
 # spring-cloud-netflix v5.0.3

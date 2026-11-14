@@ -6,7 +6,7 @@ tag: "7.0.8"
 published: "2026-10-22"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Polish onetimetoken references"
 ---
 
 # spring-security 7.0.8

@@ -6,6 +6,7 @@ tag: "2.3.11"
 published: "2025-05-27"
 type: "patch"
 lang: "en"
+summary: "[Doc][Improve] support chinese [docs/zh/connector-v2/source/MySQL-CDC.md] (#8884) · Add MongoDB-CDC connector Chinese documentation (#9337) · [Doc][zh-CN] Add HiveJdbc connector Chinese documentation (#8497) (#9329)"
 ---
 
 # seatunnel 2.3.11

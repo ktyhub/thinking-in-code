@@ -6,7 +6,7 @@ tag: "v2.1.0"
 published: "2021-01-24"
 type: "minor"
 lang: "en"
-summary: "Full Changelog"
+summary: "BTrace support for custom JFR events \\#429 · Do not generate cushion methods when Indy is used \\#431 · Initial support of unattended mode \\#430"
 ---
 
 # btrace v2.1.0

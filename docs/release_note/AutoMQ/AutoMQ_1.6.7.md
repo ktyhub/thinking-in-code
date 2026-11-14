@@ -6,7 +6,7 @@ tag: "1.6.7"
 published: "2026-05-12"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/AutoMQ/automq/compare/1.6.6...1.6.7"
+summary: "fix: handle empty read-committed elastic log fetch (#3346) · fix(s3stream): avoid aliasing LogCache merge sources · docs(devkit): document broker log location · feat(release): release 1.6.7"
 ---
 
 # AutoMQ 1.6.7

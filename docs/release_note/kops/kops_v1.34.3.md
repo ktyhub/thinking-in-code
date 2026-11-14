@@ -6,7 +6,7 @@ tag: "v1.34.3"
 published: "2026-05-27"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/kops/compare/v1.34.2...v1.34.3"
+summary: "Automated cherry pick of #17740: Fix HasHighlyAvailableControlPlane to use AllInstanceGroups · Automated cherry pick of #18114: Pin upload-artifacts GHA to commit sha"
 ---
 
 # kops v1.34.3

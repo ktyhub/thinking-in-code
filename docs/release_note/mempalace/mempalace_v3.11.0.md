@@ -7,7 +7,7 @@ version: "v3.11.0"
 published: "2026-10-14"
 type: "minor"
 lang: "en"
-summary: "A palace can now be audited and repaired in guided steps, and EmbeddingGemma 2 arrives as an opt-in embedder with native image, audio and video search. Every palace records the embedding model that built it and refuses…"
+summary: "A palace can now be audited and repaired in guided steps, and EmbeddingGemma 2 arrives as an opt-in embedder with native image, audio and video search."
 ---
 
 # mempalace v3.11.0

@@ -6,7 +6,7 @@ tag: "1.12.1"
 published: "2025-01-23"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/brpc/compare/1.12.0...1.12.1"
+summary: "Support tcp user timeout of client (#2867)"
 ---
 
 # brpc 1.12.1

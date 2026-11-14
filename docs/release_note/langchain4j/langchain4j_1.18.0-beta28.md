@@ -6,7 +6,7 @@ tag: "1.18.0-beta28"
 published: "2026-07-17"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/langchain4j/langchain4j-spring/compare/1.17.2-beta27...1.18.0-beta28"
+summary: "Added returnThinking and sendThinking properties to Gemini Spring Boot starters"
 ---
 
 # langchain4j 1.18.0-beta28

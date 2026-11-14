@@ -6,7 +6,7 @@ tag: "v5.6.0"
 published: "2026-10-02"
 type: "minor"
 lang: "en"
-summary: "Jobs"
+summary: "Adopt compose-go jobs and container-spec layering"
 ---
 
 # compose v5.6.0

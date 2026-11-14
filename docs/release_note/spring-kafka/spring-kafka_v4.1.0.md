@@ -6,7 +6,7 @@ tag: "v4.1.0"
 published: "2026-06-09"
 type: "minor"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "make the method setBackOffFunction work for the batch processing as well #4455"
 ---
 
 # spring-kafka v4.1.0

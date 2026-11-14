@@ -7,6 +7,7 @@ version: "v3.1.11"
 published: "2026-10-27"
 type: "patch"
 lang: "en"
+summary: "Harness Agents in Teams and Workflows: ClaudeAgent and CodexAgent can now be members of an Agno Team and steps of a Workflow, including inside Parallel, Loop, Condition and Router."
 ---
 
 # agno v3.1.11

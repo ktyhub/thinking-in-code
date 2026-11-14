@@ -6,7 +6,7 @@ tag: "v4.10.0"
 published: "2026-10-01"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/ColorlibHQ/AdminLTE/compare/v4.9.1...v4.10.0"
+summary: "Fix brand logo to stay centered on mini sidebar mode · chore(deps-dev): bump the eslint group with 4 updates[bot] · chore(deps-dev): bump rollup from 4.62.4 to 4.63.1 in the rollup group[bot]"
 ---
 
 # AdminLTE v4.10.0

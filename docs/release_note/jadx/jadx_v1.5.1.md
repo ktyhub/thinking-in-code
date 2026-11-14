@@ -6,7 +6,7 @@ tag: "v1.5.1"
 published: "2024-11-11"
 type: "patch"
 lang: "en"
-summary: "Core:"
+summary: "Support restore of switch over string · Adding automatic patching for semi-corrupted APKs (PR #2298) · Resource decoding support new fields"
 ---
 
 # jadx v1.5.1

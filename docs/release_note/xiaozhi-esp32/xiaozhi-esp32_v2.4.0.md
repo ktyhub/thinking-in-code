@@ -7,6 +7,7 @@ version: "v2.4.0"
 published: "2026-07-19"
 type: "minor"
 lang: "en"
+summary: "chore: temporarily disable touch sensor for ESP-VoCat on IDF v6 · feat(otto): update GIF emoji component to v1.3.0 · v2.4.0: Migrate to IDF 6.0 · Complete ESP-IDF 6 migration hardening"
 ---
 
 # xiaozhi-esp32 v2.4.0

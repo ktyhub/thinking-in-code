@@ -7,6 +7,7 @@ version: "v12.30.7"
 published: "2023-02-16"
 type: "patch"
 lang: "en"
+summary: "channel-web: carousel after reopening chat (#12449) (f4cb0b1) · core: improved timeout behavior (#12470) (21d4bc0) · core: upgrade ioredis to fix cluster (#12299) (416eb49)"
 ---
 
 # botpress v12.30.7

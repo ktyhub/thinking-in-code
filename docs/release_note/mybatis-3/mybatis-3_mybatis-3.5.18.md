@@ -6,7 +6,7 @@ tag: "mybatis-3.5.18"
 published: "2025-01-01"
 type: "release"
 lang: "en"
-summary: "Regressions"
+summary: "Fixed issue in 3.5.17 #3334"
 ---
 
 # mybatis-3 mybatis-3.5.18

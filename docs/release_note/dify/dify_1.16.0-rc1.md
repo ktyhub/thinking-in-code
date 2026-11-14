@@ -6,7 +6,7 @@ tag: "1.16.0-rc1"
 published: "2026-07-09"
 type: "minor"
 lang: "en"
-summary: "As many of you know, the shell-based LLM agent paradigm has brought a major leap in agent capabilities and changed how we think about agents. Meanwhile, Skills provide a standardized way to package and distribute…"
+summary: "As many of you know, the shell-based LLM agent paradigm has brought a major leap in agent capabilities and changed how we think about agents."
 ---
 
 # dify 1.16.0-rc1

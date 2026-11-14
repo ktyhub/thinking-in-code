@@ -7,6 +7,7 @@ version: "0.27.37"
 published: "2026-11-06"
 type: "patch"
 lang: "en"
+summary: "fix(lang): keep the languages a caller passes on short ASCII text · fix(pdf): extract vector-heavy PDFs with the fast strategy instead of returning nothing"
 ---
 
 # unstructured 0.27.37

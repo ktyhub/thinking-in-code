@@ -6,7 +6,7 @@ tag: "v1.8.0-M2"
 published: "2026-09-24"
 type: "pre"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Remove EOL and deprecated Wavefront modules/code #1560 · Deprecate support for OTel's Zipkin Exporter #1537 · Transitive aopalliance dependency conflicts with spring-aop #1536"
 ---
 
 # micrometer tracing v1.8.0-M2

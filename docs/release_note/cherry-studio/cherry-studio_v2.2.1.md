@@ -7,7 +7,7 @@ version: "v2.2.1"
 published: "2026-11-12"
 type: "patch"
 lang: "en"
-summary: "Release Notes"
+summary: "Cherry Studio 2.2.1 - Remote Tasks, Search Providers, and Agent Fixes"
 ---
 
 # cherry-studio v2.2.1

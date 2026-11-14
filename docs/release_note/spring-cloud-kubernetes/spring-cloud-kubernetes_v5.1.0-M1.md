@@ -6,7 +6,7 @@ tag: "v5.1.0-M1"
 published: "2026-09-24"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-kubernetes/compare/v5.0.3...v5.1.0-M1"
+summary: "Update Maven wrapper to 3.9.16 · Keep Running All Test Jobs and Add Retry Functionality · move config to the parent project · Move common build plugin"
 ---
 
 # spring-cloud-kubernetes v5.1.0-M1

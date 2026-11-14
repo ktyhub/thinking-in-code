@@ -6,6 +6,7 @@ tag: "v2.11.1"
 published: "2026-09-16"
 type: "patch"
 lang: "zh"
+summary: "Netdata v2.11.1 是一个补丁版本，用于解决自 v2.11.0 以来发现的问题。"
 ---
 
 # netdata v2.11.1

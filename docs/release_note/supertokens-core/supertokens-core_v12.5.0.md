@@ -6,7 +6,7 @@ tag: "v12.5.0"
 published: "2026-11-06"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/supertokens/supertokens-core/compare/v12.4.3...v12.5.0"
+summary: "feat: configurable SAML attribute mapping for user ID, email and names[bot] · fix: skip the backfill cron when migrated and store imported timeJoined 0 as 1"
 ---
 
 # supertokens-core v12.5.0

@@ -6,7 +6,7 @@ tag: "3.2.1"
 published: "2026-04-22"
 type: "patch"
 lang: "en"
-summary: "📦 PyPI: https://pypi.org/project/apache-airflow/3.2.1/ 📚 Docs: https://airflow.apache.org/docs/apache-airflow/3.2.1/ 🛠 Release Notes: https://airflow.apache.org/docs/apache-airflow/3.2.1/releasenotes.html 🐳 Docker…"
+summary: "📦 PyPI: https://pypi.org/project/apache-airflow/3.2.1/ 📚 Docs: https://airflow.apache.org/docs/apache-airflow/3.2.1/ 🛠 Release Notes: https://airflow.apache.org/docs/apache-airflow/3.2.1/release_notes.html 🐳 Docker…"
 ---
 
 # airflow 3.2.1

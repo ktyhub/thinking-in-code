@@ -6,7 +6,7 @@ tag: "v12.4.3"
 published: "2026-11-06"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/supertokens/supertokens-core/compare/v12.4.2...v12.4.3"
+summary: "fix: legacy SAML authorize and callback APIs don't require the API key (12.4.3) · ci: no DB migration for a core release that reuses an already-released postgresql plugin"
 ---
 
 # supertokens-core v12.4.3

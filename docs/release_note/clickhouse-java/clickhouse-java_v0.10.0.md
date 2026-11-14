@@ -6,7 +6,7 @@ tag: "v0.10.0"
 published: "2026-08-17"
 type: "minor"
 lang: "en"
-summary: "Release Migration Guide"
+summary: "[jdbc-v2] The driver no longer hardcodes the server settings async_insert=0 and wait_end_of_query=0 on every JDBC"
 ---
 
 # clickhouse-java v0.10.0

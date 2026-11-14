@@ -7,7 +7,7 @@ version: "v1.8.0"
 published: "2023-10-31"
 type: "minor"
 lang: "en"
-summary: "Seata 1.8.0 Released."
+summary: "Seata is an easy-to-use, high-performance, open source distributed transaction solution."
 ---
 
 # incubator-seata v1.8.0

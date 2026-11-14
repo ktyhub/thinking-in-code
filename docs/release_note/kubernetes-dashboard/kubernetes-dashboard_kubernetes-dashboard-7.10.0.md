@@ -6,7 +6,7 @@ tag: "kubernetes-dashboard-7.10.0"
 published: "2024-10-31"
 type: "release"
 lang: "en"
-summary: "Dependency updates"
+summary: "fix(api): ssar resource kind name and resource updates · fix(signin button): signin button is clickable when token is autofilled by browser · feat: allow hiding 'All namespaces' in namespaces dropdown list"
 ---
 
 # kubernetes-dashboard kubernetes-dashboard-7.10.0

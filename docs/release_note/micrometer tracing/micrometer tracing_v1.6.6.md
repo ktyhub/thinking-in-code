@@ -6,6 +6,7 @@ tag: "v1.6.6"
 published: "2026-06-08"
 type: "patch"
 lang: "en"
+summary: "Bump io.micrometer:micrometer-bom from 1.16.5 to 1.16.6 #1435"
 ---
 
 # micrometer tracing v1.6.6

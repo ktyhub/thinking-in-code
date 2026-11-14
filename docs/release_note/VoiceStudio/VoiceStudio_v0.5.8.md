@@ -7,7 +7,7 @@ version: "v0.5.8"
 published: "2026-11-12"
 type: "patch"
 lang: "en"
-summary: "Highlights"
+summary: "OmniVoice GGUF uses AMD, Intel and NVIDIA GPUs through Vulkan on Windows and Linux, and Intel Arc GPUs run OmniVoice"
 ---
 
 # VoiceStudio v0.5.8

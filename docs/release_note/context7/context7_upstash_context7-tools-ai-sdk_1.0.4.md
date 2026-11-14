@@ -7,6 +7,7 @@ version: "@upstash/context7-tools-ai-sdk@1.0.4"
 published: "2026-11-12"
 type: "release"
 lang: "en"
+summary: "bdd9bf7: resolveLibraryId returns the SDK's 'No libraries found' message when nothing matches, and queryDocs returns its 'No documentation found' message for an unknown library ID. Other errors no longer end with '.."
 ---
 
 # context7 @upstash/context7-tools-ai-sdk@1.0.4

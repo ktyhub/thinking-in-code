@@ -6,7 +6,7 @@ tag: "2.8.30"
 published: "2026-01-31"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/servicecomb-java-chassis/compare/2.8.29...2.8.30"
+summary: "[#5058] Upgrade the Netty, Vertx version. · [#5065] fixed cannot immediately pull service instances when watched registry-center service instance changed problem"
 ---
 
 # servicecomb-java-chassis 2.8.30

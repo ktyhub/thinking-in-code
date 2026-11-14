@@ -6,6 +6,7 @@ tag: "v0.40.8"
 published: "2026-10-21"
 type: "patch"
 lang: "en"
+summary: "Flint brings Recursive's coding model to Ollama. It is designed for the work coding agents do across a repository: understanding unfamiliar code, tracing bugs, implementing features, and adding tests."
 ---
 
 # ollama v0.40.8

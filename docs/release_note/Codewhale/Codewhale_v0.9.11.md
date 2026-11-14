@@ -7,7 +7,7 @@ version: "v0.9.11"
 published: "2026-08-23"
 type: "patch"
 lang: "en"
-summary: "npm install -g codewhale"
+summary: "The wrapper downloads the matched codewhale and codew command assets from this Release. Both contain the same compiled runtime."
 ---
 
 # Codewhale v0.9.11

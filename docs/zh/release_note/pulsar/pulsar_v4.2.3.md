@@ -6,6 +6,7 @@ tag: "v4.2.3"
 published: "2026-07-06"
 type: "patch"
 lang: "zh"
+summary: "[feat][pip] PIP-469：遗留主题策略后端路由和元数据存储主题策略（#25547）"
 ---
 
 # pulsar v4.2.3

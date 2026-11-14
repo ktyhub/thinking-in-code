@@ -7,6 +7,7 @@ version: "v4.80.0"
 published: "2026-11-13"
 type: "minor"
 lang: "en"
+summary: "feat(clickhouse): send query parameters in the request body by default · feat(ai-gateway): add Google AI Studio as a gateway provider"
 ---
 
 # langfuse v4.80.0

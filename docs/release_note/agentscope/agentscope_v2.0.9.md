@@ -7,6 +7,7 @@ version: "v2.0.9"
 published: "2026-09-28"
 type: "patch"
 lang: "en"
+summary: "Standard Operating Procedures (Experimental): Added the agentscope.sop module for splitting a task into ordered milestones, each verified before the next one starts, with run state that can be persisted and resumed."
 ---
 
 # agentscope v2.0.9

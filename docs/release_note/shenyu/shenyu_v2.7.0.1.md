@@ -6,7 +6,7 @@ tag: "v2.7.0.1"
 published: "2025-04-25"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/shenyu/compare/v2.7.0...v2.7.0.1"
+summary: "fixed some bug when using http-polling mode · [type:refactor] plugin-jwt SPI extension for parsing JWT payloads to ensure compatibility with older versions of JWT tools · [type:fix] support dubbo method configure"
 ---
 
 # shenyu v2.7.0.1

@@ -6,7 +6,7 @@ tag: "v1.0.0"
 published: "2021-10-18"
 type: "major"
 lang: "en"
-summary: "This release affects the following module:"
+summary: "This release affects the following module"
 ---
 
 # dubbo-spi-extensions v1.0.0

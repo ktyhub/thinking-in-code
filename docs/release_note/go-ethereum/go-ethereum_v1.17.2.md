@@ -6,6 +6,7 @@ tag: "v1.17.2"
 published: "2026-03-30"
 type: "patch"
 lang: "en"
+summary: "This is a maintenance release with several important bug fixes. Notably, a critical issue in debug_executionWitness could previously corrupt node data, users relying on this RPC endpoint are strongly advised to upgrade."
 ---
 
 # go-ethereum v1.17.2

@@ -6,7 +6,7 @@ tag: "metrics-scraper/v1.2.0"
 published: "2024-10-08"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/dashboard/compare/metrics-scraper/v1.1.1...metrics-scraper/v1.2.0"
+summary: "feat: bump dependencies"
 ---
 
 # kubernetes-dashboard metrics-scraper/v1.2.0

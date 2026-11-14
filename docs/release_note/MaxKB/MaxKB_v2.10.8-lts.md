@@ -7,7 +7,7 @@ version: "v2.10.8-lts"
 published: "2026-10-22"
 type: "patch"
 lang: "en"
-summary: "■ Security (X-Pack): Fixed a vulnerability where the login authentication configuration endpoint did not redact sensitive fields, exposing third-party login app credentials (such as DingTalk appkey, corpid, and…"
+summary: "■ Security (X-Pack): Fixed a vulnerability where the login authentication configuration endpoint did not redact sensitive fields, exposing third-party login app credentials (such as DingTalk app_key, corp_id, and…"
 ---
 
 # MaxKB v2.10.8-lts

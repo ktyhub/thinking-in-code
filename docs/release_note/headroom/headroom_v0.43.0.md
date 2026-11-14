@@ -7,6 +7,7 @@ version: "v0.43.0"
 published: "2026-11-05"
 type: "minor"
 lang: "en"
+summary: "mcp: port MCP servers to SDK 2.x (#4603)"
 ---
 
 # headroom v0.43.0

@@ -6,6 +6,7 @@ tag: "2.3.10"
 published: "2025-03-26"
 type: "patch"
 lang: "en"
+summary: "[improve] update localfile connector config (#8765) · [Improve][Zeta] Check closing log file handle every 1 minute (#9003) · Revert ' [improve] update localfile connector config' (#9018)"
 ---
 
 # seatunnel 2.3.10

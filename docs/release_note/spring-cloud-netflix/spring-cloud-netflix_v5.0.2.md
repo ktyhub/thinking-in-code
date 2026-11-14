@@ -6,7 +6,7 @@ tag: "v5.0.2"
 published: "2026-06-11"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Bump testcontainers.version from 1.21.3 to 1.21.4[bot] · Bump jersey.version from 4.0.1 to 4.0.2[bot] · Bump actions/upload-artifact from 6 to 7[bot] · Bump @antora/collector-extension from 1.0.2 to 1.0.3 in /docs[bot]"
 ---
 
 # spring-cloud-netflix v5.0.2

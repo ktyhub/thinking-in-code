@@ -6,6 +6,7 @@ tag: "v1.17.1"
 published: "2026-03-03"
 type: "patch"
 lang: "en"
+summary: "This is a bug fix release and is recommended for all users. It resolves a regression in snap sync, as well as several security issues."
 ---
 
 # go-ethereum v1.17.1

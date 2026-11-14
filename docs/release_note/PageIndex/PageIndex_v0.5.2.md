@@ -7,7 +7,7 @@ version: "v0.5.2"
 published: "2026-11-04"
 type: "patch"
 lang: "en"
-summary: "Index, to chat, to agent integration, one client. Local mode needs no server, no vector DB, no PageIndex API key."
+summary: "Cheaper than vector RAG: for both index and query. · Faster: trees are created from layout stats. · Unified SDK: vectorless RAG. Local or cloud, for index and chat. · Runs on your Claude subscription."
 ---
 
 # PageIndex v0.5.2

@@ -6,7 +6,7 @@ tag: "zxing-3.4.1"
 published: "2020-09-30"
 type: "release"
 lang: "en"
-summary: "See https://github.com/zxing/zxing/milestone/12?closed=1"
+summary: "Wifi QR codes now recognize PH2:, not H:, for phase 2 method · Minor bug fixes and improvements"
 ---
 
 # zxing zxing-3.4.1

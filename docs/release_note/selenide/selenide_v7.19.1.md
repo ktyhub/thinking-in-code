@@ -6,7 +6,7 @@ tag: "v7.19.1"
 published: "2026-10-25"
 type: "patch"
 lang: "en"
-summary: "NB! This version is Java 11 compatible."
+summary: "#3475 add setting Configuration.timezone for all browser tabs and windows · #3475 add option --timezone to Selenide CLI and MCP server · Selenide CLI skill: document HTML page dumps"
 ---
 
 # selenide v7.19.1

@@ -6,7 +6,7 @@ tag: "v2.2.5"
 published: "2024-04-10"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/btraceio/btrace/compare/v2.2.4...v2.2.5"
+summary: "Shade full jctools · Do not drop CHECKCAST instructions · Fix gradle tasks to generate javadoc and sources maven artifacts · chore(deps): update various actions and dependencies"
 ---
 
 # btrace v2.2.5

@@ -6,7 +6,7 @@ tag: "v0.40.6"
 published: "2026-10-16"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/ollama/ollama/compare/v0.40.5...v0.40.6-rc0"
+summary: "win: prevent orphaned runners · gguf: add the q2_0 tensor and file types · Launch clef in Ollama's cloud · use identifiers for --ask mode question keys"
 ---
 
 # ollama v0.40.6

@@ -7,7 +7,7 @@ version: "v0.21.3"
 published: "2026-11-13"
 type: "patch"
 lang: "en"
-summary: "Release 0.21.3 containing:"
+summary: "#3963: Only gather adapter weights when saving a DTensor TP model"
 ---
 
 # peft v0.21.3

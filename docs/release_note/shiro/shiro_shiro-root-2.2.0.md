@@ -6,7 +6,7 @@ tag: "shiro-root-2.2.0"
 published: "2026-05-18"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/shiro/compare/shiro-root-2.1.0...shiro-root-2.2.0"
+summary: "@iampratap7997-dot made their first contribution"
 ---
 
 # shiro shiro-root-2.2.0

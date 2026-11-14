@@ -7,7 +7,7 @@ version: "v1.3.8"
 published: "2026-10-03"
 type: "patch"
 lang: "en"
-summary: "English | 中文"
+summary: "Added continuous progress reporting during stock footage downloads, clip processing, and final rendering, with task logs from background helper threads visible in the WebUI."
 ---
 
 # MoneyPrinterTurbo v1.3.8

@@ -7,7 +7,7 @@ version: "v17.13.0"
 published: "2026-09-28"
 type: "minor"
 lang: "en"
-summary: "Changes"
+summary: "PDF/A made without Ghostscript ('speculative' conversion) is now validated"
 ---
 
 # OCRmyPDF v17.13.0

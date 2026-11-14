@@ -6,7 +6,7 @@ tag: "v3.8.3-patch.9"
 published: "2025-08-19"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/openimsdk/open-im-server/compare/v3.8.3-patch.8...v3.8.3-patch.9"
+summary: "fix: fill in the most recent sendTime for a gap message to prevent th… · feat: enable redis aof-use-rdb-preamble && disable auto rdb [Created from #3529]"
 ---
 
 # open-im-server v3.8.3-patch.9

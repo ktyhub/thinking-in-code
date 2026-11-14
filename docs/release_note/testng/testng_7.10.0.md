@@ -6,7 +6,7 @@ tag: "7.10.0"
 published: "2024-04-07"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/testng-team/testng/compare/7.9.0...7.10.0"
+summary: "Clean-up deprecated code · Minor discrepancy fixes · Deleting TestNG eclipse plugin specific classes · Code clean-up"
 ---
 
 # testng 7.10.0

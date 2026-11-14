@@ -6,7 +6,7 @@ tag: "v9.1.0"
 published: "2026-08-06"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/ccfos/nightingale/compare/v9.0.0...v9.1.0"
+summary: "feat: built-in time series database — metrics pushed by Categraf are stored locally, so no external Prometheus / VictoriaMetrics is required to get started;"
 ---
 
 # nightingale v9.1.0

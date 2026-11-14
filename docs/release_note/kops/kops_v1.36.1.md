@@ -6,7 +6,7 @@ tag: "v1.36.1"
 published: "2026-07-28"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/kops/compare/v1.36.0...v1.36.1"
+summary: "Automated cherry pick of #18600: nodeup: don't mutate the cluster spec when clearing authenticator config · Automated cherry pick of #18631: hetzner: Ignore WellKnownServices when comparing load balancers"
 ---
 
 # kops v1.36.1

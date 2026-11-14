@@ -6,7 +6,7 @@ tag: "v2.2.0"
 published: "2025-09-12"
 type: "minor"
 lang: "en"
-summary: "🔗 Full Changelog: v2.1.0...v2.2.0"
+summary: "MCP version 3 is live. Stable support for cloud mcp with HTTP Transport and SSE modes. Compatible with v2 and v1 from. · Webhooks: Now we support signatures + extract support + event failures"
 ---
 
 # firecrawl v2.2.0

@@ -7,7 +7,7 @@ version: "v5.1.65"
 published: "2026-11-09"
 type: "patch"
 lang: "en"
-summary: "A message an agent sends to a session on another device now says who sent it. It used to arrive there as plain text, indistinguishable from that session's own user. It now carries the same sender line and authority…"
+summary: "A message an agent sends to a session on another device now says who sent it. It used to arrive there as plain text, indistinguishable from that session's own user."
 ---
 
 # oh-my-openagent v5.1.65

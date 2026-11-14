@@ -6,7 +6,7 @@ tag: "v5.0.3"
 published: "2026-08-20"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-openfeign/compare/v5.0.2...v5.0.3"
+summary: "Bump @springio/antora-extensions from 1.14.11 to 1.14.12 in /docs[bot] · Fix #1324: Add @JsonAlias support to SimplePageable for SNAKE_CASE compatibility · Fix concurrent initialization race in FeignHttpMessageConverters"
 ---
 
 # spring-cloud-openfeign v5.0.3

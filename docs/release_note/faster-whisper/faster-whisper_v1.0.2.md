@@ -7,7 +7,7 @@ version: "v1.0.2"
 published: "2024-05-06"
 type: "patch"
 lang: "en"
-summary: "The latest Distil-Whisper model, distil-large-v3, is intrinsically designed to work with the OpenAI sequential algorithm."
+summary: "Add support for distil-large-v3 ("
 ---
 
 # faster-whisper v1.0.2

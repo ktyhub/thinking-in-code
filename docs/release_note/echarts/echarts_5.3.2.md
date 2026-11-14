@@ -6,6 +6,7 @@ tag: "5.3.2"
 published: "2022-04-01"
 type: "patch"
 lang: "en"
+summary: "[Feature] [line] allow areaStyle.origin to take number as input. #16719 (jiawulin001) · [Feature] [scatter] scale support number. #16688 (susiwen8)"
 ---
 
 # echarts 5.3.2

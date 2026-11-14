@@ -6,7 +6,7 @@ tag: "2.8.26"
 published: "2025-08-26"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/servicecomb-java-chassis/compare/2.8.25...2.8.26"
+summary: "[#4842] servicecomb-client supports configurable connectTimeout , connectRequestTimeout, socketTimeout · [#4877] not clear service instances cache when pull instance exception and add telnet check"
 ---
 
 # servicecomb-java-chassis 2.8.26

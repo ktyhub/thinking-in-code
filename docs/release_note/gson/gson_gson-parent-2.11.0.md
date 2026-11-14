@@ -6,7 +6,7 @@ tag: "gson-parent-2.11.0"
 published: "2024-05-20"
 type: "release"
 lang: "en"
-summary: "If you are using ProGuard or R8 (for example for Android projects) you might not need any special Gson configuration anymore if your classes have a no-args constructor and use @SerializedName for their fields."
+summary: "Added default ProGuard / R8 rules (@Marcono1234, #2397, #2420; @sgjesse, #2448; @sfreilich)\\"
 ---
 
 # gson gson-parent-2.11.0

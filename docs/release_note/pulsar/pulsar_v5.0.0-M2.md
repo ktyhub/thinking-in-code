@@ -6,7 +6,7 @@ tag: "v5.0.0-M2"
 published: "2026-09-16"
 type: "pre"
 lang: "en"
-summary: "Previously, logs from third-party libraries that use JUL (e.g., Jersey/Jetty, gRPC, Guava) were not managed by Pulsar's Log4j2 configuration, making them difficult to control and causing inconsistent log output. To…"
+summary: "[improve][pip] PIP-445: Add Builder Methods to Create Message-based TableView (#24842) · [improve][pip] PIP-486: Scalable Topic Key-Shared Consumption (#26077)"
 ---
 
 # pulsar v5.0.0-M2

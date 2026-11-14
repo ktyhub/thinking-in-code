@@ -6,7 +6,7 @@ tag: "rel_3_33_0_ga"
 published: "2026-08-23"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/jboss-javassist/javassist/compare/rel3320ga...rel3330ga"
+summary: "Fix SerialVersionUID for static nested classes"
 ---
 
 # javassist rel_3_33_0_ga

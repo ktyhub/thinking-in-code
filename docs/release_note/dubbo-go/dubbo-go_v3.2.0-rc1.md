@@ -6,7 +6,7 @@ tag: "v3.2.0-rc1"
 published: "2024-03-10"
 type: "minor"
 lang: "en"
-summary: "This version guarantees fully interoperability between dubbo go and java implementations, below are some interop examples:"
+summary: "Introduce brand new programming API. · Upgraded triple protocol, 100% compatible with gRPC while supporting direct HTTP API access with application/json payload. · RPC service definition supports both IDL and NON-IDL."
 ---
 
 # dubbo-go v3.2.0-rc1

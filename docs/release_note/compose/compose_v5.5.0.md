@@ -6,7 +6,7 @@ tag: "v5.5.0"
 published: "2026-08-17"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/docker/compose/compare/v5.4.0...v5.5.0"
+summary: "New image digest reconciliation process & @ndeloof https://github.com/docker/compose/pull/14011"
 ---
 
 # compose v5.5.0

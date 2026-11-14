@@ -7,6 +7,7 @@ version: "v2.10.4-lts"
 published: "2026-07-16"
 type: "patch"
 lang: "en"
+summary: "Vulnerability: Fixed a system file permission flaw that allowed anonymous access to resources"
 ---
 
 # MaxKB v2.10.4-lts

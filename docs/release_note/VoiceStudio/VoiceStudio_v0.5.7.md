@@ -7,7 +7,7 @@ version: "v0.5.7"
 published: "2026-10-26"
 type: "patch"
 lang: "en"
-summary: "First, an apology. This release took much longer than it should have. Urgent family matters kept me away for a while, and I'm sorry for the wait and for the issues that sat unanswered meanwhile. Thank you for your…"
+summary: "First, an apology. This release took much longer than it should have. Urgent family matters kept me away for a while, and I'm sorry for the wait and for the issues that sat unanswered meanwhile."
 ---
 
 # VoiceStudio v0.5.7

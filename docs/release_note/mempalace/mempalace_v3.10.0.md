@@ -7,7 +7,7 @@ version: "v3.10.0"
 published: "2026-09-16"
 type: "minor"
 lang: "en"
-summary: "Agents get lighter ways in: a 3-tool MCP server with Palace Query Language, shared-brain rules for host:harness:project identities, and optional native exact-vector search. New installs follow XDG, and storage fixes…"
+summary: "Agents get lighter ways in: a 3-tool MCP server with Palace Query Language, shared-brain rules for host:harness:project identities, and optional native exact-vector search."
 ---
 
 # mempalace v3.10.0

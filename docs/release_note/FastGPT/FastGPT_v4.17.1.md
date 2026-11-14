@@ -7,7 +7,7 @@ version: "v4.17.1"
 published: "2026-09-30"
 type: "patch"
 lang: "en"
-summary: "本次升级包含以下自动化脚本"
+summary: "更新 fastgpt-app（FastGPT 主服务）镜像 tag: v4.17.1；更新 fastgpt-pro（FastGPT 商业版）镜像 tag: v4.17.1；更新 fastgpt-plugin 镜像 tag: v1.1.4；更新 AI Proxy 镜像 tag: v0.7.3"
 ---
 
 # FastGPT v4.17.1

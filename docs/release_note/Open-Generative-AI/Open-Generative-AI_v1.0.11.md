@@ -7,6 +7,7 @@ version: "v1.0.11"
 published: "2026-05-11"
 type: "patch"
 lang: "en"
+summary: "Video Studio: the end-frame picker (for FLF image-to-video models like kling / veo / seedance) no longer triggers the API-key modal when a Wan2GP local model is selected."
 ---
 
 # Open-Generative-AI v1.0.11

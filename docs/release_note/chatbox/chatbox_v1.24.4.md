@@ -7,6 +7,7 @@ version: "v1.24.4"
 published: "2026-11-12"
 type: "patch"
 lang: "en"
+summary: "macOS (Apple Silicon) · macOS (Intel) · Windows (x64) · Linux (x64 DEB)"
 ---
 
 # chatbox v1.24.4

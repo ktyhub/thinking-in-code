@@ -6,7 +6,7 @@ tag: "v5.0.0-M1"
 published: "2025-07-29"
 type: "pre"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Add missing documentation links in spring-cloud-bus.adoc #280"
 ---
 
 # spring-cloud-bus v5.0.0-M1

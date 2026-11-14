@@ -6,7 +6,7 @@ tag: "2.9.0"
 published: "2025-06-19"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/servicecomb-java-chassis/compare/2.8.24...2.9.0"
+summary: "[perf]When a microservice instance is isolated and taken offline, reduce unnecessary network communication · [#4785] Compatible with Spring6.x, Jakarta, JDK21, and Springboot3.x"
 ---
 
 # servicecomb-java-chassis 2.9.0

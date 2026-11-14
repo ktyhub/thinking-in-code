@@ -7,7 +7,7 @@ version: "v1.3.9"
 published: "2026-10-21"
 type: "patch"
 lang: "en"
-summary: "English | 中文"
+summary: "Added official mpt pip packaging. Start the WebUI with mpt webui or generate videos with mpt cli. · Added static and slow zoom image effects for local and AI-generated images. Slow zoom remains the default."
 ---
 
 # MoneyPrinterTurbo v1.3.9

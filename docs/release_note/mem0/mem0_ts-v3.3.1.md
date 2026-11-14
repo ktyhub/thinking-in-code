@@ -7,7 +7,7 @@ version: "ts-v3.3.1"
 published: "2026-09-25"
 type: "release"
 lang: "en"
-summary: "Bug Fixes:"
+summary: "Config (OSS): ConfigManager no longer injects OpenAI's default baseURL and model into non-OpenAI LLM providers. The defaults now apply only to openai and openai_structured, so a DeepSeek, xAI, or other provider config…"
 ---
 
 # mem0 ts-v3.3.1

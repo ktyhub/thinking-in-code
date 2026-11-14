@@ -6,7 +6,7 @@ tag: "v1.16.2"
 published: "2026-04-22"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/PX4/PX4-Autopilot/compare/v1.16.1...v1.16.2"
+summary: "[Backport 1.16] fix(ekf2): allow optical flow to start when range finder is height reference · fix(ekf2): break unbounded recursion [BACKPORT v1.16]"
 ---
 
 # PX4-Autopilot v1.16.2

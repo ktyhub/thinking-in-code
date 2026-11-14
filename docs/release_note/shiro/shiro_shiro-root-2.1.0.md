@@ -6,7 +6,7 @@ tag: "shiro-root-2.1.0"
 published: "2026-02-04"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/shiro/compare/shiro-root-2.0.6...shiro-root-2.1.0"
+summary: "chore(deps): bump org.htmlunit:htmlunit from 4.17.0 to 4.18.0[bot] · chore: hide deprecation warning in AD test · chore(deps): bump github/codeql-action from 4.31.0 to 4.31.2 in the github-dependencies group[bot]"
 ---
 
 # shiro shiro-root-2.1.0

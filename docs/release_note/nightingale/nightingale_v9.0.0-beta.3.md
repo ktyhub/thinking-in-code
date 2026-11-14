@@ -6,7 +6,7 @@ tag: "v9.0.0-beta.3"
 published: "2026-06-12"
 type: "pre"
 lang: "en"
-summary: "the operation can be forced after confirmation"
+summary: "feat: dashboards now support AI-powered analysis · feat: AI assistant supports creating and modifying notification rules, mute rules, and subscription rules through conversation"
 ---
 
 # nightingale v9.0.0-beta.3

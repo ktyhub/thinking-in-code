@@ -6,7 +6,7 @@ tag: "1.7.5-rc1"
 published: "2026-09-24"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/AutoMQ/automq/compare/1.7.5-rc0...1.7.5-rc1"
+summary: "fix(metadata): clear pending topic configs on replay · fix(metadata): remove empty partition stream mappings · fix(docker): update S3 container images · fix(s3stream): retry recoverable object listing failures"
 ---
 
 # AutoMQ 1.7.5-rc1

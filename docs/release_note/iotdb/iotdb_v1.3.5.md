@@ -6,6 +6,7 @@ tag: "v1.3.5"
 published: "2025-09-11"
 type: "patch"
 lang: "en"
+summary: "Storage Module: Optimize user password encryption by changing the algorithm to SHA-256 · ..."
 ---
 
 # iotdb v1.3.5

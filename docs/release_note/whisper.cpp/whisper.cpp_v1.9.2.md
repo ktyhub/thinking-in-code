@@ -7,6 +7,7 @@ version: "v1.9.2"
 published: "2026-08-04"
 type: "patch"
 lang: "en"
+summary: "sync : ggml · include parakeet in build-xcframework.sh · Fix pkgconfig configuration (Nix build failure) · examples : update model names in parakeet-cli README.md [no ci]"
 ---
 
 # whisper.cpp v1.9.2

@@ -6,7 +6,7 @@ tag: "v1.59.0"
 published: "2026-02-06"
 type: "minor"
 lang: "en"
-summary: "This release was possible thanks to the following contributors who shared their brilliant ideas and awesome pull requests:"
+summary: "Stabilize complex attributes (#7973) · Limit init valid hex array to range that can be true (#7809)"
 ---
 
 # opentelemetry-java v1.59.0

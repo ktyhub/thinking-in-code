@@ -6,7 +6,7 @@ tag: "v2.7.2-RC4"
 published: "2026-11-06"
 type: "patch"
 lang: "en"
-summary: "No new contributors were added in this release candidate."
+summary: "Fix request transformer body replay for one-shot request bodies and preserve downstream errors and"
 ---
 
 # shenyu v2.7.2-RC4

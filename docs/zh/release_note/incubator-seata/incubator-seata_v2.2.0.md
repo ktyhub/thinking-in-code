@@ -6,6 +6,7 @@ tag: "v2.2.0"
 published: "2024-09-20"
 type: "minor"
 lang: "zh"
+summary: "Apache Seata（孵化中）2.2.0 发布。"
 ---
 
 # incubator-seata v2.2.0

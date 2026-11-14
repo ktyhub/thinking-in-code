@@ -7,6 +7,7 @@ version: "v2.0.0"
 published: "2026-05-23"
 type: "major"
 lang: "en"
+summary: "Audio Studio — dedicated audio generation tab · Vibe Motion — new motion effect capability · Clipping Tab — video clipping workflow · Design Agent — AI-powered design assistant integration"
 ---
 
 # Open-Generative-AI v2.0.0

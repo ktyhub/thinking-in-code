@@ -7,7 +7,7 @@ version: "v0.30.0"
 published: "2026-09-01"
 type: "minor"
 lang: "en"
-summary: "Fixed: Neo4j queries now respect the configured database Neo4jDriver.executequery() previously ignored the driver's database setting and ran all queries (including searches) against the server's home database, while…"
+summary: "Fixed: Neo4j queries now respect the configured database Neo4jDriver.execute_query() previously ignored the driver's database setting and ran all queries (including searches) against the server's home database, while…"
 ---
 
 # graphiti v0.30.0

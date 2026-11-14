@@ -6,7 +6,7 @@ tag: "shiro-root-2.0.2"
 published: "2024-11-07"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/shiro/compare/shiro-root-2.0.1...shiro-root-2.0.2"
+summary: "[#1381] enh: Build on JDK 22 · [#1762] enh: follow desired request scheme when doing redirection · enh(jakarta,it-tests): no longer relying on hardcoded https port in t…"
 ---
 
 # shiro shiro-root-2.0.2
