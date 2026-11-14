@@ -3,7 +3,8 @@
 import Shell from "../layouts/Shell.astro";
 import ReleaseRow from "./ReleaseRow.astro";
 import { t, localePath, type Locale } from "../lib/i18n";
-import { getProject, projectReleases, hrefFor } from "../lib/registry";
+import { getProject, projectReleases, hrefFor, projectHref } from "../lib/registry";
+import { projectStats, pairsFor, pairHref, topicHref, topicProjects } from "../lib/catalog";
 import { longDate, num } from "../lib/format";
 
 interface Props {
@@ -18,6 +19,17 @@ const versions = projectReleases(slug);
 const dated = versions.filter((v) => v.date);
 const undated = versions.filter((v) => !v.date);
 
+/**
+ * 内链：项目页是整站权重最集中的一类页面（每页都有真实版本列表），
+ * 由它向下分发到专题页与对比页，新页面才能在三次点击内被爬到。
+ */
+const stats = projectStats(slug);
+const topic = stats?.topic ?? null;
+const topicSiblings = topic
+  ? topicProjects(topic).filter((p) => p.slug !== slug).slice(0, 6)
+  : [];
+const comparisons = pairsFor(slug).slice(0, 6);
+
 // 按年分组（新 → 旧）
 const years = new Map<string, typeof versions>();
 for (const v of dated) {
@@ -31,6 +43,38 @@ for (const v of dated) {
 
 <Shell
   locale={locale}
+  jsonLd={[
+    {
+      "@type": "CollectionPage",
+      name: t(locale, "project.title", { name: project.name }),
+      inLanguage: locale === "zh" ? "zh-CN" : "en",
+      isPartOf: { "@id": "https://www.stags.cn/#website" },
+      about: {
+        "@type": "SoftwareApplication",
+        name: project.name,
+        applicationCategory: "DeveloperApplication",
+        ...(project.repo ? { url: `https://github.com/${project.repo}` } : {}),
+        ...(project.latest ? { softwareVersion: project.latest.version } : {}),
+      },
+    },
+    ...(project.latest
+      ? [{
+          "@type": "FAQPage",
+          mainEntity: [{
+            "@type": "Question",
+            name: locale === "zh"
+              ? `${project.name} 最新版本是多少？`
+              : `What is the latest version of ${project.name}?`,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: locale === "zh"
+                ? `${project.name} 的最新版本是 ${project.latest.version}，发布于 ${longDate(project.latest.date, locale)}。本站收录了它的 ${num(versions.length)} 个版本。`
+                : `The latest version of ${project.name} is ${project.latest.version}, released on ${longDate(project.latest.date, locale)}. ${num(versions.length)} releases from this project are indexed here.`,
+            },
+          }],
+        }]
+      : []),
+  ]}
   title={t(locale, "project.title", { name: project.name })}
   description={`${t(locale, "project.title", { name: project.name })}${project.repo ? ` · ${project.repo}` : ""} — ${num(versions.length)} release notes indexed.`}
   active="projects"
@@ -82,5 +126,99 @@ for (const v of dated) {
         </section>
       )}
     </div>
+
+    {(topic || comparisons.length > 0) && (
+      <aside class="px-mesh">
+        {topic && (
+          <div class="px-mesh-col">
+            <h2>
+              <a href={topicHref(topic, locale)}>{locale === "zh" ? topic.zh : topic.en} →</a>
+            </h2>
+            <p>{locale === "zh" ? topic.blurbZh : topic.blurbEn}</p>
+            {topicSiblings.length > 0 && (
+              <ul>
+                {topicSiblings.map((sib) => (
+                  <li><a href={projectHref(sib.slug, locale)} class="mono">{sib.name}</a></li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+        {comparisons.length > 0 && (
+          <div class="px-mesh-col">
+            <h2>{locale === "zh" ? "横向对比" : "Head-to-head"}</h2>
+            <ul>
+              {comparisons.map((p) => {
+                const other = p.a === slug ? p.b : p.a;
+                const otherStat = projectStats(other);
+                return (
+                  <li>
+                    <a href={pairHref(p, locale)}>
+                      {locale === "zh" ? `与 ${otherStat?.name} 对比` : `vs ${otherStat?.name}`}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+      </aside>
+    )}
   </div>
 </Shell>
+
+<style>
+  .px-mesh {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s8);
+    margin-top: var(--s12);
+    padding-top: var(--s5);
+    border-top: 1px solid var(--ink);
+  }
+  .px-mesh-col h2 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .px-mesh-col h2 a {
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    text-transform: none;
+    font-size: 15px;
+  }
+  .px-mesh-col h2 a:hover {
+    color: var(--accent);
+  }
+  .px-mesh-col p {
+    margin-top: var(--s2);
+    max-width: 46ch;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-3);
+  }
+  .px-mesh-col ul {
+    list-style: none;
+    padding: var(--s3) 0 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s2) var(--s4);
+  }
+  .px-mesh-col li a {
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .px-mesh-col li a:hover {
+    color: var(--accent);
+  }
+  @media (max-width: 700px) {
+    .px-mesh {
+      grid-template-columns: 1fr;
+      gap: var(--s6);
+    }
+  }
+</style>

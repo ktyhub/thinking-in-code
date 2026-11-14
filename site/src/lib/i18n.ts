@@ -93,6 +93,8 @@ const en: Dict = {
 
   "nav.releases": "Releases",
   "nav.projects": "Projects",
+  "nav.topics": "Topics",
+  "nav.compare": "Compare",
   "nav.method": "Method",
   "nav.archive": "Chinese archive",
 
@@ -229,6 +231,8 @@ const zh: Dict = {
 
   "nav.releases": "版本发布",
   "nav.projects": "项目",
+  "nav.topics": "专题",
+  "nav.compare": "对比",
   "nav.method": "方法",
   "nav.archive": "中文归档",
 
