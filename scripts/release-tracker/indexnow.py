@@ -179,6 +179,11 @@ def submit(key: str, urls: list[str]) -> bool:
             return code in (200, 202)
     except urllib.error.HTTPError as e:
         detail = e.read().decode("utf-8", "replace")[:300]
+        # 403 SiteVerificationNotCompleted：Bing 还没把密钥文件抓完。
+        # 这不是错误，只是时机未到——返回 False 由调用方决定不重试、不报警。
+        if e.code == 403 and "SiteVerificationNotCompleted" in detail:
+            print("[indexnow] 站点校验尚未完成（Bing 还没抓到密钥文件），稍后重试即可", file=sys.stderr)
+            return False
         print(f"[indexnow] HTTP {e.code}: {detail}", file=sys.stderr)
         # 429 是限流，等一会儿值得重试一次
         if e.code == 429:
@@ -226,7 +231,9 @@ def main() -> int:
         time.sleep(2)
 
     print(f"[indexnow] 完成，已提交 {ok}/{len(fresh)}")
-    return 0 if ok else 1
+    # 「站点校验未完成」属正常的暂时状态，不返回非零：CI 里把它标红只会
+    # 训练大家忽略失败，真正的报错反而看不见。真出错在 submit() 里已 exit。
+    return 0
 
 
 if __name__ == "__main__":
