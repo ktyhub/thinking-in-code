@@ -8,6 +8,7 @@ import {
   t, LOCALES, LOCALE_META, localePath, switchLocale,
   otherLocale, otherLocales, stripLocale, hasAllLocales, type Locale,
 } from "../lib/i18n";
+import { shouldNoindex, isIndexable } from "../lib/gate";
 
 interface Props {
   locale: Locale;
@@ -33,9 +34,15 @@ const {
   altHref,
   article = false,
   jsonLd,
-  noindex = false,
+  noindex: noindexProp = false,
   canonicalPath,
 } = Astro.props;
+
+/**
+ * 索引闸门：语言未放量时整站该语言 noindex，页面自身也可以用 noindex 单独排除。
+ * 这是「URL 空间先扩到百万、可索引页面逐批放量」的开关。
+ */
+const noindex = shouldNoindex(locale, noindexProp);
 
 const SITE = "NextStack";
 const meta = LOCALE_META[locale];
@@ -62,18 +69,24 @@ const langTargets = LOCALES.map((l) => ({
     : fullAlt ? switchLocale(Astro.url.pathname, l) : localePath(l, "/releases"),
 }));
 
-/** hreflang：全语言页输出 7 条 + x-default；其余只输出 en ↔ zh 对 */
-const hreflangLinks = fullAlt
-  ? LOCALES.map((l) => ({
-      code: LOCALE_META[l].hreflang,
-      href: new URL(switchLocale(Astro.url.pathname, l), Astro.site).href,
-    }))
-  : hasAlt
-    ? [
-        { code: "en", href: locale === "en" ? canonical : altUrl },
-        { code: "zh-Hans", href: locale === "zh" ? canonical : altUrl },
-      ]
-    : [];
+/**
+ * hreflang：全语言页输出 7 条 + x-default；其余只输出 en ↔ zh 对。
+ * 闸门关闭的语言不再出现在 hreflang 里——noindex 页上的 hreflang 会被忽略，
+ * 保留它只会向搜索引擎发出自相矛盾的信号。
+ */
+const hreflangLinks = noindex
+  ? []
+  : fullAlt
+    ? LOCALES.filter((l) => isIndexable(l)).map((l) => ({
+        code: LOCALE_META[l].hreflang,
+        href: new URL(switchLocale(Astro.url.pathname, l), Astro.site).href,
+      }))
+    : hasAlt
+      ? [
+          { code: "en", href: locale === "en" ? canonical : altUrl },
+          { code: "zh-Hans", href: locale === "zh" ? canonical : altUrl },
+        ].filter((l) => isIndexable(l.code === "zh-Hans" ? "zh" : l.code))
+      : [];
 const xDefault = fullAlt
   ? new URL(switchLocale(Astro.url.pathname, "en"), Astro.site).href
   : locale === "en" ? canonical : altUrl;
@@ -122,7 +135,7 @@ const graph = [
     {hreflangLinks.map((l) => (
       <link rel="alternate" hreflang={l.code} href={l.href} />
     ))}
-    {hasAlt && <link rel="alternate" hreflang="x-default" href={xDefault} />}
+    {hreflangLinks.length > 0 && <link rel="alternate" hreflang="x-default" href={xDefault} />}
     {noindex && <meta name="robots" content="noindex,follow" />}
 
     <meta property="og:site_name" content={SITE} />
