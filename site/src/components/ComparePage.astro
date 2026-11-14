@@ -1,0 +1,525 @@
+---
+/**
+ * 「A vs B」选型对比页。
+ *
+ * 这类页面是纯数据驱动的：表里的每一个数字、每一句判断都来自本站收录的
+ * release 记录（版本数、发布日期、间隔中位数、通道分布）。不写「A 更灵活，
+ * B 更简单」这种没有信息量的套话——那正是搜索引擎判定为模板内容的东西。
+ *
+ * 双语只做 en / zh：其余语言没有人工校对过这套句式，硬翻只会产出
+ * 5 份语义漂移的重复页面。
+ */
+import Shell from "../layouts/Shell.astro";
+import { t, localePath, type Locale } from "../lib/i18n";
+import { projectReleases, projectHref } from "../lib/registry";
+import { projectStats, getPair, dataNow, topicHref, pairHref, pairsFor, type Pair } from "../lib/catalog";
+import { longDate, num } from "../lib/format";
+import ReleaseRow from "./ReleaseRow.astro";
+
+interface Props {
+  locale: Locale;
+  pairSlug: string;
+  canonicalPath?: string;
+}
+
+const { locale, pairSlug, canonicalPath } = Astro.props;
+const zh = locale === "zh";
+const pair = getPair(pairSlug)!;
+
+const A = projectStats(pair.a)!;
+const B = projectStats(pair.b)!;
+
+/** 活跃度高的在前，与标题顺序一致 */
+const faster = A.per90 >= B.per90 ? A : B;
+const slower = faster === A ? B : A;
+const tie = faster.per90 === slower.per90 && faster.medianGap === slower.medianGap;
+
+const recentA = projectReleases(A.slug).slice(0, 3);
+const recentB = projectReleases(B.slug).slice(0, 3);
+
+const now = dataNow();
+
+const fmtDate = (iso: string) => (iso ? longDate(iso, locale) : "—");
+const fmtGap = (g: number | null) => (g === null ? "—" : zh ? `${g} 天` : `${g} days`);
+const pct = (n: number, total: number) => (total ? Math.round((n / total) * 100) : 0);
+
+/** 稳定性口径：非预发布的版本占比，用来判断「能安心上生产的版本有几个」 */
+const stableA = A.count - A.mix.pre;
+const stableB = B.count - B.mix.pre;
+
+const rows: { label: string; a: string; b: string; hint?: string }[] = [
+  {
+    label: zh ? "仓库" : "Repository",
+    a: A.repo ?? "—",
+    b: B.repo ?? "—",
+  },
+  {
+    label: zh ? "最新版本" : "Latest version",
+    a: A.latest ? A.latest.version : "—",
+    b: B.latest ? B.latest.version : "—",
+  },
+  {
+    label: zh ? "最新发布日期" : "Latest release date",
+    a: fmtDate(A.lastDate),
+    b: fmtDate(B.lastDate),
+  },
+  {
+    label: zh ? "收录版本数" : "Releases indexed",
+    a: num(A.count),
+    b: num(B.count),
+  },
+  {
+    label: zh ? "近 90 天发布数" : "Releases in the last 90 days",
+    a: num(A.per90),
+    b: num(B.per90),
+    hint: zh ? `以 ${fmtDate(now)} 为基准回推` : `Counted back from ${fmtDate(now)}`,
+  },
+  {
+    label: zh ? "发布间隔中位数" : "Median gap between releases",
+    a: fmtGap(A.medianGap),
+    b: fmtGap(B.medianGap),
+  },
+  {
+    label: zh ? "首次收录" : "First release indexed",
+    a: fmtDate(A.firstDate),
+    b: fmtDate(B.firstDate),
+  },
+  {
+    label: zh ? "非预发布版本" : "Non-prerelease builds",
+    a: zh
+      ? `${num(stableA)} / ${num(A.count)}（${pct(stableA, A.count)}%）`
+      : `${num(stableA)} of ${num(A.count)} (${pct(stableA, A.count)}%)`,
+    b: zh
+      ? `${num(stableB)} / ${num(B.count)}（${pct(stableB, B.count)}%）`
+      : `${num(stableB)} of ${num(B.count)} (${pct(stableB, B.count)}%)`,
+  },
+];
+
+// ---------------------------------------------------------------- 文案
+
+const lead = zh
+  ? `${A.name} 与 ${B.name} 都收录在本站。${A.name} 有 ${num(A.count)} 个版本，最新 ${A.latest?.version ?? "—"}（${fmtDate(A.lastDate)}）；${B.name} 有 ${num(B.count)} 个版本，最新 ${B.latest?.version ?? "—"}（${fmtDate(B.lastDate)}）。下面用发布节奏和版本通道的实际数据做一次横向对比。`
+  : `${A.name} and ${B.name} are both tracked here. ${A.name} has ${num(A.count)} indexed releases, the latest being ${A.latest?.version ?? "—"} on ${fmtDate(A.lastDate)}; ${B.name} has ${num(B.count)}, the latest ${B.latest?.version ?? "—"} on ${fmtDate(B.lastDate)}. The comparison below is built from their actual release cadence and channel mix.`;
+
+const cadenceLines: string[] = [];
+if (tie) {
+  cadenceLines.push(
+    zh
+      ? `两者节奏接近：90 天内各发布 ${num(faster.per90)} 个版本，间隔中位数都是 ${fmtGap(faster.medianGap)}。`
+      : `They move at a similar pace: ${num(faster.per90)} releases each in the last 90 days, both with a median gap of ${fmtGap(faster.medianGap)}.`
+  );
+} else {
+  cadenceLines.push(
+    zh
+      ? `${faster.name} 迭代更快：近 90 天发布 ${num(faster.per90)} 个版本，${slower.name} 是 ${num(slower.per90)} 个。`
+      : `${faster.name} moves faster: ${num(faster.per90)} releases in the last 90 days against ${num(slower.per90)} for ${slower.name}.`
+  );
+  if (faster.medianGap !== null || slower.medianGap !== null) {
+    cadenceLines.push(
+      zh
+        ? `从相邻两次发布间隔看，${faster.name} 的中位数是 ${fmtGap(faster.medianGap)}，${slower.name} 是 ${fmtGap(slower.medianGap)}。间隔越短，升级窗口越难规划——但这通常也意味着修复来得更快。`
+        : `Measured by the gap between consecutive releases, the median for ${faster.name} is ${fmtGap(faster.medianGap)} versus ${fmtGap(slower.medianGap)} for ${slower.name}. Shorter gaps make upgrade windows harder to plan — but they also mean fixes land sooner.`
+    );
+  }
+}
+const stalest = A.quietDays >= B.quietDays ? A : B;
+if (stalest.quietDays > 180) {
+  cadenceLines.push(
+    zh
+      ? `注意：${stalest.name} 最近一次发布距今已有 ${stalest.quietDays} 天，它的节奏数据反映的是历史，不代表当前状态。`
+      : `Caveat: ${stalest.name} has not published in ${stalest.quietDays} days, so its cadence reflects history rather than current activity.`
+  );
+}
+
+const chooseLines: { head: string; body: string }[] = [];
+chooseLines.push({
+  head: zh ? "需要新功能持续落地" : "You need features to keep landing",
+  body: zh
+    ? `选 ${faster.name}。近 90 天 ${num(faster.per90)} 个版本、间隔中位数 ${fmtGap(faster.medianGap)}，意味着接口面一直在动，配套文档和客户端要跟得上。`
+    : `Pick ${faster.name}. ${num(faster.per90)} releases in 90 days with a ${fmtGap(faster.medianGap)} median gap means the API surface keeps moving — your docs and clients have to keep up.`,
+});
+chooseLines.push({
+  head: zh ? "希望升级周期可预测" : "You want a predictable upgrade cycle",
+  body: zh
+    ? `选 ${slower.name}。间隔中位数 ${fmtGap(slower.medianGap)}，近 90 天 ${num(slower.per90)} 个版本，升级批次更少、回归面更窄。`
+    : `Pick ${slower.name}. A ${fmtGap(slower.medianGap)} median gap and ${num(slower.per90)} releases in 90 days mean fewer upgrade batches and a narrower regression surface.`,
+});
+const stableOf = (s: { count: number; mix: { pre: number } }) => s.count - s.mix.pre;
+chooseLines.push({
+  head: zh ? "只想要正式版本" : "You only ship stable builds",
+  body: zh
+    ? `${faster.name} 有 ${num(faster.mix.pre)} 个预发布版本，${slower.name} 有 ${num(slower.mix.pre)} 个。只看正式版本的话，可用发布数分别是 ${num(stableOf(faster))} 和 ${num(stableOf(slower))}。`
+    : `${faster.name} carries ${num(faster.mix.pre)} prerelease builds, ${slower.name} ${num(slower.mix.pre)}. Counting stable releases only, the usable totals are ${num(stableOf(faster))} and ${num(stableOf(slower))}.`,
+});
+
+const faq = [
+  {
+    q: zh
+      ? `${A.name} 和 ${B.name} 哪个维护更活跃？`
+      : `Which is more actively maintained, ${A.name} or ${B.name}?`,
+    a: zh
+      ? `${faster.name} 更活跃：近 90 天发布 ${num(faster.per90)} 个版本（${slower.name} ${num(slower.per90)} 个），发布间隔中位数 ${fmtGap(faster.medianGap)}（${slower.name} ${fmtGap(slower.medianGap)}）。`
+      : `${faster.name} is the more active project: ${num(faster.per90)} releases in the last 90 days versus ${num(slower.per90)}, with a median gap of ${fmtGap(faster.medianGap)} against ${fmtGap(slower.medianGap)}.`,
+  },
+  {
+    q: zh ? `${A.name} 最新版本是多少？` : `What is the latest version of ${A.name}?`,
+    a: zh
+      ? `${A.name} 的最新版本是 ${A.latest?.version ?? "—"}，发布于 ${fmtDate(A.lastDate)}。本站收录了它的 ${num(A.count)} 个版本。`
+      : `The latest version of ${A.name} is ${A.latest?.version ?? "—"}, released on ${fmtDate(A.lastDate)}. ${num(A.count)} releases from this project are indexed here.`,
+  },
+  {
+    q: zh ? `${B.name} 最新版本是多少？` : `What is the latest version of ${B.name}?`,
+    a: zh
+      ? `${B.name} 的最新版本是 ${B.latest?.version ?? "—"}，发布于 ${fmtDate(B.lastDate)}。本站收录了它的 ${num(B.count)} 个版本。`
+      : `The latest version of ${B.name} is ${B.latest?.version ?? "—"}, released on ${fmtDate(B.lastDate)}. ${num(B.count)} releases from this project are indexed here.`,
+  },
+];
+
+/** 相关对比：优先和当前两个项目共享对手的组合，再按同专题补齐 */
+const related: Pair[] = (() => {
+  const score = (p: Pair) =>
+    (p.a === A.slug || p.b === A.slug ? 2 : 0) + (p.a === B.slug || p.b === B.slug ? 2 : 0) +
+    (p.topic.slug === pair.topic.slug ? 1 : 0);
+  return pairsFor(A.slug)
+    .filter((p) => p.slug !== pair.slug)
+    .sort((x, y) => score(y) - score(x) || x.slug.localeCompare(y.slug))
+    .slice(0, 6);
+})();
+
+const topic = pair.topic;
+
+// ---------------------------------------------------------------- JSON-LD
+
+const pageUrl = new URL(canonicalPath ?? Astro.url.pathname, Astro.site).href;
+const title = zh ? `${A.name} 与 ${B.name} 对比：发布节奏与版本通道` : `${A.name} vs ${B.name}: release cadence compared`;
+const description = zh
+  ? `${A.name}（${num(A.count)} 个版本，最新 ${A.latest?.version ?? "—"}）与 ${B.name}（${num(B.count)} 个版本，最新 ${B.latest?.version ?? "—"}）的发布节奏、升级频率与预发布占比对比。`
+  : `${A.name} vs ${B.name}, compared on real release data: ${num(A.count)} and ${num(B.count)} indexed releases, median gap between releases, and prerelease share.`;
+
+const jsonLd = [
+  {
+    "@type": "WebPage",
+    "@id": `${pageUrl}#page`,
+    url: pageUrl,
+    name: title,
+    description,
+    inLanguage: zh ? "zh-CN" : "en",
+    isPartOf: { "@id": "https://www.stags.cn/#website" },
+    about: [
+      { "@type": "SoftwareApplication", name: A.name, applicationCategory: "DeveloperApplication", ...(A.repo ? { url: `https://github.com/${A.repo}` } : {}), ...(A.latest ? { softwareVersion: A.latest.version } : {}) },
+      { "@type": "SoftwareApplication", name: B.name, applicationCategory: "DeveloperApplication", ...(B.repo ? { url: `https://github.com/${B.repo}` } : {}), ...(B.latest ? { softwareVersion: B.latest.version } : {}) },
+    ],
+  },
+  {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: zh ? "首页" : "Home", item: new URL(localePath(locale, "/"), Astro.site).href },
+      { "@type": "ListItem", position: 2, name: zh ? "对比" : "Compare", item: new URL(localePath(locale, "/compare"), Astro.site).href },
+      { "@type": "ListItem", position: 3, name: `${A.name} vs ${B.name}`, item: pageUrl },
+    ],
+  },
+  {
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  },
+];
+---
+
+<Shell
+  locale={locale}
+  title={title}
+  description={description}
+  active="compare"
+  jsonLd={jsonLd}
+  canonicalPath={canonicalPath}
+>
+  <div class="wrap cmp">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={localePath(locale, "/")}>{t(locale, "crumb.home")}</a>
+      <span class="sep">/</span>
+      <a href={localePath(locale, "/compare")}>{zh ? "对比" : "Compare"}</a>
+      <span class="sep">/</span>
+      <span>{A.name} vs {B.name}</span>
+    </nav>
+
+    <header class="cmp-hd">
+      <p class="eyebrow">{zh ? topic.zh : topic.en}</p>
+      <h1 class="mono">{A.name} <span class="vs">vs</span> {B.name}</h1>
+      <p class="cmp-lead">{lead}</p>
+    </header>
+
+    <section class="cmp-sec" aria-labelledby="at-a-glance">
+      <div class="cmp-sec-hd">
+        <h2 id="at-a-glance">{zh ? "关键数据" : "At a glance"}</h2>
+        <p class="cmp-hint">{zh ? `数据截至 ${fmtDate(now)}` : `Data as of ${fmtDate(now)}`}</p>
+      </div>
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th scope="col"><span class="sr-only">{zh ? "指标" : "Metric"}</span></th>
+            <th scope="col">
+              <a href={projectHref(A.slug, locale)}>{A.name}</a>
+            </th>
+            <th scope="col">
+              <a href={projectHref(B.slug, locale)}>{B.name}</a>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr>
+              <th scope="row">{r.label}</th>
+              <td class="mono">{r.a}</td>
+              <td class="mono">{r.b}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="cmp-sec" aria-labelledby="cadence">
+      <div class="cmp-sec-hd">
+        <h2 id="cadence">{zh ? "发布节奏" : "Release cadence"}</h2>
+      </div>
+      {cadenceLines.map((line) => <p class="cmp-p">{line}</p>)}
+    </section>
+
+    <section class="cmp-sec" aria-labelledby="choose">
+      <div class="cmp-sec-hd">
+        <h2 id="choose">{zh ? "怎么选" : "How to choose"}</h2>
+      </div>
+      <dl class="cmp-dl">
+        {chooseLines.map((c) => (
+          <>
+            <dt>{c.head}</dt>
+            <dd>{c.body}</dd>
+          </>
+        ))}
+      </dl>
+    </section>
+
+    <section class="cmp-sec" aria-labelledby="latest">
+      <div class="cmp-sec-hd">
+        <h2 id="latest">{zh ? "最近的发布记录" : "Latest releases"}</h2>
+      </div>
+      <div class="cmp-cols">
+        {[
+          { s: A, items: recentA },
+          { s: B, items: recentB },
+        ].map(({ s, items }) => (
+          <div class="cmp-col">
+            <h3 class="cmp-col-hd">
+              <a href={projectHref(s.slug, locale)} class="mono">{s.name}</a>
+              <span>{num(s.count)} {zh ? "个版本" : "releases"}</span>
+            </h3>
+            {items.length === 0 && <p class="cmp-empty">{zh ? "暂无记录" : "No releases indexed."}</p>}
+            {items.map((r) => <ReleaseRow release={r} locale={locale} hideProject />)}
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="cmp-sec" aria-labelledby="related">
+      <div class="cmp-sec-hd">
+        <h2 id="related">{zh ? "相关对比" : "Related comparisons"}</h2>
+        <p class="cmp-hint">
+          <a href={topicHref(topic, locale)}>{zh ? `全部 ${topic.zh} 项目` : `All ${topic.en} projects`} →</a>
+        </p>
+      </div>
+      <ul class="cmp-links">
+        {related.map((p) => (
+          <li>
+            <a href={pairHref(p, locale)}>
+              {projectStats(p.a)!.name} <span class="vs">vs</span> {projectStats(p.b)!.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</Shell>
+
+<style>
+  .cmp {
+    padding-top: var(--s10);
+    padding-bottom: var(--s20);
+  }
+  .cmp-hd {
+    padding-bottom: var(--s6);
+    border-bottom: 1px solid var(--ink);
+  }
+  .cmp-hd h1 {
+    font-size: clamp(1.7rem, 4vw, 2.5rem);
+    letter-spacing: -0.04em;
+    line-height: 1.12;
+    margin-top: var(--s3);
+  }
+  .vs {
+    color: var(--ink-4);
+    font-weight: 400;
+    font-size: 0.7em;
+    padding: 0 0.15em;
+  }
+  .cmp-lead {
+    margin-top: var(--s4);
+    max-width: 68ch;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink-2);
+  }
+  .cmp-sec {
+    padding-top: var(--s10);
+  }
+  .cmp-sec-hd {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s4);
+    padding-bottom: var(--s3);
+    border-bottom: 1px solid var(--line-2);
+  }
+  .cmp-sec-hd h2 {
+    font-size: clamp(1.15rem, 2vw, 1.4rem);
+    letter-spacing: -0.025em;
+  }
+  .cmp-hint,
+  .cmp-hint a {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-3);
+  }
+  .cmp-hint a:hover {
+    color: var(--accent);
+  }
+  .cmp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--s2);
+    font-size: 14px;
+  }
+  .cmp-table th,
+  .cmp-table td {
+    text-align: left;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .cmp-table thead th {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+    border-bottom: 1px solid var(--ink);
+  }
+  .cmp-table thead th a {
+    color: var(--ink);
+  }
+  .cmp-table tbody th {
+    font-weight: 400;
+    color: var(--ink-3);
+    font-size: 13px;
+    padding-right: var(--s4);
+    width: 42%;
+  }
+  .cmp-table tbody td {
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    width: 29%;
+  }
+  .cmp-p {
+    max-width: 72ch;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink-2);
+    padding-top: var(--s4);
+  }
+  .cmp-dl {
+    margin: var(--s4) 0 0;
+    display: grid;
+    gap: var(--s4);
+  }
+  .cmp-dl dt {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+  }
+  .cmp-dl dd {
+    margin: 4px 0 0;
+    max-width: 74ch;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink-2);
+  }
+  .cmp-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s8);
+    margin-top: var(--s4);
+  }
+  .cmp-col-hd {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s3);
+    padding-bottom: var(--s2);
+    border-bottom: 1px solid var(--line-2);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ink-3);
+  }
+  .cmp-col-hd a {
+    color: var(--ink);
+    font-size: 14px;
+  }
+  .cmp-empty {
+    padding: var(--s4) 0;
+    font-size: 13px;
+    color: var(--ink-4);
+  }
+  .cmp-links {
+    list-style: none;
+    padding: var(--s4) 0 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--s2) var(--s6);
+  }
+  .cmp-links a {
+    display: block;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .cmp-links a:hover {
+    color: var(--accent);
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  @media (max-width: 760px) {
+    .cmp-cols {
+      grid-template-columns: 1fr;
+      gap: var(--s6);
+    }
+    .cmp-table tbody th {
+      width: 50%;
+    }
+  }
+</style>

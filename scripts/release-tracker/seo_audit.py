@@ -36,6 +36,9 @@ ROBOTS_RE = re.compile(r'<meta\s+name="robots"\s+content="([^"]*)"', re.I)
 CANONICAL_RE = re.compile(r'<link[^>]+rel="canonical"[^>]+href="([^"]+)"', re.I)
 HREFLANG_RE = re.compile(r'<link[^>]+hreflang="([^"]+)"[^>]+href="([^"]+)"', re.I)
 TITLE_RE = re.compile(r"<title>(.*?)</title>", re.I | re.S)
+# 内容族：由数据批量生成的页面，最容易出现「模板化 / 缺结构化数据」的问题
+COMPARE_RE = re.compile(r"^(?:[a-z]{2}(?:-[a-z]{2,4})?/)?compare/[^/]+$", re.I)
+TOPIC_RE = re.compile(r"^(?:[a-z]{2}(?:-[a-z]{2,4})?/)?topics/(?!index$)[^/]+$", re.I)
 H1_RE = re.compile(r"<h1[^>]*>(.*?)</h1>", re.I | re.S)
 TAG_RE = re.compile(r"<[^>]+>")
 SITE_RE = re.compile(r'^\s*site:\s*["\']([^"\']+)["\']', re.M)
@@ -78,6 +81,10 @@ def audit() -> dict:
     hreflang_total = 0
     thin_samples: list[str] = []
     canonical_bad = 0
+    no_canonical = 0
+    family = Counter()
+    compare_no_faq = 0
+    compare_no_faq_samples: list[str] = []
     canonical_samples: list[dict] = []
     host_counter: Counter = Counter()
 
@@ -94,6 +101,8 @@ def audit() -> dict:
         # canonical 必须指向本站。写错域名会把整站权重送给别人，
         # 而且从页面上看不出来——只有把主机名抽出来比才知道。
         canon = CANONICAL_RE.search(text)
+        if not canon:
+            no_canonical += 1
         if canon:
             host = re.sub(r"^https?://([^/]+).*$", r"\1", canon.group(1))
             host_counter[host] += 1
@@ -110,6 +119,18 @@ def audit() -> dict:
             continue
 
         indexable_urls.append(url_path or "/")
+
+        # 内容族体检：对比页必须带 FAQPage（精选摘要的唯一入口），
+        # 专题页必须真有几个项目，否则就是薄内容。
+        bare = url_path.strip("/")
+        if COMPARE_RE.match(bare):
+            family["compare"] += 1
+            if '"FAQPage"' not in text:
+                compare_no_faq += 1
+                if len(compare_no_faq_samples) < 5:
+                    compare_no_faq_samples.append(url_path)
+        elif TOPIC_RE.match(bare):
+            family["topics"] += 1
 
         # hreflang 目标不得是不可索引页面
         for code, href in HREFLANG_RE.findall(text):
@@ -147,6 +168,10 @@ def audit() -> dict:
         "canonical_hosts": dict(host_counter.most_common(5)),
         "canonical_offsite": canonical_bad,
         "canonical_offsite_samples": canonical_samples,
+        "pages_without_canonical": no_canonical,
+        "families": dict(family),
+        "compare_missing_faq": compare_no_faq,
+        "compare_missing_faq_samples": compare_no_faq_samples,
         "thin_pages": sum(v["thin"] for v in stats.values()),
         "thin_samples": thin_samples,
     }
@@ -179,6 +204,12 @@ def main() -> None:
     if r["canonical_offsite"]:
         sample = r["canonical_offsite_samples"][0]
         print(f"  ⚠️ {r['canonical_offsite']:,} 个页面 canonical 指向站外，样例 {sample['page']} → {sample['canonical']}")
+    if r["families"]:
+        print(f"\n内容族: " + "  ".join(f"{k} {v:,}" for k, v in sorted(r["families"].items())))
+    if r["compare_missing_faq"]:
+        print(f"  ⚠️ {r['compare_missing_faq']} 个对比页缺 FAQPage，样例 {r['compare_missing_faq_samples'][0]}")
+    if r["pages_without_canonical"]:
+        print(f"  ⚠️ {r['pages_without_canonical']:,} 个可索引页缺 canonical")
     if r["thin_pages"]:
         print(f"薄内容页 {r['thin_pages']:,} 个，样例: {', '.join(r['thin_samples'][:5])}")
 
@@ -189,6 +220,10 @@ def main() -> None:
         problems.append(f"hreflang 指向 noindex 页面 {r['hreflang_to_noindex']} 条")
     if r["indexable"] > SHARD_LIMIT and r["sitemap_shards"] == 1:
         problems.append("可索引页超过单 sitemap 上限但未分片")
+    if r["pages_without_canonical"]:
+        problems.append(f"{r['pages_without_canonical']:,} 个可索引页缺 canonical")
+    if r["compare_missing_faq"]:
+        problems.append(f"{r['compare_missing_faq']} 个对比页缺 FAQPage 结构化数据")
 
     if problems:
         print("\n❌ " + "；".join(problems))

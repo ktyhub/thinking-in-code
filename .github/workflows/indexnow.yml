@@ -1,0 +1,37 @@
+name: IndexNow
+
+# 把新增 URL 推给 Bing / Yandex / Seznam / Naver，让它们在几小时内来抓，
+# 而不是等 sitemap 被轮询到（新站常常是几天到几周）。
+#
+# 只跑在部署完成之后：提交的 URL 必须真的可访问，否则抓取器拿到 404，
+# 这一批就等于白提交了。
+on:
+  workflow_run:
+    workflows: ["ci"]
+    types: [completed]
+  schedule:
+    - cron: "30 4 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: indexnow
+  cancel-in-progress: false
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    # workflow_run 触发时只在部署成功时继续
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    steps:
+      - uses: actions/checkout@v4
+
+      # 状态需要跨次保留：只提交「上次之后新增」的 URL，
+      # 否则每天把七千条全推一遍会被当成滥用。
+      - uses: actions/cache@v4
+        with:
+          path: .cache/indexnow.json
+          key: indexnow-${{ github.run_id }}
+          restore-keys: indexnow-
+
+      - name: 提交新增 URL
+        run: python3 scripts/release-tracker/indexnow.py --remote

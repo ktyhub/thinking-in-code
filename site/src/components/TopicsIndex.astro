@@ -1,0 +1,170 @@
+---
+/** 专题总览：所有专题的入口页，也是品类关键词的聚合入口 */
+import Shell from "../layouts/Shell.astro";
+import { t, localePath, type Locale } from "../lib/i18n";
+import { publicTopics, topicProjects, topicHref, allPairs, dataNow } from "../lib/catalog";
+import { longDate, num } from "../lib/format";
+
+interface Props {
+  locale: Locale;
+  canonicalPath?: string;
+}
+
+const { locale, canonicalPath } = Astro.props;
+const zh = locale === "zh";
+const topics = publicTopics();
+const now = dataNow();
+
+const rows = topics.map((topic) => {
+  const ps = topicProjects(topic);
+  return {
+    topic,
+    count: ps.length,
+    releases: ps.reduce((n, p) => n + p.count, 0),
+    active: ps.filter((p) => p.per90 > 0).length,
+    pairs: allPairs().filter((p) => p.topic.slug === topic.slug).length,
+    top: ps.slice(0, 3).map((p) => p.name),
+  };
+});
+
+const totalReleases = rows.reduce((n, r) => n + r.releases, 0);
+
+const title = zh ? "按专题浏览开源项目版本节奏" : "Browse open-source release activity by topic";
+const description = zh
+  ? `${topics.length} 个专题、${num(totalReleases)} 个版本。按近 90 天真实发布数排序，用于判断哪个项目在持续迭代、哪个已进入维护状态。`
+  : `${topics.length} topics covering ${num(totalReleases)} indexed releases, ranked by how often each project actually ships.`;
+
+const pageUrl = new URL(canonicalPath ?? Astro.url.pathname, Astro.site).href;
+const jsonLd = {
+  "@type": "CollectionPage",
+  "@id": `${pageUrl}#page`,
+  url: pageUrl,
+  name: title,
+  description,
+  inLanguage: zh ? "zh-CN" : "en",
+  isPartOf: { "@id": "https://www.stags.cn/#website" },
+  mainEntity: {
+    "@type": "ItemList",
+    numberOfItems: topics.length,
+    itemListElement: topics.map((topic, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: zh ? topic.zh : topic.en,
+      url: new URL(topicHref(topic, locale), Astro.site).href,
+    })),
+  },
+};
+---
+
+<Shell locale={locale} title={title} description={description} active="topics" jsonLd={jsonLd} canonicalPath={canonicalPath}>
+  <div class="wrap tx">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={localePath(locale, "/")}>{t(locale, "crumb.home")}</a>
+      <span class="sep">/</span>
+      <span>{zh ? "专题" : "Topics"}</span>
+    </nav>
+
+    <header class="tx-hd">
+      <p class="eyebrow">{zh ? "专题索引" : "Topic index"}</p>
+      <h1>{zh ? "按专题看版本节奏" : "Release activity by topic"}</h1>
+      <p class="tx-lead">
+        {zh
+          ? `${topics.length} 个专题，合计 ${num(totalReleases)} 个版本。每个专题按「近 90 天实际发布数」排序——比 star 数更能说明一个项目现在是否还在动。`
+          : `${topics.length} topics, ${num(totalReleases)} releases. Each one is ranked by how many versions shipped in the last 90 days — a better signal of current activity than star counts.`}
+      </p>
+      <p class="tx-meta mono">{zh ? "数据截至" : "Data as of"} {longDate(now, locale)}</p>
+    </header>
+
+    <div class="tx-grid">
+      {rows.map((r) => (
+        <a class="tx-card" href={topicHref(r.topic, locale)}>
+          <span class="tx-card-name">{zh ? r.topic.zh : r.topic.en}</span>
+          <span class="tx-card-blurb">{zh ? r.topic.blurbZh : r.topic.blurbEn}</span>
+          <span class="tx-card-top mono">{r.top.join(" · ")}</span>
+          <span class="tx-card-meta mono">
+            <span>{num(r.count)} {zh ? "项目" : "projects"}</span>
+            <span>{num(r.releases)} {zh ? "版本" : "releases"}</span>
+            <span>{num(r.active)} {zh ? "近 90 天活跃" : "active 90d"}</span>
+          </span>
+        </a>
+      ))}
+    </div>
+  </div>
+</Shell>
+
+<style>
+  .tx {
+    padding-top: var(--s10);
+    padding-bottom: var(--s20);
+  }
+  .tx-hd {
+    padding-bottom: var(--s6);
+    border-bottom: 1px solid var(--ink);
+  }
+  .tx-hd h1 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    margin-top: var(--s3);
+  }
+  .tx-lead {
+    margin-top: var(--s4);
+    max-width: 68ch;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink-2);
+  }
+  .tx-meta {
+    margin-top: var(--s3);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .tx-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-top: var(--s8);
+  }
+  .tx-card {
+    background: var(--paper);
+    padding: var(--s5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--s2);
+    min-height: 190px;
+    transition: background 0.14s ease;
+  }
+  .tx-card:hover {
+    background: var(--surface);
+  }
+  .tx-card-name {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .tx-card-blurb {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--ink-3);
+  }
+  .tx-card-top {
+    margin-top: auto;
+    font-size: 11.5px;
+    color: var(--ink-4);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .tx-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s3);
+    font-size: 11px;
+    color: var(--ink-3);
+    padding-top: var(--s2);
+    border-top: 1px solid var(--line);
+  }
+</style>

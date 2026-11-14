@@ -1,0 +1,352 @@
+---
+/**
+ * 专题页：一个品类（消息队列 / 智能体框架 / 向量检索…）下所有被收录项目的
+ * 活跃度横排。
+ *
+ * 这类页面对应「best open-source X」「X 更新频繁吗」「X 有哪些替代品」这组
+ * 搜索意图。和普通目录页的区别在于：排序依据是近 90 天真实发布数，不是
+ * 人工推荐或 star 数——这是本站独有的数据，也是它能排上去的原因。
+ */
+import Shell from "../layouts/Shell.astro";
+import { t, localePath, type Locale } from "../lib/i18n";
+import { projectHref } from "../lib/registry";
+import {
+  getTopic, topicProjects, allPairs, pairHref, publicTopics, topicHref, dataNow, projectStats,
+} from "../lib/catalog";
+import { longDate, num } from "../lib/format";
+
+interface Props {
+  locale: Locale;
+  slug: string;
+  canonicalPath?: string;
+}
+
+const { locale, slug, canonicalPath } = Astro.props;
+const zh = locale === "zh";
+const topic = getTopic(slug)!;
+const projects = topicProjects(topic);
+const now = dataNow();
+
+const totalReleases = projects.reduce((n, p) => n + p.count, 0);
+const active90 = projects.filter((p) => p.per90 > 0).length;
+const leader = projects[0];
+const pairs = allPairs().filter((p) => p.topic.slug === topic.slug).slice(0, 12);
+
+const fmt = (iso: string) => (iso ? longDate(iso, locale) : "—");
+const gap = (g: number | null) => (g === null ? "—" : zh ? `${g} 天` : `${g}d`);
+
+const name = zh ? topic.zh : topic.en;
+const blurb = zh ? topic.blurbZh : topic.blurbEn;
+
+const title = zh
+  ? `${name} 开源项目版本节奏排行`
+  : `${name}: open-source release cadence, ranked`;
+const description = zh
+  ? `收录 ${num(projects.length)} 个${name}项目、${num(totalReleases)} 个版本。按近 90 天实际发布数排序，含最新版本、发布间隔中位数与升级建议。`
+  : `${num(projects.length)} ${topic.en.toLowerCase()} projects and ${num(totalReleases)} indexed releases, ranked by how often they actually ship. Latest versions, median gap between releases, and where to compare them.`;
+
+const pageUrl = new URL(canonicalPath ?? Astro.url.pathname, Astro.site).href;
+
+const jsonLd = [
+  {
+    "@type": "CollectionPage",
+    "@id": `${pageUrl}#page`,
+    url: pageUrl,
+    name: title,
+    description,
+    inLanguage: zh ? "zh-CN" : "en",
+    isPartOf: { "@id": "https://www.stags.cn/#website" },
+    keywords: topic.keys.join(", "),
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: projects.length,
+      itemListElement: projects.slice(0, 30).map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: p.name,
+        url: new URL(projectHref(p.slug, locale), Astro.site).href,
+      })),
+    },
+  },
+  {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: zh ? "首页" : "Home", item: new URL(localePath(locale, "/"), Astro.site).href },
+      { "@type": "ListItem", position: 2, name: zh ? "专题" : "Topics", item: new URL(localePath(locale, "/topics"), Astro.site).href },
+      { "@type": "ListItem", position: 3, name, item: pageUrl },
+    ],
+  },
+  {
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: zh ? `${name}里哪个项目发布最频繁？` : `Which ${topic.en.toLowerCase()} project releases most often?`,
+        a: zh
+          ? `按近 90 天的实际发布数，${leader.name} 排第一：${num(leader.per90)} 个版本，发布间隔中位数 ${gap(leader.medianGap)}，最新版本 ${leader.latest?.version ?? "—"}（${fmt(leader.lastDate)}）。`
+          : `By releases in the last 90 days, ${leader.name} leads with ${num(leader.per90)} versions and a median gap of ${gap(leader.medianGap)} between releases. Its latest version is ${leader.latest?.version ?? "—"} (${fmt(leader.lastDate)}).`,
+      },
+      {
+        "@type": "Question",
+        name: zh ? `本站收录了多少个${name}项目？` : `How many ${topic.en.toLowerCase()} projects are tracked?`,
+        a: zh
+          ? `目前 ${num(projects.length)} 个，合计 ${num(totalReleases)} 个版本，其中 ${num(active90)} 个在最近 90 天内有过发布。`
+          : `${num(projects.length)} projects, ${num(totalReleases)} indexed releases in total, ${num(active90)} of which published within the last 90 days.`,
+      },
+    ],
+  },
+];
+---
+
+<Shell locale={locale} title={title} description={description} active="topics" jsonLd={jsonLd} canonicalPath={canonicalPath}>
+  <div class="wrap tp">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={localePath(locale, "/")}>{t(locale, "crumb.home")}</a>
+      <span class="sep">/</span>
+      <a href={localePath(locale, "/topics")}>{zh ? "专题" : "Topics"}</a>
+      <span class="sep">/</span>
+      <span>{name}</span>
+    </nav>
+
+    <header class="tp-hd">
+      <p class="eyebrow">{zh ? "专题" : "Topic"}</p>
+      <h1>{name}</h1>
+      <p class="tp-lead">{blurb}</p>
+      <dl class="tp-stats">
+        <div><dt>{zh ? "项目" : "Projects"}</dt><dd class="mono">{num(projects.length)}</dd></div>
+        <div><dt>{zh ? "版本" : "Releases"}</dt><dd class="mono">{num(totalReleases)}</dd></div>
+        <div><dt>{zh ? "近 90 天有发布" : "Active in 90d"}</dt><dd class="mono">{num(active90)}</dd></div>
+        <div><dt>{zh ? "数据截至" : "As of"}</dt><dd class="mono">{fmt(now)}</dd></div>
+      </dl>
+    </header>
+
+    <section class="tp-sec" aria-labelledby="rank">
+      <div class="tp-sec-hd">
+        <h2 id="rank">{zh ? "按发布频率排序" : "Ranked by release frequency"}</h2>
+        <p class="tp-hint">{zh ? "近 90 天发布数 → 收录版本数 → 最近发布日期" : "90-day releases → total indexed → latest date"}</p>
+      </div>
+      <table class="tp-table">
+        <thead>
+          <tr>
+            <th scope="col">{zh ? "项目" : "Project"}</th>
+            <th scope="col">{zh ? "最新版本" : "Latest"}</th>
+            <th scope="col">{zh ? "近 90 天" : "90d"}</th>
+            <th scope="col">{zh ? "间隔中位数" : "Median gap"}</th>
+            <th scope="col">{zh ? "收录" : "Indexed"}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {projects.map((p) => (
+            <tr>
+              <th scope="row">
+                <a href={projectHref(p.slug, locale)} class="mono">{p.name}</a>
+                {p.repo && <span class="tp-repo">{p.repo}</span>}
+              </th>
+              <td class="mono">{p.latest?.version ?? "—"}<span class="tp-date">{fmt(p.lastDate)}</span></td>
+              <td class="mono tp-num">{num(p.per90)}</td>
+              <td class="mono tp-num">{gap(p.medianGap)}</td>
+              <td class="mono tp-num">{num(p.count)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    {pairs.length > 0 && (
+      <section class="tp-sec" aria-labelledby="cmp">
+        <div class="tp-sec-hd">
+          <h2 id="cmp">{zh ? "两两对比" : "Head-to-head"}</h2>
+          <p class="tp-hint">{zh ? `${num(pairs.length)} 组` : `${pairs.length} comparisons`}</p>
+        </div>
+        <ul class="tp-links">
+          {pairs.map((p) => (
+            <li>
+              <a href={pairHref(p, locale)}>
+                {projectStats(p.a)!.name} <span class="vs">vs</span> {projectStats(p.b)!.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <nav class="tp-more" aria-label="Other topics">
+      <h2>{zh ? "其他专题" : "Other topics"}</h2>
+      <ul>
+        {publicTopics().filter((x) => x.slug !== topic.slug).map((x) => (
+          <li><a href={topicHref(x, locale)}>{zh ? x.zh : x.en}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</Shell>
+
+<style>
+  .tp {
+    padding-top: var(--s10);
+    padding-bottom: var(--s20);
+  }
+  .tp-hd {
+    padding-bottom: var(--s6);
+    border-bottom: 1px solid var(--ink);
+  }
+  .tp-hd h1 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    margin-top: var(--s3);
+  }
+  .tp-lead {
+    margin-top: var(--s4);
+    max-width: 68ch;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink-2);
+  }
+  .tp-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s8);
+    margin: var(--s6) 0 0;
+  }
+  .tp-stats div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tp-stats dt {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .tp-stats dd {
+    margin: 0;
+    font-size: 18px;
+    font-variant-numeric: tabular-nums;
+  }
+  .tp-sec {
+    padding-top: var(--s10);
+  }
+  .tp-sec-hd {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s4);
+    padding-bottom: var(--s3);
+    border-bottom: 1px solid var(--line-2);
+  }
+  .tp-sec-hd h2 {
+    font-size: clamp(1.15rem, 2vw, 1.4rem);
+    letter-spacing: -0.025em;
+  }
+  .tp-hint {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-3);
+  }
+  .tp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: var(--s2);
+    font-size: 14px;
+  }
+  .tp-table th,
+  .tp-table td {
+    text-align: left;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: baseline;
+  }
+  .tp-table thead th {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+    border-bottom: 1px solid var(--ink);
+  }
+  .tp-table thead th:not(:first-child),
+  .tp-table td:not(:first-child) {
+    text-align: right;
+    padding-left: var(--s4);
+  }
+  .tp-table tbody th {
+    font-weight: 400;
+  }
+  .tp-repo {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-4);
+    margin-top: 2px;
+  }
+  .tp-date {
+    display: block;
+    font-size: 11px;
+    color: var(--ink-4);
+    margin-top: 2px;
+  }
+  .tp-num {
+    font-variant-numeric: tabular-nums;
+  }
+  .tp-links {
+    list-style: none;
+    padding: var(--s4) 0 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--s2) var(--s6);
+  }
+  .tp-links a {
+    display: block;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+    color: var(--ink-2);
+  }
+  .tp-links a:hover {
+    color: var(--accent);
+  }
+  .vs {
+    color: var(--ink-4);
+    font-size: 0.85em;
+    padding: 0 0.1em;
+  }
+  .tp-more {
+    margin-top: var(--s12);
+    padding-top: var(--s5);
+    border-top: 1px solid var(--ink);
+  }
+  .tp-more h2 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .tp-more ul {
+    list-style: none;
+    padding: var(--s3) 0 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s2) var(--s5);
+  }
+  .tp-more a {
+    font-size: 13.5px;
+    color: var(--ink-2);
+  }
+  .tp-more a:hover {
+    color: var(--accent);
+  }
+  @media (max-width: 640px) {
+    .tp-table thead th:nth-child(4),
+    .tp-table td:nth-child(4) {
+      display: none;
+    }
+  }
+</style>

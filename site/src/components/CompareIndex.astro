@@ -1,0 +1,171 @@
+---
+/**
+ * 对比总览：486 组对比的入口。这一页同时承担内链枢纽的作用——
+ * 每个对比页只被链到一次也能保证三层深度内可达，抓取预算才不会被浪费。
+ */
+import Shell from "../layouts/Shell.astro";
+import { t, localePath, type Locale } from "../lib/i18n";
+import { allPairs, publicTopics, pairHref, projectStats, dataNow, topicHref } from "../lib/catalog";
+import { longDate, num } from "../lib/format";
+
+interface Props {
+  locale: Locale;
+  canonicalPath?: string;
+}
+
+const { locale, canonicalPath } = Astro.props;
+const zh = locale === "zh";
+
+const groups = publicTopics()
+  .map((topic) => ({
+    topic,
+    pairs: allPairs().filter((p) => p.topic.slug === topic.slug),
+  }))
+  .filter((g) => g.pairs.length > 0);
+
+const total = groups.reduce((n, g) => n + g.pairs.length, 0);
+const now = dataNow();
+
+const title = zh ? "开源项目两两对比" : "Open-source project comparisons";
+const description = zh
+  ? `${num(total)} 组基于真实发布数据的对比：版本数、升级频率、预发布占比，逐项并排。`
+  : `${num(total)} head-to-head comparisons built on real release data: version counts, upgrade frequency and prerelease share, side by side.`;
+
+const pageUrl = new URL(canonicalPath ?? Astro.url.pathname, Astro.site).href;
+const jsonLd = {
+  "@type": "CollectionPage",
+  "@id": `${pageUrl}#page`,
+  url: pageUrl,
+  name: title,
+  description,
+  inLanguage: zh ? "zh-CN" : "en",
+  isPartOf: { "@id": "https://www.stags.cn/#website" },
+};
+---
+
+<Shell locale={locale} title={title} description={description} active="compare" jsonLd={jsonLd} canonicalPath={canonicalPath}>
+  <div class="wrap cx">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={localePath(locale, "/")}>{t(locale, "crumb.home")}</a>
+      <span class="sep">/</span>
+      <span>{zh ? "对比" : "Compare"}</span>
+    </nav>
+
+    <header class="cx-hd">
+      <p class="eyebrow">{zh ? "选型对比" : "Comparisons"}</p>
+      <h1>{zh ? "两两对比" : "Head-to-head"}</h1>
+      <p class="cx-lead">
+        {zh
+          ? `${num(total)} 组对比，全部由本站收录的 Release 数据算出：谁发版更勤、升级窗口多长、有多少预发布版本。没有主观打分，只有可以核对的数字。`
+          : `${num(total)} comparisons, all computed from indexed release data: who ships more often, how long the upgrade window is, how many builds are prereleases. No scores, only numbers you can verify.`}
+      </p>
+      <p class="cx-meta mono">{zh ? "数据截至" : "Data as of"} {longDate(now, locale)}</p>
+    </header>
+
+    {groups.map((g) => (
+      <section class="cx-sec" aria-labelledby={`g-${g.topic.slug}`}>
+        <div class="cx-sec-hd">
+          <h2 id={`g-${g.topic.slug}`}>{zh ? g.topic.zh : g.topic.en}</h2>
+          <a class="cx-more mono" href={topicHref(g.topic, locale)}>
+            {num(g.pairs.length)} {zh ? "组" : "pairs"} →
+          </a>
+        </div>
+        <ul class="cx-list">
+          {g.pairs.map((p) => (
+            <li>
+              <a href={pairHref(p, locale)}>
+                <span class="mono">{projectStats(p.a)!.name}</span>
+                <span class="vs">vs</span>
+                <span class="mono">{projectStats(p.b)!.name}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+</Shell>
+
+<style>
+  .cx {
+    padding-top: var(--s10);
+    padding-bottom: var(--s20);
+  }
+  .cx-hd {
+    padding-bottom: var(--s6);
+    border-bottom: 1px solid var(--ink);
+  }
+  .cx-hd h1 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    margin-top: var(--s3);
+  }
+  .cx-lead {
+    margin-top: var(--s4);
+    max-width: 68ch;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink-2);
+  }
+  .cx-meta {
+    margin-top: var(--s3);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .cx-sec {
+    padding-top: var(--s8);
+  }
+  .cx-sec-hd {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s4);
+    padding-bottom: var(--s2);
+    border-bottom: 1px solid var(--line-2);
+  }
+  .cx-sec-hd h2 {
+    font-size: 15px;
+    letter-spacing: -0.01em;
+  }
+  .cx-more {
+    font-size: 11.5px;
+    color: var(--ink-3);
+  }
+  .cx-more:hover {
+    color: var(--accent);
+  }
+  .cx-list {
+    list-style: none;
+    padding: var(--s2) 0 0;
+    margin: 0;
+    columns: 2;
+    column-gap: var(--s8);
+  }
+  .cx-list li {
+    break-inside: avoid;
+  }
+  .cx-list a {
+    display: block;
+    padding: 6px 0;
+    font-size: 13.5px;
+    color: var(--ink-2);
+    border-bottom: 1px solid var(--line);
+  }
+  .cx-list a:hover {
+    color: var(--accent);
+  }
+  .vs {
+    color: var(--ink-4);
+    font-size: 11px;
+    padding: 0 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  @media (max-width: 700px) {
+    .cx-list {
+      columns: 1;
+    }
+  }
+</style>
