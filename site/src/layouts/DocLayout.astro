@@ -9,9 +9,14 @@ import { getNavGroups, breadcrumbs } from "../lib/nav";
 interface Props {
   frontmatter: { title?: string; description?: string };
   urlPath: string;
+  /**
+   * 旧站语言占位页（docs/en、docs/ar… 各一篇）只是为了让老链接不 404，
+   * 内容是路径拼出来的标题 + 空正文，属于典型薄内容，必须 noindex。
+   */
+  noindex?: boolean;
 }
 
-const { frontmatter, urlPath } = Astro.props;
+const { frontmatter, urlPath, noindex = false } = Astro.props;
 const groups = getNavGroups();
 const topKey = urlPath.split("/").filter(Boolean)[1] ?? "";
 const group = groups.find((g) => g.key === topKey);
@@ -19,7 +24,7 @@ const crumbs = breadcrumbs(urlPath.replace(/\/$/, ""));
 const isCurrent = (href: string) => urlPath === href || urlPath === `${href}/`;
 ---
 
-<Shell locale="zh" title={frontmatter.title} description={frontmatter.description}>
+<Shell locale="zh" title={frontmatter.title} description={frontmatter.description} noindex={noindex}>
   <div class="wrap doc-shell">
     <aside class="doc-side">
       <h3>{group?.title ?? "技术笔记"}</h3>

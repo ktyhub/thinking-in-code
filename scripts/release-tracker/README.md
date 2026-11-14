@@ -101,6 +101,37 @@ python scripts/release-tracker/gen_summaries.py --limit 20
 
 也可以在 Actions 页手动触发 `daily-release-tracker`（`workflow_dispatch`）。摘要翻译步骤设了 `continue-on-error`，免费端点偶发限流不会阻断当天采集内容上线。
 
+## 扩语言与容量规划
+
+扩语言前先跑账本，别凭感觉：
+
+```bash
+# 百万页三条路线的真实账本（页数/体积/构建/免费额度占用/翻译量）
+python scripts/release-tracker/plan_million.py
+python scripts/release-tracker/plan_million.py --langs 35 --pv 0.3   # 自定义语言数与页均访问
+
+# 发布前 SEO 审计：闸门与产物是否一致、hreflang 是否指向 noindex、薄内容页
+python scripts/release-tracker/seo_audit.py
+python scripts/release-tracker/seo_audit.py --strict                 # CI 门禁用，有问题退出码 1
+```
+
+完整方案见 [`MILLION_PAGES.md`](./MILLION_PAGES.md)。三条结论：
+
+1. **全静态预渲染 249 种语言不可行** —— 82.9 万页 / 17.4 GB / 构建 13.3 小时，GitHub Pages 只剩 1 GB、Cloudflare Pages 只剩 2 万文件
+2. **可行的是混合架构** —— 7 种主力语言静态（0.11 GB，占 GH Pages 11.4%），其余 242 种由边缘函数按需渲染（数据 0.68 GB，占 R2 免费额度 6.8%）
+3. **百万 URL ≠ 百万收录页** —— URL 空间可以铺满，但 sitemap 只提交 `index-gate.json` 放量的语言，否则触发 Google 的 scaled content abuse 判定
+
+## 索引闸门（放量开关）
+
+`site/src/data/index-gate.json` 决定哪些语言允许被搜索引擎收录。
+
+- 新增语言**默认 noindex**：页面照常生成、能访问、能分享，但不进 sitemap、不参与排名
+- 放开某个语言 = 把它改成 `status: "index"`，跑构建，去 Search Console 重提交 sitemap
+- 闸门关闭的语言会自动从 hreflang 里剔除（noindex 页上的 hreflang 会被忽略，留着是自相矛盾的信号）
+- 未放量的语言用旧 URL 访问时不受影响，`trailingSlash: "ignore"` 保证不跳转
+
+放量节奏写在 `index-gate.json` 的 `nextBatches` 里：批次 2 是 9 种 Tier 2 语言（只开聚合页），批次 3 是剩余 Tier 2。每批观察 4 周抓取与展示数据再决定下一批。
+
 ## 成本与风险
 
 - 全部通道均为免费额度或免密公开端点，**预期成本 0**；未启用任何付费 API、未开启自动续费
