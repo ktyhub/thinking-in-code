@@ -3,6 +3,7 @@
 import Shell from "../layouts/Shell.astro";
 import { t, localePath, type Locale } from "../lib/i18n";
 import { publicTopics, topicProjects, topicHref, allPairs, dataNow } from "../lib/catalog";
+import { orderTopics } from "../lib/loop";
 import { longDate, num } from "../lib/format";
 
 interface Props {
@@ -12,7 +13,8 @@ interface Props {
 
 const { locale, canonicalPath } = Astro.props;
 const zh = locale === "zh";
-const topics = publicTopics();
+// 闭环可能按真实搜索点击重排；没配置时保持「近 90 天发布数」的默认顺序
+const topics = orderTopics(publicTopics(), (t) => t.slug);
 const now = dataNow();
 
 const rows = topics.map((topic) => {
