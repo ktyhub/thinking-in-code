@@ -6,6 +6,7 @@
 import Shell from "../layouts/Shell.astro";
 import { t, localePath, type Locale } from "../lib/i18n";
 import { allPairs, publicTopics, pairHref, projectStats, dataNow, topicHref } from "../lib/catalog";
+import { featuredPairSlugs, isPairSuppressed } from "../lib/loop";
 import { longDate, num } from "../lib/format";
 
 interface Props {
@@ -16,14 +17,28 @@ interface Props {
 const { locale, canonicalPath } = Astro.props;
 const zh = locale === "zh";
 
+/*
+ * 闭环给出的两类调整都在这一页落地：
+ *   featured  已经在真实搜索里拿到点击的组合，置顶
+ *   suppress  窗口内零展示的组合，从内链撤掉（URL 保留）
+ * 撤掉不等于删除页面——页面还在，只是不再从这里分权重过去。
+ */
+const featuredSlugs = featuredPairSlugs();
+const all = allPairs();
+const featured = featuredSlugs
+  .map((slug) => all.find((p) => p.slug === slug))
+  .filter((p): p is (typeof all)[number] => Boolean(p) && !isPairSuppressed(p!.slug));
+
 const groups = publicTopics()
   .map((topic) => ({
     topic,
-    pairs: allPairs().filter((p) => p.topic.slug === topic.slug),
+    pairs: all.filter(
+      (p) => p.topic.slug === topic.slug && !isPairSuppressed(p.slug) && !featuredSlugs.includes(p.slug)
+    ),
   }))
   .filter((g) => g.pairs.length > 0);
 
-const total = groups.reduce((n, g) => n + g.pairs.length, 0);
+const total = groups.reduce((n, g) => n + g.pairs.length, 0) + featured.length;
 const now = dataNow();
 
 const title = zh ? "开源项目两两对比" : "Open-source project comparisons";
@@ -61,6 +76,26 @@ const jsonLd = {
       </p>
       <p class="cx-meta mono">{zh ? "数据截至" : "Data as of"} {longDate(now, locale)}</p>
     </header>
+
+    {featured.length > 0 && (
+      <section class="cx-sec cx-feat" aria-labelledby="cx-featured">
+        <div class="cx-sec-hd">
+          <h2 id="cx-featured">{zh ? "最常被拿来比较的" : "Most compared"}</h2>
+          <span class="cx-more mono">{num(featured.length)}</span>
+        </div>
+        <ul class="cx-list">
+          {featured.map((p) => (
+            <li>
+              <a href={pairHref(p, locale)}>
+                <span class="mono">{projectStats(p.a)!.name}</span>
+                <span class="vs">vs</span>
+                <span class="mono">{projectStats(p.b)!.name}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
 
     {groups.map((g) => (
       <section class="cx-sec" aria-labelledby={`g-${g.topic.slug}`}>
@@ -116,6 +151,12 @@ const jsonLd = {
   }
   .cx-sec {
     padding-top: var(--s8);
+  }
+  .cx-feat {
+    padding-top: var(--s6);
+  }
+  .cx-feat .cx-sec-hd h2 {
+    color: var(--ink);
   }
   .cx-sec-hd {
     display: flex;

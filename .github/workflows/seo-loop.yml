@@ -1,0 +1,109 @@
+name: SEO Loop
+
+# 每周一次闭环：结算到期实验 → 采搜索数据 → 生成提案 → 边界内执行 → 复盘。
+#
+# 为什么不每天都跑：一次变更的观测窗是 28 天（CTR 类 42 天）。跑得比观测窗
+# 更勤，等于在数据还没反映上一轮效果时又改一轮，所有实验互相污染，最后
+# 一条结论都得不出来。每周一次，加上账本里的冷却期，才是可测的节奏。
+#
+# 写回的是配置（索引闸门 / 排序 / 内部链接 / 采集优先级），不是页面代码。
+# 提交后由 ci.yml 正常部署，所以改动会和普通提交一样经过构建与审计。
+
+on:
+  schedule:
+    - cron: "0 5 * * 1"      # 每周一 05:00 UTC
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "只提案不写盘"
+        type: boolean
+        default: false
+
+concurrency:
+  group: seo-loop
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  loop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 只有配了服务账号才装签名库；没配就走 Bing / 手工导出通道
+      - name: 准备 GSC 凭据
+        if: ${{ secrets.GSC_SA_JSON != '' }}
+        run: |
+          echo '${{ secrets.GSC_SA_JSON }}' > /tmp/gsc-sa.json
+          echo "GSC_SERVICE_ACCOUNT=/tmp/gsc-sa.json" >> "$GITHUB_ENV"
+
+      - name: 安装依赖
+        if: ${{ secrets.GSC_SA_JSON != '' }}
+        run: pip install --quiet cryptography
+
+      # 需要 dist 里的 URL 清单来判断哪些页面零展示（判死规则）
+      - name: 取当前线上 URL 清单
+        run: |
+          curl -sf https://www.stags.cn/sitemap-index.xml -o /tmp/smi.xml || true
+          mkdir -p site/dist
+          if [ -f /tmp/smi.xml ]; then
+            for u in $(grep -o '<loc>[^<]*</loc>' /tmp/smi.xml | sed 's/<[^>]*>//g'); do
+              curl -sf "$u" -o "site/dist/$(basename "$u")" || true
+            done
+          fi
+          ls site/dist || true
+
+      - name: 运行闭环
+        env:
+          BING_WEBMASTER_KEY: ${{ secrets.BING_WEBMASTER_KEY }}
+        run: |
+          FLAG=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then FLAG="--no-telemetry"; fi
+          python3 scripts/release-tracker/loop.py --apply $FLAG | tee /tmp/report.txt
+
+      - name: 提交变更
+        run: |
+          git config user.name  "seo-loop"
+          git config user.email "seo-loop@users.noreply.github.com"
+          if git diff --quiet -- site/src/data scripts/release-tracker/config.json data/; then
+            echo "本轮无变更"
+            exit 0
+          fi
+          REV=$(python3 -c "import json;print(json.load(open('site/src/data/loop-state.json'))['revision'])")
+          SUMMARY=$(python3 - <<'PY'
+          import json, pathlib
+          p = pathlib.Path("data/seo/proposals.json")
+          if not p.exists():
+              print("无提案")
+              raise SystemExit
+          d = json.loads(p.read_text())
+          for a in d.get("actions", []):
+              print(f"- {a['rule']}: {a['target']}")
+          PY
+          )
+          git add -A site/src/data scripts/release-tracker/config.json data/
+          git commit -q -m "chore(loop): 闭环第 ${REV} 轮 — 按搜索表现调整策略
+
+          ${SUMMARY}
+
+          判据与基线见 data/loop-ledger.jsonl，如需回滚：
+          python3 scripts/release-tracker/loop.py rollback <id>"
+          git push
+
+      - name: 报告入摘要
+        if: always()
+        run: |
+          {
+            echo '### SEO 闭环报告'
+            echo '```'
+            tail -60 /tmp/report.txt 2>/dev/null || echo '未产出报告'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
