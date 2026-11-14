@@ -1,82 +1,97 @@
+---
+title: "shardingsphere 5.3.0"
+project: "shardingsphere"
+repo: "apache/shardingsphere"
+tag: "5.3.0"
+published: "2023-01-08"
+type: "minor"
+lang: "zh"
+---
+
 # shardingsphere 5.3.0
 
-### API 变更
+### API 变化
 
-1. DistSQL: 重构语法 API，请参考用户手册
-2. Proxy: 更改全局规则的配置样式，移除感叹号
-3. Proxy: 允许零配置启动，当没有权限配置时启用默认账户 root/root
-4. Proxy: 移除默认的 logback.xml，使用 API 初始化
-5. JDBC: 移除 Spring 配置，改用 Driver + YAML 配置
+1. DistSQL：重构语法API，请参考用户手册
+1.Proxy：更改全局规则的配置样式，去掉感叹号
+1、Proxy：允许零配置启动，无权限配置时启用默认账户root/root
+1.Proxy：去掉默认的logback.xml，使用API初始化
+1. JDBC：去掉Spring配置，改用Driver + YAML配置
 
 ### 增强功能
 
-1. DistSQL: 新增语法 REFRESH DATABASE METADATA，刷新逻辑数据库元数据
-2. Kernel: 支持 DistSQL REFRESH DATABASE METADATA 从治理中心加载配置并重建 MetaDataContext
-3. 支持 postgresql/openGauss 设置事务隔离级别
-4. Scaling: 增加库存任务进度更新频率
-5. Scaling: DATA_MATCH 一致性检查支持断点续传
-6. Scaling: 支持通过 DistSQL 删除一致性检查任务
-7. Scaling: 在任务列表 DistSQL 响应中将列名从 sharding_total_count 重命名为 job_item_count
-8. Scaling: 在增量任务 SQL 中添加分片列以避免广播路由
-9. Scaling: 在生成 SQL 时可以更新分片列
-10. Scaling: 改进 DATA_MATCH 一致性检查的列值读取器
-11. DistSQL: 优化加密 DistSQL 语法，支持 like 查询算法
-12. DistSQL: 在 REGISTER STORAGE UNIT 时添加属性值检查
-13. DistSQL: 在 DROP RULE 时同时移除无用的算法
-14. DistSQL: EXPORT DATABASE CONFIGURATION 支持广播表
-15. DistSQL: REGISTER STORAGE UNIT 支持异构数据源
-16. Encrypt: 支持 Encrypt LIKE 功能
-17. 执行跨多个分片的 DML 语句时自动启动分布式事务
-18. Kernel: 支持 PostgreSQL 和 openGauss 的客户端 \d
-19. Kernel: 支持当列包含空值时的 select group by, order by 语句
-20. Kernel: 支持解析 PostgreSQL/openGauss Insert 的 RETURNING 子句
-21. Kernel: SQL HINT 性能提升
-22. Kernel: 支持解析 mysql case when then 语句
-23. Kernel: 支持数据源级别的异构数据库网关
-24. (实验) Sharding: 添加分片缓存插件
-25. Proxy: 支持更多 PostgreSQL 日期时间格式
-26. Proxy: 支持 MySQL COM_RESET_CONNECTION
-27. Scaling: 改进 MySQLBinlogEventType.valueOf 以支持未知事件类型
-28. Kernel: 支持联邦中的 case when
+1.DistSQL：新语法REFRESH DATABASE METADATA，刷新逻辑数据库元数据
+1.内核：支持DistSQL REFRESH DATABASE METADATA从治理中心加载配置并重建MetaDataContext
+1.支持postgresql/openGauss设置事务隔离级别
+1. 扩展：增加盘点任务进度更新频率
+1.扩展：DATA_MATCH一致性检查支持断点续传
+1. 扩展：支持通过DistSQL删除一致性检查作业
+1. 扩展：将作业列表 DistSQL 响应中的列从 sharding_total_count 重命名为 job_item_count
+1. 扩展：增量任务SQL中添加分片列，避免广播路由
+1. Scaling：生成SQL时可以更新Sharding列
+1. 扩展：改进列值读取器以进行 DATA_MATCH 一致性检查
+1.DistSQL：加密DistSQL语法优化，支持like查询算法
+1. DistSQL：注册存储单元时添加属性值检查
+1.DistSQL：DROP RULE的同时去除无用的算法
+1. DistSQL：EXPORT DATABASE CONFIGURATION 支持广播表
+1. DistSQL：REGISTER STORAGE UNIT支持异构数据源
+1. 加密：支持Encrypt LIKE功能
+1、跨多个分片执行DML语句时自动启动分布式事务
+1. 内核：支持client \d for PostgreSQL和openGauss
+1.内核：支持列包含空值时的select group by、order by语句
+1. 内核：支持解析PostgreSQL/openGauss Insert的RETURNING子句
+1.内核：SQL HINT性能提升
+1. 内核：then语句解析时支持mysql case
+1、内核：支持数据源级异构数据库网关
+1.（实验）Sharding：添加分片缓存插件
+1. Proxy：支持更多PostgreSQL日期时间格式
+1.代理：支持MySQL COM_RESET_CONNECTION
+1. 扩展：改进 MySQLBinlogEventType.valueOf 以支持未知事件类型
+1. 内核：联邦时的支持情况
 
-### Bug 修复
+### 错误修复
 
-1. Scaling: 修复在删除任务时创建的屏障节点
-2. Scaling: 修复在 DATA_MATCH 一致性检查中部分列值可能被忽略的问题
-3. Scaling: 修复一致性检查中 jdbc url 参数未更新的问题
-4. Scaling: 修复表分片算法类型 INLINE 区分大小写的问题
-5. Scaling: 修复 MySQL 增量任务需要 mysql 系统数据库权限的问题
-6. Proxy: 修复在没有存储节点时执行 select SQL 的 NPE 问题
-7. Proxy: 支持在单播场景中进行 DATABASE_PERMITTED 权限验证
-8. Kernel: 修复 show compute nodes 中 worker-id 的错误值
-9. Kernel: 修复当可读数据源数量与权重算法的权重配置不相等时的路由错误
-10. Kernel: 修复多个读写分离组引用相同负载均衡器名称时负载均衡器失效的问题
-11. Kernel: 修复无法禁用和启用计算节点的问题
-12. JDBC: 修复在 ShardingSphereDriver 集群模式下启动时数据源关闭的问题
-13. Kernel: 修复当绑定表的逻辑表名与实际表名部分一致时的错误重写结果
-14. Kernel: 修复在未配置规则的情况下使用 SpringBoot 启动时的异常
-15. Encrypt: 修复 Encrypt 值为空时的空指针异常
-16. Kernel: 修复 oracle 解析不支持 varchar2 指定类型的问题
-17. Kernel: 修复事务中序列标志判断错误
-18. Kernel: 修复由于 wasNull 变化导致的游标获取错误
-19. Kernel: 修复刷新元数据时的 alter transaction rule 错误
-20. Encrypt: 修复在 Encrypt 场景下执行调用过程语句时出现的 EncryptRule 转换为 TransparentRule 异常
-21. Encrypt: 修复由简写投影中的 ExpressionProjection 引起的异常
-22. Proxy: 修复 PostgreSQL Proxy int2 负值解码不正确的问题
-23. Proxy: PostgreSQL/openGauss 支持描述插入返回子句
-24. Proxy: 修复连接 Proxy 时 gsql 3.0 可能卡住的问题
-25. Proxy: 修复在 Proxy 后端检查 SQL 时参数丢失的问题
-26. Proxy: 启用 MySQL Proxy 编码大包
-27. Kernel: 修复 oracle 解析注释时没有空格的问题
-28. DistSQL: 修复加密表的 show create table
+1. 扩展：修复删除作业时创建的屏障节点
+1. Scaling：修复DATA_MATCH一致性检查中可能会忽略部分列值的问题
+1. Scaling：修复一致性检查中jdbc url参数未更新的问题
+1. Scaling：修复分表算法类型 INLINE 区分大小写
+1. 扩展：修复MySQL上的增量任务需要mysql系统数据库权限
+1. Proxy：修复无存储节点执行select SQL时的NPE
+1、Proxy：支持单播场景下的DATABASE_PERMITTED权限验证
+1.内核：修复显示计算节点中worker-id的错误值
+1.内核：修复当可读数据源数量与Weight算法的权重配置不相等时的路由错误
+1.内核：修复多组读写分割引用同一个负载均衡器名称，导致负载均衡器失败的问题
+1.内核：修复无法禁用和启用计算节点的问题
+1. JDBC：修复ShardingSphereDriver集群模式启动时关闭数据源的问题
+1.内核：修复绑定表逻辑表名部分与实际表名一致、部分不一致时重写结果错误的问题
+1.内核：修复在不配置规则的情况下使用SpringBoot时启动异常的问题
+1. Encrypt：修复Encrypt值为null时空指针异常
+1.内核：修复oracle解析不支持varchar2指定类型
+1.内核：修复事务内串行标志判断错误
+1. 内核：修复 wasNull 更改导致的游标获取错误
+1.内核：修复刷新元数据时alter transaction规则错误
+1. Encrypt：修复Encrypt场景下执行call procedure语句时发生的EncryptRule强制转换为TransparentRule异常
+1. Encrypt：修复速记投影中ExpressionProjection导致的异常
+1. Proxy：修复PostgreSQL Proxy int2负值解码不正确的问题
+1.代理：PostgreSQL/openGauss支持描述插入返回子句
+1. Proxy：修复 gsql 3.0 连接 Proxy 时可能卡住的问题
+1. Proxy：修复Proxy后端检查SQL时丢失参数的问题
+1. Proxy：启用MySQL Proxy对大数据包进行编码
+1.内核：修复oracle解析注释无空格错误
+1. DistSQL：修复加密表的显示创建表问题
 
 ### 重构
 
-1. Scaling: 在生成 SQL 时如果是 SQL 关键字则反转表名和列名
-2. Scaling: 改进增量任务失败处理
-3. Kernel: 治理中心节点调整，统一驼峰为下划线
+1.缩放：如果是SQL关键字，则生成SQL时反转表名和列名
+1. 扩展：改进增量任务失败处理
+1.内核：治理中心节点调整，统一驼峰为下划线
 
-### 变更日志
+### 更改日志
 
-1. [MILESTONE](https://github.com/apache/shardingsphere/milestone/22)
-```
+1. [里程碑](https://github.com/apache/shardingsphere/milestone/22)
+
+---
+
+> 📦 仓库：[apache/shardingsphere](https://github.com/apache/shardingsphere) · 🏷️ 版本：`5.3.0` · 📅 发布：2023-01-08 · [查看英文原版 Release](https://github.com/apache/shardingsphere/releases/tag/5.3.0)
+
+*本文由 NextStack 自动翻译，内容以官方英文原文为准。*
