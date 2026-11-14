@@ -52,16 +52,24 @@ STATIC_POOL = [
      "origin": "stags-zh.github.io", "locales": ["zh"]},
 ]
 
-# 边缘渲染平台池（免费额度，2026-11 公开文档）
+# 边缘渲染平台池（免费额度，2026-11-14 逐项核对官方定价页）
+#
+# 只保留真正能扛住按需渲染的平台。上一版把 Deno Deploy 和 Netlify 也算进来了，
+# 两项都已失效：
+#   - Deno Deploy：2026-10-09 Deno 官方宣布团队并入 Cloudflare，Deploy 再运营
+#     约六个月后关停，新项目已无意义
+#   - Netlify Free：改成 300 credits/月硬上限（1 次生产部署 15 credits、
+#     1 GB 带宽 20 credits、1 万请求 2 credits），折合约 15 GB 带宽或 150 万请求，
+#     且"一个项目超限全账号暂停"。它连 HTML 带宽都撑不住，不能做渲染层。
+# 另外 Google Cloud Run 虽然 200 万请求/月免费，但每月只含 1 GB 出网，
+# 按每页 30 KB 算只够 3.4 万页，同样排除。
 RENDER_POOL = [
     {"id": "edge-cf", "platform": "cloudflare-workers", "quota_month": 3_000_000,
-     "origin": "stags-edge-cf.workers.dev"},
+     "origin": "stags-edge-cf.workers.dev",
+     "note": "10 万请求/天；静态资源请求不计入额度，只有 Worker 调用计数"},
     {"id": "edge-vercel", "platform": "vercel-edge", "quota_month": 1_000_000,
-     "origin": "stags-edge-vercel.vercel.app"},
-    {"id": "edge-deno", "platform": "deno-deploy", "quota_month": 1_000_000,
-     "origin": "stags-edge-deno.deno.dev"},
-    {"id": "edge-netlify", "platform": "netlify-edge", "quota_month": 125_000,
-     "origin": "stags-edge-netlify.netlify.app"},
+     "origin": "stags-edge-vercel.vercel.app",
+     "note": "Hobby 限非商业用途；超额是暂停而非计费"},
 ]
 
 # 流量权重：Tier 1 访问量远高于 Tier 4。分配要按权重均衡，
@@ -161,6 +169,7 @@ def plan(reg: dict, only: list[str] | None, releases: int, pv: float, cache_hit:
             "quota_month": p["quota_month"],
             "quota_pct": round(est / p["quota_month"] * 100, 2),
             "build_minutes": 0,  # 边缘渲染不预渲染页面
+            "note": p.get("note", ""),
         })
 
     # ---- 翻译成本：内容基数 × 语言数
