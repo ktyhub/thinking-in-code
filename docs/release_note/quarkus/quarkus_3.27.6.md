@@ -6,6 +6,7 @@ tag: "3.27.6"
 published: "2026-09-30"
 type: "patch"
 lang: "en"
+summary: "#50365 - Bump keycloak to 26.4.0 and keycloak-client to 26.0.7 · #50404 - Application with quarkus-keycloak-admin-rest-client fails to compile after recent Keycloak bump"
 ---
 
 # quarkus 3.27.6

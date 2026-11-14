@@ -6,7 +6,7 @@ tag: "v7.6.0"
 published: "2026-03-02"
 type: "minor"
 lang: "en"
-summary: "The kubernetes-httpclient-vertx (Vert.x 4.x) and kubernetes-httpclient-vertx-5 (Vert.x 5.x) modules are mutually exclusive. They must not be included together in your project dependencies. Both modules provide an…"
+summary: "Fix #5292: Cluster() configuration should use tlsServerName · Fix #7174: (httpclient) Fix HTTP client factory priority - VertxHttpClientFactory (default) now has priority -1, OkHttpClientFactory restored to priority 0"
 ---
 
 # kubernetes-client v7.6.0

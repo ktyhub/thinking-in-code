@@ -6,7 +6,7 @@ tag: "v1.1.0.0-M5"
 published: "2025-11-17"
 type: "pre"
 lang: "en"
-summary: "Spring AI Alibaba 1.1.x provides the core features for building enterprise-level agent applications, built upon the practical experience learned from building agent with 1.0.x in Alibaba and numerous enterprises. 1.1.x…"
+summary: "Spring AI Alibaba 1.1.x provides the core features for building enterprise-level agent applications, built upon the practical experience learned from building agent with 1.0.x in Alibaba and numerous enterprises."
 ---
 
 # spring-ai-alibaba v1.1.0.0-M5

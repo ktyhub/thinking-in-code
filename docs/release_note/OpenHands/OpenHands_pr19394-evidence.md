@@ -7,7 +7,7 @@ version: "pr19394-evidence"
 published: "2026-11-05"
 type: "release"
 lang: "en"
-summary: "Temporary evidence assets for OpenHands/OpenHands#19394. Browser click-through of automation setup dead ends and decoded PostHog automationsetupblocked payloads. This release is evidence storage only and can be deleted…"
+summary: "Temporary evidence assets for OpenHands/OpenHands#19394. Browser click-through of automation setup dead ends and decoded PostHog automation_setup_blocked payloads."
 ---
 
 # OpenHands pr19394-evidence

@@ -6,7 +6,7 @@ tag: "v4.0.7"
 published: "2026-08-20"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "CVE-2026-59317: Harden retry_topic-original-timestamp and backoff timestamp header … #4573 · CVE-2026-59278: Normalize and restrict certain java.net types in header type mapping #4572"
 ---
 
 # spring-kafka v4.0.7

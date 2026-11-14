@@ -6,7 +6,7 @@ tag: "v7.5.1"
 published: "2026-01-15"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/fabric8io/kubernetes-client/compare/v7.5.0...v7.5.1"
+summary: "Fix #7400: Parent reference added in BOM 7.5.0"
 ---
 
 # kubernetes-client v7.5.1

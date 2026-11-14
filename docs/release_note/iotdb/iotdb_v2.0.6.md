@@ -6,6 +6,7 @@ tag: "v2.0.6"
 published: "2026-01-20"
 type: "patch"
 lang: "en"
+summary: "Data Query: Supports table model query and write-back functions. · Data Query: The MATCH RECOGNIZE feature for table models supports aggregate functions to capture continuous data for analysis and calculation."
 ---
 
 # iotdb v2.0.6

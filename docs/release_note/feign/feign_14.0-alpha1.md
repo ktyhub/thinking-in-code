@@ -6,7 +6,7 @@ tag: "14.0-alpha1"
 published: "2026-11-10"
 type: "major"
 lang: "en"
-summary: "Full Changelog: https://github.com/OpenFeign/feign/compare/13.18...14.0-alpha1"
+summary: "feat!: make feign.Request.Body streaming-ready · refactor: split feign-core into feign-api and feign-core · feat: add streaming support for request bodies in DefaultEncoder"
 ---
 
 # feign 14.0-alpha1

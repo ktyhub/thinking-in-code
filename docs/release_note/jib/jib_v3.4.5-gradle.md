@@ -6,7 +6,7 @@ tag: "v3.4.5-gradle"
 published: "2025-03-20"
 type: "patch"
 lang: "en"
-summary: "See CHANGELOG.md for more details."
+summary: "fix: address windows deadlock issue when determining docker environment info"
 ---
 
 # jib v3.4.5-gradle

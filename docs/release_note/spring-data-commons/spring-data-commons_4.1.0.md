@@ -6,7 +6,7 @@ tag: "4.1.0"
 published: "2026-06-09"
 type: "minor"
 lang: "en"
-summary: "We'd like to thank all the contributors who worked on this release!"
+summary: "Spring Data Commons 4.1.0 Reference documentation · Spring Data Commons 4.1.0 Javadoc"
 ---
 
 # spring-data-commons 4.1.0

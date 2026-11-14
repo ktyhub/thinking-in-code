@@ -6,7 +6,7 @@ tag: "1.22.0-beta32"
 published: "2026-10-08"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/langchain4j/langchain4j-spring/compare/1.21.0-beta31...1.22.0-beta32"
+summary: "Support property placeholder resolution bean attributes · Update dependency commons-io:commons-io to v2.22.0[bot] · Update dependency org.wiremock.integrations:wiremock-spring-boot to v4.4.3[bot]"
 ---
 
 # langchain4j 1.22.0-beta32

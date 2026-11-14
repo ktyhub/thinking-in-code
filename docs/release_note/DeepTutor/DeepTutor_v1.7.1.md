@@ -7,7 +7,7 @@ version: "v1.7.1"
 published: "2026-10-31"
 type: "patch"
 lang: "en"
-summary: "Release Date: 2026.11.01"
+summary: "Building on v1.7.0, v1.7.1 introduces Open DeepTutor desktop previews, broader localization, and substantial improvements to chat, lessons, accounts, providers, and document handling."
 ---
 
 # DeepTutor v1.7.1

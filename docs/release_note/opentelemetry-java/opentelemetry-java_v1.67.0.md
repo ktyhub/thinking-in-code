@@ -6,7 +6,7 @@ tag: "v1.67.0"
 published: "2026-10-09"
 type: "minor"
 lang: "en"
-summary: "This release was possible thanks to the following contributors who shared their brilliant ideas and awesome pull requests:"
+summary: "Deprecate TextMapGetter.keys() and make TextMapGetter a functional interface (#8531) · Add null guards and API usage logging for tracing, baggage, attributes, logging, and metrics (#8803, #8863, #8864)"
 ---
 
 # opentelemetry-java v1.67.0

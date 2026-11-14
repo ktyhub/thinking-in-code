@@ -6,7 +6,7 @@ tag: "v1.1.7"
 published: "2023-05-31"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/alibaba/lowcode-engine/compare/v1.1.6...v1.1.7"
+summary: "Update setters.md · refactor: Change let to const · feat: add componentRenderer lifeCycles log · feat: added features in workspace mode"
 ---
 
 # lowcode-engine v1.1.7

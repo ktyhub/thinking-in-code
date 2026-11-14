@@ -6,7 +6,7 @@ tag: "v3.8.3-patch.12"
 published: "2025-10-24"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/openimsdk/open-im-server/compare/v3.8.3-patch.11...v3.8.3-patch.12"
+summary: "fix: full id version · fix: incorrect redis fields."
 ---
 
 # open-im-server v3.8.3-patch.12

@@ -7,6 +7,7 @@ version: "1.0.0"
 published: "2026-10-08"
 type: "major"
 lang: "en"
+summary: "Guardrail docs · feat(widget): align search bar with widget theme, add voice search · refactor(settings): split into per-domain modules, generate the settings reference · docsgpt backup and restore"
 ---
 
 # DocsGPT 1.0.0

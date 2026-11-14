@@ -6,7 +6,7 @@ tag: "v6.1.0-M1"
 published: "2026-08-21"
 type: "pre"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release!"
+summary: "Fix incorrect handling of malformed input in FlatFileItemReader #5496 · Fix incorrect deserialization in DefaultExecutionContextSerializer #5497 · Fix incorrect deserialization in JobParameterDeserializer #5498"
 ---
 
 # spring-batch v6.1.0-M1

@@ -6,7 +6,7 @@ tag: "1.21.0-beta31"
 published: "2026-10-02"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/langchain4j/langchain4j-spring/compare/1.20.2-beta30...1.21.0-beta31"
+summary: "Restore Spring configuration metadata on JDK 23+ · Wire tool error handlers into AI Services"
 ---
 
 # langchain4j 1.21.0-beta31

@@ -6,7 +6,7 @@ tag: "1.6.6"
 published: "2026-04-22"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/AutoMQ/automq/compare/1.6.5...1.6.6"
+summary: "feat(devkit): add namespace support for multi-instance isolation (#3295) · fix(s3stream): fix double-release race in LogCache.tryMerge (#3307) · fix(s3): fix concurrent write exception for oci (#3310)"
 ---
 
 # AutoMQ 1.6.6

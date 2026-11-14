@@ -7,6 +7,7 @@ version: "v4.78.0"
 published: "2026-11-10"
 type: "minor"
 lang: "en"
+summary: "feat(web): EmptyState with illustrated drawings · feat(web): LangfuseIllustration with lazy product scenes · feat(topics): filter traces in the Topics setup flow · feat(rbac): mirror memberships into role assignments"
 ---
 
 # langfuse v4.78.0

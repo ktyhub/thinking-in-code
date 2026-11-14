@@ -7,6 +7,7 @@ version: "v0.27.2"
 published: "2026-09-10"
 type: "patch"
 lang: "en"
+summary: "Agentic RAG: Refactored the Agentic RAG retrieval framework, significantly improving reasoning speed and benchmark performance. (#19046, #19112, #19172, #19209, #19424, #19459)"
 ---
 
 # ragflow v0.27.2

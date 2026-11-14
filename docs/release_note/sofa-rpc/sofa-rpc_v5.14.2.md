@@ -6,7 +6,7 @@ tag: "v5.14.2"
 published: "2026-03-11"
 type: "patch"
 lang: "en"
-summary: "SOFARPC v5.14.2 is an enhancement release that focuses on fixing several issues in the Triple protocol, including POJO generic calls, Tracer context propagation, and optimizing the remote IP retrieval logic. This…"
+summary: "SOFARPC v5.14.2 is an enhancement release that focuses on fixing several issues in the Triple protocol, including POJO generic calls, Tracer context propagation, and optimizing the remote IP retrieval logic."
 ---
 
 # sofa-rpc v5.14.2

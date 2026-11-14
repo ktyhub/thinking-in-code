@@ -6,7 +6,7 @@ tag: "v2.2.4"
 published: "2023-07-24"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/btraceio/btrace/compare/v2.2.3...v2.2.4"
+summary: "Fixing all Gradle deprecation warnings · Platform agnosticism · All dependencies handing switched to dependencyResolutionManagement · Add the required jctools classes to the client jar."
 ---
 
 # btrace v2.2.4

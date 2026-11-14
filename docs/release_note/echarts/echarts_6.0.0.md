@@ -6,6 +6,7 @@ tag: "6.0.0"
 published: "2025-07-30"
 type: "major"
 lang: "en"
+summary: "[Feature] [theme] New theme for ECharts 6.0. #20865 #21097 #21114 (Ovilia) · [Feature] [chord] New chord series. #20522 (Ovilia)"
 ---
 
 # echarts 6.0.0

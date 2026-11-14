@@ -6,7 +6,7 @@ tag: "v0.22.0"
 published: "2026-08-19"
 type: "minor"
 lang: "en"
-summary: "Version 0.22.0 is a minor release because it adds substantial runtime hardening and tightens an existing provider configuration contract. Applications that combine an explicit openaiclient with organization or project…"
+summary: "Version 0.22.0 is a minor release because it adds substantial runtime hardening and tightens an existing provider configuration contract."
 ---
 
 # openai-agents-python v0.22.0

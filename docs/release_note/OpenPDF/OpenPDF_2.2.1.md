@@ -6,6 +6,7 @@ tag: "2.2.1"
 published: "2025-06-15"
 type: "patch"
 lang: "en"
+summary: "Openpdf-renderer: Modernization and fix of multiple code analysis warnings."
 ---
 
 # OpenPDF 2.2.1

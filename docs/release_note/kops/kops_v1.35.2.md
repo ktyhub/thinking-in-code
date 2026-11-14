@@ -6,7 +6,7 @@ tag: "v1.35.2"
 published: "2026-07-15"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/kops/compare/v1.35.1...v1.35.2"
+summary: "Automated cherry pick of #18428: cert-manager: upgrade to v1.19.5 and set AWS_REGION for Route53 dns-01 · Cherry pick of #18436: upgrade etcd-manager and etcd to latest patches"
 ---
 
 # kops v1.35.2

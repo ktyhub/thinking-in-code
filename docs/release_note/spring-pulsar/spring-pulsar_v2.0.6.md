@@ -6,6 +6,7 @@ tag: "v2.0.6"
 published: "2026-06-09"
 type: "patch"
 lang: "en"
+summary: "Bump org.apache.pulsar:pulsar-client-all from 4.2.1 to 4.2.2 #1514 · Bump org.springframework:spring-framework-bom from 7.0.7 to 7.0.8 #1513 · Bump io.micrometer:micrometer-tracing-bom from 1.6.5 to 1.6.6 #1509"
 ---
 
 # spring-pulsar v2.0.6

@@ -6,7 +6,6 @@ tag: "v5.0.1"
 published: "2026-10-26"
 type: "patch"
 lang: "en"
-summary: "Cherry-picked changes"
 ---
 
 # pulsar v5.0.1

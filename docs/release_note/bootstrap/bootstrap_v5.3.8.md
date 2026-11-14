@@ -6,7 +6,7 @@ tag: "v5.3.8"
 published: "2025-08-26"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/twbs/bootstrap/compare/v5.3.7...v5.3.8"
+summary: "Streamline release prep script · Docs: restore local dev port to 9001 · Docs: use Example shortcode instead of divs with only .bd-example class · Docs: fix scss autorecompile in dev mode"
 ---
 
 # bootstrap v5.3.8

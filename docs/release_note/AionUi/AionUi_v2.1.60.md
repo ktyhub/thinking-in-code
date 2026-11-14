@@ -7,6 +7,7 @@ version: "v2.1.60"
 published: "2026-08-21"
 type: "patch"
 lang: "en"
+summary: "fix(desktop): log attribution for uncaught main-process errors · refactor(feedback): attach account email automatically · feat(explorer): refresh a root via backend remount"
 ---
 
 # AionUi v2.1.60

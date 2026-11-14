@@ -6,7 +6,7 @@ tag: "4.2.0"
 published: "2022-10-20"
 type: "minor"
 lang: "en"
-summary: "Changed"
+summary: "Re-enable japicmp API diff checking \\#619 (jimmyjames) · Update .shiprc to only update lib version in build.gradle \\#625 (jimmyjames) · Optimise TokenUtils parsing \\#611 (noetro)"
 ---
 
 # java-jwt 4.2.0

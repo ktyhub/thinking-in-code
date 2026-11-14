@@ -6,7 +6,7 @@ tag: "2.8.27"
 published: "2025-09-01"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/servicecomb-java-chassis/compare/2.8.26...2.8.27"
+summary: "[#4910] fixed registration center response exception cause nullPointerException · [#4910] fixed config center response exception cause nullPointerException"
 ---
 
 # servicecomb-java-chassis 2.8.27

@@ -6,7 +6,7 @@ tag: "gson-parent-2.13.1"
 published: "2025-04-24"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/google/gson/compare/gson-parent-2.13.0...gson-parent-2.13.1"
+summary: "Give FieldNamingStrategy the ability to return multiple String names · Remove outdated android-proguard-example · Adjust Troubleshooting Guide ProGuard / R8 section"
 ---
 
 # gson gson-parent-2.13.1

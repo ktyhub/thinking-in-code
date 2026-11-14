@@ -7,6 +7,7 @@ version: "v0.13.2"
 published: "2026-11-08"
 type: "patch"
 lang: "en"
+summary: "🔓 Chat over plain HTTP. Opening Open WebUI over plain HTTP at a LAN or Docker address now loads new and existing chats instead of staying on a spinner with 'crypto.randomUUID is not a function'. #33919"
 ---
 
 # open-webui v0.13.2

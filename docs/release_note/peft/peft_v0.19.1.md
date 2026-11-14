@@ -7,7 +7,7 @@ version: "v0.19.1"
 published: "2026-04-16"
 type: "patch"
 lang: "en"
-summary: "A small patch release containing these fixes:"
+summary: "A small patch release containing these fixes"
 ---
 
 # peft v0.19.1

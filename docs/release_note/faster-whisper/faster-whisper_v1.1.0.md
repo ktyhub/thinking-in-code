@@ -7,6 +7,7 @@ version: "v1.1.0"
 published: "2024-11-21"
 type: "minor"
 lang: "en"
+summary: "New batched inference that is 4x faster and accurate, Refer to README on usage instructions. · Support for the new large-v3-turbo model. · VAD filter is now 3x faster on CPU. · Feature Extraction is now 3x faster."
 ---
 
 # faster-whisper v1.1.0

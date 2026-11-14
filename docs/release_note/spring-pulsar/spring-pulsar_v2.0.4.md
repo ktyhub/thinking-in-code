@@ -6,6 +6,7 @@ tag: "v2.0.4"
 published: "2026-03-16"
 type: "patch"
 lang: "en"
+summary: "Bump io.micrometer:micrometer-bom from 1.16.3 to 1.16.4 #1448 · Bump org.projectlombok:lombok from 1.18.42 to 1.18.44 #1447 · Update Spring Framework to 7.0.6 #1446 · Update Jackson to 2.21.1 to fix CVE in 2.20.x #1444"
 ---
 
 # spring-pulsar v2.0.4

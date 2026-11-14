@@ -6,7 +6,7 @@ tag: "v4.2.2"
 published: "2026-06-08"
 type: "patch"
 lang: "en"
-summary: "For the complete list, check the full changelog."
+summary: "[fix][sec] Bump org.asynchttpclient:async-http-client from 2.14.5 to 2.15.0 (#25818) · [fix][sec] Upgrade commons-configuration2 to 2.15.0 to address CVE-2026-45205 (#25844)"
 ---
 
 # pulsar v4.2.2

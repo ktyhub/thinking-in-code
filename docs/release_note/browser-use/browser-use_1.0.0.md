@@ -7,6 +7,7 @@ version: "1.0.0"
 published: "2026-11-10"
 type: "major"
 lang: "en"
+summary: "We started over. The agent now writes Python in one persistent REPL, straight on Chrome DevTools Protocol. No DOM serializer, no action schema, nothing in between."
 ---
 
 # browser-use 1.0.0

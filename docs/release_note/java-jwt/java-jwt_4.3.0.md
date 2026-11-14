@@ -6,7 +6,7 @@ tag: "4.3.0"
 published: "2023-02-13"
 type: "minor"
 lang: "en"
-summary: "Full Changelog"
+summary: "Improve JWT parse/decode performance \\#620 (noetro)"
 ---
 
 # java-jwt 4.3.0

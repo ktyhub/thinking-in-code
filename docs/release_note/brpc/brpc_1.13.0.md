@@ -6,7 +6,7 @@ tag: "1.13.0"
 published: "2025-05-18"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/brpc/compare/1.12.1...1.13.0"
+summary: "Support ProtoJson formatted http body (#2921) · support dynamic update method concurrency (#2923) · Support various payload of baidu-std: json, proto-json and proto-text (#2946) · Support AddressSanitizer (#2890)"
 ---
 
 # brpc 1.13.0

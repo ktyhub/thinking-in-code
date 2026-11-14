@@ -6,6 +6,7 @@ tag: "6.1.0"
 published: "2026-05-19"
 type: "minor"
 lang: "en"
+summary: "[Feature] [axis] Support dataMin and dataMax option for calculating a nice axis extent. #20838 (Justin-ZS, Ovilia)"
 ---
 
 # echarts 6.1.0

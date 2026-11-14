@@ -6,6 +6,7 @@ tag: "5.3.1"
 published: "2023-01-10"
 type: "patch"
 lang: "zh"
+summary: "1.内核：添加新的数据脱敏、动态数据脱敏功能、内置数据脱敏算法"
 ---
 
 # shardingsphere 5.3.1

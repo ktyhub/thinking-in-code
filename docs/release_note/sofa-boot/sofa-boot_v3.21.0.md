@@ -6,7 +6,7 @@ tag: "v3.21.0"
 published: "2023-10-31"
 type: "minor"
 lang: "en"
-summary: "⭐️ New Features"
+summary: "Support sofa-rpc provider register blacklist/whitelist #1254"
 ---
 
 # sofa-boot v3.21.0

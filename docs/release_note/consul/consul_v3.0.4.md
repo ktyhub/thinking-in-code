@@ -6,7 +6,7 @@ tag: "v3.0.4"
 published: "2025-02-26"
 type: "patch"
 lang: "en"
-summary: "Backport fix for GHSA-c6gw-w398-hv78 CVE-2025-27144 https://github.com/go-jose/go-jose/pull/174"
+summary: "Backport fix for GHSA-c6gw-w398-hv78 CVE-2025-27144"
 ---
 
 # consul v3.0.4

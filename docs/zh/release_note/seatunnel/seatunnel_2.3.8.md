@@ -6,6 +6,7 @@ tag: "2.3.8"
 published: "2024-10-14"
 type: "patch"
 lang: "zh"
+summary: "[Hotfix][Core] 修复 MultiTableSink#PrepareCommit 时的并发异常 (#7686)；[hotfix][zeta] conf 属性为空，打印日志错误修复 (#7487)；[Fix][Seatunnel-core]修复 Windows 上执行脚本中的语法错误 (#7423)"
 ---
 
 # seatunnel 2.3.8

@@ -7,6 +7,7 @@ version: "2.2.143"
 published: "2026-11-06"
 type: "patch"
 lang: "en"
+summary: "[OPIK-8934] [SDK] fix: Prompt() and ChatPrompt() use the default project · [OPIK-9097] [BE] feat: map ClickHouse TOO_MANY_BYTES to a clean 400 and cap free-form SQL bytes read · chore(deps): Lock file maintenance[bot]"
 ---
 
 # opik 2.2.143

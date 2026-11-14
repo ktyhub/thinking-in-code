@@ -7,6 +7,7 @@ version: "5.2.1"
 published: "2022-10-18"
 type: "patch"
 lang: "en"
+summary: "Add ShardingSphere default system database to support global metadata management · Support asynchronous data consistency check · Added support for Consul governance center · Added support for Nacos governance center"
 ---
 
 # shardingsphere 5.2.1

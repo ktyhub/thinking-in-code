@@ -6,7 +6,7 @@ tag: "v11.2.4"
 published: "2026-10-16"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/supertokens/supertokens-core/compare/v11.2.3...v11.2.4"
+summary: "Prevents an app-scoped API key from updating its parent connectionUriDomain (GHSA-4rf2). · Enforces dashboard session expiry at verification time (GHSA-w9fp-wv6g-pqv8)."
 ---
 
 # supertokens-core v11.2.4

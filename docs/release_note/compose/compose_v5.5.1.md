@@ -6,7 +6,7 @@ tag: "v5.5.1"
 published: "2026-09-03"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/docker/compose/compare/v5.5.0...v5.5.1"
+summary: "Feat(hooks): capture and surface lifecycle hook output · Feat(tracing): surface otel shutdown errors via --debug"
 ---
 
 # compose v5.5.1

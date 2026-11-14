@@ -6,6 +6,7 @@ tag: "canal-1.1.1"
 published: "2018-10-29"
 type: "release"
 lang: "en"
+summary: "原生支持RocketMQ消息投递 #695 【Canal Kafka QuickStart】；原生支持hbase的数据同步 #849 ClientAdapter；新增c#/go多语言客户端的支持；canal java客户端: https://github.com/alibaba/canal/wiki/ClientExample"
 ---
 
 # canal canal-1.1.1

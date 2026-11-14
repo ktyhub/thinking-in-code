@@ -6,7 +6,7 @@ tag: "v2.2.0"
 published: "2021-04-03"
 type: "minor"
 lang: "en"
-summary: "Full Changelog"
+summary: "ExceptionInInitializerError from NullPointerException in btrace.core.Messages. \\#455 · AllLines not working, raises java.lang.VerifyError \\#456 · BTrace launchers do not work on JDK 16 \\#458"
 ---
 
 # btrace v2.2.0

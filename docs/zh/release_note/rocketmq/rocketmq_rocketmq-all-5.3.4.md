@@ -6,6 +6,7 @@ tag: "rocketmq-all-5.3.4"
 published: "2025-11-27"
 type: "release"
 lang: "zh"
+summary: "这是一个错误修复版本，包含许多改进以增强稳定性、性能和正确性。主要亮点包括关键依赖项升级（例如，Netty、OpenTelemetry）、显着的稳定性增强（例如用于可靠恢复的 TimerWheel 快照机制）以及跨模块（例如 Broker、Proxy 和 Client）的广泛错误修复。"
 ---
 
 # rocketmq rocketmq-all-5.3.4

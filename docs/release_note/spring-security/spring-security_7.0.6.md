@@ -6,6 +6,7 @@ tag: "7.0.6"
 published: "2026-06-09"
 type: "patch"
 lang: "en"
+summary: "FormPostRedirectStrategy should not emit percent-encoded values into hidden form inputs #19137 · AbstractAuthenticationFilterConfigurer should not automatically pick up servlet path #19128"
 ---
 
 # spring-security 7.0.6

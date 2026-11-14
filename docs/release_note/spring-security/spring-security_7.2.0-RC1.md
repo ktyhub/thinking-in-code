@@ -6,7 +6,7 @@ tag: "7.2.0-RC1"
 published: "2026-10-22"
 type: "minor"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Improve WebAuthn Registration Page no-script Handling · Support nonce-based Content Security Policy"
 ---
 
 # spring-security 7.2.0-RC1

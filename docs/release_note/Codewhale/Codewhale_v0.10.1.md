@@ -7,7 +7,7 @@ version: "v0.10.1"
 published: "2026-10-08"
 type: "patch"
 lang: "en"
-summary: "New macOS/Linux install (checksummed binaries from this release):"
+summary: "New macOS/Linux install (checksummed binaries from this release)"
 ---
 
 # Codewhale v0.10.1

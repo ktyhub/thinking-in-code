@@ -6,7 +6,7 @@ tag: "1.14.1"
 published: "2025-08-06"
 type: "patch"
 lang: "en"
-summary: "Security:"
+summary: "Fix CVE-2025-54472: Apache bRPC: Redis Parser Remote Denial of Service (#3050)"
 ---
 
 # brpc 1.14.1

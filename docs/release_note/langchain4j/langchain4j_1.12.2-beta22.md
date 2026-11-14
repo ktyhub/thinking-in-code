@@ -6,7 +6,7 @@ tag: "1.12.2-beta22"
 published: "2026-03-13"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/langchain4j/langchain4j-spring/compare/1.12.1-beta21...1.12.2-beta22"
+summary: "Update versions to 1.13.0-SNAPSHOT and 1.13.0-beta22-SNAPSHOT"
 ---
 
 # langchain4j 1.12.2-beta22

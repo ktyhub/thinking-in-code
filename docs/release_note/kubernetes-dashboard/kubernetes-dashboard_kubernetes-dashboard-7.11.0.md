@@ -6,7 +6,7 @@ tag: "kubernetes-dashboard-7.11.0"
 published: "2025-03-03"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/dashboard/compare/kubernetes-dashboard-7.10.5...kubernetes-dashboard-7.11.0"
+summary: "chore(deps-dev): bump prettier from 3.5.1 to 3.5.2 in /modules/web · chore(deps-dev): bump ts-jest from 29.2.5 to 29.2.6 in /modules/web"
 ---
 
 # kubernetes-dashboard kubernetes-dashboard-7.11.0

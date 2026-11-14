@@ -33,6 +33,9 @@ import urllib.request
 from collections import Counter
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from excerpt import summarize  # noqa: E402
+
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 ZH_DIR = ROOT / "docs" / "zh" / "release_note"
@@ -128,37 +131,6 @@ def low_value(body: str) -> bool:
     if t.startswith("full changelog") or re.fullmatch(r"(full changelog|what's changed)[:\s\S]{0,80}", t):
         return True
     return False
-
-
-def summarize(body: str) -> str:
-    lines = []
-    for raw in body.split("\n"):
-        line = raw.strip()
-        if not line:
-            if lines:
-                break
-            continue
-        if (
-            line.startswith(("#", "|", ">", "---", "```"))
-            or re.match(r"^[-*+]\s", line)
-            or re.match(r"^\d+\.\s", line)
-        ):
-            if lines:
-                break
-            continue
-        lines.append(line)
-    text = " ".join(lines)
-    text = re.sub(r"!\[[^\]]*\]\([^)]*\)", "", text)
-    text = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", text)
-    text = re.sub(r"[*_~`]", "", text)
-    text = re.sub(r"<[^>]+>", "", text)
-    # 跳过 “Full Changelog: <link>” 这类没有信息量的行
-    text = re.sub(r"(?i)full changelog:?\s*https?://\S+", "", text)
-    text = re.sub(r"\s+", " ", text).strip()
-    if len(text) > 220:
-        cut = text[:220]
-        text = cut[: max(cut.rfind(" "), 140)] + "…"
-    return text.replace('"', "'")
 
 
 def version_type(tag: str) -> str:

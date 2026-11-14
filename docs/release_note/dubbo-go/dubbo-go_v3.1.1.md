@@ -6,6 +6,7 @@ tag: "v3.1.1"
 published: "2024-03-05"
 type: "patch"
 lang: "en"
+summary: "Fix metrics path set in config does not work · Fix retry time calculation · Fix nacos App Metadata not compatible with that in dubbo-java · Fix router warn log"
 ---
 
 # dubbo-go v3.1.1

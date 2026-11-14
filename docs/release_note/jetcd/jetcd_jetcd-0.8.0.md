@@ -6,7 +6,7 @@ tag: "jetcd-0.8.0"
 published: "2024-04-17"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/etcd-io/jetcd/compare/jetcd-0.7.7...jetcd-0.8.0"
+summary: "build(deps): bump errorprone from 2.23.0 to 2.24.0 · build(deps): bump grpc from 1.60.0 to 1.60.1 · build(deps): bump org.assertj:assertj-core from 3.24.2 to 3.25.1"
 ---
 
 # jetcd jetcd-0.8.0

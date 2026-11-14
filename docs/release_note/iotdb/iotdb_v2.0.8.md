@@ -6,7 +6,7 @@ tag: "v2.0.8"
 published: "2026-04-13"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/iotdb/compare/v2.0.7...v2.0.8"
+summary: "Data Query: Added list display for available DataNode nodes · Data Query: Added a system table for statistics on query latency in the table model"
 ---
 
 # iotdb v2.0.8

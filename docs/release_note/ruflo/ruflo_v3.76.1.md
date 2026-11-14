@@ -7,7 +7,7 @@ version: "v3.76.1"
 published: "2026-11-12"
 type: "patch"
 lang: "en"
-summary: "Patch release."
+summary: "Fix (#4963, PR #4974): auto-memory-hook import and sync now exit 1 when @claude-flow/memory cannot be resolved. Before, they printed the 'DISABLED' warning and exited 0, so a hook runner saw success although nothing was…"
 ---
 
 # ruflo v3.76.1

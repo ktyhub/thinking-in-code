@@ -7,7 +7,7 @@ version: "v4.0.8"
 published: "2026-08-21"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Kafka consumer-specific security protocol is not taken into account #51365 · Temporary file is not deleted when ExportedImageTar construction fails #51117"
 ---
 
 # spring-boot v4.0.8

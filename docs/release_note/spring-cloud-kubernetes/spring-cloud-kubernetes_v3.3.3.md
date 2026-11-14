@@ -6,7 +6,7 @@ tag: "v3.3.3"
 published: "2026-06-11"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Bump @springio/antora-extensions from 1.14.10 to 1.14.11 in /docs[bot] · Bump actions/github-script from 8 to 9[bot] · Bump @springio/antora-extensions from 1.14.11 to 1.14.12 in /docs[bot]"
 ---
 
 # spring-cloud-kubernetes v3.3.3

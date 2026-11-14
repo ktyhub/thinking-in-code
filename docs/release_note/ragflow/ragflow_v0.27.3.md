@@ -7,6 +7,7 @@ version: "v0.27.3"
 published: "2026-10-23"
 type: "patch"
 lang: "en"
+summary: "Port agentic RAG to GO · Revert 'fix(ingestion): allow re-parsing a document whose parse was canceled at progress 0' · fix(agent/tool): translate MCP tool inputSchema.properties in Info()"
 ---
 
 # ragflow v0.27.3

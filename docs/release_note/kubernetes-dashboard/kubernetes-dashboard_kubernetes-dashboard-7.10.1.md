@@ -6,7 +6,7 @@ tag: "kubernetes-dashboard-7.10.1"
 published: "2025-01-10"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/dashboard/compare/kubernetes-dashboard-7.10.0...kubernetes-dashboard-7.10.1"
+summary: "chore(deps-dev): bump @types/node from 22.8.4 to 22.9.0 in /modules/web · chore(deps-dev): bump @graphql-mesh/runtime from 0.103.11 to 0.103.12 in /modules/web"
 ---
 
 # kubernetes-dashboard kubernetes-dashboard-7.10.1

@@ -6,7 +6,7 @@ tag: "v5.0.0-M1"
 published: "2026-06-23"
 type: "pre"
 lang: "en"
-summary: "Apache Pulsar 5.0.0-M1 is the first milestone release on the road to Apache Pulsar 5.0.0, with general availability expected later in 2026. It is a preview: an early build that puts the major new features of 5.0 in your…"
+summary: "Apache Pulsar 5.0.0-M1 is the first milestone release on the road to Apache Pulsar 5.0.0, with general availability expected later in 2026."
 ---
 
 # pulsar v5.0.0-M1

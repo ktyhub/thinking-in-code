@@ -7,6 +7,7 @@ version: "v1.17.0"
 published: "2026-10-01"
 type: "minor"
 lang: "en"
+summary: "fix(collector): read spreadsheet dates as dates, not serial numbers · Drop temp param for Anthropic models · Allow Generic OpenAI max tokens of 0 to omit max_tokens from request"
 ---
 
 # anything-llm v1.17.0

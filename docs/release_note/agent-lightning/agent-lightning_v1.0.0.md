@@ -7,7 +7,7 @@ version: "v1.0.0"
 published: "2026-08-17"
 type: "major"
 lang: "en"
-summary: "Agent Lightning v1.0.0 is released! In this release, we have completely refactored the codebase, making it lightweight while adding support for the latest models. Agent Lightning v1.0.0 is designed for RL training with…"
+summary: "Agent Lightning v1.0.0 is released! In this release, we have completely refactored the codebase, making it lightweight while adding support for the latest models."
 ---
 
 # agent-lightning v1.0.0

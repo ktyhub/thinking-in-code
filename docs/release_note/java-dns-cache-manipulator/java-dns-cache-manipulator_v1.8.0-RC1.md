@@ -6,7 +6,7 @@ tag: "v1.8.0-RC1"
 published: "2022-06-26"
 type: "minor"
 lang: "en"
-summary: "[](https://search.maven.org/artifact/com.alibaba/dns-cache-manipulator/1.8.0-RC1/jar) [](https://github.com/alibaba/java-dns-cache-manipulator/releases/download/v1.8.0-RC1/dcm-1.8.0-RC1.tar.gz)"
+summary: "support Java 18/19"
 ---
 
 # java-dns-cache-manipulator v1.8.0-RC1

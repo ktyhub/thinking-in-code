@@ -6,7 +6,7 @@ tag: "4.2.1"
 published: "2022-10-25"
 type: "patch"
 lang: "en"
-summary: "Security"
+summary: "Bump com.fasterxml.jackson.core:jackson-databind to 2.13.4.2 https://github.com/auth0/java-jwt/pull/630 (evansims)"
 ---
 
 # java-jwt 4.2.1

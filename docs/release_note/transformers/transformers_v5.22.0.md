@@ -7,6 +7,7 @@ version: "v5.22.0"
 published: "2026-10-29"
 type: "minor"
 lang: "en"
+summary: "Mistral Large 4 is Mistral's largest and most capable model to date: a 1 trillion-parameter natively multimodal Mixture-of-Experts model with 49 billion active parameters per token (52 billion including embeddings and…"
 ---
 
 # transformers v5.22.0

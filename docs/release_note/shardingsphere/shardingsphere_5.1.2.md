@@ -7,6 +7,7 @@ version: "5.1.2"
 published: "2022-06-17"
 type: "patch"
 lang: "en"
+summary: "Kernel: Alpha version to support SQL dialect translate for MySQL and PostgreSQL · Kernel: Support custom schema for PostgreSQL and openGauss · Kernel: Support create/alter/drop view statement for PostgreSQL and openGauss"
 ---
 
 # shardingsphere 5.1.2

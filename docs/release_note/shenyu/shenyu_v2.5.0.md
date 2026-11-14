@@ -6,6 +6,7 @@ tag: "v2.5.0"
 published: "2022-08-25"
 type: "minor"
 lang: "en"
+summary: "Add logging-aliyun-sls plugin · Add mock plugin · Add logging-es plugin · Add logging-rocketmq plugin"
 ---
 
 # shenyu v2.5.0

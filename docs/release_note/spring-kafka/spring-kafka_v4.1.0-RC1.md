@@ -6,7 +6,7 @@ tag: "v4.1.0-RC1"
 published: "2026-04-20"
 type: "minor"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Add AcknowledgementCommitCallback support for async share consumer commits #4380 · Introduce ShareAckMode enum for share consumers #4376"
 ---
 
 # spring-kafka v4.1.0-RC1

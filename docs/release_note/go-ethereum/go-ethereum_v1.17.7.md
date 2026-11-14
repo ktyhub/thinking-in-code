@@ -6,6 +6,7 @@ tag: "v1.17.7"
 published: "2026-09-30"
 type: "patch"
 lang: "en"
+summary: "This is a quick release, cut mainly because publishing v1.17.6 to the Ubuntu PPA failed. It also carries a few fixes merged since then."
 ---
 
 # go-ethereum v1.17.7

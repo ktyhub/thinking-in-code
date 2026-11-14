@@ -7,7 +7,7 @@ version: "opencode-v0.4.1"
 published: "2026-09-23"
 type: "release"
 lang: "en"
-summary: "Improvements:"
+summary: "Search: The search_memories tool description no longer asks the agent to search proactively or to run several searches for multi-part questions."
 ---
 
 # mem0 opencode-v0.4.1

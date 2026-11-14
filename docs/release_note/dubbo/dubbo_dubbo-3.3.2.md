@@ -6,7 +6,7 @@ tag: "dubbo-3.3.2"
 published: "2024-10-29"
 type: "release"
 lang: "en"
-summary: "Releates PRs: #14810, #14801, #14817, #14815, #14840, #14839"
+summary: "Config value supports arrays."
 ---
 
 # dubbo dubbo-3.3.2

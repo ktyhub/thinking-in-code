@@ -6,7 +6,7 @@ tag: "v3.0.15"
 published: "2025-07-24"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/dropwizard/dropwizard/compare/v3.0.14...v3.0.15"
+summary: "chore(deps): update dependency org.codehaus.mojo:exec-maven-plugin to v3.5.1 (release/3.0.x)[bot] · fix(deps): update dependency org.testcontainers:testcontainers-bom to v1.21.1 (release/3.0.x)[bot]"
 ---
 
 # dropwizard v3.0.15

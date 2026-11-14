@@ -6,7 +6,7 @@ tag: "v1.3.1"
 published: "2024-01-17"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/alibaba/lowcode-engine/compare/v1.3.0...v1.3.1"
+summary: "docs: update resource docs · feat: update comtext menu component · chore: update build-plugin-lce version · chore: add 'set -e' in build.sh"
 ---
 
 # lowcode-engine v1.3.1

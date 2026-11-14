@@ -6,6 +6,7 @@ tag: "maven-4.0.0-rc-5"
 published: "2025-11-13"
 type: "pre"
 lang: "en"
+summary: "This new release candidate of Maven 4 is released to get feedback from users. Maven 4 has a restrained a few things comparent to Maven 3, so make sure to run the mvnup tool before trying to project with Maven 4."
 ---
 
 # maven maven-4.0.0-rc-5

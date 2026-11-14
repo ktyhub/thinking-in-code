@@ -7,6 +7,7 @@ version: "v1.2.1"
 published: "2026-11-10"
 type: "patch"
 lang: "en"
+summary: "docs drop 0.9 · docs: reading progress bar under the navbar · fix(admin): hindsight-admin cloud is listed in --help · fix(api): one id rule for banks, aliases and mental models; bound page max_tokens"
 ---
 
 # hindsight v1.2.1

@@ -6,7 +6,7 @@ tag: "v3.0.0a12"
 published: "2025-02-24"
 type: "major"
 lang: "en"
-summary: "Full Changelog: https://github.com/sinaptik-ai/pandas-ai/compare/v3.0.0-beta.11...v3.0.0a12"
+summary: "docs: docstring improvements · feature(LocalLoader): enabling local loader to use duckdb loader · fix: fixing datasets naming convention · fix: passing correct dialect and error to llm"
 ---
 
 # pandas-ai v3.0.0a12

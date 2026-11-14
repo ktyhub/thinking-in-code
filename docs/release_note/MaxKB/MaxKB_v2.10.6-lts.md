@@ -7,7 +7,7 @@ version: "v2.10.6-lts"
 published: "2026-09-03"
 type: "patch"
 lang: "en"
-summary: "In the MaxKB v2.10.6 LTS community edition, workflow default model settings have been introduced for agent workflows, knowledge base workflows, and workflow tools. Previously, multi-AI-node workflows required opening…"
+summary: "Security: Fixed a security vulnerability where Chat file uploads could spoof APPLICATION attribution and be read anonymously, allowing content injection into the application namespace."
 ---
 
 # MaxKB v2.10.6-lts

@@ -6,7 +6,7 @@ tag: "2023.0.1.2"
 published: "2024-07-16"
 type: "patch"
 lang: "en"
-summary: "spring.cloud.nacos.config.share-configs & spring.cloud.nacos.config.extension-configs has been depareate, using spring.config.import instead,see https://github.com/alibaba/spring-cloud-alibaba/issues/3998"
+summary: "[Scheduling]: add distributed scheduling support spring-cloud-starter-alibaba-schedulerx."
 ---
 
 # spring-cloud-alibaba 2023.0.1.2

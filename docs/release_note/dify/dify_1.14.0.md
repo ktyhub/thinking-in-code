@@ -6,6 +6,7 @@ tag: "1.14.0"
 published: "2026-04-29"
 type: "minor"
 lang: "en"
+summary: "Collaboration allows workspace members to edit the same workflow together, with synced graph updates, online presence, and shared visibility into who is working where."
 ---
 
 # dify 1.14.0

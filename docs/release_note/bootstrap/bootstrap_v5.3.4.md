@@ -6,6 +6,7 @@ tag: "v5.3.4"
 published: "2025-04-03"
 type: "patch"
 lang: "en"
+summary: "#40888: Dependabot: switch to grouped updates"
 ---
 
 # bootstrap v5.3.4

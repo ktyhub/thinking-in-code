@@ -6,7 +6,7 @@ tag: "2.1.2"
 published: "2026-06-18"
 type: "patch"
 lang: "en"
-summary: "🌐 English | 中文"
+summary: "This release adds several visual management capabilities to the Web Console, so more configuration can be done in the UI without editing files"
 ---
 
 # chatgpt-on-wechat 2.1.2

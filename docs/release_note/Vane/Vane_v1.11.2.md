@@ -7,6 +7,7 @@ version: "v1.11.2"
 published: "2025-10-25"
 type: "patch"
 lang: "en"
+summary: "Fixed issues with Transformer models not loading · Fixed issues with model selection not updating the state · Fixed issues with empty message being sent"
 ---
 
 # Vane v1.11.2

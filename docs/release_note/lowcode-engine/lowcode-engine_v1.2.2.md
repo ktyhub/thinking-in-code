@@ -6,7 +6,7 @@ tag: "v1.2.2"
 published: "2023-11-13"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/alibaba/lowcode-engine/compare/v1.2.1...v1.2.2"
+summary: "fix: import schema 之后 cache 判断错误(#2596)；docs: update useEditor.md；feat: update engine classes exports；feat(utils|types): add esmodule support for component meta resources"
 ---
 
 # lowcode-engine v1.2.2

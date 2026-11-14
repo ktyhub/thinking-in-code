@@ -6,7 +6,7 @@ tag: "v5.2.5"
 published: "2026-03-18"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who contributed to this release!"
+summary: "Add ZonedDateTime and OffsetDateTime support to JobParametersConverter #5178"
 ---
 
 # spring-batch v5.2.5

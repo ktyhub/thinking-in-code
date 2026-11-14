@@ -7,6 +7,7 @@ version: "v2.1.61"
 published: "2026-08-25"
 type: "patch"
 lang: "en"
+summary: "Settings → Appearance now lets you choose the typeface across four regions — app, chat, markdown and code — from a searchable list of fonts installed on your machine, plus a matching font-weight control…"
 ---
 
 # AionUi v2.1.61

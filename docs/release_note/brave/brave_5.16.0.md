@@ -6,7 +6,7 @@ tag: "5.16.0"
 published: "2023-05-11"
 type: "minor"
 lang: "en"
-summary: "Thank you both!"
+summary: "Support Apache HttpClient 5.2+ · Fixed the httpclient5 licenses."
 ---
 
 # brave 5.16.0

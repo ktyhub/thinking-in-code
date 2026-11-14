@@ -6,6 +6,7 @@ tag: "v0.23.1"
 published: "2026-10-02"
 type: "patch"
 lang: "en"
+summary: "restore release tests and refresh required readiness check (#5278) (730deb4)"
 ---
 
 # openai-agents-python v0.23.1

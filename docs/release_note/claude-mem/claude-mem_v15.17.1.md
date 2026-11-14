@@ -7,7 +7,7 @@ version: "v15.17.1"
 published: "2026-11-11"
 type: "patch"
 lang: "en"
-summary: "Since 15.16.0 the worker clears old plugin versions out of Claude Code's plugin cache five minutes after it starts and then hourly. A Claude Code session that was already open when an update arrived keeps running from…"
+summary: "Since 15.16.0 the worker clears old plugin versions out of Claude Code's plugin cache five minutes after it starts and then hourly."
 ---
 
 # claude-mem v15.17.1

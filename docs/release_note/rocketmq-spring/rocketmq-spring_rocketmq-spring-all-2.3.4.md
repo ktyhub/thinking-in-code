@@ -6,7 +6,7 @@ tag: "rocketmq-spring-all-2.3.4"
 published: "2025-06-23"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/rocketmq-spring/compare/rocketmq-spring-all-2.3.3...rocketmq-spring-all-2.3.4"
+summary: "update remoting client version to 5.3.2 to support go-away · [ISSUE #718]fix: registers a null consumerBuilder for RocketMQClientTemplate · [ISSUE #723] Fix warning log info · fix string format"
 ---
 
 # rocketmq-spring rocketmq-spring-all-2.3.4

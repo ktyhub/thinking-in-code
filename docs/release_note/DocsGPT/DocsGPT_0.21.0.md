@@ -7,6 +7,7 @@ version: "0.21.0"
 published: "2026-09-16"
 type: "minor"
 lang: "en"
+summary: "release: publish the frontend and sandbox images, write the 0.20.0 changelog · ci: fix PyPI publishing from the release chain, make image builds recoverable · feat(api): serve long-lived streams on the event loop"
 ---
 
 # DocsGPT 0.21.0

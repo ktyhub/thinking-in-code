@@ -6,6 +6,7 @@ tag: "v1.94.0"
 published: "2026-10-23"
 type: "minor"
 lang: "en"
+summary: "auth: request certificate-bound tokens for agent identities by (01eaba1) · bigquery-jdbc: Add clearcut telemetry client (#14607) (c702438) · bigquery-jdbc: expose QueryStatistics for jobless queries (#14596) (15f472c)"
 ---
 
 # google-cloud-java v1.94.0

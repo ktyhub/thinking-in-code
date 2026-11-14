@@ -6,7 +6,7 @@ tag: "13.14"
 published: "2026-08-19"
 type: "minor"
 lang: "en"
-summary: "List of PRs that updated libraries versions"
+summary: "Honor jdk.httpclient.allowRestrictedHeaders in Http2Client (#2975) · escape crlf and quotes in multipart Content-Disposition headers · fall back to utf-8 for invalid content-type charset"
 ---
 
 # feign 13.14

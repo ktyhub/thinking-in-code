@@ -6,7 +6,7 @@ tag: "v2.7.0.2"
 published: "2025-08-20"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/shenyu/compare/v2.7.0.1...v2.7.0.2"
+summary: "[release] 2.7.0.1 release · [fix] fix doc pulling error · [feat] update badge · [fix] fix h2 ai proxy sql lack of selector handle"
 ---
 
 # shenyu v2.7.0.2

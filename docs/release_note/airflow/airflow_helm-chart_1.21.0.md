@@ -6,7 +6,7 @@ tag: "helm-chart/1.21.0"
 published: "2026-04-24"
 type: "release"
 lang: "en"
-summary: "Significant Changes"
+summary: "Workers config options have been moved under workers.celery. and workers.kubernetes."
 ---
 
 # airflow helm-chart/1.21.0

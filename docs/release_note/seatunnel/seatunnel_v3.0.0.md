@@ -6,7 +6,7 @@ tag: "v3.0.0"
 published: "2026-09-29"
 type: "major"
 lang: "en"
-summary: "This is a great milestone for the Apache SeaTunnel project! The release of version 3.0.0 is a major update with 927 PRs, 30 new connectors and significant improvements across the Zeta engine, Connector-V2 and the CLI,…"
+summary: "This is a great milestone for the Apache SeaTunnel project! The release of version 3.0.0 is a major update with 927 PRs, 30 new connectors and significant improvements across the Zeta engine, Connector-V2 and the CLI…"
 ---
 
 # seatunnel v3.0.0

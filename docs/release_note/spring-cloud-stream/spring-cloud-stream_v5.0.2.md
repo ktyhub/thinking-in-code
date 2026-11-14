@@ -6,7 +6,7 @@ tag: "v5.0.2"
 published: "2026-06-11"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Kafka Binder does not work with multiple bindings #3173"
 ---
 
 # spring-cloud-stream v5.0.2

@@ -6,7 +6,7 @@ tag: "2.9.1"
 published: "2025-08-22"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/servicecomb-java-chassis/compare/2.9.0...2.9.1"
+summary: "[#4873] Support for SSE interface RPC calls · [#4873] unified Flowable conversion to prevent internal typecasting exceptions."
 ---
 
 # servicecomb-java-chassis 2.9.1

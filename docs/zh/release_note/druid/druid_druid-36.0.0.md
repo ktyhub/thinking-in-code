@@ -1,6 +1,7 @@
 ---
 title: "druid druid-36.0.0"
 description: "Apache Druid：高性能实时分析数据库。"
+summary: "Apache Druid：高性能实时分析数据库。"
 ---
 
 # druid druid-36.0.0

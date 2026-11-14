@@ -7,6 +7,7 @@ version: "v0.9.4"
 published: "2025-12-31"
 type: "patch"
 lang: "en"
+summary: "Repository name updated: LLaMA-Factory → LlamaFactory · Python 3.9–3.10 have been deprecated; LlamaFactory now requires Python 3.11–3.13 · Migrated from pip to uv; use uv pip install llamafactory"
 ---
 
 # LlamaFactory v0.9.4

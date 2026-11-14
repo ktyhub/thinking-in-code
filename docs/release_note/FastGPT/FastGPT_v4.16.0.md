@@ -6,7 +6,7 @@ tag: "v4.16.0"
 published: "2026-08-16"
 type: "minor"
 lang: "en"
-summary: "4.16.0 需要依赖 proxy 进行静态资源代理访问，如果网关支持 ws 和 http 在同一个端口，则可以只开放一个端口。如果不支持，可以通过设置 PREVIEWPORT 来设置 http 访问端口。"
+summary: "4.16.0 需要依赖 proxy 进行静态资源代理访问，如果网关支持 ws 和 http 在同一个端口，则可以只开放一个端口。如果不支持，可以通过设置 PREVIEW_PORT 来设置 http 访问端口。"
 ---
 
 # FastGPT v4.16.0

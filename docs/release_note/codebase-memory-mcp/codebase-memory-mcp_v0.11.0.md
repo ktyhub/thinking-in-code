@@ -7,7 +7,7 @@ version: "v0.11.0"
 published: "2026-09-15"
 type: "minor"
 lang: "en"
-summary: "A large release, and an unusually community-heavy one: 171 pull requests merged since v0.10.8 (9 of them dependency bumps), 76 of them from contributors outside the maintainer. Thank you — this release is mostly your…"
+summary: "A large release, and an unusually community-heavy one: 171 pull requests merged since v0.10.8 (9 of them dependency bumps), 76 of them from contributors outside the maintainer."
 ---
 
 # codebase-memory-mcp v0.11.0

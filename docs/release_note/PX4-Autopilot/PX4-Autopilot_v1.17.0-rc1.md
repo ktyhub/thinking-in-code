@@ -6,7 +6,7 @@ tag: "v1.17.0-rc1"
 published: "2026-03-11"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/PX4/PX4-Autopilot/compare/v1.17.0-beta1...v1.17.0-rc1"
+summary: "[BACKPORT 1.17] Include PWM Center PR · [Backport 1.17] Fix VTOL stuck after back-transition in Mission Fast RTL · [BACKPORT] failsafe: Prevent Offboard to Position without RC"
 ---
 
 # PX4-Autopilot v1.17.0-rc1

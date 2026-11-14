@@ -6,7 +6,7 @@ tag: "v7.9.0"
 published: "2026-09-04"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/fabric8io/kubernetes-client/compare/v7.8.0...v7.9.0"
+summary: "Fix #8024: (httpclient-vertx-5) WebSocket operations (exec/attach/portForward/WebSocket-backed watches) on a derived client - one produced by calling newBuilder()/build() on an already-built HttpClient - no longer fall…"
 ---
 
 # kubernetes-client v7.9.0

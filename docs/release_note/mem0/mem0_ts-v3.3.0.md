@@ -7,7 +7,7 @@ version: "ts-v3.3.0"
 published: "2026-09-23"
 type: "release"
 lang: "en"
-summary: "New Features:"
+summary: "Client: Add User Profiles to MemoryClient: getProfile(), generateProfile(), getProfileSettings(), updateProfileSettings(), sampleProfiles(), and getProfileJob()."
 ---
 
 # mem0 ts-v3.3.0

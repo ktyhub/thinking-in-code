@@ -7,6 +7,7 @@ version: "3.40.1"
 published: "2026-09-30"
 type: "patch"
 lang: "en"
+summary: "#48420 - Redis with 'CacheResult' returns 'QUEUED' under high concurrency load · #56834 - Missing RdsUtilities during Java 25 native build · #56938 - Harden AeshLauncher signal protocol and timeout diagnostics"
 ---
 
 # quarkus 3.40.1

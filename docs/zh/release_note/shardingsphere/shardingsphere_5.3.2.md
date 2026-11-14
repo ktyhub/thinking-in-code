@@ -6,6 +6,7 @@ tag: "5.3.2"
 published: "2023-03-30"
 type: "patch"
 lang: "zh"
+summary: "Proxy：添加属性`system-log-level，支持DistSQL动态更改日志级别。；DistSQL：删除Hint相关的DistSQL，用户可以使用`SQL Hint`代替"
 ---
 
 # shardingsphere 5.3.2

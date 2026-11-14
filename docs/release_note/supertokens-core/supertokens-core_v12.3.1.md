@@ -6,7 +6,7 @@ tag: "v12.3.1"
 published: "2026-10-16"
 type: "patch"
 lang: "en"
-summary: "The SAML replay hardening adds two columns to samlrelaystate and the samlconsumedassertions table. The core applies them at startup (CREATE TABLE / ADD COLUMN IF NOT EXISTS), so an in-place upgrade needs no manual step;…"
+summary: "SAML callback replay hardening (GHSA-3r7x-rhvc-fw28): the callback RelayState is now single-use, every assertion is consumed at most once (new saml_consumed_assertions table), and the response is bound to the login via…"
 ---
 
 # supertokens-core v12.3.1

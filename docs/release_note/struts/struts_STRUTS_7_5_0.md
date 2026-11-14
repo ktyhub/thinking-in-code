@@ -6,7 +6,7 @@ tag: "STRUTS_7_5_0"
 published: "2026-11-08"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/struts/compare/STRUTS740...STRUTS750"
+summary: "docs: state the control test that separates hardening from a vulnerability · docs(skills): send the [TEST] mail from the @apache.org identity · build(ci): decide 'does this need a build' in one reusable workflow"
 ---
 
 # struts STRUTS_7_5_0

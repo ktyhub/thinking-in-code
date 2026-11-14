@@ -6,7 +6,7 @@ tag: "v4.3.0-M1"
 published: "2025-01-30"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-stream/compare/v4.2.0...v4.3.0-M1"
+summary: "Fix typo in docs · Fix typo in docs for rabbit and spring cloud stream sections · Clarify that having a custom error handler disables auto send to DLQ · GH-3062: Fix KafkaBinderMetrics for resource leaks"
 ---
 
 # spring-cloud-stream v4.3.0-M1

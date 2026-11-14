@@ -6,7 +6,7 @@ tag: "v1.2026.6"
 published: "2026-06-08"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/plantuml/plantuml/compare/v1.2026.5...v1.2026.6"
+summary: "✨ enable TeaVM JS build for the MIT license flavor · ⬆️ Bump com.gorylenko.gradle-git-properties from 2.5.7 to 3.0.3[bot] · ⬆️ Bump com.github.librepdf:openpdf from 3.0.4 to 3.0.5[bot]"
 ---
 
 # plantuml v1.2026.6

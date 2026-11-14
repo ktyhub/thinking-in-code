@@ -6,6 +6,7 @@ tag: "6.6.7"
 published: "2026-10-20"
 type: "patch"
 lang: "en"
+summary: "🐞 Fix antd failing to load in some production builds when the React version export is unavailable. #59560 react-component/util#810 @github-actions @nrps9909"
 ---
 
 # ant-design 6.6.7

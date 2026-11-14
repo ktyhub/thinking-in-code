@@ -7,6 +7,7 @@ version: "v0.7.2"
 published: "2026-08-07"
 type: "patch"
 lang: "en"
+summary: "refactor(agent): consolidate model-handle codecs into internal/modelcontext · refactor(auth,router): unify auth session context and split router by domain · fix(knowledge): clean bound vector stores in batch delete"
 ---
 
 # WeKnora v0.7.2

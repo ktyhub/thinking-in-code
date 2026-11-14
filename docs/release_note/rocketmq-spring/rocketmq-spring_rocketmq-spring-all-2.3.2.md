@@ -6,7 +6,7 @@ tag: "rocketmq-spring-all-2.3.2"
 published: "2024-12-27"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/rocketmq-spring/compare/rocketmq-spring-all-2.3.1...rocketmq-spring-all-2.3.2"
+summary: "Updated the RocketMQ version dependencies in the rocketmq-spring-boot-samples and rocketmq-v5-client-spring-boot-samples modules. · Delete system property · Modify the inner class call to use the bean instance invocation"
 ---
 
 # rocketmq-spring rocketmq-spring-all-2.3.2

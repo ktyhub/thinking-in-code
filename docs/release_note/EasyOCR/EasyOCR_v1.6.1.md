@@ -7,6 +7,7 @@ version: "v1.6.1"
 published: "2022-09-01"
 type: "patch"
 lang: "en"
+summary: "1 September 2022 - Version 1.6.1 · Fix DBNET path bug for Windows · Add new built-in model cyrillic_g2. This model is a new default for Cyrillic script."
 ---
 
 # EasyOCR v1.6.1

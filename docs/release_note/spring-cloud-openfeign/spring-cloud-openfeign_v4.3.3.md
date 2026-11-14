@@ -6,7 +6,7 @@ tag: "v4.3.3"
 published: "2026-06-11"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "fallbackFactory property unconditionally overwritten in eagerlyRegisterFeignClientBeanDefinition #1367 · Response Compression Not Working Due to Missing Accept-Encoding Header #1204"
 ---
 
 # spring-cloud-openfeign v4.3.3

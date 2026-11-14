@@ -6,6 +6,7 @@ tag: "v9.0.1"
 published: "2026-08-26"
 type: "patch"
 lang: "en"
+summary: "core: restore prop defaults when consumers downlevel (#31375) (b4174f9) · item-sliding, segment-button: read props after frameworks assign them (#31391) (7956b97), closes #31388"
 ---
 
 # ionic-framework v9.0.1

@@ -6,6 +6,7 @@ tag: "druid-33.0.0"
 published: "2025-04-29"
 type: "release"
 lang: "en"
+summary: "Apache Druid 33.0.0 contains over 190 new features, bug fixes, performance enhancements, documentation improvements, and additional test coverage from 44 contributors."
 ---
 
 # druid druid-33.0.0

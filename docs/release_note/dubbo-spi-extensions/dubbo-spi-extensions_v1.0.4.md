@@ -6,6 +6,7 @@ tag: "v1.0.4"
 published: "2023-01-05"
 type: "patch"
 lang: "en"
+summary: "Remove the transitive dependency of seata-core in dubbo-filter-seata. · Support address creation in dubbo-cluster-specify-address-dubbo2 · Fix re-router failed in dubbo-cluster-specify-address"
 ---
 
 # dubbo-spi-extensions v1.0.4

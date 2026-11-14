@@ -6,6 +6,7 @@ tag: "v0.9.4"
 published: "2025-11-06"
 type: "patch"
 lang: "en"
+summary: "[client-v2] Added support for different compression algorithms when HTTP compression is enabled. ("
 ---
 
 # clickhouse-java v0.9.4

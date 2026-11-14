@@ -6,7 +6,7 @@ tag: "v1.66.0"
 published: "2026-09-11"
 type: "minor"
 lang: "en"
-summary: "This release was possible thanks to the following contributors who shared their brilliant ideas and awesome pull requests:"
+summary: "Fix Baggage.fromContext() and Baggage.fromContextOrNull() to handle a null context (#8667) · Do not percent-encode W3C baggage metadata (#8682)"
 ---
 
 # opentelemetry-java v1.66.0

@@ -7,6 +7,7 @@ version: "@composio/cli@0.6.1"
 published: "2026-11-13"
 type: "release"
 lang: "en"
+summary: "chore(sdk): update composio-client to 2.1.32[bot]"
 ---
 
 # composio @composio/cli@0.6.1

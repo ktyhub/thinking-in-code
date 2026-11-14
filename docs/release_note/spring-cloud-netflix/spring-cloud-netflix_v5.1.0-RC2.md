@@ -6,7 +6,7 @@ tag: "v5.1.0-RC2"
 published: "2026-11-05"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-netflix/compare/v5.1.0-RC1...v5.1.0-RC2"
+summary: "Improve Eureka server setup documentation · Improve documentation for Spring Cloud LoadBalancer with Eureka integration · Add custom Eureka health status mapping"
 ---
 
 # spring-cloud-netflix v5.1.0-RC2

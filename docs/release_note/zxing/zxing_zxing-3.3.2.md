@@ -6,7 +6,7 @@ tag: "zxing-3.3.2"
 published: "2018-01-31"
 type: "release"
 lang: "en"
-summary: "https://github.com/zxing/zxing/milestone/10?closed=1"
+summary: "Add workaround for Gradle + Android build issues · Minor DataMatrix bug fixes · Improve WPA2 wi-fi configuration support in Barcode Scanner · Various translation updates and minor improvements"
 ---
 
 # zxing zxing-3.3.2

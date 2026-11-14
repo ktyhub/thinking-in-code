@@ -6,7 +6,7 @@ tag: "v1.5.0"
 published: "2024-04-20"
 type: "minor"
 lang: "en"
-summary: "Both features in preview state, API is stable but limited (especially in UI customizations)"
+summary: "Added support for · Scripting, uses Kotlin, check short guide · External plugins, guide"
 ---
 
 # jadx v1.5.0

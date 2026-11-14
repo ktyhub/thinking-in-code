@@ -7,7 +7,7 @@ version: "v0.9.57"
 published: "2026-11-14"
 type: "patch"
 lang: "en"
-summary: "View changes on GitHub"
+summary: "feat(monaco): add Monaco CRM integration (#10009) · feat(computer-use): batch 2-8 actions per call and read app state in one round trip per element (#9995)"
 ---
 
 # sim v0.9.57

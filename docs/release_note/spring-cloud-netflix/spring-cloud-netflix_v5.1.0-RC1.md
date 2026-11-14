@@ -6,7 +6,7 @@ tag: "v5.1.0-RC1"
 published: "2026-10-23"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-netflix/compare/v5.1.0-M1...v5.1.0-RC1"
+summary: "Document securing Eureka replication requests with custom filters · Update Antora UI bundle to v0.4.26 · Update Antora UI bundle to v0.4.26 · Allow Dependabot minor version updates on main"
 ---
 
 # spring-cloud-netflix v5.1.0-RC1

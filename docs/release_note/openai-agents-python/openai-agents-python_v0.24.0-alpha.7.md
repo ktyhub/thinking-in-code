@@ -6,7 +6,7 @@ tag: "v0.24.0-alpha.7"
 published: "2026-11-08"
 type: "pre"
 lang: "en"
-summary: "Source: c27b24cc6c4fa7e89ab54fa9f795ef4f2d4d5fb9."
+summary: "Use Classic workflows alongside native execution. Import the retained v0 runtime through agents.classic. This alpha also changes executor write defaults; review the upgrade actions before opening existing environments."
 ---
 
 # openai-agents-python v0.24.0-alpha.7

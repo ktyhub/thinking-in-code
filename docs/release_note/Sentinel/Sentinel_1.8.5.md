@@ -6,7 +6,7 @@ tag: "1.8.5"
 published: "2022-08-09"
 type: "patch"
 lang: "en"
-summary: "Thanks for all contributors: @AlbumenJ, @benyamin2014, @icodening, @jgzl, @sczyh30, @zuohl"
+summary: "Add adapter for Apache Dubbo 3.x (#2789) · Auto-extract value from ParamFlowArgument when blocked in ParamFlowSlot (#2776)"
 ---
 
 # Sentinel 1.8.5

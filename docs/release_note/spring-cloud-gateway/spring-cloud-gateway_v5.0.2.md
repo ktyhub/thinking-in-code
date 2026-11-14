@@ -6,7 +6,7 @@ tag: "v5.0.2"
 published: "2026-06-11"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Fix for CVE-2026-47825"
 ---
 
 # spring-cloud-gateway v5.0.2

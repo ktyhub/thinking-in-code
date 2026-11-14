@@ -1,6 +1,7 @@
 ---
 title: "iotdb v2.0.10"
 description: "Apache物联网数据库"
+summary: "数据查询：支持schema级和表级存储空间统计；数据查询：增加DEBUG SQL能力，优化Explain Analyze结果集；数据查询：支持表模型中的集合运算（UNION/INTERSECT/EXCEPT）和公共表表达式（CTE）；数据查询：为表模型添加IF标量函数、二元函数和APPROX_PERCENTILE聚合函数"
 ---
 
 # iotdb v2.0.10

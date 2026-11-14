@@ -7,6 +7,7 @@ version: "v4.5.2"
 published: "2026-08-16"
 type: "patch"
 lang: "en"
+summary: "Fixed: Corrected the incorrect size configuration for Qwen3.8-35B-A3B, which was mistakenly copied from the previous Qwen3.5/3.6 series during development. We apologize for the confusion and inconvenience this caused."
 ---
 
 # ms-swift v4.5.2

@@ -7,6 +7,7 @@ version: "v0.13.0"
 published: "2026-11-03"
 type: "minor"
 lang: "en"
+summary: "📑 Tabbed workspace. The Tabs button at the top of a chat now opens a workspace for files, multiple terminal sessions, artifacts, previews, voice calls and comments."
 ---
 
 # open-webui v0.13.0

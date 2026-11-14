@@ -6,6 +6,7 @@ tag: "7.1.0"
 published: "2026-06-09"
 type: "minor"
 lang: "en"
+summary: "Opaque token introspectors should not allow empty credentials #19201"
 ---
 
 # spring-security 7.1.0

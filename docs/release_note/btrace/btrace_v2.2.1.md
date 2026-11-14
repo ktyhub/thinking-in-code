@@ -6,7 +6,7 @@ tag: "v2.2.1"
 published: "2021-12-26"
 type: "patch"
 lang: "en"
-summary: "Full Changelog"
+summary: "Instance classes don't work in JDK11 \\#482 · git clone not successful \\#478 · Cant start btrace because of wrong windows script \\#491\\ · BTrace probe's output is not being redirected for the first connection \\#498"
 ---
 
 # btrace v2.2.1

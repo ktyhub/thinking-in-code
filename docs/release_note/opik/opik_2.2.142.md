@@ -7,6 +7,7 @@ version: "2.2.142"
 published: "2026-11-05"
 type: "patch"
 lang: "en"
+summary: "[issue-3411] [FE] feat: open any LLM span in the playground · chore(deps): Update python:3.12.16-slim Docker digest to e695ab1[bot] · [issue-9381] [SDK] fix: treat a non-object LLMJudge verdict as a parse failure"
 ---
 
 # opik 2.2.142

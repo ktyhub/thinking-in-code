@@ -6,7 +6,7 @@ tag: "autogpt-platform-beta-v0.8.2"
 published: "2026-09-30"
 type: "pre"
 lang: "en"
-summary: "A huge shoutout to everyone who contributed to this release. Special thanks to our new contributors:"
+summary: "#14209 - AutoPilot action gating modes - Ask First, Auto, Unsupervised (by @Pwuts) · #14817 - Workflows started from AutoPilot pause before an irreversible action; the irreversible marker renamed and widened (by @Pwuts)"
 ---
 
 # AutoGPT autogpt-platform-beta-v0.8.2

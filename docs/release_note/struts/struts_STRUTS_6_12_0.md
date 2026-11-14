@@ -6,7 +6,7 @@ tag: "STRUTS_6_12_0"
 published: "2026-09-17"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/struts/compare/STRUTS6110...STRUTS6120"
+summary: "Prepare for a new development cycle of Struts 6.12.0 · WW-5688 Resolve id-bearing REST URIs into the root namespace when declared (6.x backport)"
 ---
 
 # struts STRUTS_6_12_0

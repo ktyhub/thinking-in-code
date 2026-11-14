@@ -6,7 +6,7 @@ tag: "kubernetes-dashboard-7.10.4"
 published: "2025-02-07"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/dashboard/compare/kubernetes-dashboard-7.10.3...kubernetes-dashboard-7.10.4"
+summary: "fix: use correct Kong service port for ingress based on TLS settings"
 ---
 
 # kubernetes-dashboard kubernetes-dashboard-7.10.4

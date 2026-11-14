@@ -6,7 +6,7 @@ tag: "v4.14.30"
 published: "2026-08-10"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/labring/FastGPT/compare/v4.14.29...v4.14.30"
+summary: "fix(mcp): avoid duplicating headers in SSE fallback"
 ---
 
 # FastGPT v4.14.30

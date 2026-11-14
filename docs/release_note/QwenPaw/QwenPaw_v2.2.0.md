@@ -7,7 +7,7 @@ version: "v2.2.0"
 published: "2026-09-03"
 type: "minor"
 lang: "en"
-summary: "QwenPaw Hub"
+summary: "Self-host a multi-user QwenPaw Hub with local-process or Docker runtimes, workspace-level access controls, credential management, and reverse-proxy support (#7112)"
 ---
 
 # QwenPaw v2.2.0

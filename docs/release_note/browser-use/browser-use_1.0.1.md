@@ -7,7 +7,7 @@ version: "1.0.1"
 published: "2026-11-10"
 type: "patch"
 lang: "en"
-summary: "Fixes on 1.0.0."
+summary: "MCP without Chrome: browser-use --cli-mcp on servers, containers and CI boxes now drives its own Chromium, installed on first use. When no browser can run, you get one clear error."
 ---
 
 # browser-use 1.0.1

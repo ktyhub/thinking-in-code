@@ -6,7 +6,7 @@ tag: "mybatis-3.5.10"
 published: "2022-05-23"
 type: "release"
 lang: "en"
-summary: "Bug fixes:"
+summary: "Unexpected illegal reflective access warning (or InaccessibleObjectException on Java 16+) when calling method in OGNL expression. #2392 · IllegalAccessException when auto-mapping Records (JEP-359) #2195"
 ---
 
 # mybatis-3 mybatis-3.5.10

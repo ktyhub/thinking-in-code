@@ -6,7 +6,7 @@ tag: "v3.0.2"
 published: "2026-10-01"
 type: "patch"
 lang: "en"
-summary: "This release contains bug fixes and various other improvements Enhancements:"
+summary: "This release contains bug fixes and various other improvements Enhancements"
 ---
 
 # Stirling-PDF v3.0.2

@@ -6,7 +6,7 @@ tag: "v1.8.4-Alpha1"
 published: "2026-05-04"
 type: "patch"
 lang: "en"
-summary: "[](https://central.sonatype.com/artifact/com.alibaba/dns-cache-manipulator/1.8.4-Alpha1) [](https://github.com/alibaba/java-dns-cache-manipulator/releases/download/v1.8.4-Alpha1/dcm-1.8.4-Alpha1.tar.gz)"
+summary: "Support Java 25/26"
 ---
 
 # java-dns-cache-manipulator v1.8.4-Alpha1

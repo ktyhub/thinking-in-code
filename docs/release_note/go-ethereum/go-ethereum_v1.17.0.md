@@ -6,6 +6,7 @@ tag: "v1.17.0"
 published: "2026-02-17"
 type: "minor"
 lang: "en"
+summary: "This is a feature release, with all accumulated development from the last 3 months. See below for the highlights."
 ---
 
 # go-ethereum v1.17.0

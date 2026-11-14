@@ -7,6 +7,7 @@ version: "v5.23.0"
 published: "2026-11-13"
 type: "minor"
 lang: "en"
+summary: "Inkling 2 Small is a multimodal model from Thinking Machines Lab that accepts text and image inputs and generates text outputs, and it is intended for use in English and other languages and across multiple coding…"
 ---
 
 # transformers v5.23.0

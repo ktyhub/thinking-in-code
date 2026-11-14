@@ -6,7 +6,7 @@ tag: "v8.5.1"
 published: "2026-01-16"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/ccfos/nightingale/compare/v8.5.0...v8.5.1"
+summary: "refactor: Optimize database initialization logic · fix: Migrate typo in panel config within dashboard groups · fix: Reset zoom when time range changes in dashboard time series chart"
 ---
 
 # nightingale v8.5.1

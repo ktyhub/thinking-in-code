@@ -6,7 +6,7 @@ tag: "autogpt-platform-beta-v0.7.4"
 published: "2026-09-04"
 type: "pre"
 lang: "en"
-summary: "A huge shoutout to everyone who contributed to this release. Special thanks to our new contributors:"
+summary: "#14215 - Scope integrations per expert and surface them in the UI (by @0ubbe) · #14216 - Surface agent work on the homepage via an activity event log (by @0ubbe)"
 ---
 
 # AutoGPT autogpt-platform-beta-v0.7.4

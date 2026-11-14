@@ -6,7 +6,7 @@ tag: "v5.1.0-M1"
 published: "2026-09-24"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-stream/compare/v5.0.3...v5.1.0-M1"
+summary: "Update Maven wrapper to 3.9.16 · Add reflection hints for Kafka serializers · Bump actions/setup-java from 5 to 6[bot] · Bump antora from 3.2.0-rc.2 to 3.2.0-rc.3 in /docs[bot]"
 ---
 
 # spring-cloud-stream v5.1.0-M1

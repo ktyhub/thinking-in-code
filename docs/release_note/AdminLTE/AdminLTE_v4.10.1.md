@@ -6,7 +6,7 @@ tag: "v4.10.1"
 published: "2026-10-08"
 type: "patch"
 lang: "en"
-summary: "AdminLTE 4.10.1 refreshes the build toolchain and demo integrations, fixes responsive and accessibility issues, and adds broader regression coverage. Public AdminLTE component APIs and the published package's Node.js…"
+summary: "AdminLTE 4.10.1 refreshes the build toolchain and demo integrations, fixes responsive and accessibility issues, and adds broader regression coverage."
 ---
 
 # AdminLTE v4.10.1

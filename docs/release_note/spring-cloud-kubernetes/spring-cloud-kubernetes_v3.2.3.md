@@ -6,7 +6,7 @@ tag: "v3.2.3"
 published: "2025-12-11"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Cannot disable leaderElection for /info endpoint #2085 · fix issue 2008 (3.2.x) #2015 · DiscoveryServer packaging changed in latest release #2012"
 ---
 
 # spring-cloud-kubernetes v3.2.3

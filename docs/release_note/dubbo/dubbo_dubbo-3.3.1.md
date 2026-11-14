@@ -6,7 +6,7 @@ tag: "dubbo-3.3.1"
 published: "2024-10-02"
 type: "release"
 lang: "en"
-summary: "Releates PRs: #14671, #14705"
+summary: "Support single file mode in dubbo-maven-plugin · Support configuration of disallowed content-types · Returns a matching http status code based on the rest mappings · Http2 sse support"
 ---
 
 # dubbo dubbo-3.3.1

@@ -6,7 +6,6 @@ tag: "v4.3.1"
 published: "2025-12-16"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
 ---
 
 # spring-cloud-stream v4.3.1

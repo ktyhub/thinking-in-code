@@ -6,6 +6,7 @@ tag: "2.3.8"
 published: "2024-10-14"
 type: "patch"
 lang: "en"
+summary: "[Hotfix][Core] Fix concurrency exceptions when MultiTableSink#PrepareCommit (#7686) · [hotfix][zeta] conf property is null, print log bug fix (#7487)"
 ---
 
 # seatunnel 2.3.8

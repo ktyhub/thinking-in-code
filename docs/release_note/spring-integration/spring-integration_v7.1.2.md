@@ -6,6 +6,7 @@ tag: "v7.1.2"
 published: "2026-10-22"
 type: "patch"
 lang: "en"
+summary: "Remove broken stack trace from HttpRequestHandlingController errors #11516 · Reject unconvertible messages in AMQP 1.0 inbound endpoints #11501"
 ---
 
 # spring-integration v7.1.2

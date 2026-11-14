@@ -6,7 +6,7 @@ tag: "v1.8.3"
 published: "2024-09-09"
 type: "patch"
 lang: "en"
-summary: "[](https://search.maven.org/artifact/com.alibaba/dns-cache-manipulator/1.8.3/jar) [](https://github.com/alibaba/java-dns-cache-manipulator/releases/download/v1.8.3/dcm-1.8.3.tar.gz)"
+summary: "support for use through JVM -javaagent command line option 🤖 (#289)"
 ---
 
 # java-dns-cache-manipulator v1.8.3

@@ -7,6 +7,7 @@ version: "v1.7.0"
 published: "2023-05-25"
 type: "minor"
 lang: "en"
+summary: "25 May 2023 - Version 1.7.0 · Add Apple Silicon support (thanks@rayeesoft and @ArtemBernatskyy, see PR) · Fix several compatibilities"
 ---
 
 # EasyOCR v1.7.0

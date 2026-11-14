@@ -6,7 +6,7 @@ tag: "v3.0.0a20"
 published: "2025-10-01"
 type: "major"
 lang: "en"
-summary: "Full Changelog: https://github.com/sinaptik-ai/pandas-ai/compare/v3.0.0a19...v3.0.0a20"
+summary: "docs: update views documentation · fixing LiteLLM call for the follow up · fix: last_code_generated retrieval logic in multi-turn conversations · feat: add sqlserver support"
 ---
 
 # pandas-ai v3.0.0a20

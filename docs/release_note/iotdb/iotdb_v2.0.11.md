@@ -6,7 +6,7 @@ tag: "v2.0.11"
 published: "2026-09-11"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/iotdb/compare/v2.0.10...v2.0.11"
+summary: "This version raises the minimum required JDK version to 17."
 ---
 
 # iotdb v2.0.11

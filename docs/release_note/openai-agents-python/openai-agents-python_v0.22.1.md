@@ -6,7 +6,7 @@ tag: "v0.22.1"
 published: "2026-09-08"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/openai/openai-agents-python/compare/v0.22.0...v0.22.1"
+summary: "feat(core): support image results in web search tools · feat(core): customize output guardrail blocked messages · feat(mcp): add server-wide guardrails to MCP tools"
 ---
 
 # openai-agents-python v0.22.1

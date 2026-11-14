@@ -6,6 +6,7 @@ tag: "dubbo-3.3.1"
 published: "2024-10-02"
 type: "release"
 lang: "zh"
+summary: "支持 @oxsean 在 https://github.com/apache/dubbo/pull/14726 中配置不允许的内容类型；根据 @oxsean 在 https://github.com/apache/dubbo/pull/14714 中的其余映射返回匹配的 http 状态代码；@oxsean 在 https://github.com/apache/dubbo/pull/14673 中支持 Http2 sse"
 ---
 
 # dubbo dubbo-3.3.1

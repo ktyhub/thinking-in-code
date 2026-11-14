@@ -6,6 +6,7 @@ tag: "2025.0.0.0"
 published: "2025-10-17"
 type: "major"
 lang: "en"
+summary: "[Nacos]: Disable HealthIndicator by default · [Sentinel]: Support SpringCloudGateway 2025 version @uuuyuqi in #4042"
 ---
 
 # spring-cloud-alibaba 2025.0.0.0

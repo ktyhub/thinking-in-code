@@ -7,6 +7,7 @@ version: "v1.16.2"
 published: "2026-09-22"
 type: "patch"
 lang: "en"
+summary: "[x] LLMman - OSS is now available as a local LLM provider, replacing Docker Model Runner · [x] Google Vertex AI is now available as an LLM provider · [x] New generate-image agent skill for creating images from chat"
 ---
 
 # anything-llm v1.16.2

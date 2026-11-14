@@ -6,7 +6,7 @@ tag: "1.14.0-beta24"
 published: "2026-04-30"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/langchain4j/langchain4j-spring/compare/1.13.0-beta23...1.14.0-beta24"
+summary: "Update versions to 1.14.0-SNAPSHOT and 1.14.0-beta24-SNAPSHOT · Add Spring Boot starters for OpenAI Official (langchain4j-open-ai-official) · Add assertEmbedding() in EmbeddingStoreAutoConfigurationIT"
 ---
 
 # langchain4j 1.14.0-beta24

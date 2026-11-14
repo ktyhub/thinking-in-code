@@ -7,6 +7,7 @@ version: "0.18.0"
 published: "2026-06-26"
 type: "minor"
 lang: "en"
+summary: "feat: agent import / export · chore(deps-dev): bump @tailwindcss/postcss from 4.2.2 to 4.2.4 in /frontend[bot] · chore(deps-dev): bump tailwindcss from 4.2.4 to 4.3.1 in /frontend[bot]"
 ---
 
 # DocsGPT 0.18.0

@@ -6,6 +6,7 @@ tag: "v1.0.0-M5.1"
 published: "2025-01-20"
 type: "pre"
 lang: "en"
+summary: "Upgrade Spring AI to 1.0.0-M5 · Community-driven FunctionCalling and DocumentReader implementations."
 ---
 
 # spring-ai-alibaba v1.0.0-M5.1

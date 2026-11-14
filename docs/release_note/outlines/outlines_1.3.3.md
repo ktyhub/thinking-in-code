@@ -7,6 +7,7 @@ version: "1.3.3"
 published: "2026-08-06"
 type: "patch"
 lang: "en"
+summary: "Support PEP 604 unions (int | str) as output types · fix: reject negative counts in exactly/at_least/at_most/between · fix: raise clearly instead of asserting on a rejected XGrammar token"
 ---
 
 # outlines 1.3.3

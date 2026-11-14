@@ -6,7 +6,7 @@ tag: "v5.3.0"
 published: "2026-07-02"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/docker/compose/compare/v5.2.0...v5.3.0"
+summary: "Pre start init containers"
 ---
 
 # compose v5.3.0

@@ -6,6 +6,7 @@ tag: "v2.16.0"
 published: "2026-11-10"
 type: "minor"
 lang: "en"
+summary: "Update artifact_accessory to add source column to identify accessory · feat: replace redis with valkey as cache backend · Full Multi-Architecture Enablement for Harbor (amd64 + arm64)"
 ---
 
 # harbor v2.16.0

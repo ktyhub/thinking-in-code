@@ -7,6 +7,7 @@ version: "n8n@2.47.6"
 published: "2026-11-13"
 type: "release"
 lang: "en"
+summary: "core: Keep trusted-source cache keys in one Redis cluster slot (#43627) (2d95724) · core: Let agents turn off prompt caching for endpoints that reject the cache fields (#43673) (400fb98)"
 ---
 
 # n8n n8n@2.47.6

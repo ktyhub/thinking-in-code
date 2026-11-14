@@ -7,6 +7,7 @@ version: "0.125.0"
 published: "2026-10-23"
 type: "minor"
 lang: "en"
+summary: "deps: make jks-js an optional peer dependency (#11739) · providers: make Claude Agent and Codex SDKs opt-in (#11134)"
 ---
 
 # promptfoo 0.125.0

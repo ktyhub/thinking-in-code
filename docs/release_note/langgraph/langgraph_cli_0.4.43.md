@@ -7,7 +7,7 @@ version: "cli 0.4.43"
 published: "2026-11-12"
 type: "release"
 lang: "en"
-summary: "Changes since cli==0.4.42"
+summary: "release(cli): 0.4.43 (#9682) · feat(cli): use Agent Server flags with hidden deployment aliases (#9666) · fix(cli): remove discontinued local debugger image (#8543)"
 ---
 
 # langgraph cli==0.4.43

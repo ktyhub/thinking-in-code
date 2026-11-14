@@ -7,7 +7,7 @@ version: "ray-2.60.0"
 published: "2026-11-04"
 type: "release"
 lang: "en"
-summary: "Make shuffle v2 the default, add task-based shuffle v2 for sort, and rename external shuffle to disk shuffle (\\#66260, \\#64875, \\#66367)"
+summary: "Ray Data shuffle and Parquet reads: In this Ray release, shuffle v2 is the default shuffle strategy for joins, aggregations (\\#66260)."
 ---
 
 # ray ray-2.60.0

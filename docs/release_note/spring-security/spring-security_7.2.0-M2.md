@@ -6,7 +6,7 @@ tag: "7.2.0-M2"
 published: "2026-09-24"
 type: "pre"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "@EnableMethodSecurity should pick up PermissionEvaluator bean · Allow configurable DPoP Proof verifier · Expose OAuth2AuthorizationCodeRequestValidatingFilter"
 ---
 
 # spring-security 7.2.0-M2

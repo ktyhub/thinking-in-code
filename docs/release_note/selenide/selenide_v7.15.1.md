@@ -6,7 +6,7 @@ tag: "v7.15.1"
 published: "2026-04-01"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/selenide/selenide/compare/v7.15.0...v7.15.1"
+summary: "#3274 Revert 'limit execution time of all Selenide commands' (#3276) · #3251 stop downloading a file from remote browser after given timeout (#3276) · bump Appium from 10.0.0 to 10.1.0"
 ---
 
 # selenide v7.15.1

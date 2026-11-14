@@ -6,7 +6,7 @@ tag: "3.0.5"
 published: "2026-05-22"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/LibrePDF/OpenPDF/compare/3.0.4...3.0.5"
+summary: "openpdf-html - reformating according to defined checkstyle rules · Bump org.verapdf:validation-model from 1.28.2 to 1.30.1[bot] · Bump commons-io:commons-io from 2.21.0 to 2.22.0[bot]"
 ---
 
 # OpenPDF 3.0.5

@@ -6,7 +6,7 @@ tag: "v4.3.0-M2"
 published: "2025-03-03"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-stream/compare/v4.3.0-M1...v4.3.0-M2"
+summary: "Fix typos in documentation · Add Null Handling for FunctionToInvoke in StreamBridge along with Test"
 ---
 
 # spring-cloud-stream v4.3.0-M2

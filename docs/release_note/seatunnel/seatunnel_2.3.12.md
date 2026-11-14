@@ -6,7 +6,7 @@ tag: "2.3.12"
 published: "2025-09-12"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/seatunnel/compare/2.3.11...2.3.12"
+summary: "[Doc] Added deepwiki to README.md #9354 (#9356) · [Doc] Fix link error and DynamoDB parameter error (#9447) · [Doc][Improve] update projection supported in Paimon (#9425) · [Doc][Zeta] Add zeta tuning guide (#9539)"
 ---
 
 # seatunnel 2.3.12

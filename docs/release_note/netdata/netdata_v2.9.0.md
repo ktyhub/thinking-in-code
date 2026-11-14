@@ -6,7 +6,7 @@ tag: "v2.9.0"
 published: "2026-02-16"
 type: "minor"
 lang: "en"
-summary: "Netdata v2.9.0 brings powerful database observability and expanded OpenTelemetry support."
+summary: "Summary · Highlights · Contributions · Collectors"
 ---
 
 # netdata v2.9.0

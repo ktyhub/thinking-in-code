@@ -6,7 +6,7 @@ tag: "1.8.3"
 published: "2021-12-31"
 type: "patch"
 lang: "en"
-summary: "Thanks for all contributors: @brotherlu-xcq, @chenzhiguo, @sczyh30, @shaohsiung, @su787910081, @winjaychan, @wucheng1997, @xiaojun207, @xianwdong"
+summary: "Add support for Envoy RLS v3 API in sentinel-cluster-server-envoy-rls token server module (#2336) · Add metric exporter extension for exporting Sentinel metrics via JMX (#2275)"
 ---
 
 # Sentinel 1.8.3

@@ -6,7 +6,7 @@ tag: "v7.18.1"
 published: "2026-08-29"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/selenide/selenide/compare/v7.18.0...v7.18.1"
+summary: "update Selenium from 4.47.0 to 4.48.0 · update LittleProxy from 2.9.0 to 2.9.1 · MCP append tool · build(deps): bump io.modelcontextprotocol.sdk:mcp from 2.0.0 to 2.0.1[bot]"
 ---
 
 # selenide v7.18.1

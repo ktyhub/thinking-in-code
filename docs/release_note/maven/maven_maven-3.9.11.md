@@ -6,6 +6,7 @@ tag: "maven-3.9.11"
 published: "2025-07-15"
 type: "release"
 lang: "en"
+summary: "Augment version range resolution used repositories (#2574) @cstamas"
 ---
 
 # maven maven-3.9.11

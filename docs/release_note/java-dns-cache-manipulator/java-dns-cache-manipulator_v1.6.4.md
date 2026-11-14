@@ -6,7 +6,7 @@ tag: "v1.6.4"
 published: "2021-12-17"
 type: "patch"
 lang: "en"
-summary: "[](https://search.maven.org/artifact/com.alibaba/dns-cache-manipulator/1.6.4/jar) [](https://github.com/alibaba/java-dns-cache-manipulator/releases/download/v1.6.4/dcm-1.6.4.tar.gz)"
+summary: "improve codeclimate · fix Method InetAddressCacheUtilForJava9Plus#inetAddress$Addresses2DnsCacheEntry codeclimate issue #66"
 ---
 
 # java-dns-cache-manipulator v1.6.4

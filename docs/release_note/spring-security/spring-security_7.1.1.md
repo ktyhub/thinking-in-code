@@ -6,6 +6,7 @@ tag: "7.1.1"
 published: "2026-08-20"
 type: "patch"
 lang: "en"
+summary: "Fix Broken DefaultLoginPageGeneratingFilter Javadoc Link #19252 · Remove BeanResolver Null Checks #19209 · Remove Unnecessary AuthorizationDecision Cast #19283 · Update One-Time Token Docs for Renamed APIs #19274"
 ---
 
 # spring-security 7.1.1

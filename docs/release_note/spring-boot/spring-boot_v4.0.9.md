@@ -7,7 +7,7 @@ version: "v4.0.9"
 published: "2026-10-22"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Add TWENTY\\SEVEN to JavaVersion enum #51422"
 ---
 
 # spring-boot v4.0.9

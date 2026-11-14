@@ -6,7 +6,7 @@ tag: "1.7.5-rc0"
 published: "2026-09-02"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/AutoMQ/automq/compare/1.7.4...1.7.5-rc0"
+summary: "fix(s3stream): retry block index load after compaction race (1.7 backport) · fix(deps): align Jetty with Kafka 3.9 · fix(security): upgrade Wire to 6.3.0 · fix(deps): upgrade Netty to 4.1.137.Final"
 ---
 
 # AutoMQ 1.7.5-rc0

@@ -7,7 +7,7 @@ version: "autogpt-platform-beta-v0.11.2"
 published: "2026-11-11"
 type: "pre"
 lang: "en"
-summary: "Date: January 2025"
+summary: "#16308 - Plan-first trial: starter tasks and experts on the paywall, hire step removed, team hired on trial start, Home starts with ranked tasks owned by experts (by @itsababseh)"
 ---
 
 # AutoGPT autogpt-platform-beta-v0.11.2

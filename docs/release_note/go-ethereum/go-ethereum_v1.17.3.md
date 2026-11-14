@@ -6,6 +6,7 @@ tag: "v1.17.3"
 published: "2026-05-11"
 type: "patch"
 lang: "en"
+summary: "This is a maintenance release with continued progress on the Amsterdam fork implementation. It also introduces ETH/70, which is now live on the network."
 ---
 
 # go-ethereum v1.17.3

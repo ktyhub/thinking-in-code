@@ -6,6 +6,7 @@ tag: "v4.0.5"
 published: "2026-04-20"
 type: "patch"
 lang: "en"
+summary: "Async Processing (and out of order commits) with FilteringMessageListenerAdapter #4414 · ShareKafkaMessageListenerContainer.doStart() does not await consumer thread startup #4400"
 ---
 
 # spring-kafka v4.0.5

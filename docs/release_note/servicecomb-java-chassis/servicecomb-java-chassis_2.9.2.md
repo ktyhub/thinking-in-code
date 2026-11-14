@@ -6,7 +6,7 @@ tag: "2.9.2"
 published: "2025-10-11"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/servicecomb-java-chassis/compare/2.9.1...2.9.2"
+summary: "[#4930] upgrade vertx to 4.5.21, netty version to 4.1.127.Final · [#4936] isolation event add instance total and isolation num"
 ---
 
 # servicecomb-java-chassis 2.9.2

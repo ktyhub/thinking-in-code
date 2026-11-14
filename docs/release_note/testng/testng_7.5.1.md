@@ -6,7 +6,7 @@ tag: "7.5.1"
 published: "2023-04-26"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/cbeust/testng/compare/7.5...7.5.1"
+summary: "Cherrypick Zip Slip Vulnerability to 7.5 release"
 ---
 
 # testng 7.5.1

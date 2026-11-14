@@ -6,6 +6,7 @@ tag: "maven-3.9.15"
 published: "2026-04-17"
 type: "release"
 lang: "en"
+summary: "Use new Maven logos in documentation (#11938) @slawekjaranowski · document modelVersion only supported value: 4.0.0 (#11809) @hboutemy"
 ---
 
 # maven maven-3.9.15

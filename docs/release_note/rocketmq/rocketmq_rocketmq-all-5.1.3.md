@@ -6,7 +6,7 @@ tag: "rocketmq-all-5.1.3"
 published: "2023-06-24"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/rocketmq/compare/rocketmq-all-5.1.2...rocketmq-all-5.1.3"
+summary: "[ISSUE #6576] Fix pop lmq message · [ISSUE #5866] Fix client-side memory leak of inactive channel · [ISSUE #6889] Add attribute for SubscriptionGroupConfig · [ISSUE #6720] [RIP-64] Heartbeat Optimization"
 ---
 
 # rocketmq rocketmq-all-5.1.3

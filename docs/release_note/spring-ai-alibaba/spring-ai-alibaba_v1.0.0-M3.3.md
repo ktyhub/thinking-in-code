@@ -6,7 +6,7 @@ tag: "v1.0.0-M3.3"
 published: "2024-12-25"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/alibaba/spring-ai-alibaba/compare/v1.0.0-M3.2...v1.0.0-M3.3"
+summary: "Feature/autoconfig 2024 · Feature/time plugin 20241119 · Baidu search plugin · bing plugin"
 ---
 
 # spring-ai-alibaba v1.0.0-M3.3

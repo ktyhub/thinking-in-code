@@ -6,7 +6,7 @@ tag: "v5.0.2"
 published: "2026-05-31"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/dropwizard/dropwizard/compare/v5.0.1...v5.0.2"
+summary: "chore(deps): update actions/cache action to v5.0.3 (release/5.0.x)[bot] · fix(deps): update jetty monorepo to v12.1.6 (release/5.0.x) (patch)[bot]"
 ---
 
 # dropwizard v5.0.2

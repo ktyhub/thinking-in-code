@@ -7,6 +7,7 @@ version: "v1.0.10"
 published: "2026-05-01"
 type: "patch"
 lang: "en"
+summary: "fix(lipsync): Infinite Talk image-to-video (and the other hasPrompt: true lipsync models — Wan 2.2 s2v, LTX 2.3, LTX 2 19B, Infinite Talk v2v) no longer fail with field 'prompt' failed nullable validation: Value is not…"
 ---
 
 # Open-Generative-AI v1.0.10

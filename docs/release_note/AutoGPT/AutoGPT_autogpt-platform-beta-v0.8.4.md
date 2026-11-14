@@ -7,7 +7,7 @@ version: "autogpt-platform-beta-v0.8.4"
 published: "2026-10-14"
 type: "pre"
 lang: "en"
-summary: "Date: October 2026"
+summary: "#15089 - Run Copilot chat on a turn runtime that resumes at its cursor on one connection (by @Pwuts) · #15199 - Expert integrations connect through MCP first (by @0ubbe)"
 ---
 
 # AutoGPT autogpt-platform-beta-v0.8.4

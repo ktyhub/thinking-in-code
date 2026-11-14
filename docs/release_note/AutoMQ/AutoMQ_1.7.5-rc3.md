@@ -6,7 +6,7 @@ tag: "1.7.5-rc3"
 published: "2026-11-02"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/AutoMQ/automq/compare/1.7.5-rc2...1.7.5-rc3"
+summary: "fix(1.7): backport #3665 shutdown bounds (S3MetricsExporter flush, ClusterEventPublisher close) · fix(1.7): backport Jackson upgrade and DirectIO memory release · fix(s3): avoid unsupported multipart range copy on GCS"
 ---
 
 # AutoMQ 1.7.5-rc3

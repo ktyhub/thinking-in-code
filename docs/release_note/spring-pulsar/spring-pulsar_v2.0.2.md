@@ -6,7 +6,7 @@ tag: "v2.0.2"
 published: "2026-01-20"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Update usage of AOT hints for AsyncHttpClient properties #1373 · Fix pulsar listener's incorrect ack behaviour causing un-acked backlog on partitioned topic when using AckMode.BATCH #1372"
 ---
 
 # spring-pulsar v2.0.2

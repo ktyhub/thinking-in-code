@@ -6,7 +6,7 @@ tag: "rel_3_31_0_ga"
 published: "2026-04-19"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/jboss-javassist/javassist/compare/rel3302ga...rel3310ga"
+summary: "improve pom · support bootstrap method coping when using code coping · Line numbers support · [bugfix]fix TransformCallToStatic with invokeinterface or invokedynamic"
 ---
 
 # javassist rel_3_31_0_ga

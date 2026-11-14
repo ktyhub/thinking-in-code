@@ -6,7 +6,7 @@ tag: "2.2.2"
 published: "2025-06-16"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/LibrePDF/OpenPDF/compare/2.2.1...2.2.2"
+summary: "Bump org.apache.maven.plugins:maven-javadoc-plugin from 3.5.0 to 3.11.2 · Rename openpdf-html config file til openpdf.conf and some minor fixes"
 ---
 
 # OpenPDF 2.2.2

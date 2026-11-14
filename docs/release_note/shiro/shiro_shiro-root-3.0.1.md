@@ -6,7 +6,7 @@ tag: "shiro-root-3.0.1"
 published: "2026-08-23"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/shiro/compare/shiro-root-3.0.0...shiro-root-3.0.1"
+summary: "enh: added replay whitelist and blacklist check before resubmitting a…"
 ---
 
 # shiro shiro-root-3.0.1

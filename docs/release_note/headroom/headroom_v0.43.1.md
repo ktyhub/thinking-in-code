@@ -7,6 +7,7 @@ version: "v0.43.1"
 published: "2026-11-05"
 type: "patch"
 lang: "en"
+summary: "ccr: keep the in-memory order queue from evicting re-stored entries (#4545) (c6f5bf9) · memory: read the relation key the memory_save schema advertises (#4647) (7592e68)"
 ---
 
 # headroom v0.43.1

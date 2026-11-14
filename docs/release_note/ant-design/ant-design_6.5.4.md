@@ -6,6 +6,7 @@ tag: "6.5.4"
 published: "2026-08-07"
 type: "patch"
 lang: "en"
+summary: "🐞 Fix Alert not showing the close button when the closable configuration object only contains onClose. #58885 @QDyanbing"
 ---
 
 # ant-design 6.5.4

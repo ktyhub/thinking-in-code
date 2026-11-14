@@ -7,7 +7,7 @@ version: "v1.12.2"
 published: "2026-04-10"
 type: "patch"
 lang: "en"
-summary: "The Deep Research pipeline now operates on a more aggressive Reason-Search-Scrape-Extract-Repeat cycle. The system iteratively identifies top-tier websites, scrapes their full content, and extracts key data points to…"
+summary: "Fixed history double-conversion bugs to ensure smoother suggestion generation. · Added validation and timeouts to prevent hung search requests."
 ---
 
 # Vane v1.12.2

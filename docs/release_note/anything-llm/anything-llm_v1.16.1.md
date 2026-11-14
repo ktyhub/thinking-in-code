@@ -7,6 +7,7 @@ version: "v1.16.1"
 published: "2026-08-27"
 type: "patch"
 lang: "en"
+summary: "We overhauled our UI for long-horizon agentic tasks that show multiple thinking and tool calls to now roll up into a single clean, collapsible UI element."
 ---
 
 # anything-llm v1.16.1

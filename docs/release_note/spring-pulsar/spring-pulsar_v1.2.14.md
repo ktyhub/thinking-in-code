@@ -6,7 +6,7 @@ tag: "v1.2.14"
 published: "2026-01-20"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-projects/spring-pulsar/compare/v1.2.13...v1.2.14"
+summary: "Bump ch.qos.logback:logback-classic from 1.5.22 to 1.5.23 #1369 · Bump ch.qos.logback:logback-classic from 1.5.23 to 1.5.24 #1382 · Bump ch.qos.logback:logback-classic from 1.5.24 to 1.5.25 #1392"
 ---
 
 # spring-pulsar v1.2.14

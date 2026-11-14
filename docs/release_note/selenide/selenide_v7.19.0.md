@@ -6,7 +6,7 @@ tag: "v7.19.0"
 published: "2026-10-10"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/selenide/selenide/compare/v7.18.2...v7.19.0"
+summary: "#3378 save and restore browser state (#3461) · #3370 add built-in clock and timezone emulation (#3431) (#3442) -- thanks to @suhanrain"
 ---
 
 # selenide v7.19.0

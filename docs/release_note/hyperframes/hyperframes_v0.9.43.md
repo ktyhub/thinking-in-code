@@ -7,7 +7,7 @@ version: "v0.9.43"
 published: "2026-11-13"
 type: "patch"
 lang: "en"
-summary: "Released on 2026-11-13."
+summary: "Renders on Windows no longer show coloured fringes around text, and previews open no audio device until a clip with sound plays. That second change ends long freezes on Windows."
 ---
 
 # hyperframes v0.9.43

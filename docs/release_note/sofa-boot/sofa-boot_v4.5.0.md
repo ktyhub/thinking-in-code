@@ -6,7 +6,7 @@ tag: "v4.5.0"
 published: "2025-07-04"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/sofastack/sofa-boot/compare/v4.4.1...v4.5.0"
+summary: "Fast Fail when component failed to register · Support spring boot 3.5.3 · Change OSSRH to Central Portal"
 ---
 
 # sofa-boot v4.5.0

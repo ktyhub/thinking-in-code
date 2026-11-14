@@ -7,6 +7,7 @@ version: "v0.8.3"
 published: "2026-10-14"
 type: "patch"
 lang: "en"
+summary: "fix(website-docs): serve everything but the homepage from /docs/ · test(website-docs): update integration test for the v0.8.2 header and release gallery · fix(session): keep auto-generated titles plain text"
 ---
 
 # WeKnora v0.8.3

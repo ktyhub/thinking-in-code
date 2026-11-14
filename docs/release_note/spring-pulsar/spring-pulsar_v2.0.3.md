@@ -6,7 +6,7 @@ tag: "v2.0.3"
 published: "2026-02-17"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Bump org.springframework:spring-framework-bom from 7.0.3 to 7.0.4 #1418 · Bump ch.qos.logback:logback-classic from 1.5.28 to 1.5.29 #1417 · Bump io.micrometer:micrometer-bom from 1.16.2 to 1.16.3 #1414"
 ---
 
 # spring-pulsar v2.0.3

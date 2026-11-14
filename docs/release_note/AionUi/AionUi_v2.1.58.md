@@ -7,6 +7,7 @@ version: "v2.1.58"
 published: "2026-08-18"
 type: "patch"
 lang: "en"
+summary: "Persian (fa-IR) now renders with a full right-to-left layout — mirrored icons, panels, and reading direction across the entire app."
 ---
 
 # AionUi v2.1.58

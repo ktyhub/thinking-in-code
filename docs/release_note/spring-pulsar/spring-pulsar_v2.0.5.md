@@ -6,7 +6,7 @@ tag: "v2.0.5"
 published: "2026-04-20"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Pulsar 4.2.0 breaks integration tests #1470"
 ---
 
 # spring-pulsar v2.0.5

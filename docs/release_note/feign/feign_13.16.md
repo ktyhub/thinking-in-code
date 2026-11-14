@@ -6,7 +6,7 @@ tag: "13.16"
 published: "2026-10-05"
 type: "minor"
 lang: "en"
-summary: "List of PRs that updated libraries versions"
+summary: "Stop publishing feign-bom twice during release · Allow retryable exceptions without a request · Refactor Logger level checks and encapsulate Response.Builder fields"
 ---
 
 # feign 13.16

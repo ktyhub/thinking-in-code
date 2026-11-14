@@ -7,6 +7,7 @@ version: "3.39.5"
 published: "2026-09-23"
 type: "patch"
 lang: "en"
+summary: "#56037 - Always complete the export when the OTLP sender is shut down · #56255 - Bump org.freemarker:freemarker from 2.3.34 to 2.3.35 · #56349 - [3.39] Bump to Vert.x 4.5.33"
 ---
 
 # quarkus 3.39.5

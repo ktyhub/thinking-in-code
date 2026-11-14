@@ -7,6 +7,7 @@ version: "v1.59.0"
 published: "2026-11-10"
 type: "minor"
 lang: "en"
+summary: "Minimal deferred MCP tools in ToolExecutionOperation #13378 · Configurable and per-start voice instructions for live-voice #13375 · Configurable GPT-Live endpoint, model and key #13360"
 ---
 
 # goose v1.59.0

@@ -6,7 +6,7 @@ tag: "v8.5.0"
 published: "2025-12-20"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/ccfos/nightingale/compare/v8.4.1...v8.5.0"
+summary: "feat: Support VictoriaLogs datasource for alert rules · feat: Support Dingtalk for Single Sign-On (SSO) · feat: Display associated business groups in team management · feat: Add hash field to alert event details"
 ---
 
 # nightingale v8.5.0

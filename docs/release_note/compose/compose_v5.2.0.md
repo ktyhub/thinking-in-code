@@ -6,7 +6,7 @@ tag: "v5.2.0"
 published: "2026-06-23"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/docker/compose/compare/v5.1.4...v5.2.0"
+summary: "Reconciliation plan & @glours · Add rawsetenv message type for provider plugins"
 ---
 
 # compose v5.2.0

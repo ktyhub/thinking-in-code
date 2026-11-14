@@ -6,7 +6,7 @@ tag: "v6.0.2"
 published: "2026-01-21"
 type: "patch"
 lang: "en"
-summary: "Spring Framework: 7.0.3 Spring Integration: 7.0.2 Spring AMQP: 4.0.2 Spring Kafka: 4.0.2 Spring Data: 4.0.2 Micrometer: 1.16.2"
+summary: "Add ZonedDateTime and OffsetDateTime support to JobParametersConverter #5178"
 ---
 
 # spring-batch v6.0.2

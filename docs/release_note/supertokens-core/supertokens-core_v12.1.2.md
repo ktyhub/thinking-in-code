@@ -6,7 +6,7 @@ tag: "v12.1.2"
 published: "2026-10-16"
 type: "patch"
 lang: "en"
-summary: "The SAML replay hardening (applied by supertokens-postgresql-plugin) adds two columns to samlrelaystate, the samlconsumedassertions table, and the samlclients.acsurls allow-list column. The plugin applies them…"
+summary: "Serializes session creation with account unlink to close a session race (GHSA-2pc4-vw9j-454c). · Enforces SAML callback replay protection and request binding (GHSA-3r7x-rhvc-fw28)."
 ---
 
 # supertokens-core v12.1.2

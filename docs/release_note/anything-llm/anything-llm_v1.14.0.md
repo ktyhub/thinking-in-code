@@ -6,7 +6,7 @@ tag: "v1.14.0"
 published: "2026-06-09"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/Mintplex-Labs/anything-llm/compare/v1.13.0...v1.14.0"
+summary: "[x] Cerebres provider"
 ---
 
 # anything-llm v1.14.0

@@ -7,6 +7,7 @@ version: "v1.57.0"
 published: "2026-10-28"
 type: "minor"
 lang: "en"
+summary: "Allowlist: require HTTPS and validate redirects, block on policy failure #12619 · Allow callers to supply Goose session IDs #13098"
 ---
 
 # goose v1.57.0

@@ -7,6 +7,7 @@ version: "v2.0.7"
 published: "2026-08-24"
 type: "patch"
 lang: "en"
+summary: "fix(gemini): remove unsupported $schema from tool parameters · feat(workspace): share workspace across different agents · feat(workspace): isolate skills per agent, select them per session"
 ---
 
 # agentscope v2.0.7

@@ -6,6 +6,7 @@ tag: "v2.14.6"
 published: "2026-10-23"
 type: "patch"
 lang: "en"
+summary: "bump base version for v2.14.6 · Release 2.14 bump go trivy distribution · fix(webhook): allow private network access by default (#24082) · fix(prepare): expose the legacy signer pull switch in harbor.yml (#24…"
 ---
 
 # harbor v2.14.6

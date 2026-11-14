@@ -6,7 +6,7 @@ tag: "rel/v5.4.1"
 published: "2023-06-24"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/jmeter/compare/rel/v5.4...rel/v5.4.1"
+summary: "update xstreams to 1.4.15 (from 1.4.14)"
 ---
 
 # jmeter rel/v5.4.1

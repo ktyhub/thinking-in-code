@@ -6,6 +6,7 @@ tag: "v2.0.5"
 published: "2025-08-21"
 type: "patch"
 lang: "en"
+summary: "Data Query: Support manual creation of tree-to-table views · Data Query: Table model adds window functions · Data Query: Table model adds the aggregate function approx_most_frequent"
 ---
 
 # iotdb v2.0.5

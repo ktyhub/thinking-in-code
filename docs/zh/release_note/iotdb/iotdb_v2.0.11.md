@@ -1,6 +1,7 @@
 ---
 title: "iotdb v2.0.11"
 description: "Apache物联网数据库"
+summary: "此版本将所需的最低 JDK 版本提高到 17。"
 ---
 
 # iotdb v2.0.11

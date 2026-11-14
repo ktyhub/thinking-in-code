@@ -6,7 +6,7 @@ tag: "v4.3.3"
 published: "2026-06-11"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Bump @springio/antora-extensions from 1.14.9 to 1.14.10 in /docs[bot] · Bump @springio/antora-extensions from 1.14.10 to 1.14.11 in /docs[bot]"
 ---
 
 # spring-cloud-netflix v4.3.3

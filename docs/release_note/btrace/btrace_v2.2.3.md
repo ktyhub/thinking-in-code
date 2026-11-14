@@ -6,7 +6,7 @@ tag: "v2.2.3"
 published: "2022-12-23"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/btraceio/btrace/compare/v2.2.2...v2.2.3"
+summary: "Do not synchronize on ClassCache operations · Allow executing commands on BTrace server · Store before-jump state for switch labels · Use SLF4J SimpleLogger"
 ---
 
 # btrace v2.2.3

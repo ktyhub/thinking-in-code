@@ -6,7 +6,7 @@ tag: "v1.34.0"
 published: "2026-02-03"
 type: "minor"
 lang: "en"
-summary: "Changes:"
+summary: "Support Java 25 Instance Main Methods ("
 ---
 
 # google-java-format v1.34.0

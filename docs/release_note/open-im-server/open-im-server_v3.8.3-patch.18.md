@@ -6,7 +6,7 @@ tag: "v3.8.3-patch.18"
 published: "2026-10-13"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/openimsdk/open-im-server/compare/v3.8.3-patch.17...v3.8.3-patch.18"
+summary: "fix(core): publish multi-architecture images to ACR"
 ---
 
 # open-im-server v3.8.3-patch.18

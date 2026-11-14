@@ -6,6 +6,7 @@ tag: "v4.1.7"
 published: "2026-10-30"
 type: "patch"
 lang: "en"
+summary: "Thumbprint: reject invalid RSA key (#317) - GHSA-r39w-98wm-9pp6 · json: backport stdlib fix for embedded unexported field (#318) - GHSA-27pc-rm86-68pq"
 ---
 
 # consul v4.1.7

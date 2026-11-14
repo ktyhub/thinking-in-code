@@ -6,7 +6,7 @@ tag: "v1.15.0"
 published: "2026-06-25"
 type: "minor"
 lang: "en"
-summary: "With AnythingLLM 1.15.0 for Desktop we have been working hard on what it means to bring your agent to you. Something that is still local, but outside of the walls of an app or a browser. This release features our first…"
+summary: "With AnythingLLM 1.15.0 for Desktop we have been working hard on what it means to bring your agent to you. Something that is still local, but outside of the walls of an app or a browser."
 ---
 
 # anything-llm v1.15.0

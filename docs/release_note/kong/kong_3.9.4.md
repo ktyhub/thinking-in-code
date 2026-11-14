@@ -7,7 +7,7 @@ version: "3.9.4"
 published: "2026-10-12"
 type: "patch"
 lang: "en"
-summary: "Download Kong 3.9.4 and run it now:"
+summary: "Download Kong 3.9.4 and run it now"
 ---
 
 # kong 3.9.4

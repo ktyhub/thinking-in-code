@@ -6,7 +6,7 @@ tag: "2.8.31"
 published: "2026-03-16"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/servicecomb-java-chassis/compare/2.8.30...2.8.31"
+summary: "[#5087] upgrade netty/vertx version · [#5090] SSLOption/KeyPairUtils change using Environment get configs"
 ---
 
 # servicecomb-java-chassis 2.8.31

@@ -7,7 +7,7 @@ version: "v2.1.9"
 published: "2026-10-30"
 type: "patch"
 lang: "en"
-summary: "Release Notes"
+summary: "Cherry Studio 2.1.9 - Diagrams, File Pane, and Provider Updates"
 ---
 
 # cherry-studio v2.1.9

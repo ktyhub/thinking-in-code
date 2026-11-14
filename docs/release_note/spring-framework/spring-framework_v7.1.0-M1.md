@@ -6,7 +6,7 @@ tag: "v7.1.0-M1"
 published: "2026-08-20"
 type: "pre"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "starting in Spring Framework 7.1, ForwardedHeaderFilter (Spring MVC) and ForwardedHeaderTransformer (WebFlux) each require a boolean argument whether to use the standard 'Forwarded' header or the 'X-Forwarded'…"
 ---
 
 # spring-framework v7.1.0-M1

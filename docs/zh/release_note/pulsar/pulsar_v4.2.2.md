@@ -6,6 +6,7 @@ tag: "v4.2.2"
 published: "2026-06-08"
 type: "patch"
 lang: "zh"
+summary: "[修复][秒] 将 org.asynchttpclient:async-http-client 从 2.14.5 提升到 2.15.0 (#25818)；[修复][秒] 将 commons-configuration2 升级到 2.15.0 以解决 CVE-2026-45205 (#25844)；[修复][秒]将 Netty 升级到 4.1.133.Final 以解决 CVE (#25670)"
 ---
 
 # pulsar v4.2.2

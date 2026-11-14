@@ -6,7 +6,7 @@ tag: "shiro-root-3.0.0"
 published: "2026-06-20"
 type: "release"
 lang: "en"
-summary: "Breaking Changes:"
+summary: "JDK 17 · Jakarta EE 9/10/11+ (no javax. namespace) · Spring 6/7+ and SpringBoot 3/4+ · Guice 7/8+"
 ---
 
 # shiro shiro-root-3.0.0

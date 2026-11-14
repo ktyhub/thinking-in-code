@@ -6,7 +6,7 @@ tag: "v8.8.12"
 published: "2026-11-01"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/xtekky/gpt4free/compare/v8.8.11...v8.8.12"
+summary: "PyPI: pip install g4f==v8.8.12"
 ---
 
 # gpt4free v8.8.12

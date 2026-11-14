@@ -6,7 +6,7 @@ tag: "kubernetes-dashboard-7.10.2"
 published: "2025-01-30"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/dashboard/compare/kubernetes-dashboard-7.10.1...kubernetes-dashboard-7.10.2"
+summary: "docs: Fixing redirects from docs/user-guide which were removed in website repo · fix: workload charts are black for certain languages"
 ---
 
 # kubernetes-dashboard kubernetes-dashboard-7.10.2

@@ -6,7 +6,7 @@ tag: "v3.8.3-patch.17"
 published: "2026-10-10"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/openimsdk/open-im-server/compare/v3.8.3...v3.8.3-patch.17"
+summary: "fix: solve unocrrect invite notification [Created from #3213] · feat: optimize friend and group applications · build: update gomake version in dockerfile.[Patch branch] · fix: Add friend DB in notification sender"
 ---
 
 # open-im-server v3.8.3-patch.17

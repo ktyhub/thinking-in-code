@@ -6,7 +6,7 @@ tag: "v3.0.0a19"
 published: "2025-07-13"
 type: "major"
 lang: "en"
-summary: "Full Changelog: https://github.com/sinaptik-ai/pandas-ai/compare/v3.0.0a18...v3.0.0a19"
+summary: "introducing read excel · fix(sql): dialect sql parser fixed"
 ---
 
 # pandas-ai v3.0.0a19

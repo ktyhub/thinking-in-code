@@ -7,6 +7,7 @@ version: "v2.2.2.post1"
 published: "2026-10-22"
 type: "patch"
 lang: "en"
+summary: "chore: bump the version to v2.2.2post1 · fix(security): remediate emSign CA trust across dependencies, installers, and builds · fix(security): update Node.js to 22.23.4"
 ---
 
 # QwenPaw v2.2.2.post1

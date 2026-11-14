@@ -6,7 +6,7 @@ tag: "v2.6.1"
 published: "2024-01-17"
 type: "patch"
 lang: "en"
-summary: "plugin.list ['plugin.sign', 'plugin.dubbo', 'plugin.pluginName'] -> plugin.sign -> plugin.dubbo -> plugin.pluginName"
+summary: "Add dubbo annotation analysis for shenyu ingress controller · Support plugin lifecycle · Support shenyu-sdk-client by openFeign · Adding a Motan plugin and Spring Cloud to shenyu ingress-controller"
 ---
 
 # shenyu v2.6.1

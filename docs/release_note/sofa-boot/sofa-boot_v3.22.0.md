@@ -6,7 +6,7 @@ tag: "v3.22.0"
 published: "2024-01-25"
 type: "minor"
 lang: "en"
-summary: "⭐️ New Features"
+summary: "Support ExcludeBeanNameAutoProxyCreator"
 ---
 
 # sofa-boot v3.22.0

@@ -6,7 +6,7 @@ tag: "2.1.2.0-2025.0.2-RC1"
 published: "2026-05-20"
 type: "patch"
 lang: "en"
-summary: "Upgrade to Spring Cloud 2025.0.x from branch 2024."
+summary: "Spring Cloud Tencent: 2.1.2.0-2025.0.2-RC1 · Spring Cloud: 2025.0.2 · Spring Boot: 3.5.11 · Spring Framework: 6.2.15"
 ---
 
 # spring-cloud-tencent 2.1.2.0-2025.0.2-RC1

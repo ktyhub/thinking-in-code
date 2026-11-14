@@ -6,6 +6,7 @@ tag: "arthas-all-4.3.0"
 published: "2026-06-15"
 type: "release"
 lang: "en"
+summary: "feat: 新增 line 命令，支持在指定源码行插入探针，观察方法参数、局部变量、表达式结果和当前调用栈，见 #3210；feat: 为 agent/AI 场景增加 quiet terminal mode，减少批处理、WebSocket 和 MCP 执行时的交互噪音，见 #3213；feat: 新增 Arthas MCP version tool，支持通过 MCP 工具查询当前 Arthas 版本，见 #3211"
 ---
 
 # arthas arthas-all-4.3.0

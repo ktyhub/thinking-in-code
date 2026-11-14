@@ -7,7 +7,7 @@ version: "v7.0.10"
 published: "2026-10-22"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Align DelegatingMessageSource fallback implementation with AbstractMessageSource #37383 · HttpEntity(T, MultiValueMap) stores an HttpHeaders unchecked, causing IncompatibleClassChangeError inside RestTemplate #37358"
 ---
 
 # spring-framework v7.0.10

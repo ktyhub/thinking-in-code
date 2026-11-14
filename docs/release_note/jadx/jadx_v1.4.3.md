@@ -6,7 +6,7 @@ tag: "v1.4.3"
 published: "2022-07-20"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/skylot/jadx/compare/v1.4.2...v1.4.3"
+summary: "[gui] Check user renames (#1557) · [gui] Allow to use empty name to reset rename · [gui] Ignore/limit waiting of canceled search task (#1568) · [gui] Forbid rename method args in fallback mode (#1558)"
 ---
 
 # jadx v1.4.3

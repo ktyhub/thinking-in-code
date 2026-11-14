@@ -6,6 +6,7 @@ tag: "v0.9.8"
 published: "2026-03-18"
 type: "patch"
 lang: "en"
+summary: "[client-v2] Added Records#getSchema() to expose table schema metadata even when query result is empty. ("
 ---
 
 # clickhouse-java v0.9.8

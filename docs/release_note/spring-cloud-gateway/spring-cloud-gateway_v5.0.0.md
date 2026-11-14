@@ -6,7 +6,7 @@ tag: "v5.0.0"
 published: "2025-11-24"
 type: "major"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "ClassClastException in Bucket4jFilterFunctions.rateLimit() #3983 · Spring Cloud Gateway Proxyexchange Webmvc artifact is missing configuration metadata files #3979"
 ---
 
 # spring-cloud-gateway v5.0.0

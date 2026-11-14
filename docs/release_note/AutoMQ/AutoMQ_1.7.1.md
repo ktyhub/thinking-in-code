@@ -6,7 +6,7 @@ tag: "1.7.1"
 published: "2026-06-23"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/AutoMQ/automq/compare/1.7.0...1.7.1"
+summary: "feat: add retry storm backoff · perf(failover): accelerate failover · fix(s3wal): optimize wal upload prepare by batching objectId (#3374) · fix(package): declare proto source jar dependency"
 ---
 
 # AutoMQ 1.7.1

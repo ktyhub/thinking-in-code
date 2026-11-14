@@ -7,7 +7,7 @@ version: "v0.0.84"
 published: "2026-10-31"
 type: "patch"
 lang: "en"
-summary: "Configs that use @playwright/mcp@latest pick this release up on the next client restart. To pin it:"
+summary: "👥 Separate sessions in one browser — work with multiple accounts without sharing their cookies or storage. browser_tabs with action: 'new' now accepts isolatedContext: '': tabs with the same name share a context, while…"
 ---
 
 # playwright-mcp v0.0.84

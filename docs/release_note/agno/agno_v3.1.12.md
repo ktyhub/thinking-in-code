@@ -7,6 +7,7 @@ version: "v3.1.12"
 published: "2026-10-29"
 type: "patch"
 lang: "en"
+summary: "Native Approvals for Harness Agents: Claude's and Codex's own permission requests now reach the AgentOS approval UI. When the agent has a database, including one AgentOS supplies, a native request persists a PAUSED run…"
 ---
 
 # agno v3.1.12

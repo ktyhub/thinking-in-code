@@ -6,7 +6,7 @@ tag: "mybatis-3.5.15"
 published: "2023-12-14"
 type: "release"
 lang: "en"
-summary: "Changes"
+summary: "XNode#toString() should output all child nodes. See #3001 and associated tickets on this issue · Fix performance of mappedColumnNames.contains by using 'set' rather than 'list'. See #3023"
 ---
 
 # mybatis-3 mybatis-3.5.15

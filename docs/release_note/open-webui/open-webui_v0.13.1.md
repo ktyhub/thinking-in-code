@@ -7,6 +7,7 @@ version: "v0.13.1"
 published: "2026-11-08"
 type: "patch"
 lang: "en"
+summary: "🦾 Coding agents as models. On an Open Terminal that offers agents, coding agents such as Claude Code, Codex and Pi now appear in the model picker."
 ---
 
 # open-webui v0.13.1

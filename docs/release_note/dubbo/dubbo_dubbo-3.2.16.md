@@ -7,6 +7,7 @@ version: "dubbo-3.2.16"
 published: "2024-09-07"
 type: "release"
 lang: "en"
+summary: "optimize: rest protocol connection default keepalive · optimize: the handling logic of PathAndInvokerMapper · optimize: rest protocol connection default keepalive"
 ---
 
 # dubbo dubbo-3.2.16

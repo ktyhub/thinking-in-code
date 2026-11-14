@@ -6,7 +6,7 @@ tag: "rocketmq-spring-all-2.3.5"
 published: "2025-12-03"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/rocketmq-spring/compare/rocketmq-spring-all-2.3.4...rocketmq-spring-all-2.3.5"
+summary: "[ISSUE #754] When initializing the ext producer, the topic is optional. · [ISSUE #755] Modify the judgment method · [ISSUE #758] Delete accessKey/secretKey from log"
 ---
 
 # rocketmq-spring rocketmq-spring-all-2.3.5

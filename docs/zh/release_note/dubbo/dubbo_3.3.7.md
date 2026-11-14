@@ -1,6 +1,7 @@
 ---
 title: "dubbo 3.3.7"
 description: "Apache Dubbo 的 java 实现。 RPC 和微服务框架。"
+summary: "Apache Dubbo 的 java 实现。 RPC 和微服务框架。"
 ---
 
 # dubbo 3.3.7

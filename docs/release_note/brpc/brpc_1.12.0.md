@@ -6,7 +6,7 @@ tag: "1.12.0"
 published: "2025-01-15"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/brpc/compare/1.11.0...1.12.0"
+summary: "Support task tracer (#2851) · Add NonreflectableMessage and support Protobuf v5 (#2782 #2823 #2830) · Method level option to ignore server eovercrowded (#2820) · Add support for bthread cpu usage (#2852)"
 ---
 
 # brpc 1.12.0

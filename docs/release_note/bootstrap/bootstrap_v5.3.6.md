@@ -6,7 +6,7 @@ tag: "v5.3.6"
 published: "2025-05-05"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/twbs/bootstrap/compare/v5.3.5...v5.3.6"
+summary: "Ported the docs from Hugo to Astro for our own sanity! · Added usage docs for Accordion JavaScript · Prevent .visually-hidden overflowing children to become focusable"
 ---
 
 # bootstrap v5.3.6

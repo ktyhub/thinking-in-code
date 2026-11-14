@@ -6,7 +6,7 @@ tag: "v1.7.2"
 published: "2026-10-23"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "OtelTracer.nextSpan(parent) makes a stale context current while starting the child span #1605 · Baggage Tags are not propagated unless explicit getBaggage call to Tracer #933"
 ---
 
 # micrometer tracing v1.7.2

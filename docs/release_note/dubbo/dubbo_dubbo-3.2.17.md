@@ -6,7 +6,7 @@ tag: "dubbo-3.2.17"
 published: "2025-03-05"
 type: "release"
 lang: "en"
-summary: "Dubbo would like to thank the following contributors for their contributions to this release: @AlbumenJ, @co63oc, @funky-eyes, @JunJieLiu51520, @Stellar1999, @wuwen5, @zrlw"
+summary: "Fix tcp connection window size split from stream connection window size for 3.2 · Fix parse application/x-www-form-urlencoded error · Disable check when create MetadataService invoker to prevent memory leak"
 ---
 
 # dubbo dubbo-3.2.17

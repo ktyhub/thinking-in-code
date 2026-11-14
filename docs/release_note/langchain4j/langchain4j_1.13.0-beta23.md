@@ -6,7 +6,7 @@ tag: "1.13.0-beta23"
 published: "2026-04-09"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/langchain4j/langchain4j-spring/compare/1.12.2-beta22...1.13.0-beta23"
+summary: "Spring Boot 4 support"
 ---
 
 # langchain4j 1.13.0-beta23

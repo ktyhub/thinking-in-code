@@ -7,7 +7,7 @@ version: "v1.4.254"
 published: "2026-11-08"
 type: "patch"
 lang: "en"
-summary: "Ask side questions in a fork, fork from the latest reply, see CI results in chat and keep waiting messages in order."
+summary: "🌳 See the whole repository: A new Git Graph tab shows local and remote branches and tags, with each commit's details and changed files."
 ---
 
 # orca v1.4.254

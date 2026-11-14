@@ -6,7 +6,7 @@ tag: "v3.6.1"
 published: "2026-08-24"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/assafelovic/gpt-researcher/compare/v3.6.0...v3.6.1"
+summary: "fix: restore main, add CI, and land 97 queued PRs · fix(readme): restore broken star history chart · docs: document scholarly retriever configuration"
 ---
 
 # gpt-researcher v3.6.1

@@ -6,7 +6,7 @@ tag: "v4.1.0"
 published: "2025-04-07"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/go-jose/go-jose/compare/v4.0.5...v4.1.0"
+summary: "Document signatureAlgorithms argument · Add custom error for unsupported JWS signature algorithms · use stdlib pbkdf2 package on go 1.24 · The minimum supported Go version is now 1.24"
 ---
 
 # consul v4.1.0

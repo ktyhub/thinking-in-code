@@ -6,7 +6,7 @@ tag: "v1.2026.10"
 published: "2026-11-11"
 type: "patch"
 lang: "en"
-summary: "JavaScript"
+summary: "🐛 allow several notes on a self message · 🐛 txt export: draw standalone sequence notes instead of crashing · ✨ [Chart] allow missing values in bar and line data"
 ---
 
 # plantuml v1.2026.10

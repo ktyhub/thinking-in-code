@@ -6,7 +6,7 @@ tag: "v4.3.0"
 published: "2024-06-06"
 type: "minor"
 lang: "en"
-summary: "⭐️ New Features"
+summary: "Support PolarisRegistryConfiguration · Add queueRemainingSize log at the beginning monitor · Add spring-boot-configuration-processor in sofa-boot-actuator-autoconigure model · Support sofa thread pool actuator"
 ---
 
 # sofa-boot v4.3.0

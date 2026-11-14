@@ -6,6 +6,7 @@ tag: "v1.97.0"
 published: "2026-11-13"
 type: "minor"
 lang: "en"
+summary: "shopping-merchant: remove discontinued Merchant API v1beta (#14942)"
 ---
 
 # google-cloud-java v1.97.0

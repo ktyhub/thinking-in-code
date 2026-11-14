@@ -7,6 +7,7 @@ version: "v0.40.0"
 published: "2026-10-06"
 type: "minor"
 lang: "en"
+summary: "proxy: read HEADROOM_LICENSE and make usage reporting opt-in (#3857) · drop the crewai extra to remove chromadb from the lockfile (#3870)"
 ---
 
 # headroom v0.40.0

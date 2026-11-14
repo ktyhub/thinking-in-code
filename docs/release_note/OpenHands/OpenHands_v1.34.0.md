@@ -6,6 +6,7 @@ tag: "v1.34.0"
 published: "2026-10-27"
 type: "minor"
 lang: "en"
+summary: "feat(verify): stand in for DigitalOcean so Managed Agents can be verified · feat(canvas): per-conversation Docker runtime and Settings → Runtime page · feat(automations): filter and edit automation tags"
 ---
 
 # OpenHands v1.34.0

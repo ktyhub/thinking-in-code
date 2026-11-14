@@ -6,7 +6,7 @@ tag: "jetcd-0.8.3"
 published: "2024-08-16"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/etcd-io/jetcd/compare/jetcd-0.8.2...jetcd-0.8.3"
+summary: "build(deps): bump com.google.guava:guava from 33.2.0-jre to 33.2.1-jre · build(deps): bump errorprone from 2.27.1 to 2.28.0 · build(deps): bump org.junit.jupiter:junit-jupiter from 5.10.2 to 5.10.3"
 ---
 
 # jetcd jetcd-0.8.3

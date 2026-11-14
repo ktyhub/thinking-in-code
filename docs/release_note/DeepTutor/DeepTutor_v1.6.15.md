@@ -7,7 +7,7 @@ version: "v1.6.15"
 published: "2026-10-18"
 type: "patch"
 lang: "en"
-summary: "Release Date: 2026.10.19"
+summary: "Building on v1.6.14, v1.6.15 improves Guided Learning with reviewed outline changes, independently graded question groups, and bounded tutoring memory."
 ---
 
 # DeepTutor v1.6.15

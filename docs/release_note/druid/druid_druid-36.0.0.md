@@ -6,6 +6,7 @@ tag: "druid-36.0.0"
 published: "2026-02-09"
 type: "release"
 lang: "en"
+summary: "Apache Druid 36.0.0 contains over 189 new features, bug fixes, performance enhancements, documentation improvements, and additional test coverage from 34 contributors."
 ---
 
 # druid druid-36.0.0

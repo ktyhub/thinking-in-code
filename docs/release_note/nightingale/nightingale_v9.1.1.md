@@ -6,7 +6,7 @@ tag: "v9.1.1"
 published: "2026-08-18"
 type: "patch"
 lang: "en"
-summary: "Replace the binary and the integrations directory, then restart."
+summary: "feat: list pages keep the current page in the URL, so a refresh or a trip into a detail page brings you back to where you were; the page resets to 1 only on save or when you switch business group"
 ---
 
 # nightingale v9.1.1

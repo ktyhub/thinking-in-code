@@ -6,7 +6,7 @@ tag: "v9.2.0"
 published: "2026-10-11"
 type: "minor"
 lang: "en"
-summary: "Replace the binary and the integrations directory, then restart. To pick up the new metric descriptions in the added languages, also replace etc/metrics.yaml."
+summary: "feat: native Jira, Discord, JSM Alert, Slack and Mattermost notification channels (#3408), and notification channel configs can reference user variables (#3349)"
 ---
 
 # nightingale v9.2.0

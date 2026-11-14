@@ -7,7 +7,7 @@ version: "20250815"
 published: "2025-08-15"
 type: "major"
 lang: "en"
-summary: "English Version (Click to expand)"
+summary: "Added support for GPT-5 models (@GaiZhenbiao) · Added support for DeepSeek models (@GaiZhenbiao) · Gemini models support custom API host (@GaiZhenbiao)"
 ---
 
 # ChuanhuChatGPT 20250815

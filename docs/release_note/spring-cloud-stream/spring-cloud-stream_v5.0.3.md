@@ -6,7 +6,7 @@ tag: "v5.0.3"
 published: "2026-08-20"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-stream/compare/v5.0.2...v5.0.3"
+summary: "CVE-2026-59302 — Potential for logging sensitive data in Spring Cloud Stream · CVE-2026-59303 — Dynamic destination cache size is not properly bound in Spring Cloud Stream"
 ---
 
 # spring-cloud-stream v5.0.3

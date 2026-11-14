@@ -6,6 +6,7 @@ tag: "v9.0.7"
 published: "2026-10-07"
 type: "patch"
 lang: "en"
+summary: "close-watcher: allow back navigation when nothing is open (#31520) (6532bcb), closes #29648 · css: stop emitting :host-context selectors in global stylesheets (#31516) (35bd2fa), closes #30024"
 ---
 
 # ionic-framework v9.0.7

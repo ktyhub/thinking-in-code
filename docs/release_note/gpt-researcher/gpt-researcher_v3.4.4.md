@@ -6,7 +6,7 @@ tag: "v3.4.4"
 published: "2026-04-16"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/assafelovic/gpt-researcher/compare/v3.4.3...v3.4.4"
+summary: "#1673: Fixed the reference error in code. · fix potential data parsing issue in web scraping · Fix: Add context normalization for dict and string formats · feat: add MiniMax as a native LLM and embedding provider (M2.7)"
 ---
 
 # gpt-researcher v3.4.4

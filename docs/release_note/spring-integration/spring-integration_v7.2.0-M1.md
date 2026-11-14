@@ -6,7 +6,7 @@ tag: "v7.2.0-M1"
 published: "2026-08-20"
 type: "pre"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "JdbcMetadataStore.putIfAbsent() returns null for an existing row with a null METADATA_VALUE #11248 · Fix RestTemplate-related deprecations in the HTTP module #11234"
 ---
 
 # spring-integration v7.2.0-M1

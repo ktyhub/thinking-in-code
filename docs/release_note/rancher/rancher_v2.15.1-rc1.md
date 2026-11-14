@@ -6,7 +6,7 @@ tag: "v2.15.1-rc1"
 published: "2026-08-25"
 type: "patch"
 lang: "en"
-summary: "rancher/prometheus-federator:v7.0.1-rc.1 rancher/rancher-agent:v2.15.1-rc1 rancher/rancher:v2.15.1-rc1"
+summary: "CHART_DEFAULT_BRANCH: dev-v2.15 (scripts/package-env) · CHART_DEFAULT_BRANCH: dev-v2.15 (package/Dockerfile) · CATTLE_KDM_BRANCH: release-v2.15 (package/Dockerfile) · CATTLE_KDM_BRANCH: release-v2.15 (Dockerfile.runtime)"
 ---
 
 # rancher v2.15.1-rc1

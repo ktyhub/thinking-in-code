@@ -6,7 +6,7 @@ tag: "v7.0.6"
 published: "2026-03-13"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Log warning when default context configuration is ignored within test class hierarchies #36390 · Ignore flush calls on ServletServerHttpResponse body outputstream #36385"
 ---
 
 # spring-framework v7.0.6

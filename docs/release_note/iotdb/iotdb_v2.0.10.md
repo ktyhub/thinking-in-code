@@ -6,7 +6,7 @@ tag: "v2.0.10"
 published: "2026-07-04"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/iotdb/compare/v2.0.8...v2.0.10"
+summary: "Data Query: Support schema-level and table-level storage space statistics · Data Query: Add DEBUG SQL capability and optimize the result set of Explain Analyze"
 ---
 
 # iotdb v2.0.10

@@ -6,7 +6,7 @@ tag: "v2.15.1"
 published: "2024-09-07"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/compare/v2.15.0...v2.15.1"
+summary: "hotfix Mermaid can not render. close #5374 · Add crossOrigin='use-credentials' for site.webmanifest · fix(#5378): default plugin ids to empty array"
 ---
 
 # ChatGPTNextWeb v2.15.1

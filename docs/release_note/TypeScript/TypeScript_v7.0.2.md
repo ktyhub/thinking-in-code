@@ -6,7 +6,7 @@ tag: "v7.0.2"
 published: "2026-08-20"
 type: "patch"
 lang: "en"
-summary: "https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/"
+summary: "This tag was originally released at: https://github.com/microsoft/typescript-go/releases/tag/typescript%2Fv7.0.2"
 ---
 
 # TypeScript v7.0.2

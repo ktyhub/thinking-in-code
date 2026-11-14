@@ -7,7 +7,7 @@ version: "v1.0.0-rc.102"
 published: "2026-11-07"
 type: "pre"
 lang: "en"
-summary: "Linux-only release. This release ships Linux binaries (x8664 and aarch64, glibc and musl, plus .deb for both glibc targets) and the XERJ Query-1 model bundle. macOS and Windows builds follow in an update of this…"
+summary: "Linux-only release. This release ships Linux binaries (x86_64 and aarch64, glibc and musl, plus .deb for both glibc targets) and the XERJ Query-1 model bundle."
 ---
 
 # xerj v1.0.0-rc.102

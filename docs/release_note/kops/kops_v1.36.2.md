@@ -6,7 +6,7 @@ tag: "v1.36.2"
 published: "2026-08-08"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/kops/compare/v1.36.1...v1.36.2"
+summary: "Automated cherry pick of #18636: azure: support terraform provider azurerm v5 · Automated cherry pick of #18638: Update hcloud-go/v2 to latest version (v2.47.0)"
 ---
 
 # kops v1.36.2

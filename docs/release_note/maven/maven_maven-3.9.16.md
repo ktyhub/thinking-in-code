@@ -6,6 +6,7 @@ tag: "maven-3.9.16"
 published: "2026-05-17"
 type: "release"
 lang: "en"
+summary: "Trim threadConfiguration to accept input surrounded with spaces (#12042) @slawekjaranowski · Backport: Maven 3.10.x fixed plugin resolution (#12022) @cstamas"
 ---
 
 # maven maven-3.9.16

@@ -6,6 +6,7 @@ tag: "v1.32.0"
 published: "2026-10-23"
 type: "minor"
 lang: "en"
+summary: "feat(home): store pinned automations in agent-server settings · feat(mcp): let the install dialog choose between installable library options"
 ---
 
 # OpenHands v1.32.0

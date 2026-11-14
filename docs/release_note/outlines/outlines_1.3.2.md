@@ -7,6 +7,7 @@ version: "1.3.2"
 published: "2026-07-20"
 type: "patch"
 lang: "en"
+summary: "fix(types): map JSON Schema const to a Literal · fix: reject invalid day '00' in the date type regex · fix(exceptions): don't require a provider's optional SDK to normalize errors"
 ---
 
 # outlines 1.3.2

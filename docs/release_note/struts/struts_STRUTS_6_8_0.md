@@ -6,7 +6,7 @@ tag: "STRUTS_6_8_0"
 published: "2025-09-15"
 type: "release"
 lang: "en"
-summary: "https://github.com/apache/struts/pull/1337"
+summary: "WW-5544 Marks ReflectionContextFactory as deprecated and uses ActionContext instead · WW-5546 Fixes NPE when uploaded file is empty · Cleans up all uploaded files · WW-5524 Fixup StrutsConverterFactory - Struts 6"
 ---
 
 # struts STRUTS_6_8_0

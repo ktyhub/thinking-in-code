@@ -6,7 +6,7 @@ tag: "v0.22.3"
 published: "2026-09-17"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/openai/openai-agents-python/compare/v0.22.2...v0.22.3"
+summary: "fix(core): align conditional approvals with validated tool arguments · fix(core): deliver tool-not-found output on server-managed resume · fix(sandbox): keep command paths POSIX on a Windows host"
 ---
 
 # openai-agents-python v0.22.3

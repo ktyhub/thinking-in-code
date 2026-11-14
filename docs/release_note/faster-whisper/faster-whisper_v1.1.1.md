@@ -7,6 +7,7 @@ version: "v1.1.1"
 published: "2025-01-01"
 type: "patch"
 lang: "en"
+summary: "Brings back original VAD parameters naming · Make batched suppress_tokens behaviour same as in sequential · Fixes OOM Errors - too high RAM usage by VAD"
 ---
 
 # faster-whisper v1.1.1

@@ -6,7 +6,7 @@ tag: "1.17.0-beta27"
 published: "2026-06-26"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/langchain4j/langchain4j-spring/compare/1.16.3-beta26...1.17.0-beta27"
+summary: "Fix unwired builder properties in Azure AI Search and GitHub Models starters"
 ---
 
 # langchain4j 1.17.0-beta27

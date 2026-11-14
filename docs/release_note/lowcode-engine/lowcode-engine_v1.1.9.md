@@ -6,7 +6,7 @@ tag: "v1.1.9"
 published: "2023-07-27"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/alibaba/lowcode-engine/compare/v1.1.8...v1.1.9"
+summary: "feat: listen for the logic of requestHandlersMap config update · feat(workspace): add multi focus-tracker in workspace mode · chore(code-gen): 1.template sync icejs 2.replace deprecated api"
 ---
 
 # lowcode-engine v1.1.9

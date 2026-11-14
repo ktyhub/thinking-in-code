@@ -6,7 +6,7 @@ tag: "v1.7.2"
 published: "2022-06-03"
 type: "patch"
 lang: "en"
-summary: "[](https://search.maven.org/artifact/com.alibaba/dns-cache-manipulator/1.7.2/jar) [](https://github.com/alibaba/java-dns-cache-manipulator/releases/download/v1.7.2/dcm-1.7.2.tar.gz)"
+summary: "upgrade dependencies/plugins · docs · improve 'JVM settings for Java 16+' · update project description"
 ---
 
 # java-dns-cache-manipulator v1.7.2

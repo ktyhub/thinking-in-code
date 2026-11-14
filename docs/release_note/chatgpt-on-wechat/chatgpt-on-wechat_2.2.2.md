@@ -6,7 +6,7 @@ tag: "2.2.2"
 published: "2026-10-30"
 type: "patch"
 lang: "en"
-summary: "🌐 English | 中文"
+summary: "Share an Agent as a standalone chat page, or embed it in your website as a chat window. Visitors open the link and start chatting without signing in, which suits product inquiries, knowledge base Q&A, customer support…"
 ---
 
 # chatgpt-on-wechat 2.2.2

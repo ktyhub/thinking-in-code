@@ -6,7 +6,7 @@ tag: "v4.0.5"
 published: "2025-02-24"
 type: "patch"
 lang: "en"
-summary: "Fixes https://github.com/go-jose/go-jose/security/advisories/GHSA-c6gw-w398-hv78"
+summary: "Don't allow unbounded amounts of splits"
 ---
 
 # consul v4.0.5

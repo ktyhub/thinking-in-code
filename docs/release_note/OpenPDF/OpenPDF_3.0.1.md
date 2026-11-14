@@ -6,7 +6,7 @@ tag: "3.0.1"
 published: "2026-02-19"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/LibrePDF/OpenPDF/compare/3.0.0...3.0.1"
+summary: "Bump org.htmlunit:neko-htmlunit from 4.14.0 to 4.15.0[bot] · Bump org.apache.maven.plugins:maven-javadoc-plugin from 3.11.2 to 3.11.3[bot] · Bump maven-surefire-plugin.version from 3.5.3 to 3.5.4[bot]"
 ---
 
 # OpenPDF 3.0.1

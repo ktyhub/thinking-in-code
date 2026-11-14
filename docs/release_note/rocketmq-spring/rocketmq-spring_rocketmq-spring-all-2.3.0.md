@@ -6,7 +6,7 @@ tag: "rocketmq-spring-all-2.3.0"
 published: "2024-02-19"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/rocketmq-spring/compare/rocketmq-spring-all-2.2.3...rocketmq-spring-all-2.3.0"
+summary: "[ISSUE #553] Integrate RocketMQ 5.0 gRPC client with Spring"
 ---
 
 # rocketmq-spring rocketmq-spring-all-2.3.0

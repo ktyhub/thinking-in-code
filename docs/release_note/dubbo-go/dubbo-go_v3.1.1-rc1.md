@@ -6,6 +6,7 @@ tag: "v3.1.1-rc1"
 published: "2023-12-12"
 type: "patch"
 lang: "en"
+summary: "Wrapper sliding window with custom aggregator · Wrapper sliding window with custom counter for caculating QPS · Add some metrics · Add registry metrics"
 ---
 
 # dubbo-go v3.1.1-rc1

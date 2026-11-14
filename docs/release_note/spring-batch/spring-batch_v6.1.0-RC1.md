@@ -6,7 +6,7 @@ tag: "v6.1.0-RC1"
 published: "2026-10-22"
 type: "minor"
 lang: "en"
-summary: "Spring Framework: 7.1.0-RC1 Spring Integration: 7.2.0-RC1 Spring AMQP: 4.2.0-RC1 Spring Kafka: 4.2.0-RC1 Spring Data: 2026.1.0-RC1 Spring LDAP: 4.2.0-RC1 Micrometer: 1.18.0-RC1"
+summary: "Provide a @JobParameter annotation for more convenient access to variables in JobParameters. #5563 · Add PageableItemReader #5477 · Make JsonLineMapper agnostic to the JSON library #5345"
 ---
 
 # spring-batch v6.1.0-RC1

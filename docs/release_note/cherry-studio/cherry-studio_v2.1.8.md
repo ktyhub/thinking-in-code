@@ -7,7 +7,7 @@ version: "v2.1.8"
 published: "2026-10-26"
 type: "patch"
 lang: "en"
-summary: "Release Notes"
+summary: "Cherry Studio 2.1.8 - Editing, Voice, and Integration Updates"
 ---
 
 # cherry-studio v2.1.8

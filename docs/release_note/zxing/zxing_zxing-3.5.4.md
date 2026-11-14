@@ -6,7 +6,7 @@ tag: "zxing-3.5.4"
 published: "2025-11-11"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/zxing/zxing/compare/zxing-3.5.3...zxing-3.5.4"
+summary: "Fix container inefficiency in RSSExpandedReader.java · Fix SYMBOLOGY_IDENTIFIER Loss in QRCodeMultiReader to Ensure Data Integrity and Functional Consistency with QRCodeReader"
 ---
 
 # zxing zxing-3.5.4

@@ -6,7 +6,7 @@ tag: "13.17"
 published: "2026-10-08"
 type: "minor"
 lang: "en"
-summary: "List of PRs that updated libraries versions"
+summary: "Drop unpublished vertx test modules from feign-bom · Add Feign logo to README · Add tube shading to the Feign logo · Treat a null Request.Body as a request with no body"
 ---
 
 # feign 13.17

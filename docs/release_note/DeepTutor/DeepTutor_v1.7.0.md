@@ -7,7 +7,7 @@ version: "v1.7.0"
 published: "2026-10-28"
 type: "minor"
 lang: "en"
-summary: "Release Date: 2026.10.28"
+summary: "Building on v1.6.15, v1.7.0 brings modular installation, a refreshed learning workspace, block-based notebooks with Dito, and narrated video lessons."
 ---
 
 # DeepTutor v1.7.0

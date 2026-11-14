@@ -7,6 +7,7 @@ version: "v2.14.1"
 published: "2026-11-12"
 type: "patch"
 lang: "en"
+summary: "tracing: turn off FastAPI's native tracing on Agent Engine (87e5399)"
 ---
 
 # adk-python v2.14.1

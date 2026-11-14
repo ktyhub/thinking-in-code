@@ -7,7 +7,7 @@ version: "v5.1.66"
 published: "2026-11-10"
 type: "patch"
 lang: "en"
-summary: "omo thread says when a broken install leaves it on this device only. A thread client sidecar that cannot be loaded no longer makes omo thread read silently answer notfound: stderr names the sidecar, the error, and the…"
+summary: "omo thread says when a broken install leaves it on this device only. A thread client sidecar that cannot be loaded no longer makes omo thread read silently answer not_found: stderr names the sidecar, the error, and the…"
 ---
 
 # oh-my-openagent v5.1.66

@@ -6,7 +6,7 @@ tag: "v1.63.0"
 published: "2026-06-05"
 type: "minor"
 lang: "en"
-summary: "This release was possible thanks to the following contributors who shared their brilliant ideas and awesome pull requests:"
+summary: "Add missing setAttribute shortcuts to Span and LogRecordBuilder (#8255) · Promote InstrumentationUtil to public class in io.opentelemetry.api.impl package (#8413) · Fix index-out-of-bounds in StrictContextStorage (#8294)"
 ---
 
 # opentelemetry-java v1.63.0

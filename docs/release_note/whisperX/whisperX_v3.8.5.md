@@ -7,6 +7,7 @@ version: "v3.8.5"
 published: "2026-04-01"
 type: "patch"
 lang: "en"
+summary: "fix: pin torchvision and torchcodec for torch 2.8 compatibility"
 ---
 
 # whisperX v3.8.5

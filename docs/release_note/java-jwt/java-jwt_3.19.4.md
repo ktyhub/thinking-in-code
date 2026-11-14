@@ -6,7 +6,7 @@ tag: "3.19.4"
 published: "2023-01-11"
 type: "patch"
 lang: "en"
-summary: "Full Changelog"
+summary: "This patch release does not contain any functional changes, but is being released using an updated signing key for verification as part of our commitment to best security practices."
 ---
 
 # java-jwt 3.19.4

@@ -7,6 +7,7 @@ version: "1.0.5"
 published: "2025-10-09"
 type: "patch"
 lang: "en"
+summary: "Supports MPS devices."
 ---
 
 # VoxCPM 1.0.5

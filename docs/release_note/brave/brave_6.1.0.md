@@ -6,7 +6,7 @@ tag: "6.1.0"
 published: "2025-02-16"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/openzipkin/brave/compare/6.0.3...6.1.0"
+summary: "adjusts remaining drift around checkout configuration · Adds SECURITY.md and scanning workflow · docker: bumps zipkin test images"
 ---
 
 # brave 6.1.0

@@ -6,6 +6,7 @@ tag: "v1.31.0"
 published: "2026-10-22"
 type: "minor"
 lang: "en"
+summary: "feat(automations): hide the GitHub token secret field on self-hosted instances when GitHub is connected (OHE-3699)"
 ---
 
 # OpenHands v1.31.0

@@ -6,7 +6,7 @@ tag: "7.6.0"
 published: "2022-05-18"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/cbeust/testng/compare/7.5...7.6.0"
+summary: "Remove redundant Parameter implementation · Upgrade to JDK11 · Move SimpleBaseTest to be Kotlin based · Restore testnames when using suites in suite."
 ---
 
 # testng 7.6.0

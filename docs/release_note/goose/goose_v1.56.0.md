@@ -7,6 +7,7 @@ version: "v1.56.0"
 published: "2026-10-23"
 type: "minor"
 lang: "en"
+summary: "Automatic thinking level operation for improved model reasoning #12237 · Resume failed or cancelled delegate subagents #13015 · Subagent session link in UI with view-only subagent sessions #12998"
 ---
 
 # goose v1.56.0

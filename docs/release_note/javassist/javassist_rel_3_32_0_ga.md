@@ -6,7 +6,7 @@ tag: "rel_3_32_0_ga"
 published: "2026-06-21"
 type: "release"
 lang: "en"
-summary: "Please use javassist.runtime.Desc.setUseContextClassLoaderLocally() instead."
+summary: "Excludes javassist.tools.{reflect,rmi,web}. They are now included in ./examples/src/main. · Disables javassist.runtime.Desc.useContextClassLoader."
 ---
 
 # javassist rel_3_32_0_ga

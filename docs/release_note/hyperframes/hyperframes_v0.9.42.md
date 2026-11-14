@@ -7,7 +7,7 @@ version: "v0.9.42"
 published: "2026-11-13"
 type: "patch"
 lang: "en"
-summary: "Released on 2026-11-13."
+summary: "Studio now says why a file cannot be saved when another program holds it open or it is read-only. Dragging and resizing a layer draw live over an opaque preview, local renders bring in only media, font, CSS and JS files…"
 ---
 
 # hyperframes v0.9.42

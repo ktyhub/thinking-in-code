@@ -6,7 +6,7 @@ tag: "v4.2.1"
 published: "2025-03-18"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Enabling lazy initialization breaks Kafka Streams #3065 · Clarify that having a custom error handler disables auto send to DLQ #3063"
 ---
 
 # spring-cloud-stream v4.2.1

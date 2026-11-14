@@ -6,6 +6,7 @@ tag: "v2.4.3"
 published: "2022-04-14"
 type: "patch"
 lang: "en"
+summary: "Add http register client retry. · Support octet-stream context-type. · Support redirecting to URIs outside of bootstrap and refactoring code. · Add local API authorization."
 ---
 
 # shenyu v2.4.3

@@ -6,7 +6,7 @@ tag: "3.3.7"
 published: "2026-10-26"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/dubbo/compare/dubbo-3.3.6...3.3.7"
+summary: "Bump spring-6.version from 6.2.8 to 6.2.11[bot] · [3.3] Add dubbo springboot3 dependency checker automatic configuration · Bump org.springframework:spring-core from 6.2.8 to 6.2.11[bot]"
 ---
 
 # dubbo 3.3.7

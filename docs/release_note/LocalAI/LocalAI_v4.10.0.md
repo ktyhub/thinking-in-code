@@ -7,6 +7,7 @@ version: "v4.10.0"
 published: "2026-09-17"
 type: "minor"
 lang: "en"
+summary: "Twenty-eight days and 280 pull requests. The work landed on three fronts: operating a fleet, feeding it models from private sources, and fixing the backends you depend on."
 ---
 
 # LocalAI v4.10.0

@@ -7,6 +7,7 @@ version: "v1.2.1"
 published: "2025-10-31"
 type: "patch"
 lang: "en"
+summary: "only merge when clip_timestamps are not provided · Fix: Prevent tokens in BatchedInferencePipeline · Upgrade to Silero-VAD V6 and @sssshhhhhh · Offload retry logic to hf hub"
 ---
 
 # faster-whisper v1.2.1

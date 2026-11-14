@@ -6,7 +6,7 @@ tag: "v12.4.0"
 published: "2026-10-20"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/supertokens/supertokens-core/compare/v12.3.1...v12.4.0"
+summary: "fix: move EE license sync off the FeatureFlag constructor to a jittered cron[bot] · feat: add opt-in admin connector with port-scoped route classification[bot]"
 ---
 
 # supertokens-core v12.4.0

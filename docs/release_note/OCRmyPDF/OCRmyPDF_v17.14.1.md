@@ -7,7 +7,7 @@ version: "v17.14.1"
 published: "2026-11-09"
 type: "patch"
 lang: "en"
-summary: "Fixes"
+summary: "Fixed the RapidOCR engine offering no way to choose where its models are"
 ---
 
 # OCRmyPDF v17.14.1

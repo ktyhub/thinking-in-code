@@ -6,7 +6,7 @@ tag: "v4.2.1"
 published: "2025-03-18"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Allow customising HC5 RequestConfig in EurekaClientHttpRequestFactorySupplier #4391"
 ---
 
 # spring-cloud-netflix v4.2.1

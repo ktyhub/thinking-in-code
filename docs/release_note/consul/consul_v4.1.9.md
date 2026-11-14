@@ -6,7 +6,7 @@ tag: "v4.1.9"
 published: "2026-11-05"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/go-jose/go-jose/compare/v4.1.8...v4.1.9"
+summary: "OpaqueSigner now supports unrecognized public key types again (#325, fixes a regression in v4.1.5) · Parsing a JWK with an unsupported elliptic curve, or a too-big RSA modulus, now returns ErrUnsupportedKeyType ("
 ---
 
 # consul v4.1.9

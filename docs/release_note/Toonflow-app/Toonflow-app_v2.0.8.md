@@ -7,7 +7,7 @@ version: "v2.0.8"
 published: "2026-10-27"
 type: "patch"
 lang: "en"
-summary: "选择你的设备对应的安装包，点击即可下载："
+summary: "选择你的设备对应的安装包，点击即可下载"
 ---
 
 # Toonflow-app v2.0.8

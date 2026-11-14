@@ -6,7 +6,7 @@ tag: "v2.0.8"
 published: "2026-10-22"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Honor startImmediately when registering a listener container #1556 · Keep reader container running when listener throws #1551 · Fix thread safety of thread-bound transactions in PulsarTemplate #1515"
 ---
 
 # spring-pulsar v2.0.8

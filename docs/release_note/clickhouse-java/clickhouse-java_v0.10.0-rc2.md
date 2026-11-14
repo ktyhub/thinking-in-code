@@ -6,7 +6,7 @@ tag: "v0.10.0-rc2"
 published: "2026-07-22"
 type: "minor"
 lang: "en"
-summary: "Release Migration Guide"
+summary: "[client-v2] The public ClickHouseBinaryFormatWriter interface gained two methods, setString(String, byte[]) and setString(int, byte[]), for writing raw String/FixedString bytes."
 ---
 
 # clickhouse-java v0.10.0-rc2

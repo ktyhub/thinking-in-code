@@ -6,7 +6,7 @@ tag: "v6.0.1"
 published: "2025-12-17"
 type: "patch"
 lang: "en"
-summary: "Spring Framework: 7.0.2 Spring Integration: 7.0.1 Spring AMQP: 4.0.1 Spring Kafka: 4.0.1 Spring Data: 4.0.1 Spring Ldap: 4.0.1 Micrometer: 1.16.1"
+summary: "Local Chunking: BatchStatus remains COMPLETED when worker thread write fails #5172 · RemotePartitioningWorkerStepBuilder doesn't override all configuration methods from StepBuilder #5150"
 ---
 
 # spring-batch v6.0.1

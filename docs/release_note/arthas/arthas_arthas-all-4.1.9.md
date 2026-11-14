@@ -6,6 +6,7 @@ tag: "arthas-all-4.1.9"
 published: "2026-05-09"
 type: "release"
 lang: "en"
+summary: "feat: 新增 classloader-metaspace 命令，支持按 ClassLoader 实例统计 metaspace / class metadata 内存，见 #3188；feat: MCP Server 支持 task 模式，支持长时间工具调用的异步执行、查询/取消，并限制并发 task session，见 #3140 #3182 #3185"
 ---
 
 # arthas arthas-all-4.1.9

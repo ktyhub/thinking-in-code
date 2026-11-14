@@ -7,7 +7,7 @@ version: "autogpt-platform-beta-v0.9.0"
 published: "2026-10-23"
 type: "pre"
 lang: "en"
-summary: "A huge shoutout to everyone who contributed to this release. Special thanks to our new contributors:"
+summary: "#15824 - Add measures and admin tools against multi-account abuse (by @Pwuts) · #14553 - Self-host from the Docker Hub image, with a Windows installer (by @ntindle)"
 ---
 
 # AutoGPT autogpt-platform-beta-v0.9.0

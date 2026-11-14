@@ -7,6 +7,7 @@ version: "v8.8.16"
 published: "2026-11-01"
 type: "patch"
 lang: "en"
+summary: "PyPI: pip install g4f==v8.8.16"
 ---
 
 # gpt4free v8.8.16

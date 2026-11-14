@@ -6,7 +6,7 @@ tag: "1.8.7"
 published: "2023-12-29"
 type: "patch"
 lang: "en"
-summary: "Thanks for all contributors: @sczyh30, @wuwen5, @xiaozzzi, @EzrealOf, @wilsonwu, @kirklin, @garroshh, @JosephZhang3, @LiYangSir, @Yan1025, @wenshao, @pandaapo, @frank-zsy, @z521598, @LearningGp, @robberphex, @clara0,…"
+summary: "Add default circuit breaker rule support (#2232) · Update metrics name for better monitor selection in JMX MetricBeanWriter extension (#2976)"
 ---
 
 # Sentinel 1.8.7

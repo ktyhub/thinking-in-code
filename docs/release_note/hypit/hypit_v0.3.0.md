@@ -7,7 +7,7 @@ version: "v0.3.0"
 published: "2026-10-08"
 type: "minor"
 lang: "en"
-summary: "Install @hypit/hypit@0.3.0 with your package manager and commit the resulting lockfile. This is an architectural release: migrate 0.2 Sources, Recipes, Runs and project components to the 0.3 author model rather than…"
+summary: "Hypit now has a domain-neutral language host and an adaptive video authoring layer. SVML, SVS and SVRun remain the author-facing source family, while video semantics, audiovisual tracks, components and execution are…"
 ---
 
 # hypit v0.3.0

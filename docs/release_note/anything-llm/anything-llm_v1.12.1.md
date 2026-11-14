@@ -6,7 +6,7 @@ tag: "v1.12.1"
 published: "2026-04-22"
 type: "patch"
 lang: "en"
-summary: "Now, when you upload a document to the workspace the process per-document is now reported during embedding. This is a huge improvement in performance and user experience. During this process you can add and remove…"
+summary: "Now, when you upload a document to the workspace the process per-document is now reported during embedding. This is a huge improvement in performance and user experience."
 ---
 
 # anything-llm v1.12.1

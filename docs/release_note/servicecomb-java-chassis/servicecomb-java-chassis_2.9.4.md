@@ -6,7 +6,7 @@ tag: "2.9.4"
 published: "2026-04-25"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/servicecomb-java-chassis/compare/2.9.3...2.9.4"
+summary: "[#5015] update jdk version · [#5130] Fixed incorrect ProduceProcessor is selected when the produces is null · [#5128] Project management of the Archaius component"
 ---
 
 # servicecomb-java-chassis 2.9.4

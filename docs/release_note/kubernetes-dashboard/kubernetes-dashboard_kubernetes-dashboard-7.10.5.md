@@ -6,7 +6,7 @@ tag: "kubernetes-dashboard-7.10.5"
 published: "2025-02-25"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/dashboard/compare/kubernetes-dashboard-7.10.1...kubernetes-dashboard-7.10.5"
+summary: "feat: add restart option for DaemonSets & StatefulSets · fix: workload charts are black for certain languages"
 ---
 
 # kubernetes-dashboard kubernetes-dashboard-7.10.5

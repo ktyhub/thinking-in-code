@@ -6,7 +6,7 @@ tag: "v5.1.3"
 published: "2026-04-15"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/docker/compose/compare/v5.1.2...v5.1.3"
+summary: "fix: provider output handling and watch rebuild re-invocation"
 ---
 
 # compose v5.1.3

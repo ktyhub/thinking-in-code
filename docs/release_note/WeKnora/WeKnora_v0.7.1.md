@@ -7,6 +7,7 @@ version: "v0.7.1"
 published: "2026-07-24"
 type: "patch"
 lang: "en"
+summary: "feat(chat): add session header actions and Markdown export · feat(tracing): migrate langfuse client to OTLP/OTel wire protocol · fix(tracing): merge Langfuse finish metadata and export auto root spans"
 ---
 
 # WeKnora v0.7.1

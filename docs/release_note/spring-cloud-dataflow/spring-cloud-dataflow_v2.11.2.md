@@ -6,7 +6,7 @@ tag: "v2.11.2"
 published: "2024-01-11"
 type: "patch"
 lang: "en"
-summary: "Component | Version"
+summary: "spring-cloud/spring-cloud-dataflow#5593 Update logback to handle CVE-2023-6378 spring-cloud/spring-cloud-deployer#407 CF Deployer needs to use LogCacheClient to retrieve logs spring-cloud/spring-cloud-dataflow-ui#1974…"
 ---
 
 # spring-cloud-dataflow v2.11.2

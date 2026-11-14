@@ -6,7 +6,7 @@ tag: "v0.21.1"
 published: "2026-08-16"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/openai/openai-agents-python/compare/v0.21.0...v0.21.1"
+summary: "feat(core): add model call timeouts · feat(sandbox): add run-scoped sandbox working directories · feat(sandbox): allow Docker sandboxes to disable networking · feat(sandbox): add Modal sandbox resource options"
 ---
 
 # openai-agents-python v0.21.1

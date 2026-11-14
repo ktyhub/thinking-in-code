@@ -7,6 +7,7 @@ version: "v0.30.2"
 published: "2026-09-08"
 type: "patch"
 lang: "en"
+summary: "fix(ci): bump gh-action-pypi-publish for metadata 2.5 · Bump graphiti-core to 0.30.1 · Fix Neo4j database routing and honor NEO4J_DATABASE in MCP server · fix: include Saga nodes when clearing data by group_ids"
 ---
 
 # graphiti v0.30.2

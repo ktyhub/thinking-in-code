@@ -6,6 +6,7 @@ tag: "v1.17.10"
 published: "2026-10-23"
 type: "patch"
 lang: "en"
+summary: "This is a quick release that postpones the Amsterdam fork on the Hoodi testnet, previously scheduled for Oct 26, 2026, 17:42:48 UTC. Hoodi node operators running v1.17.9 must upgrade before then."
 ---
 
 # go-ethereum v1.17.10

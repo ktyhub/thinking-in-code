@@ -7,6 +7,7 @@ version: "v3.6.0"
 published: "2026-05-28"
 type: "minor"
 lang: "en"
+summary: "Release the PaddleOCR-VL-1.6 document parsing solution."
 ---
 
 # PaddleOCR v3.6.0

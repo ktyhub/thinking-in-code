@@ -6,6 +6,7 @@ tag: "rocketmq-all-5.3.2"
 published: "2025-03-08"
 type: "release"
 lang: "zh"
+summary: "此版本引入了基于 RocksDB 的 Pop 消费的新实现（处于 alpha 阶段，详细信息请参阅 RIP-73）。它改进并提供了使用 RocksDB 存储消费队列索引的能力的迁移计划，增加了对取消预定消息能力的支持，增强了优雅的在线和离线能力，并包含大量与 HA、ACL、Metrics 和 Pop 消费相关的常规细节修复。"
 ---
 
 # rocketmq rocketmq-all-5.3.2

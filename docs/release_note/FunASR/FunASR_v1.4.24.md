@@ -7,6 +7,7 @@ version: "v1.4.24"
 published: "2026-11-08"
 type: "patch"
 lang: "en"
+summary: "GitHub Release and PyPI 1.4.24 are both published. Both distributions were downloaded from official PyPI and match the accepted GitHub assets by SHA-256 and size"
 ---
 
 # FunASR v1.4.24

@@ -7,6 +7,7 @@ version: "20240410"
 published: "2024-04-10"
 type: "major"
 lang: "en"
+summary: "川虎助理调整为自动使用可使用的第三方插件，并支持上下文对话 (@Gaizhenbiao)；适配到 gradio 4.26，重构部分代码 (@Gaizhenbiao, @Keldos-Li)"
 ---
 
 # ChuanhuChatGPT 20240410

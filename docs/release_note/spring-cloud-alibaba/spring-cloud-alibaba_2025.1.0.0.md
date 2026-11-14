@@ -6,6 +6,7 @@ tag: "2025.1.0.0"
 published: "2026-02-06"
 type: "minor"
 lang: "en"
+summary: "\\[Core\\]: Support Spring Boot 4.x and Spring Cloud 2025.1.x · \\[Nacos\\]: Remove bootstrap config support, use spring.config.import instead and @chiangzeon in #4156"
 ---
 
 # spring-cloud-alibaba 2025.1.0.0

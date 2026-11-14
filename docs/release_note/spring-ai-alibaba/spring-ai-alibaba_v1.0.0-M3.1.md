@@ -6,6 +6,7 @@ tag: "v1.0.0-M3.1"
 published: "2024-10-28"
 type: "pre"
 lang: "en"
+summary: "feat: update Spring AI dependency to 1.0.0-M3 · feat: rerank model and advisor · feat: add multimodel support · feat: support speech synthesis model"
 ---
 
 # spring-ai-alibaba v1.0.0-M3.1

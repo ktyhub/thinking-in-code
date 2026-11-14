@@ -6,6 +6,7 @@ tag: "v4.1.2"
 published: "2026-10-22"
 type: "patch"
 lang: "en"
+summary: "KafkaTemplate.receive() returns a record at a different offset when the requested offset is missing #4830 · GH-4823: Keep partition pause across child containers #4828"
 ---
 
 # spring-kafka v4.1.2

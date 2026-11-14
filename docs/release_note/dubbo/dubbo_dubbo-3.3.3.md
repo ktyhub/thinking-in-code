@@ -6,7 +6,7 @@ tag: "dubbo-3.3.3"
 published: "2025-01-05"
 type: "release"
 lang: "en"
-summary: "Releates PRs: #14794, #14858, #14866, #14869, #14875, #14899, #14896, #14871, #14900, #14904, #14850, #14922, #14928, #14932, #14948, #14929, #15015"
+summary: "Dubbo has removed dubbo-dependencies-zookeeper-curator5 and dubbo-zookeeper-spring-boot-starter dependency， The dependency of zk is only provided in dubpo-zookeeper-curator5-spring-boot-starter."
 ---
 
 # dubbo dubbo-3.3.3

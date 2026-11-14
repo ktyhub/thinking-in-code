@@ -7,7 +7,7 @@ version: "1.15.40"
 published: "2026-11-11"
 type: "patch"
 lang: "en"
-summary: "@AadeshSalecha, @Kiko0301, @Vidit-Ostwal, @arizedatngo, @bballhaus, @chang-amy, @factory-droid[bot], @joaomdmoura, @lorenzejay, @sallyw02"
+summary: "Remove chromadb from the embedding function layer. · Add exact historical state lookup by row id. · Wire jsonl into rag data type discovery. · Scaffold standalone agents as JSON by default."
 ---
 
 # crewAI 1.15.40

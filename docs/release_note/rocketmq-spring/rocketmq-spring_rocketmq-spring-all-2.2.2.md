@@ -6,7 +6,7 @@ tag: "rocketmq-spring-all-2.2.2"
 published: "2022-04-05"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/rocketmq-spring/compare/rocketmq-spring-all-2.2.1...rocketmq-spring-all-2.2.2"
+summary: "[ISSUE #219] Support to enable tls through configuration file · [ISSUE #365] WAIT_STORE_MSG_OK property parsing error · [ISSUE #389] Upgrade rocketmq-samples version to 2.2.2-SNAPSHOT · [ISSUE #396] Support namespace"
 ---
 
 # rocketmq-spring rocketmq-spring-all-2.2.2

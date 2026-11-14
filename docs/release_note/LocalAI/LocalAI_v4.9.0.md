@@ -7,6 +7,7 @@ version: "v4.9.0"
 published: "2026-08-20"
 type: "minor"
 lang: "en"
+summary: "Thirteen days and 146 pull requests, spent on the parts of LocalAI you touch every day rather than on new engines. Authentication is now deny-by-default, chat gained end-to-end context compression, models and backends…"
 ---
 
 # LocalAI v4.9.0

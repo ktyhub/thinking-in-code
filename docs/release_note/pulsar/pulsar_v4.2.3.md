@@ -6,7 +6,7 @@ tag: "v4.2.3"
 published: "2026-07-06"
 type: "patch"
 lang: "en"
-summary: "For the complete list, check the full changelog."
+summary: "[feat][pip] PIP-469: Legacy-aware topic policies backend routing and metadata-store topic policies (#25547)"
 ---
 
 # pulsar v4.2.3

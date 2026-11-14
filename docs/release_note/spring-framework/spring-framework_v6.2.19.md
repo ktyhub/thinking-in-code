@@ -6,7 +6,7 @@ tag: "v6.2.19"
 published: "2026-06-08"
 type: "patch"
 lang: "en"
-summary: "This maintenance release fixes a high number of CVEs. You can learn more about this in the 'Spring and Security In The Times Of AI' blog post. Here is the full list of 16 CVEs:"
+summary: "This maintenance release fixes a high number of CVEs. You can learn more about this in the 'Spring and Security In The Times Of AI' blog post. Here is the full list of 16 CVEs"
 ---
 
 # spring-framework v6.2.19

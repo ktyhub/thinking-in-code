@@ -6,7 +6,7 @@ tag: "v1.61.0"
 published: "2026-04-10"
 type: "minor"
 lang: "en"
-summary: "This release was possible thanks to the following contributors who shared their brilliant ideas and awesome pull requests:"
+summary: "Stabilize isEnabled() on Tracer, Logger, and metric instruments (#8200)"
 ---
 
 # opentelemetry-java v1.61.0

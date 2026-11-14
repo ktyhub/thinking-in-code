@@ -6,7 +6,7 @@ tag: "v3.25.0"
 published: "2025-05-29"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/sofastack/sofa-boot/compare/v3.24.0...v3.25.0"
+summary: "Exception is thrown for fast fail when component failed to register"
 ---
 
 # sofa-boot v3.25.0

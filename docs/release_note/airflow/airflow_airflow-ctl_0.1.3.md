@@ -6,7 +6,7 @@ tag: "airflow-ctl/0.1.3"
 published: "2026-03-19"
 type: "release"
 lang: "en"
-summary: "📦 PyPI: https://pypi.org/project/apache-airflow-ctl/0.1.3/ 📚 Docs: https://airflow.apache.org/docs/apache-airflow-ctl/0.1.3/ 🛠 Release Notes: https://airflow.apache.org/docs/apache-airflow-ctl/0.1.3/releasenotes.html"
+summary: "📦 PyPI: https://pypi.org/project/apache-airflow-ctl/0.1.3/ 📚 Docs: https://airflow.apache.org/docs/apache-airflow-ctl/0.1.3/ 🛠 Release Notes: https://airflow.apache.org/docs/apache-airflow-ctl/0.1.3/release_notes.html"
 ---
 
 # airflow airflow-ctl/0.1.3

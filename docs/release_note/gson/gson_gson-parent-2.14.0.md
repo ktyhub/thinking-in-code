@@ -6,7 +6,7 @@ tag: "gson-parent-2.14.0"
 published: "2026-04-23"
 type: "release"
 lang: "en"
-summary: "When the java.time API is available, Gson automatically can read and write instances of classes like Instant and Duration. The format it uses essentially freezes the JSON representation that ReflectiveTypeAdapterFactory…"
+summary: "Add type adapters for java.time classes"
 ---
 
 # gson gson-parent-2.14.0

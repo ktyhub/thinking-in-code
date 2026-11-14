@@ -6,7 +6,7 @@ tag: "v3.24.0"
 published: "2024-08-19"
 type: "minor"
 lang: "en"
-summary: "🔨 Optimize"
+summary: "Fix performance issues caused by debuglog"
 ---
 
 # sofa-boot v3.24.0

@@ -6,7 +6,7 @@ tag: "v1.40.0"
 published: "2026-10-13"
 type: "minor"
 lang: "en"
-summary: "Docker images: https://hub.docker.com/r/envoyproxy/envoy/tags?page=1&name=v1.40.0 Docs: https://www.envoyproxy.io/docs/envoy/v1.40.0/ Release notes:…"
+summary: "build: Envoy has switched from WORKSPACE to bzlmod. The WORKSPACE file is removed; Envoy, the API and the docs are published as Bazel modules (envoy, envoy_api, envoy-docs)."
 ---
 
 # envoy v1.40.0

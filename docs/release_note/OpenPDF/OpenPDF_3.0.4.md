@@ -6,7 +6,7 @@ tag: "3.0.4"
 published: "2026-05-01"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/LibrePDF/OpenPDF/compare/3.0.3...3.0.4"
+summary: "fix: preserve indexed PNG transparency to prevent black box regression when stamping PDF · Bump com.ibm.icu:icu4j from 78.2 to 78.3[bot] · refactoring string concatenation to text blocks"
 ---
 
 # OpenPDF 3.0.4

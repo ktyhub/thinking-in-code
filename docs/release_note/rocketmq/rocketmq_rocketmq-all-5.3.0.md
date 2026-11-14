@@ -7,6 +7,7 @@ version: "rocketmq-all-5.3.0"
 published: "2024-07-17"
 type: "release"
 lang: "en"
+summary: "[ISSUE #7560] [RIP-68] Support RocketMQ ACL 2.0"
 ---
 
 # rocketmq rocketmq-all-5.3.0

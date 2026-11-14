@@ -6,7 +6,7 @@ tag: "2.1.1"
 published: "2026-06-09"
 type: "patch"
 lang: "en"
-summary: "🌐 English | 中文"
+summary: "CowAgent introduces Self-Evolution, letting the agent go beyond completing a single task and keep improving through everyday collaboration with you"
 ---
 
 # chatgpt-on-wechat 2.1.1

@@ -7,6 +7,7 @@ version: "1.3.0"
 published: "2026-05-13"
 type: "minor"
 lang: "en"
+summary: "Fix error message for model type determination · Implement uniform exceptions classes across model providers"
 ---
 
 # outlines 1.3.0

@@ -6,7 +6,7 @@ tag: "rocketmq-all-5.3.2"
 published: "2025-03-08"
 type: "release"
 lang: "en"
-summary: "This release introduces a new implementation of Pop consumption based on RocksDB (in the alpha phase, see RIP-73 for details). It improves and provides a migration plan for the capability of using RocksDB to store…"
+summary: "This release introduces a new implementation of Pop consumption based on RocksDB (in the alpha phase, see RIP-73 for details)."
 ---
 
 # rocketmq rocketmq-all-5.3.2

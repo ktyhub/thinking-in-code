@@ -7,6 +7,7 @@ version: "v15.18.1"
 published: "2026-11-12"
 type: "patch"
 lang: "en"
+summary: "The worker no longer fails to start when the database is busy at startup (#6041). If the My Work refresh record was left as 'running' by a restart and the database was locked at that moment, the repair write threw and…"
 ---
 
 # claude-mem v15.18.1

@@ -6,7 +6,7 @@ tag: "rel_3_30_0_ga"
 published: "2023-12-16"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/jboss-javassist/javassist/compare/rel3292ga...rel3300ga"
+summary: "try to fix trivial link error · fixes Issue 462 (In Java21, the ConstPool API throws NPE for MethodParameters attributes without parameter names) · Fix MemberResolver.lookupMethod bug when super class has more precise…"
 ---
 
 # javassist rel_3_30_0_ga

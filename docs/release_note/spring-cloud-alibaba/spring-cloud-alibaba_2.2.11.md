@@ -6,6 +6,7 @@ tag: "2.2.11"
 published: "2024-12-12"
 type: "patch"
 lang: "en"
+summary: "[Nacos] support nacos config annotation · [Nacos] nacos config support type and bean factory"
 ---
 
 # spring-cloud-alibaba 2.2.11

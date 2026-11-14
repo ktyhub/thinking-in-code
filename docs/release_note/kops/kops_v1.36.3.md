@@ -6,7 +6,7 @@ tag: "v1.36.3"
 published: "2026-11-10"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/kops/compare/v1.36.2...v1.36.3"
+summary: "Automated cherry pick of #18711: Update Go to 1.26.6 and bump golang.org/x modules · Automated cherry pick of #18727: Disable kindnet DNS caching by default"
 ---
 
 # kops v1.36.3

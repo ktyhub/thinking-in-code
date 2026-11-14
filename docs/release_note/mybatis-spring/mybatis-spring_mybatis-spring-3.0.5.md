@@ -6,7 +6,7 @@ tag: "mybatis-spring-3.0.5"
 published: "2025-06-10"
 type: "release"
 lang: "en"
-summary: "Here is the complete list of changes."
+summary: "Replace synchronized method with Lock #1039"
 ---
 
 # mybatis-spring mybatis-spring-3.0.5

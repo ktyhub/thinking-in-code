@@ -6,7 +6,7 @@ tag: "v1.39.4"
 published: "2026-10-12"
 type: "patch"
 lang: "en"
-summary: "Summary of changes:"
+summary: "Bug fixes · aws: fixed a race where the route-level configuration of the AWS"
 ---
 
 # envoy v1.39.4

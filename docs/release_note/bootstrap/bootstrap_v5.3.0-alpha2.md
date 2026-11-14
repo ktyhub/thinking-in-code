@@ -6,7 +6,7 @@ tag: "v5.3.0-alpha2"
 published: "2023-03-24"
 type: "minor"
 lang: "en"
-summary: "Updated numerous devDependencies: https://github.com/twbs/bootstrap/pulls?q=is%3Apr+label%3Adependencies+project%3Atwbs%2F13+is%3Aclosed"
+summary: "#33126: Add .nav-underline modifier class · #37762: Add new link utilities, icon link helper, and update colored link helpers · #38199: Docs: Better scroll"
 ---
 
 # bootstrap v5.3.0-alpha2

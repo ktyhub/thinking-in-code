@@ -7,6 +7,7 @@ version: "v0.41.0"
 published: "2026-10-14"
 type: "minor"
 lang: "en"
+summary: "antigravity: add native Google Antigravity IDE integration (#3817) (cd4367b) · opencode: support the OpenCode 2.x plugin API (#3999) (1d4b357)"
 ---
 
 # headroom v0.41.0

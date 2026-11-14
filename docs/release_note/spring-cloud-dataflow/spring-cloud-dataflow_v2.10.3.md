@@ -6,7 +6,7 @@ tag: "v2.10.3"
 published: "2023-05-05"
 type: "patch"
 lang: "en"
-summary: "Component | Version"
+summary: "Spring Boot 2.7.11"
 ---
 
 # spring-cloud-dataflow v2.10.3

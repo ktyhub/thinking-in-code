@@ -6,6 +6,7 @@ tag: "v2.6.0"
 published: "2023-08-11"
 type: "minor"
 lang: "en"
+summary: "Support shenyu-admin expose prometheus metrics · Add shenyu Level-1 cache and Level-2 cache · Save extend plugin jar to shenyu admin · Support shenyu upload plugin hot load in gateway"
 ---
 
 # shenyu v2.6.0

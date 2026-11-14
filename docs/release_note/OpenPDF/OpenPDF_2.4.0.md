@@ -6,7 +6,7 @@ tag: "2.4.0"
 published: "2025-08-08"
 type: "minor"
 lang: "en"
-summary: "See 2.4.0 migration guide for details."
+summary: "Java package name change: All classes have been moved from com.lowagie to org.openpdf in the openpdf-core-modern module. · Module split: The openpdf submodule has been split (duplicated) into"
 ---
 
 # OpenPDF 2.4.0

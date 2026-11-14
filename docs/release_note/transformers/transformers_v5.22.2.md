@@ -7,7 +7,7 @@ version: "v5.22.2"
 published: "2026-11-06"
 type: "patch"
 lang: "en"
-summary: "Some in between patch for security and distributed fixes. See the included commits :hugs:"
+summary: "Some in between patch for security and distributed fixes. See the included commits :hugs"
 ---
 
 # transformers v5.22.2

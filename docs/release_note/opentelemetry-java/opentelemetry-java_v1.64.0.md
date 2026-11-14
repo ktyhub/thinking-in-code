@@ -6,7 +6,7 @@ tag: "v1.64.0"
 published: "2026-07-10"
 type: "minor"
 lang: "en"
-summary: "This release was possible thanks to the following contributors who shared their brilliant ideas and awesome pull requests:"
+summary: "Fix W3CBaggagePropagator to allow empty baggage values per W3C spec (#8468) · Fix baggage parsing for invalid percent-encoded members (#8480)"
 ---
 
 # opentelemetry-java v1.64.0

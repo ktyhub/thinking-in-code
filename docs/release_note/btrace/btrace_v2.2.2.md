@@ -6,7 +6,7 @@ tag: "v2.2.2"
 published: "2022-03-25"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/btraceio/btrace/compare/v2.1.0...v2.2.2"
+summary: "Update dependency com.github.johnrengelman.shadow:com.github.johnrengelman.shadow.gradle.plugin to v6.1.0 · Update dependency gradle to v6.8.2 · Update dependency junit:junit to v4.13.2"
 ---
 
 # btrace v2.2.2

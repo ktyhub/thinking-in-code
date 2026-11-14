@@ -6,7 +6,7 @@ tag: "v1.2026.7"
 published: "2026-08-25"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/plantuml/plantuml/compare/v1.2026.6...v1.2026.7"
+summary: "🐛 Fix #2277 NPE when using ELK · 🐛 Fix images rendered using Dockerfile being owned by root · 🐛 [Smetana] fill arrowheads of filled decorations (>>) · 📝 Add MCP Toplist rank badge"
 ---
 
 # plantuml v1.2026.7

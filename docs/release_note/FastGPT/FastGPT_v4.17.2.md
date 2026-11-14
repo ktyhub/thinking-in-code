@@ -7,7 +7,7 @@ version: "v4.17.2"
 published: "2026-10-09"
 type: "patch"
 lang: "en"
-summary: "本次升级包含以下手动触发升级脚本（可在「管理员 > 版本升级」中查看与执行）："
+summary: "更新 fastgpt-app（FastGPT 主服务）镜像 tag: v4.17.2；更新 fastgpt-pro（FastGPT 商业版）镜像 tag: v4.17.2"
 ---
 
 # FastGPT v4.17.2

@@ -6,7 +6,7 @@ tag: "dubbo-3.3.4"
 published: "2025-03-05"
 type: "release"
 lang: "en"
-summary: "Releates PRs: #14800, #15058, #15064, #15017, #15065, #15082, #15122, #15125, #15135, #15163, #15164"
+summary: "Client supports requests to server-streaming endpoints without parameters · Add a configuration to determine whether to enable the point-to-point network interface"
 ---
 
 # dubbo dubbo-3.3.4

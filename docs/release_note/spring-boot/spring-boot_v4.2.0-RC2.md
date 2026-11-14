@@ -6,7 +6,7 @@ tag: "v4.2.0-RC2"
 published: "2026-11-05"
 type: "minor"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Remove LDAP SSL reload support #52365 · Add support for X-Forwarded-Prefix with Reactor Netty #52316"
 ---
 
 # spring-boot v4.2.0-RC2

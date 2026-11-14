@@ -6,7 +6,7 @@ tag: "autogpt-platform-beta-v0.8.1"
 published: "2026-09-24"
 type: "pre"
 lang: "en"
-summary: "Date: January 2025"
+summary: "#14636 - Add eight machine-built generalist experts with their skills and routines (by @ntindle) · #14794 - Add Zara, a go-to-market strategist expert (by @ntindle)"
 ---
 
 # AutoGPT autogpt-platform-beta-v0.8.1

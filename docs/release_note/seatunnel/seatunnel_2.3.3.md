@@ -7,6 +7,7 @@ version: "2.3.3"
 published: "2023-08-22"
 type: "patch"
 lang: "en"
+summary: "[Translation] [Spark] Fix SeaTunnelRowConvertor fail to convert when schema contains row type (#5170)"
 ---
 
 # seatunnel 2.3.3

@@ -6,6 +6,7 @@ tag: "v9.0.6"
 published: "2026-09-30"
 type: "patch"
 lang: "en"
+summary: "react-router: dispatch view lifecycle events on non-animated transitions (#31497) (f01e9a7), closes #31479 · react-router: keep splat route page mounted when a sibling route is pushed (#31481) (1130c2c), closes #31477"
 ---
 
 # ionic-framework v9.0.6

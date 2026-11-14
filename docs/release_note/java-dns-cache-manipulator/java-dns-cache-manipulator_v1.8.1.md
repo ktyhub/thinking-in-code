@@ -6,7 +6,7 @@ tag: "v1.8.1"
 published: "2023-02-25"
 type: "patch"
 lang: "en"
-summary: "[](https://search.maven.org/artifact/com.alibaba/dns-cache-manipulator/1.8.1/jar) [](https://github.com/alibaba/java-dns-cache-manipulator/releases/download/v1.8.1/dcm-1.8.1.tar.gz)"
+summary: "upgrade dependencies/plugins · upgrade maven wrapper to 3.9.0"
 ---
 
 # java-dns-cache-manipulator v1.8.1

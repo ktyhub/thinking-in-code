@@ -6,7 +6,7 @@ tag: "v7.0.6"
 published: "2026-08-20"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Do not convert wrong message in the JmsOutboundGateway.onMessageSync() just for debug logging #11212"
 ---
 
 # spring-integration v7.0.6

@@ -6,7 +6,7 @@ tag: "v4.0.7"
 published: "2026-06-10"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "MailSender auto-configuration does not enable hostname verification #50746 · Artemis auto-configuration uses a predictable default location for the embedded broker's data #50744"
 ---
 
 # spring-boot v4.0.7

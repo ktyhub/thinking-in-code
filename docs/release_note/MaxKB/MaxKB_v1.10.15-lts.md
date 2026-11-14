@@ -7,6 +7,7 @@ version: "v1.10.15-lts"
 published: "2026-08-11"
 type: "patch"
 lang: "en"
+summary: "Security Vulnerability: Fixed flaws in permission verification to block a high-risk privilege escalation vulnerability where anonymous application session tokens could be exploited to obtain the administrator's system…"
 ---
 
 # MaxKB v1.10.15-lts

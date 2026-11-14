@@ -6,6 +6,7 @@ tag: "dubbo-3.3.2"
 published: "2024-10-29"
 type: "release"
 lang: "zh"
+summary: "配置值支持数组。通过 @oxsean 在"
 ---
 
 # dubbo dubbo-3.3.2

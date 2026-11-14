@@ -6,6 +6,7 @@ tag: "v2.7.8.3"
 published: "2021-04-29"
 type: "patch"
 lang: "en"
+summary: "fix: when the global group/version is set by the provider, dubbo admin cannot get the interface list #22 · fix: do not get dubbo ProviderConfig config when ServiceConfig not set group #24"
 ---
 
 # dubbo-spi-extensions v2.7.8.3

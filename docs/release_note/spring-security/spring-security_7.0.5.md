@@ -6,7 +6,7 @@ tag: "7.0.5"
 published: "2026-04-20"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Add XML Based shouldWriteHeadersEagerly tests #19018 · Merge Add CredentialRecordOwnerAuthorizationManager #19005"
 ---
 
 # spring-security 7.0.5

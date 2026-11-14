@@ -6,6 +6,7 @@ tag: "maven-3.9.12"
 published: "2025-12-16"
 type: "release"
 lang: "en"
+summary: "[3.9.x] Apply resolver changes and improvements (#11536) @cstamas · Update formatting of prerequisites-requirements error to improve readability (#11523) @slawekjaranowski"
 ---
 
 # maven maven-3.9.12

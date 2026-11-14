@@ -7,6 +7,7 @@ version: "v3.8.4"
 published: "2026-03-25"
 type: "patch"
 lang: "en"
+summary: "feat: add progress_callback to transcribe, align, and diarize · fix: remove dead model_bytes read that leaked file handle · fix: restore word-level timestamps for unalignable characters"
 ---
 
 # whisperX v3.8.4

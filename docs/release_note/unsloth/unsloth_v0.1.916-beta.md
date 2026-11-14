@@ -7,7 +7,7 @@ version: "v0.1.916-beta"
 published: "2026-11-06"
 type: "pre"
 lang: "en"
-summary: "This release brings large performance fixes across Unsloth: faster typing and search in long chats, faster image/video loads, two-GPU image/video gen. It also adds separate browsers for each chat, floating browser…"
+summary: "This release brings large performance fixes across Unsloth: faster typing and search in long chats, faster image/video loads, two-GPU image/video gen."
 ---
 
 # unsloth v0.1.916-beta

@@ -6,7 +6,7 @@ tag: "controller-v1.15.1"
 published: "2026-03-19"
 type: "release"
 lang: "en"
-summary: "Images:"
+summary: "registry.k8s.io/ingress-nginx/controller:v1.15.1@sha256:594ceea76b01c592858f803f9ff4d2cb40542cae2060410b2c95f75907d659e1"
 ---
 
 # ingress-nginx controller-v1.15.1

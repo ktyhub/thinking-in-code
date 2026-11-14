@@ -6,7 +6,7 @@ tag: "v2.15.1-alpha1"
 published: "2026-08-18"
 type: "patch"
 lang: "en"
-summary: "rancher/rancher-agent:v2.15.1-alpha1 rancher/rancher-webhook:v0.11.1-rc.1 rancher/rancher:v2.15.1-alpha1"
+summary: "CHART_DEFAULT_BRANCH: dev-v2.15 (scripts/package-env) · CHART_DEFAULT_BRANCH: dev-v2.15 (package/Dockerfile) · CATTLE_KDM_BRANCH: dev-v2.15 (package/Dockerfile) · CATTLE_KDM_BRANCH: dev-v2.15 (Dockerfile.runtime)"
 ---
 
 # rancher v2.15.1-alpha1

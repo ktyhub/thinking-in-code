@@ -6,6 +6,7 @@ tag: "6.5.3"
 published: "2026-07-31"
 type: "patch"
 lang: "en"
+summary: "Input · 🐞 Fix Input.OTP using type='text' when mask is a string while preserving explicit type values. #58835 @QDyanbing · 🐞 Fix Input.OTP displaying the original value when mask is true. #58805 @cyphercodes"
 ---
 
 # ant-design 6.5.3

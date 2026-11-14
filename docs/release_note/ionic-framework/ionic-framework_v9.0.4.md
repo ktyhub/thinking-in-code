@@ -6,6 +6,7 @@ tag: "v9.0.4"
 published: "2026-09-16"
 type: "patch"
 lang: "en"
+summary: "input, select, textarea: emit one click event when slotted content is clicked (#31423) (d6acf12) · input, textarea: keep the value visible when slotted content is wide (#31435) (1fb47c5)"
 ---
 
 # ionic-framework v9.0.4

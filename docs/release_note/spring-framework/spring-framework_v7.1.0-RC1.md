@@ -6,7 +6,7 @@ tag: "v7.1.0-RC1"
 published: "2026-10-22"
 type: "minor"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Remove APIs marked as deprecated for removal in 7.1 #37455 · Consistently treat 0 as no timeout in WebTestClient #37454 · Consistently treat 0 as no timeout in MockMvc #37453"
 ---
 
 # spring-framework v7.1.0-RC1

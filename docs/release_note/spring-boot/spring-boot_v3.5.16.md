@@ -6,6 +6,7 @@ tag: "v3.5.16"
 published: "2026-06-25"
 type: "patch"
 lang: "en"
+summary: "Upgrade to Spring AMQP 3.2.12 #50818 · Upgrade to Spring Data Bom 2025.0.13 #50819 · Upgrade to Spring Integration 6.5.10 #50820"
 ---
 
 # spring-boot v3.5.16

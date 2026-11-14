@@ -6,7 +6,7 @@ tag: "zxing-3.5.1"
 published: "2022-11-02"
 type: "release"
 lang: "en"
-summary: "See https://github.com/zxing/zxing/milestone/14?closed=1"
+summary: "Various minor bug fixes, including more from oss-fuzz · Avoid very long detection of QR codes in two types of pathological cases · Don't fail QR code decoding if GB2312 not supported by JDK"
 ---
 
 # zxing zxing-3.5.1

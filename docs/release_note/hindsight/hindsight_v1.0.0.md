@@ -7,6 +7,7 @@ version: "v1.0.0"
 published: "2026-10-13"
 type: "major"
 lang: "en"
+summary: "fix(docs): overview hero reaches the window edges on wide screens · docs: changelog and blog post for v0.10.3 · docs: fix the home page link preview"
 ---
 
 # hindsight v1.0.0

@@ -6,6 +6,7 @@ tag: "v2.5.1"
 published: "2023-02-03"
 type: "patch"
 lang: "en"
+summary: "Add brpc example · Add spring boot starter plugin brpc&admin · Add brpc-plugin · Add shenyu-client-api-doc"
 ---
 
 # shenyu v2.5.1

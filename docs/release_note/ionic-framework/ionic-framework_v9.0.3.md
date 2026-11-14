@@ -6,6 +6,7 @@ tag: "v9.0.3"
 published: "2026-09-09"
 type: "patch"
 lang: "en"
+summary: "vue-router: clear navigation info when a guard aborts navigation (#31364) (8d41b5f), closes #29721 · vue: support attribute autocomplete in WebStorm (#31419) (49d6339)"
 ---
 
 # ionic-framework v9.0.3

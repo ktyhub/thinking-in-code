@@ -6,6 +6,7 @@ tag: "v1.35.0"
 published: "2026-11-03"
 type: "minor"
 lang: "en"
+summary: "feat(home): remember and clear the cloud repository selection · feat(automations): store picked Bitbucket Data Center repositories as clone URLs · feat(automations): list each event source's own event types"
 ---
 
 # OpenHands v1.35.0

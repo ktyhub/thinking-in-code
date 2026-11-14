@@ -7,6 +7,7 @@ version: "v1.38.0"
 published: "2026-11-10"
 type: "minor"
 lang: "en"
+summary: "feat: edit executable plugin configuration in automation help · feat: display conversation budgets with semantic meter fills · feat: add Paper theme to Agent Canvas"
 ---
 
 # OpenHands v1.38.0

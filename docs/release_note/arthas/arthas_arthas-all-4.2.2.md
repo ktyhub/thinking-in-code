@@ -6,6 +6,7 @@ tag: "arthas-all-4.2.2"
 published: "2026-06-04"
 type: "release"
 lang: "en"
+summary: "fix: 修复 MCP tools/call 自动轮询任务超时时间固定为 30s 的问题，现在会根据正数 arguments.timeout 追加 10s grace window，同时保留配置的 automatic polling timeout 作为最小等待时间，并补充 timeout 边界测试，见 #3205"
 ---
 
 # arthas arthas-all-4.2.2

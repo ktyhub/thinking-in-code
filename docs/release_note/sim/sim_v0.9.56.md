@@ -7,7 +7,7 @@ version: "v0.9.56"
 published: "2026-11-13"
 type: "patch"
 lang: "en"
-summary: "View changes on GitHub"
+summary: "feat(demo): auto-confirm demo bookings that came through the verified form and decline the rest (#9976)"
 ---
 
 # sim v0.9.56

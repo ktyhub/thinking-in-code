@@ -6,7 +6,7 @@ tag: "v1.2.15"
 published: "2026-02-17"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-projects/spring-pulsar/compare/v1.2.14...v1.2.15"
+summary: "Bump org.springframework:spring-framework-bom from 6.2.15 to 6.2.16 #1419 · Bump ch.qos.logback:logback-classic from 1.5.25 to 1.5.29 #1416 · Bump io.projectreactor:reactor-bom from 2024.0.14 to 2024.0.15 #1415"
 ---
 
 # spring-pulsar v1.2.15

@@ -6,7 +6,7 @@ tag: "v5.6.1"
 published: "2026-10-21"
 type: "patch"
 lang: "en"
-summary: "update to go1.26.10 These releases include 1 security fix following the security policy:"
+summary: "update to go1.26.10 These releases include 1 security fix following the security policy"
 ---
 
 # compose v5.6.1

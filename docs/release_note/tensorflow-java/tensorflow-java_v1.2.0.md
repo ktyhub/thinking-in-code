@@ -6,7 +6,7 @@ tag: "v1.2.0"
 published: "2026-07-24"
 type: "minor"
 lang: "en"
-summary: "This release upgrades the native component to TensorFlow 2.21, merges tensorflow-ndarray back into this project, and adds small fixes to the gradient system. Due to a lack of available builds from upstream TensorFlow it…"
+summary: "This release upgrades the native component to TensorFlow 2.21, merges tensorflow-ndarray back into this project, and adds small fixes to the gradient system."
 ---
 
 # tensorflow-java v1.2.0

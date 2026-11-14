@@ -6,7 +6,7 @@ tag: "v1.60.0"
 published: "2026-03-06"
 type: "minor"
 lang: "en"
-summary: "This release was possible thanks to the following contributors who shared their brilliant ideas and awesome pull requests:"
+summary: "Support W3C trace context random flag (#8012) · Clarify that SpanBuilder.setAttribute allows null values (#8072)"
 ---
 
 # opentelemetry-java v1.60.0

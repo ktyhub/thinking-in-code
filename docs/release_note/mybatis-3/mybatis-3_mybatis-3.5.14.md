@@ -6,7 +6,7 @@ tag: "mybatis-3.5.14"
 published: "2023-11-03"
 type: "release"
 lang: "en"
-summary: "Bug fixes:"
+summary: "Registered type handler is not used for anonymous enums #2956 · Discriminator does not work in constructor mapping #2913"
 ---
 
 # mybatis-3 mybatis-3.5.14

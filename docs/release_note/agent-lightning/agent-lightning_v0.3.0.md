@@ -7,7 +7,7 @@ version: "v0.3.0"
 published: "2025-12-24"
 type: "minor"
 lang: "en"
-summary: "Agent-lightning v0.3.0 is a major release that introduces several new features and bug fixes. The release is a collaborative effort between Agent-lightning core teams and the community. Thanks to all the contributors…"
+summary: "Agent-lightning v0.3.0 is a major release that introduces several new features and bug fixes. The release is a collaborative effort between Agent-lightning core teams and the community."
 ---
 
 # agent-lightning v0.3.0

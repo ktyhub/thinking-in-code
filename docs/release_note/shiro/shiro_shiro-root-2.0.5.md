@@ -6,7 +6,7 @@ tag: "shiro-root-2.0.5"
 published: "2025-07-02"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/shiro/compare/shiro-root-2.0.4...shiro-root-2.0.5"
+summary: "[#1691] added the @Qualifier annotation to the RequestMappi…"
 ---
 
 # shiro shiro-root-2.0.5

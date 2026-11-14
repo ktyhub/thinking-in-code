@@ -6,7 +6,7 @@ tag: "v5.0.1"
 published: "2026-01-28"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Allow Customizer for HttpClientConnectionManager in HttpClient5FeignConfiguration #1305"
 ---
 
 # spring-cloud-openfeign v5.0.1

@@ -6,7 +6,7 @@ tag: "v1.36.1"
 published: "2026-07-30"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/google/google-java-format/compare/v1.36.0...v1.36.1"
+summary: "Fix an issue with formatting indented list items. · Handle blank lines before and within Markdown lists more accurately."
 ---
 
 # google-java-format v1.36.1

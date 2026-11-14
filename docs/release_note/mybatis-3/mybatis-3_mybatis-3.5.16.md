@@ -6,7 +6,7 @@ tag: "mybatis-3.5.16"
 published: "2024-04-04"
 type: "release"
 lang: "en"
-summary: "Security:"
+summary: "Prevent Invocation from being used by vulnerable applications. #3115"
 ---
 
 # mybatis-3 mybatis-3.5.16

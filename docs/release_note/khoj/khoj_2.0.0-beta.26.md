@@ -7,6 +7,7 @@ version: "2.0.0-beta.26"
 published: "2026-03-25"
 type: "pre"
 lang: "en"
+summary: "Faster, more reliable web app experience with Next.js 15 upgrade in a9749c718 · Add Banner to notify Khoj cloud users about the upcoming cloud deprecation · Disable subscribing to Khoj cloud from web app settings page"
 ---
 
 # khoj 2.0.0-beta.26

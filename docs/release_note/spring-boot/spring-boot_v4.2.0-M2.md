@@ -6,7 +6,7 @@ tag: "v4.2.0-M2"
 published: "2026-09-24"
 type: "pre"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Deprecate AppOptics as it has retired #51810 · Improve classpath entry lookup performance during jar creation and extraction #51787 · Add spring.kafka.listener.await-async-results-on-stop property #51774"
 ---
 
 # spring-boot v4.2.0-M2

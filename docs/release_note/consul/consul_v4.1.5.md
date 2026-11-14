@@ -6,7 +6,7 @@ tag: "v4.1.5"
 published: "2026-09-03"
 type: "patch"
 lang: "en"
-summary: "In #226, we un-exported jose.RandReader. This was used to be able to stub out the randomness function in tests, but is ignored as of Go 1.26 in some APIs, so no longer serves a useful function."
+summary: "cipher/cbc_hmac: don't panic on empty ciphertext (#292) · cipher/cbc_hmac: don't panic on invalid key (#291) · json: limit stack depth (#290) · jwt: reject out-of-range NumericDate values (#278)"
 ---
 
 # consul v4.1.5

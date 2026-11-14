@@ -6,7 +6,7 @@ tag: "v7.0.7"
 published: "2026-04-17"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Improve SpringValidatorAdapter and MethodValidationAdapter performance #36621 · Support JSON array decoding to Flux in KotlinSerializationJsonDecoder #36597"
 ---
 
 # spring-framework v7.0.7

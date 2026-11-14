@@ -6,6 +6,7 @@ tag: "2021.0.6.2"
 published: "2024-12-12"
 type: "patch"
 lang: "en"
+summary: "[Nacos] Expand NacosLoadBalancer to conveniently support custom service list filtering and load balancing algorithms · [Nacos] support nacos config annotation"
 ---
 
 # spring-cloud-alibaba 2021.0.6.2

@@ -6,7 +6,7 @@ tag: "v5.0.0"
 published: "2026-10-05"
 type: "major"
 lang: "en"
-summary: "The 5.0.0 release also includes the changes from these milestone releases:"
+summary: "The 5.0.0 release also includes the changes from these milestone releases"
 ---
 
 # pulsar v5.0.0

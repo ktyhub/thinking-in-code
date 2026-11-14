@@ -7,7 +7,7 @@ version: "v2026.1023.0"
 published: "2026-10-24"
 type: "minor"
 lang: "en"
-summary: "Paperclip v2026.1023.0 carries 200 commits, promoted from 2026.1012.1-beta.0. The headline is private work: a task or project can now be marked private and shared with named people and agents; everyone else cannot open…"
+summary: "Paperclip v2026.1023.0 carries 200 commits, promoted from 2026.1012.1-beta.0. The headline is private work: a task or project can now be marked private and shared with named people and agents;"
 ---
 
 # paperclip v2026.1023.0

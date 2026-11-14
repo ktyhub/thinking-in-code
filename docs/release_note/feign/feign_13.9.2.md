@@ -6,7 +6,7 @@ tag: "13.9.2"
 published: "2026-02-27"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/OpenFeign/feign/compare/13.9.1...13.9.2"
+summary: "feat: Generate nested result types as inner records in graphql-apt"
 ---
 
 # feign 13.9.2

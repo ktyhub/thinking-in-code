@@ -6,7 +6,7 @@ tag: "v4.2.0-M1"
 published: "2026-08-20"
 type: "pre"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Refine Forwarded headers configuration for Jetty servers #51148 · Disable Micrometer global registry in tests by default #51142"
 ---
 
 # spring-boot v4.2.0-M1

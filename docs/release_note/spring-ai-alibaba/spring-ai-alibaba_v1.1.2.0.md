@@ -7,7 +7,7 @@ version: "v1.1.2.0"
 published: "2026-02-02"
 type: "patch"
 lang: "en"
-summary: "This release upgrades Spring AI to 1.1.2, adds Agent Skills support for Agent Framework, adds parallel sub-agent execution for workflow agents (LlmRouting, Supervisor), extends the graph with parallel conditional edges,…"
+summary: "This release upgrades Spring AI to 1.1.2, adds Agent Skills support for Agent Framework, adds parallel sub-agent execution for workflow agents (LlmRouting, Supervisor), extends the graph with parallel conditional edges…"
 ---
 
 # spring-ai-alibaba v1.1.2.0

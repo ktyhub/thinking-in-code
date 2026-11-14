@@ -6,6 +6,7 @@ tag: "canal-1.1.2"
 published: "2018-11-26"
 type: "release"
 lang: "en"
+summary: "支持mysql8.0的binlog解析 【BinlogChange(MySQL8)】；canal提供内置的客户端能力【ClientAdapter】；同步到HBase wiki；同步到Rdb(支持mysql/pg/oracle/sqlserver) wiki"
 ---
 
 # canal canal-1.1.2

@@ -7,6 +7,7 @@ version: "v2.2.6"
 published: "2026-04-19"
 type: "patch"
 lang: "en"
+summary: "Rename EchoEar to ESP-VoCat · Add support for waveshare ESP32-S3-ePaper-3.97 · fix: add explicit UTF-8 encoding to Python file operations for Windows build compatibility"
 ---
 
 # xiaozhi-esp32 v2.2.6

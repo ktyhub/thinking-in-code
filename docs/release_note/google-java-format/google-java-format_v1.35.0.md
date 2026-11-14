@@ -6,7 +6,7 @@ tag: "v1.35.0"
 published: "2026-03-03"
 type: "minor"
 lang: "en"
-summary: "Changes:"
+summary: "Improved support for latest JDK 27 EA builds ("
 ---
 
 # google-java-format v1.35.0

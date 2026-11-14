@@ -6,7 +6,7 @@ tag: "3.0.0"
 published: "2025-08-17"
 type: "major"
 lang: "en"
-summary: "This means that source code using OpenPDF must be migrated to use import statements using org.openpdf. package."
+summary: "OpenPDF 3.0.0 uses the new package name org.openpdf. The old com.lowagie is now removed from OpenPDF 3.0."
 ---
 
 # OpenPDF 3.0.0

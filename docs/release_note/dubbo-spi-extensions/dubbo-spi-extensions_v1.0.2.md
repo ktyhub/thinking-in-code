@@ -6,7 +6,7 @@ tag: "v1.0.2"
 published: "2022-07-22"
 type: "patch"
 lang: "en"
-summary: "This release includes the following modules:"
+summary: "This release includes the following modules"
 ---
 
 # dubbo-spi-extensions v1.0.2

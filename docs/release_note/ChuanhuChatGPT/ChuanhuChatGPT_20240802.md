@@ -7,6 +7,7 @@ version: "20240802"
 published: "2024-08-02"
 type: "major"
 lang: "en"
+summary: "由于 Gradio 的一个问题，LaTeX 渲染被禁用 LaTeX rendering is disabled due to an issue in Gradio"
 ---
 
 # ChuanhuChatGPT 20240802

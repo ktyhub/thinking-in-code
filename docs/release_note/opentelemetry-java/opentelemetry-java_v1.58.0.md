@@ -6,7 +6,7 @@ tag: "v1.58.0"
 published: "2026-01-09"
 type: "minor"
 lang: "en"
-summary: "This release was possible thanks to the following contributors who shared their brilliant ideas and awesome pull requests:"
+summary: "Delete GlobalConfigProvider in favor of access via ExtendedOpenTelemetry (#7914) · Add DeclarativeConfigProperties#get method (#7923) · Update ConfigProvider#getInstrumentationConfig response to be non-null (#7954)"
 ---
 
 # opentelemetry-java v1.58.0

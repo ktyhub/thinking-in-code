@@ -6,6 +6,7 @@ tag: "v9.0.9"
 published: "2026-10-21"
 type: "patch"
 lang: "en"
+summary: "angular: import tab proxies directly in standalone tabs (#31596) (cb963f8), closes #31594 · datetime: discard unconfirmed selection on cancel (#31558) (cecd3af), closes #30777 #27975"
 ---
 
 # ionic-framework v9.0.9

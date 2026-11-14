@@ -7,7 +7,7 @@ version: "v4.6.1"
 published: "2026-11-13"
 type: "patch"
 lang: "en"
-summary: "megatron-core >= 0.18 (was >= 0.16). (#10481, #10087)"
+summary: "NVIDIA-Nemotron-3.5-Super-VL-120B-A12B(#10377) · NVIDIA-Nemotron-3.5-Transcribe-30B-A4B(#10458) · Unlimited-OCR-2(#10448) · MiniCPM-OCR-1.0(#10414)"
 ---
 
 # ms-swift v4.6.1

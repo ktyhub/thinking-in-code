@@ -6,7 +6,7 @@ tag: "v7.14.0"
 published: "2026-01-21"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/selenide/selenide/compare/v7.13.0...v7.14.0"
+summary: "fix downloading files that have space in name (#3231) · #3227 fix downloading file from Grid which is few seconds behind the central time (#3240)"
 ---
 
 # selenide v7.14.0

@@ -6,7 +6,7 @@ tag: "2.1.4"
 published: "2026-07-20"
 type: "patch"
 lang: "en"
-summary: "🌐 English | 中文"
+summary: "Following the desktop client launched in the previous release, this version further improves browser capabilities, system compatibility, and overall experience"
 ---
 
 # chatgpt-on-wechat 2.1.4

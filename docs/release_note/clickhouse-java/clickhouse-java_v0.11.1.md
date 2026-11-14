@@ -6,7 +6,7 @@ tag: "v0.11.1"
 published: "2026-11-09"
 type: "patch"
 lang: "en"
-summary: "ZstdException: Destination buffer is too small (ZSTD) when request compression is enabled (compressClientRequest(true)) and a 64 KiB block of the data does not compress, for example random bytes. The compressed output…"
+summary: "[client-v2] Fixed INSERT failing with LZ4Exception: maxDestLen is too small (LZ4) or"
 ---
 
 # clickhouse-java v0.11.1

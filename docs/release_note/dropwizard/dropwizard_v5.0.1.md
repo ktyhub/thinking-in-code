@@ -6,7 +6,7 @@ tag: "v5.0.1"
 published: "2026-01-28"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/dropwizard/dropwizard/compare/v5.0.0...v5.0.1"
+summary: "docs: list jackson 2.20.x in Upgrade Notes for Dropwizard 5.0.x · chore(deps): update dependency com.uber.nullaway:nullaway to v0.12.10 (release/5.0.x)[bot]"
 ---
 
 # dropwizard v5.0.1

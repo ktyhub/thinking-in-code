@@ -6,6 +6,7 @@ tag: "v3.0.5"
 published: "2023-02-14"
 type: "patch"
 lang: "en"
+summary: "Fix: Consumers try to reconnect to the metadata service of offline providers infinitely · Fix: Service discovery registry notify before return · Fix: Do not launch Polaris governance capability if Polaris is not enabled"
 ---
 
 # dubbo-go v3.0.5

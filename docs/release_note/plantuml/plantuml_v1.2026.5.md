@@ -6,7 +6,7 @@ tag: "v1.2026.5"
 published: "2026-05-27"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/plantuml/plantuml/compare/v1.2026.4...v1.2026.5"
+summary: "🐛 fix HorizontalAlignment Right being ignored with MinimumWidth · 🐛 accept decimal period, pulse and offset for timing clock · Fix 32-bit build failure caused by hardcoded JVM heap size"
 ---
 
 # plantuml v1.2026.5

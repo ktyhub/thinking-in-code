@@ -7,7 +7,7 @@ version: "v2.0.0"
 published: "2026-06-25"
 type: "major"
 lang: "en"
-summary: "DeerFlow 2.0 is a ground-up rewrite around a 'super agent' harness that orchestrates sub-agents, persistent memory, sandboxed execution, and an extensible skills/tools system. It shares no code with the 1.x line, which…"
+summary: "DeerFlow 2.0 is a ground-up rewrite around a 'super agent' harness that orchestrates sub-agents, persistent memory, sandboxed execution, and an extensible skills/tools system."
 ---
 
 # deer-flow v2.0.0

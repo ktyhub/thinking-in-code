@@ -6,7 +6,7 @@ tag: "v3.0.0-beta.9"
 published: "2025-02-10"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/sinaptik-ai/pandas-ai/compare/v3.0.0-beta.8...v3.0.0-beta.9"
+summary: "fix(Views): updated views to reflect refactors · fix(config): dataframe remove config variable class attribute and chat · chore: remove numpy dependency · fix(deps): remove numpy strict installation from all extensions"
 ---
 
 # pandas-ai v3.0.0-beta.9

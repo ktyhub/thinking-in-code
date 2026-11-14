@@ -6,6 +6,7 @@ tag: "maven-3.9.13"
 published: "2026-03-06"
 type: "release"
 lang: "en"
+summary: "Bug: SecDispatcher is managed by legacy Plexus DI (#11711) @cstamas · [3.9.x] MavenPluginJavaPrerequisiteChecker: Handle 8/1.8 Java version in ranges as well (#11577) @cstamas"
 ---
 
 # maven maven-3.9.13

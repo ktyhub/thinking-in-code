@@ -6,7 +6,7 @@ tag: "v4.6.0"
 published: "2025-11-27"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/sofastack/sofa-boot/compare/v4.5.0...v4.6.0"
+summary: "Support jdk25"
 ---
 
 # sofa-boot v4.6.0

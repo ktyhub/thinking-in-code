@@ -1,6 +1,7 @@
 ---
 title: "spring-boot v4.1.2"
 description: "Spring Boot 可帮助您轻松创建由 Spring 驱动的生产级应用程序和服务。"
+summary: "Spring Boot 可帮助您轻松创建由 Spring 驱动的生产级应用程序和服务。"
 ---
 
 # spring-boot v4.1.2

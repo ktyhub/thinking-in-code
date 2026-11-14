@@ -6,7 +6,7 @@ tag: "v4.0.16"
 published: "2025-08-25"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/dropwizard/dropwizard/compare/v4.0.15...v4.0.16"
+summary: "fix(deps): update junit-framework monorepo to v5.13.4 (release/4.0.x) (patch)[bot] · chore(deps): update github/codeql-action action to v3.29.4 (release/4.0.x)[bot]"
 ---
 
 # dropwizard v4.0.16

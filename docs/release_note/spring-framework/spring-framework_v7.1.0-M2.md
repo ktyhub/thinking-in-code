@@ -6,7 +6,7 @@ tag: "v7.1.0-M2"
 published: "2026-09-24"
 type: "pre"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Align DispatcherServlet bean detection logs #37296 · Extract bean property path support into PropertyPath #37275 · Expose matched PathPattern as MVC request attribute #37272"
 ---
 
 # spring-framework v7.1.0-M2

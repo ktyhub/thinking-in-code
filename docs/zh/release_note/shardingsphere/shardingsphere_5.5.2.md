@@ -1,6 +1,7 @@
 ---
 title: "shardingsphere 5.5.2"
 description: "通过分布式 SQL 增强数据智能，实现跨所有数据库的分片、可扩展性和安全性。"
+summary: "通过分布式 SQL 增强数据智能，实现跨所有数据库的分片、可扩展性和安全性。"
 ---
 
 # shardingsphere 5.5.2

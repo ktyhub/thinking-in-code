@@ -6,6 +6,7 @@ tag: "druid-31.0.2"
 published: "2025-03-19"
 type: "release"
 lang: "zh"
+summary: "Apache Druid 团队很自豪地宣布发布 Apache Druid 31.0.2。 Druid 是一个用于事件驱动数据的高性能分析数据存储。"
 ---
 
 # druid druid-31.0.2

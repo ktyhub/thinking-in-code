@@ -6,6 +6,7 @@ tag: "6.6.3"
 published: "2026-09-07"
 type: "patch"
 lang: "en"
+summary: "🐞 Fix DatePicker and TimePicker rendering issues when prefix, suffixIcon, allowClear.clearIcon, or the value returned by renderExtraFooter is 0. #59212 react-component/picker#1009 @github-actions @QDyanbing"
 ---
 
 # ant-design 6.6.3

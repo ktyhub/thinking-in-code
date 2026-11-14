@@ -6,7 +6,7 @@ tag: "preview-seed-fixture"
 published: "2026-08-06"
 type: "pre"
 lang: "en"
-summary: "Rolling, fully SYNTHETIC preview-database seed fixture baked from dev@14ee5bd1f497 (migration head: 20261109120000addfeedbackprompt). Preview environments restore fixture.dump.gz (custom-format, gzipped, platform schema…"
+summary: "Rolling, fully SYNTHETIC preview-database seed fixture baked from dev@14ee5bd1f497 (migration head: 20261109120000_add_feedback_prompt)."
 ---
 
 # AutoGPT preview-seed-fixture

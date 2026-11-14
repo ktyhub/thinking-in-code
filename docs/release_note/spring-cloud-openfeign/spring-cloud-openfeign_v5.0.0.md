@@ -6,6 +6,7 @@ tag: "v5.0.0"
 published: "2025-11-24"
 type: "major"
 lang: "en"
+summary: "SpringEncoderTests.testBinaryData() broken after jackson 3 upgrade #1269"
 ---
 
 # spring-cloud-openfeign v5.0.0

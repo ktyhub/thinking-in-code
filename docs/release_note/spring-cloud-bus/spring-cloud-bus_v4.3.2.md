@@ -6,7 +6,7 @@ tag: "v4.3.2"
 published: "2026-06-11"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "BusEnvironmentPostProcessor rebuilds Bus Stream bindings from bootstrap-visible config on refresh, not from application.yml #286"
 ---
 
 # spring-cloud-bus v4.3.2

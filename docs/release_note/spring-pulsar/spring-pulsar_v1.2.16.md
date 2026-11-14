@@ -6,6 +6,7 @@ tag: "v1.2.16"
 published: "2026-03-16"
 type: "patch"
 lang: "en"
+summary: "Update Jackson to 2.18.6 #1445 · Bump org.springframework:spring-framework-bom from 6.2.16 to 6.2.17 #1441 · Bump org.projectlombok:lombok from 1.18.42 to 1.18.44 #1440"
 ---
 
 # spring-pulsar v1.2.16

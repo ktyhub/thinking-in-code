@@ -6,7 +6,7 @@ tag: "v6.5.9"
 published: "2026-06-10"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Add message selector based on header value matching patterns #11094 · Disable allowCredentials in the CrossOrigin and introduce originPatterns #11009"
 ---
 
 # spring-integration v6.5.9

@@ -6,7 +6,7 @@ tag: "v3.8.3-patch.10"
 published: "2025-09-01"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/openimsdk/open-im-server/compare/v3.8.3-patch.9...v3.8.3-patch.10"
+summary: "build: improve publish docker image workflow in v3.8.3-patch branch."
 ---
 
 # open-im-server v3.8.3-patch.10

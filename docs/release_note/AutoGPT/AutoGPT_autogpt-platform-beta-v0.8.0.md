@@ -6,7 +6,7 @@ tag: "autogpt-platform-beta-v0.8.0"
 published: "2026-09-19"
 type: "pre"
 lang: "en"
-summary: "ENCRYPTIONKEY, UNSUBSCRIBESECRETKEY and BETTERAUTHSECRET no longer ship with values in .env.default; they are generated per install, and the backend does not start on the value .env.default used to contain. A fresh…"
+summary: "ENCRYPTION_KEY, UNSUBSCRIBE_SECRET_KEY and BETTER_AUTH_SECRET no longer ship with values in .env.default; they are generated per install, and the backend does not start on the value .env.default used to contain."
 ---
 
 # AutoGPT autogpt-platform-beta-v0.8.0

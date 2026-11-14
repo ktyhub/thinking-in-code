@@ -6,7 +6,7 @@ tag: "1.10.0"
 published: "2024-07-17"
 type: "minor"
 lang: "en"
-summary: "(#2625) by @chenBright"
+summary: "Support connect on socket create (#2574) · Support more meta for ServerNode (#2603) · Support proxy and generic call of baidu protocol (#2629) · Support thread local object iteration (#2632)"
 ---
 
 # brpc 1.10.0

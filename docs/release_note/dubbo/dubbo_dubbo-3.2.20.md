@@ -6,7 +6,7 @@ tag: "dubbo-3.2.20"
 published: "2026-05-17"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/dubbo/compare/dubbo-3.2.18...dubbo-3.2.20"
+summary: "Init SslContext when channel inited · 3.2.19 release · update .asf.yaml · Fix Update Zookeeper download URL in build-and-test-pr.yml"
 ---
 
 # dubbo dubbo-3.2.20

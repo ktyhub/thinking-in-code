@@ -6,7 +6,7 @@ tag: "v1.34.1"
 published: "2026-02-04"
 type: "patch"
 lang: "en"
-summary: "Changes:"
+summary: "Fix reflection configuration for GraalVM native binaries (#1327)"
 ---
 
 # google-java-format v1.34.1

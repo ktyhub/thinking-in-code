@@ -6,7 +6,7 @@ tag: "v4.2.0-RC1"
 published: "2024-11-08"
 type: "minor"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Add a shutdown event, endpoint, and listener #277"
 ---
 
 # spring-cloud-bus v4.2.0-RC1

@@ -6,7 +6,7 @@ tag: "rel/v5.5"
 published: "2023-06-24"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/jmeter/compare/rel/v5.4.1...rel/v5.5"
+summary: "Bump Gradle 6.7 -> 6.8.1 · fix doc for 'get-started' file · Update to Gradle 7.0.2 · Reduce memory consumption by the logging panel (disable undo events for it)"
 ---
 
 # jmeter rel/v5.5

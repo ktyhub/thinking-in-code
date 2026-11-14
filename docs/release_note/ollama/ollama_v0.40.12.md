@@ -6,7 +6,7 @@ tag: "v0.40.12"
 published: "2026-10-27"
 type: "patch"
 lang: "en"
-summary: "LFM3 is Liquid AI's new family of small models built for local agents, tool calling, and structured output, on Liquid's new tri-hybrid architecture. The family includes:"
+summary: "LFM3 is Liquid AI's new family of small models built for local agents, tool calling, and structured output, on Liquid's new tri-hybrid architecture. The family includes"
 ---
 
 # ollama v0.40.12

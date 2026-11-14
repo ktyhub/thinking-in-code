@@ -6,7 +6,7 @@ tag: "5.18.1"
 published: "2024-01-10"
 type: "patch"
 lang: "en"
-summary: "Brave 5.18 prepares for Brave 6 by deprecating instrumentation for libraries not released in 1.5-3.5 years including:"
+summary: "Brave 5.18 prepares for Brave 6 by deprecating instrumentation for libraries not released in 1.5-3.5 years including"
 ---
 
 # brave 5.18.1

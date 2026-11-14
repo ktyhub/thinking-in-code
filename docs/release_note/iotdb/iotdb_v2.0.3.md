@@ -7,6 +7,7 @@ version: "v2.0.3"
 published: "2025-05-30"
 type: "patch"
 lang: "en"
+summary: "Data Query: Added new aggregate function count_if and scalar functions greatest / least to the table model. · Data Query: Significantly improved the performance of full-table count() queries in the table model."
 ---
 
 # iotdb v2.0.3

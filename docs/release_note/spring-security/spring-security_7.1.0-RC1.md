@@ -6,7 +6,7 @@ tag: "7.1.0-RC1"
 published: "2026-04-20"
 type: "minor"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Add AllRequiredFactorsAuthorizationManager.anyOf #18960 · Add PreFlightRequestFilter Support #18926 · Add ConditionalAuthorizationManager #18919 · Add MultiFactorCondition.WEBAUTHN\\REGISTERED #18923"
 ---
 
 # spring-security 7.1.0-RC1

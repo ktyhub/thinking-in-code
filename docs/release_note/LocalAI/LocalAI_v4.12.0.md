@@ -7,6 +7,7 @@ version: "v4.12.0"
 published: "2026-10-22"
 type: "minor"
 lang: "en"
+summary: "This release redesigns the web UI and adds streaming voice responses, native decision routing, and more control over model memory and prompt state."
 ---
 
 # LocalAI v4.12.0

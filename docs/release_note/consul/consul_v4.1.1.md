@@ -6,7 +6,7 @@ tag: "v4.1.1"
 published: "2025-06-26"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/go-jose/go-jose/compare/v4.1.0...v4.1.1"
+summary: "Drop go-cmp dependency · jws: improve performance and allocations for ParseSignedCompact · Add missing quote to unknown curve message #170 · Fix incorrect validation"
 ---
 
 # consul v4.1.1

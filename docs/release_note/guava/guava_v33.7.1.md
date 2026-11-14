@@ -6,7 +6,7 @@ tag: "v33.7.1"
 published: "2026-08-18"
 type: "patch"
 lang: "en"
-summary: "com.google.guava guava 33.7.1-jre 33.7.1-android"
+summary: "33.7.1-jre.jar · 33.7.1-android.jar"
 ---
 
 # guava v33.7.1

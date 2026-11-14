@@ -6,7 +6,7 @@ tag: "v1.2.18"
 published: "2026-06-09"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Bump org.springframework:spring-framework-bom from 6.2.18 to 6.2.19 #1512 · Bump org.springframework.retry:spring-retry from 2.0.12 to 2.0.13 #1511 · Bump io.projectreactor:reactor-bom from 2024.0.17 to 2024.0.18 #1510"
 ---
 
 # spring-pulsar v1.2.18

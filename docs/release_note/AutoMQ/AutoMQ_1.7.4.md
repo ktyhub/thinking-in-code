@@ -6,7 +6,7 @@ tag: "1.7.4"
 published: "2026-08-29"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/AutoMQ/automq/compare/1.7.3...1.7.4"
+summary: "fix(log): preserve confirm offset metadata on append ack · fix(autobalancer): support TLS for LoadRetriever · feat(zerozone): support direct local writes"
 ---
 
 # AutoMQ 1.7.4

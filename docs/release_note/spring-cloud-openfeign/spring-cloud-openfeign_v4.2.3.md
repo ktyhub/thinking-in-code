@@ -6,7 +6,7 @@ tag: "v4.2.3"
 published: "2025-12-11"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Set max requests based on http client properties #1286"
 ---
 
 # spring-cloud-openfeign v4.2.3

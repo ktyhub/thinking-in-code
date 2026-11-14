@@ -6,7 +6,7 @@ tag: "v3.8.3-patch.8"
 published: "2025-08-13"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/openimsdk/open-im-server/compare/v3.8.3-patch.7...v3.8.3-patch.8"
+summary: "fix: fix incorrect kicked logic and PCAndOther Login policy In v3.8.3-patch · fix: solve batch incorrect error in Find DocIDs in v3.8.3-patch branch."
 ---
 
 # open-im-server v3.8.3-patch.8

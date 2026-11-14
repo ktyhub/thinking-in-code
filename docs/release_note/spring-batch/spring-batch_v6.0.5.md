@@ -6,7 +6,7 @@ tag: "v6.0.5"
 published: "2026-08-21"
 type: "patch"
 lang: "en"
-summary: "Spring Integration 7.0.6+ introduced a security fix that restricts DefaultJmsHeaderMapper's inbound property mapping to an explicit allowlist, which defaults to only the contenttype property. Remote chunking and remote…"
+summary: "Spring Integration 7.0.6+ introduced a security fix that restricts DefaultJmsHeaderMapper's inbound property mapping to an explicit allowlist, which defaults to only the content_type property."
 ---
 
 # spring-batch v6.0.5

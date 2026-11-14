@@ -6,7 +6,7 @@ tag: "v2.10.0"
 published: "2026-04-09"
 type: "minor"
 lang: "en"
-summary: "Netdata v2.10.0 introduces secrets management, a Nagios plugins collector, Azure Monitor support, and broad stability improvements."
+summary: "Summary · Highlights · Acknowledgments · Contributions"
 ---
 
 # netdata v2.10.0

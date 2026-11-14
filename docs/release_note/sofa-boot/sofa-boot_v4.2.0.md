@@ -6,7 +6,7 @@ tag: "v4.2.0"
 published: "2024-01-22"
 type: "minor"
 lang: "en"
-summary: "⭐️ New Features"
+summary: "Update SpringBoot 3.2.2 · Support virtual threads · Support ExcludeBeanNameAutoProxyCreator"
 ---
 
 # sofa-boot v4.2.0

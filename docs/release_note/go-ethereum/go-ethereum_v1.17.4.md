@@ -6,6 +6,7 @@ tag: "v1.17.4"
 published: "2026-06-22"
 type: "patch"
 lang: "en"
+summary: "This is a maintenance release with accumulated bug fixes and improvements, and is recommended for all users. It also continues the implementation work for the upcoming Amsterdam hardfork."
 ---
 
 # go-ethereum v1.17.4

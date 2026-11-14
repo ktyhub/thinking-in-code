@@ -7,7 +7,7 @@ version: "v15.18.3"
 published: "2026-11-12"
 type: "patch"
 lang: "en"
-summary: "Codex users: do this once after updating."
+summary: "Codex keeps recording after claude-mem updates (#6058, thanks @wiesenthal). Codex approves a hook that ships inside a plugin against a fingerprint of the plugin's whole folder."
 ---
 
 # claude-mem v15.18.3

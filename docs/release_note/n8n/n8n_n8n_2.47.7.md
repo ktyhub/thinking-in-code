@@ -7,6 +7,7 @@ version: "n8n@2.47.7"
 published: "2026-11-13"
 type: "release"
 lang: "en"
+summary: "core: Stop redacting executions that use global credentials (#43776) (c067170)"
 ---
 
 # n8n n8n@2.47.7

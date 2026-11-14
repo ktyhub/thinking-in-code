@@ -6,7 +6,7 @@ tag: "mybatis-spring-2.1.0"
 published: "2022-11-25"
 type: "release"
 lang: "en"
-summary: "Here is the complete list of changes."
+summary: "Remove usage of NestedIOException #663 · Add parameter supplier support to spring batch readers #727"
 ---
 
 # mybatis-spring mybatis-spring-2.1.0

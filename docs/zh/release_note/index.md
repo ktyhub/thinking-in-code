@@ -2,6 +2,7 @@
 title: "RELEASE NOTE — 开源项目版本发布追踪"
 description: "每日自动追踪 Apache Dubbo、Kafka、Spring Boot、Kubernetes、Pulsar、Netdata 等主流开源项目的最新版本发布，翻译为中文并按「是什么 / 更新了什么 / 更新日志」结构整理，帮助开发者快速掌握技术演进。"
 keywords: "开源项目版本追踪,GitHub Release 中文,版本更新日志,中间件版本,Dubbo 新版本,Spring Boot 新版本,Kubernetes 版本"
+summary: "开源项目的 Release Notes 是技术演进最真实的记录：新特性怎么设计、哪些 API 被废弃、性能优化做了什么取舍。但原始 Release 往往散落在英文 changelog、issue 链接和 PR 列表里，读起来费时。"
 ---
 
 # 📰 技术版本发布追踪

@@ -7,7 +7,7 @@ version: "1.18.0"
 published: "2026-10-23"
 type: "minor"
 lang: "en"
-summary: "Dify 1.18.0 brings Agents that route workflows, portable app packages, deeper visibility into nested workflow runs, and the opt-in Agent Knowledge Base experience. OpenAPI and the new difyctl expand how you build and…"
+summary: "Dify 1.18.0 brings Agents that route workflows, portable app packages, deeper visibility into nested workflow runs, and the opt-in Agent Knowledge Base experience."
 ---
 
 # dify 1.18.0

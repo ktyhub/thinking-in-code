@@ -7,6 +7,7 @@ version: "2.2.141"
 published: "2026-11-05"
 type: "patch"
 lang: "en"
+summary: "[NA] [FE] fix: add the missing space in the 80% plan-limits banner · [OPIK-9067] [SDK] fix: agentic judge submits its verdict through a tool"
 ---
 
 # opik 2.2.141

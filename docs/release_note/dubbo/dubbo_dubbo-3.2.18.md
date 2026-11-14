@@ -6,6 +6,7 @@ tag: "dubbo-3.2.18"
 published: "2025-05-29"
 type: "release"
 lang: "en"
+summary: "Fix memory leak when OOM · exclude logback transit dependency in zookeeper · Port unification support reject if client not TLS · Remove duplicated invokers in registry notification"
 ---
 
 # dubbo dubbo-3.2.18

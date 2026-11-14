@@ -7,6 +7,7 @@ version: "0.27.35"
 published: "2026-10-27"
 type: "patch"
 lang: "en"
+summary: "chore: replace per-PR changelog edits with generated release notes · fix(utils): compare bounding boxes for elements with no page number · fix(chunking): measure combine thresholds in tokens when max_tokens is set"
 ---
 
 # unstructured 0.27.35

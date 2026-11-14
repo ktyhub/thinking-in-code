@@ -7,7 +7,7 @@ version: "v3.76.0"
 published: "2026-11-11"
 type: "minor"
 lang: "en"
-summary: "The alpha and v3alpha dist-tags stay at 3.75.2 (ADR-513)."
+summary: "Nearest-centroid agent router (ADR-527, #4953). Set CLAUDE_FLOW_ROUTER_CENTROID=1 to route tasks to agents by nearest centroid over labelled examples."
 ---
 
 # ruflo v3.76.0

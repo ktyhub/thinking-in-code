@@ -6,7 +6,7 @@ tag: "v6.0.0"
 published: "2025-11-19"
 type: "major"
 lang: "en"
-summary: "Spring Batch 6.0 is a major release that comes with several new features, enhancements, and bug fixes. This release introduces a number of API breaking changes and deprecations. Please refer to the migration guide for…"
+summary: "Spring Batch 6.0 is a major release that comes with several new features, enhancements, and bug fixes. This release introduces a number of API breaking changes and deprecations."
 ---
 
 # spring-batch v6.0.0

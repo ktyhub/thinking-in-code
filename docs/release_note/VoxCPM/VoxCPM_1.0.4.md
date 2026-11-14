@@ -7,6 +7,7 @@ version: "1.0.4"
 published: "2025-09-23"
 type: "patch"
 lang: "en"
+summary: "add prompt-file option to set prompt text · Add a streaming API for VoxCPM · Update the minimum Python version to 3.10 to support Gradio 5."
 ---
 
 # VoxCPM 1.0.4

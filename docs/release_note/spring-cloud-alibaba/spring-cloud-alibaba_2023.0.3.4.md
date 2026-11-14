@@ -6,6 +6,7 @@ tag: "2023.0.3.4"
 published: "2025-10-17"
 type: "patch"
 lang: "en"
+summary: "[Nacos]: Disable HealthIndicator by default"
 ---
 
 # spring-cloud-alibaba 2023.0.3.4

@@ -7,7 +7,7 @@ version: "v0.3.1"
 published: "2026-10-09"
 type: "patch"
 lang: "en"
-summary: "Existing 0.3.0 project components may need SDK import and dependency updates. Read the 0.3.1 migration guide before updating a production. Preserve existing Sources, Runs and Results; update the project lockfile…"
+summary: "Existing 0.3.0 project components may need SDK import and dependency updates. Read the 0.3.1 migration guide before updating a production."
 ---
 
 # hypit v0.3.1

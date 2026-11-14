@@ -6,7 +6,7 @@ tag: "kubernetes-dashboard-7.13.0"
 published: "2025-05-28"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/dashboard/compare/kubernetes-dashboard-7.12.0...kubernetes-dashboard-7.13.0"
+summary: "fix: Statefulset restart not working · style: Various improvements to Dockerfiles · feat: add cache invalidation support based on Cache-Control header"
 ---
 
 # kubernetes-dashboard kubernetes-dashboard-7.13.0

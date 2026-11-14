@@ -6,6 +6,7 @@ tag: "4.0.0.Beta3"
 published: "2026-11-04"
 type: "major"
 lang: "en"
+summary: "#57851 - Bump Hibernate ORM to 8.0.0.Beta4, Reactive to 5.1.0.Beta1, rework Quarkus Data Annotation Processor"
 ---
 
 # quarkus 4.0.0.Beta3

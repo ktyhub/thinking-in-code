@@ -6,7 +6,7 @@ tag: "v1.32.0"
 published: "2025-10-28"
 type: "minor"
 lang: "en"
-summary: "Changes:"
+summary: "Add support for AOSP formatting in the Eclipse plugin (#179)"
 ---
 
 # google-java-format v1.32.0

@@ -7,7 +7,7 @@ version: "v0.9.5"
 published: "2026-10-14"
 type: "patch"
 lang: "en"
-summary: "PyPI:"
+summary: "Note: Docker images are being built and will be available shortly. Check the Docker Release workflow for build status."
 ---
 
 # crawl4ai v0.9.5

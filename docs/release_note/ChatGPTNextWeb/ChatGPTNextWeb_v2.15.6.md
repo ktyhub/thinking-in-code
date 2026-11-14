@@ -6,7 +6,7 @@ tag: "v2.15.6"
 published: "2024-10-24"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/compare/v2.15.5...v2.15.6"
+summary: "fix: use tauri fetch · xAi support"
 ---
 
 # ChatGPTNextWeb v2.15.6

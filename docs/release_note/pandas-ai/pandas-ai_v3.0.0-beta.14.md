@@ -6,7 +6,7 @@ tag: "v3.0.0-beta.14"
 published: "2025-02-28"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/sinaptik-ai/pandas-ai/compare/v3.0.0a12...v3.0.0-beta.14"
+summary: "fix(license): pypi license not displayed for the ee extensions · fix(cache): removes cache · feature(SQLTransformation): SQL transformation · fix(expression): modulo operation issues"
 ---
 
 # pandas-ai v3.0.0-beta.14

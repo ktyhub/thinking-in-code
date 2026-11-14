@@ -1,6 +1,7 @@
 ---
 title: "iotdb v2.0.8"
 description: "Apache物联网数据库"
+summary: "数据查询：新增可用DataNode节点列表显示；数据查询：表模型中新增系统表，用于统计查询延迟；数据查询：Python SessionDataset支持将TsBlock转换为DataFrame并批量返回DataFrame；存储管理：支持 TIME 列的自定义列名称"
 ---
 
 # iotdb v2.0.8

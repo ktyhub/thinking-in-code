@@ -6,6 +6,7 @@ tag: "5.4.0"
 published: "2023-07-08"
 type: "minor"
 lang: "en"
+summary: "Metadata: Change sharding broadcast tables to global broadcast tables · JDBC: Remove exclamation mark (!) for global rules · DistSQL: Simplify keywords ASSISTED_QUERY, LIKE_QUERY in encrypt DistSQL"
 ---
 
 # shardingsphere 5.4.0

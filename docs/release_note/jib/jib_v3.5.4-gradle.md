@@ -6,7 +6,7 @@ tag: "v3.5.4-gradle"
 published: "2026-07-14"
 type: "patch"
 lang: "en"
-summary: "See CHANGELOG.md for more details."
+summary: "Update Jackson BOM version to 2.21.1 · Ignore unknown 'artifactType' field in manifest descriptors"
 ---
 
 # jib v3.5.4-gradle

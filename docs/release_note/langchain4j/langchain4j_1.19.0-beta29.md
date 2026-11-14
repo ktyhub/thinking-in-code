@@ -6,7 +6,7 @@ tag: "1.19.0-beta29"
 published: "2026-08-14"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/langchain4j/langchain4j-spring/compare/1.18.1-beta28...1.19.0-beta29"
+summary: "Disable Apache HttpClient automatic retries in SpringRestClient"
 ---
 
 # langchain4j 1.19.0-beta29

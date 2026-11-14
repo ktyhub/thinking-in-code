@@ -6,6 +6,7 @@ tag: "5.3.2"
 published: "2023-03-30"
 type: "patch"
 lang: "en"
+summary: "Proxy: Add property system-log-level, support dynamic change of log level by DistSQL. · DistSQL: Remove Hint-related DistSQL, users can use SQL Hint instead"
 ---
 
 # shardingsphere 5.3.2

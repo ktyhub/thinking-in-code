@@ -6,7 +6,7 @@ tag: "4.5.2"
 published: "2026-04-29"
 type: "patch"
 lang: "en"
-summary: "Added"
+summary: "Chore: Bump update commons-beanutils dependency \\#761 (tanya732) · Chore: Update Readme with Java 21 \\#760 (tanya732)"
 ---
 
 # java-jwt 4.5.2

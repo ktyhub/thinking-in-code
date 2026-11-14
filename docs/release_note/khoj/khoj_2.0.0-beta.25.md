@@ -7,6 +7,7 @@ version: "2.0.0-beta.25"
 published: "2026-02-22"
 type: "pre"
 lang: "en"
+summary: "Give Khoj Long Term Memories · Improve Obsidian Batch Sync. Show Progress, Storage Used on Settings Page · Show autocomplete suggestions for File Query Filters on Obsidian App"
 ---
 
 # khoj 2.0.0-beta.25

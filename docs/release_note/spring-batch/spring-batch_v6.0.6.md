@@ -6,7 +6,7 @@ tag: "v6.0.6"
 published: "2026-10-22"
 type: "patch"
 lang: "en"
-summary: "Spring Framework: 7.0.9 -> 7.0.10 Spring Integration: 7.0.6 -> 7.0.7 Spring AMQP: 4.0.5 -> 4.0.6 Spring Kafka: 4.0.7 -> 4.0.8 Spring Data: 2025.1.7 -> 2025.1.8 Spring LDAP: 4.0.5 -> 4.0.6 Micrometer: 1.16.7 -> 1.16.8"
+summary: "Add @FunctionalInterface to StepInterruptionPolicy #5402 · Fix SimpleJobOperator jobRegistry state message #5369 · Improve JdbcJobExecutionDao#synchronizeStatus(StepExecution) #5365"
 ---
 
 # spring-batch v6.0.6

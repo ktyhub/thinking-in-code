@@ -7,6 +7,7 @@ version: "v1.5.7rc2"
 published: "2026-08-19"
 type: "patch"
 lang: "en"
+summary: "Add an offline tool to migrate a graph from Apache AGE to PostgreSQL tables · feat: support graph-first ingestion with deferred vector indexing · feat: add explicit custom chunking selector"
 ---
 
 # LightRAG v1.5.7rc2

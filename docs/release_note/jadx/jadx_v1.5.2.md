@@ -6,7 +6,7 @@ tag: "v1.5.2"
 published: "2025-06-02"
 type: "patch"
 lang: "en"
-summary: "Core:"
+summary: "Custom zip reader implementation to fight tampering · Add gradle export templates, support android app/lib and simple java · Initial support for DEX v41 (#2128)"
 ---
 
 # jadx v1.5.2

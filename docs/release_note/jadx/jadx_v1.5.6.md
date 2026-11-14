@@ -6,7 +6,7 @@ tag: "v1.5.6"
 published: "2026-07-10"
 type: "patch"
 lang: "en"
-summary: "Security fixes:"
+summary: "Reject absolute or path to CWD for zip entries · Sanitize all string values for gradle scripts on export · Add missing escaping on summary page"
 ---
 
 # jadx v1.5.6

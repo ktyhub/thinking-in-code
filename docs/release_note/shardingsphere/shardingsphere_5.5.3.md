@@ -6,6 +6,7 @@ tag: "5.5.3"
 published: "2026-02-28"
 type: "patch"
 lang: "en"
+summary: "Fix CVE-2025-55163, CVE-2025-58056, CVE-2025-58057 #36758 · Fix CVE-2025-48924 #36085 · Fix CVE-2024-7254 #36153 · Fix CVE-2015-5237, CVE-2024-7254, CVE-2022-3171, CVE-2021-22569, CVE-2021-22570 #37888"
 ---
 
 # shardingsphere 5.5.3

@@ -6,6 +6,7 @@ tag: "2.3.7"
 published: "2024-08-19"
 type: "patch"
 lang: "zh"
+summary: "[修补程序][MySQL-CDC] 修复 mysql binlog 读取中的 ArrayIndexOutOfBoundsException (#7381)；[Fix][Doris] 修复 doris 主键顺序和字段顺序不一致的问题 (#7377)；[Bugfix][Doris]修复Json序列化，空值导致数据错误的问题(#7379)；[Hotfix][Jdbc] 修复 jdbc 编译错误 (#7359)"
 ---
 
 # seatunnel 2.3.7

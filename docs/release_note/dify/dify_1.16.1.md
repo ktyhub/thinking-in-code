@@ -7,7 +7,7 @@ version: "1.16.1"
 published: "2026-07-28"
 type: "patch"
 lang: "en"
-summary: "Tool Multi-Select Input"
+summary: "Workflow tool nodes now support multi-select dropdown inputs, allowing users to choose multiple values from a predefined list when configuring tool parameters. (#39346)"
 ---
 
 # dify 1.16.1

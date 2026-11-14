@@ -6,7 +6,6 @@ tag: "v9.0.0"
 published: "2026-08-19"
 type: "major"
 lang: "en"
-summary: "Full Changelog: https://github.com/ionic-team/ionic-framework/compare/v8.8.19...v9.0.0"
 ---
 
 # ionic-framework v9.0.0

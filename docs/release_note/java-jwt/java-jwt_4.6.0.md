@@ -6,7 +6,7 @@ tag: "4.6.0"
 published: "2026-07-13"
 type: "minor"
 lang: "en"
-summary: "Added"
+summary: "feat: Add PS256 Support \\#788 (tanya732) · Report out-of-range NumericDate claims distinctly from non-numeric ones \\#774 (arpitjain099)"
 ---
 
 # java-jwt 4.6.0

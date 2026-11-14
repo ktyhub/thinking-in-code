@@ -6,7 +6,7 @@ tag: "1.14.0"
 published: "2025-07-28"
 type: "minor"
 lang: "en"
-summary: "Features:"
+summary: "Support generics for MultiDimension APIs (#3026) · Support rpc checksum (#2967) · Support RDMA polling mode (#2920) · Support epoll bthread deal first (#2819)"
 ---
 
 # brpc 1.14.0

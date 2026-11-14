@@ -6,6 +6,7 @@ tag: "v1.95.0"
 published: "2026-11-03"
 type: "minor"
 lang: "en"
+summary: "bigquery-jdbc: expose BigQueryResultSetMetadata and getField(int) (#14761) (f01245a) · gax: align resumable upload chunk size to server granularity and surface effective chunk size (#14670) (6cbb096)"
 ---
 
 # google-cloud-java v1.95.0

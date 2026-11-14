@@ -6,7 +6,7 @@ tag: "v9.0.0-beta.4"
 published: "2026-07-04"
 type: "pre"
 lang: "en"
-summary: "The new AI assistant relies on Redis Streams, so Redis 5.0 or later is required (Redis 7.0+ recommended for Cluster users to enable sharded Pub/Sub)."
+summary: "feat: new skill-creator built-in skill lets you create and edit Skills directly in conversation, and skill scripts now run inside a sandbox for safer execution, falling back gracefully to the strongest isolation level…"
 ---
 
 # nightingale v9.0.0-beta.4

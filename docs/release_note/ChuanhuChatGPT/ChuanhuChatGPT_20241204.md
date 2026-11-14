@@ -7,7 +7,7 @@ version: "20241204"
 published: "2024-12-04"
 type: "major"
 lang: "en"
-summary: "English Version (Click to expand)"
+summary: "Added the ability to preserve the 'single-turn' and 'streaming' toggle state in conversation history (@GaiZhenbiao, @Keldos-Li)"
 ---
 
 # ChuanhuChatGPT 20241204

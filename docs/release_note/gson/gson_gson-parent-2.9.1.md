@@ -6,7 +6,7 @@ tag: "gson-parent-2.9.1"
 published: "2022-07-31"
 type: "release"
 lang: "en"
-summary: "Also many small improvements to javadoc."
+summary: "Make Object and JsonElement deserialization iterative rather than recursive (#1912) · Added parsing support for enum that has overridden toString() method (#1950) · Removed support for building Gson with Gradle (#2081)"
 ---
 
 # gson gson-parent-2.9.1

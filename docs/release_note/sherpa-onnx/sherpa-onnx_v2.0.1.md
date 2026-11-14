@@ -7,6 +7,7 @@ version: "v2.0.1"
 published: "2026-10-26"
 type: "patch"
 lang: "en"
+summary: "Fix publishing flutter packages · Fix decoder positions of generated tokens in Canary greedy search · Add VoxLock target-speaker voice isolation to the speech denoisers"
 ---
 
 # sherpa-onnx v2.0.1

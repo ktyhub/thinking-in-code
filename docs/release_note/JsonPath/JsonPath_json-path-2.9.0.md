@@ -6,7 +6,7 @@ tag: "json-path-2.9.0"
 published: "2024-01-20"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/json-path/JsonPath/compare/json-path-2.8.0...json-path-2.9.0"
+summary: "Fix for CVE-2023-51074. · update dependencies · JPMS: define Automatic-Module-Name as json.path · Bump json-smart version from 2.4.10 to 2.5.0"
 ---
 
 # JsonPath json-path-2.9.0

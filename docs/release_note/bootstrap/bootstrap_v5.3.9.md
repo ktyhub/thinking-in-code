@@ -6,7 +6,7 @@ tag: "v5.3.9"
 published: "2026-11-11"
 type: "patch"
 lang: "en"
-summary: "Dependency updates (119 pull requests)"
+summary: "Guard placeholder glow/wave animations behind prefers-reduced-motion · Add .modal-xxl size to modals · Rename datetime edit minute pseudo-element"
 ---
 
 # bootstrap v5.3.9

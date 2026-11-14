@@ -7,6 +7,7 @@ version: "v1.39.0"
 published: "2026-11-11"
 type: "minor"
 lang: "en"
+summary: "feat(automations): filter the dashboard by owner with a Service accounts option · feat(chat): move the message hover timestamp closer to its message · feat(conversation): keep Stop hook feedback out of the chat"
 ---
 
 # OpenHands v1.39.0

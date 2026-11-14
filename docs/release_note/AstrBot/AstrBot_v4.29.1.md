@@ -7,6 +7,7 @@ version: "v4.29.1"
 published: "2026-10-17"
 type: "patch"
 lang: "en"
+summary: "网页搜索：“网页搜索” 能力新增 SerpApi 搜索服务 (Google 网页搜索、图片搜索、学术搜索、财经搜索)、DeepSeek 搜索服务（网页搜索、网页内容提取）。 (#10599)；插件开发：为插件的单选/多选配置项（list 类型）添加本地化的 subtitles 副标题元数据。"
 ---
 
 # AstrBot v4.29.1

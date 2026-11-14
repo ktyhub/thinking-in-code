@@ -7,6 +7,7 @@ version: "dubbo-3.3.0-beta.5"
 published: "2024-08-05"
 type: "pre"
 lang: "en"
+summary: "Fix Compilation failure in jdk8 · New metadata service · Add ser-api constants · Add Triple test"
 ---
 
 # dubbo dubbo-3.3.0-beta.5

@@ -7,7 +7,7 @@ version: "v0.8.1"
 published: "2026-11-06"
 type: "patch"
 lang: "en"
-summary: "Upgrade note: Collections with pending WAL recovery must first be opened and closed in writable mode before being opened read-only. (#840)"
+summary: "PQ for HNSW and IVF: Added PQ4/PQ8 and optional OPQ, covering training, search, persistence, and subsequent updates. (#833)"
 ---
 
 # zvec v0.8.1

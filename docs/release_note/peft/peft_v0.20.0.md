@@ -7,6 +7,7 @@ version: "v0.20.0"
 published: "2026-07-28"
 type: "minor"
 lang: "en"
+summary: "This release adds no less than nine new PEFT methods and puts a lot of work into the surrounding infrastructure, for example adding a new image generation benchmark for the method comparison suite and greatly improving…"
 ---
 
 # peft v0.20.0

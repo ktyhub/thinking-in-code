@@ -6,7 +6,7 @@ tag: "v2.1.0"
 published: "2025-08-29"
 type: "minor"
 lang: "en"
-summary: "🔗 Full Changelog"
+summary: "Search Categories: Filter search results by specific categories using the categories parameter · github: Search within GitHub repositories, code, issues, and documentation"
 ---
 
 # firecrawl v2.1.0

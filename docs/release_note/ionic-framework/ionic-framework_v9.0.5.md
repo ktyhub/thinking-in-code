@@ -6,6 +6,7 @@ tag: "v9.0.5"
 published: "2026-09-23"
 type: "patch"
 lang: "en"
+summary: "button: sync aria attributes between host and native button (#31264) (e771519), closes #30626 · datetime: tear down ready state only when the host is hidden (#31460) (bf0607e), closes #30933"
 ---
 
 # ionic-framework v9.0.5

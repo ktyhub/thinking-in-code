@@ -6,7 +6,7 @@ tag: "v3.3.2"
 published: "2026-04-02"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "ConfigMap reloading not starting due to 'PropertySources does not match the ones loaded from Kubernetes' #2148 · Zone-aware load balancing doesn't work with Spring Cloud Kubernetes Discovery #2072"
 ---
 
 # spring-cloud-kubernetes v3.3.2

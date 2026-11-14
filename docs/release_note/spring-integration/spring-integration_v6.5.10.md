@@ -6,6 +6,7 @@ tag: "v6.5.10"
 published: "2026-06-30"
 type: "patch"
 lang: "en"
+summary: "JdbcLockRegistry & RedisLockRegistry - Shared ReentrantLock from DefaultLockRegistry causes APP\\LOCK entry not deleted on unlock when two different lock keys map to the same bucket #11156"
 ---
 
 # spring-integration v6.5.10

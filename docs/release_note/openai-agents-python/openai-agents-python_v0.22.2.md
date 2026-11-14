@@ -6,7 +6,7 @@ tag: "v0.22.2"
 published: "2026-09-09"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/openai/openai-agents-python/compare/v0.22.1...v0.22.2"
+summary: "feat: support current image generation tool options · fix(sandbox): prevent UnixLocal file API symlink races · fix(sessions): reset compaction response chain after pop"
 ---
 
 # openai-agents-python v0.22.2

@@ -6,7 +6,7 @@ tag: "v5.1.0-M1"
 published: "2026-09-24"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-netflix/compare/v5.0.2...v5.1.0-M1"
+summary: "Bump actions/checkout from 6 to 7[bot] · Bump antora from 3.2.0-alpha.12 to 3.2.0-rc.2 in /docs[bot] · Ignore release-train workflow updates in Dependabot"
 ---
 
 # spring-cloud-netflix v5.1.0-M1

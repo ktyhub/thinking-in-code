@@ -7,6 +7,7 @@ version: "v4.5.3"
 published: "2026-09-08"
 type: "patch"
 lang: "en"
+summary: "Qwen3.8-Flash-Next, a multimodal MoE model with 125B total parameters (6B activated per token, including a 51B N-gram embedding table)."
 ---
 
 # ms-swift v4.5.3

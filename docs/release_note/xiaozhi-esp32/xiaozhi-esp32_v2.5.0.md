@@ -7,6 +7,7 @@ version: "v2.5.0"
 published: "2026-09-10"
 type: "minor"
 lang: "en"
+summary: "feat: add wk esp32s3 dev board · fix: restore WDMomo CGC LCD selection · content : add waveshare esp32-c6-epaper-1.54 · Add Marathi (mr-IN) Indian Language Support"
 ---
 
 # xiaozhi-esp32 v2.5.0

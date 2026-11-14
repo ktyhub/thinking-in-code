@@ -6,7 +6,7 @@ tag: "v5.0.0-rc.5"
 published: "2025-08-25"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/dropwizard/dropwizard/compare/v5.0.0-rc.4...v5.0.0-rc.5"
+summary: "fix(deps): update junit-framework monorepo to v5.13.4 (release/5.0.x) (patch)[bot] · fix(deps): update dependency org.hibernate.orm:hibernate-core to v6.6.23.final (release/5.0.x)[bot]"
 ---
 
 # dropwizard v5.0.0-rc.5

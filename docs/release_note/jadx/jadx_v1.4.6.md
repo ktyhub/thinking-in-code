@@ -6,7 +6,7 @@ tag: "v1.4.6"
 published: "2023-02-20"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/skylot/jadx/compare/v1.4.5...v1.4.6"
+summary: "[core] Support polymorphic invoke (#384)(#1777) · [gui] Add alternative file open dialog (#1709) · [gui] Add native libs info to summary (#1717) · [gui] Add Russian Translation (PR #1744)"
 ---
 
 # jadx v1.4.6

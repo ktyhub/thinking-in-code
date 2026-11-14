@@ -6,7 +6,7 @@ tag: "v1.36.0-alpha.1"
 published: "2026-05-27"
 type: "pre"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/kops/compare/v1.35.0-beta.1...v1.36.0-alpha.1"
+summary: "Remove support for Amazon Linux 2 · Update distribution matrix for Amazon Linux 2 · metal: Unpin K8s version · Create iproute2 symlink for kuberouter on older distros"
 ---
 
 # kops v1.36.0-alpha.1

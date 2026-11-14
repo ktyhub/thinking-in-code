@@ -6,7 +6,7 @@ tag: "7.8.0"
 published: "2023-05-19"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/testng-team/testng/compare/7.7.1...7.8.0"
+summary: "XmlTest index is not set for test suites invoked with YAML · Listener's onAfterClass is called before @AfterClass configuration methods are executed."
 ---
 
 # testng 7.8.0

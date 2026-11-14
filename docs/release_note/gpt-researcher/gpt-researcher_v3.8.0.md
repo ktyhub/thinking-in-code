@@ -6,6 +6,7 @@ tag: "v3.8.0"
 published: "2026-11-09"
 type: "minor"
 lang: "en"
+summary: "The Next.js app has a new paper design that matches gptr.dev. Settings live in one modal with tabs for Research, MCP, Documents and Backend;"
 ---
 
 # gpt-researcher v3.8.0

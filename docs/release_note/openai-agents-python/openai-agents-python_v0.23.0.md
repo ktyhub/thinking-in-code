@@ -6,6 +6,7 @@ tag: "v0.23.0"
 published: "2026-10-02"
 type: "minor"
 lang: "en"
+summary: "mcp: add configurable MCP listing page limits (#5133) (9a21ab1) · sandbox: add opt-in Docker removal protection (#5116) (ae5803f) · sandbox: allow configuring memory consolidation turns (#5135) (daa1bcb)"
 ---
 
 # openai-agents-python v0.23.0

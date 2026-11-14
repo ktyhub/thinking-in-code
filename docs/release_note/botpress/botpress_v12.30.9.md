@@ -7,6 +7,7 @@ version: "v12.30.9"
 published: "2023-06-22"
 type: "patch"
 lang: "en"
+summary: "channel-web: render carousel right away (#12597) (a02b782) · core: allow standalone messaging server to work with proxy (#12559) (107ed26) · core: ensure lower case email (#12554) (e05652c)"
 ---
 
 # botpress v12.30.9

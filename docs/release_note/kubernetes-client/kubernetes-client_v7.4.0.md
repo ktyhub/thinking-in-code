@@ -6,7 +6,7 @@ tag: "v7.4.0"
 published: "2025-09-08"
 type: "minor"
 lang: "en"
-summary: "Fix #7204: Rationalized config constructors"
+summary: "Fix #3032: EnableKubernetesMockClient annotation works with Nested tests · Fix #7148: corrected octal format detection · Fix #7167: Allow Informer.isWatching to see underlying Watch state"
 ---
 
 # kubernetes-client v7.4.0

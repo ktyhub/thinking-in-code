@@ -6,7 +6,7 @@ tag: "v0.11.0"
 published: "2026-10-21"
 type: "minor"
 lang: "en"
-summary: "Release Migration Guide"
+summary: "[client-v2, jdbc-v2] The socket buffer options socket_rcvbuf and"
 ---
 
 # clickhouse-java v0.11.0

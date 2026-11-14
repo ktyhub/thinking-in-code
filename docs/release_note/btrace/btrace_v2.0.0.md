@@ -6,7 +6,7 @@ tag: "v2.0.0"
 published: "2020-02-12"
 type: "major"
 lang: "en"
-summary: "Full Changelog"
+summary: "JPMS support (Java 9, 10 and 11) \\#374"
 ---
 
 # btrace v2.0.0

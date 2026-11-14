@@ -6,7 +6,7 @@ tag: "1.20.0-beta30"
 published: "2026-09-04"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/langchain4j/langchain4j-spring/compare/1.19.0-beta29...1.20.0-beta30"
+summary: "Reactor support for the non-blocking AI Service modes, and Spring's executor for offloaded work"
 ---
 
 # langchain4j 1.20.0-beta30

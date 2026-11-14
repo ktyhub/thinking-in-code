@@ -6,7 +6,7 @@ tag: "v3.0.0a16"
 published: "2025-03-21"
 type: "major"
 lang: "en"
-summary: "Full Changelog: https://github.com/sinaptik-ai/pandas-ai/compare/v3.0.0-beta.15...v3.0.0a16"
+summary: "fix(sql_query): resolve double dash issue in url path · fix(loader): optimization · fix(loaders): avoid extra initialization of loader · fix(docs): sandbox documentation and example corrected"
 ---
 
 # pandas-ai v3.0.0a16

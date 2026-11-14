@@ -7,6 +7,7 @@ version: "0.19.0"
 published: "2026-08-13"
 type: "minor"
 lang: "en"
+summary: "fix: enable Chokidar polling for Vite HMR in Docker on Windows · UI refinement · (feat)workflows: add undo/redo · chore(deps-dev): bump vitest from 3.2.4 to 4.1.9 in /frontend[bot]"
 ---
 
 # DocsGPT 0.19.0

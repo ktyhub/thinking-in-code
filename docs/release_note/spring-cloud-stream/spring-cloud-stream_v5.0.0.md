@@ -6,7 +6,7 @@ tag: "v5.0.0"
 published: "2025-11-24"
 type: "major"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Add consumer priority #3147 · Add caching and logging control options for KTable materialization #3136"
 ---
 
 # spring-cloud-stream v5.0.0

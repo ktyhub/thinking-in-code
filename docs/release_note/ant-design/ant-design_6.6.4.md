@@ -6,6 +6,7 @@ tag: "6.6.4"
 published: "2026-09-14"
 type: "patch"
 lang: "en"
+summary: "🗑 Deprecate legacy Avatar GroupProps, BackTop and FloatButton BackTopProps, Input GroupProps, Mentions OptionProps, and Select OptionProps types in favor of GetProps or option-derived types. #58949 @li-jia-nan"
 ---
 
 # ant-design 6.6.4

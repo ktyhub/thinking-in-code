@@ -7,7 +7,7 @@ version: "v0.7.0"
 published: "2026-08-24"
 type: "minor"
 lang: "en"
-summary: "Thanks to all first-time contributors in this release:"
+summary: "C++ public API switched to snake_case: All public C++ SDK interfaces (Index, Collection, etc.) have been moved from PascalCase to snake_case."
 ---
 
 # zvec v0.7.0

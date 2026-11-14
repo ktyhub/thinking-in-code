@@ -6,6 +6,7 @@ tag: "v5.0.0-RC1"
 published: "2025-11-12"
 type: "major"
 lang: "en"
+summary: "Jackson deserialization fails to construct AckRemoteApplicationEvent #284"
 ---
 
 # spring-cloud-bus v5.0.0-RC1

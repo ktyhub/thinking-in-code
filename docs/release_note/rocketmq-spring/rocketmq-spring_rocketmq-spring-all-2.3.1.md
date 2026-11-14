@@ -6,7 +6,7 @@ tag: "rocketmq-spring-all-2.3.1"
 published: "2024-07-18"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/rocketmq-spring/compare/rocketmq-spring-all-2.3.0...rocketmq-spring-all-2.3.1"
+summary: "[ISSUE #632 ] Fix NPE caused by using @ ExtRocketMQTemplateConfiguration annotation extension to send messages"
 ---
 
 # rocketmq-spring rocketmq-spring-all-2.3.1

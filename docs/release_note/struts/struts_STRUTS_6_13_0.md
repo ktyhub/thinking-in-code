@@ -6,7 +6,7 @@ tag: "STRUTS_6_13_0"
 published: "2026-11-08"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/struts/compare/STRUTS6120...STRUTS6130"
+summary: "Release 6.12.0 RC-1 · WW-5753 Reject cross-site non-GET navigations and cross-site GET subresource requests in the Fetch Metadata policy (6.x)"
 ---
 
 # struts STRUTS_6_13_0

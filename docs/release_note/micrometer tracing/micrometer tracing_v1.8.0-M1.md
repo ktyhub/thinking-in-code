@@ -6,6 +6,7 @@ tag: "v1.8.0-M1"
 published: "2026-08-20"
 type: "pre"
 lang: "en"
+summary: "Harden W3C baggage propagation against injection and DoS/OOM"
 ---
 
 # micrometer tracing v1.8.0-M1

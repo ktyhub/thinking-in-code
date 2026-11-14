@@ -6,7 +6,7 @@ tag: "json-path-3.0.0"
 published: "2026-02-22"
 type: "release"
 lang: "en"
-summary: "Full Changelog: https://github.com/json-path/JsonPath/compare/json-path-2.10.0...json-path-3.0.0"
+summary: "adding jackson3 provider (#1066) · Prepare Version 3.0.0 - Java 17 baseline with Jackson 3"
 ---
 
 # JsonPath json-path-3.0.0

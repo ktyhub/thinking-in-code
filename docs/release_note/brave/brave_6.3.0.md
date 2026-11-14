@@ -6,7 +6,7 @@ tag: "6.3.0"
 published: "2025-06-01"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/openzipkin/brave/compare/6.2.0...6.3.0"
+summary: "Add JDBI 3 plugin · jdbi3: converts to StatementLogger and follows existing style"
 ---
 
 # brave 6.3.0

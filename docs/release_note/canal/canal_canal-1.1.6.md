@@ -6,6 +6,7 @@ tag: "canal-1.1.6"
 published: "2022-05-24"
 type: "release"
 lang: "en"
+summary: "支持PolarDB-X 2.0 binlog的订阅和消费；PolarDB-X是阿里巴巴自主研发的云原生分布式数据库，近期推出全局Binlog可完全兼容mysql binlog协议 参考文档；canal可原生支持PolarDB-X binlog对接,全面支持tcp/MQ/adapter等多种模式 #3494；新增Puslar MQ支持 #3791 #4060"
 ---
 
 # canal canal-1.1.6

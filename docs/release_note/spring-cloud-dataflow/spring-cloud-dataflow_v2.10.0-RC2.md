@@ -6,7 +6,7 @@ tag: "v2.10.0-RC2"
 published: "2022-11-16"
 type: "minor"
 lang: "en"
-summary: "Updates to the following versions:"
+summary: "Updates to the following versions"
 ---
 
 # spring-cloud-dataflow v2.10.0-RC2

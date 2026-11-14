@@ -7,7 +7,7 @@ version: "ray-2.59.1"
 published: "2026-11-04"
 type: "release"
 lang: "en"
-summary: "The eMudhra intermediate CA keys were reported compromised on October 20, 2026\\. pip trusts its own vendored certifi bundle in addition to the system store, so updating OS ca-certificates alone doesn't protect pip. This…"
+summary: "The eMudhra intermediate CA keys were reported compromised on October 20, 2026\\. pip trusts its own vendored certifi bundle in addition to the system store, so updating OS ca-certificates alone doesn't protect pip."
 ---
 
 # ray ray-2.59.1

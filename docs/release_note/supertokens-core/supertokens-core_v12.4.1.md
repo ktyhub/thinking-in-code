@@ -6,7 +6,7 @@ tag: "v12.4.1"
 published: "2026-10-23"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/supertokens/supertokens-core/compare/v12.4.0...v12.4.1"
+summary: "ci: only run publishing workflows in supertokens/supertokens-core · ci: embargo-build workflow for private security releases · ci: build the core image once and promote it by digest"
 ---
 
 # supertokens-core v12.4.1

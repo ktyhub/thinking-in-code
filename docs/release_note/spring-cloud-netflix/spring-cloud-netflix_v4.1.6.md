@@ -6,7 +6,7 @@ tag: "v4.1.6"
 published: "2025-06-24"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Error when using Eureka as a server and client at the same time and setting the parameter eureka.client.refresh.enable=false #4407"
 ---
 
 # spring-cloud-netflix v4.1.6

@@ -6,7 +6,7 @@ tag: "v4.2.4"
 published: "2026-08-03"
 type: "patch"
 lang: "en"
-summary: "For the complete list, check the full changelog."
+summary: "[fix][ci] Upgrade sandboxed-trivy-action to approved sha (#26169) · [improve][meta] Upgrade Oxia client to 0.9.4 (#26193) · [improve][build] Upgrade docker base image Alpine to 3.24 (#26225)"
 ---
 
 # pulsar v4.2.4

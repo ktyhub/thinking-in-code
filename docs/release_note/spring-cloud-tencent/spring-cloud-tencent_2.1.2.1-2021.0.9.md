@@ -6,7 +6,7 @@ tag: "2.1.2.1-2021.0.9"
 published: "2026-07-27"
 type: "patch"
 lang: "en"
-summary: "https://github.com/Tencent/spring-cloud-tencent/compare/2.1.2.0-2021.0.9...2.1.2.1-2021.0.9"
+summary: "Spring Cloud Tencent: 2.1.2.1-2021.0.9 · Spring Cloud: 2021.0.9 · Spring Boot: 2.7.18 · Spring Framework: 5.3.39"
 ---
 
 # spring-cloud-tencent 2.1.2.1-2021.0.9

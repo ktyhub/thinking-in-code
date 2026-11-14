@@ -7,7 +7,7 @@ version: "v1.4.2"
 published: "2026-06-10"
 type: "patch"
 lang: "en"
-summary: "移除抖音、微博、微信公众号三个渠道。 原因很直接——它们已经名不副实："
+summary: "移除抖音、微博、微信公众号三个渠道。 原因很直接——它们已经名不副实"
 ---
 
 # Agent-Reach v1.4.2

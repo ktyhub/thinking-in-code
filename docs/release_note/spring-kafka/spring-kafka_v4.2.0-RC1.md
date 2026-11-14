@@ -6,7 +6,7 @@ tag: "v4.2.0-RC1"
 published: "2026-10-22"
 type: "minor"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Support the delivery attempt header with CommonDelegatingErrorHandler #4786"
 ---
 
 # spring-kafka v4.2.0-RC1

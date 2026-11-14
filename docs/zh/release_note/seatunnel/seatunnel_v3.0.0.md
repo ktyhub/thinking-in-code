@@ -1,6 +1,7 @@
 ---
 title: "seatunnel v3.0.0"
 description: "SeaTunnel是一个多模态、高性能、分布式、海量数据集成工具。"
+summary: "SeaTunnel是一个多模态、高性能、分布式、海量数据集成工具。"
 ---
 
 # seatunnel v3.0.0

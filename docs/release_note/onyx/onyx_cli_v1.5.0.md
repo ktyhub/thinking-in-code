@@ -7,6 +7,7 @@ version: "cli/v1.5.0"
 published: "2026-11-10"
 type: "release"
 lang: "en"
+summary: "feat(cli): add --document-set filter to onyx-cli search and a document-sets command (#17504) (34d4307fe7) · feat(chat): enable code mode behind CODE_MODE_ENABLED (#17339) (a9b8dfb4a9)"
 ---
 
 # onyx cli/v1.5.0

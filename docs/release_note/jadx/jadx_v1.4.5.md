@@ -6,7 +6,7 @@ tag: "v1.4.5"
 published: "2022-10-20"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/skylot/jadx/compare/v1.4.4...v1.4.5"
+summary: "[gui] Option for search results count per page (#1652) · [debugger] Add logcat output (#1411)(PR #1666)"
 ---
 
 # jadx v1.4.5

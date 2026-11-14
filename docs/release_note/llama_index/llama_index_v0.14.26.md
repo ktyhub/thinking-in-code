@@ -7,6 +7,7 @@ version: "v0.14.26"
 published: "2026-11-13"
 type: "patch"
 lang: "en"
+summary: "Python security relock: all integration uv.lock files (lock files only, no Python floor changes) (#24039) · BREAKING: raise requires-python for security fixes across integrations (stacked on #24039) (#24040)"
 ---
 
 # llama_index v0.14.26

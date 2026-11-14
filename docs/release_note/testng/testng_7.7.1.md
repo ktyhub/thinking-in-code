@@ -6,7 +6,7 @@ tag: "7.7.1"
 published: "2022-12-29"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/cbeust/testng/compare/7.7.0...7.7.1"
+summary: "Streamline overloaded assertion methods for Groovy"
 ---
 
 # testng 7.7.1

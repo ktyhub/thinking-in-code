@@ -6,7 +6,7 @@ tag: "v1.7.0"
 published: "2026-06-08"
 type: "minor"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Bump io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom from 2.26.1 to 2.28.1 #1402"
 ---
 
 # micrometer tracing v1.7.0

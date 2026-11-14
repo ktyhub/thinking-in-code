@@ -6,6 +6,7 @@ tag: "6.5.11"
 published: "2026-06-09"
 type: "patch"
 lang: "en"
+summary: "FormPostRedirectStrategy should not emit percent-encoded values into hidden form inputs #19136"
 ---
 
 # spring-security 6.5.11

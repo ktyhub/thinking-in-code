@@ -6,7 +6,7 @@ tag: "v4.3.0"
 published: "2025-05-29"
 type: "minor"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Removes deprecated DescribeTopicsResult method #3111 · StreamBridge does not add dynamic Bindings to Output/Input binding lifecycle #3106 · Retain Binder in AbstractExtendedBindingProperties to improve performance #3101"
 ---
 
 # spring-cloud-stream v4.3.0

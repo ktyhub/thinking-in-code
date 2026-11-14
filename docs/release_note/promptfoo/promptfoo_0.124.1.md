@@ -7,6 +7,7 @@ version: "0.124.1"
 published: "2026-10-08"
 type: "patch"
 lang: "en"
+summary: "assertions: record cost without a threshold (#11451) (037f1f6) · providers: add OpenAI Decisions support (#11454) (2dbf3ec) · providers: expose catalog text-token pricing (#11452) (3ecce2e)"
 ---
 
 # promptfoo 0.124.1

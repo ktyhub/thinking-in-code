@@ -6,7 +6,7 @@ tag: "v5.0.0"
 published: "2025-11-24"
 type: "major"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Do we have support for Lease based leader access. #1954"
 ---
 
 # spring-cloud-kubernetes v5.0.0

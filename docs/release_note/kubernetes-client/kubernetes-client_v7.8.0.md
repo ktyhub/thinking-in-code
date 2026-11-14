@@ -6,7 +6,7 @@ tag: "v7.8.0"
 published: "2026-06-29"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/fabric8io/kubernetes-client/compare/v7.7.0...v7.8.0"
+summary: "Fix #7953: (httpclient-jdk) bodyless requests now preserve the requested HTTP method instead of silently defaulting to GET."
 ---
 
 # kubernetes-client v7.8.0

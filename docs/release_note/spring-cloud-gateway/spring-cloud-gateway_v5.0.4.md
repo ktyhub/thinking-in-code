@@ -6,7 +6,7 @@ tag: "v5.0.4"
 published: "2026-10-23"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/spring-cloud/spring-cloud-gateway/compare/v5.0.3...v5.0.4"
+summary: "Update Maven wrapper to 3.9.16 · Fix forwarded headers for untrusted proxies · Bump antora from 3.2.0-rc.2 to 3.2.0-rc.3 in /docs[bot] · Filter out synthetic and anonymous types when registering hints"
 ---
 
 # spring-cloud-gateway v5.0.4

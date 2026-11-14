@@ -6,6 +6,7 @@ tag: "3.39.3"
 published: "2026-09-10"
 type: "patch"
 lang: "en"
+summary: "#42976 - Quarkus REST in NATIVE - abstract resources with @Path requires impl. to be CDI beans while RESTEasy does not · #45257 - update guide on writing extension regarding docs generation"
 ---
 
 # quarkus 3.39.3

@@ -6,7 +6,7 @@ tag: "2023.0.1.3"
 published: "2024-10-28"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/alibaba/spring-cloud-alibaba/compare/2023.0.1.2...2023.0.1.3"
+summary: "[Nacos] Support nacos config annotation split · [Nacos] Expand NacosLoadBalancer to conveniently support custom service list filtering and load balancing algorithms"
 ---
 
 # spring-cloud-alibaba 2023.0.1.3

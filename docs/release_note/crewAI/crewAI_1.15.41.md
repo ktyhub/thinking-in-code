@@ -7,7 +7,7 @@ version: "1.15.41"
 published: "2026-11-12"
 type: "patch"
 lang: "en"
-summary: "@Vidit-Ostwal, @gabemilani, @github-actions[bot], @lorenzejay"
+summary: "Allow approved private URL hosts."
 ---
 
 # crewAI 1.15.41

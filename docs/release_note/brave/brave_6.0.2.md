@@ -6,7 +6,7 @@ tag: "6.0.2"
 published: "2024-02-27"
 type: "patch"
 lang: "en"
-summary: "Brave 6.0.2 fixes a propagation glitch on kafka streams processors using context.forward(). Tons of thanks to @frosiere for the help on this! We also changed how dependencies are managed so that less false-positives…"
+summary: "Brave 6.0.2 fixes a propagation glitch on kafka streams processors using context.forward(). Tons of thanks to @frosiere for the help on this!"
 ---
 
 # brave 6.0.2

@@ -6,6 +6,7 @@ tag: "maven-3.9.14"
 published: "2026-03-12"
 type: "release"
 lang: "en"
+summary: "plexus-testing dependencies should be use in test scope (#11761) @slawekjaranowski"
 ---
 
 # maven maven-3.9.14

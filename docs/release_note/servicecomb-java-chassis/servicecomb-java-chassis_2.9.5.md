@@ -6,7 +6,7 @@ tag: "2.9.5"
 published: "2026-06-23"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/servicecomb-java-chassis/compare/2.9.4...2.9.5"
+summary: "fix OOM problem when receive big response of SSE interface from backend · [#5087] upgrade netty/vertx version"
 ---
 
 # servicecomb-java-chassis 2.9.5

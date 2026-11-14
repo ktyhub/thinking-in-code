@@ -6,6 +6,7 @@ tag: "v0.24.0"
 published: "2026-10-15"
 type: "minor"
 lang: "en"
+summary: "expose MCP annotations on converted tools (#5356) (75813f8) · support run-wide tool exception formatting (#5326) (8fd9a7c)"
 ---
 
 # openai-agents-python v0.24.0

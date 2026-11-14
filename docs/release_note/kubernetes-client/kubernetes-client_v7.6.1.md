@@ -6,7 +6,7 @@ tag: "v7.6.1"
 published: "2026-03-05"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/fabric8io/kubernetes-client/compare/v7.6.0...v7.6.1"
+summary: "Fix #7460: Add explicit Automatic-Module-Name to all httpclient modules to fix invalid auto-derived JPMS module names and vertx/vertx-5 collision"
 ---
 
 # kubernetes-client v7.6.1

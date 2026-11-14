@@ -6,6 +6,7 @@ tag: "1.11.0"
 published: "2024-10-27"
 type: "minor"
 lang: "en"
+summary: "Support pthread mutex deadlock detection (#2692 #2727) · Support bzlmod (#2670) · Support multiple RPCs parsing in wireshark dissector for baidu_std protocol (#2710), @xulei25"
 ---
 
 # brpc 1.11.0

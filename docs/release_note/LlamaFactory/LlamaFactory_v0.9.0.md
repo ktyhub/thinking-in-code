@@ -7,6 +7,7 @@ version: "v0.9.0"
 published: "2024-09-08"
 type: "minor"
 lang: "en"
+summary: "🔥Support fine-tuning Qwen2-VL model on multi-image datasets · 🔥Support time&memory-efficient Liger-Kernel via the enable_liger_kernel argument"
 ---
 
 # LlamaFactory v0.9.0

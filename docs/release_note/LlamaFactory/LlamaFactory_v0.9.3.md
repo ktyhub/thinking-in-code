@@ -7,6 +7,7 @@ version: "v0.9.3"
 published: "2025-06-16"
 type: "patch"
 lang: "en"
+summary: "Event info: https://aws.amazon.com/cn/events/summits/shanghai/"
 ---
 
 # LlamaFactory v0.9.3

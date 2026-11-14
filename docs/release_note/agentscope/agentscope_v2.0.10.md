@@ -7,6 +7,7 @@ version: "v2.0.10"
 published: "2026-10-12"
 type: "patch"
 lang: "en"
+summary: "chore(version): bump version to 2.0.10dev · docs: announce SOP, TeamPipeline and MiniMax support in news · fix(tts): label audio with the effective response format"
 ---
 
 # agentscope v2.0.10

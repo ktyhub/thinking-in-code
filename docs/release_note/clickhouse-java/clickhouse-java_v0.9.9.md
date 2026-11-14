@@ -6,7 +6,7 @@ tag: "v0.9.9"
 published: "2026-08-25"
 type: "patch"
 lang: "en"
-summary: "error treated as non-retriable. (part of https://github.com/ClickHouse/clickhouse-java/issues/2637)"
+summary: "[client-v2] ServerException with code 159 Execution Timeout is retried unconditionally. After the fix this"
 ---
 
 # clickhouse-java v0.9.9

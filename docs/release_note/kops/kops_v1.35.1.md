@@ -6,7 +6,7 @@ tag: "v1.35.1"
 published: "2026-05-28"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/kubernetes/kops/compare/v1.35.0...v1.35.1"
+summary: "Automated cherry pick of #17740: Fix HasHighlyAvailableControlPlane to use AllInstanceGroups · Automated cherry pick of #18113: Add excludedInstanceTypes to instanceRequirements"
 ---
 
 # kops v1.35.1

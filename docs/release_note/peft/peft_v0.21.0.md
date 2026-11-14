@@ -7,6 +7,7 @@ version: "v0.21.0"
 published: "2026-09-15"
 type: "minor"
 lang: "en"
+summary: "Riemannian-preconditioned LoRA optimizer (#3382), contributed, is a new LoRA-specific optimizer similar to LoRA-FA or LoRA+ that applies a Riemannian pre-conditioning on the gradients to improve feature learning and…"
 ---
 
 # peft v0.21.0

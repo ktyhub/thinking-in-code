@@ -6,6 +6,7 @@ tag: "v2.7.0"
 published: "2025-01-13"
 type: "minor"
 lang: "en"
+summary: "Upgrade dockerfile java runtime version 8 to 17 · Upgrade SpringBoot to 3.x · Support ShenYu Admin Cluster · Upgrade checkstyle plugin to 3.4.0"
 ---
 
 # shenyu v2.7.0

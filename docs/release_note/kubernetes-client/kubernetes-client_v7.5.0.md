@@ -6,7 +6,7 @@ tag: "v7.5.0"
 published: "2026-01-09"
 type: "minor"
 lang: "en"
-summary: "Users should migrate to admissionregistration.v1.ValidatingAdmissionPolicy for GA APIs."
+summary: "Fix #7160: Use the duration from current leader record, not from the config · Fix #7343: Leader election callbacks to be called only once (instead of 2) · Fix #7347: Ensure vert.x websockets handle multiple frames"
 ---
 
 # kubernetes-client v7.5.0

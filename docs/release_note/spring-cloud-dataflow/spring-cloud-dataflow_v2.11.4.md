@@ -6,7 +6,7 @@ tag: "v2.11.4"
 published: "2024-07-19"
 type: "patch"
 lang: "en"
-summary: "Component | Version"
+summary: "spring-cloud/spring-cloud-dataflow#5848 BadSqlGrammarException for Spring Boot 3 Task Applications · spring-cloud/spring-cloud-dataflow#5825 Security issues in transitive dependency of xmlunit-core-2.9.1.jar"
 ---
 
 # spring-cloud-dataflow v2.11.4

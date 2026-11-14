@@ -6,7 +6,7 @@ tag: "v5.0.1"
 published: "2026-01-28"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Support 'by' parameter in Forwarded header (RFC 7239) #4019 · Support epoch millisecond values for datetime predicates in WebMVC #4005"
 ---
 
 # spring-cloud-gateway v5.0.1

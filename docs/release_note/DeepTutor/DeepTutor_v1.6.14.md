@@ -7,7 +7,7 @@ version: "v1.6.14"
 published: "2026-10-08"
 type: "patch"
 lang: "en"
-summary: "Release Date: 2026.10.08"
+summary: "Building on v1.6.13, v1.6.14 brings original-source visual practice, recoverable knowledge-base indexing, scientific research tools, and managed plugins."
 ---
 
 # DeepTutor v1.6.14

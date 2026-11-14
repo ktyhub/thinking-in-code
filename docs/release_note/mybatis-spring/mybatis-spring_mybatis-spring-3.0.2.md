@@ -6,7 +6,7 @@ tag: "mybatis-spring-3.0.2"
 published: "2023-05-19"
 type: "release"
 lang: "en"
-summary: "Here is the complete list of changes."
+summary: "Bean definition overridden when spring.aot.enabled=true in spring boot 3.0 #780 (@wylswz)"
 ---
 
 # mybatis-spring mybatis-spring-3.0.2

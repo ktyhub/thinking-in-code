@@ -6,7 +6,7 @@ tag: "mybatis-spring-4.1.0"
 published: "2026-06-27"
 type: "release"
 lang: "en"
-summary: "Here is the complete list of changes."
+summary: "@hazendaz with @Copilot made their first contribution · @wanggang1111111 made their first contribution · @wlswo made their first contribution · @seonwooj0810 made their first contribution"
 ---
 
 # mybatis-spring mybatis-spring-4.1.0

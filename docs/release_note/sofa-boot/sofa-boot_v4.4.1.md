@@ -6,7 +6,7 @@ tag: "v4.4.1"
 published: "2025-02-17"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/sofastack/sofa-boot/compare/v4.4.0...v4.4.1"
+summary: "Support sbom endpoint"
 ---
 
 # sofa-boot v4.4.1

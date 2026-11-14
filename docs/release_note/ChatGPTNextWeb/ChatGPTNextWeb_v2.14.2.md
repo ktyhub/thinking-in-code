@@ -6,7 +6,7 @@ tag: "v2.14.2"
 published: "2024-08-16"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web/compare/v2.14.1...v2.14.2"
+summary: "解决禁止gpt4时禁止gtp4o-mini问题；修复拼写错误；修复ChatGPTNextWeb页面的无障碍问题；Feature/bangpt"
 ---
 
 # ChatGPTNextWeb v2.14.2

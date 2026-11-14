@@ -6,7 +6,7 @@ tag: "v1.3.2"
 published: "2024-02-23"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/alibaba/lowcode-engine/compare/v1.3.1...v1.3.2"
+summary: "docs: remove title level from 示例 sections in documentation；feat(utils): checkPropTypes support IPublicTypePropType as rule for check；test(designer): add parse-metadata test"
 ---
 
 # lowcode-engine v1.3.2

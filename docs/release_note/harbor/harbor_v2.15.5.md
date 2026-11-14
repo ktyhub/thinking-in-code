@@ -6,6 +6,7 @@ tag: "v2.15.5"
 published: "2026-11-12"
 type: "patch"
 lang: "en"
+summary: "fix(portal): Add the missing i18n entries for the operate action and the configuration resource · fix(http): redact the pagination Link in rejection errors · fix(api): bound audited and manifest request bodies"
 ---
 
 # harbor v2.15.5

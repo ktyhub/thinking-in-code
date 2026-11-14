@@ -6,7 +6,7 @@ tag: "v1.37.9"
 published: "2026-10-12"
 type: "patch"
 lang: "en"
-summary: "Summary of changes:"
+summary: "Upstream security fixes · CVE-2026-54786: wasm: bumped wasmtime to 24.0.10 to resolve"
 ---
 
 # envoy v1.37.9

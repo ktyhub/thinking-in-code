@@ -6,6 +6,7 @@ tag: "v1.92.0"
 published: "2026-09-23"
 type: "minor"
 lang: "en"
+summary: "bigquery-jdbc: add EnableTimestampPicos connection property and its plumbing (#14284) (b4aa5ac) · bigquery-jdbc: implement picosecond temporal math and formatting engine (#14286) (2a9612a)"
 ---
 
 # google-cloud-java v1.92.0

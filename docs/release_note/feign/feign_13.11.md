@@ -6,7 +6,7 @@ tag: "13.11"
 published: "2026-03-18"
 type: "minor"
 lang: "en"
-summary: "List of PRs that updated libraries versions"
+summary: "Add Codec/JsonCodec, Capability interceptor enrichment, and GraphqlCapability · Fix GraphqlDecoder Optional record fields and non-nullable list nulls · Simplify GraphqlDecoder convertWithOptionalSupport"
 ---
 
 # feign 13.11

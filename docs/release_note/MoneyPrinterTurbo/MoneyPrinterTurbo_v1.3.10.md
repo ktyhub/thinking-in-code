@@ -7,7 +7,7 @@ version: "v1.3.10"
 published: "2026-11-07"
 type: "patch"
 lang: "en"
-summary: "English | 中文"
+summary: "Added OpenAI Codex subscription access with device-code sign-in and dynamic model selection, plus a separate ChatGPT Native OAuth provider."
 ---
 
 # MoneyPrinterTurbo v1.3.10

@@ -6,6 +6,7 @@ tag: "v2.0.7"
 published: "2026-08-21"
 type: "patch"
 lang: "en"
+summary: "Bump spring-boot from 4.0.6 to 4.0.7 #1520 · Bump ch.qos.logback:logback-classic from 1.5.34 to 1.5.35 #1524 · Bump io.spring.nullability from 0.0.13 to 0.0.14 in the development-dependencies group #1526"
 ---
 
 # spring-pulsar v2.0.7

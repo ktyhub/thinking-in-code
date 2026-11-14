@@ -6,6 +6,7 @@ tag: "5.3.0"
 published: "2023-01-08"
 type: "minor"
 lang: "zh"
+summary: "DistSQL：重构语法API，请参考用户手册"
 ---
 
 # shardingsphere 5.3.0

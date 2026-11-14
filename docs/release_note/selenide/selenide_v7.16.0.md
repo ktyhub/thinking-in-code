@@ -6,7 +6,7 @@ tag: "v7.16.0"
 published: "2026-04-10"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/selenide/selenide/compare/v7.15.1...v7.16.0"
+summary: "#3091 Add Selenide MCP server (#3291) · Add WebSockets support in Selenide proxy see BUP changelog (#3293) (#3290) · #3280 fix searching element by label (#3282)"
 ---
 
 # selenide v7.16.0

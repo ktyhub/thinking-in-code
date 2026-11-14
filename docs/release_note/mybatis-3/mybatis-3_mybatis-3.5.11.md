@@ -6,7 +6,7 @@ tag: "mybatis-3.5.11"
 published: "2022-09-18"
 type: "release"
 lang: "en"
-summary: "Bug fixes:"
+summary: "OGNL could throw IllegalArgumentException when invoking inherited method. #2609 · returnInstanceForEmptyRow is not applied to constructor auto-mapping. #2665"
 ---
 
 # mybatis-3 mybatis-3.5.11

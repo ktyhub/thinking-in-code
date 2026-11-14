@@ -7,6 +7,7 @@ version: "v2.0.0"
 published: "2026-10-23"
 type: "major"
 lang: "en"
+summary: "Fix releasing dart packages · Support NeMo transducers in offline Python examples · Add OfflineDiacritization to kotlin-api · Support modified_beam_search with hotwords for streaming NeMo transducer models"
 ---
 
 # sherpa-onnx v2.0.0

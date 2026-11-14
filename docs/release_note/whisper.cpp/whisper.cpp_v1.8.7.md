@@ -7,6 +7,7 @@ version: "v1.8.7"
 published: "2026-06-16"
 type: "patch"
 lang: "en"
+summary: "Do not assume /usr/lib library installation. · server : merge split UTF-8 token text in verbose JSON · whisper : catch C++ exceptions in whisper_init_with_params_no_state · ci : refactor + optimize"
 ---
 
 # whisper.cpp v1.8.7

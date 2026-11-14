@@ -6,6 +6,7 @@ tag: "v9.0.11"
 published: "2026-11-11"
 type: "patch"
 lang: "en"
+summary: "a11y: forward host tabindex to the native element (#31720) (efaca43), closes #31623 · react-router: show page that mounts during a navigation (#31718) (c6680bb), closes #31696 #28878"
 ---
 
 # ionic-framework v9.0.11

@@ -6,7 +6,7 @@ tag: "v4.3.4"
 published: "2026-04-01"
 type: "patch"
 lang: "en"
-summary: "Thank you to all the contributors who worked on this release:"
+summary: "Issue with shortcut configuration not working for SetRequestUriGatewayFilterFactory #4062"
 ---
 
 # spring-cloud-gateway v4.3.4

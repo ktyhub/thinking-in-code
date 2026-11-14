@@ -7,6 +7,7 @@ version: "v2.5.22"
 published: "2026-11-12"
 type: "patch"
 lang: "en"
+summary: "chore: begin 2.5.22-SNAPSHOT[bot] · fix(cli): refuse --to-stdout with a format that stdout cannot carry · fix(core): read the columns first when a gap starts a section in one column only"
 ---
 
 # opendataloader-pdf v2.5.22

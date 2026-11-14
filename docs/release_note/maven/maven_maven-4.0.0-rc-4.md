@@ -6,7 +6,7 @@ tag: "maven-4.0.0-rc-4"
 published: "2025-06-25"
 type: "pre"
 lang: "en"
-summary: "Maven 4.0.0-rc-4 aims at being the last release candidate before Maven 4.0.0 GA. We'll focus on fixing critical bugs raised before GA. Worth mentioning is the new upgrade tool which can be used to fix your pom.xml files…"
+summary: "Maven 4.0.0-rc-4 aims at being the last release candidate before Maven 4.0.0 GA. We'll focus on fixing critical bugs raised before GA."
 ---
 
 # maven maven-4.0.0-rc-4

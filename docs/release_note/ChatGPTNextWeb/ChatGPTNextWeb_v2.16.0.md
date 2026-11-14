@@ -6,7 +6,7 @@ tag: "v2.16.0"
 published: "2025-02-16"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/ChatGPTNextWeb/NextChat/compare/v2.15.8...v2.16.0"
+summary: "chore(deps-dev): bump @testing-library/jest-dom from 6.6.2 to 6.6.3 · fix: use current session id to trigger rerender · 更新视觉模型匹配关键词 · artifacts support svg"
 ---
 
 # ChatGPTNextWeb v2.16.0

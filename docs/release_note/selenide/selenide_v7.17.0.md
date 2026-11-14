@@ -6,7 +6,7 @@ tag: "v7.17.0"
 published: "2026-07-11"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/selenide/selenide/compare/v7.16.2...v7.17.0"
+summary: "#3359 Add 'byRole' locator - find elements by ARIA role (#3336) · Add more MCP tools (browser_network_requests, browser_fill_form, browser_tab_list, browser_resize etc.) (#3335)"
 ---
 
 # selenide v7.17.0

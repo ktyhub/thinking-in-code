@@ -6,6 +6,7 @@ tag: "6.6.6"
 published: "2026-10-12"
 type: "patch"
 lang: "en"
+summary: "Table · 🐞 Fix Table selection menu's 'Select all data' option missing descendant rows in tree data. #59342 @QDyanbing"
 ---
 
 # ant-design 6.6.6

@@ -6,7 +6,7 @@ tag: "v9.6.0"
 published: "2023-09-03"
 type: "minor"
 lang: "en"
-summary: "https://skywalking.apache.org/downloads/"
+summary: "Don't download source codes from this page. Please follow build document, if you want to build source codes by yourself."
 ---
 
 # skywalking v9.6.0

@@ -7,6 +7,7 @@ version: "v0.14.25"
 published: "2026-09-21"
 type: "patch"
 lang: "en"
+summary: "fix: resolve a ton of security alerts (#22855)"
 ---
 
 # llama_index v0.14.25

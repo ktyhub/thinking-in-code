@@ -7,6 +7,7 @@ version: "v2.0.11"
 published: "2026-10-27"
 type: "patch"
 lang: "en"
+summary: "fix(model): declare real WAV sizes in the final streamed audio block · fix(embedding): isolate Ollama embedding caches by host · fix(model): await provider stream cleanup on public aclose"
 ---
 
 # agentscope v2.0.11

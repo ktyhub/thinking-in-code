@@ -6,6 +6,7 @@ tag: "5.3.1"
 published: "2023-01-10"
 type: "patch"
 lang: "en"
+summary: "Kernel: Add new data masking, dynamic data masking features, and built-in data masking algorithms · Scaling: Basic support of CDC feature · DistSQL: Add masking rule related DistSQL"
 ---
 
 # shardingsphere 5.3.1
