@@ -1,10 +1,13 @@
 ---
 /**
  * 全站外壳：页头 / 搜索面板 / 页脚 / SEO 元信息
- * 英文是默认语言（挂在 /），中文在 /zh 前缀下。
+ * 英文是默认语言（挂在 /），其余语言在 /{locale} 前缀下。
  */
 import "../styles/global.css";
-import { t, LOCALE_META, localePath, switchLocale, otherLocale, type Locale } from "../lib/i18n";
+import {
+  t, LOCALES, LOCALE_META, localePath, switchLocale,
+  otherLocale, otherLocales, stripLocale, hasAllLocales, type Locale,
+} from "../lib/i18n";
 
 interface Props {
   locale: Locale;
@@ -44,8 +47,36 @@ const canonical = canonicalPath
   : new URL(Astro.url.pathname, Astro.site).href;
 const hasAlt = altHref !== null;
 const alt = altHref ?? switchLocale(Astro.url.pathname, otherLocale(locale));
-const enHref = locale === "en" ? canonical : new URL(alt, Astro.site).href;
-const zhHref = locale === "zh" ? canonical : new URL(alt, Astro.site).href;
+const altUrl = new URL(alt, Astro.site).href;
+
+/** 只有导航层与聚合页在 7 种语言下都有对应页面 */
+const langNeutralPath = stripLocale(Astro.url.pathname).path;
+const fullAlt = hasAlt && hasAllLocales(langNeutralPath);
+
+/** 语言切换目标：详情页没有对应译文，回落到该语言的 Releases 列表 */
+const langTargets = LOCALES.map((l) => ({
+  code: l,
+  ...LOCALE_META[l],
+  href: l === locale
+    ? Astro.url.pathname
+    : fullAlt ? switchLocale(Astro.url.pathname, l) : localePath(l, "/releases"),
+}));
+
+/** hreflang：全语言页输出 7 条 + x-default；其余只输出 en ↔ zh 对 */
+const hreflangLinks = fullAlt
+  ? LOCALES.map((l) => ({
+      code: LOCALE_META[l].hreflang,
+      href: new URL(switchLocale(Astro.url.pathname, l), Astro.site).href,
+    }))
+  : hasAlt
+    ? [
+        { code: "en", href: locale === "en" ? canonical : altUrl },
+        { code: "zh-Hans", href: locale === "zh" ? canonical : altUrl },
+      ]
+    : [];
+const xDefault = fullAlt
+  ? new URL(switchLocale(Astro.url.pathname, "en"), Astro.site).href
+  : locale === "en" ? canonical : altUrl;
 
 const nav = [
   { key: "releases", label: t(locale, "nav.releases"), href: localePath(locale, "/releases") },
@@ -61,7 +92,7 @@ const graph = [
     "@id": "https://www.ktyhub.com/#website",
     name: SITE,
     url: "https://www.ktyhub.com/",
-    inLanguage: "en",
+    inLanguage: meta.htmlLang,
     description: siteDesc,
     publisher: { "@id": "https://www.ktyhub.com/#org" },
   },
@@ -88,13 +119,10 @@ const graph = [
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate" type="application/rss+xml" title={`${SITE} — releases`} href={`${localePath(locale, "/releases.xml")}`} />
-    {hasAlt && (
-      <>
-        <link rel="alternate" hreflang="en" href={enHref} />
-        <link rel="alternate" hreflang="zh-Hans" href={zhHref} />
-        <link rel="alternate" hreflang="x-default" href={enHref} />
-      </>
-    )}
+    {hreflangLinks.map((l) => (
+      <link rel="alternate" hreflang={l.code} href={l.href} />
+    ))}
+    {hasAlt && <link rel="alternate" hreflang="x-default" href={xDefault} />}
     {noindex && <meta name="robots" content="noindex,follow" />}
 
     <meta property="og:site_name" content={SITE} />
@@ -104,7 +132,9 @@ const graph = [
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content="https://www.ktyhub.com/img/stags-tracker-icon.png" />
     <meta property="og:locale" content={meta.ogLocale} />
-    <meta property="og:locale:alternate" content={LOCALE_META[otherLocale(locale)].ogLocale} />
+    {otherLocales(locale).map((l) => (
+      <meta property="og:locale:alternate" content={LOCALE_META[l].ogLocale} />
+    ))}
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:image" content="https://www.ktyhub.com/img/stags-tracker-icon.png" />
 
@@ -145,16 +175,32 @@ const graph = [
             <span class="kbd">⌘K</span>
           </button>
 
-          <div class="lang" role="group" aria-label="Language">
-            <a
-              href={locale === "en" ? Astro.url.pathname : hasAlt ? alt : "/"}
-              data-on={locale === "en" ? "true" : "false"}
-              hreflang="en">EN</a>
-            <a
-              href={locale === "zh" ? Astro.url.pathname : hasAlt ? alt : "/zh/"}
-              data-on={locale === "zh" ? "true" : "false"}
-              hreflang="zh-Hans">中</a>
-          </div>
+          <details class="langmenu" data-langmenu>
+            <summary class="langmenu-btn" aria-label={t(locale, "a11y.language")}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path>
+              </svg>
+              <span class="langmenu-cur">{meta.short}</span>
+              <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg>
+            </summary>
+            <div class="langmenu-panel" role="group" aria-label={t(locale, "a11y.language")}>
+              <p class="langmenu-head">{t(locale, "a11y.language")}</p>
+              {langTargets.map((l) => (
+                <a
+                  class="langmenu-item"
+                  href={l.href}
+                  hreflang={l.hreflang}
+                  lang={l.htmlLang}
+                  aria-current={l.code === locale ? "true" : undefined}
+                  data-on={l.code === locale ? "true" : "false"}
+                >
+                  <span class="langmenu-label">{l.label}</span>
+                  <span class="langmenu-code">{l.short}</span>
+                </a>
+              ))}
+            </div>
+          </details>
 
           <a class="iconlink" href="https://github.com/ktyhub/thinking-in-code" target="_blank" rel="noopener" aria-label="GitHub">
             <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
@@ -187,8 +233,8 @@ const graph = [
           <div class="footer-col">
             <h3>{t(locale, "footer.archive")}</h3>
             <ul>
-              <li><a href={archiveHref}>{t(locale, "nav.archive")}</a></li>
-              <li><a href="/zh/chapters/">{t(locale, "footer.blog")}</a></li>
+              <li><a href={archiveHref} hreflang="zh-Hans">{t(locale, "nav.archive")}</a></li>
+              <li><a href="/zh/chapters/" hreflang="zh-Hans">{t(locale, "footer.blog")}</a></li>
               <li><a href="/zh/downloads/">Stags Tracker</a></li>
             </ul>
           </div>
@@ -220,8 +266,8 @@ const graph = [
         </div>
         <ul class="palette-res" data-palette-res></ul>
         <div class="palette-ft">
-          <span>↑↓ {locale === "en" ? "navigate" : "选择"}</span>
-          <span>↵ {locale === "en" ? "open" : "打开"}</span>
+          <span>↑↓ {locale === "zh" ? "选择" : "navigate"}</span>
+          <span>↵ {locale === "zh" ? "打开" : "open"}</span>
           <span style="margin-left:auto" data-palette-count></span>
         </div>
       </div>

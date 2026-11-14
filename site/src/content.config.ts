@@ -7,7 +7,8 @@ import { glob } from "astro/loaders";
  * releasesEn    docs/release_note/**        英文原文（canonical）
  * releasesZh    docs/zh/release_note/**     中文译文 / 历史归档
  * docs          docs/zh/**（除 release_note） 技术笔记
- * locales       docs/{lang}/**              其他语言的占位页
+ * locales       docs/{lang}/**              旧站残留的语言占位页
+ *                                         （ja/de/fr/es/pt 已由新版本地化路由接管，故排除）
  *
  * generateId 保留文件名原样（含点号），确保 /zh/release_note/{project}/{file}
  * 与旧站 URL 逐字一致，历史收录不失效。
@@ -25,7 +26,7 @@ const docs = defineCollection({
 
 const locales = defineCollection({
   loader: glob({
-    pattern: ["{en,ja,ko,es,fr,de,pt,ru,ar}/**/*.md"],
+    pattern: ["{en,ko,ru,ar}/**/*.md"],
     base: "../docs",
     generateId: keepName,
   }),

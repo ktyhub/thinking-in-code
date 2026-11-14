@@ -275,3 +275,30 @@ document.addEventListener("click", async (e) => {
   btn.textContent = isZh ? "已复制" : "Copied";
   setTimeout(() => (btn.textContent = prev), 1400);
 });
+
+/* ------------------------------------------------- 语言选择器（渐进增强） */
+/* 原生 <details> 已可键盘展开；这里补上互斥展开、点击外部与 Esc 关闭 */
+const langMenus = [...document.querySelectorAll("[data-langmenu]")];
+if (langMenus.length) {
+  const closeAll = (except) => {
+    langMenus.forEach((m) => {
+      if (m !== except) m.open = false;
+    });
+  };
+  langMenus.forEach((menu) => {
+    menu.addEventListener("toggle", () => {
+      if (menu.open) closeAll(menu);
+    });
+  });
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest("[data-langmenu]")) closeAll(null);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    const open = langMenus.find((m) => m.open);
+    if (open) {
+      open.open = false;
+      open.querySelector("summary")?.focus();
+    }
+  });
+}
