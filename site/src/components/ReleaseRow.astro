@@ -3,6 +3,7 @@
 import { t, type Locale } from "../lib/i18n";
 import { hrefFor } from "../lib/registry";
 import { shortDay } from "../lib/format";
+import { summaryFor } from "../lib/summaries";
 
 interface Props {
   release: import("../lib/registry").ReleaseRecord;
@@ -16,7 +17,9 @@ const href = hrefFor(r, locale);
 const typeLabel = t(locale, `type.${r.type}`);
 const showTranslation = locale === "en" && r.hasZh;
 const showEnglish = locale === "zh" && r.hasEn && !r.hasZh;
-const summary = locale === "zh" && r.summaryZh ? r.summaryZh : r.summary;
+// 新增语言只翻译了摘要，正文仍是英文原文 —— 明确标注，避免误导
+const showOriginal = locale !== "en" && locale !== "zh";
+const summary = summaryFor(r, locale);
 const q = `${r.project} ${r.version} ${(summary || "").slice(0, 110)}`.toLowerCase();
 ---
 
@@ -37,6 +40,7 @@ const q = `${r.project} ${r.version} ${(summary || "").slice(0, 110)}`.toLowerCa
       <span class={`chip chip--${r.type}`}>{typeLabel}</span>
       {showTranslation && <span class="chip chip--zh">{t(locale, "feed.lang.zh")}</span>}
       {showEnglish && <span class="chip">{t(locale, "feed.lang.en")}</span>}
+      {showOriginal && <span class="chip" title="Original English release note">{t(locale, "feed.lang.en")}</span>}
     </div>
     {summary && <p class="rrow-sum">{summary}</p>}
   </div>

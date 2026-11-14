@@ -1,18 +1,39 @@
 /**
  * 站点国际化（i18n）
  *
- * 默认语言 = English（挂在根路径 /），中文 = /zh 前缀。
+ * 默认语言 = English（挂在根路径 /），其余语言 = /{locale} 前缀。
  * 旧站的所有中文 URL（/zh/chapter_*、/zh/release_note/*）保持不变，
- * 因此切换默认语言不会造成任何已有链接失效。
+ * 因此扩展语言不会造成任何已有链接失效。
+ *
+ * 分层策略：新增语言只覆盖「导航层 + 聚合页 + 项目页」，
+ * Release 正文仍以英文原文为 canonical，技术笔记仍只在中文归档下。
  */
+import { GENERATED_DICTS } from "./dicts.generated";
 
-export const LOCALES = ["en", "zh"] as const;
+export const LOCALES = ["en", "zh", "ja", "de", "fr", "es", "pt"] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = "en";
 
-export const LOCALE_META: Record<Locale, { label: string; short: string; htmlLang: string; ogLocale: string }> = {
-  en: { label: "English", short: "EN", htmlLang: "en", ogLocale: "en_US" },
-  zh: { label: "中文", short: "中文", htmlLang: "zh-CN", ogLocale: "zh_CN" },
+/** 需要额外生成本地化路由的语言（en/zh 已有独立页面） */
+export const EXTRA_LOCALES = ["ja", "de", "fr", "es", "pt"] as const satisfies readonly Locale[];
+export type ExtraLocale = (typeof EXTRA_LOCALES)[number];
+
+export interface LocaleMeta {
+  label: string;
+  short: string;
+  htmlLang: string;
+  hreflang: string;
+  ogLocale: string;
+}
+
+export const LOCALE_META: Record<Locale, LocaleMeta> = {
+  en: { label: "English", short: "EN", htmlLang: "en", hreflang: "en", ogLocale: "en_US" },
+  zh: { label: "中文", short: "中", htmlLang: "zh-CN", hreflang: "zh-Hans", ogLocale: "zh_CN" },
+  ja: { label: "日本語", short: "日", htmlLang: "ja", hreflang: "ja", ogLocale: "ja_JP" },
+  de: { label: "Deutsch", short: "DE", htmlLang: "de", hreflang: "de", ogLocale: "de_DE" },
+  fr: { label: "Français", short: "FR", htmlLang: "fr", hreflang: "fr", ogLocale: "fr_FR" },
+  es: { label: "Español", short: "ES", htmlLang: "es", hreflang: "es", ogLocale: "es_ES" },
+  pt: { label: "Português", short: "PT", htmlLang: "pt-BR", hreflang: "pt-BR", ogLocale: "pt_BR" },
 };
 
 type Dict = Record<string, string>;
@@ -150,6 +171,7 @@ const en: Dict = {
 
   "a11y.skip": "Skip to content",
   "a11y.theme": "Toggle theme",
+  "a11y.language": "Language",
 };
 
 const zh: Dict = {
@@ -283,9 +305,14 @@ const zh: Dict = {
 
   "a11y.skip": "跳到正文",
   "a11y.theme": "切换主题",
+  "a11y.language": "语言",
 };
 
-const DICTS: Record<Locale, Dict> = { en, zh };
+/** 供 gen_dicts.py 读取源文案，避免重复维护一份字典 */
+export const EN_DICT: Dict = en;
+export const ZH_DICT: Dict = zh;
+
+const DICTS: Record<Locale, Dict> = { en, zh, ...GENERATED_DICTS };
 
 /** 取词条；缺失时回落到英文，再回落到 key 本身。 */
 export function t(locale: Locale, key: string, vars?: Record<string, string | number>): string {
@@ -318,7 +345,24 @@ export function switchLocale(pathname: string, target: Locale): string {
   return localePath(target, path === "" ? "/" : path);
 }
 
-/** 反向语言 */
+/**
+ * 该「语言无关路径」是否在全部语言下都有对应页面。
+ * 只有导航层与聚合页会为 7 种语言生成页面；Release 正文与技术笔记
+ * 仍只在 en / zh 下存在，因此这些页面只输出 en ↔ zh 双向 hreflang，
+ * 避免把搜索引擎指向不存在的地址。
+ */
+export function hasAllLocales(path: string): boolean {
+  const p = path.replace(/\/+$/, "") || "/";
+  if (p === "/" || p === "/releases" || p === "/projects" || p === "/method") return true;
+  return /^\/releases\/[^/]+$/.test(p); // 项目版本历史页
+}
+
+/** 除当前语言外的所有语言（用于 hreflang 与语言菜单） */
+export function otherLocales(locale: Locale): Locale[] {
+  return LOCALES.filter((l) => l !== locale);
+}
+
+/** 兼容旧调用：主「另一语言」（英文站优先中文，其余回英文） */
 export function otherLocale(locale: Locale): Locale {
   return locale === "en" ? "zh" : "en";
 }

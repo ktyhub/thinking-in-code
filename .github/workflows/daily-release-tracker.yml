@@ -1,7 +1,9 @@
 name: daily-release-tracker
 
 # 每日采集追踪仓库的新 Release：英文原文写入 docs/release_note（canonical），
-# 同时生成中文译文写入 docs/zh/release_note。
+# 同时生成中文译文写入 docs/zh/release_note；新增条目的摘要增量翻译成
+# ja/de/fr/es/pt 五语言（产物 site/src/data/summaries.json 随仓库提交，
+# 因此每天只翻新增条目，通常在几秒内完成）。
 # push 到 main 后由 ci workflow 自动部署到 www.ktyhub.com，
 # 新页面自动进入 sitemap.xml，实现每日新增 SEO 内容。
 
@@ -27,10 +29,19 @@ jobs:
         with:
           python-version: "3.x"
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: 采集最新 Release（英文原文 + 中文译文）
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 提升速率到 1000+/小时
         run: python scripts/release-tracker/collect.py --translate
+
+      - name: 增量翻译新增 Release 摘要（5 语言）
+        # 免费翻译端点偶发限流；失败不应阻断当天采集的内容上线
+        continue-on-error: true
+        run: python scripts/release-tracker/gen_summaries.py --workers 6
 
       - name: 提交并推送
         run: |

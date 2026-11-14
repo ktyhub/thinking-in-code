@@ -469,7 +469,7 @@ export function projectReleases(slug: string): ReleaseRecord[] {
 
 /** 有日期的版本，用于信息流 */
 export function datedReleases(locale: Locale): ReleaseRecord[] {
-  const key = locale === "en" ? "hasEn" : "hasZh";
+  const key = locale === "zh" ? "hasZh" : "hasEn";
   return allReleases().filter((r) => r.date && r[key]);
 }
 
@@ -508,8 +508,11 @@ export function hrefZh(r: ReleaseRecord): string {
   return r.hasZh ? `/zh/release_note/${r.entryZh}` : `/releases/${r.projectSlug}/${r.versionSlug}`;
 }
 export function hrefFor(r: ReleaseRecord, locale: Locale): string {
-  return locale === "en" ? hrefEn(r) : hrefZh(r);
+  // 只有中文页走向中文译文；其余语言统一指向英文 canonical
+  return locale === "zh" ? hrefZh(r) : hrefEn(r);
 }
 export function projectHref(slug: string, locale: Locale): string {
-  return locale === "en" ? `/releases/${slug}` : `/zh/releases/${slug}`;
+  if (locale === "en") return `/releases/${slug}`;
+  if (locale === "zh") return `/zh/releases/${slug}`;
+  return `/${locale}/releases/${slug}`;
 }
