@@ -1,53 +1,81 @@
+---
+title: "dubbo dubbo-3.3.1"
+project: "dubbo"
+repo: "apache/dubbo"
+tag: "dubbo-3.3.1"
+published: "2024-10-02"
+type: "release"
+lang: "zh"
+---
+
 # dubbo dubbo-3.3.1
-### 为什么要使用dubbo
 
-在当今这个快速变化的技术世界中，企业面临着如何高效、灵活地构建和管理分布式系统的挑战。传统的单体架构往往难以应对不断增长的业务需求和复杂性。此时，Dubbo作为一款高性能的开源RPC框架，恰好提供了解决方案。它不仅支持多种协议和负载均衡策略，还能实现服务的动态发现和治理，帮助企业在复杂的环境中保持竞争力。然而，许多开发者在选择框架时却常常陷入选择困难的矛盾中：是继续使用传统的架构，还是勇敢尝试Dubbo？这正是我们需要深入探讨的主题。
+## 发生了什么变化
 
-### dubbo是什么
+### 功能
+* https://github.com/apache/dubbo/pull/14723中@finefuture在dubbo-maven-plugin中支持单文件模式
+* 支持 @oxsean 在 https://github.com/apache/dubbo/pull/14726 中配置不允许的内容类型
+* 根据 @oxsean 在 https://github.com/apache/dubbo/pull/14714 中的其余映射返回匹配的 http 状态代码
+* @oxsean 在 https://github.com/apache/dubbo/pull/14673 中支持 Http2 sse
+* 添加了对在 Spring boot 中配置 Tomcat HTTP2 最大流大小的支持（@oxsean 在 https://github.com/apache/dubbo/pull/14702 中）
+* 在 https://github.com/apache/dubbo/pull/14596 中添加@JinQian1024 支持将 Spring Boot 执行器桥接到 QoS
 
-Dubbo是一个高性能的开源RPC框架，最初由阿里巴巴开发并开源。它旨在提供高效的服务治理和服务调用能力，支持多种协议和负载均衡策略。Dubbo的核心功能包括服务注册与发现、负载均衡、容错处理和监控等，使得构建和管理分布式系统变得更加简单和高效。
-
-### 入门示例
-
-想象一下，一个电商平台需要处理成千上万的用户请求。为了提高系统的可扩展性和性能，开发团队决定使用Dubbo来构建微服务架构。首先，他们将用户服务、订单服务和支付服务拆分成独立的微服务。接着，使用Dubbo的服务注册功能，将这些服务注册到Zookeeper中。最后，团队通过Dubbo的RPC调用实现服务之间的通信，确保用户在下单时能够快速、准确地完成支付。这一过程不仅提高了系统的响应速度，还增强了系统的可维护性。
-
-### dubbo-3.3.1版本更新了什么
-
-Dubbo 3.3.1版本带来了多项重要更新，包括支持dubbo-maven-plugin的单文件模式、配置不允许的内容类型、基于REST映射返回匹配的HTTP状态码、HTTP2 SSE支持，以及在Spring Boot中配置Tomcat HTTP2最大流大小的功能。此外，还增强了与QoS的桥接支持，提升了整体性能和稳定性。
-
-### 更新日志
-
-## 更新内容
-
-### 新特性
-- 支持在dubbo-maven-plugin中使用单文件模式。
-- 支持配置不允许的内容类型。
-- 根据REST映射返回匹配的HTTP状态码。
-- 支持HTTP2 SSE。
-- 在Spring Boot中添加配置Tomcat HTTP2最大流大小的支持。
-- 增加了将Spring Boot Actuator桥接到QoS的支持。
-
-### Bug修复
-- 修复TCP连接窗口大小与流连接窗口大小分离的问题。
-- 修复代理的本地映像问题。
-- 修复三重客户端连接共享的竞争条件。
-- 禁用创建MetadataService调用者时的检查，以防止内存泄漏。
-- 修复在中断时未运行的safeLock和ServiceInstancesChangedListener中的部分通知被取消的问题。
+### 错误修复
+* 修复https://github.com/apache/dubbo/pull/14670中@JunJieLiu51520从流连接窗口大小中分割出的tcp连接窗口大小
+* 修复 https://github.com/apache/dubbo/pull/14724 中 @CrazyHZM 代理的本机图像
+* 修复 https://github.com/apache/dubbo/pull/14718 中@chickenlj 的三重 client 连接共享竞争状况
+* 在https://github.com/apache/dubbo/pull/14732中创建MetadataService调用者时禁用检查以防止@AlbumenJ造成内存泄漏
+* 修复中断时 safeLock 不运行的问题，并修复 https://github.com/apache/dubbo/pull/14730 中 @AlbumenJ 在 ServiceInstancesChangedListener 中取消部分通知的问题
+* 修复https://github.com/apache/dubbo/pull/14731中MetadataServiceV2无法被@AlbumenJ销毁的问题
+* 通过 @oxsean 在 https://github.com/apache/dubbo/pull/14741 中修复 HttpPostRequestDecoder 中的内存泄漏
+* 修复 https://github.com/apache/dubbo/pull/14742 中 @oxsean 的 SpringRestToolKit getBean 参数错误
 
 ### 代码增强
-- 相关PRs：#14671, #14705。
+相关 PR：#14671、#14705
 
 ### 依赖升级
-- 更新了多个依赖库，包括bytebuddy、logback、fastjson2等，提升了整体性能和安全性。
+*更新bytebuddy.版本：1.15.0 -> 1.15.3 #14736 #14648
+* 更新 ch.qos.logback:logback-core: 1.5.7 -> 1.5.8 #14653
+* 更新 com.alibaba.fastjson2:fastjson2: 2.0.52 -> 2.0.53 #14707
+* 更新 com.alibaba.nacos:nacos-client: 2.4.1 -> 2.4.2 #14655
+* 更新 com.github.spullara.mustache.java:编译器：0.9.10 -> 0.9.14 #14693
+* 更新 com.google.protobuf:protobuf-java: 3.25.4 -> 3.25.5 #14704
+* 更新公共编解码器：公共编解码器：1.16.0 -> 1.17.1 #14711
+* 更新 commons-io:commons-io: 2.16.1 -> 2.17.0 #14713
+* 更新grpc.版本：1.66.0 -> 1.68.0 #14706
+* 更新 io.micrometer:micrometer-bom: 1.13.3 -> 1.13.4 #14681
+* 更新 io.micrometer:micrometer-core: 1.13.3 -> 1.13.4 #14679
+* 更新 io.micrometer:micrometer-tracing-bom: 1.3.3 -> 1.3.4 #14682, #14739
+* 更新 io.opentelemetry:opentelemetry-bom: 1.41.0 -> 1.42.1 #14651, #14676
+* 更新 io.projectreactor:reactor-core: 3.6.9 -> 3.6.10 #14680
+* 更新 io.zipkin.reporter2:zipkin-reporter-bom: 3.4.0 -> 3.4.2 #14678, #14710, #14734
+* 更新 Jackson_version：2.17.2 -> 2.18.0 #14738
+* 更新 jakarta.xml.bind:jakarta.xml.bind-api: 4.0.1 -> 4.0.2 #14690
+* 更新 jetty_version: 9.4.55.v20240627 -> 9.4.56.v20240826 #14650
+* 更新 log4j2_version: 2.23.1 -> 2.24.1 #14649, #14735
+* 更新 netty4_版本：4.1.112.Final -> 4.1.113.Final #14652
+* 更新 org.apache.groovy:groovy: 4.0.21 -> 4.0.23 #14709
+* 更新 org.awaitility:awaitility: 4.2.0 -> 4.2.2 #14708
+* 更新 org.glassfish.jaxb:jaxb-runtime: 2.3.3-b02 -> 2.4.0-b180830.0438 #14689
+* 更新 org.springframework.cloud:spring-cloud-openfeign-core: 3.1.5 -> 3.1.9 #14687
+* 更新 org.xerial.snappy:snappy-java: 1.1.10.6 -> 1.1.10.7 #14683
+*更新seata.版本：1.6.1 -> 1.8.0 #14692
+* 更新哨兵版本：1.8.6 -> 1.8.8 #14688
+* 更新 spring.version: 6.0.11 -> 6.1.13 #14691
 
-### 总结
+## 贡献者
+Dubbo 衷心感谢以下贡献者对此版本的贡献：
+@AlbumenJ、@chickenlj、@co63oc、@CrazyHZM、@finefuture、@funky-eyes、@JinQian1024、@JunJieLiu51520、@oxsean
 
-Dubbo 3.3.1版本的更新不仅引入了多个新特性，提升了系统的灵活性和性能，还修复了多个关键的Bug，确保了系统的稳定性和安全性。这些更新将帮助开发者更好地构建和管理分布式系统。
+## 新贡献者
+* @JunJieLiu51520 在 https://github.com/apache/dubbo/pull/14664 中做出了第一个贡献
+* @co63oc 在 https://github.com/apache/dubbo/pull/14671 中做出了第一个贡献
+* @JinQian1024 在 https://github.com/apache/dubbo/pull/14596 中做出了第一个贡献
 
-### 爆款标题
+**完整 Changelog**：https://github.com/apache/dubbo/compare/dubbo-3.3.0...dubbo-3.3.1
 
-- "Dubbo 3.3.1发布：单文件模式与HTTP2支持引领微服务新潮流"
-- "重磅更新！Dubbo 3.3.1版本带来多项新特性与Bug修复"
-- "Dubbo 3.3.1：让你的微服务架构更高效的秘密武器"
-- "探索Dubbo 3.3.1：新特性与依赖升级助力开发者"
-- "Dubbo 3.3.1版本更新：提升性能与稳定性的关键改进"
+---
+
+> 📦 仓库：[apache/dubbo](https://github.com/apache/dubbo) · 🏷️ 版本：`dubbo-3.3.1` · 📅 发布：2024-10-02 · [查看英文原版 Release](https://github.com/apache/dubbo/releases/tag/dubbo-3.3.1)
+
+*本文由 NextStack 自动翻译，内容以官方英文原文为准。*

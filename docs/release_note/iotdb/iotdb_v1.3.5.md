@@ -6,7 +6,6 @@ tag: "v1.3.5"
 published: "2025-09-11"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/apache/iotdb/compare/v1.3.4-1...v1.3.5"
 ---
 
 # iotdb v1.3.5
