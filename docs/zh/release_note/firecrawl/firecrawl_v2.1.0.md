@@ -1,94 +1,76 @@
+---
+title: "firecrawl v2.1.0"
+project: "firecrawl"
+repo: "firecrawl/firecrawl"
+tag: "v2.1.0"
+version: "v2.1.0"
+published: "2025-08-29"
+type: "minor"
+lang: "zh"
+---
+
 # firecrawl v2.1.0
-### 为什么要使用Firecrawl
 
-在信息泛滥的时代，数据是新的石油，但获取高质量数据却如同大海捞针。传统爬虫工具要么复杂难用，要么功能有限，让你在数据泥潭中越陷越深。Firecrawl 的出现，正是为了解决这一矛盾——它让数据提取变得简单、高效，且强大到足以应对各种复杂场景。无论你是开发者、研究员，还是数据驱动型企业的决策者，Firecrawl 都能帮你从杂乱无章的网页中提炼出有价值的信息，让你专注于洞察而非技术细节。
-
----
-
-### Firecrawl是什么
-
-Firecrawl 是一个开源的网络爬虫和数据提取工具，旨在帮助用户轻松地从网页中抓取和结构化数据。它支持多种数据格式和网站类型，并提供简洁的 API 和 SDK，使开发者能够快速集成和使用。
-
----
-
-### 入门示例
-
-假设你正在开发一个市场分析工具，需要从多个电商网站提取产品信息、价格和评论。使用 Firecrawl，你可以通过几行代码实现这一需求：
-
-```python
-from firecrawl import FirecrawlApp
-
-# 初始化 Firecrawl 应用
-app = FirecrawlApp(api_key="你的API密钥")
-
-# 抓取指定URL的数据
-response = app.scrape_url("https://example.com/product-page", params={
-    "extract_rules": {
-        "title": "h1",
-        "price": ".price",
-        "description": ".product-description"
-    }
-})
-
-print(response)
-```
-
-这段代码会提取指定页面的标题、价格和描述，并以结构化的 JSON 格式返回数据。Firecrawl 还支持批量抓取和自定义提取规则，适合各种复杂场景。
-
----
-
-### Firecrawl v2.1.0版本更新内容
-
-Firecrawl v2.1.0 引入了多项新功能和改进，包括：
-1. 支持按类别筛选搜索结果，如 GitHub 和研究类网站。
-2. 新增图像提取功能，并支持抓取 `data-*` 属性。
-3. 改进了 Google Drive 文件（TXT、PDF、Sheets）的抓取能力。
-4. 增强了 API 功能，支持最多 10 万条结果的映射端点。
-5. 提升了安全性和错误处理能力。
-
----
-
-### 更新日志
-
-# Firecrawl v2.1.0 发布！
+#Firecrawl v2.1.0 来了！
 
 ## ✨ 新功能
-
-- **搜索分类**：使用 `categories` 参数按特定类别筛选搜索结果：
-  - `github`：在 GitHub 仓库、代码、问题和文档中搜索
-  - `research`：在学术和研究网站（如 arXiv、Nature、IEEE、PubMed 等）中搜索
-  - 更多分类即将推出
-
-- **图像提取**：在 v2 版本的 scrape 端点中新增图像提取支持。
-
-- **数据属性抓取**：现在支持提取 `data-*` 属性。
-
-- **基于哈希的路由**：爬虫端点现在支持基于哈希的路由。
-
-- **改进的 Google Drive 抓取**：新增对 Google Drive 中 TXT、PDF 和 Sheets 文件的抓取能力。
-
-- **PDF 增强**：提取 PDF 标题并在元数据中显示。
-
-- **API 增强**：
-  - 映射端点支持最多 **10 万条结果**。
-
-- **Helm Chart**：新增用于 Firecrawl 部署的初始 Helm chart。
-
-- **安全性**：改进对 XFF 欺骗的防护能力。
+- **搜索类别**：使用 `categories` 参数按特定类别过滤搜索结果：
+    - `github`：在 GitHub 存储库、代码、问题和文档中搜索
+    - `research`：搜索学术和研究网站（arXiv、Nature、IEEE、PubMed 等）
+    - 更多即将推出
+- **图像提取：** 添加了对 v2 抓取端点的图像提取支持。  
+- **数据属性 Scraping：** 现在支持提取 `data-*` 属性。  
+- **基于哈希的路由：** 爬网端点现在处理基于哈希的路由。  
+- **改进了 Google Drive Scraping：** 添加了从 Google Drive 抓取 TXT、PDF 和表格的功能。  
+- **PDF 增强功能：** 提取 PDF 标题并在元数据中显示它们。  
+- **API 增强功能：**  
+  - 地图端点支持最多 **100k 结果**。  
+- **Helm Chart：** 为 Firecrawl 部署添加了初始 Helm 图表。  
+- **安全性：** 改进了针对 XFF 欺骗的保护。
 
 ## 🛠 修复
+- 修复了 Google 搜索抓取工具中的 UTF-8 编码。  
+- 恢复了预览模式下的抓取状态。  
+- 修复了 Python SDK 中缺失的方法。  
+- 更正了使用 `scrapeOptions.formats` 进行 v2 搜索的 JSON 响应处理。  
+- 修复了 v0 刮擦中 `credits_billed` 的现场人口。  
+- 改进了 v2 搜索中的文档字段覆盖。
 
-- 修复了 Google 搜索爬虫中的 UTF-8 编码问题。
-- 恢复了预览模式中的爬虫状态显示。
-- 修复了 Python SDK 中缺失的方法。
-- 修正了使用 `scrapeOptions.formats` 时 v2 搜索的 JSON 响应处理。
-- 修复了 v0 版本 scrape 中 `credits_billed` 字段的填充问题。
-- 改进了 v2 搜索中的文档字段覆盖逻辑。
+## 👥 新贡献者
+- @kelter-antunes  
+- @vishkrish200  
+- @ieedan  
 
-🔗 [完整更新日志](https://github.com/firecrawl/firecrawl/compare/v2.0.1...v2.1.0)
+🔗 [**完整 Changelog**](https://github.com/firecrawl/firecrawl/compare/v2.0.1...v2.1.0)
+
+
+## 发生了什么变化
+* 修复：https://github.com/firecrawl/firecrawl/pull/1924 中的 @kelter-antunes 在 Google 搜索抓取工具中正确处理 UTF-8 编码
+* feat(api)：通过https://github.com/firecrawl/firecrawl/pull/2008中的@vishkrish200向v2抓取端点添加图像提取支持
+* feat(api)：支持https://github.com/firecrawl/firecrawl/pull/2006中的@vishkrish200在抓取端点中提取数据*属性
+* 壮举：为 https://github.com/firecrawl/firecrawl/pull/1262 中的 @JakobStadlhuber 的 Firecrawl 部署添加初始 Helm 图表
+* feat(api/crawl)：在https://github.com/firecrawl/firecrawl/pull/2031中支持@mogery基于哈希的路由
+*修复（python-sdk）：https://github.com/firecrawl/firecrawl/pull/2050中@rafaelsideguide在client中缺少方法
+* feat(countryCheck)：在 https://github.com/firecrawl/firecrawl/pull/2051 中更好地防止 @mogery 的 XFF 欺骗
+* 修复：在 https://github.com/firecrawl/firecrawl/pull/2052 中使用 @ieedan 的 scrapeOptions.formats 时，在 v2 /search 响应中包含 json
+* 壮举（scrapeURL/rewrite）：通过 @mogery 在 https://github.com/firecrawl/firecrawl/pull/2053 中抓取 Google Drive TXT/PDF 文件和表格
+* 由 @nickscamara 在 https://github.com/firecrawl/firecrawl/pull/2060 中更新 README.md
+*（修复/抓取）在https://github.com/firecrawl/firecrawl/pull/2061中@nickscamara在预览模式下重新启用抓取状态
+* feat(pdf-parser)：通过 https://github.com/firecrawl/firecrawl/pull/2062 中的 @mogery 获取 PDF 标题并显示在元数据中
+* 修复（v2/搜索）：https://github.com/firecrawl/firecrawl/pull/2054 中的 @mogery 通过扩展运算符覆盖文档字段
+* feat(api)：通过 @mogery 在 https://github.com/firecrawl/firecrawl/pull/2049 中将 api_key_id 传播到计费功能
+* feat(api/map)：使用新的 RPC + 在 https://github.com/firecrawl/firecrawl/pull/2065 中通过 @mogery 将最大限制设置为 100k
+* 修复（api/v0/scrape）：通过@mogery在https://github.com/firecrawl/firecrawl/pull/2066中填充credits_billed字段
+
+## 新贡献者
+* @kelter-antunes 在 https://github.com/firecrawl/firecrawl/pull/1924 中做出了第一个贡献
+* @vishkrish200 在 https://github.com/firecrawl/firecrawl/pull/2008 中做出了第一个贡献
+* @ieedan 在 https://github.com/firecrawl/firecrawl/pull/2052 中做出了第一个贡献
+
+**完整 Changelog**：https://github.com/firecrawl/firecrawl/compare/v2.0.1...v2.1.0
 
 ---
 
-### 总结
+> 📦 仓库：[firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) · 🏷️ 版本：`v2.1.0` · 📅 发布：2025-08-29 · [查看英文原版 Release](https://github.com/firecrawl/firecrawl/releases/tag/v2.1.0)
 
-Firecrawl v2.1.0 版本带来了多项重要更新，包括搜索分类、图像提取、数据属性抓取等新功能，同时改进了 Google Drive 抓取能力和 PDF 处理效率。此外，API 功能的增强和安全性的提升进一步优化了用户体验。此次更新不仅丰富了工具的功能性，还修复了多个已知问题，确保了系统的稳定性和可靠性。
+*本文由 NextStack 自动翻译，内容以官方英文原文为准。*

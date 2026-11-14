@@ -1,0 +1,753 @@
+---
+title: "hermes-agent v0.22.1"
+project: "hermes-agent"
+repo: "NousResearch/hermes-agent"
+tag: "v0.22.1"
+version: "v0.22.1"
+published: "2026-10-14"
+type: "patch"
+lang: "zh"
+---
+
+# hermes-agent v0.22.1
+
+# 爱马仕特工 v0.22.1 (rc.5-v0.22.1)
+
+**发布日期：** 2026 年 10 月 14 日
+
+这是一个补丁版本，包含一些针对 Windows 应用商店的修复、插件更新等。
+
+## ✨ 特点
+
+- Agent): 添加nemotron super 3.5默认参数([`c59d2994`](https://github.com/NousResearch/hermes-agent/commit/c59d299408e924c3682619e7d9d368891d4b709e)) — @elisam0
+- Cli)：在模型选择器列表的顶部添加精选模型列表 ([`e6835fd3`](https://github.com/NousResearch/hermes-agent/commit/e6835fd3cb3bb399ce06cac5356c36226483b889)) — @elisam0
+- 插件目录）：添加 Hermes-lang-ko — 韩语桌面语言包 ([`e5f49b6a`](https://github.com/NousResearch/hermes-agent/commit/e5f49b6a17a9bd623da961d86b779d523a09227c)) — @dandacompany
+- 插件目录：添加 hermes-lang-pt-br （巴西葡萄牙语语言包）（[`0169e80c`](https://github.com/NousResearch/hermes-agent/commit/0169e80c7dbb6d2d2a33126310f5c5c075e1952a)） — @StudioCodeAI
+- 插件目录：添加 teamorouter（TeamoRouter 模型提供商）（[`ef223406`](https://github.com/NousResearch/hermes-agent/commit/ef223406225638a73e8f9c1536a734bb7addfe18)） — @2867297362mjb-sketch
+- 插件目录）：添加作者提要 ([`5f6d6836`](https://github.com/NousResearch/hermes-agent/commit/5f6d6836cc80051e297936b4467a91d7c4925039)) — @TakeshiTGAL
+- 插件目录）：将 aux-ledger 升级为 1.4.0 ([`6048066e`](https://github.com/NousResearch/hermes-agent/commit/6048066e22f3019505d04caeab29577c803f4d71)) — @olric3015
+- 插件目录）：添加等待分类帐目录卡（[`77cb58e5`]（https://github.com/NousResearch/hermes-agent/commit/77cb58e56ac47d5e3aa1ee720d4bcd7a8c6a8513）） - @olric3015
+- 插件目录）：添加等待分类帐（[`97e65322`]（https://github.com/NousResearch/hermes-agent/commit/97e65322efebd1b8dc07d33634b685df078d5858）） - @olric3015
+- 社区插件：lightningai + lightingai-rate-limit ([`07515466`](https://github.com/NousResearch/hermes-agent/commit/075154660043fe5656ec3ca48c93d6a6f9755494)) — @dinosauria123
+- 目录：在经过审查的确切源引脚处添加 Hermes AAC 0.1.0 ([`7c9adda8`](https://github.com/NousResearch/hermes-agent/commit/7c9adda81a2d152ba4f63fe6aecf59385dfc3284)) — @TREE-Ind
+- 插件目录）：添加 openinvest ([`b6e86101`](https://github.com/NousResearch/hermes-agent/commit/b6e86101c29593785c81eb8d380e2faef2530d5f)) — @longsizhuo
+- 目录：添加 Hermes-agent-mixer (v0.2.0 @ 04c4e13) ([`2e7e3859`](https://github.com/NousResearch/hermes-agent/commit/2e7e385959dc65ceb3053724724d8a5f526c675d)) — @Sahil-SS9
+- 插件）：将 Kumiho Memory 移至内存目录架 ([`46f95e08`](https://github.com/NousResearch/hermes-agent/commit/46f95e086379a2d701595b981cb94733fd060384)) — @kaveone
+- 添加规范组附件控件 ([`4673f17c`](https://github.com/NousResearch/hermes-agent/commit/4673f17c9aa5e5cfe48a68830e3ed352af11e0a6))
+- 通过规范准入使用事件绑定的托管文件 ([`e87bd098`](https://github.com/NousResearch/hermes-agent/commit/e87bd098eab1a24f97802fe783596bd91f81fc5b))
+- 将桌面组连接到规范的驱动程序控件（[`3c2c9d47`]（https://github.com/NousResearch/hermes-agent/commit/3c2c9d470a7ade1a5f47d202a2d1d24abc608f95））
+- 通过经过身份验证的所有者套接字传输托管生产者（[`51189b05`]（https://github.com/NousResearch/hermes-agent/commit/51189b05330b2eee1de148f4f83d3a5f34baa54a））
+- 在权限变更期间保留托管房间工作证据 ([`0af2c714`](https://github.com/NousResearch/hermes-agent/commit/0af2c714542d055047aa7529d896ee528e80ccdf))
+- 通过会话权限路由托管房间工作人员 ([`bd22e0f9`](https://github.com/NousResearch/hermes-agent/commit/bd22e0f9c467f8a68ee24656c49c7c28c7967954))
+- 有线规范托管组控件（[`fa2179bb`]（https://github.com/NousResearch/hermes-agent/commit/fa2179bb8c3bc263559bbfdfe32ac0d3ffe9a6ec））
+- 网关）：解析权限中的 --resume <title> 和 -c <title> [--create-if-missing] ([`11a83ad4`](https://github.com/NousResearch/hermes-agent/commit/11a83ad4d19fab4bd8889c9d04759af168c55b2b))
+- 在历史退休期间保留终端身份墓碑（[`ba435291`]（https://github.com/NousResearch/hermes-agent/commit/ba435291aab7d782e70f1102bd6174d9b6278675））
+- 通过准备好的控件路由本机 CLI 和 ACP 操作 ([`27b0f7f2`](https://github.com/NousResearch/hermes-agent/commit/27b0f7f20a7ba0fdc793fafe732d56adf2dfa54f))
+- 在突变收据交易中发布真实准备的压缩（[`b6540276`]（https://github.com/NousResearch/hermes-agent/commit/b654027693d6c8f92b185e8a3bd2728c5f3e81c5））
+- 准备并自动发布本地模型更改（[`7e7fa7c6`]（https://github.com/NousResearch/hermes-agent/commit/7e7fa7c61611a858cc0be51f790584b91f1d149c））
+- 以原子方式提交独立的本地分支策略和路由（[`f98eaec1`]（https://github.com/NousResearch/hermes-agent/commit/f98eaec108f365da07090495a82d6ca95c2de66a））
+- 没有私有参数或结果的项目管理工具进度 ([`61ccd894`](https://github.com/NousResearch/hermes-agent/commit/61ccd894c3674d01a2fb95528217816bc4888d52))
+- 桥梁管理工人审批澄清和停止 ([`a0b5118f`](https://github.com/NousResearch/hermes-agent/commit/a0b5118f46196190bc244a8f1ecf17d5754fc72c))
+- 从普通守护进程启动入场拥有的工具工作人员 ([`510e32be`](https://github.com/NousResearch/hermes-agent/commit/510e32be9a31a2caae358fc6c95673ffb24c0466))
+- 在裸代理构建时强制执行安全默认设置（[`1eeac867`](https://github.com/NousResearch/hermes-agent/commit/1eeac867b187f331b61e1b607d35b1af7f00b2bc)）
+- 抑制私人安全人员的规则技能和记忆读取器（[`25cda66a`]（https://github.com/NousResearch/hermes-agent/commit/25cda66a8bfff26da5c92bf3170cc724bd7fc5ec））
+- 绕过插件提供程序并在安全工作人员中执行钩子（[`33921e6f`]（https://github.com/NousResearch/hermes-agent/commit/33921e6f97a950b4b74ffa11cdb3004676f1c920））
+- 在运行时导入之前绑定不可变的私有工作配置（[`4cc3f420`]（https://github.com/NousResearch/hermes-agent/commit/4cc3f42087e61e84a3b6054903e88f3c7e943a56））
+- 公开经过验证的规范 ACP 编辑器 MCP 附件 ([`1bda56a1`](https://github.com/NousResearch/hermes-agent/commit/1bda56a104e55ebbd21fdefaed860f6488009b57))
+- 在规范的 ACP 简历上重新绑定准确的编辑 MCP 凭据 ([`5bfa2f2c`](https://github.com/NousResearch/hermes-agent/commit/5bfa2f2c2df10d26f24c103079fd9044e69b4df8))
+- 借用具有冻结会话清单的编辑器 MCP 配置 ([`394f00f6`](https://github.com/NousResearch/hermes-agent/commit/394f00f694cb90c2ea6f502eda0959bc37ab2830))
+- 隔离执行拥有的 MCP 注册表覆盖 ([`96e4d296`](https://github.com/NousResearch/hermes-agent/commit/96e4d2962bfeb56323063f64bad8cca3fd4479ee))
+- 使用运行时突变收据提交本地重置目标（[`821137c3`]（https://github.com/NousResearch/hermes-agent/commit/821137c301ebc5419f86a7069b66036b42100aab））
+- 在权限上公开配置文件范围的机器人中继邮箱 RPC ([`792aa35a`](https://github.com/NousResearch/hermes-agent/commit/792aa35adc57874c62a6d03a40d512d0bab1cebe))
+- 迁移排队的机器人邮箱身份而不重播声明 ([`af49e2fc`](https://github.com/NousResearch/hermes-agent/commit/af49e2fc05950473e4ee6f9dd431233540f62923))
+- 将本地机器人 DM 发送到发现的规范权威 ([`47ba694e`](https://github.com/NousResearch/hermes-agent/commit/47ba694e291d0d3233041720d04317f5cd82285f))
+- 通过会话权限承认已识别的机器人聊天中继传递 ([`998df8cc`](https://github.com/NousResearch/hermes-agent/commit/998df8cc0b8028634a6fca15677ab2fc20900b2a))
+- 保留确切的业主启动的入场工人索赔（[`fbdfd46d`]（https://github.com/NousResearch/hermes-agent/commit/fbdfd46de8303673c908207206a818d98f8d68f4））
+- 公开经过身份验证的所有者突变快照（[`d6331c48`]（https://github.com/NousResearch/hermes-agent/commit/d6331c4813bab5d0d920286b4af5a6b58fd13ced））
+- 冻结 ACP 工具策略并绑定执行拥有的编辑同意（[`e2f5cfc6`](https://github.com/NousResearch/hermes-agent/commit/e2f5cfc65ea6c38580d3ac38469e71bf31912354)）
+- 通过权威机构保留托管的 API 身份 ([`6b278ca4`](https://github.com/NousResearch/hermes-agent/commit/6b278ca4f015e2a5a5b0a30c5ac1b11825c15384))
+- 在确认执行之前承认 API 运行 ([`f2d9cea3`](https://github.com/NousResearch/hermes-agent/commit/f2d9cea38e97e0356b9b24c07ea5deddfe9de914))
+- 运行绑定的 API 打开共享缓存代理 ([`dea4f0c5`](https://github.com/NousResearch/hermes-agent/commit/dea4f0c568e6d0e13fd9ea8be73cd4ea81a96f25))
+- 恢复服务器绑定的 API 会话身份 ([`76532ae1`](https://github.com/NousResearch/hermes-agent/commit/76532ae1338cc193f6bdef92c0aa4d616a319150))
+- 保留索赔围栏结构化录取结果 ([`262e0ebf`](https://github.com/NousResearch/hermes-agent/commit/262e0ebf5ff0123d675098aaa5c8e03f5e4c5d1b))
+- 编写工作压缩生命周期和委托持久性（[`6c57ad37`]（https://github.com/NousResearch/hermes-agent/commit/6c57ad37c31e643f5692ea5d31ab759b425cf113））
+- 通过经过身份验证的所有者桥发布承诺的工人完成情况（[`d94ccc2d`]（https://github.com/NousResearch/hermes-agent/commit/d94ccc2d8182ed1a5da6a11b9d79a1d4b97a96c7））
+- 具有共享工作序列和纪元的栅栏委托收据（[`be85ca24`]（https://github.com/NousResearch/hermes-agent/commit/be85ca249e51ae9975c049604e1ae2ed4194261b））
+- 路由注册工人代表团通过持久发件箱写入（[`1ee6545f`]（https://github.com/NousResearch/hermes-agent/commit/1ee6545f7a34d4424d7dcae44b7e40c217cb4a0c））
+- 添加执行绑定的委托账本操作（[`8128e88f`](https://github.com/NousResearch/hermes-agent/commit/8128e88fd2b7f86b16534c0f62b605265aee80af)）
+- 保留工人头衔活动并使用收据路由边车（[`235e4f12`]（https://github.com/NousResearch/hermes-agent/commit/235e4f12d7d9212c205cf1f98876ea0e6fa0e12c））
+- 添加受赋值保护的工作构造函数和终结处理程序 ([`b7de5a8e`](https://github.com/NousResearch/hermes-agent/commit/b7de5a8eba9ab7c4851c823f8fd196f2c4ca5da8))
+- 原子紧凑和先进的工人成绩单分配（[`c2e77eba`]（https://github.com/NousResearch/hermes-agent/commit/c2e77ebaeb77b0f70dce83c105606335a64cd988））
+- 保留工作人员历史记录和缓存沿袭身份（[`e63e1101`]（https://github.com/NousResearch/hermes-agent/commit/e63e1101c02a80e6f3b9f0ca619fae5b6be73e6e））
+- 添加已收据的工人压缩防护装置和租赁 ([`d51afe4c`](https://github.com/NousResearch/hermes-agent/commit/d51afe4cb92e66e499c6e3f385dfbe18b8d9b88d))
+- 通过突变收据路由 REST 导入和删除 ([`2cdd103d`](https://github.com/NousResearch/hermes-agent/commit/2cdd103df9f7b1668292c36e791fc5fd084860ff))
+- 通过共享权限路由 REST 侧边栏编辑 ([`eb329d21`](https://github.com/NousResearch/hermes-agent/commit/eb329d21ba95077eff9764e7531e3364ed3d8362))
+- 协调共享突变并发布提交的修订（[`eb42a002`]（https://github.com/NousResearch/hermes-agent/commit/eb42a0021f05befde4159c43e097b652fc9d1cf3））
+- 通过生成和收据栅栏重用事务倒带（[`6777ffa4`]（https://github.com/NousResearch/hermes-agent/commit/6777ffa4bb67310bc5a7044892cc7cf48bdb685e））
+- 使用重试收据自动导入会话历史记录 ([`b9194595`](https://github.com/NousResearch/hermes-agent/commit/b919459524e609dd60cf04c5710941db8cce1903))
+- 围栏破坏性删除而不擦除运行时义务（[`e5249c9a`]（https://github.com/NousResearch/hermes-agent/commit/e5249c9af4efbcfd9aca39f276c71d938249c3e4））
+- 使用规范突变收据提交侧边栏编辑（[`0b1b8e0f`]（https://github.com/NousResearch/hermes-agent/commit/0b1b8e0f1d845060c84791f9bc45f581b9ed8858））
+- 项目执行拥有的对 ACP 查看者的批准 ([`97a24c10`](https://github.com/NousResearch/hermes-agent/commit/97a24c10b3b81a8ea1f142d0125b05ffc62098aa))
+- 将 ACP 传输附加到规范会话执行 ([`8dd92a30`](https://github.com/NousResearch/hermes-agent/commit/8dd92a30b6b53c9b5ae3a27eebcb90f36c9919a3))
+- 保留分配的工作人员提示上下文和使用锚点 ([`c6540cb9`](https://github.com/NousResearch/hermes-agent/commit/c6540cb9dd86a08eef0bf597bcb9dae68a955ac3))
+- 通过所有者持久 FIFO 允许本地自动化 ([`1642b339`](https://github.com/NousResearch/hermes-agent/commit/1642b339918cb74f87b4d03e17593d547e674329))
+- 队列由于网关心跳通过规范准入滴答（[`ab44af2c`]（https://github.com/NousResearch/hermes-agent/commit/ab44af2c0732485fb33c7e53bad0a5daa29f8d28））
+- 将 trusted 网关完成承认到持久会话 FIFO ([`7cd1b000`](https://github.com/NousResearch/hermes-agent/commit/7cd1b000daa3526e72a817df70190dd5569e0aec))
+- 排序持久写入后的 Fence Worker 终端收据 ([`21a48aea`](https://github.com/NousResearch/hermes-agent/commit/21a48aea09d719b3f2a1f2ebae8053791b6b13d2))
+- 验证实时工作人员持久性和显式重新启动采用（[`9d7d7e2a`]（https://github.com/NousResearch/hermes-agent/commit/9d7d7e2abdab2a59f7e7e0ff517b85b73de45681））
+- 规范交易中收据工作人员的主要和辅助用途（[`9d896c49`](https://github.com/NousResearch/hermes-agent/commit/9d896c499b034fcb4e16e58a1865a26feb778ec0)）
+- 原子接收结构化工人成绩单和转租约 ([`2abe47de`](https://github.com/NousResearch/hermes-agent/commit/2abe47de8bd8f2b9f76c024b339244e05e7918b0))
+- 通过网关处理程序调度绑定的本地斜杠命令（[`b0377e92`]（https://github.com/NousResearch/hermes-agent/commit/b0377e929b48bed68fb13799ad1878d747e128e3））
+- 与遗留目录共享经过验证的规范斜线发现（[`fcf50e03`]（https://github.com/NousResearch/hermes-agent/commit/fcf50e03c3b2cdae9c160ee01f23ba576c198965））
+- 通过私有守护进程授权来验证本机 HTTP ([`75764b2a`](https://github.com/NousResearch/hermes-agent/commit/75764b2ad0c8767069da717f68a81977d1165409))
+- 提交本地创建策略并恢复冷权限路由（[`aa2624ba`]（https://github.com/NousResearch/hermes-agent/commit/aa2624ba5c200d2e540e538e6bae73754f9f8f15））
+- 将桌面本地启动附加到规范网关（[`9c40ddcf`](https://github.com/NousResearch/hermes-agent/commit/9c40ddcfc2a04fdb3278e8173a85a4b03c24099f)）
+- 将 Ink 会话和控件绑定到规范权威信封 ([`a2d9e258`](https://github.com/NousResearch/hermes-agent/commit/a2d9e258daa97b43836821a97f79c5de06d21df5))
+- 通过规范网关引导程序附加 Ink 本地传输 ([`08f628f9`](https://github.com/NousResearch/hermes-agent/commit/08f628f9f5b0f5a2ebcaf7ece45e76e3ff71f457))
+- 通过网关路由正常经典和一次性发射（[`35510459`]（https://github.com/NousResearch/hermes-agent/commit/3551045907580e25a766d01bc56eb0ee41115d0d））
+- 添加仅传输经典网关 client 和选项验证 ([`6ed03be9`](https://github.com/NousResearch/hermes-agent/commit/6ed03be97446425fbf47c64ea4c71a318f4f6ba5))
+- 通过真实网关轮流应用本地启动策略 ([`080c5da6`](https://github.com/NousResearch/hermes-agent/commit/080c5da6f201058cf7dfda6bc0343910dc1f6625))
+- 定义冻结本地会话启动策略（[`81ed9712`](https://github.com/NousResearch/hermes-agent/commit/81ed9712f29cacb8727e2c0cc12960a64201abf0)）
+- 通过网关路由经过修订检查的会话元数据 ([`17ddbe44`](https://github.com/NousResearch/hermes-agent/commit/17ddbe4407a60230c2bfb0b743fc44b8a027f1c4))
+- 公开范围内的本地会话元数据和文档兼容性（[`52c354ff`]（https://github.com/NousResearch/hermes-agent/commit/52c354ff183ae96e2cbba651acda7e679b795db6））
+- 通过经过身份验证的控件创建网关拥有的本地会话（[`42967cdd`]（https://github.com/NousResearch/hermes-agent/commit/42967cddd73f56da1f62ab91f945c36347bd932c））
+- 在持久准入和索赔之前重新检查原生 Discord 会员资格 ([`cc0cd5c9`](https://github.com/NousResearch/hermes-agent/commit/cc0cd5c993e51feaf6be61077e2a2566673847fc))
+- 在普通网关中启动经过身份验证的会话权限（[`c3bf62eb`]（https://github.com/NousResearch/hermes-agent/commit/c3bf62ebd392e9d2f843b0f5b2f1020561c7baee））
+- 在附加查看器之间共享实时澄清控件 ([`9c474378`](https://github.com/NousResearch/hermes-agent/commit/9c474378a1f608cb388d50fdd5e3d5b173cbac89))
+- 将规范网关执行事件流式传输到共享观察者 ([`40d9b4c7`](https://github.com/NousResearch/hermes-agent/commit/40d9b4c7ea8e755c886588523fa3b659137fe54a))
+- 重新授权多路本机连接器来源 ([`244bff73`](https://github.com/NousResearch/hermes-agent/commit/244bff73c8cb4430b8041de6b14c87e5861f3c17))
+- 在网关查看者之间共享世代隔离的批准 ([`5e2afdae`](https://github.com/NousResearch/hermes-agent/commit/5e2afdaec356a2999de82d67b556f02189516ede))
+- 在持久准入之前保留原生媒体和上下文 ([`ef447482`](https://github.com/NousResearch/hermes-agent/commit/ef447482f23ec3c46c3e0f7dafd52e6693c14117))
+- 重播原子订阅水印的权威事件（[`d24dc3fa`]（https://github.com/NousResearch/hermes-agent/commit/d24dc3fa6f55afc29eb8e56907c225cbc0288c01））
+- 恢复提交的本机文本而不重播未知回合（[`78646003`]（https://github.com/NousResearch/hermes-agent/commit/78646003aeab0a086b81a580b3fd0eff80808e2a））
+- 执行附加的 websocket 打开消息传递实时代理 ([`47fbfd4c`](https://github.com/NousResearch/hermes-agent/commit/47fbfd4ca545b84f7413c263cb1aa799d7e34bd3))
+- 添加修订防护运行时重命名和存档收据 ([`5878e565`](https://github.com/NousResearch/hermes-agent/commit/5878e5656ca6907168d957cc08eec8e7862f13b4))
+- 具有原子重放收据的围栏类型工人持久性（[`7cc69d29`]（https://github.com/NousResearch/hermes-agent/commit/7cc69d293faa91c24d674886ed7bfbe7ddf71923））
+- 以原子方式导入耗尽的遗留准入，恢复未知（[`124dfa7c`]（https://github.com/NousResearch/hermes-agent/commit/124dfa7c5791435d3227efe76c378f10e88b0396））
+- 将持久会话准入集中在规范存储中（[`0695b12b`](https://github.com/NousResearch/hermes-agent/commit/0695b12b4c4b2c672d96229eba464e20617d73a8)）
+- 保持 declined 网关向导启动不受管理 ([`7500930d`](https://github.com/NousResearch/hermes-agent/commit/7500930d9f626ab45ec2a209448ef909a0fc6a1e))
+- 需要明确同意网关服务设置 ([`16d6b7da`](https://github.com/NousResearch/hermes-agent/commit/16d6b7daa13b51344fdcecc66958f3f876cf017f))
+- 限制运行时引导程序对等点并绑定本机管道 I/O ([`d3ccac14`](https://github.com/NousResearch/hermes-agent/commit/d3ccac14e84c5861ab6105b952b370c6a8b0e135))
+- 将现有的 API 组合到网关事件循环中 ([`bac47874`](https://github.com/NousResearch/hermes-agent/commit/bac47874ec723c1436748061c221a9c06fcdf642))
+- 区分不可用的网关所有者和不存在的运行时 ([`e903841c`](https://github.com/NousResearch/hermes-agent/commit/e903841cb861228bcde86f9840379876eb097b45))
+
+## 🔧 改进
+
+- Profiles）：构建一次种子路由视图；也展开 `enabled` ([`311155fa`](https://github.com/NousResearch/hermes-agent/commit/311155fade43d1993ea968909a2ad36762345bbc)) — @kshitijk4poor
+- 更新 nemotron 超级 3.5 名称 ([`3224993a`](https://github.com/NousResearch/hermes-agent/commit/3224993af1860ffdb587e491560f32bf845c82ad)) — @elisam0
+- Hermes_cli): 更新 nemotron 3.5 名称 ([`108ae4e7`](https://github.com/NousResearch/hermes-agent/commit/108ae4e7cd4c89a95545b1cdab3e1b72ce220755)) — @elisam0
+- 目录：在没有上游自我更新检查的情况下重新固定到构建（[`6462f64a`]（https://github.com/NousResearch/hermes-agent/commit/6462f64aefba9271f9977edcd430d61141d4d760）） - @slchris
+- 目录：将模型路由器更新为 v0.4.3 本机首选项 ([`6a097ee9`](https://github.com/NousResearch/hermes-agent/commit/6a097ee98d4c96eafa9ef76c98c3c39d6d65a0da)) — @meta Mindu
+- 保持本机 MCP 修订范围为冻结工具设置 ([`53d17f1c`](https://github.com/NousResearch/hermes-agent/commit/53d17f1c5b15059d4a44ea30839726371ff3df2e))
+- Cron 机器人聊天交付没有本地 CLI 后备通道 ([`5d87060e`](https://github.com/NousResearch/hermes-agent/commit/5d87060eb8c1445bc53e135fdb79be64fd6179e5))
+- 从查看器通知轮询器中取消机器人执行发现（[`c8ae25cd`]（https://github.com/NousResearch/hermes-agent/commit/c8ae25cd1122550a13ba22f84e325adab0d8c91a））
+- 设为仅默认 ACP 施工机构 ([`c423a431`](https://github.com/NousResearch/hermes-agent/commit/c423a431b330c6f9ef110b0eb8c691e37ec400e5))
+- 删除过时的更新程序 sidecar 删除路径 ([`58895653`](https://github.com/NousResearch/hermes-agent/commit/5889565343c9daa08ac64e774d4dda1f8b0ec459))
+- 删除已停用的本地服务启动导入 ([`5702f9df`](https://github.com/NousResearch/hermes-agent/commit/5702f9dfccd1981a722700fb7ce319c3daa58a6a))
+- 提取普通网关引导生命周期（[`3c0f1e01`](https://github.com/NousResearch/hermes-agent/commit/3c0f1e01e73ae5f05b3a44153c60b29daf2ff877)）
+- 冻结共享会话权限接口合约（[`1af74c27`](https://github.com/NousResearch/hermes-agent/commit/1af74c27301edc1ce0f48b866d3b645c4d949048)）
+- 提取 TUI 会话注册表和代理工厂接缝 ([`a38ca908`](https://github.com/NousResearch/hermes-agent/commit/a38ca908e0c33cc96b289e720a09d904072a4af6))
+- 将网关代理获取与本机进度分开（[`0f3a4fb2`]（https://github.com/NousResearch/hermes-agent/commit/0f3a4fb2e7aaa9b2676747bab3ca2656160b259a））
+- 提取网关轮次准备和持久阶段（[`6e8de80a`]（https://github.com/NousResearch/hermes-agent/commit/6e8de80a7af35b47fc79ae18f725f3588d8a278a））
+- 将网关服务向导移至设置同级 ([`f0b35a98`](https://github.com/NousResearch/hermes-agent/commit/f0b35a982eceb2a177da7d6545800b80607f233a))
+- 提取网关设置服务编排（[`02d0307c`](https://github.com/NousResearch/hermes-agent/commit/02d0307c24d2fa3541316484693f97a8e3e8723c)）
+- 删除提取的跑步者初始化主体（[`4b1379fb`]（https://github.com/NousResearch/hermes-agent/commit/4b1379fb1620e29f8e6c36c2f3660a08fb9f8bdc））
+- 提取网关引导和可写初始化阶段（[`0c287340`]（https://github.com/NousResearch/hermes-agent/commit/0c2873402d67ed43b59d51c83d83c1f6bf5dbbc4））
+- 提取独立 Web 应用程序的生命周期 ([`f38f2444`](https://github.com/NousResearch/hermes-agent/commit/f38f2444fdd5be92b340a3f39f5a226efd4db798))
+
+## 🐛 错误修复
+
+- 压缩）：后备摘要、多行设置注释和并行负载使技能标记保持正确（[`297552a9`]（https://github.com/NousResearch/hermes-agent/commit/297552a9d646119871391d202509822cd86330df））
+- 压缩）：斜杠技能主体的示例路径不位于锚点索引之外（[`d6020828`](https://github.com/NousResearch/hermes-agent/commit/d602082868bcca0efcfc0dd86723bbfce29fb9e5)）
+- 压缩）：小技能和斜线调用技能在压缩过程中保持重新加载标记（[`71e815de`]（https://github.com/NousResearch/hermes-agent/commit/71e815def843ab4885ba14a9170b546a6df077f9））
+- 桌面版）：更新注释保留全文，重新读取每次检查合并的 PR，尊重自定义分支 ([`f2a93db9`](https://github.com/NousResearch/hermes-agent/commit/f2a93db97c1c8ab7b97ce640764349c1f6a804a3))
+- Mcp）：通过外部工具执行保留服务器截止日期（[`f30020ed`]（https://github.com/NousResearch/hermes-agent/commit/f30020ed5e1fc35551ce0d259ed5086dd6bf9885））
+- 插件）：遵守便携式每服务器调用截止日期（[`fcc170b7`]（https://github.com/NousResearch/hermes-agent/commit/fcc170b7983e3891e02f96d977ecdf219d11be1e））
+- Agent）：在 Mistral 看到分割工具 ID 之前重写它们 ([`b33ed359`](https://github.com/NousResearch/hermes-agent/commit/b33ed35968f00896e093fa41735af7c108e6bead)) — @xxxigm
+- 配置文件）：将模型种子与提供者分辨率对齐（[`5fee8d77`]（https://github.com/NousResearch/hermes-agent/commit/5fee8d77bf91ea2e34817817334f98fe93a5b8f6）） - @helix4u
+- 配置文件）：继承规范和遗留自定义端点（[`2d3e75aa`]（https://github.com/NousResearch/hermes-agent/commit/2d3e75aab02f044000110137a0503b5fa2114367）） - @helix4u
+- 从 CDN 阻止消息中删除 VPN/代理建议 ([`300228d2`](https://github.com/NousResearch/hermes-agent/commit/300228d24c593f779055204753921fbe9a2163c5))
+- 目录）：维护者审核后重新固定代理混合器（[`4297a692`]（https://github.com/NousResearch/hermes-agent/commit/4297a692d9570e039aa8c7bfde900ffca420eaff）） - @Sahil-SS9
+- Pin 活动 v0.2.1 公共凭证路线 ([`3dac1f07`](https://github.com/NousResearch/hermes-agent/commit/3dac1f07d59f7f300f6f3433cef1bf8966b763c4)) — @hassan-kamel
+- 插件目录）：将 switchbot-control 更新为 d0e6f77 ([`c4bf61b1`](https://github.com/NousResearch/hermes-agent/commit/c4bf61b126a60172d2598b923fd08b1d60b1e84f)) — @TakeshiTGAL
+- 医生）：澄清 Docker npm 审计补救措施 ([`e21caa27`](https://github.com/NousResearch/hermes-agent/commit/e21caa27b75a880536ac3429f70c356ece19a330)) — @KoNit-K
+- Deps): 使 WhatsApp 桥锁突破其 npm 审计结果 ([`231cb757`](https://github.com/NousResearch/hermes-agent/commit/231cb757a4607e6b44e13c154696e869fd959102)) — @ethernet8023
+- Tui)：在规范会话选择器中保留本机遗留历史 ([`2171365a`](https://github.com/NousResearch/hermes-agent/commit/2171365a3fcbe646bcb21dc26e8391f5588023fe)) — @unsupportedpastels
+- Tui)：横幅显示规范 ID 的 main 的 8 字符会话标签 ([`2c979900`](https://github.com/NousResearch/hermes-agent/commit/2c97990051a6a415ce4baadf4bb6e90262cca482))
+- 网关）：本地流程完成保留为 process_complete 卡（[`ff770cb7`](https://github.com/NousResearch/hermes-agent/commit/ff770cb769852a776c8788ddaae2f121234eb942)）
+- 运行时）：通过重播保留诊断自动化类别 ([`bdac7911`](https://github.com/NousResearch/hermes-agent/commit/bdac7911d99e5b18793e3fc414ce67d839d1f3f0)) — David Dudok de Wit
+- 网关）：有权撤销机器人接收任务（[`d50b2eda`]（https://github.com/NousResearch/hermes-agent/commit/d50b2eda3d453eeedf720337f06e743eeb6d7655）） - @Lokee86
+- 网关）：保留操作员来源以进行本机恢复（[`c51049aa`]（https://github.com/NousResearch/hermes-agent/commit/c51049aa8f6099b79569d339de895ca0a9301ba5）） - @Lokee86
+- Cli）：在有限输出中保留阻塞控制（[`954638ed`]（https://github.com/NousResearch/hermes-agent/commit/954638ede23e1e3ddeca27412992cfa2d636ea31）） - @Lokee86
+- 网关）：隔离格式错误的机器人收据模式（[`4be62f9c`]（https://github.com/NousResearch/hermes-agent/commit/4be62f9ca68d626760a54742c6308cf38f804f88）） - @Lokee86
+- Acp): 清理延迟取消生命周期 ([`89dac620`](https://github.com/NousResearch/hermes-agent/commit/89dac62078c964f5aa8f1a5ff40f3914baecc481)) — @Lokee86
+- Gateway）：弥补剩余的统一运行时审查差距（[`83cdc63a`]（https://github.com/NousResearch/hermes-agent/commit/83cdc63a19925827ba0aa78339fb5acea02b06cc）） - @Lokee86
+- 网关）：隔离机器人收据并保持无头 cron 不生成 ([`cdf36315`](https://github.com/NousResearch/hermes-agent/commit/cdf36315e95e922970b91401bd1156c00a2d1817)) — @Lokee86
+- 网关）：恢复混合本地队列并退出失败的热服务（[`f4fd982b`]（https://github.com/NousResearch/hermes-agent/commit/f4fd982b56920ccf5311943e7d1a8c19f986e87f）） - @Lokee86
+- 网关）：终止重放间隙并保留 ACP 取消 ([`37662b16`](https://github.com/NousResearch/hermes-agent/commit/37662b16ec967452d3fd600db1dab1bc12e68e46)) — @Lokee86
+- 网关）：通过控制所有者路由本地票据引导程序（[`996d9beb`]（https://github.com/NousResearch/hermes-agent/commit/996d9bebd1190fa4e45f9f8106de99ff558dd819）） - @Lokee86
+- 桌面版）：转录协调会跳过运行时中间切换到另一个会话（[`09aafcea`](https://github.com/NousResearch/hermes-agent/commit/09aafceab4d325ccbed402caf928f7b9ead4371c)）
+- 网关/流）：失败的溢出头发送不再旋转事件循环（[`f0d9bd2f`]（https://github.com/NousResearch/hermes-agent/commit/f0d9bd2fc4971534f636bbda16c56004116b3d52））
+- 网关）：我们自己家里的 `profile` 仅针对封闭会话动词被剥离（[`2c5b0af5`]（https://github.com/NousResearch/hermes-agent/commit/2c5b0af5e19bf607ffd6f9bbb6cb34a1d4a5c9df））
+- 网关）：`gateway ensure` 在用户总线无法访问的 systemd 主机上启动（[`82db702f`](https://github.com/NousResearch/hermes-agent/commit/82db702f3fbf5a04db3880df02d6517b27bf3163)）
+- 桌面版）：路由到新套接字的会话在提交之前重新附加（[`307dac20`](https://github.com/NousResearch/hermes-agent/commit/307dac202f0f847632f05de1e91ffae3d3a125a6)）
+- 桌面）：注册表连接悬停预热该连接的网关（主#89756端口）（[#89756]（https://github.com/NousResearch/hermes-agent/pull/89756））
+- 机器人中继）：中继的DM仅针对实时配置文件（权限门上的#99392）（[#99392]（https://github.com/NousResearch/hermes-agent/pull/99392））
+- Gateway_chat)：一次性拒绝未知阻塞的会话； Stream-json 总是以结果结束 ([`08b6ebd0`](https://github.com/NousResearch/hermes-agent/commit/08b6ebd05155adabf8a7162e9755df424f083b6f))
+- Tui_gateway）：当配置文件的 state.db 从未初始化时，从扫描缓存中项目 RPC 应答（[`372ec7fc`](https://github.com/NousResearch/hermes-agent/commit/372ec7fc1303e4cdc9c74ebf3bc7e2dd2a786914)）
+- Cron)：Bot Chat 交付会创建缺失的 Bot Chat，而不是使运行失败 ([`364a0e22`](https://github.com/NousResearch/hermes-agent/commit/364a0e22b9106d94356a962089f1674ebe78c48a))
+- 种子复制补偿丢弃没有退休围栏的行（[`44212c5a`]（https://github.com/NousResearch/hermes-agent/commit/44212c5a559f11ea9285161ca4372590f09dde73））
+- Gateway）：精确突变重试修复运行时投影（X11，由@Xipong报道）（[`c1ee9286`]（https://github.com/NousResearch/hermes-agent/commit/c1ee92860012bffec6128aead77ba1b7fa1fed8d））
+- 桌面）：保留接受的输入并澄清持续工作退出（[`f8e234ed`]（https://github.com/NousResearch/hermes-agent/commit/f8e234ed89dd1b00149699d806783f89e2f5164e）） - @dokterdok
+- 桌面版）：删除池子系统后添加的删除池限制通知接线主线（[`c3632fcc`](https://github.com/NousResearch/hermes-agent/commit/c3632fcca3639e44f1f16ebfce176c3f2fd6823c)）
+- 运行时）：所有者范围仅是多路复用的；国外本地源未能关闭；主要=发射家（[`a37550b9`]（https://github.com/NousResearch/hermes-agent/commit/a37550b96ff7f5f433990149d1b04f100df2b57c））
+- 使用合并的入门选项键入会话创建身份 ([`0948ffc9`](https://github.com/NousResearch/hermes-agent/commit/0948ffc98a77426a0f529837e6ebee7b70343a30))
+- 提取后保留主要生命周期和发现行为（[`b186879a`]（https://github.com/NousResearch/hermes-agent/commit/b186879a3fe2915077880c71db5ad1a5ea8a79a0））
+- 保留 webhook 传递配置文件和快照范围主页 ([`8fe3d198`](https://github.com/NousResearch/hermes-agent/commit/8fe3d19800cf7ace40c9595fa5183a54d1de3927))
+- 保留按入场机器人和 API 作者 ([`61f75a77`](https://github.com/NousResearch/hermes-agent/commit/61f75a7752387852eb996eee9c9e081ed7f245dc))
+- 恢复混合时钟会话并组成运行时测试侦听器（[`9e747d7f`]（https://github.com/NousResearch/hermes-agent/commit/9e747d7f1e4374e98b0a8fe0a747fd770c5b6963））
+- 保留跨所有者的托管图像准入和执行（[`2672b820`](https://github.com/NousResearch/hermes-agent/commit/2672b82012162187f8e6b68d8a5cfb39531f8a8a)）
+- 网关）：本机恢复托管图像附件 ([`bdfe8a50`](https://github.com/NousResearch/hermes-agent/commit/bdfe8a50c30058a712ed6bedeb7bdcc3726312ce))
+- 桌面版）：重新连接期间保留配置文件目标 ([`ddf8bec7`](https://github.com/NousResearch/hermes-agent/commit/ddf8bec7b32bf4677f2f7e493f8f23393de451da))
+- 在启用输入之前恢复持久托管组发送（[`d3162155`]（https://github.com/NousResearch/hermes-agent/commit/d31621559f82646fe0161f2c8ea2408b5c349108））
+- 翻译所有桌面区域设置中的规范托管组控件 ([`29e27af5`](https://github.com/NousResearch/hermes-agent/commit/29e27af5cf2905202d4992084d229e3b16c08d59))
+- 桌面版）：期刊规范组在录取前发送（[`3d1cb4e0`](https://github.com/NousResearch/hermes-agent/commit/3d1cb4e0e88dc56ae0d603c26991651a4283a0c3)）
+- 集成托管附件准入挂钩 ([`c094d91e`](https://github.com/NousResearch/hermes-agent/commit/c094d91ec29a9854dd9eb481bd3d975a05898772))
+- 通过任务范围的所有者证明传输托管输入字节 ([`519e1101`](https://github.com/NousResearch/hermes-agent/commit/519e11011d63df04ae8b5381475cbe10db994782))
+- 将托管所有者运输绑定到确切的目的地家庭（[`9035ef9a`]（https://github.com/NousResearch/hermes-agent/commit/9035ef9a9c04b2d00c9e4b0b561180001ec9ea4d））
+- 最大限度地减少保留的 Webhook 目标并保留旧收据 ([`c6456808`](https://github.com/NousResearch/hermes-agent/commit/c6456808af9803127ba8556b75a613f7b1d17502))
+- 捕获对等 ACK 证据并修剪未使用的文件目录助手 ([`c86dd71b`](https://github.com/NousResearch/hermes-agent/commit/c86dd71b654e47564eeee62897396f8558428138))
+- 通过游标防护重试发布托管文件共享 ([`49e27d8b`](https://github.com/NousResearch/hermes-agent/commit/49e27d8b4c9a21f9392cac86ff765090ef32de5f))
+- 通过独立拥有的配置文件守护程序运行托管房间（[`53a260ac`]（https://github.com/NousResearch/hermes-agent/commit/53a260ac1b09e9d11413bccdb9d7e6e7574311ce））
+- 围栏托管丢弃并防止未知的重试代（[`3cde0092`]（https://github.com/NousResearch/hermes-agent/commit/3cde00927487ce70759b4640d857d2ecfebbf9b4））
+- 明确丢弃确切托管的未知执行（[`864c34f3`]（https://github.com/NousResearch/hermes-agent/commit/864c34f3c68213242cbfba9680a599769cc6c56c））
+- 在服务关闭期间保留托管房间所有权 ([`bfa8022d`](https://github.com/NousResearch/hermes-agent/commit/bfa8022d88c47aca2cd020848303928430b7bdaa))
+- 持久恢复 webhook 目标 ([`d207fd64`](https://github.com/NousResearch/hermes-agent/commit/d207fd64d3b0ab2b1073d048009873565a14abad))
+- 普通适配器启动后恢复本机准入 ([`70659676`](https://github.com/NousResearch/hermes-agent/commit/706596765107a52ef20397ce21e92901a7402357))
+- 通过规范准入执行有限执行策略（[`9edd28e6`](https://github.com/NousResearch/hermes-agent/commit/9edd28e6e0ad951f8bf1c6ca0917537bf579051b)）
+- 在允许的回合中加入有限网关聊天代表团 ([`5977ef75`](https://github.com/NousResearch/hermes-agent/commit/5977ef75fdd74306bdda3da5e2a9bba6df0a720a))
+- 解决本机票证探针中的托管节点 ([`ee9030bd`](https://github.com/NousResearch/hermes-agent/commit/ee9030bd303da503857f26ecce3c7dd445b9cc8a))
+- 保留手动压缩设置和会话标识 ([`9fa0b6aa`](https://github.com/NousResearch/hermes-agent/commit/9fa0b6aa7a42f621172b66bf9d44dc118ca60590))
+- 防止持久交付切换后出现重复的 cron 警报 ([`47e3bb25`](https://github.com/NousResearch/hermes-agent/commit/47e3bb25fb5b26e6d38f276f7d8ee30b787c8da3))
+- 保留 cron 传递静默和事件确认 ([`0c7f676e`](https://github.com/NousResearch/hermes-agent/commit/0c7f676ee41564da7d4355c5665523a970d97fe7))
+- 绑定规范 cron 所有者商店获取 ([`61759b57`](https://github.com/NousResearch/hermes-agent/commit/61759b573d4626eb4f8598a4abb689c90d0bb03f))
+- 安全地恢复规范的桌面图像缩略图（[`4d5db820`](https://github.com/NousResearch/hermes-agent/commit/4d5db8201b9022c0cd42863bbfdd2282688731a7)）
+- 重新启动后恢复准备好的桌面图像草稿（[`5034ee3a`]（https://github.com/NousResearch/hermes-agent/commit/5034ee3a4a20ec08fc48c25e7af1155a7d69a62a））
+- 将丢失的提示丢弃路由至其会话所有者 ([`566872a8`](https://github.com/NousResearch/hermes-agent/commit/566872a8190128359f55193eb42222eaca7aa8f1))
+- 在延迟重定向收据中保留较新的回复 ([`ac30b57a`](https://github.com/NousResearch/hermes-agent/commit/ac30b57acbddec343573c2b3488fbda4855e25e5))
+- 重试瞬时桌面繁忙策略读取 ([`82098e63`](https://github.com/NousResearch/hermes-agent/commit/82098e63730d87c63b22ace154e168e791c1cbef))
+- 当更正被拒绝时保持桌面流完整（[`3c886973`]（https://github.com/NousResearch/hermes-agent/commit/3c88697343eb324a8bcd25929ce65a7d927b7f84））
+- 连接恢复和所有者投影路线（[`cfa5c152`]（https://github.com/NousResearch/hermes-agent/commit/cfa5c152214d246e49f3304efa33fe68aa9c27c8））
+- 跨本机临时根发现私有网关套接字 ([`de66df14`](https://github.com/NousResearch/hermes-agent/commit/de66df140032c903f3fae7fefbd441ade7ea0d54))
+- 公开所有者范围的辅助会话读取（[`61ace21a`]（https://github.com/NousResearch/hermes-agent/commit/61ace21a95a9d78096924fc61b086963ce7e3af7））
+- 在授权所有者缓存中暂存规范远程映像 ([`baaa4464`](https://github.com/NousResearch/hermes-agent/commit/baaa4464a4680dea7eb1fa21d423442cf94c73c6))
+- 来自规范所有者的项目本机配置和模型库存（[`1064971e`]（https://github.com/NousResearch/hermes-agent/commit/1064971e07d3f95f39a7dc9128b14f7093d416ff））
+- 保留看板发现和未知所有者尝试 ([`90e2b2eb`](https://github.com/NousResearch/hermes-agent/commit/90e2b2eb3adb1f46638e03817c5519d0cbd7d872))
+- 将规范的 cron 收据协调为持久交付 ([`c1172b1a`](https://github.com/NousResearch/hermes-agent/commit/c1172b1a8278bcb7f4135317fcba7c9904992a68))
+- 保留托管工作人员中承认的图像和异步使用（[`4abbb3f9`]（https://github.com/NousResearch/hermes-agent/commit/4abbb3f9788ce374652ff8380f458d7797352b1a））
+- 跨 HTTP 和 WebSocket 共享静态令牌会话所有权 ([`56e344e5`](https://github.com/NousResearch/hermes-agent/commit/56e344e5a8039caaafddad33ccc415f5b7b8a336))
+- 连接所有者和 clients 之间的规范切换维修 ([`c8f8d9ae`](https://github.com/NousResearch/hermes-agent/commit/c8f8d9ae638447799c1253f6e0d0d3093d87f9cc))
+- 恢复范围规范繁忙和校正控制（[`daa01697`]（https://github.com/NousResearch/hermes-agent/commit/daa016976b09cec396c9c421baa34bec83622af0））
+- 按提供商和发行者隔离经过身份验证的网关所有者 ([`6b8a6d4c`](https://github.com/NousResearch/hermes-agent/commit/6b8a6d4c358161b62c621cb7f04a4c901ec701a9))
+- 通过经过验证的 Python 管道引导 Windows 桌面票据 ([`f8ba25a9`](https://github.com/NousResearch/hermes-agent/commit/f8ba25a99b0e9bd75d3f2743f4887d813dacb195))
+- 通过规范招生提交桌面图像（[`c93382c0`]（https://github.com/NousResearch/hermes-agent/commit/c93382c0a1dc3abb6a19e84ad89190446673d943））
+- 保留桌面忙碌修正意图拒绝（[`b3cca0f3`]（https://github.com/NousResearch/hermes-agent/commit/b3cca0f3caf7cc7fba027af120657458246a152d））
+- 将规范的 RPC 拒绝排除在桌面恢复恢复之外 ([`9ba2582b`](https://github.com/NousResearch/hermes-agent/commit/9ba2582bbae1f72e5cb37ea00afd5d00ca25c3a1))
+- 保留未绑定的墨水草稿，而不是索取仅内存入场（[`07588b5e`]（https://github.com/NousResearch/hermes-agent/commit/07588b5e7d13f6cf80be71e4da20311fc58de062））
+- 遵守非幂等规范繁忙控制确认（[`01e4829c`](https://github.com/NousResearch/hermes-agent/commit/01e4829cbaee5cc0d3c860717853abfc9ff8f31b)）
+- Ink client 主机上的舞台 clipboard 图像 ([`179a8473`](https://github.com/NousResearch/hermes-agent/commit/179a84734cdf604604a45d4531c22f4c45e17cbe))
+- 范围墨水配置水合和提示模型突变（[`798c3926`]（https://github.com/NousResearch/hermes-agent/commit/798c3926662aa5aec2f37ec3291b38ecc609d860））
+- 保留断开的墨水输入和规范控制收据 ([`1a5bae9b`](https://github.com/NousResearch/hermes-agent/commit/1a5bae9bd1ab6b99e100067989a2f03f2389f0a6))
+- 暂存并保留规范的 Ink 图像提交 ([`33622c04`](https://github.com/NousResearch/hermes-agent/commit/33622c04095805497ebe0fbe5c0e0140178556f6))
+- 通过规范权威路由 Ink 会话控制 ([`bf0b25a9`](https://github.com/NousResearch/hermes-agent/commit/bf0b25a90f1f554091e8fb516ae5df0addea869a))
+- 保留看板执行 PID 和持久的工作成果 ([`d4fd07d2`](https://github.com/NousResearch/hermes-agent/commit/d4fd07d21239500dd03d6aac78d5bba8d0397f41))
+- 通过 trusted 所有者准入路由已声明的看板任务 ([`5aeba055`](https://github.com/NousResearch/hermes-agent/commit/5aeba055f28280bd326f29aa9f8627eaabf4dc05))
+- 承认代理 cron 通过规范所有者运行 ([`cdbe8c35`](https://github.com/NousResearch/hermes-agent/commit/cdbe8c35adf224de282b47fde3fc297002441485))
+- 通过会话权限转发A2A配置文件任务（[`4e3a6bdb`]（https://github.com/NousResearch/hermes-agent/commit/4e3a6bdbb732b543f5a3b80f35ea5abbd047b4e8））
+- 项目ACP取消并准确录取失败（[`03c0efc8`](https://github.com/NousResearch/hermes-agent/commit/03c0efc84dd66716f0a3c28b1dd94fa7abe63b31)）
+- 保留 API 内容身份历史记录和终端结果 ([`f48d0956`](https://github.com/NousResearch/hermes-agent/commit/f48d09563b37297322a994b42c24f1359ddb7d8c))
+- 屏蔽遗留历史声明并遵循机器人重置目标（[`f88f8615`]（https://github.com/NousResearch/hermes-agent/commit/f88f861567de81ec6828854bffcd0b290ca238c2））
+- 通过 trusted 会话所有者采用旧的本地历史记录 ([`cb748e7a`](https://github.com/NousResearch/hermes-agent/commit/cb748e7a193a70ead9e2e50d1b3cdc1163123f27))
+- 在稍后压缩之前记录物理准入分配（[`7b9dc454`](https://github.com/NousResearch/hermes-agent/commit/7b9dc45444f367f4cffcc43da994350dd0b8830b)）
+- 对托管工作线程错误进行分类并验证压缩重新启动 ([`4bbbb90f`](https://github.com/NousResearch/hermes-agent/commit/4bbbb90ff2189b3d476182a210c25332d28c4cbf))
+- 保留工作人员压缩准入身份（[`588c609c`]（https://github.com/NousResearch/hermes-agent/commit/588c609c1542f447ccea9fadba536ffa62c63adf））
+- 压缩后刷新工作行身份（[`e19f05ff`](https://github.com/NousResearch/hermes-agent/commit/e19f05ffb9ca0aa59650047406b8a7b9893f2d5b)）
+- 保留受管理的转录谱系并在工作人员完成后解决（[`ec0ebf80`]（https://github.com/NousResearch/hermes-agent/commit/ec0ebf80639d58a3854bb087bb63e3db14163346））
+- Cli)：将 Termux 启动提示保留在网关策略之外 ([`31dc5078`](https://github.com/NousResearch/hermes-agent/commit/31dc5078fa4251d3eef039d2ed88914cb28d0a49))
+- 服务后缀遵循主配置文件根规则；删除进程内 cli.main 测试（[`0ea5a879`](https://github.com/NousResearch/hermes-agent/commit/0ea5a879b957efd52e27c366aca7659479ee20e8)）
+- 规范交付将附件结果提供给 record_delivery；记录失败的转弯（[`19ca1e85`]（https://github.com/NousResearch/hermes-agent/commit/19ca1e85c805264bb662684c94a51a56179e67d7））
+- 托管工作人员发件箱目录是执行 id 的可移植拼写 ([`4a08032d`](https://github.com/NousResearch/hermes-agent/commit/4a08032d35685a3079a17d48db4112a086a9fb45))
+- 所有者通过翻译蹦床验证托管工人身份（[`e8fbefb2`]（https://github.com/NousResearch/hermes-agent/commit/e8fbefb21e37b5e98ddf73c062e4ffb9eb7a6520））
+- 拒绝 /v1/ 在具有有限 409 的本机拥有的会话上运行 ([`809fec15`](https://github.com/NousResearch/hermes-agent/commit/809fec1567d3d5eb0fa83c32a81bda49aec93863))
+- 通过终端结算提交执行结果([`43348a03`](https://github.com/NousResearch/hermes-agent/commit/43348a03b7fd1463a5696567bcc1be59d939f1f0))
+- 重放规范的中继信封，直到终端回复确认（[`8dfd7add`]（https://github.com/NousResearch/hermes-agent/commit/8dfd7addcd589a9d4bd876eb930ed6d6b6b0f2fc））
+- 将机器人中继发现和发件箱保留在发件人配置文件中 ([`437e3d85`](https://github.com/NousResearch/hermes-agent/commit/437e3d85d683871e498beb5da4017c2d176d934d))
+- 隔离桌面机器人中继发件人和目标配置文件路由 ([`4f75b6aa`](https://github.com/NousResearch/hermes-agent/commit/4f75b6aae4c54849dd3d894c3b566fe2ab453d3c))
+- 恢复机器人邮箱收据并在所有者启动时迁移排队输入 ([`76a60441`](https://github.com/NousResearch/hermes-agent/commit/76a6044139c12e6a9ad71987b9e10117c246c186))
+- 从准确的承诺录取结果中恢复机器人回复 ([`a5ea5b21`](https://github.com/NousResearch/hermes-agent/commit/a5ea5b21a5252aae945eb901e2912c256d226674))
+- 保留已识别的桌面机器人交付直至结算 ([`e1734e7d`](https://github.com/NousResearch/hermes-agent/commit/e1734e7de6165ca246a3218d1df0e64e7a7c2a8d))
+- 当拥有的工人丢失时暂停管理准入追随者（[`e6077ecc`]（https://github.com/NousResearch/hermes-agent/commit/e6077eccc19e5723ee33f883c14fcf101f4cd355））
+- 防止旁路工作人员进行范围内的秘密补液（[`1ff3d877`]（https://github.com/NousResearch/hermes-agent/commit/1ff3d87770d4f7e9e5201d21b655fcd7eaf20e1d））
+- 在对等持久性期间保留托管的 API 源 ([`06a9516c`](https://github.com/NousResearch/hermes-agent/commit/06a9516c166d38bf908939641c8f519680590094))
+- 在 API 崩溃重试时返回显式未知执行 ([`f26c5c43`](https://github.com/NousResearch/hermes-agent/commit/f26c5c432123de5d7d7bde365d00b9416950c943))
+- 当其适配器重新连接时恢复提交的 API 队列 ([`8ef9fbe8`](https://github.com/NousResearch/hermes-agent/commit/8ef9fbe8ef066b8405e62740ba803da6f0afb6fe))
+- 通过规范待处理控件解决 API 提示 ([`f35358a6`](https://github.com/NousResearch/hermes-agent/commit/f35358a60f2240a58019c6c08b4b62eef9f5465b))
+- 保留预编辑器凭证身份和本机控制覆盖范围（[`8e3b3a0c`](https://github.com/NousResearch/hermes-agent/commit/8e3b3a0c67a97840d0ac70ef44ceffef4c82a129)）
+- 推迟编辑器 MCP 架构更改，直到新会话为止 ([`be748101`](https://github.com/NousResearch/hermes-agent/commit/be748101302dd40bd736292912510c97c9f79230))
+- 在其收货交易中绑定导入的历史控制（[`f40dc17b`](https://github.com/NousResearch/hermes-agent/commit/f40dc17bd6bdbbfe205de03d1d5cb5752a4150a6)）
+- 防止导入重用已停用的运行时身份（[`0a55e373`](https://github.com/NousResearch/hermes-agent/commit/0a55e37320050ad74dbf61921add9ce97b9e263d)）
+- 删除时停用本地物理沿袭和缓存关联性 ([`a1d47945`](https://github.com/NousResearch/hermes-agent/commit/a1d47945ad82be38d901a1b31860324114098b95))
+- 授权冷历史突变而不执行重新绑定（[`529fb127`]（https://github.com/NousResearch/hermes-agent/commit/529fb127b42ad217ad4a697eaff14c9304b8843b））
+- 使用删除收据停用本机会话路由 ([`10b155bf`](https://github.com/NousResearch/hermes-agent/commit/10b155bfc084ea66c952611070985f3904a00679))
+- 淘汰旧版机器人邮箱生成器和推理消耗 ([`ee09dad4`](https://github.com/NousResearch/hermes-agent/commit/ee09dad420a1fd49165ae89f6f5ea635c260b7ff))
+- 在精确重试时保留不可变的机器人中继回复收据 ([`391517b7`](https://github.com/NousResearch/hermes-agent/commit/391517b74b3a129befaf54de8cc3bae21954798c))
+- 拒绝机器人交付而不是启动竞争运行时（[`03f5d843`]（https://github.com/NousResearch/hermes-agent/commit/03f5d8438efaff32e8775d8dcb795611fb3668d0））
+- 在所有者出版物内迁移工人轮换自动化（[`6fce9f77`](https://github.com/NousResearch/hermes-agent/commit/6fce9f77c6f5a84c93ecaca90f0497c5c444910b)）
+- 在代理发现之前绑定注册的工人分类帐（[`56586998`]（https://github.com/NousResearch/hermes-agent/commit/56586998e278d3da1a284bfff70bf8a7bc1bed42））
+- 轮换后释放原来的工人轮租 ([`ce8b1171`](https://github.com/NousResearch/hermes-agent/commit/ce8b1171a6617fa162b0f0c51123d5a93c84dc95))
+- 保留 REST 突变成功响应形状 ([`c1882a69`](https://github.com/NousResearch/hermes-agent/commit/c1882a690ef7f913fe699c17c9f004c5823a9f61))
+- 需要对旧版批量会话写入进行独家维护 ([`7323773c`](https://github.com/NousResearch/hermes-agent/commit/7323773c0a13dae5ba57328d3ca2aec10fb156d9))
+- 无需激活配置文件即可保持机器人可见性（[`7fab399a`](https://github.com/NousResearch/hermes-agent/commit/7fab399a7cde05e69dc37d14bad56c361060495d)）
+- 在不确定的回复中保留仪表板突变身份（[`20dd6813`]（https://github.com/NousResearch/hermes-agent/commit/20dd681307dc86ea835af2d7b204d454a756bb3f））
+- 从所有者快照准备桌面会话编辑 ([`c01a625c`](https://github.com/NousResearch/hermes-agent/commit/c01a625c6896bbf770a45508a0e505281f51ac68))
+- 使用真正的权威装置保留导入验证（[`83b87b01`]（https://github.com/NousResearch/hermes-agent/commit/83b87b01a66f4f4f3293b885338192bb70ddbe01））
+- 拒绝强制会话突变计数器和标志 ([`927ca964`](https://github.com/NousResearch/hermes-agent/commit/927ca9647fa23491ed911d883c4450a16cd091b5))
+- 锚定 V4A 编辑器批准路径到会话 cwd ([`490453f7`](https://github.com/NousResearch/hermes-agent/commit/490453f7b8448be4e7f9839b0f886872a3035919))
+- 在其冻结工作空间下列出规范 ACP 会话 ([`3c79ac4e`](https://github.com/NousResearch/hermes-agent/commit/3c79ac4e609f339b791f2bef9a7c217d5ca6b641))
+- 解决针对执行 cwd 的 ACP 编辑预览 ([`85ce5418`](https://github.com/NousResearch/hermes-agent/commit/85ce5418ec748a3325cbda63faacdece56134846))
+- 项目规范编辑器差异和冻结 cwd 到 ACP ([`45aee742`](https://github.com/NousResearch/hermes-agent/commit/45aee7424c2dd934dba955589509b491177e995f))
+- 在没有 client MCP 发现的情况下释放 ACP 传输 ([`92d97ba8`](https://github.com/NousResearch/hermes-agent/commit/92d97ba8a4446bcebbf33a7199706fa673a2e6a1))
+- 转向 API 贯穿当前权威声明 ([`a69efa90`](https://github.com/NousResearch/hermes-agent/commit/a69efa90ffe35e88ecbba80c0f28497fa4391018))
+- 栅栏 API 运行取消其持久入场 ([`f67f19fb`](https://github.com/NousResearch/hermes-agent/commit/f67f19fb272b3d8ce71645da321b73d5f6bde4ff))
+- 跨 HTTP 交付模式重播持久的 API 结果 ([`cbcad6fb`](https://github.com/NousResearch/hermes-agent/commit/cbcad6fb554f3cdab9ef9c630fc8f1a1cb3eb2aa))
+- 将可恢复的工人头衔冲突保留为持久结果 ([`b7d14c75`](https://github.com/NousResearch/hermes-agent/commit/b7d14c758e04174e97db063db2ed5a32ff99d0e8))
+- 保留工作压缩预发布刷新注释（[`dbe08962`]（https://github.com/NousResearch/hermes-agent/commit/dbe089623f71a8ee783955e979910834d8de56d7））
+-轮换后保留工人压缩清理权限（[`36d5b639`]（https://github.com/NousResearch/hermes-agent/commit/36d5b63906fc0b853ec31db5d48db572c2dfc66b））
+- 接受真实的工作人员压缩切换标记（[`e98a036a`](https://github.com/NousResearch/hermes-agent/commit/e98a036a09f3bbf113b211890ae7b5cdbea6a6bc)）
+- 在父级删除期间保留实时委托任务 ([`b0f792ac`](https://github.com/NousResearch/hermes-agent/commit/b0f792ac49a7e222b5490c6fb37c61613f049c24))
+- Fence ACP 控制并公开只读目录 ([`d304b025`](https://github.com/NousResearch/hermes-agent/commit/d304b025fca20bfdadae7bea9f13c8a93730dc74))
+- 将 ACP 会话目录保持为只读 ([`b117521c`](https://github.com/NousResearch/hermes-agent/commit/b117521cbd6ff77c5278f8c7e343d55a0e40d035))
+- 将 API 存储绑定到其选定的运行时权限 ([`c812ec71`](https://github.com/NousResearch/hermes-agent/commit/c812ec711b96a0851ecc44329c9399d62cdeabf9))
+- 使用真实路线准入装置保留 webhook 重复响应 ([`253f9b5e`](https://github.com/NousResearch/hermes-agent/commit/253f9b5e4c5f69460991c0ad7a6cbee403f739db))
+- 通过承认的会话和生成完成 Fence Webhook ([`ca2211f0`](https://github.com/NousResearch/hermes-agent/commit/ca2211f0d845da6ec4e723a40293b21c46f52625))
+- 在确认之前持久地接受经过身份验证的图形通知（[`e8e17493`](https://github.com/NousResearch/hermes-agent/commit/e8e17493bad09a1470107fa0655f47f6b332e478)）
+- 保留中继传递，直到规范准入提交（[`e75bc52f`]（https://github.com/NousResearch/hermes-agent/commit/e75bc52f50b4af92b0f7ac191cd7135276e264ab））
+- 仅在持久本机许可后才确认 Webhooks ([`9d9e4789`](https://github.com/NousResearch/hermes-agent/commit/9d9e4789dd561afe56f2096f06ed9cd9c5439697))
+- 在代理施工前恢复工人压缩机防护罩（[`84ccae21`](https://github.com/NousResearch/hermes-agent/commit/84ccae21417e629132f4a205bd98a588c43a1f41)）
+- 拒绝计算工作者中未注册的子进程和 cron 持久性 ([`2ee0725c`](https://github.com/NousResearch/hermes-agent/commit/2ee0725c324f4549ba65d70209ff1a7cabeeb7a4))
+- 将注册的计算导入保留在所有者委托恢复之外 ([`7eecdcf2`](https://github.com/NousResearch/hermes-agent/commit/7eecdcf213664c482d1687acfad44c744bd71542))
+- 在当地消费者中保留明显的重复观看通知（[`0c42619c`](https://github.com/NousResearch/hermes-agent/commit/0c42619c35d1853224c68dbbded3fd5a5dd3aba4)）
+- 退款被录取拒绝的遗留通知索赔（[`d5b332ed`](https://github.com/NousResearch/hermes-agent/commit/d5b332edfefa7ba9ae663f68ef03011ca1b38df2)）
+- 为观看事件提供稳定的所有者绑定自动化身份（[`135730d1`]（https://github.com/NousResearch/hermes-agent/commit/135730d1bc3dccefaf98464460b3a97e7d5332b4））
+- 在首次运行配置检查之前验证网关启动选项 ([`bec94623`](https://github.com/NousResearch/hermes-agent/commit/bec94623041eba5d9847a2a8c51657546645a682))
+- 恢复网关准入前的首次运行引导（[`351b8eb4`](https://github.com/NousResearch/hermes-agent/commit/351b8eb462f5a06de315716e8c677ae6a0e25169)）
+- 在规范的 CLI 发布时保留部分更新诊断（[`a6376f0e`](https://github.com/NousResearch/hermes-agent/commit/a6376f0eebde0aea12e566a969ff35501478e285)）
+- 跨更新程序快照恢复保留运行时权限 ([`8a8a1372`](https://github.com/NousResearch/hermes-agent/commit/8a8a13723b82ee361a13eac045277e72abfa9583))
+- 拒绝无主自动化而不花费兄弟重试预算（[`d6635ffe`]（https://github.com/NousResearch/hermes-agent/commit/d6635ffe03bc1eb92dbaa56155a5b49c23f271c3））
+- 在持久切换重试中保留完成批次同级 ([`0307a33f`](https://github.com/NousResearch/hermes-agent/commit/0307a33f82fce50113796498f0a0938107164240))
+- 将命名的启动密钥和端点与配置文件默认值分开（[`219ed58f`]（https://github.com/NousResearch/hermes-agent/commit/219ed58f9c19483792ec866eca8d0ad3bc34966b））
+- 编辑并恢复带有凭据的终端投影 ([`478d9b73`](https://github.com/NousResearch/hermes-agent/commit/478d9b7379dcc668863adbf11ec2362598b0bb07))
+- 解析来自冻结提供商策略的配置本地路由 ([`e02cc03a`](https://github.com/NousResearch/hermes-agent/commit/e02cc03a337f3594aa9976553cf711b2de5c720a))
+- 保留对顶级一次性启动的启动同意（[`ecb0afa6`](https://github.com/NousResearch/hermes-agent/commit/ecb0afa631b23a44701b7b85b7e39f41e5cc96ae)）
+- 在网关准入之前强制执行启动成本和数据同意 ([`4dcf234d`](https://github.com/NousResearch/hermes-agent/commit/4dcf234d0d313283bc8ede7ba4e2384d3d6b11f8))
+- 重试本地创建而不绑定替换凭据 ([`12899b65`](https://github.com/NousResearch/hermes-agent/commit/12899b65d51f1ceb4aba7dc3f2695ff24f737a3b))
+- 从其配置文件源恢复冻结的本地配置凭据（[`f1da7833`]（https://github.com/NousResearch/hermes-agent/commit/f1da7833aad10bbbd0a8a3637b60dd5b880fa4f5））
+- 将配置的凭据保留在冻结保单收据之外 ([`2f6fb46b`](https://github.com/NousResearch/hermes-agent/commit/2f6fb46bf3016dea2a8bfeb9ee2387791120d748))
+- 仅将显式本地启动密钥保留在权限内存中（[`32d512fb`](https://github.com/NousResearch/hermes-agent/commit/32d512fb9e3896b82ae80e11bd7e2980d448256d)）
+- 冻结本地 CLI 推理和执行启动选项 ([`d0954a9e`](https://github.com/NousResearch/hermes-agent/commit/d0954a9ede1d903b860cfc2cef954c0a3f0ffe45))
+- 在恢复配置文件快照文件之前预检规范纪元 ([`610a97ea`](https://github.com/NousResearch/hermes-agent/commit/610a97ea48df71f085c7634f6dbd296cc131485f))
+- 只读导出迁移后保留显式验证删除 ([`23456236`](https://github.com/NousResearch/hermes-agent/commit/23456236c8f1232d91dbecc8efdcac66e9b8cf5d))
+- 按身份恢复新的和历史的会话行布局（[`9c681b2d`]（https://github.com/NousResearch/hermes-agent/commit/9c681b2d67025d406ef16158d5ca183d80360072））
+- 解释规范恢复被拒绝时的安全转录本抢救 ([`c559236f`](https://github.com/NousResearch/hermes-agent/commit/c559236f68248ee6722f9c34ab31d31e84e11657))
+- 通过工作负载和收据编码保留结构化 Unicode ([`f56e660e`](https://github.com/NousResearch/hermes-agent/commit/f56e660e018493c530f5e5e6bb94717ff3cf3364))
+- 在发件箱 I/O 故障时暂停工作人员并保留本地租约等待 ([`23b54921`](https://github.com/NousResearch/hermes-agent/commit/23b549216de9d16dd0832534d801cb41cc3f33d6))
+- 冻结重试日记并保留专有的工作人员发件箱所有权（[`a8c163af`]（https://github.com/NousResearch/hermes-agent/commit/a8c163afbcf5a2f3dafb7ac567864ecb28ff7776））
+- 减少工作人员重新连接执行操作的票证 ([`e7cd5f93`](https://github.com/NousResearch/hermes-agent/commit/e7cd5f9380b15f7cc31dda55f8520946618e15ad))
+- 仅在来源验证后安装继电器 trust ([`90f107f2`](https://github.com/NousResearch/hermes-agent/commit/90f107f22f4c8f97c56443d21445444bd7b16794))
+- 在规范繁忙传送期间保持中继阅读器处于活动状态（[`4485fb73`](https://github.com/NousResearch/hermes-agent/commit/4485fb73d5a32d08a3132877789b9128728a0de7)）
+- 允许经过验证的连接器来源的继电器输入 ([`8fe258cc`](https://github.com/NousResearch/hermes-agent/commit/8fe258cc116ba5abac94a962ef5050c35962a437))
+- 将保留的进程沿袭查找保持为只读（[`bf9cf5c2`](https://github.com/NousResearch/hermes-agent/commit/bf9cf5c217ff0ce68943511cdb795a6e808a220e)）
+- 保留非运行时 SQLite 存储的损坏恢复 ([`ad354c28`](https://github.com/NousResearch/hermes-agent/commit/ad354c28ab6f87f8ec1a66ca42fa947638b4fce7))
+- 预检所有恢复目标并保留导入警告奇偶校验 ([`f1b4f6e3`](https://github.com/NousResearch/hermes-agent/commit/f1b4f6e33badcacd30e40b688310d1cb677aea2a))
+- 在较旧的备份恢复中保留运行时纪元楼层 ([`7fd8082e`](https://github.com/NousResearch/hermes-agent/commit/7fd8082e40d664ef325254996fd4211017171121))
+- 围栏规范恢复输出并报告排除的运行时状态（[`43f62e7a`]（https://github.com/NousResearch/hermes-agent/commit/43f62e7af9f2520da96378db98218ac9d18673f0））
+- 排除具有规范运行时所有权的恢复和导入 ([`4dce8f7e`](https://github.com/NousResearch/hermes-agent/commit/4dce8f7ed24c689935b190a6cf27f52707996239))
+- 保持仪表板会话浏览只读（[`af4599c1`]（https://github.com/NousResearch/hermes-agent/commit/af4599c10738169e557dcd29f4281f893b196352））
+- 保留长网关家庭的循环活跃见证（[`ae92d198`]（https://github.com/NousResearch/hermes-agent/commit/ae92d198b7cc074ad950e799ab073eaa74104a43））
+- 在延迟队列确认中保留较新的作曲家范围（[`4b39a5fd`]（https://github.com/NousResearch/hermes-agent/commit/4b39a5fd64d32436637469ed43f5c4de8ac12a12））
+- 在规范队列准入上保留本机引导回退（[`35255f5c`](https://github.com/NousResearch/hermes-agent/commit/35255f5c13435741ac8a8f61b6c99ca0fb172055)）
+- 通过规范提交承认本机忙斜线开始（[`6bef46ea`]（https://github.com/NousResearch/hermes-agent/commit/6bef46ea53dc15a18ca9104706fe42a596749ca1））
+- 协调队列输入 ID 与规范准入身份 ([`a877aa6e`](https://github.com/NousResearch/hermes-agent/commit/a877aa6e5a11edf39297c376505eaba2556e6306))
+- 在规范队列准入期间保留活动回合所有权（[`a131bf4a`]（https://github.com/NousResearch/hermes-agent/commit/a131bf4aca37820459c4493f4fe51a8a5757379f））
+- 通过现有的准入提交路由本地作曲家队列（[`4ce95d5f`]（https://github.com/NousResearch/hermes-agent/commit/4ce95d5f2eaa0637b6a1607fe1cce2599c3b9fe2））
+- 验证每次尝试的本机桌面文件下载 ([`28741ef8`](https://github.com/NousResearch/hermes-agent/commit/28741ef8809e63d6ce0b5a066cef0797ba612656))
+- 范围稳定执行身份到规范本地源（[`c3aa2e5c`]（https://github.com/NousResearch/hermes-agent/commit/c3aa2e5c442486298637459b1f02f8ce161e1d29））
+- 拒绝国外本地收据内的血统出版物（[`1ffba2ac`]（https://github.com/NousResearch/hermes-agent/commit/1ffba2ac1fa0a93c07308b94b7a84263370abaea））
+- 在成绩单轮换期间保留本地录取所有权（[`42ee0d34`]（https://github.com/NousResearch/hermes-agent/commit/42ee0d341a7745c0ca21e196946f4cadb0a914ef））
+- 将共享队列更改发布到附加的查看器 ([`fb02973f`](https://github.com/NousResearch/hermes-agent/commit/fb02973f611c3f840db12ac8e60a5d6fe7ca9d52))
+- 在共享快照中保留公共排队输入标识（[`37332c17`](https://github.com/NousResearch/hermes-agent/commit/37332c17b11318483d948035627387c85c2191a6)）
+- 在规范会话上公开配置文件绑定设置准备情况 ([`971c3c95`](https://github.com/NousResearch/hermes-agent/commit/971c3c95515e7b27555d962c8b6c96ce14c08cc4))
+- 在命名桌面侦听器之前标准化规范提示（[`9a2a30a6`](https://github.com/NousResearch/hermes-agent/commit/9a2a30a62d63164ab908842492cd1993e6c1312b)）
+- 使用修订收据围栏规范桌面 RPC 元数据编辑 ([`ce3037dc`](https://github.com/NousResearch/hermes-agent/commit/ce3037dc1d407bb6205de93211248d6dc2d081c4))
+- 将桌面创建重试绑定到显式草稿意图 ([`c69bb4db`](https://github.com/NousResearch/hermes-agent/commit/c69bb4db31c52554894ae5cc0ee1b5e323468881))
+- 在规范确保之前保留桌面更新和配置文件门（[`a7821f63`]（https://github.com/NousResearch/hermes-agent/commit/a7821f635e28d99d0db22903ab1355655e0ea434））
+- 使桌面本机会话适应规范身份和控件（[`d1546a54`](https://github.com/NousResearch/hermes-agent/commit/d1546a54c43b850f3afeef56479550e477145e8f)）
+- 使用新的私有票证验证本机桌面 HTTP ([`dd8b9f38`](https://github.com/NousResearch/hermes-agent/commit/dd8b9f38344d27dc24058fa71866defdd598f33f))
+- 跨 JSON 合约保留本机 HTTP 配置文件选择器 ([`eaad737e`](https://github.com/NousResearch/hermes-agent/commit/eaad737e88a3f5350deb1c992a2d2baf43bbcb66))
+- 保留无源权限控制投影（[`3546eb41`](https://github.com/NousResearch/hermes-agent/commit/3546eb41a933c2aaa93c54b744bd88a34c6cb390)）
+- 在声明排队工作之前预检持久本地策略 ([`d98dd743`](https://github.com/NousResearch/hermes-agent/commit/d98dd7435ad12f3693f9247e874fc517b31f0214))
+- 仅在发现后发布规范 Ink 准备情况 ([`653889ef`](https://github.com/NousResearch/hermes-agent/commit/653889ef7f719d7bad0602d1dc6083fd676e016c))
+- 水合规范墨水历史独立于现场事件（[`971ff7f3`]（https://github.com/NousResearch/hermes-agent/commit/971ff7f362b6eaacc72006bea8da4b6a6aa263f2））
+- 通过WebSocket子协议协商携带本机票证（[`7fe8c72c`]（https://github.com/NousResearch/hermes-agent/commit/7fe8c72c78e42e0dc65ec893e249389ebaee28f5））
+- 将规范 Ink 收据与准备好的输入标识相关联 ([`3dfb7d50`](https://github.com/NousResearch/hermes-agent/commit/3dfb7d50a5c8050f8e584942156d787a94ca2d58))
+- 将一次性输出范围限制到其承认的回合并保留直接查询别名（[`17155e73`]（https://github.com/NousResearch/hermes-agent/commit/17155e733138b29c8067eb4370838c9e59e6e016））
+- 保留网关工具集策略并拒绝恢复源覆盖 ([`6feaafcc`](https://github.com/NousResearch/hermes-agent/commit/6feaafcc2960930fb4b2d5eebd43e9dab4a6d3fd))
+- 在网关耗尽时拒绝新会话注册 ([`a67637cc`](https://github.com/NousResearch/hermes-agent/commit/a67637cc973ade7d423cf9551019323d5c207641))
+- 将澄清权限与执行控制分开（[`66bc2861`]（https://github.com/NousResearch/hermes-agent/commit/66bc2861eaeda0f78e29ccfa0804fe60b90250b4））
+- 在共享会话准入之前对已验证的旧版 clients 进行标记 ([`4be08ae5`](https://github.com/NousResearch/hermes-agent/commit/4be08ae58a16611a6384ce426e9e6d5968849b28))
+- 在共享会话连接中保留范围引导授权（[`b699e0e9`](https://github.com/NousResearch/hermes-agent/commit/b699e0e95baee7200fd698a5d6b8230c4ef12f2a)）
+- 将伪造的本地配置文件排除在消息授权回退之外 ([`d379d6cc`](https://github.com/NousResearch/hermes-agent/commit/d379d6cc1d08aabd78a8404c939fad75fb9dcc8a))
+- 当关闭交叉授权等待时保留排队输入（[`733dde1c`]（https://github.com/NousResearch/hermes-agent/commit/733dde1cc9a8969b0263fac7f84d57d1d1587e0f））
+- 在等待 Discord 会员资格后重新加载传输角色政策 ([`43ae9e9a`](https://github.com/NousResearch/hermes-agent/commit/43ae9e9a23129f6b5bdac60c9539fd0db5bc3eba))
+- 保留本机 trust 字段以在冻结入口时进行验证 ([`53aadf44`](https://github.com/NousResearch/hermes-agent/commit/53aadf44895e10151f8005a14a2d52c41d2edb96))
+- 针对身份和 FIFO 更改屏蔽本机授权 ([`6ef8b38d`](https://github.com/NousResearch/hermes-agent/commit/6ef8b38df56ced2387907f836c07fc02f2daaf1d))
+- 报告格式错误的已安装 plist，而不会泄漏解析器故障 ([`1b55d964`](https://github.com/NousResearch/hermes-agent/commit/1b55d9646aa7e544a2b4ce75897d79c7f5b99d8c))
+- 从请求的配置文件根解析已安装的名称（[`258049b3`]（https://github.com/NousResearch/hermes-agent/commit/258049b38f80a2dcee4baf47386c23f860e4bd08））
+- 拒绝未绑定的启动包装器和非常规服务定义（[`1dd6268b`]（https://github.com/NousResearch/hermes-agent/commit/1dd6268bcd5354632a789c902f49e7a3988e63e4））
+- 保留任务 XML 编码和文档服务绑定拒绝 ([`7b904f95`](https://github.com/NousResearch/hermes-agent/commit/7b904f95bf3a91f5ef87f291da9cf4cad18593ef))
+- 启动前绑定加载的启动作业和计划任务 XML ([`1ce0d11e`](https://github.com/NousResearch/hermes-agent/commit/1ce0d11ef3fe0382061c9d672d2537a841449ef5))
+- 在确保启动之前验证有效的 systemd 配置文件和帐户 ([`efadac8d`](https://github.com/NousResearch/hermes-agent/commit/efadac8de2e99aee61dbb523786bbcc45302a123))
+- 侦听器失败后停止引导后台工作程序（[`6716636f`]（https://github.com/NousResearch/hermes-agent/commit/6716636ffc967db0e2103280b0ac967fb54b2990））
+- 当会话侦听器退出时撤回网关准备状态 ([`57ec2718`](https://github.com/NousResearch/hermes-agent/commit/57ec27186f84fe508d247cfbf72b68b1d5419ae8))
+- 在运行时关闭期间保持准备状态和清理（[`82ff0592`](https://github.com/NousResearch/hermes-agent/commit/82ff0592d0784533e1b7f0a7b7b1ce90e8ff9aa9)）
+- 保留浏览器身份验证并撤消本机入口 ([`5da456be`](https://github.com/NousResearch/hermes-agent/commit/5da456be802528872bacc208f4508ea26bf3b85f))
+- 导出会话而不改变规范存储（[`ae82c1a2`]（https://github.com/NousResearch/hermes-agent/commit/ae82c1a2d0cca85d17d93a26ee317757bfc38ca7））
+- 将本机段哨兵排除在规范文本增量之外 ([`caae4af5`](https://github.com/NousResearch/hermes-agent/commit/caae4af5717dc8bfcfbba107acbf774b97574286))
+- 将启动器 YOLO 排除在共享网关策略之外 ([`628d702c`](https://github.com/NousResearch/hermes-agent/commit/628d702c0e503cf116eacc4b7521d88db2706ac2))
+- 将配置文件保留与引导权限保持一致 ([`87ba34fd`](https://github.com/NousResearch/hermes-agent/commit/87ba34fdf90f2ea7ff80e784a09f0e6dacf84a52))
+- 拒绝 FIFO 网关元数据而不阻止发现 ([`5b0f0276`](https://github.com/NousResearch/hermes-agent/commit/5b0f0276eb21c388793aee46fd881f7bd97c1971))
+- 绑定新的普通准入，同时保留精确的旧重试（[`e5f39ada`]（https://github.com/NousResearch/hermes-agent/commit/e5f39ada9ff21601c3d9ac73a26b1d9e78c99bba））
+- 通过回调迁移保留普通本机重试指纹（[`6083e9ed`]（https://github.com/NousResearch/hermes-agent/commit/6083e9ed31a15372cde35a052be8407b398e2ddc））
+- 拒绝本机回调快照中的未路由配置文件声明 ([`99c923bc`](https://github.com/NousResearch/hermes-agent/commit/99c923bc8b6b6c9123781daba4d2832575466803))
+- 通过范围适配器回调保留权限所有权（[`42ce26af`]（https://github.com/NousResearch/hermes-agent/commit/42ce26af2e482bcd63d04651bae0928fff184fac））
+- 保留 trusted 普通本机回调出处 ([`1d4dab77`](https://github.com/NousResearch/hermes-agent/commit/1d4dab77c682f4a0893174fe9eb1e52c5ed7f379))
+- 忽略网关附加快照中已停用的批准 ([`e7ee1d67`](https://github.com/NousResearch/hermes-agent/commit/e7ee1d6747960aeb8e522d0fec8a69d0c2b63cd4))
+- 网关执行结算后拒绝控制([`a064afdd`](https://github.com/NousResearch/hermes-agent/commit/a064afdd5ff02aac033667a1441103ce15214be7))
+- 拒绝退休网关工人的批准出版物（[`295bc0f5`]（https://github.com/NousResearch/hermes-agent/commit/295bc0f57d9cdd9161e1bd7588943ccb83d3f992））
+- 在读取器迁移期间保留旧会话写入器 ([`82dfb85d`](https://github.com/NousResearch/hermes-agent/commit/82dfb85d6789ab7a4a53f90c1447652db39b8ed2))
+- 保持会话列表和统计信息只读（[`1a1ad945`](https://github.com/NousResearch/hermes-agent/commit/1a1ad945981c7ce1c2b56333c0f2cf1a113efb64)）
+- 无需打开会话编写器即可解决终端面包屑问题 ([`73238088`](https://github.com/NousResearch/hermes-agent/commit/73238088e6cc3221dea73317ef0a9548f7d6a3f0))
+- 与交互式 CLI ([`9cd5d6dd`](https://github.com/NousResearch/hermes-agent/commit/9cd5d6dd2108bcb14e749d1fe2c22ad3b81a17ca)) 共享只读见解报告
+- 无需初始化会话存储即可生成 CLI 见解 ([`680937a6`](https://github.com/NousResearch/hermes-agent/commit/680937a6e768be7622169308af1970b39442b35a))
+- 保持恢复查找和 TUI 退出元数据为只读 ([`617be2da`](https://github.com/NousResearch/hermes-agent/commit/617be2dabc9cbff4ad4f96711a1f71f0e50f5459))
+- 保持状态会话检查只读（[`ca77b197`](https://github.com/NousResearch/hermes-agent/commit/ca77b19711b7723d1b1ef4440d455f1e208aa5cb)）
+- 启动网关API时绑定共享权限([`11958d46`](https://github.com/NousResearch/hermes-agent/commit/11958d461893961b21e27bd36c5ddf2785b9acd2))
+- 拒绝重定向的原生媒体发布（[`e924cf98`](https://github.com/NousResearch/hermes-agent/commit/e924cf98a39a2d8b53fd133caaa4998e84a43b54)）
+- 保留旧版本机文本准入重试 ([`ca226b68`](https://github.com/NousResearch/hermes-agent/commit/ca226b68230f2cdba430ddd4bf7fe591ba67c2d5))
+- 在并发驱逐时轮换权限重放纪元（[`a9de35d2`]（https://github.com/NousResearch/hermes-agent/commit/a9de35d29ae81ba999ef89bcf6048f834057a4be））
+- 将权限执行与慢速观察者隔离（[`aab36dc6`](https://github.com/NousResearch/hermes-agent/commit/aab36dc64cc92ba2850c0f5adf91f88a449dfc18)）
+- 在重复恢复中保持权威订阅稳定（[`8c889765`](https://github.com/NousResearch/hermes-agent/commit/8c88976587e4239fd74126b150c60880589adcc1)）
+- 允许繁忙的消息文本进入规范的持久 FIFO ([`eae6194b`](https://github.com/NousResearch/hermes-agent/commit/eae6194b0aff9416849fac5d83eb4e8952692588))
+- 在清理工作文本时保留代理请求身份（[`bb90f4b8`]（https://github.com/NousResearch/hermes-agent/commit/bb90f4b8972923431d270f94e7357203da199bf1））
+- 终端结算后重播已承诺的工人收据 ([`203b3f4f`](https://github.com/NousResearch/hermes-agent/commit/203b3f4f6d51b7d46fa5684daef2a9980bd00486))
+- 保留工作人员附加的成绩单关闭保护（[`71f835b6`]（https://github.com/NousResearch/hermes-agent/commit/71f835b60e937db07e436c96ef875fb3e657e1bf））
+- 解决未知接纳问题时撤销工人（[`d7089f75`](https://github.com/NousResearch/hermes-agent/commit/d7089f7534b47bbee400d008420c7a230931cef4)）
+- 将运行时突变收据与规范的电汇合约对齐（[`e6b1dc06`](https://github.com/NousResearch/hermes-agent/commit/e6b1dc06d616ed10437bb7c807655ed919c030eb)）
+- 当运行时标题转移时围栏祖先修订（[`62aef795`]（https://github.com/NousResearch/hermes-agent/commit/62aef7959e8dbb7bf2d66f5dbc7eea963683767f））
+- 围栏工人在入场解决后坚持不懈（[`e3bfe640`]（https://github.com/NousResearch/hermes-agent/commit/e3bfe6408d2147aa013b9b356e8526fd2e28a2c7））
+- 在工人收养期间自动转移承认的索赔（[`341aed41`](https://github.com/NousResearch/hermes-agent/commit/341aed4184ee327bf22ead8eaafb15012a6bde2f)）
+- 通过准入导入保留遗留执行代（[`c45d2e5c`]（https://github.com/NousResearch/hermes-agent/commit/c45d2e5c70ff01ec47a975e9f2c0c0e5970ce380））
+- 冷持久恢复后恢复墨水待处理输入 ([`34fb13a1`](https://github.com/NousResearch/hermes-agent/commit/34fb13a1a00b0ff6c9a025b004a763bcf4fd5f5b))
+- 保留 Ink 斜线附件并协调过时的图像 ([`dbc7ffa8`](https://github.com/NousResearch/hermes-agent/commit/dbc7ffa80c3a0e6c1e58f66f39346c0fe4389940))
+- 使 Ink 重播收据与当前执行保持一致 ([`8a589010`](https://github.com/NousResearch/hermes-agent/commit/8a589010ebeaf39a0987367b08a7187401621b43))
+- 在恢复的运行时和整洁的组合探针上结算桌面收据（[`1ad31afa`]（https://github.com/NousResearch/hermes-agent/commit/1ad31afa193a2750dba098246c7566390833f466））
+- 退役桌面停止以供新所有者执行并隔离旧输出（[`926d097d`]（https://github.com/NousResearch/hermes-agent/commit/926d097dee9f1175e81b5e4623a168b953d45a57））
+- 不停止直播轮流结算终端桌面入场收据（[`d89a90e1`](https://github.com/NousResearch/hermes-agent/commit/d89a90e11848dddb1eb9b0a6f980b378ba9537f2)）
+- 隔离同一呼叫桌面遗留准入重试 ([`41b017f1`](https://github.com/NousResearch/hermes-agent/commit/41b017f1e3cc565fdd4dc2e6d733be1056c0233b))
+- 切勿重新发送不明确的 Ink 旧版录取信息 ([`5681c7d4`](https://github.com/NousResearch/hermes-agent/commit/5681c7d40699b5d111f1fb44b3277c164cea4a92))
+- 仅发出一次结构化 CLI 解析失败 ([`1d4d2b2d`](https://github.com/NousResearch/hermes-agent/commit/1d4d2b2d09faf2e18acd92cbffeb479ab74bfcc1))
+- 绑定网关探针和结构确保解析器错误（[`ad1099d6`]（https://github.com/NousResearch/hermes-agent/commit/ad1099d6c531333addcb93d736457b1a4f0bf29d））
+- 发现网关私有后备套接字目录（[`c804d40b`]（https://github.com/NousResearch/hermes-agent/commit/c804d40b0280c87f65ae91bd64c6c529fd80ba0f））
+- 保留运行时锁，同时调度程序线程在清理中幸存（[`954d5e99`]（https://github.com/NousResearch/hermes-agent/commit/954d5e9919ca5b85d8c96eee20fa2772facb35bf））
+- 通过退出状态持久性保留网关所有权 ([`d465ad0d`](https://github.com/NousResearch/hermes-agent/commit/d465ad0dbf633dca6beab00c8b912f2911cc545f))
+- 在可写初始化之前保留所有网关配置文件 ([`c941b0e6`](https://github.com/NousResearch/hermes-agent/commit/c941b0e674c3b6586cc86cf3349df291014454c6))
+- 将独立会话搜索保持为只读 ([`0e7c0588`](https://github.com/NousResearch/hermes-agent/commit/0e7c058897dd0cc5166fcc1293cc75fb893ee33a))
+
+## 📚 文档
+
+- Agent）：使用已发布的型号名称 Nemotron 3.5 Super VL ([`79651b71`](https://github.com/NousResearch/hermes-agent/commit/79651b71bd56efd76d06f3de1df64dde09b58ff3)) — @j-nolan
+- Env)：将 NVIDIA NIM 添加到 .env 示例 ([`3dd96101`](https://github.com/NousResearch/hermes-agent/commit/3dd961013c57398b4ba42d16f5bcc3772baa0701)) — @elisam0
+- 提供商）：使用本地 NIM 的非云示例密钥 ([`da463310`](https://github.com/NousResearch/hermes-agent/commit/da463310b1e31d8690b1aac6d3701798bb36a06e)) — @rroverin
+- 降级拒绝链接的回滚部分；重新生成命令奇偶校验表 ([`97ec76fa`](https://github.com/NousResearch/hermes-agent/commit/97ec76fa7eaf5066cb334b98448d1b71118df4e5))
+- Gateway): 描述消息暂停通知和/重置转义 ([`6cdf7815`](https://github.com/NousResearch/hermes-agent/commit/6cdf7815defdb94f642a0a2d2d01a0e33558bee9))
+- 解释不明确的遗留 A2A 恢复边界 ([`22a8154f`](https://github.com/NousResearch/hermes-agent/commit/22a8154ff371d9b904bd2017d9d71a5e878ae603))
+- Cli)：经典聊天解析 --resume <title> 和 -c <title> --create-if-missing 在网关； bare -c 仍然被拒绝 ([`c6c4161c`](https://github.com/NousResearch/hermes-agent/commit/c6c4161cbf8181b6dd8c357a09ef2baece3c736d))
+- 网关）：文档提示.提交附件和 ACP 媒体路径 ([`e3d60eed`](https://github.com/NousResearch/hermes-agent/commit/e3d60eed6528d1aee1b0add480311257df37eb5e))
+- 桌面版）：网关拥有的队列和在重启期间丢失轮次的放弃控制（[`101be7d7`](https://github.com/NousResearch/hermes-agent/commit/101be7d78ebb4f819347d2a335277ac6fe6204a6)）
+- 显式 /model 重写系统提示模型行一次（单个缓存前缀未命中）（[`ef813b35`]（https://github.com/NousResearch/hermes-agent/commit/ef813b356786b63685a527a20858bc814a6fe734））
+- /new 仅重新绑定共享会话的调用视图 ([`6be1de8d`](https://github.com/NousResearch/hermes-agent/commit/6be1de8d10462ac38e1194a9c6e88a57b0f679fe))
+- API 运行且 X-Hermes-Session-Id 无法绑定另一个表面拥有的会话（409 权限被拒绝）（[`789caca2`](https://github.com/NousResearch/hermes-agent/commit/789caca24f1f8e63aae670bb5ad1a47dff03964d)）
+- 仪表板会话删除栅栏、逻辑删除和仅离线批量维护 ([`46c50515`](https://github.com/NousResearch/hermes-agent/commit/46c50515dcd0ad596dbd4fc7d46b45bb19fb8944))
+- 解释规范编辑器 MCP 所有权和冷重新附加 ([`fcc978bd`](https://github.com/NousResearch/hermes-agent/commit/fcc978bd3c9b0d744695bf5b9dc42cbaf50034bb))
+- 区分规范的 Bot 准入和已退休的 UI 所有权 ([`2d22a7cd`](https://github.com/NousResearch/hermes-agent/commit/2d22a7cd441e945681b83a1d3bf1f69947b014f0))
+- 记录工作人员生命周期挂钩证明和剩余集成门（[`3dae322e`]（https://github.com/NousResearch/hermes-agent/commit/3dae322e642d144f00107aa732dd2ad578942192））
+- 记录孤立工人推理证明和剩余迁移门（[`b762d80c`](https://github.com/NousResearch/hermes-agent/commit/b762d80c95bc64f514ddf2f1a6c18e0edfd43715)）
+- 区分入场恢复和制作人重播证明（[`bc3bcaff`](https://github.com/NousResearch/hermes-agent/commit/bc3bcaff41c4789211a907927ad9bead322a9277)）
+- 划定经过验证的工作人员基材覆盖范围和推出阻碍因素 ([`f22754e8`](https://github.com/NousResearch/hermes-agent/commit/f22754e86cf9fdad840bb16697166982e76e8e89))
+- 在基材之前库存精确的工人持久性消费者（[`0e30eb6a`]（https://github.com/NousResearch/hermes-agent/commit/0e30eb6af5c43ce7fcec11299e3fa23fff3cba2f））
+- 定义稳定的本地谱系和暂停的分叉恢复（[`757f19f4`]（https://github.com/NousResearch/hermes-agent/commit/757f19f4b44ec23c201af59df7bb9b3ac66ae779））
+- 定义本机 HTTP trust 和主要配置文件范围 ([`a8a6b02c`](https://github.com/NousResearch/hermes-agent/commit/a8a6b02c920fe97a588ed4396e2bb278dc97ca3a))
+- 记录本地崩溃恢复合同和重播限制（[`375fce55`]（https://github.com/NousResearch/hermes-agent/commit/375fce5548f41d22606fa0461c488ba3249744f3））
+- 描述已解决的 Ink 恢复和本机生命周期探针 ([`2dc2e740`](https://github.com/NousResearch/hermes-agent/commit/2dc2e74069c474d23833eeefbccf4956a97d94cf))
+- 定义桌面网关所有权和私人票证边界 ([`f0ff6c57`](https://github.com/NousResearch/hermes-agent/commit/f0ff6c5701098ea4d26eb06647363504e4824349))
+- 区分本地策略证明和剩余的经典 CLI 奇偶校验（[`256cab2b`](https://github.com/NousResearch/hermes-agent/commit/256cab2b78ef549183636650f07586f0741b74c9)）
+- 发布支持的本地创建策略和恢复边界（[`0400a5ef`]（https://github.com/NousResearch/hermes-agent/commit/0400a5efc141827bdb341df91d960a88dccfeb2f））
+- 解释网关确保准备就绪并同意服务 ([`a272e8df`](https://github.com/NousResearch/hermes-agent/commit/a272e8df90f9013386f6bacdccf0e355885a098e))
+
+## 🧪 测试
+
+- Relay)：当流被缓冲时，OpenAI-stream e2e 不再自死锁 ([`6e84ce66`](https://github.com/NousResearch/hermes-agent/commit/6e84ce66fb577ceeaf43a1e2da773e70609953d2))
+- Gateway): 权限流探针等待空闲session.info ([`56b9691c`](https://github.com/NousResearch/hermes-agent/commit/56b9691cc95fc209612a63415257d7f62d31c583))
+- 网关）：将 SSE 准备清理与保留流对齐 ([`c0230ca5`](https://github.com/NousResearch/hermes-agent/commit/c0230ca59555af3be8471cd1cb42a83f5191799d)) — @Lokee86
+- Desktop-core）：在退出之前捕获孤儿普查消息的 Electron PID ([`2cf48e0c`](https://github.com/NousResearch/hermes-agent/commit/2cf48e0c82122bd23166f5732c8987f82463bb09))
+- Gateway): unserve runner 存根携带我们的释放步骤缩小的保留 ([`5fdb477b`](https://github.com/NousResearch/hermes-agent/commit/5fdb477bd9686eeb369c49ced3b57db6bd136812))
+- 通过一个多路复用网关进行冷配置文件归档/取消归档是一种接受案例 ([`dfbb9142`](https://github.com/NousResearch/hermes-agent/commit/dfbb914244812dc2e22894efc45f29e5b958856a))
+- 种子补偿伪造使用discard_unadmissed_session；托管身份验证探测等待是负载容忍的 ([`cc1eab12`](https://github.com/NousResearch/hermes-agent/commit/cc1eab12c0f784e8c501c6209e07e1513bf57abd))
+- Gateway): 托管工作线程首次推理等待可容忍饱和的 40 个工作线程运行程序 ([`57c95771`](https://github.com/NousResearch/hermes-agent/commit/57c957713d676ac562ac49bd595fe88371644e33))
+- Tui): 斜杠附件作曲家断言等待日志清除 ([`d5950d72`](https://github.com/NousResearch/hermes-agent/commit/d5950d725a86ce582ece85cafe663c396b8e5235))
+- 横幅祖先固定装置中的补丁起源 API 探针（[`cdf4eda7`]（https://github.com/NousResearch/hermes-agent/commit/cdf4eda7082644712d9f58df8b46e333758032f4））
+- 将创作的机器人装置迁移到规范传输（[`37d7834e`](https://github.com/NousResearch/hermes-agent/commit/37d7834e16e21199df7801271db13eb311bda0b7)）
+- 验证 webhook 接收观察和组合 HTTP 启动 ([`a5a0da66`](https://github.com/NousResearch/hermes-agent/commit/a5a0da667c7d62390df84f3a8f842850a6e23255))
+- 行使经过验证的托管房间停止和批准（[`7a6b2961`]（https://github.com/NousResearch/hermes-agent/commit/7a6b2961a4ca6ecdfd2668f1007c456d49b023fd））
+- 将系统 Python 用于仅 stdlib 的票据桥 ([`3394ef4c`](https://github.com/NousResearch/hermes-agent/commit/3394ef4cbb1cb832f986bc301b006c562570d3b4))
+- 保留看板策略和 cron 清理所有者不变量 ([`e1b6f10b`](https://github.com/NousResearch/hermes-agent/commit/e1b6f10ba19abb8d016b7241f03aa5ab6bd83d74))
+- 将看板范围固定装置与业主工人 client ([`ea2342d4`](https://github.com/NousResearch/hermes-agent/commit/ea2342d41c26f8f117d50740dd0eb6b2fa7704d1)) 对齐
+- 观察所有者接缝处的继电器完成和 cron 防护 ([`625bb379`](https://github.com/NousResearch/hermes-agent/commit/625bb379b7ebe46ca39e7662a41075956913a0fa))
+- 在断言发送之前耗尽持久的 cron 失败交付 ([`9b753d3b`](https://github.com/NousResearch/hermes-agent/commit/9b753d3b3fe7018e504825b48466845243fa53f6))
+- 通过所有者执行迁移 cron 防护和上下文装置 ([`7080a488`](https://github.com/NousResearch/hermes-agent/commit/7080a488630dab0c70ce4084dd94c437f95f1d5a))
+- 恢复 cron 所有者配置和会话不变量 ([`c08349cf`](https://github.com/NousResearch/hermes-agent/commit/c08349cffd1b122b7b4db0852db1d9f06524a6c3))
+- 通过所有者执行 cron 提供程序和工作目录路径 ([`9fde59d3`](https://github.com/NousResearch/hermes-agent/commit/9fde59d3d103b9c294e6fd09e54f1581ddf99487))
+- 将 cron 生命周期不变量迁移到规范所有者执行 ([`e4a2d476`](https://github.com/NousResearch/hermes-agent/commit/e4a2d476cb49ab5da1d3d62e1a9fa4efac587327))
+- 会话列表加载后保留排队输入标识（[`2671381d`](https://github.com/NousResearch/hermes-agent/commit/2671381d20afcd859287e6e5a9b10dacc68e006f)）
+- 练习本机 Electron 网关 HTTP 和 WebSocket 票证 ([`45c6c8de`](https://github.com/NousResearch/hermes-agent/commit/45c6c8de542e749337c91a80194cc991d13db0f7))
+- 验证繁忙确认并记录墨水回收限制 ([`59a90b4d`](https://github.com/NousResearch/hermes-agent/commit/59a90b4d46ab9da2885ff75d800d4af0724bbc2a))
+- 涵盖规范的 Ink 图像编辑器和启动切换 ([`65635634`](https://github.com/NousResearch/hermes-agent/commit/6563563443ceb6bb05ff79c8c0c473b11f37b291))
+- 验证本机遗留恢复和压缩切换（[`90052b33`]（https://github.com/NousResearch/hermes-agent/commit/90052b3351edee51f9de3f1801aef974baa63c54））
+- 证明准入支持的自动压缩重试（[`3ec0ea59`](https://github.com/NousResearch/hermes-agent/commit/3ec0ea59babdbbe6dcf1eb8141a004af890bf419)）
+- 在真实分布上设置 Discord 角色探针，而不是在conftest模拟上（[`19feada0`](https://github.com/NousResearch/hermes-agent/commit/19feada077552c535490f4d32f4cc53b46862bec)）
+- Acp)：实时编辑器图像提示作为 image_url 部分到达环回模型 ([`993a63f0`](https://github.com/NousResearch/hermes-agent/commit/993a63f0517971409e9e55970e8189a97b9f0614))
+- 本机套件按所有者血统查找托管工作人员，而不是裸露的 ppid（venv 蹦床）（[`9e335738`]（https://github.com/NousResearch/hermes-agent/commit/9e33573819b531d4925cd883c6ab07e95f2d8604））
+- 蹦床收获检查等待所有者的有界关闭，而不是竞速终端提交（[`cc2cdbe2`]（https://github.com/NousResearch/hermes-agent/commit/cc2cdbe28fc8e6789e6dd0c3928b44d3fbdea565））
+- 桌面版）：将令牌下载传输不变量移到提取的函数旁边（[`ff662b6b`](https://github.com/NousResearch/hermes-agent/commit/ff662b6b4324ae5a11f0ae3d77ab27e962c1990d)）
+- 通过真实提示组装进行安全身份抑制（[`cccb516c`](https://github.com/NousResearch/hermes-agent/commit/cccb516cd7e12717d9652519a4b8f0bbd76c1bb3)）
+- 通过工作人员处理程序验证保留的入场申请（[`107af6fc`]（https://github.com/NousResearch/hermes-agent/commit/107af6fc7a647f4f1a9e3f16d68507e7f3390b3f））
+- 隔离并收获拥有的看板 systemd 范围 ([`3776709d`](https://github.com/NousResearch/hermes-agent/commit/3776709d521bb932f24790ba5b8ac9d99f867459))
+- 证明轮换工人在主人杀死和收养中幸存下来（[`8459b140`]（https://github.com/NousResearch/hermes-agent/commit/8459b14094104210cfad432b680ed7397112f2d9））
+- 证明新的 ACP 切换和冷规范恢复 ([`56f62381`](https://github.com/NousResearch/hermes-agent/commit/56f623818839ebe120f25aec658e2ede93776202))
+- 验证普通守护进程上的每次准入 API 使用情况 ([`35d9eb2f`](https://github.com/NousResearch/hermes-agent/commit/35d9eb2f7024293dca0d2bda5df9ff6ace69b57e))
+- 证明普通守护进程上共享 API FIFO ([`e721121f`](https://github.com/NousResearch/hermes-agent/commit/e721121f7beb367a65194986747e46db80af2dc9))
+- 证明已注册的工作程序终端执行无需打开规范的 SQLite ([`e31b96bc`](https://github.com/NousResearch/hermes-agent/commit/e31b96bc84572ab685166f3bc45aca4160c72977))
+- 通过普通所有者练习工作人员生命周期和陈旧回调（[`5038cf75`]（https://github.com/NousResearch/hermes-agent/commit/5038cf75c91c0605bb99b5d7ca13fcc7703f3cef））
+- 通过守护进程验证工作轮换声明和丢失确认重放（[`17cf264f`]（https://github.com/NousResearch/hermes-agent/commit/17cf264fc5973301cc69ead17ef89e708d8aaa5a））
+- 验证本机 ACP 批准和错误配置文件拒绝 ([`d157534a`](https://github.com/NousResearch/hermes-agent/commit/d157534a4a4eba4cb4ecd5d2db740f68b7ec9f87))
+- 验证本地自动化保持非人类和缓存稳定（[`ef071dd3`]（https://github.com/NousResearch/hermes-agent/commit/ef071dd371e4c50ff084fe90408bbeb16e2adc70））
+- 证明所有者杀死后本地完成恢复（[`9afff7e9`]（https://github.com/NousResearch/hermes-agent/commit/9afff7e9d5b7218ab45af1a95518e854fda70d0d））
+- 遵循启动防护装置中规范的 CLI 启动 ([`34b9aad1`](https://github.com/NousResearch/hermes-agent/commit/34b9aad158d12a6dad51ffab38253e3a9ba8928b))
+- 状态）：将 FTS 迁移装置保留在历史版本上（[`21baec51`](https://github.com/NousResearch/hermes-agent/commit/21baec51bb6e3308cf885ea2a8bcde27eaf0f04b)）
+- 记录恢复限制并验证同意的网关启动 ([`ddc1b0a1`](https://github.com/NousResearch/hermes-agent/commit/ddc1b0a1b75065e561e498e236e7cd5336d3fb3f))
+- 拒绝通过普通守护进程 websocket 进行未经身份验证的凭据启动（[`9b0d7861`](https://github.com/NousResearch/hermes-agent/commit/9b0d7861d40ea2f26d48f14893d3be8ec75ee154)）
+- 拒绝创建受限制主体的凭证（[`2d2fdff9`](https://github.com/NousResearch/hermes-agent/commit/2d2fdff90d41a7127cbe44563c5d08a7e774e125)）
+- 通过实际工具轮次验证冻结的 CLI 迭代限制 ([`cc37de8b`](https://github.com/NousResearch/hermes-agent/commit/cc37de8b8488a7c806c056a049a76161068f07bc))
+- 证明并发 CLI 启动线并重新启动凭据隔离 ([`84e86a87`](https://github.com/NousResearch/hermes-agent/commit/84e86a87ec8a9e41c168a96a4934a8cc76cb2215))
+- 在完整进程 CLI 集成中拥有自己的规范守护进程（[`6c8f0fd8`](https://github.com/NousResearch/hermes-agent/commit/6c8f0fd8430cd273eae7e597bd6b9024f89540f4)）
+- 保持模拟 HEAD 更新远离实时运行时队列 ([`7b8fdfa8`](https://github.com/NousResearch/hermes-agent/commit/7b8fdfa864bb6dcb6b0fc090a63b94a817ca0f0b))
+- 用于仪表板参数验证的种子所有者数据库 ([`2af3bfd4`](https://github.com/NousResearch/hermes-agent/commit/2af3bfd471ba8a00dbd0e9b926c02501054b785b))
+- 初始化所有者存储以成功刷新仪表板 ([`a1811942`](https://github.com/NousResearch/hermes-agent/commit/a1811942e41b03cc8ac48537615d236e51522cfa))
+- 隔离服务订购固定装置主页 ([`3b42e697`](https://github.com/NousResearch/hermes-agent/commit/3b42e697695f72521e523a0d073158f4df0fd411))
+- 通过真正的只读存储种子网关状态（[`6af1ac81`]（https://github.com/NousResearch/hermes-agent/commit/6af1ac81fe978735fdf130602109105484fe3511））
+- 练习 CLI 针对真实只读会话存储的导出 ([`96782704`](https://github.com/NousResearch/hermes-agent/commit/96782704a006e8bd1d6e38ce693c3e110c2b6730))
+- 证明待处理的工人使用能够在真正的所有者停电和采用后继续存在（[`58bcc3ec`](https://github.com/NousResearch/hermes-agent/commit/58bcc3ec4d76a5dc85431b82995857cf7af9bdbb)）
+- 验证实时中继替换和 websocket 撤销栅栏 ([`89567476`](https://github.com/NousResearch/hermes-agent/commit/8956747661cd5a7dd2b3a1c0d2e3dd160489e330))
+- 拒绝因无效密封件安装继电器 trust ([`80d677d2`](https://github.com/NousResearch/hermes-agent/commit/80d677d2d0ac937d30f06dfa9178cb781fecc163))
+- 重现中继繁忙入口阻塞出站确认 ([`73bf2c66`](https://github.com/NousResearch/hermes-agent/commit/73bf2c66d364cca4d8bbea27ef9fd8d0558739b9))
+- 重现经过身份验证的中继本机准入拒绝 ([`0bbe3740`](https://github.com/NousResearch/hermes-agent/commit/0bbe37401b2f66e800bc22d03ba5bff625105764))
+- 离线导入后保留目标锁定身份 ([`ef1fe3de`](https://github.com/NousResearch/hermes-agent/commit/ef1fe3dedc97a2f5bd93ebe11c535382f79f8676))
+- 验证针对活动守护程序源的单独输出恢复 ([`cc96119b`](https://github.com/NousResearch/hermes-agent/commit/cc96119bf57efbf677c1ec9af7e0d3856c4be12e))
+- 暴露拒绝导入后的纪元重用和服务恢复（[`dbb1e531`](https://github.com/NousResearch/hermes-agent/commit/dbb1e531e221d6a690d27b50f4c7269a14473a40)）
+- 重现删除活动权限准入的实时恢复 ([`3a0111ee`](https://github.com/NousResearch/hermes-agent/commit/3a0111ee03029d4c4fb7be02400ce1a9af73b92a))
+- 将搜索装置与所有者初始化的会话存储对齐（[`e2a853ba`](https://github.com/NousResearch/hermes-agent/commit/e2a853ba7f0a8bf1da9cac089cbdab415327c0e2)）
+- 使用直接控制路径覆盖编码套接字限制（[`34407c9e`]（https://github.com/NousResearch/hermes-agent/commit/34407c9ec6ca0922233dc9c8f7cd4070609b0bf1））
+- 在长主守护进程中重现丢失的循环见证（[`36649795`](https://github.com/NousResearch/hermes-agent/commit/366497955805e9f32a3805d855c97b208cdfed23)）
+- 配置用于令牌会话创建的可恢复模型（[`bcf39bfb`](https://github.com/NousResearch/hermes-agent/commit/bcf39bfb11986643663da0b78efb57780a61d958)）
+- 验证普通守护进程重播并发布固定装置存储（[`e8f57b7f`]（https://github.com/NousResearch/hermes-agent/commit/e8f57b7fbcfa423c6b39bf4e37fb543bc29f83a1））
+- 向网关授权装置提供真实会话存储（[`e3d23087`](https://github.com/NousResearch/hermes-agent/commit/e3d230875fe505a8ea87d8ddca49e07ab5280810)）
+- 验证普通守护进程斜杠参与者隔离和处理程序范围（[`3cdf25cb`]（https://github.com/NousResearch/hermes-agent/commit/3cdf25cb2ff57aa05ebf2c5c24130cabb21b5c78））
+- 验证本机下载边界和文档传输范围 ([`c8620011`](https://github.com/NousResearch/hermes-agent/commit/c86200114096632d460371e3b4ee4d83f6d094ae))
+- 证明冷守护程序重新启动时的本地轮换和重置（[`af3f2dfe`](https://github.com/NousResearch/hermes-agent/commit/af3f2dfe1adfb49a00976a1e08a4b0d083e8cb04)）
+- 比较真实遗留服务和规范守护进程套接字的发现（[`5d1d1ee0`]（https://github.com/NousResearch/hermes-agent/commit/5d1d1ee039a140eb9589edc2d9c8489cb45af522））
+- 通过普通守护进程 WS 重现缺失的规范命令发现（[`659632c3`](https://github.com/NousResearch/hermes-agent/commit/659632c390c24d44ee3cbfb4d125faa29710666b)）
+- 将私有 Unix 票证固定装置范围扩展到受支持的本机主机 ([`ca3e4b64`](https://github.com/NousResearch/hermes-agent/commit/ca3e4b644c70dda72c61193a3853d43de0b6cccb))
+- 将本机协议装置保持在其运行时类型边界内（[`da98497c`]（https://github.com/NousResearch/hermes-agent/commit/da98497cdc4be395f43c48c9f8bc65ebe3c7c939））
+- 验证规范收据撤销本机私人文件日志（[`5bd5a8d6`]（https://github.com/NousResearch/hermes-agent/commit/5bd5a8d63ad6e753da9b5ed005871b6227cf7692））
+- 根据真实同级配置文件验证本机 HTTP 选择器 ([`f6ef1ea4`](https://github.com/NousResearch/hermes-agent/commit/f6ef1ea436991d6d2ac4c3d5af33d99e8245bc7c))
+- 通过单独的经过身份验证的守护进程证明冷本地恢复（[`041d9ee7`]（https://github.com/NousResearch/hermes-agent/commit/041d9ee74e754fc9347d09bdf022fa09a162d36d））
+- 通过 Python Ink 启动器执行本机 Stop ([`c75e0cdd`](https://github.com/NousResearch/hermes-agent/commit/c75e0cdd76a117efde713e8dfa16eaf2d2e57c6c))
+- 验证本机 Ink Stop 确认和新后续操作 ([`d0ad8324`](https://github.com/NousResearch/hermes-agent/commit/d0ad8324c8407a8199e02828774d8bb51a4249e7))
+- 通过真正的 Python 发射器练习新的 Ink 发射 ([`8b727f4a`](https://github.com/NousResearch/hermes-agent/commit/8b727f4aada6b0f40a2278cf7775c33c9253c62d))
+- 验证模型线上的实际本机澄清答案（[`cc4ad0d1`]（https://github.com/NousResearch/hermes-agent/commit/cc4ad0d1158ea032d5c39023df6205a57225deec））
+- 需要原生 Ink 重新连接才能渲染已确定的历史记录 ([`eecaba42`](https://github.com/NousResearch/hermes-agent/commit/eecaba4203c736bfc6e66f4d67b9cf42e28e97d8))
+- 使用显式运行时准入状态初始化重放装置（[`014b3ea4`]（https://github.com/NousResearch/hermes-agent/commit/014b3ea496297fdacba7522188679ea442687344））
+- 保留本机重新连接输出以应对间歇性墨水故障 ([`f454485d`](https://github.com/NousResearch/hermes-agent/commit/f454485d7cc2a94082f954fc23b6be1a8a9f52e1))
+- 根据启用策略的守护进程验证本机 CLI cwd 执行 ([`db2bdf31`](https://github.com/NousResearch/hermes-agent/commit/db2bdf316367f345ae33957bd645c9e4c6934933))
+- 证明本机网关批准在 CLI 分离和无效选择后仍然存在（[`a0c361ae`](https://github.com/NousResearch/hermes-agent/commit/a0c361ae387c438f7ceb9bf5c65d8befd85fcac5)）
+- 证明提供商线路上的并发本地策略隔离（[`15052599`](https://github.com/NousResearch/hermes-agent/commit/1505259991975ad66d45b80c59b9dbfe44c8b19a)）
+- 通过普通网关套接字验证元数据重试 ([`0d5d548f`](https://github.com/NousResearch/hermes-agent/commit/0d5d548f1d5cfb1eb63f549f28de900348f55210))
+- 通过普通网关启动执行新会话 ([`ae19a6e0`](https://github.com/NousResearch/hermes-agent/commit/ae19a6e0354646a6872e4d3222ec08fbd65a80b1))
+- 证明新鲜的本地澄清在完全观众脱离中仍然存在（[`1044867b`]（https://github.com/NousResearch/hermes-agent/commit/1044867be6a64a85b4a99bc1a99ecfa2f01a4474））
+- 保留 Discord 直接配对和范围 DM 授权 ([`144c86c7`](https://github.com/NousResearch/hermes-agent/commit/144c86c76449ff30fe63354c99ad0dc5929922d9))
+- 保留与真实授权商店的启动退出合同（[`a126b4cc`]（https://github.com/NousResearch/hermes-agent/commit/a126b4cc0a81377ea9177c0679a61f9f90fb4b55））
+- 根据规范重播验证排除的观察者前缀（[`cacd4d22`]（https://github.com/NousResearch/hermes-agent/commit/cacd4d224f1616dd60b04d3da6dfb35ab0260660））
+- 保留实时网关引导就绪探针（[`29167522`]（https://github.com/NousResearch/hermes-agent/commit/29167522421b9ced0590360934ca38717c3e5866））
+- 通过生产 API 启动行使共享批准 ([`118b34ac`](https://github.com/NousResearch/hermes-agent/commit/118b34ac6c1567b614af47c3abc7939b66e4a790))
+- 验证本机运行时所有权和执行时秘密刷新（[`234f1278`]（https://github.com/NousResearch/hermes-agent/commit/234f1278cebce88c54bc247e5b568d7ef40ca9cc））
+- 通过初始化的转弯运行器执行批准渲染（[`76efc227`]（https://github.com/NousResearch/hermes-agent/commit/76efc227017e424779299fd3e7474276df728c3c））
+- 验证 CLI 读取器和活动的 SQLite 编写器 ([`ee23996c`](https://github.com/NousResearch/hermes-agent/commit/ee23996cff7e55413f2fbe3624562ec0696bb265))
+- 保留真实的 CLI 读卡器 A/B 线束 ([`bcc03ee8`](https://github.com/NousResearch/hermes-agent/commit/bcc03ee8f7786d07fe6c7ea168a9522b8f253b91))
+- 通过缺席存储快速路径保留见解清理覆盖范围 ([`eae783bc`](https://github.com/NousResearch/hermes-agent/commit/eae783bc50c89d2737861d160f0c7543613aaa57))
+- 通过生产 API 启动进行共享转弯 ([`0cfe5a2f`](https://github.com/NousResearch/hermes-agent/commit/0cfe5a2ff436f76739342d26e02724eaa921a46d))
+- 保留权限反压执行收据（[`47ce83d6`](https://github.com/NousResearch/hermes-agent/commit/47ce83d6ff882ca01f7f104526486adca26547a4)）
+- 保留实时进程只读搜索A/B探针（[`551ccfca`](https://github.com/NousResearch/hermes-agent/commit/551ccfcad1496e66a17b165c9cf334d1988d14a4)）
+- 需要完整的共享网关验收收据覆盖范围 ([`d853d145`](https://github.com/NousResearch/hermes-agent/commit/d853d14574c53869cd408372d4e9807181e674bb))
+- 跨兄弟提取保留网关源不变量（[`e1df5d12`]（https://github.com/NousResearch/hermes-agent/commit/e1df5d12bdd4c555bb25990fd4d33755f4ce27aa））
+- 遵循跨网关转弯提取的生产方法（[`04cef1e9`]（https://github.com/NousResearch/hermes-agent/commit/04cef1e9b30b9c6e2d41b69267146ce392f2c5b3））
+- 在恢复绑定之前收割截断夹具工人（[`d6d8af93`]（https://github.com/NousResearch/hermes-agent/commit/d6d8af931c8d1041404479bc340ecfb626aefcaf））
+- 在搜索投影不变式中跟踪借用的 SQLite 阅读器 ([`fa572cbe`](https://github.com/NousResearch/hermes-agent/commit/fa572cbeab9d04ceb1e70b6bf6c53f4865e62253))
+- 验证运行时架构升级和真正的 SQLite 完全回滚 ([`1769e803`](https://github.com/NousResearch/hermes-agent/commit/1769e803f8413abe51af4a08008918139bf09051))
+- 重现仅墨水接收重试忙锁存器 ([`1c144c98`](https://github.com/NousResearch/hermes-agent/commit/1c144c98d76bf42e8b2312241bb398ebef6b95f4))
+- 重现桌面收据停止和传统超时竞赛 ([`02e0ab74`](https://github.com/NousResearch/hermes-agent/commit/02e0ab74da057f683b5837a475c43dfd6d032e64))
+- 验证导入和设置过程中的网关服务同意 ([`4ecf5975`](https://github.com/NousResearch/hermes-agent/commit/4ecf59755e9c2e2cf6f17ae3d149c2d4b08f5f0d))
+- 在多路复用装置中明确未保留的配置文件快照（[`a72ed0a5`]（https://github.com/NousResearch/hermes-agent/commit/a72ed0a5e8d16fabcd3fb9d6a6440992f8f2dfd6））
+
+## 🏗️ 基础设施
+
+- Release): 允许从release/*分支发布稳定版本，而不仅仅是主分支([`9686d55c`](https://github.com/NousResearch/hermes-agent/commit/9686d55ca87ccb22f779f012dd1ced7cdf63e0b9)) - @ethernet8023
+- 插件）：将 birkin-mnemosyne 固定到核心 0.7.1 ([`e216cd74`](https://github.com/NousResearch/hermes-agent/commit/e216cd746f9e6600cf40ab5622f5ad2119ef91cb)) — @ashmoonori-afk
+- 目录）：审查 huddo 的披露（[`85d27a51`](https://github.com/NousResearch/hermes-agent/commit/85d27a51cf87327f6ea894a3a78302a207706f34)）
+- StudioCodeAI 的地图贡献者电子邮件 ([`c708b34f`](https://github.com/NousResearch/hermes-agent/commit/c708b34ff60cacbb2aa2a34d80e46febed1c2a1b))
+- 插件目录）：将 Telegram Client 更新为 1.3.1 ([`27aaade9`](https://github.com/NousResearch/hermes-agent/commit/27aaade97b75cf8961be8201f167624b46454d8b)) — @guberm
+- 插件目录）：将 Gmail 升级为 v1.0.20 ([`c6ac0565`](https://github.com/NousResearch/hermes-agent/commit/c6ac05655ca24c96c87ddd91d444f690ca9e621d)) — @guberm
+- Kiwi)：将引脚撞到 kiwi@0.12.5，插件 v1.2.2 ([`a08f5894`](https://github.com/NousResearch/hermes-agent/commit/a08f5894355ac410a4af46875ff3ac47e8f89f50)) — @harrylabsj
+- Lightningai 速率限制为 v1.1.0（挂钟对齐窗口）([`e28d64e8`](https://github.com/NousResearch/hermes-agent/commit/e28d64e8b7b54258eae5c8cdc825f919421ca65a)) — @dinosauria123
+- TREE-Ind 的地图贡献者电子邮件 ([`71f78b3f`](https://github.com/NousResearch/hermes-agent/commit/71f78b3fe2a5b6be2dc219c999fc64ab44053b47))
+- 目录）：审查 Hermes-aac 的披露（[`0567d017`](https://github.com/NousResearch/hermes-agent/commit/0567d017c46c3fdb9dd66d5468ad2ed96dc3cfc3)）
+- 目录）：审查公开投资的披露（[`c179b286`](https://github.com/NousResearch/hermes-agent/commit/c179b286d448411f500c7318baf183769b6ba885)）
+- Sahil-SS9 的地图贡献者电子邮件 ([`d8b5bd8a`](https://github.com/NousResearch/hermes-agent/commit/d8b5bd8a497f7f3e8f02acf966b1be6afce2cd91))
+- Catalog): 审查 Hermes-agent-mixer 的披露 ([`a98cc310`](https://github.com/NousResearch/hermes-agent/commit/a98cc310f913bb6e7ac27622fa105a433e415138))
+- 将活动目录更新为 v0.2.0 ([`908c525d`](https://github.com/NousResearch/hermes-agent/commit/908c525dee4f28ba96617b4faa5e051bb21da2d7)) — @hassan-kamel
+- 目录）：经过严格审查的披露 + require_hermes >=0.21.6 ([`2ee820e7`](https://github.com/NousResearch/hermes-agent/commit/2ee820e771033539a5d5eac8356c317af9979245))
+- 目录）：审查关系披露（[`1a5f5c7b`](https://github.com/NousResearch/hermes-agent/commit/1a5f5c7b484f8ffccaa511ceb1639c3ce652e550)）
+- 目录）：kumiho-memory 审查披露（[`63da5f7b`](https://github.com/NousResearch/hermes-agent/commit/63da5f7b2033d3969b825425937143cbc2168851)）
+- 目录）：审查模型路由器的披露（[`92790c6d`]（https://github.com/NousResearch/hermes-agent/commit/92790c6d79f0d743f532b9bf0c964bde6d893a29））
+- 目录）：审查解剖博物馆、特工看门人的披露信息（[`560b2507`](https://github.com/NousResearch/hermes-agent/commit/560b250762a707ad355f3cd9019bff48be954d53)）
+- Js)：主要合并后的 lint：删除未使用的看门狗导入，订购测试导入，在 steer ctx 上存根 gw ([`1b78a417`](https://github.com/NousResearch/hermes-agent/commit/1b78a417d4438655736f5d3e6ff0e6dfd5ea3b60))
+- 重新触发 CI（零作业调度失败，自动修复）([`d056a624`](https://github.com/NousResearch/hermes-agent/commit/d056a62442dfb655fcb488b580ff292b4844be4a))
+- 为区域检测提供稀疏结帐和重试预算（[`8824ac96`]（https://github.com/NousResearch/hermes-agent/commit/8824ac9686e67f8b650e685919447f3f15204591））
+- 重新触发 CI（零作业调度失败，自动修复）([`2cbeac1f`](https://github.com/NousResearch/hermes-agent/commit/2cbeac1f1c57fa64b963eb0fde075769b6cd3d61))
+- 0作业工作流程启动失败后重新触发（[`254432b2`](https://github.com/NousResearch/hermes-agent/commit/254432b2d40a19ad4693f4c7ee98ab9658fe6dcf)）
+- 重新触发（调度窗口）([`1e398140`](https://github.com/NousResearch/hermes-agent/commit/1e39814039247a602a990c0196be3be054ebc059))
+- 重新触发（调度窗口）([`40b17a25`](https://github.com/NousResearch/hermes-agent/commit/40b17a25f4d5812c597d0062d9b13af8f0e80671))
+- 重新触发（调度窗口）([`5e198b8b`](https://github.com/NousResearch/hermes-agent/commit/5e198b8b2fb72a39887414fdffbe3f2d56e4d96c))
+- 0作业工作流程启动失败后重新触发（[`f6dd9025`](https://github.com/NousResearch/hermes-agent/commit/f6dd9025fd357ccecb8ea8b6713704cdbe497a4e)）
+- 0作业工作流程启动失败后重新触发（[`911b559e`](https://github.com/NousResearch/hermes-agent/commit/911b559e4a38bfc0e13113276dea824bc1741749)）
+- 0作业工作流程启动失败后重新触发（[`4ff21ecd`](https://github.com/NousResearch/hermes-agent/commit/4ff21ecd722f1ddf63614799657e0eedf0c5528c)）
+- 0作业工作流程启动失败后重新触发（[`c37453e7`](https://github.com/NousResearch/hermes-agent/commit/c37453e7c4e6c51d1726ff54767cfce3518f43ce)）
+- 0作业工作流程启动失败后重新触发（[`cb296788`](https://github.com/NousResearch/hermes-agent/commit/cb29678859be3e7737620a394147193f65d1b5a3)）
+- 0作业工作流程启动失败后重新触发（[`346615f3`](https://github.com/NousResearch/hermes-agent/commit/346615f3f911f9f153d54c23fb5e6bcea30321bc)）
+- 0作业工作流程启动失败后重新触发（[`1e4edefa`](https://github.com/NousResearch/hermes-agent/commit/1e4edefa4279b22e711f9c5c99a6b1082d538a46)）
+- 0作业工作流程启动失败后重新触发（[`f3d4105f`](https://github.com/NousResearch/hermes-agent/commit/f3d4105f694f71f18ddd215ce25318317a2d350f)）
+- 0作业工作流程启动失败后重新触发（[`73d9e413`](https://github.com/NousResearch/hermes-agent/commit/73d9e41344488956f49bec9ed902a318e85f5c78)）
+- 0作业工作流程启动失败后重新触发（[`c7fcc65c`](https://github.com/NousResearch/hermes-agent/commit/c7fcc65c9b1132622eb6117843c253177cd22851)）
+- 0作业工作流程启动失败后重新触发（[`4892e1d4`](https://github.com/NousResearch/hermes-agent/commit/4892e1d4416772bdaed1131a68d242a2bfa9beae)）
+- 0作业工作流程启动失败后重新触发（[`2cb84f43`](https://github.com/NousResearch/hermes-agent/commit/2cb84f4398fb52d24f03dacb02f56cbbeb287b69)）
+- 丢失推送事件后重新触发（0 在 19ca1e85c80 上运行）（[`c86b415d`](https://github.com/NousResearch/hermes-agent/commit/c86b415df4470cca848d4acbeae683591faae734)）
+- 修剪本机 HTTP 帮助程序导入 ([`25fd73b6`](https://github.com/NousResearch/hermes-agent/commit/25fd73b6654125c6a0264aff4fcc8f2b0c0f1224))
+
+## 📦 其他变化
+
+- Repin Hermes-insight to afb08fb (1.0.2) ([`51e663da`](https://github.com/NousResearch/hermes-agent/commit/51e663da9def59da047d05cd88f8dd300fca75ed)) — @BrokeSkill
+- 插件目录：将 huddo 改为 0.9.0 ([`eeacc00a`](https://github.com/NousResearch/hermes-agent/commit/eeacc00ac0b6cfd25c7daee9709d428d3cc66213)) — @hellohanchen
+- 插件目录：将 hermes-lang-pt-br 重新固定到 7548ff1（包验证器 + CI）（[`82fbd41f`](https://github.com/NousResearch/hermes-agent/commit/82fbd41fd41998124a0ae15477306aba65ba6e29)） — @StudioCodeAI
+- 插件目录：将 hermes-lang-pt-br 重新固定到 69efb2f（制作人员/时间线自述文件）（[`2c20d9a3`](https://github.com/NousResearch/hermes-agent/commit/2c20d9a350a09c3cf36f3109d6fbf0e3431fde82)） — @StudioCodeAI
+- 目录：将言语碰撞到 0.1.1 ([`3a5b9e84`](https://github.com/NousResearch/hermes-agent/commit/3a5b9e84b15b3f6d878e40045e2b26f170415759)) — @Lokeshm24
+- 目录：将 qdrant-memory 重新固定到 0.2.1 (e14adc06) ([`720552bb`](https://github.com/NousResearch/hermes-agent/commit/720552bb3083aa7a68087ee98b46b52214fbecc9)) — @cnkang
+- 目录：repin Hermes AAC 0.1.1 SDK-仅减少功能（[`473e2847`](https://github.com/NousResearch/hermes-agent/commit/473e284730b8047d1623f038bafd94c77da2f124)） — @TREE-Ind
+- 插件目录：openinvest 重新固定到 106e5ba（有界后端部门，0.41.6）（[`6cc9a434`](https://github.com/NousResearch/hermes-agent/commit/6cc9a4347b351ca6d4f4b084e572322c9d6f824c)） — @longsizhuo
+- 插件目录：openinvest 重新固定到 3a0c816（审查修复，后端 0.41.4）（[`00c311c8`]（https://github.com/NousResearch/hermes-agent/commit/00c311c834c0184f5eecc36635e8abc0e665dbf9）） — @longsizhuo
+- 插件目录：openinvest 重新固定到 3e1a9d7（审核修复）([`cb223633`](https://github.com/NousResearch/hermes-agent/commit/cb223633d2d8dc84782254563d32902d4213a943)) — @longsizhuo
+- 插件目录：将计划模式改为 0.4.4 ([`2a5617f8`](https://github.com/NousResearch/hermes-agent/commit/2a5617f858a22ab852ee0332460e164af8bbbc3a)) — @100yenadmin
+- 插件目录：将计划模式改为 0.4.3 ([`6fafdd4f`](https://github.com/NousResearch/hermes-agent/commit/6fafdd4f06b35ec4e09adccf6769b547a470ac69)) — @100yenadmin
+- 目录：固定 Showly 社区插件 ([`5da3156c`](https://github.com/NousResearch/hermes-agent/commit/5da3156c8607f15206de74b22a69a015c073d09e)) — @slchris
+- 目录（nexus）：将 sha 重新固定到 4392e6d — /embed 和 /mcp 需要每个安装密钥（[`64425a06`](https://github.com/NousResearch/hermes-agent/commit/64425a0663de5e2d660b498013a9a89a4b68f920)） — @Neboy72
+- 插件目录：将帐户池提升至 4.0.2 ([`e5d2cebe`](https://github.com/NousResearch/hermes-agent/commit/e5d2cebe17e94a3bba69867a8127d98bdf2cc05b)) — @roqianjas
+- 插件目录：将 alans-way 和 alans-way-computer 升级为 0.21.5 ([`a8d61e30`](https://github.com/NousResearch/hermes-agent/commit/a8d61e309fc8e7f22e7e4c9e3a48a11fb1f19a47)) — @capthvnsen
+- 插件目录：nvidia-app + nvidia-broadcast pin -> 729e25c（应用程序端未准备好时首次运行设置）([`f18948e4`](https://github.com/NousResearch/hermes-agent/commit/f18948e4cdc88b38104c0c4572dd8f00269c3eed)) — @alt-glitch
+- 目录：代理看门人（来自#137875）（[#137875](https://github.com/NousResearch/hermes-agent/pull/137875)） — @ZidoCode
+- 目录：解剖博物馆（来自#138166）（[#138166]（https://github.com/NousResearch/hermes-agent/pull/138166）） — @danrudy33
+- 目录：secure-env-ingress (来自 #132272) ([#132272](https://github.com/NousResearch/hermes-agent/pull/132272)) — @web3blind
+- 样式：将规范组控件与桌面 lint 规则对齐 ([`c8d8900d`](https://github.com/NousResearch/hermes-agent/commit/c8d8900dcd17281dd52f52624ac712f2199eaed3))
+- 风格：标准化已验证的队列准入导入和间距（[`d3ad7a90`](https://github.com/NousResearch/hermes-agent/commit/d3ad7a90ec585deea401a7c37ec32dbcdcb6c086)）
+
+## 👥 贡献者
+
+感谢所有为此版本做出贡献的人！
+
+- @Lokee86（11 次提交）
+- @dokterdok（6 次提交）
+- @elisam0（5 次提交）
+- @longsizhuo（4 次提交）
+- @100yenadmin（3 次提交）
+- @StudioCodeAI（3 次提交）
+- @olric3015（3 次提交）
+- @ethernet8023（2 次提交）
+- @helix4u（2 次提交）
+- @guberm（2 次提交）
+- @TakeshiTGAL（2 次提交）
+- @dinosauria123（2 次提交）
+- @TREE-Ind（2 次提交）
+- @Sahil-SS9（2 次提交）
+- @hassan-kamel（2 次提交）
+- @slchris（2 次提交）
+- David Dudok de Wit（2 次提交）
+- @xxxigm（1 次提交）
+- @kshitijk4poor（1 次提交）
+- @j-nolan（1 次提交）
+- @roverin（1 次提交）
+- @BrokeSkill（1 次提交）
+- @dandacompany（1 次提交）
+- @ashmoonori-afk（1 次提交）
+- @hellohanchen（1 次提交）
+- @2867297362mjb-sketch（1 次提交）
+- @Lokeshm24（1 次提交）
+- @harrylabsj（1 次提交）
+- @cnkang（1 次提交）
+- @Neboy72（1 次提交）
+- @kaveone（1 次提交）
+- @roqianjas（1 次提交）
+- @capthvnsen（1 次提交）
+- @alt-glitch（1 次提交）
+- @meta Mindu（1 次提交）
+- @ZidoCode（1 次提交）
+- @danrudy33（1 次提交）
+- @web3blind（1 次提交）
+- @KoNit-K（1 次提交）
+- @unsupportedpastels（1 次提交）
+- @abundantbeing（1 次提交）
+- @utkubakir（1 次提交）
+
+**完整 Changelog**：[v0.22.0...rc.5-v0.22.1](https://github.com/NousResearch/hermes-agent/compare/v0.22.0...rc.5-v0.22.1)
+
+---
+
+> 📦 仓库：[NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) · 🏷️ 版本：`v0.22.1` · 📅 发布：2026-10-14 · [查看英文原版 Release](https://github.com/NousResearch/hermes-agent/releases/tag/v0.22.1)
+
+*本文由 NextStack 自动翻译，内容以官方英文原文为准。*
