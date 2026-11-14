@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { datedReleases, hrefEn, hrefZh } from "../lib/registry";
 import { t } from "../lib/i18n";
 
-const SITE = "https://www.ktyhub.com";
+const SITE = "https://www.stags.cn";
 
 function esc(s: string): string {
   return s

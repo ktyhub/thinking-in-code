@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { datedReleases, hrefZh } from "../../lib/registry";
 import { t } from "../../lib/i18n";
 
-const SITE = "https://www.ktyhub.com";
+const SITE = "https://www.stags.cn";
 
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
