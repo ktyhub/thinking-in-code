@@ -11,12 +11,32 @@
 import { GENERATED_DICTS } from "./dicts.generated";
 
 export const LOCALES = ["en", "zh", "ja", "de", "fr", "es", "pt"] as const;
-export type Locale = (typeof LOCALES)[number];
+
+/**
+ * 放宽为 string：语言集合随分片扩展（最终 249 种），不可能写成联合类型。
+ * 交叉 `(string & {})` 保留 IDE 对已知语言的自动补全。
+ */
+export type Locale = (typeof LOCALES)[number] | (string & {});
+
 export const DEFAULT_LOCALE: Locale = "en";
 
-/** 需要额外生成本地化路由的语言（en/zh 已有独立页面） */
-export const EXTRA_LOCALES = ["ja", "de", "fr", "es", "pt"] as const satisfies readonly Locale[];
-export type ExtraLocale = (typeof EXTRA_LOCALES)[number];
+/**
+ * 本次构建实际生成的语言。
+ *
+ * 千万页靠"全量重建"是跑不完的（13 小时起），所以拆成多个分片并行构建：
+ *   SITE_LOCALES=ja,ko,de npm run build   → 只生成这三种语言的路由
+ * 不设置环境变量时退化为全量构建，本地开发与现有 CI 行为不变。
+ */
+const ENV_LOCALES = String(import.meta.env.SITE_LOCALES ?? "").trim();
+export const ACTIVE_LOCALES: Locale[] = ENV_LOCALES
+  ? ENV_LOCALES.split(",").map((s) => s.trim()).filter(Boolean)
+  : [...LOCALES];
+
+/** 本次构建需要生成 /{locale}/ 前缀路由的语言（en 在根路径、zh 有原生页面） */
+export const EXTRA_LOCALES: Locale[] = ACTIVE_LOCALES.filter((l) => l !== "en" && l !== "zh");
+
+/** 构建分片标识，用于区分产物（sitemap 分片、缓存 key） */
+export const BUILD_SHARD = String(import.meta.env.SITE_SHARD ?? "all").trim() || "all";
 
 export interface LocaleMeta {
   label: string;
@@ -26,7 +46,8 @@ export interface LocaleMeta {
   ogLocale: string;
 }
 
-export const LOCALE_META: Record<Locale, LocaleMeta> = {
+/** 人工定稿的语言元信息（核心语种的展示名与 hreflang 需要精确控制） */
+export const LOCALE_META: Record<string, LocaleMeta> = {
   en: { label: "English", short: "EN", htmlLang: "en", hreflang: "en", ogLocale: "en_US" },
   zh: { label: "中文", short: "中", htmlLang: "zh-CN", hreflang: "zh-Hans", ogLocale: "zh_CN" },
   ja: { label: "日本語", short: "日", htmlLang: "ja", hreflang: "ja", ogLocale: "ja_JP" },
@@ -35,6 +56,30 @@ export const LOCALE_META: Record<Locale, LocaleMeta> = {
   es: { label: "Español", short: "ES", htmlLang: "es", hreflang: "es", ogLocale: "es_ES" },
   pt: { label: "Português", short: "PT", htmlLang: "pt-BR", hreflang: "pt-BR", ogLocale: "pt_BR" },
 };
+
+/**
+ * 取语言元信息。没有人工定稿的语言用 Intl 自动生成——
+ * 249 种语言不可能手写，而 Intl.DisplayNames 内置了完整的语言名表。
+ */
+export function getLocaleMeta(code: string): LocaleMeta {
+  const known = LOCALE_META[code];
+  if (known) return known;
+  let label = code;
+  try {
+    const native = new Intl.DisplayNames([code], { type: "language" }).of(code);
+    if (native) label = native;
+  } catch {
+    /* 运行时缺少该语言数据时回落语言代码 */
+  }
+  const base = code.split("-")[0];
+  return {
+    label,
+    short: base.slice(0, 2).toUpperCase(),
+    htmlLang: code,
+    hreflang: code,
+    ogLocale: code.replace("-", "_"),
+  };
+}
 
 type Dict = Record<string, string>;
 

@@ -5,7 +5,7 @@
  */
 import "../styles/global.css";
 import {
-  t, LOCALES, LOCALE_META, localePath, switchLocale,
+  t, LOCALES, getLocaleMeta, localePath, switchLocale,
   otherLocale, otherLocales, stripLocale, hasAllLocales, type Locale,
 } from "../lib/i18n";
 import { shouldNoindex, isIndexable } from "../lib/gate";
@@ -45,7 +45,7 @@ const {
 const noindex = shouldNoindex(locale, noindexProp);
 
 const SITE = "NextStack";
-const meta = LOCALE_META[locale];
+const meta = getLocaleMeta(locale);
 const siteDesc = t(locale, "site.desc");
 const fullTitle = title ? `${title} — ${SITE}` : `${SITE} — ${t(locale, "hero.title")}`;
 const desc = description || siteDesc;
@@ -63,7 +63,7 @@ const fullAlt = hasAlt && hasAllLocales(langNeutralPath);
 /** 语言切换目标：详情页没有对应译文，回落到该语言的 Releases 列表 */
 const langTargets = LOCALES.map((l) => ({
   code: l,
-  ...LOCALE_META[l],
+  ...getLocaleMeta(l),
   href: l === locale
     ? Astro.url.pathname
     : fullAlt ? switchLocale(Astro.url.pathname, l) : localePath(l, "/releases"),
@@ -78,7 +78,7 @@ const hreflangLinks = noindex
   ? []
   : fullAlt
     ? LOCALES.filter((l) => isIndexable(l)).map((l) => ({
-        code: LOCALE_META[l].hreflang,
+        code: getLocaleMeta(l).hreflang,
         href: new URL(switchLocale(Astro.url.pathname, l), Astro.site).href,
       }))
     : hasAlt
@@ -146,7 +146,7 @@ const graph = [
     <meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png" />
     <meta property="og:locale" content={meta.ogLocale} />
     {otherLocales(locale).map((l) => (
-      <meta property="og:locale:alternate" content={LOCALE_META[l].ogLocale} />
+      <meta property="og:locale:alternate" content={getLocaleMeta(l).ogLocale} />
     ))}
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png" />
