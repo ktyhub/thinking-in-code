@@ -3,10 +3,10 @@ title: "FastGPT v4.17.4"
 project: "FastGPT"
 repo: "labring/FastGPT"
 tag: "v4.17.4"
+version: "v4.17.4"
 published: "2026-11-05"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/labring/FastGPT/compare/v4.17.3...v4.17.4"
 ---
 
 # FastGPT v4.17.4

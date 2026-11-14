@@ -3,10 +3,10 @@ title: "firecrawl v2.11.0"
 project: "firecrawl"
 repo: "firecrawl/firecrawl"
 tag: "v2.11.0"
+version: "v2.11.0"
 published: "2026-06-19"
 type: "minor"
 lang: "en"
-summary: "Full Changelog: https://github.com/firecrawl/firecrawl/compare/v2.10...v2.11.0"
 ---
 
 # firecrawl v2.11.0

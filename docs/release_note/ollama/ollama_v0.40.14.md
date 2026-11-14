@@ -3,10 +3,10 @@ title: "ollama v0.40.14"
 project: "ollama"
 repo: "ollama/ollama"
 tag: "v0.40.14"
+version: "v0.40.14"
 published: "2026-11-03"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/ollama/ollama/compare/v0.40.13...v0.40.14"
 ---
 
 # ollama v0.40.14

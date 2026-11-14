@@ -58,7 +58,7 @@ python scripts/release-tracker/translate.py --text "..." --target ja
 | 文件 | 用途 |
 |------|------|
 | `config.json` | 追踪仓库列表与限额，**加仓库改这里** |
-| `collect.py` | 每日采集（英文原文 + 中文译文） |
+| `collect.py` | 定时采集（热仓库每轮必扫 + 其余按游标轮转，读响应头控配额） |
 | `translate.py` | 多通道轮询翻译器（被所有翻译脚本复用） |
 | `state.json` | 已采集 tag 去重状态 |
 | `gen_dicts.py` | 生成 7 语言 UI 字典 → `site/src/lib/dicts.generated.ts` |
@@ -79,14 +79,32 @@ python scripts/release-tracker/translate.py --text "..." --target ja
 - 缺失译文一律回落英文原文，不会出现空白或坏文案
 - `Intl.DateTimeFormat` 按 locale 本地化月份与日期，无需翻译
 
+## 扫描策略与配额
+
+GitHub 认证后是 1000 请求/小时（Actions 内置 token）或 5000（个人 token），一个仓库一个请求。名单现在 158 个，一轮扫完绰绰有余——但名单要往 1000+ 扩，所以从现在就按批走：
+
+- `scan.hot`：每轮必扫的热仓库（当前 28 个，按 star 排序的人工名单）
+- `scan.repos_per_run`：每轮额外轮转的仓库数（默认 70），游标存在 `state.json` 的 `cursor`
+- 每次响应都刷新 `X-RateLimit-Remaining`，低于 `scan.reserve_requests`（默认 200）就**主动收工**，把剩余仓库留给下一轮，而不是撞到 403 再空等
+- 撞上 403/429 时读 `Retry-After` 与 `X-RateLimit-Reset`：等得起就等，超过 2 分钟直接收工退出（退出码仍是 0，本轮内容照常提交）
+- 请求之间 350–750ms 随机间隔，避免打出突发流量被二级限流
+
+一天三轮（UTC 01:30 / 09:30 / 17:30）覆盖 210 个仓库，扩到 200 以内都不用改配置。
+
 ## 手动运行
 
 ```bash
 # 采集（试跑，不写文件）
 python scripts/release-tracker/collect.py --dry-run --limit 3 --repos apache/kafka
 
-# 采集 + 中文译文
+# 正常一轮：热仓库全扫 + 轮转 70 个
 GITHUB_TOKEN=ghp_xxx python scripts/release-tracker/collect.py --translate
+
+# 名单大改后全量首采（忽略游标，一次扫完所有仓库）
+GITHUB_TOKEN=ghp_xxx python scripts/release-tracker/collect.py --full --limit 400
+
+# 只扫某个分组（config.json 里的 groups 键）
+GITHUB_TOKEN=ghp_xxx python scripts/release-tracker/collect.py --repos $(python -c "import json;c=json.load(open('scripts/release-tracker/config.json'));print(','.join(c['groups']['ai-agent']))")
 
 # 重新生成 UI 字典（改了 i18n.ts 或 ui-overrides.json 后）
 python scripts/release-tracker/gen_dicts.py --workers 5

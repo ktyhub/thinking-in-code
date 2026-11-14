@@ -3,10 +3,10 @@ title: "anything-llm v1.16.2"
 project: "anything-llm"
 repo: "Mintplex-Labs/anything-llm"
 tag: "v1.16.2"
+version: "v1.16.2"
 published: "2026-09-22"
 type: "patch"
 lang: "en"
-summary: "Full Changelog: https://github.com/Mintplex-Labs/anything-llm/compare/v1.16.1...v1.16.2"
 ---
 
 # anything-llm v1.16.2

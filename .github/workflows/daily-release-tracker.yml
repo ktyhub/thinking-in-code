@@ -1,15 +1,22 @@
 name: daily-release-tracker
 
-# 每日采集追踪仓库的新 Release：英文原文写入 docs/release_note（canonical），
+# 定时扫描追踪仓库的新 Release：英文原文写入 docs/release_note（canonical），
 # 同时生成中文译文写入 docs/zh/release_note；新增条目的摘要增量翻译成
 # ja/de/fr/es/pt 五语言（产物 site/src/data/summaries.json 随仓库提交，
-# 因此每天只翻新增条目，通常在几秒内完成）。
-# push 到 main 后由 ci workflow 自动部署到 www.ktyhub.com，
-# 新页面自动进入 sitemap.xml，实现每日新增 SEO 内容。
+# 因此每轮只翻新增条目，通常在几秒内完成）。
+#
+# 为什么一天跑三轮而不是一轮：
+#   GitHub 认证后配额是 1000 请求/小时（Actions 内置 token）/ 5000（个人 token），
+#   一个仓库一个请求。名单 150+ 仓库一轮扫完也够用，但名单会继续扩到 1000+，
+#   所以 collect.py 按「热仓库每轮必扫 + 其余按 cursor 轮转」分片。
+#   一天三轮 × 每轮 70 个 = 210 个仓库/天，足够覆盖 200 以内的名单，
+#   并且把请求摊平，不会在某一分钟打出突发流量。
 
 on:
   schedule:
-    - cron: "30 1 * * *" # UTC 01:30 = 北京时间 09:30
+    - cron: "30 1 * * *" # UTC 01:30 = 北京 09:30
+    - cron: "30 9 * * *" # UTC 09:30 = 北京 17:30
+    - cron: "30 17 * * *" # UTC 17:30 = 北京 01:30
   workflow_dispatch: {} # 支持手动触发
 
 permissions:
@@ -22,6 +29,7 @@ concurrency:
 jobs:
   collect:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
@@ -33,10 +41,19 @@ jobs:
         with:
           node-version: 22
 
+      - name: 查看本轮 API 配额
+        run: |
+          curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+               -H "Accept: application/vnd.github+json" \
+               https://api.github.com/rate_limit \
+            | python -c "import json,sys; r=json.load(sys.stdin)['resources']['core']; print(f\"core {r['remaining']}/{r['limit']}\")"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: 采集最新 Release（英文原文 + 中文译文）
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 提升速率到 1000+/小时
-        run: python scripts/release-tracker/collect.py --translate
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python -u scripts/release-tracker/collect.py --translate | tee /tmp/collect.log
 
       - name: 增量翻译新增 Release 摘要（5 语言）
         # 免费翻译端点偶发限流；失败不应阻断当天采集的内容上线
@@ -49,9 +66,17 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [[ -n $(git status --porcelain) ]]; then
             git add -A
-            git commit -m "chore(release-tracker): 每日采集最新 Release ($(date -u +%F))"
+            git commit -m "chore(release-tracker): 采集最新 Release ($(date -u +%F))"
             git push
             echo "已提交 $(git rev-parse --short HEAD)"
           else
             echo "没有新的 Release，跳过提交"
           fi
+
+      - name: 本轮摘要
+        if: always()
+        run: |
+          echo "### Release 采集结果" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          tail -3 /tmp/collect.log >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "无日志" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
