@@ -110,15 +110,37 @@ python scripts/release-tracker/gen_summaries.py --limit 20
 python scripts/release-tracker/plan_million.py
 python scripts/release-tracker/plan_million.py --langs 35 --pv 0.3   # 自定义语言数与页均访问
 
-# 发布前 SEO 审计：闸门与产物是否一致、hreflang 是否指向 noindex、薄内容页
+# 千万级账本：内容基数差距 + 静态可行性 + 多平台配额
+python scripts/release-tracker/plan_scale.py
+python scripts/release-tracker/plan_scale.py --releases 40000 --langs 249
+
+# 多平台分片编排：语言→平台分配、网关路由表、CI matrix（产物在 deploy/）
+python scripts/release-tracker/shard_plan.py
+python scripts/release-tracker/shard_plan.py --check                  # 只看不写
+
+# 发布前 SEO 审计：闸门与产物是否一致、canonical 域名、hreflang、薄内容
 python scripts/release-tracker/seo_audit.py
 python scripts/release-tracker/seo_audit.py --strict                 # CI 门禁用，有问题退出码 1
 ```
 
-完整方案见 [`MILLION_PAGES.md`](./MILLION_PAGES.md)。三条结论：
+## 分片构建（解决"更新慢"）
+
+全量构建随页面数线性增长，249 种语言要 13 小时以上。把构建按语言切片：
+
+```bash
+SITE_LOCALES=ja,ko,de SITE_SHARD=edge-cf npm run build   # 只生成这三种语言
+npm run build                                            # 不设变量 = 全量，本地开发用
+```
+
+分片编排由 `shard_plan.py` 产出：静态层只放 en/zh（各一个 GitHub Pages 项目），
+其余 248 种语言由边缘函数按需渲染，静态构建时长不再随语言数增长。
+完整方案见 [`MILLION_PAGES.md`](./MILLION_PAGES.md)（百万级）和
+[`TEN_MILLION.md`](./TEN_MILLION.md)（千万级 + 多平台）。
+
+三条结论：
 
 1. **全静态预渲染 249 种语言不可行** —— 82.9 万页 / 17.4 GB / 构建 13.3 小时，GitHub Pages 只剩 1 GB、Cloudflare Pages 只剩 2 万文件
-2. **可行的是混合架构** —— 7 种主力语言静态（0.11 GB，占 GH Pages 11.4%），其余 242 种由边缘函数按需渲染（数据 0.68 GB，占 R2 免费额度 6.8%）
+2. **可行的是混合架构** —— 静态层只放 en/zh，其余语言由边缘函数按需渲染
 3. **百万 URL ≠ 百万收录页** —— URL 空间可以铺满，但 sitemap 只提交 `index-gate.json` 放量的语言，否则触发 Google 的 scaled content abuse 判定
 
 ## 索引闸门（放量开关）
