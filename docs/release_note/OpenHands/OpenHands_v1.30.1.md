@@ -1,8 +1,9 @@
 ---
 title: "OpenHands v1.30.1"
 project: "OpenHands"
-repo: "All-Hands-AI/OpenHands"
+repo: "OpenHands/OpenHands"
 tag: "v1.30.1"
+version: "v1.30.1"
 published: "2026-10-22"
 type: "patch"
 lang: "en"
@@ -44,6 +45,6 @@ Signing + notarization is tracked in OpenHands/OpenHands#16774.
 
 ---
 
-> **Source** [All-Hands-AI/OpenHands](https://github.com/All-Hands-AI/OpenHands) · `v1.30.1` · 2026-10-22 · [upstream release](https://github.com/OpenHands/OpenHands/releases/tag/v1.30.1)
+> **Source** [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands) · `v1.30.1` · 2026-10-22 · [upstream release](https://github.com/OpenHands/OpenHands/releases/tag/v1.30.1)
 
 *Mirrored verbatim for indexing. All rights belong to the upstream project.*

@@ -1,96 +1,82 @@
+---
+title: "firecrawl v1.9.0"
+project: "firecrawl"
+repo: "firecrawl/firecrawl"
+tag: "v1.9.0"
+version: "v1.9.0"
+published: "2025-05-16"
+type: "minor"
+lang: "zh"
+---
+
 # firecrawl v1.9.0
-### 为什么要使用Firecrawl
 
-当数据成为新时代的石油，你却还在用原始的铁锹挖掘？传统爬虫工具如同笨重的蒸汽机——配置复杂、效率低下、扩展困难，而Firecrawl是划时代的智能钻探平台。它不仅能在毫秒间穿透反爬机制，还能自动适应网站结构变化，像猎豹般优雅地穿梭于互联网丛林。更致命的是，当你的竞争对手还在为数据清洗熬夜时，Firecrawl已用AI引擎将原始数据冶炼成可直接注入机器学习模型的黄金。
+## Firecrawl v1.9.0 发布
 
-### Firecrawl是什么
+### **新消息：**
 
-Firecrawl是开源的智能网络爬虫框架，专为开发者打造的全能数据收割机。它结合了分布式架构与AI解析能力，能自动化处理JavaScript渲染、验证码破解、动态内容加载等难题，将网页数据转化为结构化信息流。就像给互联网装上了智能传感器，让数据采集从劳动密集型作业升级为精准的数字化手术。
+**自托管改进**
+- Supabase client 修复
+- 修复了对 LLM 提供商的支持
+- 现在爬行速度更快了
+- 全球采用可缓存查找系统
+- 更容易设置
 
-### 入门示例
+**MCP 改进 (v1.11.0)**
+- 大量改进（提示、示例以及如何正确使用参数）
 
-**真实场景**：某金融科技公司需要实时监控500家新闻网站的企业并购动态。  
-**开发方案**：  
-```python
-from firecrawl import FirecrawlApp
+**SDK 和 API 增强功能**
+- 添加了对 SDK 2.0 的更改跟踪
+- 抓取延迟支持与每次抓取并发限制
+- 通过 OpenRouter 的新 Qwen3 爬虫示例
+- 取消批量抓取端点
 
-app = FirecrawlApp(api_key="YOUR_KEY")
-crawler = app.crawl(
-    'https://news.example.com', 
-    {'crawlerOptions': {'includes': ['finance/*']}},
-    wait_until_done=True
-)
+**性能和限制**
+- 全球采用可缓存查找系统
+- 将地图端点限制从 5,000 个链接增加到 30,000 个
+- 搜索架构限制从 50 增加到 100
 
-for result in crawler.results:
-    ai_analysis = app.llm_extract(
-        result['content'], 
-        schema={'company': 'str', 'deal_size': 'float'}
-    )
-    print(f"捕获并购事件：{ai_analysis['company']} 金额 ${ai_analysis['deal_size']}亿")
-```
-这段代码启动了一个定向爬虫，自动过滤金融板块新闻，并通过AI即时提取关键交易数据，整个过程如同部署了数字侦察兵网络。
+**修复和稳定性**
+- 更好地处理 SSL 失败的错误
+- 可选的链接错误修复
+- firecrawl-py 中的 WaitAction 字段验证
+- 并发队列重新设计为按时间而不是优先级确定优先级
 
-### Firecrawl v1.9.0版本更新亮点
+**仪表板（云版本）**
+- 新的活动日志
 
-1. 自托管方案全面升级：Supabase客户端修复+LLM供应商兼容性增强，私有部署速度提升300%  
-2. 智能爬取引擎进化：新增OpenRouter支持的千问3爬虫示例，支持动态延迟与并发控制  
-3. 性能爆发：链接映射上限从5千跃升至3万，搜索架构容量翻倍  
-4. SDK 2.0革命性升级：变更追踪+批量任务中止API，开发控制力倍增  
-5. 稳定性涅槃：SSL错误智能处理+优先级队列重构，系统健壮性达军工级
+## 发生了什么变化
+* (sdk/py) 由 @nickscamara 在 https://github.com/mendableai/firecrawl/pull/1506 中添加到 2.0 的更改跟踪
+* 通过 @rafaelsideguide 在 https://github.com/mendableai/firecrawl/pull/1507 中修复 sdk/schemas
+* 修复：通过 https://github.com/mendableai/firecrawl/pull/1508 中的 @devin-ai-integration 处理 actions 参数中的 dict 和 model 实例
+* [feat] 实现 GCS 存储选项，以跨控制器抓取结果......由 https://github.com/mendableai/firecrawl/pull/1500 中的 @rafaelsideguide
+*（批量/抓取）通过https://github.com/mendableai/firecrawl/pull/1509中的@nickscamara取消批量抓取端点
+* 通过 @devin-ai-integration 在 https://github.com/mendableai/firecrawl/pull/1510 中添加使用 OpenRouter 的 Qwen3 网络爬虫示例
+* 通过 @devin-ai-integration 在 https://github.com/mendableai/firecrawl/pull/1413 中添加抓取延迟功能和每次抓取并发限制 (FIR-249)
+* 通过https://github.com/mendableai/firecrawl/pull/1514中的@devin-ai-integration为所有SDK中的爬网选项添加延迟参数
+* 重构：https://github.com/mendableai/firecrawl/pull/1523 中的 @ftonato 将地图端点的最大链接限制从 5000 到 30000
+* 修复（并发限制）：重新设计 cc 队列，使其按时间而不是优先级（FIR-1890）由 @mogery 在 https://github.com/mendableai/firecrawl/pull/1526 中工作
+* 修复（queue-worker、scrape）：https://github.com/mendableai/firecrawl/pull/1521 中@mogery 的隐形代理定价更改（FIR-1847）
+*壮举（acuc）：在https://github.com/mendableai/firecrawl/pull/1522中传播@mogery的团队旗帜（FIR-1879）
+* [错误修复] 通过 https://github.com/mendableai/firecrawl/pull/1533 中的 @devin-ai-integration 在 firecrawl-py 中使 WaitAction 毫秒字段可选
+* 使用 @y0hnn 在 https://github.com/mendableai/firecrawl/pull/1480 中的基本 url 参数创建 openAI 提供程序
+* 重构：https://github.com/mendableai/firecrawl/pull/1545 中的 @ftonato 将搜索请求模式的最大限制从 50 增加到 100
+* feat(scrapeURL)：@mogery 在 https://github.com/mendableai/firecrawl/pull/1552 中针对 SSL 失败提供了更好的错误
+* 修复/可选链接运算符在 https://github.com/mendableai/firecrawl/pull/1549 中被 @tribixbite 丢失
+* feat(api/extract/fire-0)：@mogery 在 https://github.com/mendableai/firecrawl/pull/1556 中记录错误 (FIR-1971)
+* 壮举：在 https://github.com/mendableai/firecrawl/pull/1559 中@mogery 处处使用可缓存查找
+* @mogery 在 https://github.com/mendableai/firecrawl/pull/1560 中进行 Mog/cachable 查找
+* 通过 https://github.com/mendableai/firecrawl/pull/1561 中的 @devin-ai-integration 在 GCS 中添加 RunPod PDF markdown 结果的缓存
+* 修复 https://github.com/mendableai/firecrawl/pull/1534 中 @devin-ai-integration 的 USE_DB_AUTHENTICATION 为 false 时 Supabase client 配置错误
 
-### 更新日志
-#### Firecrawl v1.9.0 发布公告
+## 新贡献者
+* @y0hnn 在 https://github.com/mendableai/firecrawl/pull/1480 中做出了第一个贡献
+* @tribixbite 在 https://github.com/mendableai/firecrawl/pull/1549 中做出了第一个贡献
 
-**新增功能**  
-**自托管优化**  
-- Supabase客户端修复  
-- 增强LLM供应商支持  
-- 爬取速度显著提升  
-- 全局缓存查询系统  
-- 简化部署流程  
-
-**MCP增强 (v1.11.0)**  
-- 全面改进提示词、示例和参数使用规范  
-
-**SDK & API升级**  
-- SDK 2.0新增变更追踪功能  
-- 支持自定义爬取延迟与并发限制  
-- 新增OpenRouter千问3爬虫示例  
-- 批量爬取任务中止接口  
-
-**性能优化**  
-- 全局部署缓存查询系统  
-- 链接映射上限从5,000提升至30,000  
-- 搜索架构限制从50增至100  
-
-**修复与稳定性**  
-- 增强SSL错误处理机制  
-- 可选链式调用漏洞修复  
-- firecrawl-py的WaitAction字段验证  
-- 并发队列改为时间优先级  
-
-**控制面板(云端版)**  
-- 新增活动日志追踪  
-
-**完整更新列表**  
-- SDK 2.0变更追踪  
-- 修复SDK模式校验  
-- 动作参数兼容性增强  
-- GCS存储方案支持  
-- 批量爬取中止功能  
-- 动态延迟参数支持  
-- 队列优先级算法重构  
-- 代理计费逻辑优化  
-- 团队功能标记传递  
-- OpenAI自定义终端支持  
-
-**首次贡献者**  
-- y0hnn: OpenAI终端支持  
-- tribixbite: 可选链修复  
-
-**完整更新记录**：v1.8.0至v1.9.0全量代码变更  
+**完整 Changelog**：https://github.com/mendableai/firecrawl/compare/v1.8.0...v1.9.0
 
 ---
 
-### 版本更新精要  
-v1.9.0堪称Firecrawl的进化里程碑：自托管方案获军工级稳定性，爬取效率突破物理极限，SDK控制力达手术刀级精准。更引入智能延迟调控和3万级链接处理能力，配合云端日志追踪，打造出企业级数据采集的全新范式。此次升级犹如为爬虫引擎装载了涡轮增压，在数据竞赛中为开发者装上氮气加速系统。
+> 📦 仓库：[firecrawl/firecrawl](https://github.com/firecrawl/firecrawl) · 🏷️ 版本：`v1.9.0` · 📅 发布：2025-05-16 · [查看英文原版 Release](https://github.com/firecrawl/firecrawl/releases/tag/v1.9.0)
+
+*本文由 NextStack 自动翻译，内容以官方英文原文为准。*
