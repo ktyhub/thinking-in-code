@@ -1,0 +1,39 @@
+---
+title: "ollama v0.40.4"
+project: "ollama"
+repo: "ollama/ollama"
+tag: "v0.40.4"
+version: "v0.40.4"
+published: "2026-10-12"
+type: "patch"
+lang: "en"
+summary: "Decision models can now be used directly from the terminal with ollama run — ask yes/no questions, classify text into labels, or score against a rubric: ollama run nimble --ask 'Is a refund being requested?' < ticket.txt"
+---
+
+# ollama v0.40.4
+
+## Decision models in the CLI
+Decision models can now be used directly from the terminal with `ollama run` — ask yes/no questions, classify text into labels, or score against a rubric:
+`ollama run nimble --ask "Is a refund being requested?" < ticket.txt`
+
+ ## What's Changed
+  * Kev decision models are now supported by the MLX runner on Apple silicon
+  * `ollama launch` can now be used with usage credits without upgrading to a paid plan
+  * `ollama launch codex` now includes locally installed Ollama models in its model picker. Use `/model` within the Codex CLI to swap models.
+  * Improved inference performance by reusing verified manifests and already loaded models
+  * Added support for multimodal embeddings through llama-server
+  * Fixed loading multimodal embedding models with small context windows
+  * Improved Gemma 4 prefill performance on NVIDIA GPUs with the MLX runner
+  * MLX runner now clips long Laya states instead of rejecting them
+  * Improved speculative decoding reliability in the MLX runner, including recurrent state handling after rollback
+   * Updated llama.cpp with native decision model support
+  * Updated README and documentation with clearer privacy and cloud-services wording
+
+  
+  **Full Changelog**: https://github.com/ollama/ollama/compare/v0.40.3...v0.40.4
+
+---
+
+> **Source** [ollama/ollama](https://github.com/ollama/ollama) · `v0.40.4` · 2026-10-12 · [upstream release](https://github.com/ollama/ollama/releases/tag/v0.40.4)
+
+*Mirrored verbatim for indexing. All rights belong to the upstream project.*

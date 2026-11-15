@@ -1,0 +1,59 @@
+---
+title: "ollama v0.35.1"
+project: "ollama"
+repo: "ollama/ollama"
+tag: "v0.35.1"
+version: "v0.35.1"
+published: "2026-09-29"
+type: "patch"
+lang: "en"
+summary: "Ollama now supports Clef and Clef Flash, Cloudflare's new open-source decision models, through /v1/systemone."
+---
+
+# ollama v0.35.1
+
+## Clef decision models
+
+Ollama now supports [Clef](https://ollama.com/library/clef) and [Clef Flash](https://ollama.com/library/clef), Cloudflare's new open-source decision models, through `/v1/systemone`.
+
+Clef (27B) and Clef Flash (9B) are multimodal: requests can now include images alongside the text state, shared by all questions and scored jointly with it.
+
+```sh
+curl http://localhost:11434/v1/systemone -d '{
+  "model": "clef-flash",
+  "state": "The user took this screenshot.",
+  "images": ["<base64-encoded image>"],
+  "questions": {
+    "has_ollama": {"type": "noul", "instructions": "Does this image contain Ollama?"}
+  }
+}'
+```
+
+```
+{
+  "model": "clef-flash",
+  "answers": {
+    "has_ollama": {
+      "type": "noul",
+      "noul": 0.958
+    }
+  },
+  "usage": {
+    "input_tokens": 548,
+    "output_tokens": 0
+  }
+}
+```
+## What's Changed
+* Models using web search can now perform up to ten searches per response, up from three
+* Modelfiles now support `CAPABILITY` declarations, so model creators can explicitly declare what a model can do. Declarations are preserved when creating from GGUF or safetensors, through model inheritance, and on Modelfile export
+* `ollama show` and the model list now report only `decision` as the capability for decision models, so clients no longer offer them for general chat, tools, or thinking
+* Updated llama.cpp and the MLX engine
+
+**Full Changelog**: https://github.com/ollama/ollama/compare/v0.35.0...v0.35.1
+
+---
+
+> **Source** [ollama/ollama](https://github.com/ollama/ollama) · `v0.35.1` · 2026-09-29 · [upstream release](https://github.com/ollama/ollama/releases/tag/v0.35.1)
+
+*Mirrored verbatim for indexing. All rights belong to the upstream project.*

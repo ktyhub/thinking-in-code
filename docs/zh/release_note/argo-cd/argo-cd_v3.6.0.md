@@ -1,0 +1,764 @@
+---
+title: "argo-cd v3.6.0"
+project: "argo-cd"
+repo: "argoproj/argo-cd"
+tag: "v3.6.0"
+version: "v3.6.0"
+published: "2026-11-03"
+type: "minor"
+lang: "zh"
+---
+
+# argo-cd v3.6.0
+
+## 快速入门
+
+### 非 HA：
+
+```shell
+kubectl create namespace argocd
+kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.6.0/manifests/install.yaml
+```
+
+### 哈：
+
+```shell
+kubectl create namespace argocd
+kubectl apply -n argocd --server-side --force-conflicts -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.6.0/manifests/ha/install.yaml
+```
+
+## 发布签名和出处
+
+所有 Argo CD 容器映像均由 cosign 签名。  为符合 SLSA 3 级规范的容器映像和 CLI 二进制文件生成来源。有关如何验证的信息，请参阅[文档](https://argo-cd.readthedocs.io/en/stable/operator-manual/signed-release-assets)。
+
+## Release Notes 博客文章
+有关此版本中的主要更改和改进的详细信息，请查看[官方博客文章](https://blog.argoproj.io/argo-cd-v3-6-rc1-is-here-c0b562dc78d1)
+
+## 升级
+
+如果从不同的次要版本升级，请务必阅读[升级](https://argo-cd.readthedocs.io/en/stable/operator-manual/upgrading/overview/) 文档。
+
+## Changelog
+### 特点
+* bac4616ca429ba92af1b312cb8a2cac36e1cfdea: feat(actions)：为 CNPG 集群添加休眠/补水操作 (#28478) (@purisev)
+* 0df1a4bcced9a8400d6ddafaf168e6e847209ec8：feat(appset)：为 AppSet 添加渐进式同步指标 (#29202) (@ranakan19)
+* ad23d3a9c04134f42661b5cbdb5aaeac46a1cdad：feat(appset)：在应用程序上添加注释以在继续进行渐进同步之前强制协调 (#27467) (@ranakan19)
+* 94564eba18592d1bc2fc20e64415c9214203a5d4：feat(appset)：添加渐进同步期间由 appset 触发的应用刷新计数指标 (#29244) (@ranakan19)
+* 9ef034e688e86f45fa63465710d5883d88c2ddde: feat(appset): 在应用程序集控制器上公开工作队列速率限制器标志 (#28286) (@om7057)
+* 5899f89f745513f324ff0999cf7770821b7b7fd0：壮举（appset）：将渐进同步场景表面化为原因和消息（＃27820）（@ranakan19）
+* 4e8ea39ca215a7f4c4df2d159dc3a88a8e60d994：feat(ci)：启用 Zizmor 强制执行安全配置 (#27304) (@crenshaw-dev)
+* ec10f2e627042e29044b6de5f550f6bacf19708e: feat(cli)：使用 `argocd admin export` 命令时可选择排除状态字段 (#29219) (@nitishfy)
+* 5c3637def4bef8daf16311877d9bc6f98f39f4ec: feat(controller): 允许通过 argocd-cmd-params-cm 进行指标标签/条件标志 (#28287) (@edgrz)
+* 5f8562e90a9310a9e521e5aa6ae529060a567279：feat(dex)：配置 Dex TLS 密码套件和曲线首选项（3.6 的cherry-pick #29658）(#30217) (@argo-cd-cherry-pick-bot[bot])
+* d94bcb1215c15bbe12835b4653e7c58f42b9241f: feat(dex): 为 Dex web 配置 TLS Minversion (#28712) (@akhilnittala)
+* 465d43b2455fa60c45c02041b553054921934e3d: feat(dex): 使 Dex 存储类型和配置可从 argocd-cm configmap 配置 (#28624) (@akhilnittala)
+* 2e2f4e450d57bafa249aaa330d61901f76d424df：壮举（健康）：实施kyverno健康检查（＃27354）（@sandert-k8s）
+* 034ab6150952f23071d452f0f6fc0b400124d7e1: feat(health): 为 TLSRoute 添加内置健康检查 (#26596) (@dnfwlq8054)
+* 49aa0eab6d876ba8a69b198e8319495c9931dcfb: feat(health): 添加 AWS ACK 资源的运行状况检查 (#29016) (@philljie)
+* e1145c626c7dee9ba7e437447bc2b3319e042f3f: feat(health)：为 CloudNativePG 备份添加运行状况检查 (#28468) (@yugstar)
+* 643de0bcff5a48076ce582d8b096a3f5fc1402ff: feat(health): 添加 CloudNativePG 数据库 CRD 的健康检查 (#29511) (@Matthiator)
+* ff00ee7d69ffc3d85b175bf37bbc40c7e814d183: feat(health): 添加 Kro 资源的健康检查 (#28743) (@philljie)
+* 3825b96ac9ce29b500f8895e47fd44fa26901a74：壮举（健康）：为 MedusaBackupJob 添加健康检查（问题＃28009）（＃28008）（@mgross2）
+* 309594ba94218770caa0e922530962b915741b0f：壮举（健康）：为MedusaTask添加健康检查（问题＃28007）（＃28006）（@mgross2）
+* 6858a80b2af7fde484986ea4bc282c85a489d1fd: feat(health): 为 Prometheus Operator Alertmanager 添加健康检查 (#28446) (@yugstar)
+* 2338867cea9ca0390ae5ad33a9b045f72a797f73：壮举（健康）：为Prometheus操作员ThanosRuler添加健康检查（＃28463）（@yugstar）
+* 831d77b52c809dec1ae8b7107ccb264825402d7d：壮举（健康）：为证书管理器CertificateRequest添加健康检查（＃28465）（@yugstar）
+* dec470a0ab16b7c6a97fe4eb58f9ae430eb0a04f: feat(health): 添加证书管理器 trust-manager Bundle 的健康检查 (#28615) (@yugstar)
+* fdf6751b85a04b0b60a23ec0bcd5641c814b09ec: feat(health): 为 flink.apache.org/FlinkSessionJob 添加健康检查 (#26626) (@sivchari)
+* 21ac508ef6aaae8238710688fbf26e0c20d2b9d7：feat(health)：为 Tekton PipelineRun 和 TaskRun 添加运行状况检查 (#28467) (@yugstar)
+* 180061c9b2cd879b966f60a46e09a83001acc4d8：feat(health)：为 Velero 备份、恢复和计划添加运行状况检查 (#28464) (@yugstar)
+* 57088014f10c71331ce6719f1c85d778ccfd5b14：壮举（健康）：为证书管理器 ACME 订单和挑战添加健康检查（＃28466）（@yugstar）
+* 291bfab82175b7580165a7a11be282151eac0ad8: feat(health): 允许删除标记为“recyclable-expired”的 Pipeline (#28532) (@juliev0)
+* 463f39afe5d91882e51c345fe5bce6ead40adeae：壮举（健康）：支持ListenerSet.gateway.networking.k8s.io（＃28388）（@root30）
+* ffe66fff46708bbbe4183b13f3d2cde657664c4b: feat(health): 支持自定义删除消息 (#27595) (#27596) (@crenshaw-dev)
+* 5e8ed632babda75965940a0f175010bb974b50b7：壮举（健康）：支持各种政策_.microgateway.airlock.com（＃28268）（@root30）
+* 961bd434659679dd9d80e8a4d83acb71dfcec2cd：壮举（Hydrator）：将指标添加到应用程序信息（＃29512）（＃29514）（@crenshaw-dev）
+* 2d71dc6b6e4e1ddda65f950bb3f538e04ca7c76e：壮举（Hydrator）：签署水合提交（Alpha）（＃28239）（＃28271）（@mladjan-gadzic）
+* c2df91b70ff69c24b1b5fc457e384fafab573544：壮举（模拟）：允许禁用严格执行 (#27084) (#27573) (@agaudreault)
+* e2b719ad65d7b09002e0b17b8f1bdf8640c6e7e8：壮举（otel）：添加具有可配置采样的跨度（＃28396）（@blakepettersson）
+* b2e6d1d929cdca79f774075bfaef9f738f1d1524：feat(perf)：缓存清单的可配置序列化和压缩 (#26897) (#28600) (@adityaraj178)
+* e5eb504a3a2b8ad3013dfc6b9962c2a071a4772d：feat(perf)：单次计算每个集群的应用程序数量 (#29570) (@rumstead)
+* 4c36558382aad92ccdc8129f7045db6f84807950：feat(perf)：从刷新路径中删除两个冗余应用程序副本 (#29581) (@rumstead)
+* 37273e31438a571e337058efb6e3fbbe1b28044b：壮举（perf）：部分json解组（＃29378）（@blakepettersson）
+* 0f901d1e2d9f9e9da3e52ddde9d0c97542aa6a91: feat(perf): 解析目标服务器而不复制集群 (#29573) (@rumstead)
+* 0c2545d51db30d8ce5e80a19883f4e8b65bf2947: feat(perf): 当生成器不变时重用矩阵子参数 (#29582) (@rumstead)
+* 54a740e1048b80eb3f4856e2cdc25c9bae51df94：壮举（resource_customizations）：支持victoriametrics健康检查的忽略状态（＃29351）（@AndrewChubatiuk）
+* 4abcbcf1a904e2ec6ba3310f22d5763b3e4bc772: feat(server): 添加对重定向到选定 Dex 连接器的支持 (Alpha) (#24221) (@antonu17)
+* e4470c5ff3cd0a4b948714c3f3c19731d26be05b: feat(server): 将 configHash 字段添加到集群 (#25311) (#27657) (@matmil-dev)
+* c2e39d87739338f7c57792bb394e14321a899c27: feat(server): 登录尝试时记录用户名 (cherry-pick #29841 for 3.6) (#29859) (@argo-cd-cherry-pick-bot[bot])
+* fc848eb1b454870ebab17d1092c44ae6017b3991: feat(server): 设置 X-Robots-Tag 以防止对 UI 进行索引 (#28359) (@yugstar)
+* 0141bf077dea55a15437401e7a61ab07fd2f9ad3：feat(tls)：在为存储库服务器和服务器设置 TLS 选项时，使 TLS 曲线首选项可配置。 （＃28846）（@akhilnittala）
+* ba47c6b6b0015a9939cd630db444a1e9aa1f957f: feat(ui): 选择 `all` 时实现应用程序列表/图块视图的虚拟滚动 (#29542) (@aali309)
+* bf984eaa6c17dc1d832bbbfd44760cd1e82ada06: feat(ui): 延迟加载 (#29087) (@jwinters01)
+* ac0119467ed8bcccf960fffdbe2603f9c6b95efb：壮举（ui）：将正则表达式搜索切换添加到应用程序（集）列表（＃27857）（＃27889）（@rickbrouwer）
+* 807320130714a5939242a47f32e48e28a97a02fa: feat(ui): 添加资源浏览器视图 (#28098) (@agaudreault)
+* 5b4b5def23bce4e7a0d26478ba1674361aab12b1: feat(ui): 添加搜索栏和分页到设置页面 (#28305) (@agaudreault)
+* e2a605e0d0a1f2c154c4f2215f8c66a02beba602: feat(ui): 将服务器端名称过滤器添加到应用程序列表并观看 (#29106) (#29242) (@rickbrouwer)
+* f495ca51ee8f5d725c3ea38c4b7d1a8c227b5f29: feat(ui): 高级设置视图 (#28383) (@agaudreault)
+* 4fa944edff93a4116eee008e6b018057d4da6965：壮举（ui）：在构建中启用React编译器（@jwinters01）
+* 14333597102184e784a6f2adae70b84d989e3e74：feat(ui)：在摘要面板中显示 CronJob 的上次计划和成功时间（3.6 的樱桃选择＃30690）（＃30748）（@dudinea）
+* 9cf8d7c125ac534aa58c1ee089fb48dbe80cd1d4: feat(ui): 侧边栏锚点 (#28527) (@blakepettersson)
+* 91f7adcbcfecfdeb21e87678ccdb1bc1ae15172a：feat(ui)：在应用程序/应用程序集图块和表格行中使用锚点而不是 div (#28005) (@blakepettersson)
+* 73bf020633ecd20cd4d96ec9af504b8aab4c98aa: feat(webhook): 添加对 BitBucket Server 的清单生成路径注释支持 (#27552) (@adityaraj178)
+* ca3139e842d84130ec9ed39bdfaa57ee3998bd1d: feat(webhook): 添加对 Harbor 的 webhook 支持 (#27810) (#27884) (@adityaraj178)
+* 7bdadbf693502e8ac5cdfda281e2972eaa2a04da: feat(webhooks): 添加对 DockerHub 的 webhook 支持 (#28022) (@nitishfy)
+* 79b0815beb400ed0ec9c32e36ba7360d4e9b98f4: feat: 使用 --signature-keys 时添加弃用警告 (#28941) (@kuci-JK)
+* b5d698a00a2797cbadb8c6d7769b0161daea0f18：壮举：为 pulumi.com/Stack 添加健康检查 (#28534) (@guineveresaenger)
+* 0703fcacf7c7411ffbc3fabf511b7eadc5ec3927：壮举：为 Envoy 网关扩展 CRD 添加运行状况检查资源自定义 (#27291) (@obliadp)
+* 34427a68b08f46f0bd43846213a2aaf24452cbd6：壮举：将报告组件添加到事件列表 (#25684) (#27678) (@Suven-p)
+* 816fcd02cf47cdfaebd93df9bd9d9dac332ff7ab：壮举：允许 pod healthcheck 通过注释忽略重启策略 (#15317) (Alpha) (#28249) (@jskrill)
+* 48f94615f072046d6621287e0b5c86c07efafed9: feat: 默认为带 SSA 的 SSD 并删除 SMD (#29103) (@p Jiang-dev)
+* 43637e4b85a697bc83c27fac50362f5cd20a12a8：壮举：如果在 argocd 登录调用中使用 client 证书，则保留并重用它们（3.6 的cherry-pick #29718）（#29781）（@argo-cd-cherry-pick-bot[bot]）
+* 35238e3472a27604de22939d217bdf98c3ca9b0b：壮举：在项目列表中用 SOURCE-INTEGRITY 替换 SIGNATURE-KEYS (#28920) (@kuci-JK)
+* 7a80e4ca9272889d9c452cedca7fe459b06bc127：壮举：在 repo-creds 中接受存储库样式的 Azure 密钥 (#29414) (#29415) (@SHINMH)
+* 1828831237e85645081cb4483061de4f1687ce4f：壮举：将 `tpl` 函数添加到 ApplicationSet go-templated (#16302) (#26614) (@twobiers)
+* 58d427f5391887092d1ff36c61157a865fadea8d：壮举：添加一个按钮来清除 Pod 日志查看器中的日志 (#27149) (@gcadoret)
+* eb15eb4a23c8820c35a45756ff3a28bd77b3a0c6：壮举：为 KServe LLMInferenceService 添加捆绑运行状况检查 (#29599) (#29620) (@sarfarazgit)
+* dcdf8e4026450611d23077271705a44a9f21d10b：壮举：向 ApplicationSet 过滤器添加清除所有按钮 (#28593) (@choejwoo)
+* 619c642457581e5929b8628676a7c4517e358c87：壮举：通过 ui.loginButtonText 添加可配置的 SSO 登录按钮文本 (#28254) (@NotKiwy)
+* bcb771e29326321b7be0c4bfe2d2a7c742ac7955：壮举：为应用程序集添加 oci 生成器 (#26121) (@robinlieb)
+* 68b8af21e358fa01ea42ba34aa26ab3bd854c4ab：壮举：添加禁用 Swagger UI 端点的选项 (#28717) (@smahadik-27)
+* 79e1229469403a4e9cbab5043f9128948711a330：壮举：添加哪些资源导致应用程序运行状况发生变化 (#28455) (@agaudreault)
+* e8e5ba20f7a2449a254cc2a380c293099159da38：壮举：在集群添加命令中添加 server-proxy-url 标志 (#28134) (@ppapapetrou76)
+* bcf18220b76d55a00599da0b8993276c2a419f72：壮举：允许选择为 redis 键设置前缀（关闭＃12978）（＃26169）（@healthy-pod）
+* 7cfc6cfd2e7b5de1b9e29ee497a07135405047d2：壮举：允许通过 OwnerReferencesPermissionEnforcement 许可从 CronJobs 创建作业 (#26009) (@sathieu)
+* 0984033236c695ee20ae344c402fa0d30e8a30fd：壮举：支持 REDIS_SENTINEL 和 REDIS_SENTINELMASTER 环境变量 (#28391) (@suii2210)
+* 127dbe7bcd94f3f6883eae1f2f3465763e5a5282：壮举：支持使用标签选择器过滤托管资源 (#29423) (@alexmt)
+* 9e9c2f1e751242cb3c26aaa9cc5d4cbe6426139e: feat: 支持资源上的忽略差异注释 (#29616) (@ranakan19)
+* 7d05a395eb4149c9c8d41cad3f27a20c3d6367fd：壮举：支持应用程序回滚的单独 RBAC 权限 (#28924) (@ppapapetrou76)
+### 错误修复
+* 545bcb5eeba8240ffa47299ee9ace8bb54c61dc8：修复（SyncWindow）：将SyncWindow重命名为InlineSyncWindow（＃29152）（@adityaraj178）
+* dcf03494eff98102a44ea10f1a66d80b8644b948：修复（UI）：在单独的行上显示同步选项下拉列表（＃28438）（@adityaraj178）
+* 99f4efc2588306b1d34260295dba7564cc49e529: 修复(actions): 列出 Rollout 没有状态时的 Rollout 操作 (#30291) (cherry-pick #30331 for 3.6) (#30652) (@argo-cd-cherry-pick-bot[bot])
+* d42eb204e3c2fb6818d562cefab38f03ff33dde8：修复（app）：确保仅针对文本输出格式打印删除消息（3.6 的cherry-pick＃30600）（＃30618）（@argo-cd-cherry-pick-bot [bot]）
+* 20ad5f9922600aaa54b82daa4cd7a5e3f63a709f：修复（应用程序）：通过传输包装器使用服务器端超时查询参数（＃28828）（＃28977）（@luwangVMW）
+* 3bc9cb6ce0cb378dda87637df7aad8b9dcd7649d：修复（appset）：不要将保留的集群注释公开为参数（cherry-pick＃30448 for 3.6）（＃30481）（@argo-cd-cherry-pick-bot [bot]）
+* 9bb331250c0d3f8d47d337208866afca93f86b73：修复（appset）：当孩子们仍然终止时不要释放终结器（＃28999）（@blakepettersson）
+* 777f9132b73d6f9b93798f6c4900556c36b1cf7f：修复（appset）：当无法驱逐过时的缓存条目时，反向删除失败（＃29042）（＃29140）（@himeshp）
+* fea95e66c423f71c393f1303dc6a2a85a858b5d5：修复（appset）：当补丁返回NotFound时回退到创建（＃17312）（＃28645）（@rickbrouwer）
+* a619eb81d99e872ba1637e0003f69aeb096bff27: 修复(appset): 使参数生成的条件消息一致 (#30405) (cherry-pick #30438 for 3.6) (#30577) (@argo-cd-cherry-pick-bot[bot])
+* d1a941e7095d8da75c0ccf53d1af879391252fe8：修复（appset）：刷新配置了项目路径的GitLab拉取请求生成器（#13766）（3.6的cherry-pick#30578）（#30623）（@argo-cd-cherry-pick-bot[bot]）
+* a822683efd4a73360b5643b6a2d53d2f2326ee7e: 修复(appset): 标准化后恢复ignoreApplicationDifferences (#29070) (@p Jiang-dev)
+* 3be29876ba77072cfbf4585b2d8a28b2d0912a1a：修复（appset）：停止紧密循环中的渐进同步协调（＃27577）（＃29044）（@himeshp）
+* 4891d4f4745ae87b9aebd2577d0fe5a3433b8aab：修复（appset）：当生成的应用程序名称为空时抛出错误（＃28833）（@nitishfy）
+* 29faea2da97274e1eba16bd87d026eb50f942880：修复（appset）：验证针对 API 服务器终止应用程序（＃29042）（＃29043）（@himeshp）
+* 81cd93e553ce915075599a32335032322c44bc23：修复（杂务）：凹凸argo-ui以实现React 19 toast兼容性（＃28874）（@choejwoo）
+* 75bbd2a60380d88c8709515b715f569520c80ec6：修复（ci）：在发布工作流程中验证 gitops-engine 标签推送（3.6 的cherry-pick＃29744）（＃29755）（@argo-cd-cherry-pick-bot [bot]）
+* 73661b801935213221948c167acd943e1eb20f6e：修复（ci）：从dependabot中排除生成的工作流程（＃28774）（@crenshaw-dev）
+* 760229084538b77a5b269bf2449a7d2f19087dea：修复（ci）：在暂存部署提交消息中展开图像标签（＃28773）（@crenshaw-dev）
+* 955378d6e015d48ee58357532b86545c50bd716a：修复（ci）：显式检查基础存储库和樱桃挑选作业的默认分支（＃28413）（@blakepettersson）
+* 82682852c7f0684b57052e8d9447fd0c733983e9：修复（ci）：修复CI损坏：删除dependabot对代理工作流程编译文件的更改（＃28772）（@dudinea）
+* 1af3199ee504a86ddf1a6ed30ad11c392b310b75：修复（ci）：通过删除无效链接修复readthedocs构建（＃28449）（＃28450）（@dudinea）
+* 541db75ef88063896ee5ea5d3628549319a25af1：修复（ci）：gitkeep所以去构建工作（＃28461）（@crenshaw-dev）
+* bef2051b11a07e26981ea13dc1d48ba749610b76：修复（ci）：在Renovate helm升级后任务中重新生成清单（＃29297）（@crenshaw-dev）
+* 2df94aebe8710797e14ceee0e8141d98efcc40c0：修复（ci）：删除不需要的和错误命名的ui / dist / app / gitkeep（＃28447）（@dudinea）
+* ebcbc95aaabc0b884fee860fef5082d761274db7：修复（ci）：剥离 helm 和 git-lfs 更新校验和任务的 v 前缀（＃29287）（@crenshaw-dev）
+* 9ae60857e3ef6cd1b8bacda4a422b87038b10d12：修复（ci）：在kustomize校验和帮助程序中使用curl，以便Renovate可以刷新校验和（3.6的cherry-pick＃29938）（＃30102）（@argo-cd-cherry-pick-bot [bot]）
+* 780d5405a3c3df162db028334689888c91f7a94f：修复（cli）：接受“argocd管理设置rbac can”中的写入存储库（#30457）（3.6的樱桃挑选#30458）（#30550） (@argo-cd-cherry-pick-bot[机器人])
+* 7b445c1b182592cfc0f6d6e0869213fa1beefbdb：修复（cli）：为gRPC-web连接提供HTTP_PROXY/HTTPS_PROXY/NO_PROXY（对于3.6优先选择#29642）（#30498） (@argo-cd-cherry-pick-bot[机器人])
+* 67c4a1237cc0a8bc901eca437823aca1de753ccc：修复（cli）：刷新过期的身份验证令牌时发送--header值（＃30061）（＃30511）（@nitishfy）
+* bb33bb0d1e724bac9e6964af98c76cebe5ab6be9: fix(cli): skip stale destinations in cluster stats (#21808) (#28786) (@AkashKumar7902)
+* 752958a526cc2055d7b89293016f31dfe7264e35: fix(cmp): clean up tgz stream temporary directories (#29148) (cherry-pick #29156 for 3.6) (#29772) (@argo-cd-cherry-pick-bot[bot])
+* e76a5d853f50a9605fdd66e8197f66687c14e6f3: 修复(控制器): 允许终止被同步窗口阻止的操作 (#26395) (cherry-pick #30267 for 3.6) (#30505) (@argo-cd-cherry-pick-bot[bot])
+* adbc3dcdc699fb9732ef67b4e27db61a68cc49ce: fix(controller): confirm project references before blocking deletion (cherry-pick #29737 for 3.6) (#29743) (@argo-cd-cherry-pick-bot[bot])
+* 5f4e24ec353399da81664ea1e04e9c758de21579: fix(controller): correct metrics flag help names. （＃28358）（@siddiksawani）
+* 28334d185e594be8b4b6bae8bbe428316aeb078c：修复（控制器）：在协调期间删除刷新请求（＃28603）（＃28414）（@dudinea）
+* d419d3b548b916e88b2053f30f9a5ddfc23e3fe6：修复（控制器）：尊重浅克隆存储库的清单生成路径（3.6 的cherry-pick＃30485）（＃30565）（@argo-cd-cherry-pick-bot [bot]）
+* cb99c80a553aa3eb25b38a8216ddac0b16aa3013：修复（控制器）：在屏蔽秘密数据时重用服务器端差异结果（＃27858）（@1ovsss）
+* fcb97d8c8c617dc58560b59e7cb9a47dabb9c2aa: fix(controller): rewrite resource tree when an app moves back to a controller (cherry-pick #30313 for 3.6) (#30382) (@argo-cd-cherry-pick-bot[bot])
+* f8c252b09b2c0213d1635d4f8417dd2d37f66768：修复（控制器）：以明确的格式显示重试等待时间（＃29534）（@nitishfy）
+* b9e9d4117c89a97c84afc98022d1ccef867637c5：修复（控制器）：将 `timeout.reconciliation=0` 视为禁用软过期（＃27683）（@aali309）
+* f4adccd118f0ee0aa8a0149f94db56cc14f9cacd：修复（控制器）：在禁用 timeout.reconciliation 时使用 diff 缓存 (#29073) (@aali309)
+* 360aa9ba318d11a3c8805561d5fe7b7b771871a8：修复（diff）：过滤 webhook 突变时不要删除管理者拥有的后代字段（＃28819）（@pujitha24）
+* 3fbe407789117445d088c41f867337591db33173：修复（doc）：正确的集群生成器示例注释（＃29196）（@aminerachyd）
+* e2d36692fb8106cdf496d4756f476fa72da5ac0e：修复（文档）：更正损坏的文档链接（＃29572）（@yashrajshuklaaa）
+* 7cec612777e9d5fb5c1b7966faf1bf0fc71df321：修复（文档）：将版本横幅链接到稳定的等效页面（＃27054）（@SkyShineTH）
+* c56c41bbdc47821bb47dd22c7da142b29bae0918: 修复(exec): 当命令超时而不等待时不要泄漏 goroutine (cherry-pick #30394 for 3.6) (#30433) (@argo-cd-cherry-pick-bot[bot])
+* de72f7a087d5b2e2c61086361a655b0dae88f0f2: 修复(git): 当取消 git 命令时在 SIGKILL 之前发送 SIGTERM (cherry-pick #30393 for 3.6) (#30410) (@crenshaw-dev)
+* 1bb9bd33df59a383f0840d180b32aed2c1c2d3b2：修复（grpc）：修复 SRV _grpclb._tcp SRV 查找的解决方法（＃29989）（针对 3.6 精选＃30084）（＃30169） (@argo-cd-cherry-pick-bot[机器人])
+* 3c5af0d9dc49a1c8f55fa2a32cc75eeacbea7d8b：修复（无头）：默认为进程内服务器启用SyncWithReplaceAllowed（＃27643）（@SAY-5）
+* fd04feb4b2b795fcabc67ceb41bffd121c37ad0a：修复（运行状况）：AWSManagedControlPlane 在 EKS 控制平面更新时报告运行状况 (#28936) (#28937) (@moko-poi)
+* e238e1a4e6aec5285cdfd1b81c6f61dc2c5dd87d：修复（健康）：跨平面 MR 在配置时应报告进展（不健康）（＃29381）（＃29382）（@kjothen）
+* 381b41866746fe7c5161091ddfa40739dbe2142c：修复（健康）：PromotionStrategy和ChangeTransferPolicy健康，没有进展（＃28434）（@crenshaw-dev）
+* ae1fc9969313e39242663ed6a1b0d6f408456dfc：修复（健康）：依赖传播绑定的资源绑定运行状况检查（＃28299）（@pncloud）
+* 785005d9096eecd0ce2e2f1af192cb5bf2600324：修复（健康）：声明停止的 KubeVirt VirtualMachine 是健康的（#29664）（@daixtrose）
+* d4f229e281f8455d90b2915e55eb908c39cc37d9：修复（健康）：处理缺少安装或健康状况的跨平面提供程序（＃23363）（3.6的cherry-pick＃30429）（＃30628）（@argo-cd-cherry-pick-bot [bot]）
+* fd151ade5462d88fa8ffefd51aa14c2e6f9b7ecd：修复（健康）：将尚未建立的 CRD 报告为“进展”（＃26346）（3.6 的cherry-pick＃30441）（＃30576）（@argo-cd-cherry-pick-bot [bot]）
+* 9cc2dd35602a955a41c78bbc7f026f776d92379a：修复（健康）：将不活动的 Crossplane ManagedResourceDefinitions 报告为健康（＃25270）（3.6 的cherry-pick＃30404）（＃30423）（@argo-cd-cherry-pick-bot [bot]）
+* a1e358a57f52d14696d77cdc10eaee61a48c9024：修复（健康）：将暂停的FlinkDeployment报告为健康（＃26818）（＃28995）（@SaiPisey2）
+* 7cf440730872497c3b32c1c802690a1784e58979：修复（健康）：显示暂停作业的暂停条件消息（＃28738）（@semx）
+* fd09092b7d46ec7bb36b663a32c9d888cfb5e5d6: 修复(health): 将 Lua 健康状态脚本返回的 nil 视为 n/a 而不是未知 (#28269) (@snorwin)
+* 3ba7162c10620ca3bf7d48f6979d0912643d465d：修复（health）：对customize.core.cnrm.cloud.google.com资源使用status.healthy（#30164）（3.6的cherry-pick#30165）（#30657） (@argo-cd-cherry-pick-bot[机器人])
+* b48e31cfbbbbd1c8233b58620873770757aed3ff: 修复(helm): 通过 stdin 传递注册表密码 (#17821) (#28795) (@AkashKumar7902)
+* 05c4c4b56e842edfaf4e2b2adde20fe1615a6a06：修复（Hydrator）：不报告永久笔记推送失败作为用尽的重试（3.6的cherry-pick＃29903）（＃29909）（@argo-cd-cherry-pick-bot [bot]）
+* 65feaf50238bf8220fbacfc3576ecf12f0a67712：修复（Hydrator）：重试注释推送无法锁定参考错误（＃28469）（@Churi12）
+* 906ca1166d68e024391012c8605bbebe377c394a：修复（metrics）：在argocd_app_info中公开应用程序操作阶段（＃28719）（@vishnu97770）
+* a8529cd025d600882810d8ce5d738351b58a4163：修复（oltp）：遵守标准 oltp tls/header env vars + argocd-tls-certs-cm (#29946) (cherry-pick release-3.6) (#30334) (@blakepettersson)
+* aeda334c73e682fa2ea0ea0b0a93766e9ebf42a8：修复（progressivesync）：检查是否错误==未找到（＃28663）（@blakepettersson）
+* cd44f2784d2222cd0cfb0de1d54f005bcc1b6a53：修复（redis）：重命名缓存未命中时的失败指标不正确（＃29037）（@agaudreault）
+* c7457d0668d321444560e1c0db56278c585c417c：修复（reposerver）：尊重引用源的深度而不是主要源（＃28339）（@alexandresavicki）
+* 31101a86a62c8352e476fcba192e39b7ef82455d：修复（reposerver）：CMP失败后陈旧的清单和goroutine泄漏（＃29870）（3.6的cherry-pick＃29874）（＃30142）（@argo-cd-cherry-pick-bot [bot]）
+* c73a59ad73e4e4b15f28ec3bdeeec5516038daad：修复（存储库）：修订版本更改时清理存储库（＃28771）（@emil-ep）
+* 2f7eee24a6c5eb08b9c8f4bc62dbf1ea45ec6391：修复（存储库）：解析 UpdateRevisionForPaths 中的无类型 Helm 源类型（＃28904）（@Churi12）
+* b77bdaa2c76df9da83b26bf484c6deaf109263f5：修复（存储库）：恢复UpdateRevisionForPaths中的标准化以恢复master（＃28979）（@Churi12）
+* c71119fe756e12550670a78edf2eae08b935aef0：修复（恢复）：同步期间新提交到达时跳过自动同步（＃28692）（@blakepettersson）
+* d5dd7019ee65be8895133fe4df554e28074242c4：修复（安全）：协调安全修复（release-3.6）（＃30037）（@crenshaw-dev）
+* d1a8d1ebe114821152891e56fef6fecf743e4bae：修复（服务器）：允许在没有身份验证的情况下进行 gRPC 健康检查 (#26193) (cherry-pick #30474 for 3.6) (#30567) (@antcybersec)
+* 011bb47da0f59ca5a44289e51cd2cda6fbad80c0：修复（服务器）：填写 events.k8s.io 事件的事件计数和时间戳（#30015）（3.6 的cherry-pick #30017）（#30051）（@argo-cd-cherry-pick-bot[bot]）
+* 323bb8e529b4354488543f18004029ac3df01218：修复（服务器）：清单生成中断时保留 gRPC 代码（3.6 的cherry-pick＃30425）（＃30551）（@argo-cd-cherry-pick-bot [bot]）
+* 7deb9a89a3af51c11bf52159c6f069e092ea0d3b：修复（服务器）：防止client断开连接时PodLogs goroutine泄漏（3.6的cherry-pick＃30450）（＃30461）（@argo-cd-cherry-pick-bot [bot]）
+* a37f1f1ad303dae728381260dfe35edeb7d55ab3：修复（服务器）：防止SSD CLI秘密掩码欺骗（＃29089）（@p Jiang-dev）
+* 2662e88843f79ba0d29f14d84bc8c0431b3b5bb5：修复（分片）：在一个分片上处理具有无法解析目标的应用程序（#30456）（3.6 的cherry-pick #30463）（#30639）（@argo-cd-cherry-pick-bot[bot]）
+* 166cb92ea94c3d46861773e8d5b7d2a65ab7ae8d：修复（分片）：更新添加未知集群时重新计算分布（#29476）（3.6 的cherry-pick #29477）（#30318）（@argo-cd-cherry-pick-bot[bot]）
+* 994e271bcc3c591540bbe778bf09df303dcbf5f7: 修复(ssd): 在最后应用的配置注释中隐藏秘密 (#28989) (@p Jiang-dev)
+* a683bdec6afe94c9ed88b6c7744d909407e12ec7: 修复(sync): 添加同步操作的状态信息 (#28758) (@agaudreault)
+* 9b40474c009cc0a3596da7180501b7f259b90700：修复（同步）：重试时正确设置操作状态值（＃26530）（＃28778）（@agaudreault）
+* ba8600cb76922a8b252052d9a127a3b184446f44：修复（同步）：不要将 --force 传递给服务器端应用（＃29624）（＃29626）（@KR-Ravindra）
+* 5ee2ae0cf42cc5501eb957e3648f66beb0e3008c：修复（同步）：减少刷新引起的不必要的同步操作（＃28619）（@agaudreault）
+* 59b49b47450f6782a3385e2a9955eb1e71ae9569：修复（同步）：当协调缓存中缺少活动对象时删除钩子终结器（3.6 的cherry-pick＃29469）（＃30529）（@argo-cd-cherry-pick-bot [bot]）
+* 5da9053d0ebcccf2a5858bd6578b9a5a8ec52255：修复（ui）：修复应用程序详细信息中的 Hydrate-To 修订名称（＃27134）（@olivergondza）
+* a1c22f1086166c9023e15bc0929b2a4983ee91be: 修复(ui): 将 ResizeObserver 添加到 Monaco 编辑器以修复折叠渲染 (#28810) (@choejwoo)
+* 7dbd403ef1a43c9948449a50d1bc4e2d05d13c76：修复（ui）：一致地对齐磁贴最喜欢的图标（3.6 的cherry-pick＃29844）（＃29845）（@argo-cd-cherry-pick-bot [bot]）
+* 2fadff2054bbecf1f6283ecbeefdcf2fc3d1ef44：修复（ui）：澄清范围存储库副本（＃22793）（＃29177）（@SHINMH）
+* 867b2c71e4d5ef55580665709c60717ce61ddf97: 修复(ui): 当所需状态为空时不要崩溃资源面板 (#30528) (cherry-pick #30532 for 3.6) (#30538) (@argo-cd-cherry-pick-bot[bot])
+* 1214aeda6bb23a02bf91427c587112899f3a73ea: 修复(ui): 增强 UI 中的 Bitbucket Server URL 处理以用于存储库和修订链接 (#27587) (@adityaraj178)
+* 8a7ab41f6450c3910ef5cec8ddcda50645073e3a: 修复(ui): 使用 Argo 样式格式化父节点信息 (#28385) (@agaudreault)
+* 51ec3eae5686eb1a6dcc78175716edaaab720df7：修复（ui）：保护SSO重定向以停止401重试循环（＃28807）（@geojaz）
+* f363af584ab3adff613a481d0c1f5b243c34cd64: 修复(ui): 当只有一个 pod 时隐藏 pod 高亮按钮 (#29252) (#29255) (@sandaruwijewardhana)
+* aa4629e50c2ae8c138b9333e4add48a7124d2aff: 修复(ui): 保持应用程序列表名称与外部链接对齐 (#29259) (@linghaoSu)
+* b5850f166d4f8339befbc6af5a67c5e26101b5fe：修复（ui）：在图块中保留应用程序名称旁边的通知图标（＃29413）（@choejwoo）
+* 4709e8377b2f25979aa8432b645019e5833e2c5b：修复（ui）：在黑暗模式下聚焦时保持状态面板链接可读（＃29288）（3.6的cherry-pick＃30493）（＃30542）（@argo-cd-cherry-pick-bot [bot]）
+* 14711c7eca960e505bc61d464cdd9d84b6863598：修复（ui）：重新渲染时保留待处理的新应用程序表单更新（＃30248）（3.6的cherry-pick＃30249）（＃30611）（@argo-cd-cherry-pick-bot [bot]）
+* eeef47fc23819f29842ac36267079ca676194cd0：修复（ui）：使 pod 突出显示下拉菜单在深色主题中可读（#29605）（@choejwoo）
+* b5c9f00ef3d1b5609376d6bc5c5648b52b84237e：修复（ui）：清单查看器跳转（＃29691）（＃29692）（@crenshaw-dev）
+* 49c7d81bcbe3383c2d81d9cab3447faa13cd1e91：修复（ui）：导航到应用程序集列表视图行click上的应用程序（＃28789）（@choejwoo）
+* f92e3de98cbb346f4988e96ba4556448bf9df1f8：修复（ui）：为每个应用程序CSS类添加应用程序详细信息前缀以避免冲突（＃24220）（＃28573）（@polarAli）
+* 50f99757f1746f93d165851355ad7b87cb3f3e1a：修复（ui）：保留应用程序平铺高度和页面间距（3.6 的cherry-pick＃29777）（＃29803）（@argo-cd-cherry-pick-bot [bot]）
+* 5e8122adab7f7a29958f79e7e15c377e74d2c9e5：修复（ui）：防止通过粘性源标题显示内容（＃29107）（@choejwoo）
+* 903c310230ff68e3b0433d6cac304047638f8af5: 修复(ui): 防止从分组列表中删除 ReplicaSet 时崩溃 (#26167) (@choejwoo)
+* 705205d22818fff1039f5092b56669d73627b500：修复（ui）：防止应用程序图块视图中 clipping 的删除按钮（＃28379）（@choejwoo）
+* a2bd9e8cda9e91498b9b896db9961350bac01f22: 修复(ui): 防止资源操作按钮与状态图标重叠 (#29302) (@linghaoSu)
+* 624e62a704306b7560edffc011bc2370cacb7367：修复（ui）：减少滚动时应用程序虚拟滚动闪烁（3.6 的cherry-pick＃29935）（＃29972）（@argo-cd-cherry-pick-bot [bot]）
+* 7e44792a057a1932bb60f2fd8ba0ed3ecdc3fb51：修复（ui）：改进存储库设置中写入凭据的验证和处理（3.6 的cherry-pick＃30489）（＃30592）（@argo-cd-cherry-pick-bot [bot]）
+* 3d62384914badf7a666bc54c149af3def065afa8：修复（ui）：从应用程序集页面中删除种类过滤器（＃29310）（＃29311）（@crenshaw-dev）
+* 58c7f84ec185d2fc42e6e3095f4cc993a77618e5：修复（ui）：删除列表视图上不必要的打开应用程序图标（＃29681）（@agaudreault）
+* da921411fed9777fb176d1eff0600d6a5b66c04c：修复（ui）：仅显示 Helm 的启用OCI（3.6 的cherry-pick＃29974）（＃30075）（@argo-cd-cherry-pick-bot [bot]）
+* 1fb9b6bbd9e8bed13d1001c33a329a01ad26db10：修复（ui）：悬停时显示应用程序的全名（＃29235）（＃29262）（@adityaraj178）
+* 9bc95f9edae447372ee6724a909f438a26d00353：修复（ui）：在“参数”选项卡中显示多源插件环境（＃29465）（@lemon0333）
+* 9a7d50a093e71fdf975d0a1de83a1f3a8a2c4d71: 修复(ui): 在应用程序列表页面显示操作状态 (#29063) (#29064) (@antonu17)
+* c1f41d4f3f02b677835b8f50786d04b487e3d2f2: 修复(ui): 在 appset-status 显示中显示警告 (#28445) (@ranakan19)
+* 25aef12304d0d800a3f87b1b6b99bae62cc0778f: 修复(ui): 侧边栏图标对齐 (#28783) (@southball)
+* f2ba7a0e9bc020b566c39953c20659d13c2d0626：修复（ui）：与组节点的树视图间距（＃29660）（@agaudreault）
+* 83f0886fd3087772a06d1e254297aeefd9e66c20: 修复(ui): 更新ApplicationsSummary中的集群计数逻辑 (#28768) (@linghaoSu)
+* effa730fe4b62aa2c65b215f0755063ffa0b29ed：修复（ui）：更新图标以确保应用程序集列表中的一致性（＃28528）（@choejwoo）
+* a817e9aac691c7309fb1e1599c467d932e9d564d：修复（ui）：更新应用程序集详细信息页面中的标题（＃28529）（@choejwoo）
+* bbbbaa1647168efeedd363dabb277a693a360e4c：修复（ui）：在同步状态消息上使用断字（＃5084）（＃28961）（@EmilyXinyi）
+* ae1b83ef7b7663b2b25f65cc442d79b673abe9f7：修复（ui）：对打开应用程序和外部 URL 使用不同的图标（＃28503）（@choejwoo）
+* 5f0c9b42c53dad51e647cbe92599f7b7dc1dde57：修复（ui）：在父参考面板中使用groupedResources局部变量（＃28399）（@crenshaw-dev）
+* 53cd3749eef31ae40331da6a74a6c24780bad3fe: 修复(ui): 设置时使用 HydroTo 分支名称 (#29554) (#29562) (@crenshaw-dev)
+* c1be9e9ee2a7ae9b3c08e078403f371080ce248a：修复（ui）：使用ApplicationSet列表行中的打开应用程序图标（＃29264）（@choejwoo）
+* 14bf22bdf509b3e849f06fd61ff0362653798079：修复（ui）：使用未过滤的资源进行过滤器计数（＃29621）（@choejwoo）
+* 8c38a6a680f9c28a2a46717d6f3b653e4aa7f1b2：修复（ui）：应用程序图块内容的垂直对齐（＃28412）（@choejwoo）
+* c9b07104d273873a826d5bc0326166a65705e2b7: 修复(ui): 包装 GROUP/KIND 标头而不是溢出 (#29304) (@linghaoSu)
+* 677ea452284a0a99e5ee22a2782b8afd6b3fa45a：修复（webhook）：使用 repoURL+chart 与注册表事件匹配 Helm OCI 应用程序 (#27954) (@adityaraj178)
+* b642d5f6d5eba8cd644b3ca65b217e7a718645cd：修复：UI 上 SSH 已知主机条目的空 SHA256 指纹 (#29401) (@ppapapetrou76)
+* ce9fdb755cb195cad78600830d19e4ad3bc7d7af：修复：（ui）减少应用程序虚拟滚动滚动闪烁（3.6 的樱桃选择＃29935） - 恢复（＃29973）（@keithchong）
+* 4b52fc284b3edf93153c1a6440755fbae96f4f04：修复：尽管 selfHeal 仍自动同步触发：当同步状态和上次同步处于不同提交时为 false #26769 (#26770) (@adityaraj178)
+* 102ff9f1982bab8d60d3d3fcb5d73b9e34eb7af0：修复：GRPCRoute 运行状况检查忽略过时的观察到的生成条件 (#28086) (#28087) (@obliadp)
+* f9ee8e94c66e9834df7454fd2573852facdcf72e：修复：在没有 SecretName 的情况下启用 tls 时的入口链接方案 (https)（cherry-pick #28888 for 3.6） (#30509) (@argo-cd-cherry-pick-bot[bot])
+* eb547130245421e1a966cc6747504de76ffb70a2：修复：服务器端差异应尊重模拟（#28821）（@p Jiang-dev）
+* 1beb896687b77d579f911e9b73dc4014e95710ab：修复：在健康检查中支持rabbitmq缩放为零（＃29119）（@Postremus）
+* f89fe6a097e01c6ead1a42da04deedc682a5c732：修复：使用 `EachListItemWithAlloc` 防止页面保留 (#29305) (@liam-mackie)
+* 95019a797a97b45073f0d1f7cd3fad7f348a68da：修复：像我们做 CRD 一样观看 APIServices (#28289) (@zachaller)
+* e28c40095375aae6af48e3e87931db52d3836455：修复：接受 IP 和端口作为 OCI Helm 存储库 URL (#21374) (cherry-pick #30233 for 3.6) (#30517) (@argo-cd-cherry-pick-bot[bot])
+* 96506c592f3bd54f332908ab30e245c4550b4752：修复：在 clusterinformer 上添加锁 (#28216) (@blakepettersson)
+* 187de3f426933d469f21c93058aef692da7073db：修复：添加应用程序控制器statefulset服务（＃29498）（＃29499）（@chandan009s）
+* a4ce58454566452c7145644e0d40448e3d11e3e3：修复：如果没有分配集群，管理集群分片命令不会显示分片（#28429）（@cjcocokrisp）
+* 60d29acbedcc780fd9e6308daf5f801312489e65：修复：在与清单生成路径同步期间更新的提交到达时，自动同步会被跳过（#27875）（#28227）（@josef-sotkovsky）
+* a1962e476dbdbb05adaace4b5b69b08539d50713：修复：带有短版本的徽章获得正确的宽度（＃29335）（cherry-pick＃29336 for 3.6）（＃30583）（@argo-cd-cherry-pick-bot [bot]）
+* 33eb5e4efdf2881bce8bfb596fbeb3ffe2ec064a：修复：缓存 OCI 标签列表 (#30117) (cherry-pick #30118 for 3.6) (#30120) (@argo-cd-cherry-pick-bot[bot])
+* c83aeb122104bdea35fe3979ab6a185667fd812b：修复：当服务器端差异应用程序失败时，控制器在 StateDiffs 中发生恐慌 (#30743) (cherry-pick #30744 for 3.6) (#30755) (@argo-cd-cherry-pick-bot[bot])
+* 794a2f15ad038ffae2cbe07a8cef430dda2a3c62：修复：getAppInstanceValue 中正确的运算符优先级（#28852）（@magic-peach）
+* d9e7e38c618b06a69c46cf65085ceb9429001812：修复：isDestinationMatched拒绝模式中正确的运算符优先级（＃28854）（@magic-peach）
+* 814bc4d5e3a93460983ed710f72778f3237b11b4：修复：在 CronWorkflow 创建工作流程操作中正确的计划时间格式 (#29915) (cherry-pick #29916 for 3.6) (#29952) (@argo-cd-cherry-pick-bot[bot])
+* 992d6878054ad37d212ae29245e12ccdc12dfe2e：修复：正确的Makefile中的变量扩展和.snyk中的拼写错误（＃28674）（@magic-peach）
+* 746b73a0330e6425c166120921adb3058753c008：修复：已删除的资源在 UI 中错误显示 (#28322) (@agaudreault)
+* 9513c2934e984281fb9fffc2468fbc05600c805a：修复：从 Normalize() 中的 URL 前缀检测 OCI 存储库类型 (#28517) (#28518) (@peikk0)
+* 83156cdf0a023be41d6de6a889b5b6e78a5a4411：修复：不要破坏“替换”上的非忽略字段（＃27136）（@blakepettersson）
+* 77aca0ecc386ee832eedb667ea9e883a62339fb9：修复：在配置期间 Ready 为 False 时不会降低集群 API 集群的运行状况 (#29237) (@jonathanrainer)
+* b4f5d0e2d0e8e6103ebe6d8c66716aeebe87fa24：修复：没有操作时不渲染状态 clickable (#27990) (@choejwoo)
+* 1d58350e31412eafcd8152400af3e25c333151ea：修复：修复写入存储库（信用）端点的转义 URL 路由（3.6 的cherry-pick＃29940）（＃29957）（@argo-cd-cherry-pick-bot [bot]）
+* 7f84e8c911d052fc2a9ae9e25ceb8583b879e8d9：修复：修复不适合最后应用配置的资源同步失败的问题 (#28421) (#28440) (@dudinea)
+* dcc635c353df4d3e8a7c5286e842a64f95752d76：修复：修复片状测试（＃28609）（@adityaraj178）
+* f980990402cabca4cfd8e31e499b87ee9d097d25：修复：修复解压入站检查 dstPath 是否符号链接（cherry-pick #28881 for 3.6）（＃29977）（@argo-cd-cherry-pick-bot [bot]）
+* 383ddedbf63d8a1235ad6c0d146472b89894ca4f：修复：修复了 dex 配置环境变量替换的回归（#28369）（@ppapapetrou76）
+* a5696f2b60f2b21e3693cac4489363ebcd20ddb8：修复：修复集群缓存测试不稳定的问题 (#28407) (@ppapapetrou76)
+* e59bc93dd585bdb476c88b2764f3bf4f7ec9b448：修复：通过使日志捕获器线程安全来修复片状测试（＃28328）（@ppapapetrou76）
+* d71ffe230bb23d9960cfe9fc88285126f6007ab8：修复：glob 编译错误 (#29699) (@crenshaw-dev)
+* 21956da8fb3cc970fef2c842abead37223d81d44：修复：处理 GrafanaFolder 负极性条件 (#29395) (#29397) (@Karthik-Chowdary)
+* 332a0151fc0fe804b0d95a43015bed4f23749a2c：修复：响应忽略过期时遵守 UserInfo 缓存限制（3.6 的cherry-pick＃30462）（＃30609）（@argo-cd-cherry-pick-bot [bot]）
+* 2ada1384820651c1a4ace78e0c4efab9aa2918ab：修复：在同步完成事件中包含多源修订（3.6 的樱桃选择＃30446）（＃30472）（@gdsoumya）
+* 4fd5f8bd183e06541d1c644e5e0ba3bf0a0e77cd：修复：TestGitHubListReturnsRepositoryNotFoundError 中的 GitHub 路径不正确 (#25775) (@cwoebker)
+* a16170b2e374db3475bd4f2241b75f454194b625：修复：kustomize：忽略缺少 kustomization 文件的组件目录（cherry-pick #26576 for 3.6）（＃29936）（@argo-cd-cherry-pick-bot [bot]）
+* 59ea458a7771f04b6a16f160482f9a856edfc679：修复：管道的lua脚本不使用字符串库（＃28602）（@juliev0）
+* 57c9433cb1926459115bd8321549c90c9fa015a0：修复：将react-ga迁移到react-ga4（＃28945）（@FZhg）
+* 427bfb249d9d4b63b8c199ef730368f6bb0a6f44：修复：修改GPG正则表达式以支持其他关键算法（cherry-pick＃27638 for 3.6）（＃30495）（@argo-cd-cherry-pick-bot [bot]）
+* 702c6d6c99ebff09f855bebdc5b8d746a773148e：修复：在repo-server中安装argocd-cmd-params-cm，以便可以启用pprof（＃28863）（@rumstead）
+* 9cd3549715c1f464647d25e42f112787572ab93d：修复：在资源后命名下载的部署和复制集日志 (#26970) (cherry-pick #29832 for 3.6) (#30518) (@argo-cd-cherry-pick-bot[bot])
+* 2ab2231986bf9a97676a43064aa4083dc52e587c：修复：在源比较中标准化 Helm valueObject 以避免虚假应用程序详细信息 403 (#28288) (#28318) (@bear-san)
+* e87b872eec4f4ed12ca06ab6ff9b5a917d1f2693：修复：仅在实时未设置时才进行注释回填（#28770）（@blakepettersson）
+* 13dae89db8d01dab9ff28c63c4a65e803bea4f75：修复：将上下文传递给 cli 命令，而不是使用默认上下文。Ba…（#28734）（@Eduard-Voiculescu）
+* c49f8b7127387d4e45f711487a0b5d5b4ab5d598：修复：防止 glob.MatchStringInList 中“/”源命名空间条目发生恐慌（3.6 的cherry-pick #30572）（＃30613）（@argo-cd-cherry-pick-bot [bot]）
+* 0cc7d8aa38c1674781bead51e89879ac3e0bfcf3：修复：将命令上下文传播到 argocd CLI 中的 kube 和 HTTP 调用 (#28837) (@Eduard-Voiculescu)
+* 05dcfe7d455cccc583c8c38df0f37e9e1ae7c9e8：修复：恢复 AuthReconcile 访客恐慌 (#29436) (#29440) (@Karthik-Chowdary)
+* ef6e460740c0dfc7ca9774a6f8b79f8e3875814b：修复：当 SA 被禁止时，从 AuthReconcile 中的 kubectl 恐慌中恢复 (#28669) (@mahesh-sadupalli)
+* 82c4d4691401f9d21b163c2f83f4d87468b7f6b7：修复：使用 --argocd-context 重新登录无法正确保留凭据 (#28453) (#28510) (@octonawish-akcodes)
+* c8f7f2ab51fbd5c2173e47c4662dea5e181a7963：修复：从 SSD 中删除一代（#30398）（3.6 的cherry-pick #30402）（#30443）（@argo-cd-cherry-pick-bot[bot]）
+* cb5d5fc083e9efc59a8ae53c3e71d8f551daf4a6：修复：替换 k8s.io/cri-streaming (#28315) (@blakepettersson)
+* d7efbae049ef822fa6f18d9cda60486c70898c8d：修复：尊重忽略 CRD 中各个数组元素的差异（#28220）（@nitishfy）
+* f63d92d7273179933e8ecd219083ddee1c5718b3：修复：通过 SOCKS5 代理恢复 SSH 存储库获取（3.6 的樱桃选择＃30238）（＃30252）（@ppapapetrou76）
+* 74d0f9207b670a41f0a0f4a337c8217b5c363a3c：修复：在 ListRefs 中返回无效存储库 URL 的 InvalidArgument (#28631) (@choejwoo)
+* 7fe7110f65a16f0bd2ee6ac8a4ea5535ea684228：修复：在 GetAppDetails 中返回不存在的应用程序路径的 InvalidArgument (#28699) (@choejwoo)
+* f2dc6880581e6c2462f537fac4b24db1d24d455d：修复：在 GetAppDetails 中返回未解决的修订版本的 InvalidArgument (#28782) (@choejwoo)
+* 3d2ea09eb8ebba1bf54a49e4f57a6df6f7a7040b：修复：通过图表提取序列化 Helm 图表缓存清理 (#30253) (cherry-pick #30260 for 3.6) (#30522) (@argo-cd-cherry-pick-bot[bot])
+* ac0059e093af5be23fdc35f4588636123e9b77f7：修复：服务器端差异报告被其他管理器删除的字段作为差异（cherry-pick #30206 for 3.6）（＃30231）（@argo-cd-cherry-pick-bot [bot]）
+* 55f3be859257e122ab36eb50d225bd256ba2153a：修复：在删除/同步确认对话框中显示“名称不匹配”错误 (#28752) (@octonawish-akcodes)
+* ad7215dba2fd6dbaff6298489388e9b3756fd928：修复：禁用DEX_EXPAND_ENV时跳过美元escaping（3.6的cherry-pick＃29181）（＃30648）（@argo-cd-cherry-pick-bot [bot]）
+* 4597065765b65ff1f5579eec7bc501e04f05f93a：修复：流列表请求直接发送到http writer (#27152) (@blakepettersson)
+* 63c987d755ff71df1df0b896d28a61bb9eb83413：修复：支持终端 websocket 端点上的不记名令牌身份验证（＃28285）（@amarkdotdev）
+* 70faa5d80b8c267fda498eece31d17c3e729b9e9：修复：同步 OCI 缓存清理与提取 (#30020) (cherry-pick #30023 for 3.6) (#30105) (@argo-cd-cherry-pick-bot[bot])
+* bf8bdaa3a55bf4620198f0e9ec2ddb2555037213：修复：当健康栏中的窗口太小时，工具提示被切成两半（＃28700）（@Molaryy）
+* 114cde4dd336ff398871dcb1418258d5dcae2748：修复：当 jti 不存在时，使用 Entra ID uti 声明作为令牌 id (#28625) (#28656) (@magic-peach)
+* 523ae9d9d26142e391e27d3fb61828a5b93bca9b：修复：使用 OIDC 刷新令牌续订过期会话 (#27041、#12189) (#27777) (@ris-tlp)
+* fd0aa39b7339d1e8967de84d38d8ea9cc24938da：修复：在秘密替换后验证已解析的 OIDC 配置 (#29545) (#29555) (@chandan009s)
+* 97a88b4931b304e12590a30323ae2b03897bb4a7：修复：在报告运行状况之前等待当前的 SealedSecret 生成（3.6 的cherry-pick＃29867）（＃30354）（@argo-cd-cherry-pick-bot [bot]）
+* dffb797af5f7f07483f86177548134fc19784456：修复：当“rbac can”检查没有角色绑定的组时发出警告（＃28729）（＃28733）（@SamyDjemai）
+### 文档
+* 296afb48e5d92ad507f5fee2f9ea99d53d3b1d77：文档（applicationset）：请注意，模板化的 `project` 会阻止“预览”选项卡（#29238）（@ShmuelOps）
+* 48d215145b0ea35bfaeda714fdd2e4eb1098bfd0：文档（appset）：OCI 生成器的文档 GHCR Webhook 支持（3.6 的cherry-pick #30492）（#30548）（@argo-cd-cherry-pick-bot[bot]）
+* ea04c848458cbd36abee10226f0a7d7dd32af7ba：文档（cli）：改进`argocd app create --file -`的文档（＃29553）（＃29563）（@crenshaw-dev）
+* 7d78dabbeb2f353e3c526510ec92ba6042818315：文档（Hydrator）：记录`argocd.argoproj.io/hydrate`注释（＃28400）（@dudinea）
+* 63e1252ea1cf83e6d267e1d278f47428544e1f52：文档（Hydrator）：清单生成路径和Hydrator.metadata注释限制（＃28555）（＃28557）（@crenshaw-dev）
+* 3054d6bdabeaeb52298743846eae55f20c18cf71：文档：调整误导性的入门步骤 (#29672) (@adesso-os)
+* 7047503b59f4b446df4adc9b44ee9bb65b04487b：文档：ApplicationSet 集群决策资源生成器 - 将 OCM 引用从已弃用的 PlacementRule 更新为 PlacementDecision (#28307) (@mikeshng)
+* f5ba2794fb570d0f733ad37e229d331b874b1b44：文档：修复 API 授权文档中的小拼写错误 (#28633) (@allexistence)
+* 5beabdb17395ddf339f7c52e5a54ac1e0c69296f：文档：提案：虚拟滚动（#28900）（@aali309）
+* c61503c21e927d3fd9152f329cdc932a0e5c810d：文档：Reggie 作为 4.0 的发布冠军 (#29651) (@reggie-k)
+* b9b4e64d170af94f4d42b531eb2b1c938951d7e3：文档：`timeout.reconciliation` 需要重新启动才能工作（#27540）（@carlosonunez-redhat）
+* 80128c57d6aaa8f00cf7d2c2dec45a3d9910695c：文档：将 Mojro 添加到 USERS.md (#29124) (@ruturaj220)
+* 9150b81733f7659a65c89f3a768b3506e868e43e：文档：在 api 文档中添加有关仅适用于本地用户的会话 api 的警告 (#29384) (@ppapapetrou76)
+* b50862845c1af2e1ac257f9c0b642bc084004b75：文档：将 gitlab ci 添加到菜单（#28723）（@blakepettersson）
+* 33745f6de9b7eebdf5dc8f4e865043c41a40db72：文档：将 jedarden.com 添加到 USERS.md (#29352) (@jedarden)
+* 023114693fcaaebee02787e936c57fd2cf6bad47：文档：向 mkdocs 添加美人鱼图支持（#27991）（@choejwoo）
+* 8b066231d0300619f6b5f4865cd3cc9b909805a8：文档：添加更多机器人指令（＃29317）（@blakepettersson）
+* 5e732add3c04112289499b3d998218e89aa610b5：文档：添加附加调试容器的建议（＃27366）（@KyriosGN0）
+* 3b7aa8b4683e1f160d7b3c7b4a76ead478a6bc4d：文档：将服务器端差异默认行为添加到3.6升级指南（3.6的cherry-pick＃29769）（＃29771）（@argo-cd-cherry-pick-bot [bot]）
+* dffc7f534cedb9588d177c7092f3b19dffbc2b38：文档：通过 argoproj/.project 集中维护人员（#29645）（@agaudreault）
+* 2200885c5843b86a2072f0075948b748796c1ab3：文档：澄清核心资源健康检查（＃29254）（@KHARSHAVARDHAN-eng）
+* ed7345ff4aad0b5944ae43050d362e2d8d41721a：文档：澄清数据库迁移示例中的钩子注意事项（#29409）（@ppapapetrou76）
+* 8627115a126b41fbc67275f382eb5611f9107bf5：文档：澄清项目范围集群的隐式目的地（＃28324）（@senutpal）
+* be23caeb356c2e9739a48d6d40761a47262d5cf9：文档：澄清namespaceResourceWhitelist影响UI资源树（＃28565）（@lzb12）
+* 1ee964b6c64cc0259e38cdaf8e2257be18fff979：文档：澄清必需与可选的集群秘密字段（＃28310）（@yugstar）
+* b079641e62e979aae012503ba98bbc683423492a：文档：用于域级存储库匹配的文档双通配符模式（＃26196）（@ArsalanAnwer0）
+* 2cdf3410988197d8d5553a5b3ff997eb61805689：文档：CI/CD 管道的无头身份验证方法文档 (#29046) (@ppapapetrou76)
+* bd339b372a4b4c14f96bbdb045478f96fecdf7a6：文档：文档水合器仅限 git 存储库支持（#29541）（@nandotorres）
+* 281ed63c5ba816aac74f085b60847bb0b03e56b6：文档：集群 RBAC 资源的文档对象格式 (#28668) (@allenlee820202)
+* 4510784f299f505a1159f0e50c6864f33023ae0a：文档：修复“Argo CD”项目名称（＃29318）（@hsnabszhdn）
+* 048c806861310231861ae05547206c86b46156d6：文档：修复状态徽章revisionLength中的“允许显示”语法（＃29696）（@fng713）
+* 4d09b7bdda9478bc844f569dabf1fa09e6283a13：文档：修复“argocd-cm”引用（＃29320）（@hsnabszhdn）
+* 827a459eac763a64012d2237a7cccc990638f2da：文档：修复“respectRBAC”列表格式（＃29321）（@hsnabszhdn）
+* 96475e2f47201abe3ad373f8af4330edf097ea42：文档：修复Keycloak RBAC组匹配和控制器标志描述（＃28569）（@almightymoon）
+* 6376eb155f207fadd655fdbadc96e6ecb395f2ee：文档：修复注释和标签中损坏的协调文档链接（#28330）（@s3onghyun）
+* 49b779344abe7245f7c8f680485d9ce8a9c90409：文档：修复示例中损坏的密封秘密 Helm repoURL (#28683) (@mailnike)
+* b5fc12e0155c6a58c0924afc0ec68478cf25da11：文档：修复配置管理插件链接（＃29172）（＃29173）（@DresdenGman）
+* 8a1d6eb6e4d0a20c5af6f8523d8b1813fbaf23e8：文档：修复faq.md中的语法问题#28346（#28347）（@Taiwrash）
+* 5147913f3ea89de5f192ed64564ffa38719c3043：文档：修复 running-locally.md 中的语法问题 #28346 (#28348) (@Taiwrash)
+* 4af7b5d899b995414cdd99d2283ed52d82753fac：文档：修复 CI 故障排除文档中的语法错误 (#28680) (@magic-peach)
+* d66ebb4e55360cf058fb29db49fa7a66faaf6186：文档：修复错误分类指南中的小拼写错误（＃28634）（@allexistence）
+* abe9a37fbea70f99569df7959d149824762827d8：文档：修复 SECURITY.md 漏洞报告说明中缺失的单词 (#28679) (@magic-peach)
+* 14273f55c45d75450482f60c8670f7746a747141：文档：修复嵌套矩阵生成器示例 (#26751) (#28784) (@AkashKumar7902)
+* 712c52314ede72d4e624fbcd3a70794e3c128e7e：文档：修复HA指南中不存在的“argocd repo edit”命令（3.6的cherry-pick＃30694）（＃30707）（@argo-cd-cherry-pick-bot [bot]）
+* 1b7ce4d4be1fa95ce110017cdfaf8dfe8afd50f2：文档：修复操作手册文档中的拼写错误和品牌名称不一致的问题 (#29104) (@sangharshcs)
+* 6774c9aef2b3cfd08343be8fde202cedcc76d9f3：文档：修复文档中的拼写错误和语法（#28673）（@magic-peach）
+* 55cf4ce7d8cf8e3ede2692985254a7996ef9f144：文档：修复文档和 CI 过时工作流程中的拼写错误 (#28672) (@magic-peach)
+* 56105b4e5bd340024adeae2d44158bc3ff2006e2：文档：修复在没有 grpc-web 的情况下调用时的警告消息（#28720）（@Eduard-Voiculescu）
+* 655edda0bb5e2ed8b1c760ff0cefb1f573b9123c：文档：给出每个注释并标记一个锚点（＃29380）（@nitishfy）
+* 758a0e2ce5f2873dd9bca3c9b6cf330e81ef985c：文档：将“client id”替换为“client ID”（＃29319）（@hsnabszhdn）
+### Dependency updates
+* c78cce03169b628f5c76eea9893bc80d4fc846c4：杂务（deps）：将 CVE-2026-49978 的 DOMPurify 提升到 3.4.7 (#28966) (@aali309)
+* 4ecdada356086975be473f7485d67c338a492c53：杂务（deps）：将SonarSource / sonarqube-scan-action从8.2.0提升到8.2.1（＃28741）（@dependabot [bot]）
+* 0cf2e80c59a72ac1691e66c51896a4e5c9a79333：杂务（deps）：将 Ubuntu 基本映像摘要更改为 26.04（resolute-20260811.1）（#29569）（@dudinea）
+* 2412353468a080caae9edeb15bbfd2ef49872e92：杂务（deps）：将操作/缓存从5.0.5碰撞到6.0.0（＃28402）（@dependabot [bot]）
+* 80c196cbd1e064b43006b5833ff2bca4027e5a1e：杂务（deps）：将操作/缓存从 6.0.0 碰撞到 6.1.0 (#28475) (@dependabot[bot])
+* 648e73e99e96a4a04f312beaf9e2397645d55ff0：杂务（deps）：从6.0.2到7.0.0的碰撞操作/结帐（＃28637）（@dependabot [bot]）
+* 869d32ec78b3b01504b1eb0ad1b52173714c66c0：杂务（deps）：从6.0.3到7.0.0的碰撞操作/结帐（＃28350）（@dependabot [bot]）
+* 16e66a8fd6b067c9d34f3943ae518ea7c2480a52：杂务（deps）：从7.0.0到7.0.1的碰撞操作/结帐（＃28825）（@dependabot [bot]）
+* a23b68bae707fa06648d8e3e10779f4bc945b0b3：杂务（deps）：碰撞动作/设置-从6.4.0到6.5.0（＃28401）（@dependabot [bot]）
+* 242f44d6878da41f08e5ac5b0673dea9bb00bc97：杂务（deps）：碰撞动作/设置-从6.5.0到7.0.0（＃28740）（@dependabot [bot]）
+* d8bad8aab63b2feb81ca2b1773035116cc9360eb：杂务（deps）：将动作/设置节点从 6.4.0 碰撞到 7.0.0 (#28709) (@dependabot[bot])
+* fe3610dbfc2b9c73fc9880a87fe85363b9bc2258：杂务（deps）：将操作/设置节点从 6.4.0 碰撞到 7.0.0 (#28765) (@dependabot[bot])
+* 40931a3d3ae4979a042332f5444d83b6885b6a25：杂务（deps）：从10.3.0到10.4.0的碰撞动作/陈旧（＃28664）（@dependabot [bot]）
+* c19f78c8d5461b6bb1a0d2a9a87c8350e80d3547：杂务（deps）：将操作/陈旧从 10.4.0 更改为 11.0.0 (#28932) (@dependabot[bot])
+* a14697c598120a667cb0cdfb0bdfe1f9db8e2959：杂务（deps）：将docker / build-push-action从7.2.0提升到7.3.0（＃28536）（@dependabot [bot]）
+* 773fcb2fa579663b514fb2d965d27972378a3bb5：杂务（deps）：将docker/登录操作从4.2.0提升到4.3.0（＃28562）（@dependabot [bot]）
+* 9b87468de9ae3d9308f6d0ff65b7b01bfba6fb5a：杂务（deps）：将docker/登录操作从4.3.0提升到4.4.0（＃28582）（@dependabot [bot]）
+* 06ec49b277b0248b32989338cc3e21c9daad7bac：杂务（deps）：将docker/登录操作从4.4.0提升到4.5.0（＃28886）（@dependabot [bot]）
+* a1b756d329fd61427c7bcd68e807507d425e9a84：杂务（deps）：将docker/登录操作从4.5.0提升到4.5.1（＃28917）（@dependabot [bot]）
+* 1f66f4133c366609f199c8ca6738f45566d155cb：杂务（deps）：将docker/登录操作从4.5.1提升到4.5.2（＃28951）（@dependabot [bot]）
+* 078737042732e67ad1ffdbb9984f8fab4d88140c：杂务（deps）：将docker/登录操作从4.5.2提升到4.6.0（＃28974）（@dependabot [bot]）
+* f02203d06f4938b15bf3b43fcee2a074fab95ee0: 杂务(deps): 将 docker/setup-buildx-action 从 4.1.0 提升到 4.2.0 (#28561) (@dependabot[bot])
+* ec60cff000bde8373c44f8c8dc4d8f9b05371201：杂务（deps）：将 docker/setup-buildx-action 从 4.2.0 提升到 4.3.0 (#29279) (@dependabot[bot])
+* d8e3800cdf18588fe9da415ede5fd5562209aa87: 杂务(deps): 将 docker/setup-qemu-action 从 4.1.0 提升到 4.2.0 (#28535) (@dependabot[bot])
+* 6006998f3c799757355a28bd4be402a9c00e22db：杂务（deps）：将docker / setup-qemu-action从4.2.0提升到4.3.0（＃29550）（@dependabot [bot]）
+* 615776ac535f4c9263c2ee691317e751198c3bca: 杂务(deps): 凹凸 dompurify (cherry-pick #30014 for 3.6) (#30034) (@argo-cd-cherry-pick-bot[bot])
+* 0c6c5edfcd002e4842a826c4e955af2767d48fbd：杂务（deps）：将 github.com/Azure/azure-sdk-for-go/sdk/azcore 从 1.22.0 提升到 1.23.0 (#29212) （@dependabot[机器人]）
+* bb5169caf4fb7b5b7a2f05e75690a7be5affaa66：杂务（部门）：将 github.com/Azure/azure-sdk-for-go/sdk/azcore 从 1.23.0 提升到 1.23.1 (#29462) （@dependabot[机器人]）
+* 96c6029e300cc29ca7b103f0418e5e96c321e3dc：杂务（deps）：将github.com/Azure/azure-sdk-for-go/sdk/azidentity从1.14.0提升到1.14.1（#29459） （@dependabot[机器人]）
+* c50ac5589e6fca41484b5bddcbefe4fcfc69cb7e：杂务（deps）：将 github.com/Azure/kubelogin 从 0.2.18 切换到 0.2.19 (#28403) (@dependabot[bot])
+* 259634c04ec40a81164ba1e161bc8bd069d02be5：杂务（deps）：将github.com/alicebob/miniredis/v2从2.38.0提升到2.39.0（#29588）（@dependabot[bot]）
+* b138d42840bc0da6f8e64f539df85cdca3521f32：杂务（deps）：将 github.com/aws/smithy-go 从 1.27.2 提升到 1.27.3 (#28473) (@dependabot[bot])
+* b34f73175c0e703b9a99363e17fa9d2cf1351157：杂务（deps）：将 github.com/aws/smithy-go 从 1.27.3 切换到 1.27.4 (#28760) (@dependabot[bot])
+* dee87aaa41c37ab1e38180d8afb85dbd1f9d0add：杂务（deps）：将 github.com/aws/smithy-go 从 1.27.4 提升到 1.27.5 (#28931) (@dependabot[bot])
+* 700aa46a9028bc047abbb36b117ece2950daf9cf：杂务（deps）：将 github.com/aws/smithy-go 从 1.27.5 提升到 1.27.6 (#29041) (@dependabot[bot])
+* d49b63b06c2a03512e1d9e5f405189c8be8caa2b：杂务（deps）：将 github.com/aws/smithy-go 从 1.27.6 提升到 1.27.7 (#29136) (@dependabot[bot])
+* a8c09bb4cb7018958d95916bdd1fa18ed14bfa88：杂务（deps）：将 github.com/aws/smithy-go 从 1.27.7 提升到 1.27.8 (#29230) (@dependabot[bot])
+* b24120eeb74f907146c49432d8e9ad999cc61a85：杂务（deps）：将 github.com/aws/smithy-go 从 1.27.8 切换到 1.27.9 (#29376) (@dependabot[bot])
+* f80a3ee875c309c4dbba4f032143b1cabeb42781: 杂务(deps): 将 github.com/bombsimon/logrusr/v4 从 4.1.0 提升到 4.2.0 (#29480) (@dependabot[bot])
+* 0eb9281a22f8a9bb1ae5645601a4ef01c5304f5d：杂务（deps）：将github.com/coreos/go-oidc/v3从3.18.0提升到3.19.0（#28325）（@dependabot[bot]）
+* 17ccbdf0e4c016572c7db6d46ee3ed1a72cf0918：杂务（deps）：将github.com/coreos/go-oidc/v3从3.19.0提升到3.20.0（#28643）（@dependabot[bot]）
+* d4e549c7aefd90b5f6cf507aba277d9db3124dfa：杂务（deps）：将 github.com/coreos/go-oidc/v3 从 3.20.0 提升到 3.21.0 (#29592) (@dependabot[bot])
+* 94071238c9cdbe7dea2a10402079743817d27736：杂务（deps）：将github.com/cyphar/filepath-securejoin从0.6.1提升到0.7.0（#28351）（@dependabot[bot]）
+* 5c03ec6d7cf2e726a530f7ed33e1877015c4f5c0：杂务（deps）：将github.com/go-jose/go-jose/v4从4.1.4提升到4.1.5（#29589）（@dependabot[bot]）
+* 2a48f0898134ea3410c2e9faf06aaee31f754037：杂务（deps）：将github.com/go-jose/go-jose/v4从4.1.5提升到4.1.6（3.6的樱桃挑选＃30284）（＃30711） (@argo-cd-cherry-pick-bot[机器人])
+* 501f9b8675cb7f52b01f0b6963d47c41143468e5：杂务（deps）：将github.com/go-jose/go-jose/v4从4.1.6提升到4.1.7（3.6的樱桃挑选＃30731） (#30735) (@argo-cd-cherry-pick-bot[机器人])
+* 2e170137d1f49eacb9026011cab0300d7f8bbfc0：杂务（deps）：将github.com/go-logr/logr从1.4.3提升到1.4.4（#28823）（@dependabot[bot]）
+* 88108aaa9ecd624b881e4cb4d5b19de426289915：杂务（deps）：从github.com/go-openapi/loads从0.24.0到0.25.0（#28822）（@dependabot[bot]）
+* 2c44f6a041c026de0e6b71b5c64450f5cf6fda28：杂务（deps）：将github.com/go-openapi/loads从0.25.0提升到0.25.1（#29229）（@dependabot[bot]）
+* 3af7fda329d1789a5475f849e45f36349beaf782：杂务（deps）：将github.com/go-openapi/loads从0.25.1提升到0.25.2（#29460）（@dependabot[bot]）
+* 423377775d0eb396abe4f37a78cac66e5ad5242f：杂务（deps）：将github.com/go-openapi/loads从0.25.2提升到0.25.3（#29615）（@dependabot[bot]）
+* 264fe337ba24df3343aeeead575466b3ce90549e: 杂务(deps): 将 github.com/go-openapi/runtime/server-middleware 从 0.32.3 提升到 0.32.4 (#28372) (@dependabot[bot])
+* ce83520622dcc5fd7c318f708062bc8aeb40aa27：杂务（deps）：将 github.com/go-openapi/runtime/server-middleware 从 0.32.4 提升到 0.32.5 (#28759) (@dependabot[bot])
+* cc365cb6ab07352cb2404f6ab1acb740b60af8aa：杂务（deps）：将 github.com/go-openapi/runtime/server-middleware 从 0.32.5 提升到 0.32.6 (#28845) (@dependabot[bot])
+* 0126363d4ec758a92e3eee0dbbbee385df6bbd82：杂务（deps）：将github.com/go-openapi/runtime/server-middleware从0.32.6提升到0.33.0（#28933）（@dependabot[bot]）
+* 69cc4d72b9107876aae19bb5bcc0eff629579c42：杂务（deps）：将github.com/go-openapi/runtime/server-middleware从0.33.0提升到0.33.1（#29375）（@dependabot[bot]）
+* 5fd394479589e2698c9ebb7cda4f8e793a596782：杂务（deps）：将github.com/go-openapi/runtime/server-middleware从0.33.1提升到0.33.2（#29590）（@dependabot[bot]）
+* 821e090d6f25217145b7900acf4877b8c51786a4：杂务（deps）：将github.com/gobwas/glob从0.2.3提升到1.0.0（#29482）（@dependabot[bot]）
+* 66c3591a05d179356e060763ef4189f70a31146a：杂务（deps）：将github.com/google/gnostic-models从0.7.0提升到0.7.1（#28560）（@dependabot[bot]）
+* d70c112da3224e92a46a243a0fed3e589c97544b：杂务（deps）：将 github.com/grpc-ecosystem/go-grpc-middleware/v2 从 2.3.3 提升到 2.3.4 (#29427) （@dependabot[机器人]）
+* a1cd87aebfa3111319460493fcbef074297a3139：杂务（deps）：将github.com/jarcoal/httpmock从1.4.1提升到1.4.2（＃28953）（@dependabot [bot]）
+* c5a4832a7fa46dab7d22558ca0cfa8f314b63cb9：杂务（deps）：将 github.com/mattn/go-isatty 从 0.0.22 提升到 0.0.23 (#28761) (@dependabot[bot])
+* 4f94c7f4825a65a5933f04d2e5f20f88c2f6de48：杂务（deps）：将github.com/mattn/go-isatty从0.0.23提升到0.0.24（#28883）（@dependabot[bot]）
+* 3bbfca79b9b1b5391b20c73f21a5b303006ce573：杂务（deps）：将github.com/prometheus/client_golang从1.23.2提升到1.24.0（#28824）（@dependabot[bot]）
+* 565c7447194ebf44f91dbf53790ab566aba67908：杂务（deps）：将github.com/prometheus/client_golang从1.24.0提升到1.24.1（#28914）（@dependabot[bot]）
+* 83d5bdc5ded574f344a7bcc34a9f9462c92d1874：杂务（deps）：将github.com/prometheus/client_model从0.6.2提升到0.6.3（#29552）（@dependabot[bot]）
+* f9546a8dc18bd34ae5e4c1870b7a72633f36bf4a：杂务（deps）：将github.com/redis/go-redis/v9从9.20.1提升到9.21.0（#28387）（@dependabot[bot]）
+* abbb3b7a5e5a650fd7dba5dae74b0050d2eb5fb1：杂务（deps）：将 github.com/redis/go-redis/v9 从 9.21.0 提升到 9.22.0 (#29092) (@dependabot[bot])
+* 0341aa9c4dfb23824c42653d5ca36bfa9a2f05a8：杂务（deps）：将github.com/sirupsen/logrus从1.10.0提升到1.10.1（#29341）（@dependabot[bot]）
+* 321962c5ddfb9ba05d7d82ccdd23c8c06d0b25ca：杂务（deps）：将github.com/sirupsen/logrus从1.10.1提升到1.10.2（#29457）（@dependabot[bot]）
+* e18032a9d8ed241ddb8368413bac8bc519401452：杂务（deps）：将 github.com/sirupsen/logrus 从 1.9.4 提升到 1.10.0 (#29211) (@dependabot[bot])
+* e2c6063dcfd40c2983617bb4ed1190c677409248：杂务（deps）：将 github.com/skeema/knownhosts 从 1.3.2 提升到 1.3.3 (#29458) (@dependabot[bot])
+* fbd3f8aac1282d71a24ee83a4ab45adbf48dbe08：杂务（deps）：将 github.com/stretchr/testify 从 1.11.1 提升到 1.12.0 (#29231) (@dependabot[bot])
+* 62bc080798ced7f198836a2a33ce522a55ebc7a9：杂务（deps）：将github.com/stretchr/testify从1.12.0提升到1.12.1（#29301）（@dependabot[bot]）
+* d5bf628ce64c70334fdadea1a11fb9a5a491fa0c：杂务（deps）：将 github/codeql-action/autobuild 从 4.36.2 提升到 4.36.3 (#28563) (@dependabot[bot])
+* d5f7eeb992386e04c19e11eb614f4caa9cede398：杂务（deps）：将 github/codeql-action/init 从 4.36.3 提升到 4.37.0 (#28636) (@dependabot[bot])
+* 1f9d9f185c54612b98a3c0a3dde60faf8715e9a7：杂务（deps）：将github/codeql-action/upload-sarif从4.36.2提升到4.36.3（#28583）（@dependabot[bot]）
+* 349e35411bd1de56224e020993d6c561f543b706：杂务（deps）：将github/codeql-action/upload-sarif从4.36.3提升到4.37.0（#28635）（@dependabot[bot]）
+* 0a84c102b6eb37b8a988be976929c2c4c48d2b06: 杂务(deps): 从 3.0.4 到 3.0.5 的碰撞 go.yaml.in/yaml/v3 (#28913) (@dependabot[bot])
+* c14dd2d6840ed17c550b87dfd9dc372938b3c0f8：chore（deps）：将 golang.org/x/crypto 从 golang-x 组中的 0.55.0 提升到 0.56.0 (#29587) (@dependabot[bot])
+* c82ae30d81e8b449f5ce7faae0429bd7e3e29635：杂务（deps）：将 golang.org/x/net 从 /gitops-engine 中的 0.53.0 提升到 0.55.0 (#28540) (@dependabot[bot])
+* 639b1e75be5a1998577b8942240cce265bb49d45：杂务（deps）：将 golang.org/x/net 从 0.56.0 提升到 0.57.0 (#28640) (@dependabot[bot])
+* be5fa351a5257535e337e8ae4b9bb5896c7e21aa：杂务（deps）：将golang.org/x/net从golang-x组中的0.61.0提升到0.62.0（3.6的cherry-pick＃30699）（＃30746） (@argo-cd-cherry-pick-bot[机器人])
+* 207e2ba397f12ed965babc785abba66851d8ed59：杂务（deps）：将 golang.org/x/term 从 0.44.0 提升到 0.45.0 (#28642) (@dependabot[bot])
+* b9541ba7a167d07692568752f339b58f4b770c7a：杂务（deps）：将 golangci/golangci-lint-action 从 9.2.1 提升到 9.3.0 (#28513) (@dependabot[bot])
+* b49c22a5cbccb60cec855aeef465ee8949b91fe8：杂务（deps）：将 google.golang.org/grpc 从 1.81.1 提升到 1.82.0 (#28525) (@dependabot[bot])
+* d9d9c80594db26fba671d3401e5ba2b8e0a07323：杂务（deps）：将 google.golang.org/grpc 从 1.82.0 提升到 1.82.1 (#28739) (@dependabot[bot])
+* b1b824ae02719e9d33086ac16928f1487eb187cf：杂务（deps）：将 google.golang.org/grpc 从 1.82.1 提升到 1.83.0 (#29020) (@dependabot[bot])
+* 91874e3a6863f96b2d2faeedd8277f689dd9ba31：杂务（deps）：将 google.golang.org/grpc 从 1.83.0 提升到 1.83.1 (#29340) (@dependabot[bot])
+* c0d66f6688ab94e54fd0e708daf16778cdfd00a5：杂务（deps）：将 google.golang.org/grpc 从 1.83.1 提升到 1.83.2 (#29461) (@dependabot[bot])
+* 1c35b994224f4d731bab43cfe22b8682026c998c：杂务（deps）：将google.golang.org/grpc从1.83.2提升到1.84.0（3.6的樱桃挑选#29790）（#29914） (@argo-cd-cherry-pick-bot[机器人])
+* b2929a03a55be5f824786b2a597a7d2fa42f70b3：杂务（deps）：将 goreleaser/goreleaser-action 从 7.2.2 提升到 7.2.3 (#28512) (@dependabot[bot])
+* f26f73aeda71b77d43ad227972e24b3f3f78b879：杂务（deps）：在 /ui 中将 js-yaml 从 3.14.1 提升到 4.2.0 (#28291) (@dependabot[bot])
+* 744caa03fd21c6f4674184dec41246246bd7e5dc：杂务（deps）：在 /ui 中将 js-yaml 从 3.14.1 提升到 5.2.0 (#28509) (@dependabot[bot])
+* 23704792920c1cb290ccc6105dc43f95c339b1f2：杂务（deps）：在/ ui中将js-yaml从4.3.0提升到4.3.1（＃29090）（@dependabot [bot]）
+* 06e934b7182719c783e8fabb0486f06a77bfb62a：杂务（deps）：在/ ui中将js-yaml从4.3.0提升到5.2.2（＃28918）（@dependabot [bot]）
+* 6f3778834c0c952538d9e9fc8d0e6237f6277c2b: 杂务(deps): 在/ui 中将 js-yaml 从 4.3.1 提升到 5.4.1 (#29483) (@dependabot[bot])
+* 7f1b7e394e2d28d8952beb018ea906fe0c25248d：杂务（deps）：将k8s client提升到0.37.0（＃29597）（＃29595）（@dudinea）
+* 67eb02d99aea20911354916580d6b7f1f0a7bf29：杂务（deps）：将/test/container中的库/ubuntu从`f3d2860`提升到`53958ec`（#28370）（@dependabot[bot]）
+* 1af0be15cdd69d0b237cbaf4f9ba9440d0334ab2：杂务（deps）：将oras.land/oras-go/v2从2.6.1提升到2.6.2（#28696）（@dependabot[bot]）
+* 130cf43a8626f2557cb1118294204c5e335fc539：杂务（deps）：将ossf /记分卡操作从2.4.3提升到2.4.4（＃28884）（@dependabot [bot]）
+* 05545be13e8de54f1a62e464ef42caba0f4929a3：杂务（deps）：将pnpm/action-setup从6.0.10提升到6.1.0（#29613）（@dependabot[bot]）
+* d7b98e0c334f842c649f35d8fffe4df11e92cda1：杂务（deps）：将 pnpm/action-setup 从 6.0.9 提升到 6.0.10 (#29078) (@dependabot[bot])
+* 58b45f138de736d65178111b2d7447386c6fa2e2：杂务（deps）：将renovatebot / github操作从46.1.15提升到46.1.16（＃28373）（@dependabot [bot]）
+* b31a7987caddb95e02dbaf245edfccba1ed2cb30：杂务（deps）：将renovatebot / github操作从46.1.16提升到46.1.17（＃28474）（@dependabot [bot]）
+* 8dc512ed01ccb9a878c8f5badbbaf527298bf88f：杂务（deps）：将renovatebot / github操作从46.1.17提升到46.1.18（＃28581）（@dependabot [bot]）
+* 8b9adadb4146c5e02e0a41a9fe39b43672907aef：杂务（deps）：将renovatebot / github操作从46.1.18提升到46.1.19（＃28697）（@dependabot [bot]）
+* 41c9bb8c488e781ce453ed96e4dc00d4a2cc045a：杂务（deps）：将renovatebot / github操作从46.1.19提升到46.1.20（＃28808）（@dependabot [bot]）
+* d7c62e8181811c693a8ba47fb9212095665b6843：杂务（deps）：将renovatebot / github操作从46.1.20提升到46.1.21（＃28915）（@dependabot [bot]）
+* 83d271a505efc662555c4d117d4a9be6f3a587dc：杂务（deps）：在/ ui中将rxjs从6.6.7提升到7.8.2（＃28916）（@dependabot [bot]）
+* 4e841eb36f3eb459dcafd6c5b68e666684f75796：杂务（deps）：将 sigs.k8s.io/structed-merge-diff/v6 从 6.4.0 提升到 6.4.1 (#28604) (@dependabot[bot])
+* 91081237988bb21069d663b38138ed239914d81c：杂务（deps）：将 sigs.k8s.io/structed-merge-diff/v6 从 6.4.1 提升到 6.4.2 (#28622) (@dependabot[bot])
+* 92cfc6aec80dd3eba3e29e6f904678f62653d958：杂务（deps）：将 slack-go 提升到 v0.23.1 并将 golang.org/x/net 提升到 v0.53.0 (#28377) (@ayushi-work)
+* 066fbeb50363e5ae9262d4e82cb7fd662b07b3f8：杂务（deps）：将softprops/action-gh-release从3.0.0碰撞到3.0.1（#28371）（@dependabot[bot]）
+* b0da1145147108e4843c08c5d591133289acd9d7：杂务（deps）：将步骤安全/硬化跑步者从 2.19.4 提升到 2.20.0 (#28621) (@dependabot[bot])
+* 392ae39913675ebe76f3880ac709be2c70b27e82：杂务（deps）：将步骤安全/硬化跑步者从2.19.4提升到2.20.0（＃28787）（@dependabot [bot]）
+* d958f037b37f6b1910c9bc1083fb89761ba7b372：杂务（deps）：将步骤安全/硬化跑步者从2.20.0提升到2.20.1（＃29094）（@dependabot [bot]）
+* 01a151cee87e73bc9f28cfe0671c352d6298681b：杂务（deps）：将步骤安全/硬化跑步者从2.20.1提升到2.21.0（＃29214）（@dependabot [bot]）
+* 433beaa49af8db19bc4c38ff812416f08145ec6d：杂务（deps）：将步骤安全/硬化跑步者从2.21.0提升到2.21.1（＃29497）（@dependabot [bot]）
+* fe39b236d561f96f5c48483f482a1b33be27aa11：杂务（deps）：通过 2 个更新来提升 aws-sdk-v2 组 (#28639) (@dependabot[bot])
+* 15ea3f6a1529cc1a2ef29a744d64354e1aae2117：杂务（deps）：通过 2 个更新来提升 aws-sdk-v2 组 (#29209) (@dependabot[bot])
+* 9cd006898824ae55616d9bfc7f856d0a61b63793：杂务（deps）：通过 5 项更新来提升 aws-sdk-v2 组 (#28514) (@dependabot[bot])
+* 09b2595a495826de1671ca9befa1214d78f2f543：杂务（deps）：通过 5 项更新来提升 aws-sdk-v2 组 (#28603) (@dependabot[bot])
+* 494b13848f551707256366068b411668c844ca0d：杂务（deps）：通过 5 项更新来提升 aws-sdk-v2 组 (#28710) (@dependabot[bot])
+* dcd137ef14f32a3e71857019a6660aa5ab6924fe：杂务（deps）：通过 5 项更新来提升 aws-sdk-v2 组 (#29551) (@dependabot[bot])
+* 9abf4d4810e254ddeec695bd6ab45e04cb2d4a10：杂务（deps）：通过 6 项更新来提升 aws-sdk-v2 组 (#28537) (@dependabot[bot])
+* 33b1ef2d20f90e77ad437d489c1a7f1134a9b08d：杂务（deps）：通过 6 项更新来提升 aws-sdk-v2 组 (#28844) (@dependabot[bot])
+* c2a73a5f6517af79c78445b966c3aa42d561e485：杂务（deps）：通过 6 项更新来提升 aws-sdk-v2 组 (#28952) (@dependabot[bot])
+* d943a23e5fd598bcf4516ecbbc28891ee14457e6：杂务（deps）：通过 6 项更新来提升 aws-sdk-v2 组 (#28975) (@dependabot[bot])
+* e27be21651f2c1f0de26faad9d4564bf8457b9c7：杂务（deps）：通过 6 项更新来提升 aws-sdk-v2 组 (#29040) (@dependabot[bot])
+* 3d6d90c4391df618c76b94e07f975345914f590c：杂务（deps）：通过 6 项更新来提升 aws-sdk-v2 组 (#29117) (@dependabot[bot])
+* d524270101914f93cc8ba2b3c9e211f899c2ea24：杂务（deps）：通过 6 项更新来提升 aws-sdk-v2 组 (#29192) (@dependabot[bot])
+* f3f18c96a757f07da59dca8504742d99833daf94：杂务（deps）：通过 6 项更新来增加 aws-sdk-v2 组 (#29228) (@dependabot[bot])
+* 13e97da4884f800a8e42773f0a9eef9b0aabfd88：杂务（deps）：通过 6 项更新来提升 aws-sdk-v2 组 (#29339) (@dependabot[bot])
+* ba6fe06ce7a3792b3beaf33f0cee7e54cee2535f：杂务（deps）：通过 6 项更新来提升 aws-sdk-v2 组 (#29455) (@dependabot[bot])
+* a3ec90cb9c350817629acdf96842d2e04269c0ff：杂务（deps）：通过 6 项更新来提升 aws-sdk-v2 组 (#29614) (@dependabot[bot])
+* bdc936aae234560c800ce1d063c233a10dba44c0：杂务（deps）：通过 6 项更新来提升 aws-sdk-v2 组 (#29704) (@dependabot[bot])
+* 6067c1c335686c492a7e6af885361a20ac302f5b：杂务（deps）：通过 4 个更新来提升 codeql 组（#28762）（@dependabot[bot]）
+* 24e66ef377ca32d8fac97e517cc4dc09737eb281：杂务（deps）：通过 4 个更新来提升 codeql 组（#28843）（@dependabot[bot]）
+* 2ecd93094b7036e29d9144b622d2ad600d0016e6：杂务（deps）：通过 4 个更新来修改 codeql 组（#28869）（@dependabot[bot]）
+* 65384e082a209c2a146fac9f1d6843c7f43170cb：杂务（deps）：通过 4 个更新来提升 codeql 组（#29021）（@dependabot[bot]）
+* e47977bfd3d5b7a39cbd6bf611f6a401af2a48c1：杂务（deps）：通过 4 个更新来修改 codeql 组（#29077）（@dependabot[bot]）
+* 1c2dee836b0b9e2f105e093506241a864009b227：杂务（deps）：通过 4 个更新来修改 codeql 组（#29093）（@dependabot[bot]）
+* 67840da980760696cd2dee94eb1d8e36e72c8014：杂务（deps）：通过 4 个更新来提升 codeql 组（#29213）（@dependabot[bot]）
+* a155cc4e1135983bc500d7ee89a2540c42a619da：杂务（deps）：通过 4 个更新来提升 codeql 组（#29338）（@dependabot[bot]）
+* b27a5109f7668c29c21a0c6373f580e4c2680e64：杂务（deps）：用 4 个更新来修改 codeql 组（#29454）（@dependabot[bot]）
+* 181c6cbb42be8141ca767a013231574d19cc11c8：杂务（deps）：用 4 个更新来修改 codeql 组（#29702）（@dependabot[bot]）
+* 401ddced1d4a6e4b5d4ae946cf27c746e4304c8f：杂务（deps）：通过 2 个更新来提升 golang-x 组（#29210）（@dependabot[bot]）
+* 2ed7ce57a21be16103c2ba3fbebb33a0bc5af047：杂务（deps）：通过 2 个更新来提升 golang-x 组（3.6 的cherry-pick #30146）（#30739）（@argo-cd-cherry-pick-bot[bot]）
+* fdd90b1cbb4c8e0da095a7c5167c888a7e028eeb：chore(deps)：通过 3 个更新来提升 golang-x 组 (#29628) (@dependabot[bot])
+* 363af87360f1757d123758fb301a87edf9ad3b57：杂务（deps）：通过 3 个更新来提升 golang-x 组（#29705）（@dependabot[bot]）
+* 16f4cb0ba0efa4a014503403f59891004b147df3：chore（deps）：通过3个更新来提升golang-x组（3.6的cherry-pick＃30198）（＃30742）（@argo-cd-cherry-pick-bot [bot]）
+* 6ce2a4c58aacf3f1f09fac370260c984ea01733f：杂务（deps）：通过 2 个更新来提升酒店组（#29118）（@dependabot[bot]）
+* 2aa13d4217e3018ae3d3d667897497e4b0365457：杂务（deps）：通过 4 个更新来提升酒店组（#29091）（@dependabot[bot]）
+* 52e9ee25eb167ca9597530d68d53e315d9fc185c：杂务（deps）：通过 6 项更新来提升酒店集团（#29456）（@dependabot[bot]）
+* 6951cbc21a596f75b0867ea0530de2d0478ebe79：杂务（deps）：将时区列表从 /ui 中的 3.0.1 更改为 3.1.0 (#29594) (@dependabot[bot])
+* f4315d87099da3b7e592921ae15e32d988775dd0：杂务（deps）：将 /ui 中的 uuid 从 8.3.2 更改为 14.0.1 (#28887) (@dependabot[bot])
+* ec24fab37e649babdcfe63c1ecad11008d06e281：杂务（deps）：将 zizmorcore/zizmor-action 从 0.5.7 提升到 0.6.0 (#28742) (@dependabot[bot])
+* a226ef191ad055b05a272c40aef2b29f95f65411：杂务（deps）：将 zizmorcore/zizmor-action 从 0.6.0 提升到 0.6.1 (#28885) (@dependabot[bot])
+* d464ee455e35de8503f3c4549eb3e5547808fc8a：杂务（deps）：将 zizmorcore/zizmor-action 从 0.6.1 提升到 0.6.2 (#29039) (@dependabot[bot])
+* 9c2d9453648ee8f4bbf0af4b32ebc35838aeffa4：杂务（deps）：将 zizmorcore/zizmor-action 从 0.6.2 提升到 0.6.3 (#29496) (@dependabot[bot])
+* 24b241fff60059b54fad777771cfea1521cb34f4: chore(deps): bump zizmorcore/zizmor-action from 0.6.3 to 0.6.4 (#29703) (@dependabot[bot])
+* d94bfc0db94d352662c5a3170f64d9937b65656f: chore(deps): update dependency dexidp/dex to v2.45.1 (#28850) (@argoproj-renovate[bot])
+* 4573196eb1cc5a073b6867c2f129ef8904f283ac：chore（deps）：将依赖项dexidp / dex更新为v2.46.0（3.6的cherry-pick＃30065）（＃30216）（@argo-cd-cherry-pick-bot [bot]）
+* 9870eae87273f574bc367208822d8113270b711b：杂务（deps）：将依赖项git-lfs / git-lfs更新为v3.8.0（＃29426）（@argoproj-renovate [bot]）
+* 36b8c4e714413039e6ad812c8e6a00b0558cb4f6: chore(deps): update dependency git-lfs/git-lfs to v3.8.1 (cherry-pick #30360 for 3.6) (#30751) (@dudinea)
+* 14277ccfd1f106840043dd952b807f6fb3aa30ce：杂务（deps）：将依赖golang更新为v1.27.1（＃29490）（@argoproj-renovate [bot]）
+* d0f611518d382f5335c8859e1df090f3d989a17c：杂务（deps）：将依赖项 helm/helm 更新为 v4.2.2 (#28457) (@argoproj-renovate[bot])
+* b6af3abe7b63c2f0f0c8d03e1d0678e68bb86fb1：杂务（deps）：将依赖项 helm/helm 更新为 v4.2.3 (#28851) (@argoproj-renovate[bot])
+* e33bd1d7876d830447bca6c06c1877abbd2b4f98：杂务（deps）：将依赖项 helm/helm 更新为 v4.2.4 (#29187) (@argoproj-renovate[bot])
+* 7a19801ae85c2b738329e4e61259f060608c4b0e: chore(deps): update dependency helm/helm to v4.3.0 (#29648) (@argoproj-renovate[bot])
+* 145a4a3c026665f04f78f4cfc9674e7194fbe93d：杂务（deps）：将依赖项 helm/helm 更新为 v4.3.1（release-3.6）（#30211）（@argoproj-renovate[bot]）
+* f91a95c6c80e483d3c80e5a3ccba0de80e8eafdd: chore(deps): update dependency kubernetes-sigs/kustomize to v5.8.3 (release-3.6) (#30097) (@argoproj-renovate[bot])
+* d162e356c709bb83f6f6d565474c932cee4137f8: chore(deps): update dependency markdown to v3.10.3 (#28987) (@argoproj-renovate[bot])
+* 72e01fe07a4d480cf5ad511c9fa4d4cb68e8f778: chore(deps): update dependency pygments to v2.21.0 (#29217) (@argoproj-renovate[bot])
+* 6e0d8c66625e828ad21a5d0cd185e8fc29472846: chore(deps): update dependency pymdown-extensions to v11 (#28386) (@argoproj-renovate[bot])
+* 18e1c065ba10495ed795c71dad8aa044b97ccffe：杂务（deps）：将依赖项 pymdown 扩展更新为 v11.0.1 （＃28627）（@argoproj-renovate [bot]）
+* 37ee0097cf851bc2dd7665fc081bbce61a7e836e：杂务（deps）：将依赖项pymdown扩展更新为v11.0.2（＃29329）（@argoproj-renovate [bot]）
+* 022587e35cc8a85b408ada56c81aa4f538d46a6a：杂务（deps）：将依赖项pymdown-extensions更新为v12（＃29723）（@argoproj-renovate [bot]）
+* 530de77f1f8ed3bfb5bc739973f0b9ab4d0c71f4：杂务（deps）：将 docker.io/bitnamilegacy/kubectl docker 标签更新为 v1.33 (#28458) (@argoproj-renovate[bot])
+* c8094a1b4ecd1cec1af6460d4fa4379e641f2ae3：杂务（deps）：将 docker.io/library/busybox docker 摘要更新为 dc2d74b (#29008) (@argoproj-renovate[bot])
+* 222258680cd7a728674ae12250a2a95ef8731b65: chore(deps): update docker.io/library/golang docker tag to v1.27.1 (#29492) (@argoproj-renovate[bot])
+* c3d6857ed6fa6744d0d7a9cc10ae3023bc631f0c: chore(deps): update docker.io/library/golang:1.26.4 docker digest to 8c5d338 (#28405) (@argoproj-renovate[bot])
+* f012788c44fba0cd7cdde5f37a87a02dc972243c：杂务（deps）：将 docker.io/library/redis docker 标签更新为 v8.10.0 (#28991) (@argoproj-renovate[bot])
+* 6df66f7668473256bd0aab2ace95fcb6bffb1953：杂务（deps）：将 docker.io/library/redis docker 标签更新为 v8.10.1 (#29295) (@argoproj-renovate[bot])
+* 5933e65d0d64774eabf5750c8901ba9c75783900：杂务（deps）：将docker.io/library/redis docker标签更新为v8.8.1（#28896）（@argoproj-renovate[bot]）
+* e079d120ac59e4fc2fb26969692dbcf624100802：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.11.0 (#29038) (@argoproj-renovate[bot])
+* a9bb51dc2220008232407114b6032b2b9e415398：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.11.8 (#29050) (@argoproj-renovate[bot])
+* 701cf05130427892d9b8d225b19c4018c84f0491：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.13.1 (#29062) (@argoproj-renovate[bot])
+* 5c08d08e3b9a72d58fe7fcb36c6f539184ef4f5b：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.14.0 (#29067) (@argoproj-renovate[bot])
+* 829ef380e107af541ffb1fd0c172548def9f2b8e: 杂务(deps): 将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.14.12 (#29102) (@argoproj-renovate[bot])
+* 8a062e3f4d1ec2a8358d201b8e5c5b75e459dd82：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.14.3 (#29085) (@argoproj-renovate[bot])
+* dc4085768c52bb9d8668fa3b5650aa5b6c7beeb0：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.14.4 (#29096) (@argoproj-renovate[bot])
+* 4f07b36fd7c321c2bf932a2c854b7084ad42e989：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.14.7 (#29099) (@argoproj-renovate[bot])
+* 8f30747951a5ad6e3618f90f8b32c4301542be9f：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.15.0 (#29112) (@argoproj-renovate[bot])
+* de144733685db3d808e95933541f38020469b4b2：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.17.1 (#29113) (@argoproj-renovate[bot])
+* eb12dd61d4f5413fdaaf86a1d7010f9cbfa319ee：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.17.5 (#29122) (@argoproj-renovate[bot])
+* 2bb8976a04b2be3daec72be4947fd8703cca500b：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.20.1 (#29127) (@argoproj-renovate[bot])
+* d97c65a7e278d39f6bd7ede39d2426a4c62fe5a4：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.22.0 (#29129) (@argoproj-renovate[bot])
+* d1eb611d589d354e75de933cf1074451e7d36855：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.23.3 (#29133) (@argoproj-renovate[bot])
+* 695d9ef405822d3995d5b465e915fcc3b82a0cbf：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.24.0 (#29144) (@argoproj-renovate[bot])
+* 90798bfe10b33711ba49449ee8e6b9dea852e14e：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.24.1 (#29147) (@argoproj-renovate[bot])
+* 34fe81e7c9c7508a0936c98b24dd0c98ca6cbae2：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.24.2 (#29151) (@argoproj-renovate[bot])
+* a431650b103281fd6c1fe65a2499df69bb97ca87：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.26.0 (#29154) (@argoproj-renovate[bot])
+* 997379f13e0bbc74d5dbea7a10f886fd741dd2fe：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.27.0 (#29168) (@argoproj-renovate[bot])
+* 6533d44466c3debd0f0cc6f95a3cac44393a32ea：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.30.4 (#29176) (@argoproj-renovate[bot])
+* 36be54b7a2bc015f25b363c79715f5f031c6a9cd：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.32.2 (#29207) (@argoproj-renovate[bot])
+* 3ea698138b52aa85672347d319fa36d123844313：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.32.4 (#29223) (@argoproj-renovate[bot])
+* fe367bf4371df12a2c957ddf597885ce72d60d85：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.32.6 (#29232) (@argoproj-renovate[bot])
+* 2ff152bb38929aaa7646159acafb5e3d5affe239：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.35.4 (#29271) (@argoproj-renovate[bot])
+* 986c4bca86ebdf341a648ff08502a3143a219aa5：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.37.1 (#29299) (@argoproj-renovate[bot])
+* f558a3c31030acf5398b555a4206a7980c76cae1：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.39.2 (#29327) (@argoproj-renovate[bot])
+* 1ba3d1f2cfb14ab70af9d2ba1da8a0c69ed6441c：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.4.5 (#28992) (@argoproj-renovate[bot])
+* ec1defca99e1a7a1a6788b4717287958532c0ff7：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.43.1 (#29356) (@argoproj-renovate[bot])
+* eefa3bfb16c03e05fa822fa0ccc6c6ea9dd6d308：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.46.4 (#29385) (@argoproj-renovate[bot])
+* 39ed652ba07449b40c5a12b112d39112c51bcf30：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.53.0 (#29478) (@argoproj-renovate[bot])
+* 576ce7ad05c2b40c0449a72411f53fc5c34b8e73：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.56.1 (#29489) (@argoproj-renovate[bot])
+* 506f04054e1be62b9a269400a92cad9e07c9c0f4：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.56.3 (#29491) (@argoproj-renovate[bot])
+* 0a994604a2ee242179beb8df0fa0eb6fabc05de0: 杂务(deps): 将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.57.1 (#29501) (@argoproj-renovate[bot])
+* 320d558f7ef432a32d8cc47cee3aab5329cc6a5d：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.59.2 (#29515) (@argoproj-renovate[bot])
+* eebefeff6b8e1f1616743b40435311e6827106d9：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.61.1 (#29528) (@argoproj-renovate[bot])
+* 16afc0789724f65d361185325225164eacee22ca：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.62.1 (#29539) (@argoproj-renovate[bot])
+* e3df25726901b4bd4088b90d01d53ed8f11dcf72：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.64.1 (#29557) (@argoproj-renovate[bot])
+* 62e447f2637d0af6e1b7718843e212852aa055f2：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.7.0 (#29002) (@argoproj-renovate[bot])
+* f2613118be95608568c1c0ad9d425cc348d63973：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.7.1 (#29019) (@argoproj-renovate[bot])
+* 0715b5c8412c88e25a6f9cfbf14b533dac010321：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.85.0 (#29709) (@argoproj-renovate[bot])
+* d4547c373897d75d19e39e908ccce2d8dd781bd2：杂务（deps）：将 ghcr.io/renovatebot/renovate docker 标签更新为 v44.9.1 (#29034) (@argoproj-renovate[bot])
+* 3c08eb2ffc1d47ad313f8c4e55f3dd9081934c34：杂务（deps）：更新组golang（＃29268）（@argoproj-renovate [bot]）
+* 45a914fa15b75d71e543e7c59557d39f48549ee6：杂务（deps）：更新组golang（master）（3.6的cherry-pick＃30090）（＃30130）（@argo-cd-cherry-pick-bot [bot]）
+* b2059770487d0a73a767eafb7761a34b88383d8f：杂务（deps）：将组golang更新为v1.26.5（＃28628）（@argoproj-renovate [bot]）
+* d5376a1173952e0d1a4ea40b5ca619f465509196：杂务（deps）：将组golang更新为v1.26.6（＃29186）（@argoproj-renovate [bot]）
+* 43cfa8d44f34d473a06ea73529f263c865653a14：杂务（deps）：将组golang更新为v1.27.3（发布-3.6）（＃30304）（@argoproj-renovate [bot]）
+* 5d1c03064129868ce37bd0df173ec2b2c22c5f6e：杂务（deps）：将组节点更新为v24.17.0（＃27924）（@argoproj-renovate [bot]）
+* 661d4e2bbb0a42f1e5416a569aee9625bebb3d52：杂务（deps）：更新组翻新（＃28988）（@argoproj-renovate [bot]）
+* 1f106fefc0073af712473397565289917a28c1fa：杂务（deps）：更新组翻新（＃29115）（@argoproj-renovate [bot]）
+* 1d21ee17aae88c9a17cece84df4600a1e7604d0e：杂务（deps）：更新组翻新（＃29333）（@argoproj-renovate [bot]）
+* 06870272e604379867fe9edfcf28fa25b55e04d6：杂务（deps）：更新组翻新（＃29452）（@argoproj-renovate [bot]）
+* 7e2ea8cf1ac7bedddc32f478742f2146786d2f12：杂务（deps）：更新组翻新（＃29585）（@argoproj-renovate [bot]）
+* d42819669e779fbf7e50f1ebe3187335cde0a4bf：杂务（deps）：更新组翻新（＃29700）（@argoproj-renovate [bot]）
+* 345a0f992557e48b3276bcb23da09a8e39e4d575：杂务（deps）：将模块 github.com/golangci/golangci-lint/v2 更新为 v2.12.2 (#28424) (@argoproj-renovate[bot])
+* 901a97ccd5a7e266ebe5edd959b6c489a63c5913：杂务（deps）：将模块 github.com/golangci/golangci-lint/v2 更新为 v2.13.0 (#29277) (@argoproj-renovate[bot])
+* 750cdd6aea1885cdab3b56ae481260f2b6cc8d02：杂务（deps）：将模块 github.com/golangci/golangci-lint/v2 更新为 v2.13.2 (#29425) (@argoproj-renovate[bot])
+* 6e6c62931e802888984f4cf175868a435545b191：杂务（deps）：将模块 github.com/vektra/mockery/v3 更新为 v3.7.2 (#28882) (@argoproj-renovate[bot])
+* 702ca28819970f72f526eec537dd3a346464f2eb：杂务（deps）：将模块 github.com/vektra/mockery/v3 更新为 v3.7.3 (#29167) (@argoproj-renovate[bot])
+* 7fe27c0f2e745ce34689c4e2b9de05c2ccdc3259：杂务（deps）：将模块 github.com/vektra/mockery/v3 更新为 v3.8.0 (#29630) (@argoproj-renovate[bot])
+* 205b1acc28693a2356776ff62c4db440cec58f0f：杂务（deps）：更新redis（＃29132）（@argoproj-renovate [bot]）
+* b7d05dfb29bbf30d998acd5656432507ea5b27d1：杂务（deps-dev）：在 /ui 中将 @babel/preset-env 从 7.29.5 提升到 7.29.7 (#29547) (@dependabot[bot])
+* 6add08fb31e1e46db6c95f4c30143e9508cf4f58：杂务（deps-dev）：在 /ui 中将 @babel/preset-typescript 从 7.28.5 提升到 7.29.7 (#29453) (@dependabot[bot])
+* f430ebb1cff9e2977769e2428d8b886a3a7adc2a：杂务（deps-dev）：将@testing-library/jest-dom从/ui中的6.9.1提升到7.0.1（#29495）（@dependabot[bot]）
+* e44f63b8b206662534999abea73a2624e857dd93：杂务（deps-dev）：在/ui中将@types/uuid从9.0.8撞到11.0.0（#29208）（@dependabot[bot]）
+* 6edb42bfa5262cdd01a94af37c6336bc3bd1c0fb：杂务（deps-dev）：将 /ui 中的 copy-webpack-plugin 从 12.0.2 提升到 14.0.0 (#29529) (@dependabot[bot])
+* d89fcd51103768bac925156d093b41e63c2684e0：杂务（deps-dev）：将 /ui 中的 esbuild-loader 从 4.4.3 提升到 4.5.0 (#29481) (@dependabot[bot])
+* e10650cb7ed8c1df9ef27ae3050a1cd37723e2ef：杂务（deps-dev）：在 /ui 中将 eslint-config-prettier 从 9.1.2 提升到 10.1.8 (#28234) (@dependabot[bot])
+* bbf1c96686c2eed669fb9f86177d366be88c0683：杂务（deps-dev）：在 /ui 中将 jest-environment-jsdom 从 29.7.0 提升到 30.5.0 (#29530) (@dependabot[bot])
+* 391f50748bfe58b4ec0d3efa311dcf21d2cd60c5：杂务（deps-dev）：在/ui中将jest-junit从6.4.0提升到17.0.0（#27652）（@dependabot[bot]）
+* 7271727dad7627b819f4a7875a7360a6b3e8e262：杂务（deps-dev）：在/ ui中将postcss从8.5.14提升到8.5.18（＃28919）（@dependabot [bot]）
+* 33a82e7ed98f874db4cefe7bb978464c84c32ecb：杂务（deps-dev）：在/ ui中将postcss从8.5.18提升到8.5.23（＃29036）（@dependabot [bot]）
+* 6b852ebe48bc45af80d2a06d2879707ec65a836e：杂务（deps-dev）：在/ ui中从3.8.4到3.9.5更漂亮（＃28805）（@pasha-codefresh）
+* 87f65eb52356875fe1620d0f8ce315e89cc05ea4：杂务（deps-dev）：在 /ui 中从 3.9.5 到 3.9.6 更漂亮（#27409）（@dependabot[bot]）
+* 91af317c17b231610ae3721bc107820bc32c35fe：杂务（deps-dev）：在 /ui 中将 sass 从 1.100.0 提升到 1.103.1 (#29337) (@dependabot[bot])
+* 67f6f0b1ac43fe1a03efe721ac1a2cbdae48e6c6：杂务（deps-dev）：在 /ui 中将 ts-jest 从 29.4.9 提升到 29.4.12 (#28950) (@dependabot[bot])
+* ec03608c880e55df6c4531a40215a920c0c18f58：杂务（deps-dev）：将 /ui 中的 uuid 从 9.0.1 提升到 14.0.1 (#28658) (@dependabot[bot])
+* e9c49ec4ae4a13243d74ba1f71c6907223f2213f：杂务（deps-dev）：在 /ui 中将 webpack 从 5.106.2 提升到 5.110.3 (#29612) (@dependabot[bot])
+* f07403a72ab802f781ed953e43c0fb1162e36d29：杂务（deps-dev）：在 /ui 中将 webpack-cli 从 5.1.4 提升到 7.2.3 (#29549) (@dependabot[bot])
+* 3672c40715ff3bdc418c686fc19a86b48d6d756e: 杂务(deps-dev): 将 /ui 中的 webpack-dev-server 从 5.2.4 提升到 5.2.5 (#28329) (@dependabot[bot])
+* 5d36a162b58ce9528005e5250c32e647c38e92b4：杂务（deps-dev）：将 /ui 中的 webpack-dev-server 从 5.2.5 提升到 5.2.6 (#28829) (@dependabot[bot])
+* bf3f6ea1482e6028e922beff83c38e5fb6475b74: 杂务(deps-ui): 删除未使用的 deps (#29114) (@blakepettersson)
+### 其他工作
+* 1990594a7ce6ed85dc0f03989d2e5d702792dcae：将分支“master”合并到react-compiler-rules-of-react-fixes中（@jwinters01）
+* ec3ebaa6415bc6486d0be2e143c95172ad3fde98：合并来自 jwinters01/react-compiler-rules-of-react-fixes 的拉取请求 #28417 (@jwinters01)
+* d8dbd4a4a868bbf3b528b470a8582a22d573d6fd：合并来自 juliev0/pause-disable 的拉取请求 #28538 (@juliev0)
+* 9f858a457220b1a5272dfa3d7b2f3a0857f61203：将远程跟踪分支“origin/master”合并到react-compiler-rules-of-react-fixes中（@jwinters01）
+* 585b0d50f919a08888d1728c5a4419f733226c26：杂务（凹凸）：启用go 1.27（＃29377）（@blakepettersson）
+* 0611881dd3a34bc8858bcd9a0e7c842f85da90db：杂务（ci）：每周更新自我碰撞（＃29561）（@crenshaw-dev）
+* 6a79a2ea9eebeb8bac44f9d782cb1b3fd871d77d：杂务（ci）：自动化Dex颠簸（＃28612）（@crenshaw-dev）
+* d83ca226dd73bf9686530e340bc4ace2f0ffea02：杂务（ci）：自动化生产二进制碰撞（＃28433）（@crenshaw-dev）
+* 3b9a3f4ac7ce80f03088d5634dafec5afb9a3427：杂项（ci）：e2e矩阵中的凹凸kubernetes版本（＃29596）（＃29571）（@dudinea）
+* df18a45d3c307cd5fa3e4b6aed85d2030c2c1a42：chore（ci）：golang.org/x和codeql的dependabot组（＃28651）（@crenshaw-dev）
+* dda866bb0ff57e32c38e3b0e0fbcd3ef4a47623e：杂务（ci）：修复更新 PR 归因（＃28428）（@crenshaw-dev）
+* 8ff516209af225082ca3df463d830d0de16ff887：杂务（ci）：组相互依赖的升级（＃29275）（@crenshaw-dev）
+* ec1d136ac7f825e04903b5cb329ef48d62b7a9f5：chore（ci）：忽略dependabot的节点（＃28418）（@crenshaw-dev）
+* 46452cc701bf4b1d95f2d39aedd013fe21c1cdd6：chore（ci）：只有在有新版本时才会凹凸图像（＃28419）（@crenshaw-dev）
+* 42b179a02bd6d6c1d6068f287f7d7885e1dfaf0b：chore(ci)：将问题分类代理模型固定到claude-sonnet-5 (#29502) (@nitishfy)
+* 0b9298cdc6850983a3e7054b41ce055d14a58e52：chore（ci）：使用curl而不是wget进行翻新（＃28459）（@crenshaw-dev）
+* d6da9ed4abccbd80919517da78b94c8105a29cda: 杂务(ci): 使用 sonnet-4.5 为 gh aw (#29634) (@reggie-k)
+* 21804a2acfe096ed748d3309c25b4b1211b1d912：杂务（cmp）：为CMP内部阶段添加OpenTelemetry跨度（＃28365）（@toyamagu-2021）
+* 7459a3f8ae7fa6f061f540d353c5e5f0dca07817: 杂务(dep): 碰撞 go-git 依赖项 (cherry-pick #30013 for 3.6) (#30022) (@argo-cd-cherry-pick-bot[bot])
+* fb462546624c8519a7577488bbe80b921ca3a8e4：杂务（gh-aw）：gh aw更改为gpt-5-mini模型（＃29652）（@reggie-k）
+* 1098a3eb558abe543c34e725efaacda3b7028442：chore（perf）：跨执行缓存编译的Lua脚本（＃28278）（@crenshaw-dev）
+* 3d7df262202470ab0dc2848541fc15501007b659：杂务（重构）：删除欺骗类型（＃28617）（@crenshaw-dev）
+* 4b2103cb34d9ce2e5ecf50797ddd0afc620e28fe：杂项（发布）：修复 update-supported-version.sh 脚本以处理 k3s 1.37-rc3 标签 (#29689) (@dudinea)
+* 7688350dc1c1ba0dddfa8c446f9a5ee6fa2a84c2：chore(ui)：修复 React 编译器准备就绪的 React 规则违规 (@jwinters01)
+* e4e607598c51a431d2bbaa805aad3ec727ab2220：杂务（ui）：修复额外的 React 规则违规（@jwinters01）
+* d381d5b89db7715d36714209d6fd0170bbc72f7e：chore（ui）：修复React-19升级后的弃用警告（＃29183）（@jwinters01）
+* db31394bc1a62324a2a0b85f9d18fe49fe6c7ae9：chore（ui）：修复React编译器规则集出现的lint错误（@jwinters01）
+* 17a8326d3c17af60d9f8dfbb0ae617bc513407d7：杂务（ui）：pnpm 12（＃29619）（@blakepettersson）
+* ca7128f6ed073deb07dcccefab7340a4f5c88377：杂务（ui）：删除死的filteredGraph状态（@choejwoo）
+* 67398493ffd8a6f6cad9fad76f49ed6153d00ae0：chore（ui）：从公共npm注册表中解析react-hooks deps（@jwinters01）
+* 80d8146ceb6e6b89b4a6231796b3748bd791ea2b：杂务（ui）：使用swagger-ui-dist而不是redoc（＃29018）（@blakepettersson）
+* 76eb1da6ecb31f329a44edca846781b602bf6f55：杂务：删除意外提交的测试文件（＃28626）（@olivergondza）
+* b49e9c08ff1f8cab7ea3d3b144622f08eb60133a：杂务：由于重做对旧版本的依赖而撤消 PR 28918 (#28943) (@keithchong)
+* 669b2f6564680b554fb805f02059dda7b3e2e793：杂务：将 Redis 更新为 8.6.4 (#28589) (@baurmatt)
+* 7ca01207e619ac26cc2b6a80047c0530aa1f79e2：杂务：添加带有集群同步性能计时的日志 (#28707) (@agaudreault)
+* b89ca484af4246831320445aa679748816aa5c88：杂务：添加 prometheus argocd 版本仪表（#25981）（@blakepettersson）
+* eed206e61ebbf5189a69ad09ab1fd2b34e1f0026：杂务：在时间表上添加 3.7 版本 (#29467) (@ppapapetrou76)
+* cd5d5fb4071dcca61078b854eb226370693e1681: 杂务：向健康检查贡献者添加一条短消息以更新升级… (#29025) (@ppapapetrou76)
+* c6321991b1d6408c8b3b2ac357c448a15aa74123：杂务：将 linter 应用到 gitops-engine (#28859) (@agaudreault)
+* f55566445ee3a2a4f3339bf10df0f6bc1ecf7f23：杂务：在release-3.6分支上将版本提升到3.6.0（＃30754）（@github-actions [bot]）
+* b7e3f52c2827c5c9e0dd41d71b292bbeb66010be：杂务：在release-3.6分支上将版本提升到3.6.0-rc1（＃29730）（@github-actions [bot]）
+* f922b44b5d17765910e31a583dfb253d75afebe6：杂务：在release-3.6分支上将版本提升到3.6.0-rc2（＃30042）（@github-actions [bot]）
+* 996e98bb1b37b6b1bee34254020b569a79f8918b：琐事：在release-3.6分支上将版本提升到3.6.0-rc3（＃30219）（@github-actions [bot]）
+* 2eaca1ff83a2befb2851f254552135b723fdc777：杂务：在release-3.6分支上将版本提升到3.6.0-rc4（＃30347）（@github-actions [bot]）
+* ac403530fc9daa4725dbb93e73697da00ce530aa：杂务：更改发布公关标题以通过 github 操作公关标题检查 (#28939) (@ppapapetrou76)
+* 3fea3aecf4e3e1b7c74e055194352cc046ecd4a3：杂务：正确记录 ApplicationConditionType 格式的注释 (#29084) (@tacf)
+* 1afe1eb93814e8d62ce7073bada3ace638ca84fb：杂务：不要更新索引器中的应用程序对象（＃28705）（@agaudreault）
+* 49f4694b3ecbc4986c5910c78215518cea5920be：杂务：修复损坏的测试（＃29057）（@ppapapetrou76）
+* 281ea9e80979967da47aea115a6b84cf6fafcd3f：杂务：修复 lint (#29506) (@kuci-JK)
+* 7043070e5fe69cedc58cea60a1b3659898faf573：杂务：修复代码注释和文档中的拼写错误（#28682）（@magic-peach）
+* ccc8a351a33679f8992b261209438250376b8393：杂务：修复评论和两条面向用户的消息中的拼写错误（＃29510）（@MsfPablo）
+* b53b433e4e4615f904fff92050091f08158090a6：杂务：修复分片评论中的拼写错误（＃29263）（@MsfPablo）
+* 24af376521be6c444e333a22fc11bc018f999814：杂务：处理来自举报者的DeletedFinalStateUnknown（＃28321）（@agaudreault）
+* 9071c2eb2907537a0fb0c1447e8cb2a329d75b00：杂务：像 debian 一样初始化 git lfs (#29435) (@ppapapetrou76)
+* 3c9e37b67175476cd1447a766eb275b33c24e21a：杂务：k3s 1.37.0 ga（3.6 的樱桃挑选＃29843）（＃29848）（@argo-cd-cherry-pick-bot [bot]）
+* ac346edd5cbb0af454e7b31dd41db4dfcb7c8e54：杂务：将 Docker 图像更新从 Dependabot 移至 Renovate (#28422) (@crenshaw-dev)
+* f39eacbd7345d9ceefec5dd8c206659e5461b916：杂务：传播上下文（＃28353）（@blakepettersson）
+* 090c8181e3f7e046640dcb1e5877cc61a59e0196：杂务：当版本杂务碰撞项目发布时刷新 SECURITY-INSIGHTS.yml 最后更新（#28725）（#28957）（@kobihikri）
+* 64ca73ea50398c9994ff3403b8b3b762bef49718：杂务：删除dompurify（3.6的cherry-pick＃30181）（＃30183）（@argo-cd-cherry-pick-bot[bot]）
+* 5e53705a29883eebc4c4c10b973bd53f42513348：杂务：迁移时rxjs重试（＃29475）（@pasha-codefresh）
+* 9cee19db23690fe4b446140f59162fed36635d60：琐事：信号处理后续（＃29226）（@blakepettersson）
+* 690b68a4eb0bfd884d3253758a4ce666746fee07：杂务：将托管资源的协调触发器日志切换到信息级别（＃28456）（@agaudreault）
+* 52378dd5de4ac0647a54e629cf6605552d77dd98：杂务：同步会员维护者文件 2026 年 9 月 (#29544) (@crenshaw-dev)
+* 6e68cde159b1fb23a418f997c93efb71a2a7088c：杂务：使用 tool-versions.sh 中的 kustomize 版本 (#28875) (@kuci-JK)
+* 5d48b70c0ca8364d8e45e6af4c70f87886ea260c：琐事：在整个过程中使用测试上下文（＃28314）（@blakepettersson）
+* 956b479ef59fad0b70fd0fd2856420e75c52990f: ci(gitops-engine): 支持 gitops-engine 的标记版本 (#27740) (@rumstead)
+* b7f7acb4cd82dec4e692f77aa6e2d73b01bf3037: ci(renovate): 修复 - 让 renovate 正确更新自身，修复网络故障 (#28985) (@dudinea)
+* 5e75a11c5feec060c9fef692e5a7c8e2467372b3: ci(renovate): make renovate 管理整个项目中的 Redis 版本 (#28994) (#28993) (@dudinea)
+* 40f558b884b28a6557b0774bc5becad05aabbe6b: ci: 添加 github-agentics 问题分类工作流程 (#28215) (@reggie-k)
+* 642cac52ff5358426087468ddadeb811607a0678：ci：使用gh aw副驾驶GitHub令牌（＃28797）（@reggie-k）
+* 97fc230f9358507cff342e84e3c0352acd212f21：ci：避免重复的Go缓存恢复（＃28437）（@siddiksawani）
+* 7a1da579b8f7bc07d671d23b341d67ee958fcf2e: ci: 强化 gitops-engine 标签步骤以使用 GITHUB_REF_NAME (#28706) (@RealFakeAccount)
+* 45dfd665aa9401ad06615ac5ba6e3a111c11e195：ci：从`codegen`中删除`gh-aw-local target`（＃28830）（@nitishfy）
+* f5fdf75ea9b66735965cf45ae062a73bdf051b8e：ci：使用 Codecov 标志分别上传单元和 e2e 覆盖范围（#28085）（@AdamSaleh）
+* e572f4c88bf6956de29460b6b7ef7c8b4c2b0833: ci: 使用 GitHub 令牌安装 gh aw 以避免速率限制 (#28856) (@reggie-k)
+* 859045ce1347fee8ab53b923aac0af3fe4ab8c8f：feat(azure-spn-auth)：可选择允许 azure 混合 aks 集群使用 pop 令牌 - 关闭 #24156 (#26593) (@JS-Jake)
+* 69afa575a24fbb9ca778c686635e0661e13d9116: feat(repo-server): 支持应用程序目录源的自定义扩展 (#28571) (@nitishfy)
+* 3e205187b8c44c04563338259d5369ebdc3c93b5: feat(resource-customization): 为 Project Capsule 资源添加健康检查和操作 (#28891) (@sandert-k8s)
+* a4ec66ec6723b3cd1640bb4071ae7c93473cd5f5：修复（gitops-engine）：空uid回填上的竞争条件（＃28343）（@crenshaw-dev）
+* c861e048d84864f7e8a2d4865fecd33f973c0931：修复（manifest-generate-paths）：UpdateRevisionForPaths 的一致生成清单缓存键（#28074）（@fm1ck3y）
+* 82479c8b9ed4ca2ba840dc1088ff485a598f1d89：修复（清单生成路径）：在没有路径更新的情况下不报告缓存未命中的更改（3.6 的cherry-pick＃29442）（＃29854）（@argo-cd-cherry-pick-bot [bot]）
+* d814efe0df47761fbf2e24400d5bba5e25a5b37d：修复（通知控制器）：从共享缓存中改变对象之前进行深度复制（＃29350）（@antonu17）
+* 3d8c31d45c94a74260e1cabab4b310a75929cef3：修复（通知控制器）：从通知者缓存中读取应用程序项目（＃28815）（@antonu17）
+* 5c187da9d701e26efe4b7e56017ea7ac0857860f：修复（repo-server）：使用 repo 缓存过期使缓存的 Helm 图表存档过期（#28081）（@Mangaal）
+* 656a4c30ac44e155a7ebacd60a3045d6b1881765：修复（repo-server）：使用 Helm+Kubernetes 修复服务器端差异（#28092）（@ppapapetrou76）
+* 09cb6609eb0e9a61c2acd131ffe9051d937eefc8：修复（repo-server）：运行状况检查超时导致 CrashLoopBackOff（3.6 的cherry-pick＃29863）（＃29900）（@argo-cd-cherry-pick-bot [bot]）
+* b1a0e3d782beb0a6cf47968f4675b4bc684c7da5：修复（repo-server）：在repo-server中尊重`ARGOCD_REPO_SERVER_OTLP_HEADERS`（＃28698）（@nitishfy）
+* acf74f3b9cac6edcfcccd3309770739c10faec49：修复（repo-server）：使 git auth 错误可读，而不是“终端提示已禁用”（＃28748）（@edu-diaz）
+* 814131540c6213d0ed9864d360ff3882b80ee5a7：修复（util / grpc）：不要删除Kubernetes类型消息的请求日志条目（对于3.6选择＃29872）（＃30520） (@argo-cd-cherry-pick-bot[机器人])
+* c735633574fc9e2d1ef76909b451b52abab9b883: test(cmpserver): 修复 RunCommand 超时测试中不稳定的计时断言 (#30377) (cherry-pick #30378 for 3.6) (#30419) (@argo-cd-cherry-pick-bot[bot])
+* 908f62630fb24b230bac4835b832b014a89337c0: test(controller): 在交换缓存 client 之前等待添加处理程序 (#30384) (cherry-pick #30400 for 3.6) (#30426) (@argo-cd-cherry-pick-bot[机器人])
+* e8a010bf4346dffeca06917b1e8c3d71ee488914: test(e2e): 修复 github 无法显示 e2e 测试完整结果的问题 (#28727) (#28726) (@dudinea)
+* 8f6d4e19393233a0b566403b8b76dbc11c8c9c1c：测试（flaky）：接受对等方重置连接作为有效的 mTLS 拒绝（＃28367）（@toyamagu-2021）
+* e09741298ca41e678ee0dc693eb6edd7281d6ff7: test(git): 针对本地存储库运行 TestLsRemote (#30386) (cherry-pick #30399 for 3.6) (#30411) (@argo-cd-cherry-pick-bot[bot])
+* 244235d758fad78bd67942e9d23e55ce6f9297f7：测试（Hydrator）：修复使用 `make test-e2e` 运行时 Hydrator e2e 测试失败的问题 (#28579) (#28578) (@dudinea)
+* 96da0a78d012b7c5075c2e3447c65c1ec47ff2cd：测试（通知控制器）：修复片状TestInitTimeout（＃30401）（3.6的cherry-pick＃30406）（＃30414）（@argo-cd-cherry-pick-bot [bot]）
+* eced2caca4b15de259a4ee97249c86cd816634ba: test(repo-server): 添加测试以获取 git 引用 (#28586) (@nitishfy)
+* 3be9834546ff4595790744383dae3eb870163b46：测试（存储库）：在 UpdateRevisionForPaths 测试中显式断言更改值（＃28984）（@Churi12）
+* 1b1c88439fe39bbf1f3d4e6d07d42072c3f82e3f：将 argo-ui 绑定到适当的提交（@jwinters01）
+
+**完整 Changelog**：https://github.com/argoproj/argo-cd/compare/v3.5.7...v3.6.0
+
+<a href="https://argoproj.github.io/cd/"><img src="https://raw.githubusercontent.com/argoproj/argo-site/master/content/pages/cd/gitops-cd.png" 宽度="25%" ></a>
+
+---
+
+> 📦 仓库：[argoproj/argo-cd](https://github.com/argoproj/argo-cd) · 🏷️ 版本：`v3.6.0` · 📅 发布：2026-11-03 · [查看英文原版 Release](https://github.com/argoproj/argo-cd/releases/tag/v3.6.0)
+
+*本文由 NextStack 自动翻译，内容以官方英文原文为准。*
