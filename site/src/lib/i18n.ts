@@ -210,6 +210,7 @@ const en: Dict = {
   "footer.blog": "Technical notes",
   "footer.rights": "Release notes belong to their upstream projects.",
   "footer.built": "Static site · Astro",
+  "footer.privacy": "Privacy policy",
 
   "crumb.home": "Home",
   "notfound.title": "Page not found",
@@ -346,6 +347,7 @@ const zh: Dict = {
   "footer.blog": "技术笔记",
   "footer.rights": "Release Note 版权归上游项目所有。",
   "footer.built": "静态站点 · Astro",
+  "footer.privacy": "隐私政策",
 
   "crumb.home": "首页",
   "notfound.title": "页面不存在",
