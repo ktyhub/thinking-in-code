@@ -25,6 +25,7 @@ concurrency:
 
 permissions:
   contents: write
+  actions: write # 闭环改完要显式派发站点构建
 
 jobs:
   loop:
@@ -80,11 +81,13 @@ jobs:
           fi
 
       - name: 提交变更
+        id: commit
         run: |
           git config user.name  "seo-loop"
           git config user.email "seo-loop@users.noreply.github.com"
           if git diff --quiet -- site/src/data scripts/release-tracker/config.json data/; then
             echo "本轮无变更"
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           REV=$(python3 -c "import json;print(json.load(open('site/src/data/loop-state.json'))['revision'])")
@@ -102,6 +105,17 @@ jobs:
           git commit -q -m "chore(loop): 闭环第 ${REV} 轮 — 按搜索表现调整策略" -m "${SUMMARY}" \
             -m "判据与基线见 data/loop-ledger.jsonl；回滚：python3 scripts/release-tracker/loop.py rollback <id>"
           git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      # 与 daily-release-tracker 同理：GITHUB_TOKEN 的 push 不触发 ci.yml，
+      # 闭环改的排序/闸门配置会留在仓库里不生效。显式派发才是通的。
+      - name: 触发站点重建
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run main.yml --ref main
+          echo "已派发 ci 构建"
 
       - name: 报告入摘要
         if: always()
