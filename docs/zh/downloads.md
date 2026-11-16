@@ -1,6 +1,6 @@
 # 📦 应用下载
 
-在这里下载 ktyhub 出品的桌面应用。
+在这里下载 NextStack 出品的桌面应用。
 
 ---
 
@@ -26,8 +26,7 @@
 ### 💿 下载安装
 
 <div class="download-buttons">
-  <a class="btn btn-primary" href="https://github.com/ktyhub/thinking-in-code/releases/latest/download/Stags-Tracker-macOS.zip">⬇️ 下载 macOS 版（Intel）</a>
-  <a class="btn btn-ghost" href="https://github.com/ktyhub/thinking-in-code/releases">查看全部版本</a>
+  <a class="btn btn-primary" href="/downloads/Stags-Tracker-macOS.zip">⬇️ 下载 macOS 版 v1.0.1</a>
 </div>
 
 **安装步骤：**
@@ -52,7 +51,7 @@
 `xattr -cr /Applications/Stags\ Tracker.app` 后重新打开。
 
 **Q: 需要付费吗？**
-完全免费开源。
+完全免费。
 
 **Q: 与 IDEA 插件版 Stags 的数据互通吗？**
 暂不互通。插件版数据存于 IDE 配置目录，桌面版存于本机浏览器配置，二者独立使用。

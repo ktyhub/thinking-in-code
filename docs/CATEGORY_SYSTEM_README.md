@@ -307,8 +307,7 @@ JavaScript 自动检测容器并初始化。
 ## 联系方式
 
 - 微信: 搜索"中间件源码"
-- GitHub: [ktyhub/thinking-in-code](https://github.com/ktyhub/thinking-in-code)
-- 网站: [www.ktyhub.com](https://www.ktyhub.com)
+- 网站: [www.stags.cn](https://www.stags.cn)
 
 ---
 
