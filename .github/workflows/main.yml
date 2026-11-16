@@ -80,11 +80,19 @@ jobs:
           n=$(find dist -name '*.html' | wc -l)
           echo "分片 ${{ matrix.shard }}（${{ matrix.locales }}）：$n 页" | tee -a "$GITHUB_STEP_SUMMARY"
 
+      # 为什么打成 tar 再传，而不是直接传目录：
+      # upload-artifact 会在上传前逐条校验文件名，URL 里合法的字符（空格、|、"）
+      # 都会被它拒收。release 标题进过文件名的历史数据里就带着这些字符，
+      # 一条脏数据就能让整个分片失败。tar 不关心文件名，部署端照样能用。
+      - name: 打包分片产物
+        working-directory: site
+        run: tar -czf dist-shard.tar.gz dist
+
       - name: 上传分片产物
         uses: actions/upload-artifact@v4
         with:
           name: dist-${{ matrix.shard }}
-          path: site/dist
+          path: site/dist-shard.tar.gz
           retention-days: 1
 
   # 分片产物在这里合并成一份完整站点。
@@ -99,6 +107,17 @@ jobs:
         with:
           pattern: dist-*
           path: shards
+
+      - name: 解开分片产物
+        run: |
+          # 每个分片是一个 tar.gz，里面顶层就是 dist/，解到分片自己的目录下
+          # 变成 shards/dist-en/index.html 这种形状，正好是 merge_dist.py 要的输入。
+          for d in shards/*/; do
+            echo "解包 $d"
+            tar -xzf "$d/dist-shard.tar.gz" -C "$d" --strip-components=1
+            rm -f "$d/dist-shard.tar.gz"
+          done
+          ls -1 shards
 
       - name: 合并分片并重建 sitemap
         # 分片之间路径必须不重叠，重叠且内容不同时脚本会失败退出——
