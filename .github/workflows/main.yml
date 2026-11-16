@@ -133,6 +133,35 @@ jobs:
       - name: SEO 审计（闸门与产物一致性）
         run: python3 scripts/release-tracker/seo_audit.py --strict
 
+      # GitHub Pages 的站点体积上限是 1 GB，超了不是「部署变慢」而是直接失败，
+      # 而且是在发版中途失败——那天采集的内容就上不去。所以在接近上限之前
+      # 就要把水位摆在明面上，留出足够时间做物理拆分（见 TEN_MILLION.md）。
+      - name: 站点体积水位检查
+        run: |
+          SIZE_MB=$(du -sm site/dist | cut -f1)
+          PAGES=$(find site/dist -name '*.html' | wc -l)
+          LIMIT_MB=1024
+          PCT=$((SIZE_MB * 100 / LIMIT_MB))
+          PER_KB=$((SIZE_MB * 1024 / PAGES))
+          ROOM=$(( (LIMIT_MB - SIZE_MB) * 1024 / PER_KB ))
+          echo "站点体积 ${SIZE_MB} MB / ${LIMIT_MB} MB（${PCT}%），${PAGES} 页，平均 ${PER_KB} KB/页，剩余约 ${ROOM} 页"
+          {
+            echo "### 站点体积"
+            echo ""
+            echo "| 项 | 值 |"
+            echo "|---|---|"
+            echo "| 体积 | ${SIZE_MB} MB / ${LIMIT_MB} MB（${PCT}%） |"
+            echo "| 页面 | ${PAGES} 页，平均 ${PER_KB} KB |"
+            echo "| 剩余可容纳 | 约 ${ROOM} 页 |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$PCT" -ge 95 ]; then
+            echo "::error::站点体积已达 1 GB 上限的 ${PCT}%，仅剩约 ${ROOM} 页。按 TEN_MILLION.md 做物理拆分后再恢复部署。"
+            exit 1
+          fi
+          if [ "$PCT" -ge 70 ]; then
+            echo "::warning::站点体积已达 1 GB 上限的 ${PCT}%，剩余约 ${ROOM} 页，该准备拆分了。"
+          fi
+
       - name: 上传产物
         uses: actions/upload-pages-artifact@v3
         with:

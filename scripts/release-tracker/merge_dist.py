@@ -167,8 +167,25 @@ def main() -> int:
     (args.out / "sitemap-index.xml").write_text(index, encoding="utf-8")
 
     html = sum(1 for _ in args.out.rglob("*.html"))
+    per_shard = {s.name: sum(1 for _ in s.rglob("*.html")) for s in args.shards}
+    shard_total = sum(per_shard.values())
+
     print(f"分片数: {len(args.shards)}")
-    print(f"合并后 HTML: {html} 页")
+    for name, n in per_shard.items():
+        print(f"  {name}: {n} 页")
+    print(f"分片页数之和: {shard_total}")
+    # 各分片之和总是大于合并结果：共享静态页（首页、404、栏目列表）在每个
+    # 分片都会产出一份，合并时按并集去掉。把差值摊开写出来，是为了让后来
+    # 看日志的人一眼分清「正常去重」和「真的丢了页面」——后者表现为合并数
+    # 小于最大分片，或某分片页数突然掉一截。
+    print(f"合并后 HTML: {html} 页（去重 {shard_total - html} 个重复副本）")
+    if html < max(per_shard.values()):
+        print(
+            f"\n合并结果 {html} 页少于最大分片 {max(per_shard.values())} 页，"
+            "说明有页面在合并中丢失",
+            file=sys.stderr,
+        )
+        return 1
     print(f"sitemap: {len(blocks)} 个 URL / {len(files)} 片 -> {', '.join(f.name for f in files)}")
 
     if overridden:
