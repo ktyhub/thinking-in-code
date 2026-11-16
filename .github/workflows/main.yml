@@ -138,7 +138,9 @@ jobs:
       # 就要把水位摆在明面上，留出足够时间做物理拆分（见 TEN_MILLION.md）。
       - name: 站点体积水位检查
         run: |
-          SIZE_MB=$(du -sm site/dist | cut -f1)
+          # --apparent-size：按文件实际字节算，不按磁盘块。8800 多个小文件
+          # 按块算会虚高 15%，把水位读数推向错误的日期。
+          SIZE_MB=$(du -sm --apparent-size site/dist | cut -f1)
           PAGES=$(find site/dist -name '*.html' | wc -l)
           LIMIT_MB=1024
           PCT=$((SIZE_MB * 100 / LIMIT_MB))
