@@ -35,6 +35,20 @@ export const ACTIVE_LOCALES: Locale[] = ENV_LOCALES
 /** 本次构建需要生成 /{locale}/ 前缀路由的语言（en 在根路径、zh 有原生页面） */
 export const EXTRA_LOCALES: Locale[] = ACTIVE_LOCALES.filter((l) => l !== "en" && l !== "zh");
 
+/**
+ * 该语言是否属于本次构建分片。
+ *
+ * en 走根路径、zh 走手写目录，两者都不经过 [locale] 动态路由，所以光靠
+ * SITE_LOCALES 挡不住它们——必须由各路由的 getStaticPaths 主动返回空数组。
+ * 否则「SITE_LOCALES=en」仍会把 3000 多页 zh 一起构建出来，分片就白分了。
+ *
+ * 未设置 SITE_LOCALES 时 ACTIVE_LOCALES 是全部语言，这里恒为 true，
+ * 本地开发与 `npm run build` 全量构建的行为完全不变。
+ */
+export function localeInBuild(locale: Locale): boolean {
+  return ACTIVE_LOCALES.includes(locale);
+}
+
 /** 构建分片标识，用于区分产物（sitemap 分片、缓存 key） */
 export const BUILD_SHARD = String(import.meta.env.SITE_SHARD ?? "all").trim() || "all";
 

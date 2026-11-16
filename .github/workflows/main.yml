@@ -1,7 +1,26 @@
 name: ci
 # NextStack 官网（Astro 静态站，7 语言）
 # 内容直接读取 docs/ 目录 —— release-tracker 流水线每日推送的新文章
-# 会随本次构建自动收录进站点与 sitemap.xml。
+# 会随本次构建自动收录进站点与 sitemap。
+#
+# ── 为什么分成三个 job 并行构建 ────────────────────────────────────────
+# 全量构建是「页数 × 每页成本」，页数一涨，构建时长线性上涨（本地实测
+# 6,381 页 / 597 秒生成时间）。所以按语言把构建切成互不重叠的分片，
+# 并行跑完再合并产物：
+#
+#   en        英文全部页面（根路径，页数最多，通常是最长的一根板）
+#   zh        中文（/zh/ 前缀）
+#   i18n      ja/de/fr/es/pt 五种机翻语言（/{locale}/ 前缀）
+#
+# 关键点：分片只是「构建期」的切分，**部署产物仍然是同一个站点、同一个域名、
+# 同一套 URL**。所以对 SEO 零影响，不需要网关、不需要多域名。
+#
+# 这条路也是 1 GB 上限的解法：现在三个分片合并成一个 GitHub Pages 项目，
+# 将来页面量逼近 1 GB 时，已合并的边界可以直接变成「en 一个项目、zh 一个项目」，
+# 物理上拆到两个配额里（需要 Cloudflare Worker 做统一入口，见 TEN_MILLION.md）。
+#
+# 新增语言时：把语言加进 i18n 分片的 locales，或者单独加一行分片即可，
+# 不需要改合并逻辑。
 on:
   push:
     branches:
@@ -21,6 +40,16 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: en
+            locales: en
+          - shard: zh
+            locales: zh
+          - shard: i18n
+            locales: ja,de,fr,es,pt
     steps:
       - uses: actions/checkout@v4
 
@@ -34,15 +63,52 @@ jobs:
         working-directory: site
         run: npm ci
 
-      - name: 构建站点
+      - name: 构建站点（分片 ${{ matrix.shard }}）
         working-directory: site
         # 广告单元 ID 可由仓库 Secret 覆盖；设为 off 可一键下线广告位。
         # 未配置时使用代码里的默认单元（stags版本详情页）。
         env:
           PUBLIC_ADSENSE_DETAIL_SLOT: ${{ secrets.ADSENSE_DETAIL_SLOT }}
-        run: npm run build
+          # 只生成本分片的语言；不设置时 Astro 会全量构建，本地开发行为不变。
+          SITE_LOCALES: ${{ matrix.locales }}
+        run: |
+          /usr/bin/time -f "分片 ${{ matrix.shard }} 构建耗时 %e 秒" npm run build
 
-      # 索引闸门校验：确认产物真的按 index-gate.json 执行了。
+      - name: 记录分片规模
+        working-directory: site
+        run: |
+          n=$(find dist -name '*.html' | wc -l)
+          echo "分片 ${{ matrix.shard }}（${{ matrix.locales }}）：$n 页" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: 上传分片产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.shard }}
+          path: site/dist
+          retention-days: 1
+
+  # 分片产物在这里合并成一份完整站点。
+  merge:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 下载全部分片
+        uses: actions/download-artifact@v4
+        with:
+          pattern: dist-*
+          path: shards
+
+      - name: 合并分片并重建 sitemap
+        # 分片之间路径必须不重叠，重叠且内容不同时脚本会失败退出——
+        # 那说明 SITE_LOCALES 划错了，合并出问题比部署出问题容易查得多。
+        run: |
+          python3 scripts/release-tracker/merge_dist.py \
+            shards/dist-en shards/dist-zh shards/dist-i18n \
+            --out site/dist
+
+      # 索引闸门校验：确认合并后的产物真的按 index-gate.json 执行了。
       # 不通过就不部署——带病上线（比如闸门配错导致百万页全量放开）
       # 需要几周才会在 Search Console 显现，那时已经晚了。
       - name: SEO 审计（闸门与产物一致性）
@@ -54,7 +120,7 @@ jobs:
           path: site/dist
 
   deploy:
-    needs: build
+    needs: merge
     runs-on: ubuntu-latest
     environment:
       name: github-pages
