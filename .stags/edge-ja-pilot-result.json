@@ -1,0 +1,41 @@
+{
+  "pilot": "ja 边缘渲染试点",
+  "date": "2026-11-16",
+  "worker": "stags-edge-ja",
+  "url": "https://edge-ja.stags.cn",
+  "cutover": "未切主域名。www.stags.cn 仍是灰云直连 GitHub Pages，试点在独立子域，零影响。",
+  "implementation": {
+    "data": "edge-ja/data.json，332 项目 / 4265 release，1.56MB，内联进 worker",
+    "template": "从主站真实页面提取的壳，CSS/JS/页脚/JSON-LD 完全一致",
+    "render": "按 /ja/releases/{project}/ 渲染列表页 + /ja/releases/ 索引页",
+    "cache": "Worker Cache API 24h + Cloudflare CDN 两层",
+    "size": "gzip 507KB，远低于 10MB 免费上限",
+    "seo_isolation": "robots.txt Disallow / + x-robots-tag noindex,nofollow + canonical 指主站"
+  },
+  "verification": {
+    "pages_rendered": 332,
+    "pages_failed": 0,
+    "key_fields_match_main_site": ["title", "description", "canonical", "html lang", "CSS", "rrow count"],
+    "local_zipf_test": {
+      "requests": 300,
+      "hit_rate_pct": 97.0,
+      "p50_ms": 4.0,
+      "p95_ms": 9.0,
+      "note": "本地模拟长尾分布，非真实流量"
+    },
+    "online": {
+      "cdn_cache_hit": true,
+      "worker_cache_hit": true,
+      "all_pages_200": true,
+      "main_site_unaffected": true
+    }
+  },
+  "cost": {
+    "actual_monthly_usd": 0,
+    "worker_free_requests_per_day": 100000,
+    "account_requests_last_24h": 16993,
+    "new_worker_estimated_per_day": 500
+  },
+  "conclusion": "技术路径验证通过：数据内联 + 按请求渲染 + 两层缓存可替代静态预渲染，命中率达 97% 目标线。但未验证真实长尾流量下的命中率（ja 试域无真实访问），也未验证大规模数据（332 页 vs 千万页）下的冷启动与内存表现。",
+  "next_decision": "是否切 www.stags.cn 的 /ja/* 到 Worker：需先把主域改橙云（影响全站），建议等内容库扩容决策后一并评估。真要支撑千万页，还需把 data.json 从内联改为 KV/R2 分页读取。"
+}
