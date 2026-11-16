@@ -9,7 +9,7 @@ import {
   otherLocale, otherLocales, stripLocale, hasAllLocales, type Locale,
 } from "../lib/i18n";
 import { shouldNoindex, isIndexable } from "../lib/gate";
-import { adsenseScriptSrc } from "../lib/adsense";
+import { adsenseScriptSrc, adsDetailEnabled } from "../lib/adsense";
 
 interface Props {
   locale: Locale;
@@ -156,12 +156,25 @@ const graph = [
 
     <script type="application/ld+json" set:html={JSON.stringify({ "@context": "https://schema.org", "@graph": graph })} />
 
+    <!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 -->
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+    {adsDetailEnabled && (
+      <>
+        <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous" />
+        <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+      </>
+    )}
+
     <!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
-         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。 -->
-    <script async src={adsenseScriptSrc} crossorigin="anonymous"></script>
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 -->
+    <script async src={adsenseScriptSrc} crossorigin="anonymous" fetchpriority="low"></script>
 
     <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag() { dataLayer.push(arguments); }
