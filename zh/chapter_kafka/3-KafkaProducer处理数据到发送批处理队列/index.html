@@ -1,0 +1,196 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>chapter_kafka/3-KafkaProducer处理数据到发送批处理队列 — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_kafka/3-KafkaProducer%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE%E5%88%B0%E5%8F%91%E9%80%81%E6%89%B9%E5%A4%84%E7%90%86%E9%98%9F%E5%88%97/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_kafka/3-KafkaProducer%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE%E5%88%B0%E5%8F%91%E9%80%81%E6%89%B9%E5%A4%84%E7%90%86%E9%98%9F%E5%88%97"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_kafka/3-KafkaProducer%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE%E5%88%B0%E5%8F%91%E9%80%81%E6%89%B9%E5%A4%84%E7%90%86%E9%98%9F%E5%88%97/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_kafka/3-KafkaProducer%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE%E5%88%B0%E5%8F%91%E9%80%81%E6%89%B9%E5%A4%84%E7%90%86%E9%98%9F%E5%88%97"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="chapter_kafka/3-KafkaProducer处理数据到发送批处理队列 — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_kafka/3-KafkaProducer%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE%E5%88%B0%E5%8F%91%E9%80%81%E6%89%B9%E5%A4%84%E7%90%86%E9%98%9F%E5%88%97/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_kafka/3-KafkaProducer%E5%A4%84%E7%90%86%E6%95%B0%E6%8D%AE%E5%88%B0%E5%8F%91%E9%80%81%E6%89%B9%E5%A4%84%E7%90%86%E9%98%9F%E5%88%97/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>kafka</h3> <ul> <li> <a href="/zh/chapter_kafka/0-1-Kaka知识点全解析" class="lv0" title="Kaka入门级教程"> Kaka入门级教程 </a> </li><li> <a href="/zh/chapter_kafka/1-1-生产者例子发送数据生命周期" class="lv0" title="从一个生产者的Demo出发"> 从一个生产者的Demo出发 </a> </li><li> <a href="/zh/chapter_kafka/1-2-生产者KafkaProducer对象的初始化" class="lv0" title="2 生产者KafkaProducer对象的初始化"> 2 生产者KafkaProducer对象的初始化 </a> </li><li> <a href="/zh/chapter_kafka/1-introduce" class="lv0" title="**Kaka知识全解析**"> **Kaka知识全解析** </a> </li><li> <a href="/zh/chapter_kafka/2-high-performence" class="lv0" title="**Kaka高性能设计原理**"> **Kaka高性能设计原理** </a> </li><li> <a href="/zh/chapter_kafka/3-client-sample" class="lv0" title="**从一个Kafka的Demo说起**"> **从一个Kafka的Demo说起** </a> </li><li> <a href="/zh/chapter_kafka/3-KafkaProducer处理数据到发送批处理队列" class="lv0" title="3-KafkaProducer处理数据到发送批处理队列"> 3-KafkaProducer处理数据到发送批处理队列 </a> </li><li> <a href="/zh/chapter_kafka/4-kafka-producer" class="lv0" title="**KafkaProducer生产者对象的长篇源码解析简介**"> **KafkaProducer生产者对象的长篇源码解析简介** </a> </li><li> <a href="/zh/chapter_kafka/4-Send发送者线程的主限循环逻辑" class="lv0" title="4-Send发送者线程的主限循环逻辑"> 4-Send发送者线程的主限循环逻辑 </a> </li><li> <a href="/zh/chapter_kafka/5-生产者消息请求放入Kafka通道" class="lv0" title="5-生产者消息请求放入Kafka通道"> 5-生产者消息请求放入Kafka通道 </a> </li><li> <a href="/zh/chapter_kafka/5-sender" class="lv0" title="**Kafka的发送器对象的初始化**"> **Kafka的发送器对象的初始化** </a> </li><li> <a href="/zh/chapter_kafka/6-生产者执行IO事件" class="lv0" title="执行IO事件"> 执行IO事件 </a> </li><li> <a href="/zh/chapter_kafka/6-kafka-thread" class="lv0" title="**Kafka客户端的IO线程KafkaThread**"> **Kafka客户端的IO线程KafkaThread** </a> </li><li> <a href="/zh/chapter_kafka/7-消费者和生产者处理IO结果" class="lv0" title="7-消费者和生产者处理IO结果"> 7-消费者和生产者处理IO结果 </a> </li><li> <a href="/zh/chapter_kafka/7-kafka-producer-init" class="lv0" title="**生产者KafkaProducer对象的初始化**"> **生产者KafkaProducer对象的初始化** </a> </li><li> <a href="/zh/chapter_kafka/8-消费者例子拉取数据生命周期" class="lv0" title="8-消费者例子拉取数据生命周期"> 8-消费者例子拉取数据生命周期 </a> </li><li> <a href="/zh/chapter_kafka/8-send-producer-data" class="lv0" title="8-send-producer-data"> 8-send-producer-data </a> </li><li> <a href="/zh/chapter_kafka/9-消费者KafkaConsumer对象的初始化" class="lv0" title="9-消费者KafkaConsumer对象的初始化"> 9-消费者KafkaConsumer对象的初始化 </a> </li><li> <a href="/zh/chapter_kafka/9-execute-io" class="lv0" title="**执行IO事件**"> **执行IO事件** </a> </li><li> <a href="/zh/chapter_kafka/10-消费者订阅TOPIC" class="lv0" title="10-消费者订阅TOPIC"> 10-消费者订阅TOPIC </a> </li><li> <a href="/zh/chapter_kafka/10-handle-io" class="lv0" title="**处理Poll的IO返回结果**"> **处理Poll的IO返回结果** </a> </li><li> <a href="/zh/chapter_kafka/11-消费者执行轮询消息poll方法" class="lv0" title="11-消费者执行轮询消息poll方法"> 11-消费者执行轮询消息poll方法 </a> </li><li> <a href="/zh/chapter_kafka/12-消费者尝试更新分配元数据updateAssignmentMetadataIfNeeded" class="lv0" title="12-消费者尝试更新分配元数据updateAssignmentMetadataIfNeeded"> 12-消费者尝试更新分配元数据updateAssignmentMetadataIfNeeded </a> </li><li> <a href="/zh/chapter_kafka/13-消费者Poll从服务端拉取数据" class="lv0" title="13-消费者Poll从服务端拉取数据"> 13-消费者Poll从服务端拉取数据 </a> </li><li> <a href="/zh/chapter_kafka/Kafka入门" class="lv0" title="简介"> 简介 </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_kafka">kafka</a><span class="sep">/</span><span>KafkaProducer处理数据到发送批处理队列</span> </nav> <div class="prose">  <p>KafkaProducer处理数据到发送批处理队列</p>
+<ul>
+<li>开始</li>
+<li>封装消息的TOPIC、KEY 、MESSAGE到 ProducerRecord类型对象</li>
+<li>调用KafkaProducer类型的 send方法
+<ul>
+<li>执行拦截器 ProducerInterceptors的的 onSend方法</li>
+<li>调用KafkaProducer类型的 doSend方法
+<ul>
+<li>如果生产者sender对象已经关闭则抛出异常直接结束</li>
+<li>本地MetadataCache缓存中查询集群信息Cluster waitOnMetadata方法
+<ul>
+<li>invalidTopics过滤</li>
+<li>本地内存集群信息Cluster缓存中获取Topic的分区数这个时候本地是没有分区的</li>
+<li>**更新元数据:**调用ProducerMetadata的requestUpdate 改变标记变量needUpdate = true;与请求版本号等待网络IO的执行来更新元数据</li>
+<li>**唤醒IO执行元数据请求：**调用Sender对象的wakeup()方法唤醒网络IO
+<ul>
+<li>调用到NetworkClient的wakeup()，
+<ul>
+<li>再调用Selectable的wakeup()
+<ul>
+<li>java.nio.channels.Selector nioSelector的wakeup()
+<ul>
+<li>mac电脑执行KQueueSelectorImpl的wakeup()执行逻辑
+<ul>
+<li>执行IOUtil.write1(fd1, (byte)0); 这个是个native方法</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>**等待元数据的IO请求结果：**调用ProducerMetadata类型的awaitUpdate等待60秒（配置为max.block.ms默认60秒）obj.wait等待元数据请求（IO线程会拉取元数据）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>IO线程</strong>：拉取元数据Metadata中的handleMetadataResponse方法处理元数据的响应将数据放到本地缓存</li>
+<li>**IO线程：**调用生产者元数据对象的notifyAll方法唤醒发送线程</li>
+<li><strong>序列化KEY:</strong> 调用keySerializer的serialize方法序列化KEY</li>
+<li>**序列化VALUE: **调用valueSerializer对象的serialize方法序列化VALUE</li>
+<li>**对KEY执行分区计算：**调用分区器Partitioner的partition方法对KEY进行分区默认是Hash取模</li>
+<li>发送记录大小校验
+<ul>
+<li>预估发送数据大小计算方式为： magic + keySize + valueSize</li>
+<li>发送的数据长度不能超过请求大小max.request.size配置</li>
+<li>发送的数据长度不能超过内存大小buffer.memory配置</li>
+</ul>
+</li>
+<li>数据存放在记录累加器RecordAccumulator中（内存池与内存队列批量发送使用）
+<ul>
+<li>为当前主题分区TopicPartition创建对应的批处理队列Deque<producerbatch></producerbatch></li>
+<li><strong>批处理队列与分区信息映射关系存储</strong>：映射结果存放在分区记录器的成员变量ConcurrentMap&#x3C;TopicPartition, Deque<producerbatch>> batches中</producerbatch></li>
+<li>内存池分配：调用BufferPool类型对象free的allocate方法 （使用ByteBuffer来创建的）</li>
+<li>将请求加入批处理队列中：创建批处理对象ProducerBatch</li>
+<li>将数据通过ByteBufferOutputStream写入ByteBuffer中</li>
+<li>封装结果到RecordAccumulator.RecordAppendResult类型中</li>
+</ul>
+</li>
+<li><strong>唤醒网络IO：</strong> 批处理已满或者首次创建批处理对象则调用Sender类型的wakeup方法唤醒网络IO
+<ul>
+<li>Sender类型的wakeup
+<ul>
+<li>KafkaClient的wakeup
+<ul>
+<li>Selectable类型的wakeup
+<ul>
+<li>java.nio.channels.Selector的wakeup
+<ul>
+<li>mac电脑执行KQueueSelectorImpl的wakeup()执行逻辑
+<ul>
+<li>IOUtil.write1(fd1, (byte)0);</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>返回一个Future对象可以同步等待结果</li>
+<li>结束</li>
+</ul>
+<p>KafkaProducer类型的doSend方法如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#24292E"> Future</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">RecordMetadata</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> doSend</span><span style="color:#24292E">(ProducerRecord</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">K, V</span><span style="color:#D73A49">></span><span style="color:#24292E"> record, Callback callback) {</span></span>
+<span class="line"><span style="color:#24292E">    TopicPartition tp </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6F42C1">        throwIfProducerClosed</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        // first make sure the metadata for the topic is available</span></span>
+<span class="line"><span style="color:#24292E">        ClusterAndWaitTime clusterAndWaitTime;</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            clusterAndWaitTime </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> waitOnMetadata</span><span style="color:#24292E">(record.</span><span style="color:#6F42C1">topic</span><span style="color:#24292E">(), record.</span><span style="color:#6F42C1">partition</span><span style="color:#24292E">(), maxBlockTimeMs);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (KafkaException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (metadata.</span><span style="color:#6F42C1">isClosed</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> KafkaException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Producer closed while send in progress"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#24292E"> e;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        long</span><span style="color:#24292E"> remainingWaitMs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Math.</span><span style="color:#6F42C1">max</span><span style="color:#24292E">(</span><span style="color:#005CC5">0</span><span style="color:#24292E">, maxBlockTimeMs </span><span style="color:#D73A49">-</span><span style="color:#24292E"> clusterAndWaitTime.waitedOnMetadataMs);</span></span>
+<span class="line"><span style="color:#24292E">        Cluster cluster </span><span style="color:#D73A49">=</span><span style="color:#24292E"> clusterAndWaitTime.cluster;</span></span>
+<span class="line"><span style="color:#D73A49">        byte</span><span style="color:#24292E">[] serializedKey;</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            serializedKey </span><span style="color:#D73A49">=</span><span style="color:#24292E"> keySerializer.</span><span style="color:#6F42C1">serialize</span><span style="color:#24292E">(record.</span><span style="color:#6F42C1">topic</span><span style="color:#24292E">(), record.</span><span style="color:#6F42C1">headers</span><span style="color:#24292E">(), record.</span><span style="color:#6F42C1">key</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (ClassCastException </span><span style="color:#E36209">cce</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> SerializationException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Can't convert key of class "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> record.</span><span style="color:#6F42C1">key</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getClass</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">                    " to class "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> producerConfig.</span><span style="color:#6F42C1">getClass</span><span style="color:#24292E">(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG).</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">                    " specified in key.serializer"</span><span style="color:#24292E">, cce);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        byte</span><span style="color:#24292E">[] serializedValue;</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            serializedValue </span><span style="color:#D73A49">=</span><span style="color:#24292E"> valueSerializer.</span><span style="color:#6F42C1">serialize</span><span style="color:#24292E">(record.</span><span style="color:#6F42C1">topic</span><span style="color:#24292E">(), record.</span><span style="color:#6F42C1">headers</span><span style="color:#24292E">(), record.</span><span style="color:#6F42C1">value</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (ClassCastException </span><span style="color:#E36209">cce</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> SerializationException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Can't convert value of class "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> record.</span><span style="color:#6F42C1">value</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getClass</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">                    " to class "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> producerConfig.</span><span style="color:#6F42C1">getClass</span><span style="color:#24292E">(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG).</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">                    " specified in value.serializer"</span><span style="color:#24292E">, cce);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        int</span><span style="color:#24292E"> partition </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> partition</span><span style="color:#24292E">(record, serializedKey, serializedValue, cluster);</span></span>
+<span class="line"><span style="color:#24292E">        tp </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> TopicPartition</span><span style="color:#24292E">(record.</span><span style="color:#6F42C1">topic</span><span style="color:#24292E">(), partition);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">        setReadOnly</span><span style="color:#24292E">(record.</span><span style="color:#6F42C1">headers</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">        Header</span><span style="color:#24292E">[] headers </span><span style="color:#D73A49">=</span><span style="color:#24292E"> record.</span><span style="color:#6F42C1">headers</span><span style="color:#24292E">().</span><span style="color:#6F42C1">toArray</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        int</span><span style="color:#24292E"> serializedSize </span><span style="color:#D73A49">=</span><span style="color:#24292E"> AbstractRecords.</span><span style="color:#6F42C1">estimateSizeInBytesUpperBound</span><span style="color:#24292E">(apiVersions.</span><span style="color:#6F42C1">maxUsableProduceMagic</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                compressionType, serializedKey, serializedValue, headers);</span></span>
+<span class="line"><span style="color:#6F42C1">        ensureValidRecordSize</span><span style="color:#24292E">(serializedSize);</span></span>
+<span class="line"><span style="color:#D73A49">        long</span><span style="color:#24292E"> timestamp </span><span style="color:#D73A49">=</span><span style="color:#24292E"> record.</span><span style="color:#6F42C1">timestamp</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> ?</span><span style="color:#24292E"> time.</span><span style="color:#6F42C1">milliseconds</span><span style="color:#24292E">() </span><span style="color:#D73A49">:</span><span style="color:#24292E"> record.</span><span style="color:#6F42C1">timestamp</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        log.</span><span style="color:#6F42C1">trace</span><span style="color:#24292E">(</span><span style="color:#032F62">"Sending record {} with callback {} to topic {} partition {}"</span><span style="color:#24292E">, record, callback, record.</span><span style="color:#6F42C1">topic</span><span style="color:#24292E">(), partition);</span></span>
+<span class="line"><span style="color:#6A737D">        // producer callback will make sure to call both 'callback' and interceptor callback</span></span>
+<span class="line"><span style="color:#24292E">        Callback interceptCallback </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> InterceptorCallback&#x3C;>(callback, </span><span style="color:#005CC5">this</span><span style="color:#24292E">.interceptors, tp);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (transactionManager </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> transactionManager.</span><span style="color:#6F42C1">isTransactional</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">            transactionManager.</span><span style="color:#6F42C1">maybeAddPartitionToTransaction</span><span style="color:#24292E">(tp);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        RecordAccumulator.RecordAppendResult result </span><span style="color:#D73A49">=</span><span style="color:#24292E"> accumulator.</span><span style="color:#6F42C1">append</span><span style="color:#24292E">(tp, timestamp, serializedKey,</span></span>
+<span class="line"><span style="color:#24292E">                serializedValue, headers, interceptCallback, remainingWaitMs);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (result.batchIsFull </span><span style="color:#D73A49">||</span><span style="color:#24292E"> result.</span><span style="color:#D73A49">new</span><span style="color:#24292E">BatchCreated) {</span></span>
+<span class="line"><span style="color:#24292E">            log.</span><span style="color:#6F42C1">trace</span><span style="color:#24292E">(</span><span style="color:#032F62">"Waking up the sender since topic {} partition {} is either full or getting a new batch"</span><span style="color:#24292E">, record.</span><span style="color:#6F42C1">topic</span><span style="color:#24292E">(), partition);</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.sender.</span><span style="color:#6F42C1">wakeup</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> result.future;</span></span>
+<span class="line"><span style="color:#6A737D">        // handling exceptions and record the errors;</span></span>
+<span class="line"><span style="color:#6A737D">        // for API exceptions return them in the future,</span></span>
+<span class="line"><span style="color:#6A737D">        // for other exceptions throw directly</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (ApiException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        log.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Exception occurred during message send:"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (callback </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">            callback.</span><span style="color:#6F42C1">onCompletion</span><span style="color:#24292E">(</span><span style="color:#005CC5">null</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.errors.</span><span style="color:#6F42C1">record</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.interceptors.</span><span style="color:#6F42C1">onSendError</span><span style="color:#24292E">(record, tp, e);</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> FutureFailure</span><span style="color:#24292E">(e);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (InterruptedException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.errors.</span><span style="color:#6F42C1">record</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.interceptors.</span><span style="color:#6F42C1">onSendError</span><span style="color:#24292E">(record, tp, e);</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> InterruptException</span><span style="color:#24292E">(e);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (BufferExhaustedException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.errors.</span><span style="color:#6F42C1">record</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.metrics.</span><span style="color:#6F42C1">sensor</span><span style="color:#24292E">(</span><span style="color:#032F62">"buffer-exhausted-records"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">record</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.interceptors.</span><span style="color:#6F42C1">onSendError</span><span style="color:#24292E">(record, tp, e);</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#24292E"> e;</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (KafkaException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.errors.</span><span style="color:#6F42C1">record</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.interceptors.</span><span style="color:#6F42C1">onSendError</span><span style="color:#24292E">(record, tp, e);</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#24292E"> e;</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // we notify interceptor about all exceptions, since onSend is called before anything else in this method</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.interceptors.</span><span style="color:#6F42C1">onSendError</span><span style="color:#24292E">(record, tp, e);</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#24292E"> e;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

@@ -1,0 +1,741 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>交互式源码解析器 | Interactive Source Code Analyzer — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/dev_tools/source_analyzer/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/dev_tools/source_analyzer"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/dev_tools/source_analyzer/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/dev_tools/source_analyzer"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="交互式源码解析器 | Interactive Source Code Analyzer — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/dev_tools/source_analyzer/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/dev_tools/source_analyzer/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>dev_tools</h3> <ul> <li> <a href="/zh/dev_tools/community_hub" class="lv0" title="community_hub"> community_hub </a> </li><li> <a href="/zh/dev_tools/community_platform" class="lv0" title="开发者社区系统 | Developer Community Platform"> 开发者社区系统 | Developer Community Platform </a> </li><li> <a href="/zh/dev_tools/project_health_analyzer" class="lv0" title="开源项目健康度评估 | Open Source Project Health Assessment"> 开源项目健康度评估 | Open Source Project Health Assessment </a> </li><li> <a href="/zh/dev_tools/project_health" class="lv0" title="project_health"> project_health </a> </li><li> <a href="/zh/dev_tools/smart_code_analyzer" class="lv0" title="smart_code_analyzer"> smart_code_analyzer </a> </li><li> <a href="/zh/dev_tools/source_analyzer" class="lv0" aria-current="page" title="交互式源码解析器 | Interactive Source Code Analyzer"> 交互式源码解析器 | Interactive Source Code Analyzer </a> </li><li> <a href="/zh/dev_tools/translation_platform" class="lv0" title="translation_platform"> translation_platform </a> </li><li> <a href="/zh/dev_tools/translation_workflow" class="lv0" title="translation_workflow"> translation_workflow </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/dev_tools">dev_tools</a><span class="sep">/</span><span>交互式源码解析器 | Interactive Source Code Analyzer</span> </nav> <div class="prose">  <h1 id="交互式源码解析器--interactive-source-code-analyzer">交互式源码解析器 | Interactive Source Code Analyzer</h1>
+<div class="source-analyzer-container">
+  <div class="analyzer-header">
+    <h2>🔍 源码深度解析</h2>
+    <p>可视化源码结构，理解代码执行流程</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>&#x3C;div class="analyzer-controls"></span></span>
+<span class="line"><span>  &#x3C;div class="control-section"></span></span>
+<span class="line"><span>    &#x3C;label>项目选择:&#x3C;/label></span></span>
+<span class="line"><span>    &#x3C;select id="project-selector"></span></span>
+<span class="line"><span>      &#x3C;option value="dubbo">Apache Dubbo&#x3C;/option></span></span>
+<span class="line"><span>      &#x3C;option value="spring-boot">Spring Boot&#x3C;/option></span></span>
+<span class="line"><span>      &#x3C;option value="kafka">Apache Kafka&#x3C;/option></span></span>
+<span class="line"><span>      &#x3C;option value="kubernetes">Kubernetes&#x3C;/option></span></span>
+<span class="line"><span>    &#x3C;/select></span></span>
+<span class="line"><span>  &#x3C;/div></span></span>
+<span class="line"><span>  </span></span>
+<span class="line"><span>  &#x3C;div class="control-section"></span></span>
+<span class="line"><span>    &#x3C;label>分析模式:&#x3C;/label></span></span>
+<span class="line"><span>    &#x3C;div class="mode-toggle"></span></span>
+<span class="line"><span>      &#x3C;button class="mode-btn active" data-mode="structure">架构视图&#x3C;/button></span></span>
+<span class="line"><span>      &#x3C;button class="mode-btn" data-mode="flow">执行流程&#x3C;/button></span></span>
+<span class="line"><span>      &#x3C;button class="mode-btn" data-mode="dependency">依赖关系&#x3C;/button></span></span>
+<span class="line"><span>    &#x3C;/div></span></span>
+<span class="line"><span>  &#x3C;/div></span></span>
+<span class="line"><span>  </span></span>
+<span class="line"><span>  &#x3C;div class="control-section"></span></span>
+<span class="line"><span>    &#x3C;label>深度级别:&#x3C;/label></span></span>
+<span class="line"><span>    &#x3C;input type="range" id="depth-slider" min="1" max="5" value="3"></span></span>
+<span class="line"><span>    &#x3C;span id="depth-value">3&#x3C;/span></span></span>
+<span class="line"><span>  &#x3C;/div></span></span>
+<span class="line"><span>&#x3C;/div></span></span></code></pre>
+  </div>
+  <!-- 主要分析区域 -->
+  <div class="analyzer-main">
+    <!-- 代码结构可视化 -->
+    <div class="code-visualization" id="code-viz">
+      <div class="viz-container">
+        <svg id="code-structure-svg" width="100%" height="600">
+          <!-- 动态生成架构图 -->
+        </svg>
+      </div>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>  &#x3C;!-- 代码详情面板 --></span></span>
+<span class="line"><span>  &#x3C;div class="code-details-panel" id="code-details"></span></span>
+<span class="line"><span>    &#x3C;div class="panel-tabs"></span></span>
+<span class="line"><span>      &#x3C;button class="tab-btn active" data-tab="source">源码&#x3C;/button></span></span>
+<span class="line"><span>      &#x3C;button class="tab-btn" data-tab="docs">文档&#x3C;/button></span></span>
+<span class="line"><span>      &#x3C;button class="tab-btn" data-tab="tests">测试&#x3C;/button></span></span>
+<span class="line"><span>      &#x3C;button class="tab-btn" data-tab="metrics">指标&#x3C;/button></span></span>
+<span class="line"><span>    &#x3C;/div></span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    &#x3C;div class="tab-content active" id="source-tab"></span></span>
+<span class="line"><span>      &#x3C;div class="code-editor"></span></span>
+<span class="line"><span>        &#x3C;div class="editor-toolbar"></span></span>
+<span class="line"><span>          &#x3C;span class="file-path" id="current-file">选择代码节点查看源码&#x3C;/span></span></span>
+<span class="line"><span>          &#x3C;div class="editor-actions"></span></span>
+<span class="line"><span>            &#x3C;button class="action-btn" id="copy-code">📋 复制&#x3C;/button></span></span>
+<span class="line"><span>            &#x3C;button class="action-btn" id="download-code">💾 下载&#x3C;/button></span></span>
+<span class="line"><span>            &#x3C;button class="action-btn" id="run-code">▶️ 运行&#x3C;/button></span></span>
+<span class="line"><span>          &#x3C;/div></span></span>
+<span class="line"><span>        &#x3C;/div></span></span>
+<span class="line"><span>        &#x3C;pre>&#x3C;code id="source-code" class="language-java"></span></span></code></pre>
+<p>// 选择左侧节点查看对应源码
+public class Example {
+// 代码将在这里显示
+}
+
+</p></div><p></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>      &#x3C;!-- 代码注释区域 --></span></span>
+<span class="line"><span>      &#x3C;div class="code-annotations" id="code-annotations"></span></span>
+<span class="line"><span>        &#x3C;h4>📝 专家注释&#x3C;/h4></span></span>
+<span class="line"><span>        &#x3C;div class="annotations-list"></span></span>
+<span class="line"><span>          &#x3C;div class="annotation-item"></span></span>
+<span class="line"><span>            &#x3C;div class="annotation-line">第 15 行&#x3C;/div></span></span>
+<span class="line"><span>            &#x3C;div class="annotation-content"></span></span>
+<span class="line"><span>              &#x3C;strong>设计模式:&#x3C;/strong> 这里使用了单例模式确保全局唯一实例</span></span>
+<span class="line"><span>            &#x3C;/div></span></span>
+<span class="line"><span>            &#x3C;div class="annotation-author">- Spring 核心开发者&#x3C;/div></span></span>
+<span class="line"><span>          &#x3C;/div></span></span>
+<span class="line"><span>        &#x3C;/div></span></span>
+<span class="line"><span>        </span></span>
+<span class="line"><span>        &#x3C;div class="add-annotation"></span></span>
+<span class="line"><span>          &#x3C;button class="add-btn" id="add-annotation">➕ 添加注释&#x3C;/button></span></span>
+<span class="line"><span>        &#x3C;/div></span></span>
+<span class="line"><span>      &#x3C;/div></span></span>
+<span class="line"><span>    &#x3C;/div></span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    &#x3C;div class="tab-content" id="docs-tab"></span></span>
+<span class="line"><span>      &#x3C;div class="documentation"></span></span>
+<span class="line"><span>        &#x3C;h4>📚 相关文档&#x3C;/h4></span></span>
+<span class="line"><span>        &#x3C;div id="related-docs"></span></span>
+<span class="line"><span>          &#x3C;!-- 动态加载相关文档 --></span></span>
+<span class="line"><span>        &#x3C;/div></span></span>
+<span class="line"><span>      &#x3C;/div></span></span>
+<span class="line"><span>    &#x3C;/div></span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    &#x3C;div class="tab-content" id="tests-tab"></span></span>
+<span class="line"><span>      &#x3C;div class="test-cases"></span></span>
+<span class="line"><span>        &#x3C;h4>🧪 测试用例&#x3C;/h4></span></span>
+<span class="line"><span>        &#x3C;div id="test-list"></span></span>
+<span class="line"><span>          &#x3C;!-- 动态加载测试用例 --></span></span>
+<span class="line"><span>        &#x3C;/div></span></span>
+<span class="line"><span>      &#x3C;/div></span></span>
+<span class="line"><span>    &#x3C;/div></span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    &#x3C;div class="tab-content" id="metrics-tab"></span></span>
+<span class="line"><span>      &#x3C;div class="code-metrics"></span></span>
+<span class="line"><span>        &#x3C;h4>📊 代码指标&#x3C;/h4></span></span>
+<span class="line"><span>        &#x3C;div class="metrics-grid"></span></span>
+<span class="line"><span>          &#x3C;div class="metric-card"></span></span>
+<span class="line"><span>            &#x3C;span class="metric-label">复杂度&#x3C;/span></span></span>
+<span class="line"><span>            &#x3C;span class="metric-value" id="complexity">-&#x3C;/span></span></span>
+<span class="line"><span>          &#x3C;/div></span></span>
+<span class="line"><span>          &#x3C;div class="metric-card"></span></span>
+<span class="line"><span>            &#x3C;span class="metric-label">测试覆盖率&#x3C;/span></span></span>
+<span class="line"><span>            &#x3C;span class="metric-value" id="coverage">-&#x3C;/span></span></span>
+<span class="line"><span>          &#x3C;/div></span></span>
+<span class="line"><span>          &#x3C;div class="metric-card"></span></span>
+<span class="line"><span>            &#x3C;span class="metric-label">代码行数&#x3C;/span></span></span>
+<span class="line"><span>            &#x3C;span class="metric-value" id="lines">-&#x3C;/span></span></span>
+<span class="line"><span>          &#x3C;/div></span></span>
+<span class="line"><span>          &#x3C;div class="metric-card"></span></span>
+<span class="line"><span>            &#x3C;span class="metric-label">维护指数&#x3C;/span></span></span>
+<span class="line"><span>            &#x3C;span class="metric-value" id="maintainability">-&#x3C;/span></span></span>
+<span class="line"><span>          &#x3C;/div></span></span>
+<span class="line"><span>        &#x3C;/div></span></span>
+<span class="line"><span>      &#x3C;/div></span></span>
+<span class="line"><span>    &#x3C;/div></span></span>
+<span class="line"><span>  &#x3C;/div></span></span>
+<span class="line"><span>&#x3C;/div></span></span></code></pre>
+  </div>
+  <!-- 执行流程追踪 -->
+  <div class="execution-flow" id="execution-flow" style="display: none;">
+    <div class="flow-controls">
+      <div class="scenario-selector">
+        <label>执行场景:</label>
+        <select id="scenario-select">
+          <option value="request">HTTP请求处理</option>
+          <option value="service-call">服务调用</option>
+          <option value="data-access">数据访问</option>
+          <option value="error-handling">异常处理</option>
+        </select>
+      </div>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>  &#x3C;div class="flow-actions"></span></span>
+<span class="line"><span>    &#x3C;button class="flow-btn" id="start-trace">🎬 开始追踪&#x3C;/button></span></span>
+<span class="line"><span>    &#x3C;button class="flow-btn" id="step-trace">👣 单步执行&#x3C;/button></span></span>
+<span class="line"><span>    &#x3C;button class="flow-btn" id="reset-trace">🔄 重置&#x3C;/button></span></span>
+<span class="line"><span>  &#x3C;/div></span></span>
+<span class="line"><span>&#x3C;/div></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;div class="flow-visualization"></span></span>
+<span class="line"><span>  &#x3C;div class="flow-timeline"></span></span>
+<span class="line"><span>    &#x3C;div class="timeline-header"></span></span>
+<span class="line"><span>      &#x3C;h4>📅 执行时间线&#x3C;/h4></span></span>
+<span class="line"><span>      &#x3C;span class="total-time">总耗时: &#x3C;span id="total-time">0ms&#x3C;/span>&#x3C;/span></span></span>
+<span class="line"><span>    &#x3C;/div></span></span>
+<span class="line"><span>    &#x3C;div class="timeline-track" id="execution-timeline"></span></span>
+<span class="line"><span>      &#x3C;!-- 动态生成执行步骤 --></span></span>
+<span class="line"><span>    &#x3C;/div></span></span>
+<span class="line"><span>  &#x3C;/div></span></span>
+<span class="line"><span>  </span></span>
+<span class="line"><span>  &#x3C;div class="call-stack"></span></span>
+<span class="line"><span>    &#x3C;h4>📚 调用栈&#x3C;/h4></span></span>
+<span class="line"><span>    &#x3C;div class="stack-frames" id="call-stack-frames"></span></span>
+<span class="line"><span>      &#x3C;!-- 动态显示调用栈 --></span></span>
+<span class="line"><span>    &#x3C;/div></span></span>
+<span class="line"><span>  &#x3C;/div></span></span>
+<span class="line"><span>  </span></span>
+<span class="line"><span>  &#x3C;div class="variable-inspector"></span></span>
+<span class="line"><span>    &#x3C;h4>🔍 变量检查器&#x3C;/h4></span></span>
+<span class="line"><span>    &#x3C;div class="variables" id="variable-list"></span></span>
+<span class="line"><span>      &#x3C;!-- 显示当前变量状态 --></span></span>
+<span class="line"><span>    &#x3C;/div></span></span>
+<span class="line"><span>  &#x3C;/div></span></span>
+<span class="line"><span>&#x3C;/div></span></span></code></pre>
+  </div>
+  <!-- 3D架构可视化 -->
+  <div class="architecture-3d" id="architecture-3d" style="display: none;">
+    <div class="3d-controls">
+      <div class="view-controls">
+        <button class="view-btn" data-view="overview">总览</button>
+        <button class="view-btn" data-view="layers">分层</button>
+        <button class="view-btn" data-view="modules">模块</button>
+        <button class="view-btn" data-view="dependencies">依赖</button>
+      </div>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>  &#x3C;div class="filter-controls"></span></span>
+<span class="line"><span>    &#x3C;label></span></span>
+<span class="line"><span>      &#x3C;input type="checkbox" id="show-interfaces" checked> 接口</span></span>
+<span class="line"><span>    &#x3C;/label></span></span>
+<span class="line"><span>    &#x3C;label></span></span>
+<span class="line"><span>      &#x3C;input type="checkbox" id="show-implementations" checked> 实现</span></span>
+<span class="line"><span>    &#x3C;/label></span></span>
+<span class="line"><span>    &#x3C;label></span></span>
+<span class="line"><span>      &#x3C;input type="checkbox" id="show-dependencies" checked> 依赖</span></span>
+<span class="line"><span>    &#x3C;/label></span></span>
+<span class="line"><span>  &#x3C;/div></span></span>
+<span class="line"><span>&#x3C;/div></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;div class="3d-scene" id="3d-architecture-scene"></span></span>
+<span class="line"><span>  &#x3C;!-- Three.js 3D场景将在这里渲染 --></span></span>
+<span class="line"><span>  &#x3C;canvas id="architecture-canvas">&#x3C;/canvas></span></span>
+<span class="line"><span>&#x3C;/div></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>&#x3C;div class="3d-info-panel"></span></span>
+<span class="line"><span>  &#x3C;h4>🏗️ 架构信息&#x3C;/h4></span></span>
+<span class="line"><span>  &#x3C;div id="architecture-info"></span></span>
+<span class="line"><span>    &#x3C;p>点击3D场景中的组件查看详细信息&#x3C;/p></span></span>
+<span class="line"><span>  &#x3C;/div></span></span>
+<span class="line"><span>&#x3C;/div></span></span></code></pre>
+  </div>
+</div>
+<script>
+// 源码分析器主类
+class SourceCodeAnalyzer {
+    constructor() {
+        this.currentProject = 'dubbo';
+        this.currentMode = 'structure';
+        this.depthLevel = 3;
+        this.selectedNode = null;
+        
+        // 模拟项目数据
+        this.projectData = {
+            dubbo: {
+                name: 'Apache Dubbo',
+                modules: [
+                    {
+                        id: 'dubbo-common',
+                        name: 'Common',
+                        type: 'module',
+                        classes: ['URL', 'Constants', 'Version'],
+                        dependencies: [],
+                        metrics: { complexity: 15, coverage: 85, lines: 2500 }
+                    },
+                    {
+                        id: 'dubbo-rpc',
+                        name: 'RPC Core',
+                        type: 'module', 
+                        classes: ['Invoker', 'Protocol', 'ProxyFactory'],
+                        dependencies: ['dubbo-common'],
+                        metrics: { complexity: 45, coverage: 78, lines: 8500 }
+                    },
+                    {
+                        id: 'dubbo-registry',
+                        name: 'Registry',
+                        type: 'module',
+                        classes: ['Registry', 'RegistryFactory', 'NotifyListener'],
+                        dependencies: ['dubbo-common'],
+                        metrics: { complexity: 35, coverage: 82, lines: 5200 }
+                    }
+                ],
+                executionScenarios: {
+                    'request': [
+                        { step: 1, method: 'Proxy.invoke()', time: 5, description: '代理拦截调用' },
+                        { step: 2, method: 'Invoker.invoke()', time: 15, description: 'RPC调用准备' },
+                        { step: 3, method: 'Protocol.refer()', time: 25, description: '协议处理' },
+                        { step: 4, method: 'Registry.lookup()', time: 35, description: '服务发现' },
+                        { step: 5, method: 'LoadBalance.select()', time: 45, description: '负载均衡' }
+                    ]
+                }
+            }
+        };
+        
+        this.init();
+    }
+    
+    init() {
+        this.setupEventListeners();
+        this.renderStructureView();
+        this.initSyntaxHighlighting();
+    }
+    
+    setupEventListeners() {
+        // 项目选择
+        document.getElementById('project-selector').addEventListener('change', (e) => {
+            this.currentProject = e.target.value;
+            this.renderCurrentView();
+        });
+        
+        // 模式切换
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                this.switchMode(e.target.dataset.mode);
+            });
+        });
+        
+        // 深度级别
+        document.getElementById('depth-slider').addEventListener('input', (e) => {
+            this.depthLevel = parseInt(e.target.value);
+            document.getElementById('depth-value').textContent = e.target.value;
+            this.renderCurrentView();
+        });
+        
+        // 选项卡切换
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                this.switchTab(e.target.dataset.tab);
+            });
+        });
+        
+        // 代码操作
+        document.getElementById('copy-code').addEventListener('click', () => {
+            this.copySourceCode();
+        });
+        
+        document.getElementById('run-code').addEventListener('click', () => {
+            this.runCodeExample();
+        });
+        
+        // 执行流程控制
+        document.getElementById('start-trace').addEventListener('click', () => {
+            this.startExecutionTrace();
+        });
+        
+        document.getElementById('step-trace').addEventListener('click', () => {
+            this.stepExecution();
+        });
+    }
+    
+    switchMode(mode) {
+        // 更新按钮状态
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+        
+        this.currentMode = mode;
+        this.renderCurrentView();
+    }
+    
+    renderCurrentView() {
+        // 隐藏所有视图
+        document.getElementById('code-viz').style.display = 'none';
+        document.getElementById('execution-flow').style.display = 'none';
+        document.getElementById('architecture-3d').style.display = 'none';
+        
+        switch(this.currentMode) {
+            case 'structure':
+                document.getElementById('code-viz').style.display = 'flex';
+                this.renderStructureView();
+                break;
+            case 'flow':
+                document.getElementById('execution-flow').style.display = 'block';
+                this.renderExecutionFlow();
+                break;
+            case 'dependency':
+                document.getElementById('architecture-3d').style.display = 'block';
+                this.render3DArchitecture();
+                break;
+        }
+    }
+    
+    renderStructureView() {
+        const svg = document.getElementById('code-structure-svg');
+        svg.innerHTML = '';
+        
+        const project = this.projectData[this.currentProject];
+        if (!project) return;
+        
+        // 创建模块节点
+        project.modules.forEach((module, index) => {
+            const group = this.createModuleNode(module, index);
+            svg.appendChild(group);
+        });
+        
+        // 绘制依赖关系
+        this.drawDependencies(svg, project.modules);
+    }
+    
+    createModuleNode(module, index) {
+        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        group.setAttribute('class', 'module-node');
+        group.setAttribute('data-module-id', module.id);
+        
+        const x = 150 + (index % 3) * 200;
+        const y = 100 + Math.floor(index / 3) * 150;
+        
+        // 模块矩形
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', x);
+        rect.setAttribute('y', y);
+        rect.setAttribute('width', '160');
+        rect.setAttribute('height', '100');
+        rect.setAttribute('rx', '8');
+        rect.setAttribute('fill', this.getModuleColor(module.type));
+        rect.setAttribute('stroke', '#333');
+        rect.setAttribute('stroke-width', '2');
+        
+        // 模块名称
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', x + 80);
+        text.setAttribute('y', y + 25);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('class', 'module-title');
+        text.textContent = module.name;
+        
+        // 类列表
+        module.classes.forEach((className, classIndex) => {
+            const classText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            classText.setAttribute('x', x + 10);
+            classText.setAttribute('y', y + 45 + classIndex * 15);
+            classText.setAttribute('class', 'class-name');
+            classText.textContent = `• ${className}`;
+            group.appendChild(classText);
+        });
+        
+        group.appendChild(rect);
+        group.appendChild(text);
+        
+        // 点击事件
+        group.addEventListener('click', () => {
+            this.selectModule(module);
+        });
+        
+        return group;
+    }
+    
+    drawDependencies(svg, modules) {
+        modules.forEach(module => {
+            module.dependencies.forEach(depId => {
+                const depModule = modules.find(m => m.id === depId);
+                if (depModule) {
+                    const line = this.createDependencyLine(module, depModule);
+                    svg.appendChild(line);
+                }
+            });
+        });
+    }
+    
+    createDependencyLine(from, to) {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', '200'); // 简化坐标计算
+        line.setAttribute('y1', '150');
+        line.setAttribute('x2', '400');
+        line.setAttribute('y2', '150');
+        line.setAttribute('stroke', '#666');
+        line.setAttribute('stroke-width', '2');
+        line.setAttribute('marker-end', 'url(#arrowhead)');
+        return line;
+    }
+    
+    getModuleColor(type) {
+        const colors = {
+            'module': '#4CAF50',
+            'service': '#2196F3',
+            'util': '#FF9800',
+            'config': '#9C27B0'
+        };
+        return colors[type] || '#666';
+    }
+    
+    selectModule(module) {
+        this.selectedNode = module;
+        this.updateCodeDetails(module);
+        this.highlightSelectedNode(module.id);
+    }
+    
+    updateCodeDetails(module) {
+        // 更新文件路径
+        document.getElementById('current-file').textContent = 
+            `src/main/java/org/apache/dubbo/${module.id.replace('dubbo-', '')}/`;
+        
+        // 模拟源码内容
+        const sourceCode = this.generateSampleCode(module);
+        document.getElementById('source-code').textContent = sourceCode;
+        
+        // 更新代码指标
+        document.getElementById('complexity').textContent = module.metrics.complexity;
+        document.getElementById('coverage').textContent = `${module.metrics.coverage}%`;
+        document.getElementById('lines').textContent = module.metrics.lines.toLocaleString();
+        document.getElementById('maintainability').textContent = 
+            this.calculateMaintainability(module.metrics);
+        
+        // 重新应用语法高亮
+        this.applySyntaxHighlighting();
+    }
+    
+    generateSampleCode(module) {
+        // 为每个模块生成示例代码
+        const codeTemplates = {
+            'dubbo-common': `
+/**
+ * Dubbo URL工具类 - 核心数据传输对象
+ * @author Dubbo Community
+ */
+public class URL implements Serializable {
+    
+    private final String protocol;
+    private final String host;
+    private final int port;
+    private final String path;
+    private final Map<String, String> parameters;
+    
+    /**
+     * 构造URL对象
+     * @param protocol 协议名称
+     * @param host 主机地址  
+     * @param port 端口号
+     * @param path 路径
+     * @param parameters 参数映射
+     */
+    public URL(String protocol, String host, int port, 
+               String path, Map<String, String> parameters) {
+        this.protocol = protocol;
+        this.host = host;
+        this.port = port;
+        this.path = path;
+        this.parameters = parameters != null ? 
+            Collections.unmodifiableMap(parameters) : 
+            Collections.emptyMap();
+    }
+    
+    /**
+     * 获取参数值
+     * 💡 设计思想: 提供多种重载方法增强易用性
+     */
+    public String getParameter(String key) {
+        return parameters.get(key);
+    }
+    
+    public String getParameter(String key, String defaultValue) {
+        String value = getParameter(key);
+        return value != null ? value : defaultValue;
+    }
+}`,
+            'dubbo-rpc': `
+/**
+ * RPC调用接口 - Dubbo核心抽象
+ * 🔍 关键设计: 统一同步和异步调用模型
+ */
+public interface Invoker<T> extends Node {
+    
+    /**
+     * 获取服务接口类型
+     */
+    Class<T> getInterface();
+    
+    /**
+     * 执行RPC调用
+     * ⚡ 性能要点: 支持异步调用避免线程阻塞
+     */
+    Result invoke(Invocation invocation) throws RpcException;
+    
+    /**
+     * 异步调用实现
+     * 🚀 技术亮点: CompletableFuture支持链式调用
+     */
+    default CompletableFuture<Result> invokeAsync(Invocation invocation) {
+        try {
+            return CompletableFuture.completedFuture(invoke(invocation));
+        } catch (RpcException e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+}`
+        };
+        
+        return codeTemplates[module.id] || `// ${module.name} 源码示例\npublic class ${module.name} {\n    // 实现细节...\n}`;
+    }
+    
+    calculateMaintainability(metrics) {
+        // 简单的可维护性计算
+        const score = (100 - metrics.complexity * 0.5) * (metrics.coverage / 100);
+        return Math.round(score);
+    }
+    
+    applySyntaxHighlighting() {
+        // 使用Prism.js进行语法高亮
+        if (typeof Prism !== 'undefined') {
+            Prism.highlightAll();
+        }
+    }
+    
+    initSyntaxHighlighting() {
+        // 动态加载Prism.js
+        if (!window.Prism) {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-core.min.js';
+            document.head.appendChild(script);
+            
+            script.onload = () => {
+                const javaScript = document.createElement('script');
+                javaScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-java.min.js';
+                document.head.appendChild(javaScript);
+            };
+        }
+    }
+    
+    highlightSelectedNode(moduleId) {
+        // 高亮选中的节点
+        document.querySelectorAll('.module-node').forEach(node => {
+            node.classList.remove('selected');
+        });
+        
+        const selectedNode = document.querySelector(`[data-module-id="${moduleId}"]`);
+        if (selectedNode) {
+            selectedNode.classList.add('selected');
+        }
+    }
+    
+    switchTab(tabName) {
+        // 切换选项卡
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+    }
+    
+    copySourceCode() {
+        const code = document.getElementById('source-code').textContent;
+        navigator.clipboard.writeText(code).then(() => {
+            // 显示复制成功提示
+            this.showToast('代码已复制到剪贴板');
+        });
+    }
+    
+    runCodeExample() {
+        // 模拟代码运行
+        this.showToast('正在编译运行代码...');
+        
+        setTimeout(() => {
+            this.showExecutionResult();
+        }, 2000);
+    }
+    
+    showExecutionResult() {
+        const result = `
+执行结果:
+✅ 编译成功
+✅ 单元测试通过 (15/15)
+📊 性能指标:
+   - 执行时间: 125ms
+   - 内存使用: 2.3MB
+   - CPU使用率: 15%
+        `;
+        
+        // 创建结果弹窗
+        const modal = document.createElement('div');
+        modal.className = 'execution-modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <h3>代码执行结果</h3>
+                <pre>${result}
+            <button onclick="this.parentElement.parentElement.remove()">关闭</button></script>
+<span class="line"><span>        &#x3C;/div></span></span>
+<span class="line"><span>    `;</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    document.body.appendChild(modal);</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>startExecutionTrace() {</span></span>
+<span class="line"><span>    const scenario = document.getElementById('scenario-select').value;</span></span>
+<span class="line"><span>    const steps = this.projectData[this.currentProject].executionScenarios[scenario];</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    this.animateExecutionSteps(steps);</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>animateExecutionSteps(steps) {</span></span>
+<span class="line"><span>    const timeline = document.getElementById('execution-timeline');</span></span>
+<span class="line"><span>    timeline.innerHTML = '';</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    steps.forEach((step, index) => {</span></span>
+<span class="line"><span>        setTimeout(() => {</span></span>
+<span class="line"><span>            const stepElement = this.createExecutionStep(step);</span></span>
+<span class="line"><span>            timeline.appendChild(stepElement);</span></span>
+<span class="line"><span>            </span></span>
+<span class="line"><span>            // 更新调用栈</span></span>
+<span class="line"><span>            this.updateCallStack(step);</span></span>
+<span class="line"><span>            </span></span>
+<span class="line"><span>            // 更新总时间</span></span>
+<span class="line"><span>            document.getElementById('total-time').textContent = `${step.time}ms`;</span></span>
+<span class="line"><span>        }, index * 800);</span></span>
+<span class="line"><span>    });</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>createExecutionStep(step) {</span></span>
+<span class="line"><span>    const stepDiv = document.createElement('div');</span></span>
+<span class="line"><span>    stepDiv.className = 'execution-step';</span></span>
+<span class="line"><span>    stepDiv.innerHTML = `</span></span>
+<span class="line"><span>        &#x3C;div class="step-marker">${step.step}&#x3C;/div></span></span>
+<span class="line"><span>        &#x3C;div class="step-content"></span></span>
+<span class="line"><span>            &#x3C;h5>${step.method}&#x3C;/h5></span></span>
+<span class="line"><span>            &#x3C;p>${step.description}&#x3C;/p></span></span>
+<span class="line"><span>            &#x3C;span class="step-time">${step.time}ms&#x3C;/span></span></span>
+<span class="line"><span>        &#x3C;/div></span></span>
+<span class="line"><span>    `;</span></span>
+<span class="line"><span>    return stepDiv;</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>updateCallStack(step) {</span></span>
+<span class="line"><span>    const stackFrames = document.getElementById('call-stack-frames');</span></span>
+<span class="line"><span>    const frame = document.createElement('div');</span></span>
+<span class="line"><span>    frame.className = 'stack-frame';</span></span>
+<span class="line"><span>    frame.innerHTML = `</span></span>
+<span class="line"><span>        &#x3C;span class="frame-method">${step.method}&#x3C;/span></span></span>
+<span class="line"><span>        &#x3C;span class="frame-line">line ${step.step * 10 + 5}&#x3C;/span></span></span>
+<span class="line"><span>    `;</span></span>
+<span class="line"><span>    stackFrames.insertBefore(frame, stackFrames.firstChild);</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>showToast(message) {</span></span>
+<span class="line"><span>    const toast = document.createElement('div');</span></span>
+<span class="line"><span>    toast.className = 'toast';</span></span>
+<span class="line"><span>    toast.textContent = message;</span></span>
+<span class="line"><span>    document.body.appendChild(toast);</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    setTimeout(() => {</span></span>
+<span class="line"><span>        toast.classList.add('show');</span></span>
+<span class="line"><span>    }, 100);</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    setTimeout(() => {</span></span>
+<span class="line"><span>        toast.remove();</span></span>
+<span class="line"><span>    }, 3000);</span></span>
+<span class="line"><span>}</span></span>
+<p>}</p>
+<p>// 初始化源码分析器
+document.addEventListener(‘DOMContentLoaded’, () => {
+new SourceCodeAnalyzer();
+});
+</p></div></div>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

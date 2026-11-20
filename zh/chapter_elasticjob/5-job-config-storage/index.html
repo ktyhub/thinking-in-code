@@ -1,0 +1,135 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**调度作业的配置是如何在分布式场景下存储的？** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_elasticjob/5-job-config-storage/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_elasticjob/5-job-config-storage"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_elasticjob/5-job-config-storage/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_elasticjob/5-job-config-storage"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**调度作业的配置是如何在分布式场景下存储的？** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_elasticjob/5-job-config-storage/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_elasticjob/5-job-config-storage/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>elasticjob</h3> <ul> <li> <a href="/zh/chapter_elasticjob/1-introduce" class="lv0" title="**分布式弹性调度系统的简介**"> **分布式弹性调度系统的简介** </a> </li><li> <a href="/zh/chapter_elasticjob/2-reg" class="lv0" title="**注册中心的设计原理**"> **注册中心的设计原理** </a> </li><li> <a href="/zh/chapter_elasticjob/3-job-config" class="lv0" title="**Builder建造者设计模式构造复杂的作业配置**"> **Builder建造者设计模式构造复杂的作业配置** </a> </li><li> <a href="/zh/chapter_elasticjob/4-job-template" class="lv0" title="**调度作业模版类型设计**"> **调度作业模版类型设计** </a> </li><li> <a href="/zh/chapter_elasticjob/5-job-config-storage" class="lv0" aria-current="page" title="**调度作业的配置是如何在分布式场景下存储的？**"> **调度作业的配置是如何在分布式场景下存储的？** </a> </li><li> <a href="/zh/chapter_elasticjob/6-job-registry" class="lv0" title="**线程安全的单例模式设计全局作业注册表JobRegistry**"> **线程安全的单例模式设计全局作业注册表JobRegistry** </a> </li><li> <a href="/zh/chapter_elasticjob/7-quartz" class="lv0" title="**使用Quartz为每个作业创建单机执行的调度器对象**"> **使用Quartz为每个作业创建单机执行的调度器对象** </a> </li><li> <a href="/zh/chapter_elasticjob/8-job-life" class="lv0" title="调度作业启动时的生命周期"> 调度作业启动时的生命周期 </a> </li><li> <a href="/zh/chapter_elasticjob/9-listener" class="lv0" title="**调度作业的监听器大全**"> **调度作业的监听器大全** </a> </li><li> <a href="/zh/chapter_elasticjob/10-leader-latch" class="lv0" title="**基于Zookeeper的分布式锁实现 选举 作业主节点**"> **基于Zookeeper的分布式锁实现 选举 作业主节点** </a> </li><li> <a href="/zh/chapter_elasticjob/11-server-instance" class="lv0" title="**调度作业的服务器IP和进程信息的持久化是如何设计的?**"> **调度作业的服务器IP和进程信息的持久化是如何设计的?** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_elasticjob">elasticjob</a><span class="sep">/</span><span>**调度作业的配置是如何在分布式场景下存储的？**</span> </nav> <div class="prose">  <h1 id="调度作业的配置是如何在分布式场景下存储的"><strong>调度作业的配置是如何在分布式场景下存储的？</strong></h1>
+<h2 id="作业调度器初始化示例代码"><strong>作业调度器初始化示例代码</strong></h2>
+<p>在前面文章中我们使用Java例子介绍了一个调度程序的开发过程，在注册中心与作业配置信息初始化完毕之后，最后一步就是初始化作业调度器来启动作业，先来回顾下使用Java代码自行创建的作业调度器对象的初始化代码，如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">  JobScheduler jobScheduler </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> JobScheduler</span><span style="color:#24292E">(zookeeperRegistryCenter, liteJobConfiguration);</span></span>
+<span class="line"><span style="color:#24292E">  jobScheduler.</span><span style="color:#6F42C1">init</span><span style="color:#24292E">(); </span></span></code></pre>
+<h2 id="init初始化方法"><strong>init初始化方法</strong></h2>
+<h3 id="init源码"><strong>init源码</strong></h3>
+<p>init就是调度器初始化的开始, 我们先看一下init的源码</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D">* 初始化作业.</span></span>
+<span class="line"><span style="color:#6A737D">*/</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> init</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">    //刷新配置</span></span>
+<span class="line"><span style="color:#24292E">    LiteJobConfiguration liteJobConfigFromRegCenter </span><span style="color:#D73A49">=</span><span style="color:#24292E"> schedulerFacade.</span><span style="color:#6F42C1">updateJobConfiguration</span><span style="color:#24292E">(liteJobConfig);</span></span>
+<span class="line"><span style="color:#6A737D">    //设置分片总数</span></span>
+<span class="line"><span style="color:#24292E">    JobRegistry.</span><span style="color:#6F42C1">getInstance</span><span style="color:#24292E">().</span><span style="color:#6F42C1">setCurrentShardingTotalCount</span><span style="color:#24292E">(liteJobConfigFromRegCenter.</span><span style="color:#6F42C1">getJobName</span><span style="color:#24292E">(), </span></span>
+<span class="line"><span style="color:#24292E">            liteJobConfigFromRegCenter.</span><span style="color:#6F42C1">getTypeConfig</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getCoreConfig</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getShardingTotalCount</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">    //创建作业调度控制器</span></span>
+<span class="line"><span style="color:#24292E">    JobScheduleController jobScheduleController </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> JobScheduleController</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6F42C1">            createScheduler</span><span style="color:#24292E">(), </span><span style="color:#6F42C1">createJobDetail</span><span style="color:#24292E">(liteJobConfigFromRegCenter.</span><span style="color:#6F42C1">getTypeConfig</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getJobClass</span><span style="color:#24292E">()), </span></span>
+<span class="line"><span style="color:#24292E">            liteJobConfigFromRegCenter.</span><span style="color:#6F42C1">getJobName</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">    //注册作业</span></span>
+<span class="line"><span style="color:#24292E">    JobRegistry.</span><span style="color:#6F42C1">getInstance</span><span style="color:#24292E">().</span><span style="color:#6F42C1">registerJob</span><span style="color:#24292E">(liteJobConfigFromRegCenter.</span><span style="color:#6F42C1">getJobName</span><span style="color:#24292E">(), jobScheduleController, regCenter);</span></span>
+<span class="line"><span style="color:#6A737D">    //注册启动信息</span></span>
+<span class="line"><span style="color:#24292E">    schedulerFacade.</span><span style="color:#6F42C1">registerStartUpInfo</span><span style="color:#24292E">(</span><span style="color:#D73A49">!</span><span style="color:#24292E">liteJobConfigFromRegCenter.</span><span style="color:#6F42C1">isDisabled</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">    //调度作业启动</span></span>
+<span class="line"><span style="color:#24292E">    jobScheduleController.</span><span style="color:#6F42C1">scheduleJob</span><span style="color:#24292E">(liteJobConfigFromRegCenter.</span><span style="color:#6F42C1">getTypeConfig</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getCoreConfig</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getCron</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">} </span></span></code></pre>
+<p>初始化过程，先创建JobScheduler对象，作业调度器JobScheduler对象目前只有一个公共方法init()用来初始化作业。我们调用init()方法开始进行作业的初始化，接下来我们先看下源码初始化方法做了什么？</p>
+<p>初始化作业JobScheduler调度器对象主要做了如下的内容：</p>
+<ul>
+<li>
+<p><strong>刷新</strong> 作业配置</p>
+</li>
+<li>
+<p>向作业 <strong>注册表</strong> 中 <strong>设置</strong> 当前 <strong>分片总数</strong></p>
+</li>
+<li>
+<p>初始化作业 <strong>调度控制器</strong></p>
+</li>
+<li>
+<p>作业调度控制器和注册中心对象注册到作业注册表</p>
+</li>
+<li>
+<p>调度 <strong>启动信息初始化</strong></p>
+</li>
+<li>
+<p>调度 <strong>作业启动</strong></p>
+</li>
+</ul>
+<h2 id="分布式环境下调度配置持久化原理">分布式环境下调度配置持久化原理</h2>
+<h3 id="配置加载持久化说明"><strong>配置加载持久化说明</strong></h3>
+<p>在前面的章节中我们了解到使用调度程序需要初始化调度作业的核心配置，类型配置，和轻量级作业配置，那如果同一个系统下的 <strong>同一个调度作业</strong> 在 <strong>不同机器上</strong> 部署的时候 <strong>配置信息</strong> 是不同的话，那这个作业在执行过程中，触发时间，作业分片，失效转移等等功能执行时候，无法确定 <strong>以哪个节点上的配置信息为准</strong> 那这不是就乱了么？</p>
+<p>另外代码中加载的配置信息在运行时如何进行 <strong>配置动态修改</strong> ，配置信息运行时进行了修改后如何持久化，这些因素都是要考虑进来的。</p>
+<p>接下来我们就来看下借助Zookeeper进行 <strong>分布式环境下的配置管理</strong> 。</p>
+<p>先根据作业配置信息将本地配置持久化到Zookeeper，然后再从Zookeeper上同步最新配置到本地代码如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D"> * 更新作业配置.</span></span>
+<span class="line"><span style="color:#6A737D"> *</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> liteJobConfig</span><span style="color:#6A737D"> 作业配置</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@return</span><span style="color:#6A737D"> 更新后的作业配置</span></span>
+<span class="line"><span style="color:#6A737D"> */</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#24292E"> LiteJobConfiguration </span><span style="color:#6F42C1">updateJobConfiguration</span><span style="color:#24292E">(</span><span style="color:#D73A49">final</span><span style="color:#24292E"> LiteJobConfiguration liteJobConfig) {</span></span>
+<span class="line"><span style="color:#24292E">    configService.</span><span style="color:#6F42C1">persist</span><span style="color:#24292E">(liteJobConfig);</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> configService.</span><span style="color:#6F42C1">load</span><span style="color:#24292E">(</span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="持久化作业配置到zookeeper"><strong>持久化作业配置到Zookeeper</strong></h3>
+<p>这里先检查本地作业实现类型与Zookeeper上是否一致 <strong>如果不一致则抛出异常</strong> ，防止本地修改了类型导致触发异常。</p>
+<p>然后判断 **配置信息不存在 ** 或者overwrite配置为true则将配置信息持久化到Zookeeper的config节点下。</p>
+<p>在这里我们需要关注下 <strong>overwrite</strong> 配置信息</p>
+<ul>
+<li><strong>配置为false时：</strong> 可以实现初次配置持久化到Zookeeper后期配置以Zookeeper上的为准，后期动态修改Zookeeper上的配置信息后均可持久生效，</li>
+<li><strong>配置为true时：</strong> 每次本地启动时候本地配置会覆盖Zookeeper上配置信息运行时修改的配置也就无法长久生效。先根据作业配置信息将本地配置持久化到Zookeeper代码如下：</li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D"> * configService类 </span></span>
+<span class="line"><span style="color:#6A737D"> * 持久化分布式作业配置信息. 到zookeeper</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> liteJobConfig</span><span style="color:#6A737D"> 作业配置</span></span>
+<span class="line"><span style="color:#6A737D"> */</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> persist</span><span style="color:#24292E">(</span><span style="color:#D73A49">final</span><span style="color:#24292E"> LiteJobConfiguration liteJobConfig) {</span></span>
+<span class="line"><span style="color:#6F42C1">    checkConflictJob</span><span style="color:#24292E">(liteJobConfig);</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">jobNodeStorage.</span><span style="color:#6F42C1">isJobNodeExisted</span><span style="color:#24292E">(ConfigurationNode.ROOT) </span><span style="color:#D73A49">||</span><span style="color:#24292E"> liteJobConfig.</span><span style="color:#6F42C1">isOverwrite</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">        jobNodeStorage.</span><span style="color:#6F42C1">replaceJobNode</span><span style="color:#24292E">(ConfigurationNode.ROOT, LiteJobConfigurationGsonFactory.</span><span style="color:#6F42C1">toJson</span><span style="color:#24292E">(liteJobConfig));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="加载zookeeper配置信息到本地内存"><strong>加载Zookeeper配置信息到本地内存</strong></h3>
+<p>一般情况下当overwrite设置为false时候Zookeeper上的配置信息可能会与本地配置不同，这个时候可以读取Zookeeper上已经持久化过的配置到本地这样就可以保证本地配置为最新配置。同步Zookeeper上的配置信息到本地代码如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D"> * 读取作业配置到内存.</span></span>
+<span class="line"><span style="color:#6A737D"> * </span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> fromCache</span><span style="color:#6A737D"> 是否从缓存中读取</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@return</span><span style="color:#6A737D"> 作业配置</span></span>
+<span class="line"><span style="color:#6A737D"> */</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#24292E"> LiteJobConfiguration </span><span style="color:#6F42C1">load</span><span style="color:#24292E">(</span><span style="color:#D73A49">final</span><span style="color:#D73A49"> boolean</span><span style="color:#24292E"> fromCache) {</span></span>
+<span class="line"><span style="color:#24292E">    String result;</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (fromCache) {</span></span>
+<span class="line"><span style="color:#24292E">        result </span><span style="color:#D73A49">=</span><span style="color:#24292E"> jobNodeStorage.</span><span style="color:#6F42C1">getJobNodeData</span><span style="color:#24292E">(ConfigurationNode.ROOT);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">null</span><span style="color:#D73A49"> ==</span><span style="color:#24292E"> result) {</span></span>
+<span class="line"><span style="color:#24292E">            result </span><span style="color:#D73A49">=</span><span style="color:#24292E"> jobNodeStorage.</span><span style="color:#6F42C1">getJobNodeDataDirectly</span><span style="color:#24292E">(ConfigurationNode.ROOT);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        result </span><span style="color:#D73A49">=</span><span style="color:#24292E"> jobNodeStorage.</span><span style="color:#6F42C1">getJobNodeDataDirectly</span><span style="color:#24292E">(ConfigurationNode.ROOT);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> LiteJobConfigurationGsonFactory.</span><span style="color:#6F42C1">fromJson</span><span style="color:#24292E">(result);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="配置加载流程"><strong>配置加载流程</strong></h3>
+<p>了解完配置刷新的整个流程我们可以通过流程图来捋下思路：</p>
+<p><img src="/img/chapter_elasticjob/4-3-job-config-flow.png" alt="在这里插入图片描述"></p>
+<p>图6.1 刷新配置</p>
+<ul>
+<li><strong>配置检测：</strong> 主要是将本地最新配置与Zookeeper节点/{jobName}/config节点配置进行同步刷新，刷新先检测本地配置中的执行类配置和Zookeeper中的配置执行类是否一致不一致则直接抛出异常退出，</li>
+<li><strong>配置注册：</strong> 然后如果是第一次进行注册则直接将本地配置持久化到Zookeeper节点/{jobName}/config中，</li>
+<li><strong>配置覆盖：</strong> 如果是非首次注册则具体是否刷新配置要看传递的属性overwrite，如果overwrite配置为true则每次配置都会刷新，</li>
+<li><strong>配置规则：</strong> 作业最终配置是由最后一个启动的作业节点来决定的，如果设置为false， 则每次启动不会刷新配置具体配置要看Zookeeper节点上的最新配置，</li>
+<li><strong>同步配置：</strong> 配置刷新之后就需要将Zookeeper最新的配置同步到内存一份来保证内存中是最新的配置， 后期会使用这个LiteJobConfiguration类型轻量级作业配置来做其他初始化。</li>
+</ul>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**调度作业模版类型设计** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_elasticjob/4-job-template/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_elasticjob/4-job-template"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_elasticjob/4-job-template/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_elasticjob/4-job-template"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**调度作业模版类型设计** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_elasticjob/4-job-template/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_elasticjob/4-job-template/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>elasticjob</h3> <ul> <li> <a href="/zh/chapter_elasticjob/1-introduce" class="lv0" title="**分布式弹性调度系统的简介**"> **分布式弹性调度系统的简介** </a> </li><li> <a href="/zh/chapter_elasticjob/2-reg" class="lv0" title="**注册中心的设计原理**"> **注册中心的设计原理** </a> </li><li> <a href="/zh/chapter_elasticjob/3-job-config" class="lv0" title="**Builder建造者设计模式构造复杂的作业配置**"> **Builder建造者设计模式构造复杂的作业配置** </a> </li><li> <a href="/zh/chapter_elasticjob/4-job-template" class="lv0" aria-current="page" title="**调度作业模版类型设计**"> **调度作业模版类型设计** </a> </li><li> <a href="/zh/chapter_elasticjob/5-job-config-storage" class="lv0" title="**调度作业的配置是如何在分布式场景下存储的？**"> **调度作业的配置是如何在分布式场景下存储的？** </a> </li><li> <a href="/zh/chapter_elasticjob/6-job-registry" class="lv0" title="**线程安全的单例模式设计全局作业注册表JobRegistry**"> **线程安全的单例模式设计全局作业注册表JobRegistry** </a> </li><li> <a href="/zh/chapter_elasticjob/7-quartz" class="lv0" title="**使用Quartz为每个作业创建单机执行的调度器对象**"> **使用Quartz为每个作业创建单机执行的调度器对象** </a> </li><li> <a href="/zh/chapter_elasticjob/8-job-life" class="lv0" title="调度作业启动时的生命周期"> 调度作业启动时的生命周期 </a> </li><li> <a href="/zh/chapter_elasticjob/9-listener" class="lv0" title="**调度作业的监听器大全**"> **调度作业的监听器大全** </a> </li><li> <a href="/zh/chapter_elasticjob/10-leader-latch" class="lv0" title="**基于Zookeeper的分布式锁实现 选举 作业主节点**"> **基于Zookeeper的分布式锁实现 选举 作业主节点** </a> </li><li> <a href="/zh/chapter_elasticjob/11-server-instance" class="lv0" title="**调度作业的服务器IP和进程信息的持久化是如何设计的?**"> **调度作业的服务器IP和进程信息的持久化是如何设计的?** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_elasticjob">elasticjob</a><span class="sep">/</span><span>**调度作业模版类型设计**</span> </nav> <div class="prose">  <h1 id="调度作业模版类型设计"><strong>调度作业模版类型设计</strong></h1>
+<h2 id="调度作业的类型"><strong>调度作业的类型</strong></h2>
+<p>调度作业是定时调度的核心，调度程序整个生命周期主要是围绕调度作业来说的，从一开始的调度作业配置初始化，调度作业触发，调度作业治理，调度作业监控等等，调度程序都是围绕调度作业来说的，在我们开发的业务场景中可能会有很多相似的场景，可以通过定制作业模版来简化相同类型作业的开发工作，Elastic-Job系统中提供了作业类型JobType枚举来标记作业的类型，目前一共有三种作业枚举类型，分别是：</p>
+<ul>
+<li>
+<p>SIMPLE（简单作业）</p>
+</li>
+<li>
+<p>DATAFLOW（数据流）</p>
+</li>
+<li>
+<p>SCRIPT（脚本）</p>
+</li>
+</ul>
+<p>这三种作业类型分别对应了前面提到的三种作业配置：</p>
+<ul>
+<li>SimpleJobConfiguration</li>
+<li>DataflowJobConfiguration</li>
+<li>ScriptJobConfiguration</li>
+</ul>
+<p>每种作业配置中都会有一个jobClass属性用来标示作业的执行类，三种作业类型分别对应了三种弹性作业ElasticJob接口的子接口：</p>
+<ul>
+<li>
+<p>SimpleJob</p>
+</li>
+<li>
+<p>DataflowJob</p>
+</li>
+<li>
+<p>ScriptJob</p>
+</li>
+</ul>
+<p>使用不同的作业类型可以实现不同的功能，当然我们也可以根据需求来实现接口类型ElasticJob，来根据业务定制化开发不同的作业模版，来实现具体的作业，现在我们开始看下系统是怎么设计作业相关结构的。</p>
+<p><img src="/img/chapter_elasticjob/4-job-type.png" alt="图片"></p>
+<p>图5.1 作业类型</p>
+<p>可以看到所有作业的设计顶层接口都为弹性作业接口ElasticJob，系统为我们提供的SimpleJob，DataflowJob，ScriptJob均为接口类型，我们可以实现不同作业接口灵活配置使用。</p>
+<p>有了不同类型的作业，那不同类型的作业的执行过程是封装在哪里呢，在Elastic-Job中将作业的执行过程封装在AbstractElasticJobExecutor模版类中，而我们不同的作业则分别对应不同的作业执行器中如下所示：</p>
+<ul>
+<li>
+<p>SimpleJobExecutor</p>
+</li>
+<li>
+<p>DataflowJobExecutor</p>
+</li>
+<li>
+<p>ScriptJobExecutor</p>
+</li>
+</ul>
+<p>作业执行器是根据业务逻辑来高度定制化的，当然我们也可以根据需求通过继承AbstractElasticJobExecutor模版来将需要的业务逻辑封装在作业执行器中，来定制化作业。</p>
+<p><img src="/img/chapter_elasticjob/4-2-job-executor.png" alt="在这里插入图片描述">
+图5.2 作业执行器类型</p>
+<p>这里可以看到顶层的作业执行器为抽象类型，在调度触发过程中，作业的执行核心逻辑都会被封装到这个AbstractElasticJobExecutor类型的抽象模版中，后面我们会详细介绍，这里可以了解下我们不同种类型的作业都对应着一个作业执行器来帮我们封装定制化的业务执行。</p>
+<h3 id="elasticjob弹性作业接口"><strong>ElasticJob（弹性作业接口）</strong></h3>
+<p>本接口为顶层作业接口，未实现具体的方法主要用来标示弹性分布式作业。</p>
+<h3 id="simplejob简单类型作业接口"><strong>SimpleJob（简单类型作业接口）</strong></h3>
+<p>这个接口只有一个执行方法，参数为分片上下文，如果只需要调用方法执行作业则只实现本接口，使用执行方法即可。调用过程为SimpleJobExecutor执行器来触发。</p>
+<table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>execute(shardingContext:ShardingContext):void</td>
+<td>作业执行方法，参数为分片上下文。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dataflowjob数据流类型作业接口"><strong>DataflowJob（数据流类型作业接口）</strong></h3>
+<p>这个接口为数据流处理使用，一共提供了两个方法：</p>
+<ul>
+<li>fetchData用来获取数据</li>
+<li>processData用来处理数据</li>
+</ul>
+<p>具体配置对应 <strong>DataflowJobConfiguration</strong></p>
+<p>在DataflowJobConfiguration中属性 <strong>streamingProcess</strong> 为是否流式处理数据配置.如果流式处理数据为true，则 <strong>fetchData</strong> 不返回空结果将持续执行作业，如果非流式处理数据即配置为false，则处理数据完成后作业结束.后面我们会通过介绍DataflowJobExecutor来详细介绍调用实现。</p>
+<table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>fetchData(shardingContext:ShardingContext):List<t></t></td>
+<td>获取待处理数据</td>
+</tr>
+<tr>
+<td>processData(shardingContext:ShardingContext,data:List<t>):void</t></td>
+<td>处理数据</td>
+</tr>
+</tbody>
+</table>
+<h3 id="scriptjob脚本类型作业接口"><strong>ScriptJob（脚本类型作业接口）</strong></h3>
+<p>本接口无任何扩展方法，在前面我们看到的ScriptJobConfiguration中作业类型jobType 属性值为 JobType.SCRIPT，这个类中的作业执行类jobClass对应ScriptJob.class.getCanonicalName()，也就是说脚本作业的触发类型已经确定了，另外还有个属性为作业执行脚本scriptCommandLine，当我们使用脚本执行的时候可以将命令行脚本配置到这个变量来保存即可，真正在脚本作业执行是由ScriptJobExecutor脚本作业执行器来执行的，在触发作业的时候会直接调用scriptCommandLine字符串脚本来执行对应脚本。</p>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

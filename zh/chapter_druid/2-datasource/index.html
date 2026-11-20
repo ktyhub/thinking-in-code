@@ -1,0 +1,488 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>2-DruidDataSource数据源简介 — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_druid/2-datasource/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_druid/2-datasource"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_druid/2-datasource/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_druid/2-datasource"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="2-DruidDataSource数据源简介 — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_druid/2-datasource/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_druid/2-datasource/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>druid</h3> <ul> <li> <a href="/zh/chapter_druid/1-sample" class="lv0" title="1-从一个Demo出发"> 1-从一个Demo出发 </a> </li><li> <a href="/zh/chapter_druid/2-datasource" class="lv0" aria-current="page" title="2-DruidDataSource数据源简介"> 2-DruidDataSource数据源简介 </a> </li><li> <a href="/zh/chapter_druid/3-before-connection" class="lv0" title="3-java.sql.Connection连接数据库"> 3-java.sql.Connection连接数据库 </a> </li><li> <a href="/zh/chapter_druid/4-db-type" class="lv0" title="4-DruidDataSource初始化时的神操作之自动解析DbType与驱动类"> 4-DruidDataSource初始化时的神操作之自动解析DbType与驱动类 </a> </li><li> <a href="/zh/chapter_druid/5-log-stats-thread" class="lv0" title="5-DruidDataSource监控信息定期打印日志线程LogStatsThread"> 5-DruidDataSource监控信息定期打印日志线程LogStatsThread </a> </li><li> <a href="/zh/chapter_druid/6-create-and-start-creator-thread" class="lv0" title="6-DruidDataSource物理连接创建线程createAndStartCreatorThread"> 6-DruidDataSource物理连接创建线程createAndStartCreatorThread </a> </li><li> <a href="/zh/chapter_druid/7-driver-connect" class="lv0" title="7 mysql-connector-java驱动包内部的创建数据库连接对象的过程"> 7 mysql-connector-java驱动包内部的创建数据库连接对象的过程 </a> </li><li> <a href="/zh/chapter_druid/8-validate-connection" class="lv0" title="8 数据库连接的首次验证validateConnection方法"> 8 数据库连接的首次验证validateConnection方法 </a> </li><li> <a href="/zh/chapter_druid/9-druid-destroy" class="lv0" title="9-Druid销毁线程"> 9-Druid销毁线程 </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_druid">druid</a><span class="sep">/</span><span>2-DruidDataSource数据源简介</span> </nav> <div class="prose">  <h1 id="2-druiddatasource数据源简介">2-DruidDataSource数据源简介</h1>
+<h2 id="21-简介">2.1 简介</h2>
+<p>前面我们的示例代码创建了数据源对象并为它设置了基本参数这里可以看回顾一下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">		DruidDataSource dataSource </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> DruidDataSource</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        dataSource.</span><span style="color:#6F42C1">setUrl</span><span style="color:#24292E">(</span><span style="color:#032F62">"jdbc:mysql://localhost:3306/druid?allowMultiQueries=true"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        dataSource.</span><span style="color:#6F42C1">setUsername</span><span style="color:#24292E">(</span><span style="color:#032F62">"root"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        dataSource.</span><span style="color:#6F42C1">setPassword</span><span style="color:#24292E">(</span><span style="color:#032F62">"123456"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        dataSource.</span><span style="color:#6F42C1">setFilters</span><span style="color:#24292E">(</span><span style="color:#032F62">"log4j"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        dataSource.</span><span style="color:#6F42C1">setValidationQuery</span><span style="color:#24292E">(</span><span style="color:#032F62">"SELECT 1"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        dataSource.</span><span style="color:#6F42C1">setTestOnBorrow</span><span style="color:#24292E">(</span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        dataSource.</span><span style="color:#6F42C1">setTestWhileIdle</span><span style="color:#24292E">(</span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span></code></pre>
+<p>关于DruidDataSource这个类型在官方文档与源码中都未找到任何的注释，那我们暂时就称它为Druid数据源吧，数据源封装了需要连接的数据库的基本信息，我们先来看下它的类型继承关系，然后再看它的属性：</p>
+<p><img src="/img/chapter_druid/2-druid-data-source.png" alt="2-druid-data-source.png"></p>
+<h2 id="22-类型介绍">2.2 类型介绍</h2>
+<p>在详细说明DruidDataSource类型之前我们先来看相关类型有什么作用，不论是继承还是实现的关系最终DruidDataSource都会具备父类的一些特征与行为，那就来看下相关父类型的作用：</p>
+<ul>
+<li>
+<p>DruidDataSource
+Druid的数据源类型</p>
+</li>
+<li>
+<p>DruidAbstractDataSource
+Druid抽象的数据源类型</p>
+</li>
+<li>
+<p>DruidDataSourceMBean
+接口名必须以MBean为后缀结尾的MBean类型 用来注册MBean到MBeanServer使用，供JMX访问</p>
+</li>
+<li>
+<p>DruidAbstractDataSourceMBean
+抽象的MBean</p>
+</li>
+<li>
+<p>MBeanRegistration
+可以由MBean实现，以便在从MBean服务器注册或注销之前和之后执行操作。MBean还可以实现此接口，以便在该MBean服务器中获取对MBean服务器和/或其名称的引用。</p>
+</li>
+<li>
+<p>ManagedDataSource 可管理的数据源接口主要提供启用/禁用功能的接口
+ConnectionPoolDataSource PooledConnection对象的工厂。实现此接口的对象通常将向基于Java的命名服务注册™ 命名和目录接口（JNDI）</p>
+</li>
+<li>
+<p>WrapperAdapter
+包装适配器</p>
+</li>
+<li>
+<p>Wrapper<br>
+JDBC类的接口，当所讨论的实例实际上是代理类时，它提供了检索委托实例的能力。包装器模式被许多JDBC驱动程序实现所采用，以提供超出特定于数据源的传统JDBC API的扩展。开发人员可能希望获得对这些资源的访问权，这些资源被包装（委托）为代表实际资源的代理类实例。此接口描述了一种标准机制，用于访问这些由其代理表示的包装资源，以允许直接访问资源委托。</p>
+</li>
+<li>
+<p>DataSource
+<strong>用于连接到此数据源对象表示的物理数据源的工厂</strong> 。作为DriverManager功能的替代，数据源对象是获取连接的首选方法。实现DataSource接口的对象通常将注册到基于Java的命名服务中™ 命名和目录（JNDI）API。
+<strong>数据源接口由驱动程序供应商实现</strong> 。有三种类型的实现：</p>
+<ul>
+<li>基本实现—生成标准连接对象</li>
+<li>连接池实现——生成将自动参与连接池的连接对象。此实现与中间层连接池管理器配合使用。</li>
+<li>分布式事务实现——生成可用于分布式事务的连接对象，并且几乎总是参与连接池。此实现与中间层事务管理器配合使用，并且几乎总是与连接池管理器配合使用。</li>
+</ul>
+<p>DataSource数据源对象具有可在必要时修改的属性。例如，如果将数据源移动到其他服务器，则可以更改服务器的属性。好处是，因为数据源的属性可以更改，所以访问该数据源的任何代码都不需要更改。</p>
+<p>DataSource通过数据源对象访问的驱动程序不会向DriverManager注册自身。相反，通过查找操作检索数据源对象，然后用于创建连接对象。对于基本实现，通过数据源对象获得的连接与通过DriverManager工具获得的连接相同。
+DataSource的实现必须包含一个公共的无参数构造函数。</p>
+</li>
+<li>
+<p>CommonDataSource 定义DataSource、XADataSource和ConnectionPoolDataSource之间常用方法的接口。</p>
+</li>
+<li>
+<p>DataSourceProxy  数据源代理类型</p>
+</li>
+</ul>
+<h2 id="23-druiddatasource的构造器执行过程">2.3 DruidDataSource的构造器执行过程</h2>
+<p>把思路拉回到Demo例子，我们通过调用无参构造器来创建DruidDataSource类型对象，接下来看下这个构造器的执行过程如下所示：
+Druid无参构造器：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">  public</span><span style="color:#6F42C1"> DruidDataSource</span><span style="color:#24292E">(){</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">(</span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>重载调用的构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> public</span><span style="color:#6F42C1"> DruidDataSource</span><span style="color:#24292E">(</span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> fairLock){</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">(fairLock);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">        configFromPropety</span><span style="color:#24292E">(System.</span><span style="color:#6F42C1">getProperties</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span></code></pre>
+<p>DruidDataSource的父类型DruidAbstractDataSource类型的构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">  public</span><span style="color:#6F42C1"> DruidAbstractDataSource</span><span style="color:#24292E">(</span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> lockFair){</span></span>
+<span class="line"><span style="color:#24292E">        lock </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ReentrantLock</span><span style="color:#24292E">(lockFair);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        notEmpty </span><span style="color:#D73A49">=</span><span style="color:#24292E"> lock.</span><span style="color:#6F42C1">newCondition</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        empty </span><span style="color:#D73A49">=</span><span style="color:#24292E"> lock.</span><span style="color:#6F42C1">newCondition</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span></code></pre>
+<p>DruidDataSource的configFromPropety(System.getProperties()); 从JVM参数中读取配置、
+这个方法会读取一些配置信息，这里先来看下会从JVM参数中读取哪些配置信息，后续详细来看</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> configFromPropety</span><span style="color:#24292E">(Properties properties) {</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">           //配置这个属性的意义在于，如果存在多个数据源，监控的时候可以通过名字来区分开来。如果没有配置，将会生成一个名字</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.name"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setName</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">           //连接数据库的url，不同数据库不一样</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.url"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setUrl</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">            //连接数据库的用户名</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.username"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setUsername</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">            //连接数据库的密码。如果你不希望密码直接写在配置文件中，可以使用ConfigFilter</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.password"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setPassword</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">        //建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。</span></span>
+<span class="line"><span style="color:#24292E">            Boolean value </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getBoolean</span><span style="color:#24292E">(properties, </span><span style="color:#032F62">"druid.testWhileIdle"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.testWhileIdle </span><span style="color:#D73A49">=</span><span style="color:#24292E"> value;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">          //申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。</span></span>
+<span class="line"><span style="color:#24292E">            Boolean value </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getBoolean</span><span style="color:#24292E">(properties, </span><span style="color:#032F62">"druid.testOnBorrow"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.testOnBorrow </span><span style="color:#D73A49">=</span><span style="color:#24292E"> value;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">        //用来检测连接是否有效的sql，要求是一个查询语句，常用select 'x'。如果validationQuery为null，testOnBorrow、testOnReturn、testWhileIdle都不会起作用。</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.validationQuery"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setValidationQuery</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            Boolean value </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getBoolean</span><span style="color:#24292E">(properties, </span><span style="color:#032F62">"druid.useGlobalDataSourceStat"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setUseGlobalDataSourceStat</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            Boolean value </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getBoolean</span><span style="color:#24292E">(properties, </span><span style="color:#032F62">"druid.useGloalDataSourceStat"</span><span style="color:#24292E">); </span><span style="color:#6A737D">// compatible for early versions</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setUseGlobalDataSourceStat</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            Boolean value </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getBoolean</span><span style="color:#24292E">(properties, </span><span style="color:#032F62">"druid.asyncInit"</span><span style="color:#24292E">); </span><span style="color:#6A737D">// compatible for early versions</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setAsyncInit</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">        //属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有：</span></span>
+<span class="line"><span style="color:#6A737D">			//监控统计用的filter:stat</span></span>
+<span class="line"><span style="color:#6A737D">			//日志用的filter:log4j</span></span>
+<span class="line"><span style="color:#6A737D">			//防御sql注入的filter:wall</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.filters"</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setFilters</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (SQLException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"setFilters error"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">        //druid.timeBetweenLogStatsMillis</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(Constants.DRUID_TIME_BETWEEN_LOG_STATS_MILLIS);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    long</span><span style="color:#24292E"> value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Long.</span><span style="color:#6F42C1">parseLong</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setTimeBetweenLogStatsMillis</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NumberFormatException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"illegal property '"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> Constants.DRUID_TIME_BETWEEN_LOG_STATS_MILLIS </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "'"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">        //druid.stat.sql.MaxSize</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(Constants.DRUID_STAT_SQL_MAX_SIZE);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    int</span><span style="color:#24292E"> value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (dataSourceStat </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                        dataSourceStat.</span><span style="color:#6F42C1">setMaxSqlSize</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NumberFormatException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"illegal property '"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> Constants.DRUID_STAT_SQL_MAX_SIZE </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "'"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            Boolean value </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getBoolean</span><span style="color:#24292E">(properties, </span><span style="color:#032F62">"druid.clearFiltersEnable"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setClearFiltersEnable</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            Boolean value </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getBoolean</span><span style="color:#24292E">(properties, </span><span style="color:#032F62">"druid.resetStatEnable"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setResetStatEnable</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.notFullTimeoutRetryCount"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    int</span><span style="color:#24292E"> value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setNotFullTimeoutRetryCount</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NumberFormatException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"illegal property 'druid.notFullTimeoutRetryCount'"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">        //有两个含义：</span></span>
+<span class="line"><span style="color:#6A737D">			//1) Destroy线程会检测连接的间隔时间，如果连接空闲时间大于等于minEvictableIdleTimeMillis则关闭物理连接。</span></span>
+<span class="line"><span style="color:#6A737D">			//2) testWhileIdle的判断依据，详细看testWhileIdle属性的说明</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.timeBetweenEvictionRunsMillis"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    long</span><span style="color:#24292E"> value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Long.</span><span style="color:#6F42C1">parseLong</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setTimeBetweenEvictionRunsMillis</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NumberFormatException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"illegal property 'druid.timeBetweenEvictionRunsMillis'"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.maxWaitThreadCount"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    int</span><span style="color:#24292E"> value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setMaxWaitThreadCount</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NumberFormatException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"illegal property 'druid.maxWaitThreadCount'"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">        //获取连接时最大等待时间，单位毫秒。配置了maxWait之后，缺省启用公平锁，并发效率会有所下降，如果需要可以通过配置useUnfairLock属性为true使用非公平锁。</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.maxWait"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    int</span><span style="color:#24292E"> value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setMaxWait</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NumberFormatException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"illegal property 'druid.maxWait'"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            Boolean value </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getBoolean</span><span style="color:#24292E">(properties, </span><span style="color:#032F62">"druid.failFast"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setFailFast</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.phyTimeoutMillis"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    long</span><span style="color:#24292E"> value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Long.</span><span style="color:#6F42C1">parseLong</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setPhyTimeoutMillis</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NumberFormatException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"illegal property 'druid.phyTimeoutMillis'"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.phyMaxUseCount"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    long</span><span style="color:#24292E"> value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Long.</span><span style="color:#6F42C1">parseLong</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setPhyMaxUseCount</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NumberFormatException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"illegal property 'druid.phyMaxUseCount'"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">        //连接保持空闲而不被驱逐的最小时间</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.minEvictableIdleTimeMillis"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    long</span><span style="color:#24292E"> value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Long.</span><span style="color:#6F42C1">parseLong</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setMinEvictableIdleTimeMillis</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NumberFormatException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"illegal property 'druid.minEvictableIdleTimeMillis'"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.maxEvictableIdleTimeMillis"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    long</span><span style="color:#24292E"> value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Long.</span><span style="color:#6F42C1">parseLong</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setMaxEvictableIdleTimeMillis</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NumberFormatException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"illegal property 'druid.maxEvictableIdleTimeMillis'"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">        //连接池中的minIdle数量以内的连接，空闲时间超过minEvictableIdleTimeMillis，则会执行keepAlive操作</span></span>
+<span class="line"><span style="color:#24292E">            Boolean value </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getBoolean</span><span style="color:#24292E">(properties, </span><span style="color:#032F62">"druid.keepAlive"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setKeepAlive</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.keepAliveBetweenTimeMillis"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    long</span><span style="color:#24292E"> value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Long.</span><span style="color:#6F42C1">parseLong</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setKeepAliveBetweenTimeMillis</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NumberFormatException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"illegal property 'druid.keepAliveBetweenTimeMillis'"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">        //是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql下建议关闭。</span></span>
+<span class="line"><span style="color:#24292E">            Boolean value </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getBoolean</span><span style="color:#24292E">(properties, </span><span style="color:#032F62">"druid.poolPreparedStatements"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setPoolPreparedStatements0</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            Boolean value </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getBoolean</span><span style="color:#24292E">(properties, </span><span style="color:#032F62">"druid.initVariants"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setInitVariants</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            Boolean value </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getBoolean</span><span style="color:#24292E">(properties, </span><span style="color:#032F62">"druid.initGlobalVariants"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setInitGlobalVariants</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">        //缺省启用公平锁，并发效率会有所下降，如果需要可以通过配置useUnfairLock属性为true使用非公平锁。</span></span>
+<span class="line"><span style="color:#24292E">            Boolean value </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getBoolean</span><span style="color:#24292E">(properties, </span><span style="color:#032F62">"druid.useUnfairLock"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setUseUnfairLock</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">        //这一项可配可不配，如果不配置druid会根据url自动识别dbType，然后选择相应的driverClassName</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.driverClassName"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setDriverClassName</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">        //初始化时建立物理连接的个数。初始化发生在显示调用init方法，或者第一次getConnection时</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.initialSize"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    int</span><span style="color:#24292E"> value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setInitialSize</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NumberFormatException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"illegal property 'druid.initialSize'"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">        ///最小连接池数量</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.minIdle"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    int</span><span style="color:#24292E"> value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setMinIdle</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NumberFormatException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"illegal property 'druid.minIdle'"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">        //最大连接池数量</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.maxActive"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    int</span><span style="color:#24292E"> value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setMaxActive</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NumberFormatException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"illegal property 'druid.maxActive'"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            Boolean value </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getBoolean</span><span style="color:#24292E">(properties, </span><span style="color:#032F62">"druid.killWhenSocketReadTimeout"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6F42C1">                setKillWhenSocketReadTimeout</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.connectProperties"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setConnectionProperties</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#6A737D">        //要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.maxPoolPreparedStatementPerConnectionSize"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    int</span><span style="color:#24292E"> value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(property);</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setMaxPoolPreparedStatementPerConnectionSize</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NumberFormatException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"illegal property 'druid.maxPoolPreparedStatementPerConnectionSize'"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.initConnectionSqls"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> property.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                    StringTokenizer tokenizer </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> StringTokenizer</span><span style="color:#24292E">(property, </span><span style="color:#032F62">";"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6F42C1">                    setConnectionInitSqls</span><span style="color:#24292E">(Collections.</span><span style="color:#6F42C1">list</span><span style="color:#24292E">(tokenizer));</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NumberFormatException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"illegal property 'druid.initConnectionSqls'"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> System.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.load.spifilter.skip"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#032F62">"false"</span><span style="color:#24292E">.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(property)) {</span></span>
+<span class="line"><span style="color:#24292E">                loadSpifilterSkip </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> true</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        {</span></span>
+<span class="line"><span style="color:#24292E">            String property </span><span style="color:#D73A49">=</span><span style="color:#24292E"> System.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"druid.checkExecuteTime"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (property </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#032F62">"false"</span><span style="color:#24292E">.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(property)) {</span></span>
+<span class="line"><span style="color:#24292E">                checkExecuteTime </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> true</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span></code></pre>
+<p>上面部分参数解释来源于官方文档，其他参数暂时不太清楚含义后续看到代码时详细回来解释,
+官网文档连接：<a href="https://github.com/alibaba/druid/wiki/DruidDataSource%E9%85%8D%E7%BD%AE%E5%B1%9E%E6%80%A7%E5%88%97%E8%A1%A8">点击进入</a></p>
+<h2 id="24-druiddatasource-属性设置">2.4 DruidDataSource 属性设置</h2>
+<p>前面我们讲了DruidDataSource的构造器相对来说没有复杂的逻辑，接下来我们继续看例子代码，如下：
+下面代码仅仅是调用了set方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">		DruidDataSource dataSource </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> DruidDataSource</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">		   //连接数据库的url，不同数据库不一样</span></span>
+<span class="line"><span style="color:#24292E">        dataSource.</span><span style="color:#6F42C1">setUrl</span><span style="color:#24292E">(</span><span style="color:#032F62">"jdbc:mysql://localhost:3306/druid?allowMultiQueries=true"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //连接数据库的用户名</span></span>
+<span class="line"><span style="color:#24292E">        dataSource.</span><span style="color:#6F42C1">setUsername</span><span style="color:#24292E">(</span><span style="color:#032F62">"root"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //连接数据库的密码。如果你不希望密码直接写在配置文件中，可以使用ConfigFilter。详细看这里</span></span>
+<span class="line"><span style="color:#24292E">        dataSource.</span><span style="color:#6F42C1">setPassword</span><span style="color:#24292E">(</span><span style="color:#032F62">"123456"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有：</span></span>
+<span class="line"><span style="color:#6A737D">			//监控统计用的filter:stat</span></span>
+<span class="line"><span style="color:#6A737D">			//日志用的filter:log4j</span></span>
+<span class="line"><span style="color:#6A737D">			//防御sql注入的filter:wal</span></span>
+<span class="line"><span style="color:#24292E">        dataSource.</span><span style="color:#6F42C1">setFilters</span><span style="color:#24292E">(</span><span style="color:#032F62">"log4j"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //用来检测连接是否有效的sql，要求是一个查询语句，常用select 'x'。如果validationQuery为null，testOnBorrow、testOnReturn、testWhileIdle都不会起作用。</span></span>
+<span class="line"><span style="color:#24292E">        dataSource.</span><span style="color:#6F42C1">setValidationQuery</span><span style="color:#24292E">(</span><span style="color:#032F62">"SELECT 1"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。</span></span>
+<span class="line"><span style="color:#24292E">        dataSource.</span><span style="color:#6F42C1">setTestOnBorrow</span><span style="color:#24292E">(</span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //建议配置为true，不影响性能，并且保证安全性。申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。</span></span>
+<span class="line"><span style="color:#24292E">        dataSource.</span><span style="color:#6F42C1">setTestWhileIdle</span><span style="color:#24292E">(</span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span></code></pre>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

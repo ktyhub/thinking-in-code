@@ -1,0 +1,177 @@
+<!DOCTYPE html><html lang="fr"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ragflow v0.25.3 — STAGS NextStack</title><meta name="description" content="Data source and parsing: Added column-level semantic/metadata control for the spreadsheet file parser; introduced ETag optimization for incremental synchronization of S3 data sources to avoid unnecessary file transfers."><meta name="keywords" content="release note open source, suivi des versions, agrégateur changelog, dernières modifications, suivi des dépréciations, versions Kafka, versions Spring Boot, versions Kubernetes"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/fr/releases/ragflow/0.25.3/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/fr/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/releases/ragflow/0.25.3/"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/releases/ragflow/0.25.3/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/releases/ragflow/0.25.3/"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="article"><meta property="og:title" content="ragflow v0.25.3 — STAGS NextStack"><meta property="og:description" content="Data source and parsing: Added column-level semantic/metadata control for the spreadsheet file parser; introduced ETag optimization for incremental synchronization of S3 data sources to avoid unnecessary file transfers."><meta property="og:url" content="https://www.stags.cn/fr/releases/ragflow/0.25.3/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="fr_FR"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="zh_CN"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"fr","description":"STAGS indexe les notes de version des projets d'infrastructure et d'IA – changements incompatibles, dépréciations et migrations – dans un flux unique en anglais.","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"},{"@type":"TechArticle","@id":"https://www.stags.cn/fr/releases/ragflow/0.25.3/#article","headline":"ragflow v0.25.3 release notes","datePublished":"2026-05-13","inLanguage":"en","isPartOf":{"@id":"https://www.stags.cn/#website"},"about":{"@type":"SoftwareSourceCode","codeRepository":"https://github.com/infiniflow/ragflow"}}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css">
+<style>.ad-slot[data-astro-cid-fgwukgf6]{margin:var(--s10) 0 0;padding-top:var(--s5);border-top:1px solid var(--line)}.ad-slot-label[data-astro-cid-fgwukgf6]{margin-bottom:var(--s3);font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4)}.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{display:block;min-height:100px}@media(min-width:640px){.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{min-height:250px}}
+</style></head> <body> <a class="skip" href="#main">Aller au contenu</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/fr/" class="brand" aria-label="STAGS NextStack — Veille des versions open source"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/fr/releases">Versions</a><a href="/fr/projects">Projets</a><a href="/fr/method">Méthode</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="Rechercher des versions"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">Recherche</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="Langue"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">FR</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="Langue"> <p class="langmenu-head">Langue</p> <a class="langmenu-item" href="/releases/ragflow/0.25.3/" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/release_note/ragflow/ragflow_v0.25.3" hreflang="zh-Hans" lang="zh-CN" data-on="false"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases/ragflow/0.25.3/" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases/ragflow/0.25.3/" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases/ragflow/0.25.3/" hreflang="fr" lang="fr" aria-current="true" data-on="true"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases/ragflow/0.25.3/" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases/ragflow/0.25.3/" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap"> <div class="detail"> <article> <header class="detail-hd"> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/fr/">Accueil</a> <span class="sep">/</span> <a href="/fr/releases">Versions</a> <span class="sep">/</span> <a href="/fr/releases/ragflow">ragflow</a> </nav> <h1 class="detail-title"> <span class="p">ragflow</span> v0.25.3 </h1> <div class="detail-meta"> <span class="chip chip--patch">Correctif</span> <span><span class="k">Publié</span>13 mai 2026</span>  <span class="sep" aria-hidden="true"></span> <a href="https://github.com/infiniflow/ragflow" target="_blank" rel="noopener"> <span class="k">Source</span>infiniflow/ragflow </a>   <span class="sep" aria-hidden="true"></span> <a href="/releases/ragflow/0.25.3/"> Anglais original </a>  <span class="sep" aria-hidden="true"></span> <button class="btn btn--ghost btn--sm" type="button" data-copy="https://www.stags.cn/fr/releases/ragflow/0.25.3/">Copier le lien</button> </div> </header> <div class="prose" style="margin-top:var(--s8)"> <p class="mt-notice" role="note">Cette page est traduite automatiquement. Le texte anglais original fait foi.</p>  <div><p>#ragflow v0.25.3</p>
+<h1>Résumé</h1>
+<h2>Nouvelles fonctionnalités</h2>
+<ul>
+<li>Source de données et analyse : ajout d'un contrôle sémantique/métadonnées au niveau des colonnes pour l'analyseur de fichiers de feuille de calcul ; introduit l'optimisation ETag pour la synchronisation incrémentielle des sources de données S3 afin d'éviter les transferts de fichiers inutiles.</li>
+<li>Permet d'attribuer des rôles spécifiques tels que le contenu, les métadonnées et la clé primaire aux colonnes du tableau. <a href="https://github.com/infiniflow/ragflow/pull/13710">#13710</a></li>
+</ul>
+<h2>Améliorations</h2>
+<ul>
+<li>Refactorisation et sécurité API
+<ul>
+<li>Poursuite de la transition des API Web vers les conventions RESTful, garantissant une compatibilité ascendante pour tous les points de terminaison existants.</li>
+<li>Lie le <code>user_id</code> dans <code>POST /api/v1/messages</code> au principal JWT authentifié. <a href="https://github.com/infiniflow/ragflow/pull/14745">#14745</a></li>
+<li>Sécurise l'exécuteur sandbox contre les contournements d'exécution de code dynamiques et indirects. <a href="https://github.com/infiniflow/ragflow/pull/14690">#14690</a></li>
+<li>Contrôle du délai d'attente des requêtes LLM</li>
+<li>Pool de threads d'appel bloquant la concurrence élevée</li>
+</ul>
+</li>
+<li>Réduit le temps de démarrage du serveur d'ingestion. <a href="https://github.com/infiniflow/ragflow/pull/14894">#14894</a></li>
+</ul>
+<h2>Corrections de bugs</h2>
+<ul>
+<li>Les images des classeurs Excel multi-feuilles n'étaient pas définies par feuille, ce qui entraînait une attribution incorrecte des images entre différentes feuilles de calcul. <a href="https://github.com/infiniflow/ragflow/pull/14120">#14120</a></li>
+<li>Passage d'alias d'élément d'itération</li>
+<li>Analyse du modèle de paramètres d'outil</li>
+<li>Sortie de pièce jointe d'exécution de code</li>
+<li>Correction de l'ajout du modèle de volcan</li>
+</ul>
+<h2>Ce qui a changé</h2>
+<ul>
+<li>Allez : fournisseur d'implémentation : Baidu par @Haruko386 dans https://github.com/infiniflow/ragflow/pull/14741</li>
+<li>exploit (connecteurs) : contournement basé sur ETag pour l'ingestion incrémentielle de S3 (#14628) par @hunnyboy1217 dans https://github.com/infiniflow/ragflow/pull/14677</li>
+<li>Allez : corrigez le problème de reclassement de Baidu par @JinHai-CN dans https://github.com/infiniflow/ragflow/pull/14742</li>
+<li>Go : correction du problème de reclassement de Siliconflow par @JinHai-CN dans https://github.com/infiniflow/ragflow/pull/14743</li>
+<li>Allez : implémentez Encode (embeddings) dans le pilote OpenAI par @pandadev66 dans https://github.com/infiniflow/ragflow/pull/14630</li>
+<li>Correction : Radio.Group cloneElement plante sur les enfants non-élémentaires par @JimZhang-lab dans https://github.com/infiniflow/ragflow/pull/14407</li>
+<li>correctif (auth) : revenez à l'authentification basée sur la session dans _load_user par @mhtkarakose dans https://github.com/infiniflow/ragflow/pull/14569</li>
+<li>Correction : résolution des chaînes de modèle dans les paramètres des composants de l'outil par @wanghualoong dans https://github.com/infiniflow/ragflow/pull/14601</li>
+<li>Correction de la gestion de base_url dans HuggingfaceRerank par @Qwerrty574 dans https://github.com/infiniflow/ragflow/pull/14555</li>
+<li>Rôles des colonnes de l'analyseur de fonctionnalités/tables par @ahmadintisar dans https://github.com/infiniflow/ragflow/pull/13710</li>
+<li>Exploit : ajoutez BedrockCV pour l'inférence vision/image2text via LiteLLM par @vincentlambert dans https://github.com/infiniflow/ragflow/pull/14705</li>
+<li>Allez : implémentez ListModels dans le pilote Volcengine par @bittoby dans https://github.com/infiniflow/ragflow/pull/14702</li>
+<li>exploit : rendre les miroirs sandbox Dockerfile en option avec ARG par @ParasSondhi dans https://github.com/infiniflow/ragflow/pull/14553</li>
+<li>fix(llm) : ajout d'un délai d'attente aux requêtes HTTP dans la couche d'intégration LLM par @Ricardo-M-L dans https://github.com/infiniflow/ragflow/pull/14313</li>
+<li>Allez : implémentez Encode (embeddings) dans le pilote Google Gemini par @Joseff531 dans https://github.com/infiniflow/ragflow/pull/14682</li>
+<li>correctif (go) : connectez Google CheckConnection à ListModels par @zeus1959 dans https://github.com/infiniflow/ragflow/pull/14660</li>
+<li>Correction (Go) : correction du nom () et de l'URL de la région dans le pilote Aliyun par @Joseff531 dans https://github.com/infiniflow/ragflow/pull/14673</li>
+<li>Correction : fermez deux chemins de contournement de l'analyseur de sécurité dans l'exécuteur sandbox par @Sp1kyss dans https://github.com/infiniflow/ragflow/pull/14690</li>
+<li>Correction : gestion du morceau parent manquant dans retrieval_by_children par @vincentlambert dans https://github.com/infiniflow/ragflow/pull/14556</li>
+<li>Allez : implémentez Encode (embeddings) dans le pilote Gitee AI par @bittoby dans https://github.com/infiniflow/ragflow/pull/14698</li>
+<li>correctif (keyword_extraction) : accepter les virgules/points-virgules/nouvelles lignes chinois comme délimiteurs de mots-clés par @Qinsanz dans https://github.com/infiniflow/ragflow/pull/14540</li>
+<li>Allez : implémentez Encode (embeddings) dans le pilote vLLM par @pandadev66 dans https://github.com/infiniflow/ragflow/pull/14688</li>
+<li>correctif : correctifs de robustesse complets pour le module de reclassement répondant à tous les commentaires de révision de @07heco dans https://github.com/infiniflow/ragflow/pull/14265</li>
+<li>correctif (invite) : réserver le budget du système dans message_fit_in par @hyl64 dans https://github.com/infiniflow/ragflow/pull/14164</li>
+<li>Allez : implémentez Encode (embeddings) dans le pilote Ollama par @jack-stormentswe dans https://github.com/infiniflow/ragflow/pull/14664</li>
+<li>Allez : implémentez Encode (embeddings) dans le pilote NVIDIA par @bittoby dans https://github.com/infiniflow/ragflow/pull/14700</li>
+<li>Perf(Go) : requêtes SiliconFlow Encode par lots avec segmentation de 32 éléments par @Joseff531 dans https://github.com/infiniflow/ragflow/pull/14719</li>
+<li>Allez : implémentez Encode (embeddings) dans le pilote LM Studio par @pandadev66 dans https://github.com/infiniflow/ragflow/pull/14694</li>
+<li>Correction (Go) : fait échouer OpenRouter Encode bruyamment sur des réponses mal formées par @Joseff531 dans https://github.com/infiniflow/ragflow/pull/14717</li>
+<li>Refactor : ranger le cycle de vie de ThreadPoolExecutor dans file_service et l'exécuteur de tâches par @web-dev0521 dans https://github.com/infiniflow/ragflow/pull/14668</li>
+<li>Fonctionnalité GraphRAG - Partie 1 - ajout d'espace pour extraire l'entité et la relation par @wangq8 dans https://github.com/infiniflow/ragflow/pull/14670</li>
+<li>correctif : portée en attente_cell_images par feuille dans l'analyseur Excel par @fplust dans https://github.com/infiniflow/ragflow/pull/14120</li>
+<li>fix(dify) : comportement d'erreur de l'argument de récupération de garde par @Achieve3318 dans https://github.com/infiniflow/ragflow/pull/14169</li>
+<li>Correction : lier le message mémoire <code>user_id</code> à l'utilisateur authentifié pour l'authentification JWT par @jony376 dans https://github.com/infiniflow/ragflow/pull/14745</li>
+<li>Correction : la recherche de l'ensemble de données reclasse le type d'identifiant par @buua436 dans https://github.com/infiniflow/ragflow/pull/14759</li>
+<li>Correction : recherche d'index de fragments de jeux de données partagés par @buua436 dans https://github.com/infiniflow/ragflow/pull/14764</li>
+<li>correctif : utilisez le gestionnaire de contexte pour ThreadPoolExecutor dans file_service.py par @Ricardo-M-L dans https://github.com/infiniflow/ragflow/pull/14144</li>
+<li>Allez : refactorisez l'interface d'intégration par @JinHai-CN dans https://github.com/infiniflow/ragflow/pull/14757</li>
+<li>Correction : protection des arguments sécurisé et suppression de l'appel redis redondant par @paulhuismic dans https://github.com/infiniflow/ragflow/pull/14060</li>
+<li>fix: offload blocking DB/Redis calls to thread pool for high-concurrency support (#13825) by @tmimmanuel in https://github.com/infiniflow/ragflow/pull/13941</li>
+<li>Refact : Ajout d'un assistant privé _visibility_and_status_filter par @Sank-WoT dans https://github.com/infiniflow/ragflow/pull/13627</li>
+<li>Correction : le statut d'analyse du document est défini sur DONE avant que les morceaux ne puissent être récupérés par @as-ondewo dans https://github.com/infiniflow/ragflow/pull/13352.</li>
+<li>correctif (Web) : correction de l'aperçu Docx incomplet dans la référence de citation par @yshchm dans https://github.com/infiniflow/ragflow/pull/14122</li>
+<li>fix: OCR.detect() returns truthy None-tuple causing NoneType subscript crash by @octo-patch in https://github.com/infiniflow/ragflow/pull/13951</li>
+<li>chore: fix some comments to improve readability by @box4wangjing in https://github.com/infiniflow/ragflow/pull/14756</li>
+<li>fix(opensearch): implement doc-meta dispatch surface on OSConnection by @tmimmanuel in https://github.com/infiniflow/ragflow/pull/14577</li>
+<li>Go: add development guide document by @JinHai-CN in https://github.com/infiniflow/ragflow/pull/14785</li>
+<li>Go: implement Rerank in NVIDIA driver by @RenzoMXD in https://github.com/infiniflow/ragflow/pull/14778</li>
+<li>Correction : ajout des pièces jointes codeexec générées par @buua436 dans https://github.com/infiniflow/ragflow/pull/14787</li>
+<li>Go: implement provider: CoHere and FishAudio by @Haruko386 in https://github.com/infiniflow/ragflow/pull/14790</li>
+<li>Go: fix retrieval test error by @JinHai-CN in https://github.com/infiniflow/ragflow/pull/14794</li>
+<li>[Bug]: REDIS error #12870 by @raminmardani in https://github.com/infiniflow/ragflow/pull/13875</li>
+<li>fix(dify): add GET method support to /dify/retrieval for health check by @Lntanohuang in https://github.com/infiniflow/ragflow/pull/13837</li>
+<li>feat(raptor): add Psi tree builder with original-space ranking and safe migration by @CaptainTimon in https://github.com/infiniflow/ragflow/pull/14679</li>
+<li>Chore(deps) : Bump urllib3 de 2.6.3 à 2.7.0 dans /agent/sandbox par @dependabot[bot] dans https://github.com/infiniflow/ragflow/pull/14824</li>
+<li>Refactor(Go): remove hardcode in huggingface provider by @Haruko386 in https://github.com/infiniflow/ragflow/pull/14822</li>
+<li>correctif (agent) : prise en charge des alias d'éléments d'itération dans les nœuds enfants par @hyl64 dans https://github.com/infiniflow/ragflow/pull/14146</li>
+<li>Go: implement provider: StepFun by @tmimmanuel in https://github.com/infiniflow/ragflow/pull/14815</li>
+<li>fix(docs): correct broken knowledge graph construction link by @majiayu000 in https://github.com/infiniflow/ragflow/pull/13838</li>
+<li>Correction : un bug d'agent par @buua436 dans https://github.com/infiniflow/ragflow/pull/14829</li>
+<li>Refact : sandbox quickstart.md et ajout d'un didacticiel pour le composant d'exécution de code par @Magicbook1108 dans https://github.com/infiniflow/ragflow/pull/14786</li>
+<li>Test : cas limites d'agrégation pour les valeurs de liste et scalaires par @Achieve3318 dans https://github.com/infiniflow/ragflow/pull/14170</li>
+<li>Allez : fournisseur d'implémentation : Baichuan par @Haruko386 dans https://github.com/infiniflow/ragflow/pull/14832</li>
+<li>Allez : implémentez Embed (embeddings) dans le pilote Upstage par @tmimmanuel dans https://github.com/infiniflow/ragflow/pull/14819</li>
+<li>Accélérez l'heure de démarrage par @wangq8 dans https://github.com/infiniflow/ragflow/pull/14833</li>
+<li>GO: implement GET /api/v1/datasets/:dataset_id by @buua436 in https://github.com/infiniflow/ragflow/pull/14834</li>
+<li>Go: add ASR, TTS, OCR command by @JinHai-CN in https://github.com/infiniflow/ragflow/pull/14836</li>
+<li>Go : correction de l'unité de temps de l'ensemble de données par @buua436 dans https://github.com/infiniflow/ragflow/pull/14837</li>
+<li>Allez : implémentez Embed (embeddings) dans le pilote Mistral par @tmimmanuel dans https://github.com/infiniflow/ragflow/pull/14807</li>
+<li>Allez : fournisseur d'implémentation : Jina par @Haruko386 dans https://github.com/infiniflow/ragflow/pull/14838</li>
+<li>Correction : exposer gpt-5.5 et gpt-5.4 dans la liste des modèles OpenAI par @oxtensor dans https://github.com/infiniflow/ragflow/pull/14828</li>
+<li>Prouesse : lorsqu'un nœud d'attente précède un nœud de message dans un nœud de boucle, le message sortant est divisé en deux messages distincts. par @cike8899 dans https://github.com/infiniflow/ragflow/pull/14839</li>
+<li>Correction #14801 pour autoriser la recherche dans la liste des ensembles de données lors de l'ajout par @wangq8 dans https://github.com/infiniflow/ragflow/pull/14841</li>
+<li>Go : correction de la vérification du type de modèle lors de l'utilisation du modèle par @JinHai-CN dans https://github.com/infiniflow/ragflow/pull/14843</li>
+<li>Docs : Comment ajouter Bitbucket comme source de données. par @writinwaters dans https://github.com/infiniflow/ragflow/pull/14846</li>
+<li>Correction : supprimez les fichiers .wav et .aac en double dans la liste des extensions audio prises en charge par @yaoper dans https://github.com/infiniflow/ragflow/pull/14791</li>
+<li>correctif (api) : autorisez les identifiants de propriétaire pour les discussions de liste et les applications de recherche par @dale053 dans https://github.com/infiniflow/ragflow/pull/14775</li>
+<li>Ajout de la rétrocompatibilité REST API par @wangq8 dans https://github.com/infiniflow/ragflow/pull/14872</li>
+<li>Correction : gardez les morceaux contenant uniquement des espaces avant de les intégrer par @shawnxiao105-afk dans https://github.com/infiniflow/ragflow/pull/13938</li>
+<li>Correction (Go) : faire échouer Baidu Encode bruyamment sur des réponses mal formées par @Joseff531 dans https://github.com/infiniflow/ragflow/pull/14721</li>
+<li>Correction de la suppression du graphrag qui ne prend pas effet dans l'interface utilisateur par @wangq8 dans https://github.com/infiniflow/ragflow/pull/14879</li>
+<li>Correction : La fonction de redimensionnement des champs de texte dans la création du bloc de connaissances… par @stardyun dans https://github.com/infiniflow/ragflow/pull/14212</li>
+<li>Allez : fournisseur d'implémentation : Novita.ai par @tmimmanuel dans https://github.com/infiniflow/ragflow/pull/14850</li>
+<li>Corvée : migrer les tests vers le reposant api par @6ba3i dans https://github.com/infiniflow/ragflow/pull/14871</li>
+<li>Supprimer l'itinéraire en double par @wangq8 dans https://github.com/infiniflow/ragflow/pull/14883</li>
+<li>Allez : fournisseur d'implémentation : LongCat par @tmimmanuel dans https://github.com/infiniflow/ragflow/pull/14809</li>
+<li>Correctif : définissez les modèles intégrés lors de l'initialisation du formulaire. par @dcc123456 dans https://github.com/infiniflow/ragflow/pull/14889</li>
+<li>Allez : implémentez ListModels dans le pilote ZhipuAI par @ pandadev66 dans https://github.com/infiniflow/ragflow/pull/14886</li>
+<li>Correction : llm ajoute la clé api remplacée par @buua436 dans https://github.com/infiniflow/ragflow/pull/14885</li>
+<li>Allez : corrigez la commande OCR par @JinHai-CN dans https://github.com/infiniflow/ragflow/pull/14891</li>
+<li>Accélérez le serveur ragflow par @wangq8 dans https://github.com/infiniflow/ragflow/pull/14894</li>
+<li>Docs : mettre à jour les références de version à v0.25.3 dans les README et les documents de @asiroliu dans https://github.com/infiniflow/ragflow/pull/14896</li>
+<li>Allez : implémentez Rerank dans le pilote LocalAI par @tmimmanuel dans https://github.com/infiniflow/ragflow/pull/14813</li>
+<li>Docs : brouillon de 0.25.3 release note par @writinwaters dans https://github.com/infiniflow/ragflow/pull/14898</li>
+<li>Bump vers l'infini v0.7.0-dev7 par @JinHai-CN dans https://github.com/infiniflow/ragflow/pull/14897</li>
+<li>Docs : mise à jour du brouillon de v0.25.3 release note par @writinwaters dans https://github.com/infiniflow/ragflow/pull/14899</li>
+<li>Correction : appliquer l'autorisation du locataire pour <code>tenant_rerank_id</code> dans les flux de récupération par @jony376 dans https://github.com/infiniflow/ragflow/pull/14782</li>
+<li>Correction de la compilation go par @JinHai-CN dans https://github.com/infiniflow/ragflow/pull/14900</li>
+</ul>
+<h2>Nouveaux contributeurs</h2>
+<ul>
+<li>@hunnyboy1217 a fait sa première contribution dans https://github.com/infiniflow/ragflow/pull/14677</li>
+<li>@JimZhang-lab a apporté sa première contribution dans https://github.com/infiniflow/ragflow/pull/14407</li>
+<li>@mhtkarakose a fait sa première contribution dans https://github.com/infiniflow/ragflow/pull/14569</li>
+<li>@Qwerrty574 a apporté sa première contribution dans https://github.com/infiniflow/ragflow/pull/14555</li>
+<li>@zeus1959 a apporté sa première contribution dans https://github.com/infiniflow/ragflow/pull/14660</li>
+<li>@Sp1kyss a apporté sa première contribution dans https://github.com/infiniflow/ragflow/pull/14690</li>
+<li>@Qinsanz a apporté sa première contribution dans https://github.com/infiniflow/ragflow/pull/14540</li>
+<li>@07heco a fait sa première contribution dans https://github.com/infiniflow/ragflow/pull/14265</li>
+<li>@fplust a apporté sa première contribution dans https://github.com/infiniflow/ragflow/pull/14120</li>
+<li>@yshchm a apporté sa première contribution dans https://github.com/infiniflow/ragflow/pull/14122</li>
+<li>@box4wangjing a apporté sa première contribution dans https://github.com/infiniflow/ragflow/pull/14756</li>
+<li>@CaptainTimon a apporté sa première contribution dans https://github.com/infiniflow/ragflow/pull/14679</li>
+<li>@oxtensor a apporté sa première contribution dans https://github.com/infiniflow/ragflow/pull/14828</li>
+<li>@yaoper a apporté sa première contribution dans https://github.com/infiniflow/ragflow/pull/14791</li>
+<li>@shawnxiao105-afk a fait sa première contribution dans https://github.com/infiniflow/ragflow/pull/13938</li>
+<li>@stardyun a apporté sa première contribution dans https://github.com/infiniflow/ragflow/pull/14212</li>
+</ul>
+<p><strong>Changelog complet</strong> : https://github.com/infiniflow/ragflow/compare/v0.25.2...v0.25.3</p>
+<hr />
+<blockquote>
+<p><strong>Source</strong> <a href="https://github.com/infiniflow/ragflow">infiniflow/ragflow</a> · <code>v0.25.3</code> · 2026-05-13 · <a href="https://github.com/infiniflow/ragflow/releases/tag/v0.25.3">version amont</a>
+<em>Verbatim reflété pour l'indexation. Tous les droits appartiennent au projet en amont.</em></p>
+</blockquote></div>   </div> <p class="muted" style="margin-top:var(--s8);font-size:12.5px;border-top:1px solid var(--line);padding-top:var(--s4)"> Les Release note sont publiés par le projet en amont et mis en miroir ici pour l&#39;indexation. Tous les droits appartiennent à leurs auteurs. </p> <nav class="pager" aria-label="Release navigation"> <a href="/releases/ragflow/0.25.4"> <span class="k">← Suivant</span> <span class="t">v0.25.4</span> </a> <a href="/releases/ragflow/0.25.2"> <span class="k">Précédent →</span> <span class="t">v0.25.2</span> </a> </nav> <aside class="ad-slot" aria-label="Advertisement" data-astro-cid-fgwukgf6><div class="ad-slot-label" data-astro-cid-fgwukgf6>Advertisement</div><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4184355057086168" data-ad-slot="9133765584" data-ad-format="auto" data-full-width-responsive="true" data-astro-cid-fgwukgf6></ins><script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script></aside> </article> <aside class="rail"> <div class="rail-card"> <div class="rail-title">Source</div> <ul class="rail-list"> <li> <a href="https://github.com/infiniflow/ragflow/releases/tag/v0.25.3" target="_blank" rel="noopener"> <span>Original sur GitHub</span> <span class="d">↗</span> </a> </li> <li> <a href="https://github.com/infiniflow/ragflow" target="_blank" rel="noopener"> <span>infiniflow/ragflow</span> <span class="d">↗</span> </a> </li> </ul> </div> <div class="rail-card rail-toc"> <div class="rail-title">Sur cette page</div> <nav> <a href="#" class>Nouvelles fonctionnalités</a><a href="#" class>Améliorations</a><a href="#" class>Corrections de bugs</a><a href="#" class>Ce qui a changé</a><a href="#" class>Nouveaux contributeurs</a> </nav> </div> <div class="rail-card"> <div class="rail-title">Historique des versions</div> <ul class="rail-list"> <li> <a href="/releases/ragflow/1.0.0"> <span class="v">v1.0.0</span> <span class="d">26-11-06</span> </a> </li><li> <a href="/releases/ragflow/1.0.0-rc3"> <span class="v">v1.0.0-rc3</span> <span class="d">26-10-30</span> </a> </li><li> <a href="/releases/ragflow/0.27.3"> <span class="v">v0.27.3</span> <span class="d">26-10-23</span> </a> </li><li> <a href="/releases/ragflow/1.0.0-rc2"> <span class="v">v1.0.0-rc2</span> <span class="d">26-10-16</span> </a> </li><li> <a href="/releases/ragflow/1.0.0-rc1"> <span class="v">v1.0.0-rc1</span> <span class="d">26-09-29</span> </a> </li><li> <a href="/releases/ragflow/0.27.2"> <span class="v">v0.27.2</span> <span class="d">26-09-10</span> </a> </li><li> <a href="/releases/ragflow/0.27.1"> <span class="v">v0.27.1</span> <span class="d">26-08-28</span> </a> </li><li> <a href="/releases/ragflow/0.27.0"> <span class="v">v0.27.0</span> <span class="d">26-08-19</span> </a> </li> </ul> <a href="/fr/releases/ragflow" class="mono" style="display:inline-block;margin-top:var(--s3);font-size:11.5px;color:var(--ink-3)"> Tout afficher 32 →
+</a> </div> </aside> </div> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/fr/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>Informations sur les versions open source, publiées quotidiennement.</p> </div> <div class="footer-col"> <h3>Suivre</h3> <ul> <li><a href="/fr/releases">Versions</a></li> <li><a href="/fr/projects">Projets</a></li> <li><a href="/fr/releases.xml">Flux RSS</a></li> </ul> </div> <div class="footer-col"> <h3>Archives</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">Archives chinoises</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">Notes techniques</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>À propos</h3> <ul> <li><a href="/fr/method">Méthode</a></li> <li><a href="/privacy">Privacy policy</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Les Release note appartiennent à leurs projets en amont.</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="Rechercher des versions"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="Rechercher des versions, projets, numéros…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ navigate</span> <span>↵ open</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

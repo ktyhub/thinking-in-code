@@ -1,0 +1,245 @@
+<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>iotdb v1.3.2 — STAGS NextStack</title><meta name="description" content="Storage Module: Performance improvement in the insertRecords interface for writing · Query Module: New Explain Analyze statement added (monitoring the time spent on each stage of a single SQL execution)"><meta name="keywords" content="オープンソース release note、リリース トラッカー、changelog アグリゲーター、重大な変更、非推奨トラッカー、Kafka リリース、Spring Boot リリース、Kubernetes リリース"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/ja/releases/iotdb/1.3.2/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/ja/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/releases/iotdb/1.3.2/"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/releases/iotdb/1.3.2/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/releases/iotdb/1.3.2/"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="article"><meta property="og:title" content="iotdb v1.3.2 — STAGS NextStack"><meta property="og:description" content="Storage Module: Performance improvement in the insertRecords interface for writing · Query Module: New Explain Analyze statement added (monitoring the time spent on each stage of a single SQL execution)"><meta property="og:url" content="https://www.stags.cn/ja/releases/iotdb/1.3.2/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="ja_JP"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="zh_CN"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"ja","description":"STAGS はインフラストラクチャおよび AI プロジェクトのリリースノートを索引化し、破壊的変更・非推奨・移行情報を英語優先の単一フィードで提供します。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"},{"@type":"TechArticle","@id":"https://www.stags.cn/ja/releases/iotdb/1.3.2/#article","headline":"iotdb v1.3.2 release notes","datePublished":"2024-06-27","inLanguage":"en","isPartOf":{"@id":"https://www.stags.cn/#website"},"about":{"@type":"SoftwareSourceCode","codeRepository":"https://github.com/apache/iotdb"}}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css">
+<style>.ad-slot[data-astro-cid-fgwukgf6]{margin:var(--s10) 0 0;padding-top:var(--s5);border-top:1px solid var(--line)}.ad-slot-label[data-astro-cid-fgwukgf6]{margin-bottom:var(--s3);font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4)}.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{display:block;min-height:100px}@media(min-width:640px){.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{min-height:250px}}
+</style></head> <body> <a class="skip" href="#main">本文へスキップ</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/ja/" class="brand" aria-label="STAGS NextStack — オープンソースのリリース情報"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/ja/releases">リリース</a><a href="/ja/projects">プロジェクト</a><a href="/ja/method">仕組み</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="リリースを検索"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">検索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="言語"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">日</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="言語"> <p class="langmenu-head">言語</p> <a class="langmenu-item" href="/releases/iotdb/1.3.2/" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/release_note/iotdb/iotdb_v1.3.2" hreflang="zh-Hans" lang="zh-CN" data-on="false"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases/iotdb/1.3.2/" hreflang="ja" lang="ja" aria-current="true" data-on="true"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases/iotdb/1.3.2/" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases/iotdb/1.3.2/" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases/iotdb/1.3.2/" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases/iotdb/1.3.2/" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap"> <div class="detail"> <article> <header class="detail-hd"> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/ja/">ホーム</a> <span class="sep">/</span> <a href="/ja/releases">リリース</a> <span class="sep">/</span> <a href="/ja/releases/iotdb">iotdb</a> </nav> <h1 class="detail-title"> <span class="p">iotdb</span> v1.3.2 </h1> <div class="detail-meta"> <span class="chip chip--patch">パッチ</span> <span><span class="k">公開日</span>2024年6月27日</span>  <span class="sep" aria-hidden="true"></span> <a href="https://github.com/apache/iotdb" target="_blank" rel="noopener"> <span class="k">出典</span>apache/iotdb </a>   <span class="sep" aria-hidden="true"></span> <a href="/releases/iotdb/1.3.2/"> 英語原文 </a>  <span class="sep" aria-hidden="true"></span> <button class="btn btn--ghost btn--sm" type="button" data-copy="https://www.stags.cn/ja/releases/iotdb/1.3.2/">リンクをコピー</button> </div> </header> <div class="prose" style="margin-top:var(--s8)"> <p class="mt-notice" role="note">このページは機械翻訳です。内容は必ず英文原文をご確認ください。</p>  <div><p>#iotdbv1.3.2</p>
+<h2>機能と改善点</h2>
+<ul>
+<li>ストレージ モジュール: 書き込み時の insertRecords インターフェイスのパフォーマンスの向上</li>
+<li>クエリ モジュール: 新しい Explain Analyze ステートメントが追加されました (単一 SQL 実行の各ステージに費やされた時間を監視)</li>
+<li>クエリモジュール: 新しい UDAF (ユーザー定義集計関数) フレームワークが追加されました</li>
+<li>クエリ モジュール: 新しい MaxBy/MinBy 関数が追加され、対応するタイムスタンプとともに最大/最小値の取得をサポートします。</li>
+<li>クエリ モジュール: 値フィルタリング クエリのパフォーマンスの向上</li>
+<li>データ同期: パスマッチングはパスパターンをサポートします</li>
+<li>データ同期: メタデータ同期をサポートします (時系列および関連する属性、権限などを含む)</li>
+<li>ストリーム処理: Alter Pipe ステートメントを追加し、Pipe タスクのプラグインのホット アップデートをサポートしました。</li>
+<li>システム モジュール: システム データ ポイント数統計に、TsFile のロードによってインポートされたデータの統計が含まれるようになりました。</li>
+<li>スクリプトとツール: 新しいローカル アップグレード バックアップ ツールが追加されました (ハード リンクを介して元のデータをバックアップします)。</li>
+<li>スクリプトとツール: 新しいデータ エクスポート/データ インポート スクリプトが追加され、CSV、TsFile 形式、または SQL ステートメントでのデータ エクスポートをサポートします。</li>
+<li>スクリプトとツール: Windows 環境では、ConfigNode、DataNode、Cli をウィンドウ名で区別できるようになりました。
+...</li>
+</ul>
+<h2>バグ</h2>
+<ul>
+<li>データベース削除時のタイムアウトにより NullPointerException (NPE) が発生した場合のエラー メッセージを最適化します。
+-notifyLeaderReady、notifyLeaderChanged、およびプロシージャ ワーカーのログを追加します。</li>
+<li>ファイルのマージ中に既存の誤ったデータに対する互換性処理を追加します。</li>
+<li>クエリ中に空のファイルをフラッシュすることによって引き起こされるデッドロックの問題を修正します。</li>
+<li>読み取り、書き込み、削除の操作中に Ratis が応答しなくなる問題を修正します。</li>
+<li>ロードおよびマージ操作の同時実行のバグを修正しました。</li>
+<li>特定のシナリオでシステムの圧縮率がファイルに負の数値として記録される問題を修正します。</li>
+<li>マージ タスクのメモリ推定中の ConcurrentModificationException 問題を修正します。</li>
+<li>データベースの書き込み、自動作成、削除を同時に行うときに発生する可能性がある潜在的なデッドロックを修正します。
+...</li>
+</ul>
+<h2>何が変わったのか</h2>
+<ul>
+<li>https://github.com/apache/iotdb/pull/12007 の @l2280212 による書き込みメモリ制御パラメータを削除</li>
+<li>パイプ: https://github.com/apache/iotdb/pull/12010 の @Caideyipi によるパイプの再起動後に PipeHistoricalDataRegionTsFileExtractor を強制的に開始することで、少なくとも 1 回のセマンティクスを確保します。</li>
+<li>AbstractCompactionEstimator ファイル情報キャッシュの同期ブロックを https://github.com/apache/iotdb/pull/12019 の @shuwenwei で分離</li>
+<li>パイプ: https://github.com/apache/iotdb/pull/11994 の @xuanronaldo により、clusterId を使用してターゲット クラスターがソース クラスターであるかどうかを判断します。</li>
+<li>ストレージ エンジン: https://github.com/apache/iotdb/pull/12020 の @caozj1011 によるマルチスレッドの安全性に関する質問のため、wal delete スレッド例外を修正</li>
+<li>PBTree: デッドロックを修正し、https://github.com/apache/iotdb/pull/11985 の @bigreybear による書き込み/更新インターフェイスをリファクタリング</li>
+<li>https://github.com/apache/iotdb/pull/12021 内の @shuwenwei による SQL <code>merge</code> を削除</li>
+<li>ロード: https://github.com/apache/iotdb/pull/12024 の @SteveYurongSu によるロード成功後の最後のフラッシュ時間マップと tsfile リソースの劣化をトリガーします。</li>
+<li>feat(jdbc):getDouble https://github.com/apache/iotdb/pull/12023 の @CritasWang による型チェックを追加</li>
+<li>https://github.com/apache/iotdb/pull/12028 の @OneSizeFitsQuorum による潜在的な問題を回避するために、レプリカの不整合に対する無限再試行ロジックを削除しました。</li>
+<li>パイプ: https://github.com/apache/iotdb/pull/12017 の @Caideyipi による受信機 IP 仕様の「sink.host」および「connector.host」キーをサポート</li>
+<li>https://github.com/apache/iotdb/pull/12029 の @OneSizeFitsQuorum による DataNode の再起動時に Ratis クエリが再試行されない問題を修正</li>
+<li>パイプ: https://github.com/apache/iotdb/pull/12018 の @VGalaxies によるパイプ SQL 変更の置換および変更モードをサポート</li>
+<li>ストレージ エンジン: https://github.com/apache/iotdb/pull/12016 の @caozj1011 により、DeviceCache をストレージ エンジンの合計メモリに配置</li>
+<li>https://github.com/apache/iotdb/pull/12014 の @dependabot により、jackson.version を 2.15.2 から 2.15.3 にバンプします</li>
+<li>IT フレームワークは、https://github.com/apache/iotdb/pull/12022 の @l2280212 によるクラスターの再起動をサポートします</li>
+<li>https://github.com/apache/iotdb/pull/12033 の @OneSizeFitsQuorum によるパラメーター dn_multi_dir_strategy のタイプミスを修正</li>
+<li>github アクション バージョンをアップグレードして、https://github.com/apache/iotdb/pull/12032 の @HTHou による警告を修正します</li>
+<li>https://github.com/apache/iotdb/pull/12005 の @Sh-Zh-7 による UDAF(User-Defined Aggregation Functions) を導入</li>
+<li>Pipe: 解析イベント ロジックを PipeProcessorSubtask に移動し、CPU 集中型タスクと IO 集中型タスクを分離 (https://github.com/apache/iotdb/pull/11965 の @DanielWang2035)</li>
+<li>DataNodeDevicePathCache は、https://github.com/apache/iotdb/pull/12034 の @HTHou によって memtable の空きメモリを使用する必要があります</li>
+<li>パイプ: https://github.com/apache/iotdb/pull/12031 の @Caideyipi によるサブタスク例外処理中の不要なパイプ ドロップを回避するために、「パイプ: WAL スタッキングを回避するために wal の参照カウントの固定を解除する再起動戦略を使用してパイプを停止する (#11971)」を元に戻します。</li>
+<li>パイプ: https://github.com/apache/iotdb/pull/12041 の @Caideyipi によるスタック再起動ロジックからの MayLinkedTsFileCountReachDangerousThreshold 判定を削除しました。</li>
+<li>パイプ: https://github.com/apache/iotdb/pull/12042 の @Caideyipi により、タブレットのメモリ不足が一定期間発生するとプロセッサが停止するバグを修正しました</li>
+<li>パイプ: パイプ ログを削減し、https://github.com/apache/iotdb/pull/11973 の @Caideyipi によって特定の頻度以下でログが出力される頻度を制御しました。</li>
+<li>[IOTDB-6296] https://github.com/apache/iotdb/pull/12046 の @JackieTien97 による MQTTService のメモリ リークを修正</li>
+<li>パイプ: パターン解析プルーニング: パターンがデータベースの下のレベルにある場合、tsfiles/タブレットが https://github.com/apache/iotdb/pull/12049 の @Caideyipi によるパターンと完全に一致する場合、解析ロジックをスキップできます。</li>
+<li>https://github.com/apache/iotdb/pull/12058 の @dependabot によって org.apache.commons:commons-compress を 1.21 から 1.26.0 にバンプします</li>
+<li>https://github.com/apache/iotdb/pull/12057 の @dependabot による /iotdb-connector/grafana-plugin の 2.0.0 から 2.0.1 に IP をバンプします</li>
+<li>パイプ: https://github.com/apache/iotdb/pull/12056 の @Caideyipi による履歴エクストラクターのキャンセルされたフラッシュによって引き起こされる潜在的なロストポイントのバグを修正しました。</li>
+<li>https://github.com/apache/iotdb/pull/12060で@shuwenweiによる「merge」コマンドを使用する問題を修正</li>
+<li>パイプ: CN がメタ同期でのドロップ パイプの失敗を感知できず、https://github.com/apache/iotdb/pull/12059 の @Caideyipi によるドロップ パイプのスキップが常に発生する可能性があるバグを修正しました。</li>
+<li>[IOTDB-6297] https://github.com/apache/iotdb/pull/12043 の @Beyyes による <code>aggregation with align by device</code> の状況での配布計画を最適化します。</li>
+<li>[IOTDB-6298] https://github.com/apache/iotdb/pull/12065 の @JackieTien97 による時間間隔によるグループの数値オーバーフローを修正</li>
+<li>[IOTDB-6299] https://github.com/apache/iotdb/pull/12068 の @liuminghui233 によるフィルターとオフセットのプッシュダウンによって引き起こされる、重複したデータのマージ処理におけるバグを修正</li>
+<li>https://github.com/apache/iotdb/pull/12071に@lancellyによる集計関数MinByを導入</li>
+<li>Procedure に Recovery IT を追加し、https://github.com/apache/iotdb/pull/12045 の @liyuheng55555 により ProcedureStore を削除します</li>
+<li>PBTree: https://github.com/apache/iotdb/pull/12048 の @linxt20 による MNode 管理用のデュアル バッファ コンテナの実装</li>
+<li>https://github.com/apache/iotdb/pull/12081 の @HTHou による memtable チェックのフラッシュを最適化します。</li>
+<li>[IOTDB-6302] https://github.com/apache/iotdb/pull/12086 の @HTHou による ISO_LOCAL_DATE_TIME タイムスタンプ形式のサポートを強化</li>
+<li>IT: https://github.com/apache/iotdb/pull/12066 の @l2280212 によって再起動に失敗したときにエラー ログが明確になるように、再起動 IT の一部の変更を元に戻します。</li>
+<li>https://github.com/apache/iotdb/pull/12073 の @CritasWang により ci を github ci に変更します</li>
+<li>feat(bat): タイトルを追加し、https://github.com/apache/iotdb/pull/12069 の @CritasWang によってフォーマットを設定</li>
+<li>https://github.com/apache/iotdb/pull/12079 の @bigreybear による PBTree.SchemaFile のデッドロックを修正</li>
+<li>失われた.root権限を修正し、ロールを付与します。 @ColinLeeo 著、https://github.com/apache/iotdb/pull/12091</li>
+<li>[IOTDB-6300] https://github.com/apache/iotdb/pull/12074 の @JackieTien97 による挿入ステートメント内の任意の列インデックスでの時刻列の配置をサポート</li>
+<li>https://github.com/apache/iotdb/pull/12082 の @Cpaulyz によってドロップ データベース タイムアウトの返信メッセージの詳細が作成されました。</li>
+<li>新しいバッファー内のすべてのノードが https://github.com/apache/iotdb/pull/12093 の @Cpaulyz によって修飾されていない場合、VolatileSubtreeIterator で更新バッファーが欠落する問題を修正</li>
+<li>Pbtree: https://github.com/apache/iotdb/pull/12077 の @linxt20 によるディスクとバッファー上でマージ ソートを反復する MNode</li>
+<li>https://github.com/apache/iotdb/pull/12094 に @liyuheng55555 による FileUtils.moveFileSafe 関数を追加</li>
+<li>https://github.com/apache/iotdb/pull/12090 の @CRZbulabula によるデータ パーティション割り当てのログを追加</li>
+<li>修正: https://github.com/apache/iotdb/pull/12095 の @CritasWang による IoTDBPreparedStatement の addBatch 関数の実装</li>
+<li>[IOTDB-6303] https://github.com/apache/iotdb/pull/12089 の @CRZbulabula によるユーザー、ロール、およびプロシージャ フォルダーのデフォルト パスを修正します。</li>
+<li>https://github.com/apache/iotdb/pull/12053 の @liyuheng55555 による IoTDBConfig のclusterId のキャッシュ</li>
+<li>新しい計画オプティマイザーを実装: PredicatePushDown by @liuminghui233 (https://github.com/apache/iotdb/pull/11859)</li>
+<li>https://github.com/apache/iotdb/pull/12098 の @OneSizeFitsQuorum による ConfigNode ConsensusManager 初期化ロジックの最適化</li>
+<li>https://github.com/apache/iotdb/pull/12075 の @Pengzna によって configLeader が存在する場合は再試行を待たない</li>
+<li>https://github.com/apache/iotdb/pull/12039 の @shuwenwei による修復データの高速化</li>
+<li>https://github.com/apache/iotdb/pull/12104 の @dependabot により org.scala-lang:scala-library を 2.12.18 から 2.12.19 にバンプします</li>
+<li>https://github.com/apache/iotdb/pull/12103 の @dependabot により、flink.version を 1.17.0 から 1.17.2 に変更しました</li>
+<li>[IOTDB-6305] @yx-zhang による show current_timestamp ステートメントを https://github.com/apache/iotdb/pull/12106 に追加</li>
+<li>[IOTDB-6306] https://github.com/apache/iotdb/pull/12105 の @lancelly によるフィルターでブール型の UDTF がサポートされていない問題を修正</li>
+<li>[IOTDB-6301] https://github.com/apache/iotdb/pull/12080 の @CRZbulabula による最初の挿入の最適化</li>
+<li>https://github.com/apache/iotdb/pull/12126 の @HeimingZ による DataRegion の TsFile を追加削除</li>
+<li>https://github.com/apache/iotdb/pull/12132 の @HTHou による wal ファイルからの memTable ID の読み取りに失敗する問題を修正</li>
+<li>パイプ サブスクリプション: https://github.com/apache/iotdb/pull/12121 の @VGalaxies によってサブスクリプション client RPC ペイロードを初期化します。</li>
+<li>https://github.com/apache/iotdb/pull/12135 の @HTHou による udf lib の一部の無視された IT を修正</li>
+<li>圧縮スケジュール タスク マネージャーが https://github.com/apache/iotdb/pull/12125 の @shuwenwei によるログの一部の出力を停止および変更できない問題を修正</li>
+<li>[IOTDB-6304] クエリで EXPLAN ANALYZE をサポートします。 @ycycse 著、https://github.com/apache/iotdb/pull/12100</li>
+<li>Pipe: リリースされた PipeRawTabletInsertionEvent のタブレットが依然として参照されており、https://github.com/apache/iotdb/pull/12117 の @Caideyipi によって OOM が発生するバグを修正しました。</li>
+<li>flink-iotdb-connector: IoTDBSink が https://github.com/apache/iotdb/pull/12133 の @xuanronaldo によって NPE をスローする</li>
+<li>[IOTDB-6297] https://github.com/apache/iotdb/pull/12102 の @Beyyes により、一部のデバイスがデータ領域をまたぐ場合、デバイスごとにアグリゲーション アライメントの分散計画を最適化します。</li>
+<li>https://github.com/apache/iotdb/pull/12137 の @liyuheng55555 による DataNode 登録中の早い段階で ConfigNode リストを設定します</li>
+<li>https://github.com/apache/iotdb/pull/12140 の @HTHou による「ci を github ci に変更」を元に戻す</li>
+<li>ログを無視: memtableId -9223372036854775808 が MemTableId2Info に見つかりません (https://github.com/apache/iotdb/pull/12141 の @SteveYurongSu により)</li>
+<li>[IOTDB-6309] https://github.com/apache/iotdb/pull/12116 の @CRZbulabula による自動レート リーダー バランスの間隔を大きくする</li>
+<li>https://github.com/apache/iotdb/pull/12143 の @OneSizeFitsQuorum による SimpleConsensus の ConfigNode 起動エラーを修正</li>
+<li>パイプメタ同期: https://github.com/apache/iotdb/pull/11794 の @SteveYurongSu による異なるクラスター間のメタデータ同期をサポート</li>
+<li>https://github.com/apache/iotdb/pull/12111 の @JackieTien97 により org.openjdk.jol.jol-core と io.airlift.slice への依存関係を削除</li>
+<li>バグ修正: https://github.com/apache/iotdb/pull/12147 の @linxt20 による CachedMNodeContainerIterator の変更ロジック エラー</li>
+<li>パイプ: <code>PipeRealtimeDataRegionExtractor</code> が https://github.com/apache/iotdb/pull/12118 の @VGalaxies によってバインドされたタイム パーティションをフェッチできない問題を修正しました。</li>
+<li>バグ修正: https://github.com/apache/iotdb/pull/12134 の @liyuheng55555 によってサブプロシージャが完了する前に親プロシージャを実行すべきではない</li>
+<li>パイプ: レガシー受信者の安全でない実行競合問題を修正 (IoTDBPipeDataSinkIT.testLegacyConnector を修正) by @SteveYurongSu (https://github.com/apache/iotdb/pull/12152)</li>
+<li>パイプ IT: https://github.com/apache/iotdb/pull/12153 の @SteveYurongSu により、IoTDBPipeNullValueIT のパラメーター &quot;connector.batch.enable&quot; = &quot;false&quot; を一時修正 CI に追加します</li>
+<li>https://github.com/apache/iotdb/pull/12151 で @shuwenwei により StorageEngine の回復が遅い問題を修正</li>
+<li>パイプ: https://github.com/apache/iotdb/pull/12156 の @Caideyipi により、閉じられていない tsfile が <code>isEventTimeOverlappedWithTimeRange()</code> 判定 (testInsertNullValueTemplate で CI が失敗) に達したときの潜在的なロストポイントのバグを修正しました。</li>
+<li>[IOTDB-6301] https://github.com/apache/iotdb/pull/12136 の @BUAAserein による最初の挿入の最適化</li>
+<li>パイプ: https://github.com/apache/iotdb/pull/12085 の @DanielWang2035 による IoTDB スタイルのパターンをサポート</li>
+<li>パイプ メタ: https://github.com/apache/iotdb/pull/12159 の @Caideyipi により、論理ビュー関連のロジックと IT およびディレクトリのいくつかのバグ修正が完了しました。</li>
+<li>UDF: https://github.com/apache/iotdb/pull/12158 の @caozj1011 によって UDFParameters に「timestampPrecision」を追加</li>
+<li>Windows 上の cpp client IT を修正 (https://github.com/apache/iotdb/pull/12162 の @HTHou により)</li>
+<li>パイプ: https://github.com/apache/iotdb/pull/12164 の @Caideyipi によって、すべてのパイプ IT に必要なフラッシュを補完するために IT がリファクタリングされました。</li>
+<li>[IOTDB-6310] https://github.com/apache/iotdb/pull/12160 の @JackieTien97 によるクエリ リソース初期化の最適化</li>
+<li>https://github.com/apache/iotdb/pull/12142 の @shuwenwei による圧縮モジュールの ClosedByInterruptException によって引き起こされるエラー ログを修正</li>
+<li>将来テーブル モデルをサポートするために IQueryExecution をリファクタリング (https://github.com/apache/iotdb/pull/12157 の @JackieTien97 により)</li>
+<li>修正(jdbc): カタログが「Apache IoTDB」の場合、https://github.com/apache/iotdb/pull/12166 の @CritasWang によって無視される</li>
+<li>https://github.com/apache/iotdb/pull/12155 の @Beyyes による datanode_slow_sql.log のネイティブ リクエスト api を出力します</li>
+<li>https://github.com/apache/iotdb/pull/12168 の @dependabot により、/iotdb-connector/grafana-plugin で google.golang.org/protobuf を 1.31.0 から 1.33.0 にバンプします</li>
+<li>https://github.com/apache/iotdb/pull/12167 の @shuwenwei による 1 つの圧縮スケジュール ワーカーでバインドされたデータ領域のランダム スケジュール圧縮</li>
+<li>https://github.com/apache/iotdb/pull/12169 の @Caideyipi による「into」パターンによる論理ビュー作成の失敗の問題を修正</li>
+<li>スキーマ領域スナップショット パーサーをサポートします。 @ColinLeeo 著、https://github.com/apache/iotdb/pull/12145</li>
+<li>パイプ: https://github.com/apache/iotdb/pull/12114 の @xuanronaldo によって実装された sdt-sampling-processor とリファクタリングされた down-sampling-processor</li>
+<li>UDF: https://github.com/apache/iotdb/pull/12146 の @caozj1011 により包絡線復調解析用の udf 関数を追加</li>
+<li>パイプ: 論理ビューの冪等性作成の問題と、https://github.com/apache/iotdb/pull/12170 の @Caideyipi による一部の IT チェック カバレッジが欠落している問題を修正しました。</li>
+<li>https://github.com/apache/iotdb/pull/12110 の @liyuheng55555 による統合テスト クラスターの停止が高速化</li>
+<li>NodeSupplier.close() とその run() 間の同時バグを修正 (https://github.com/apache/iotdb/pull/12175 の @JackieTien97 により)</li>
+<li>https://github.com/apache/iotdb/pull/12176 の @HeimingZ による wal delete sort メソッドを修正</li>
+<li>https://github.com/apache/iotdb/pull/12173 の @Caideyipi による単純なコンセンサス回復の問題を修正</li>
+<li>iotdb-doap.rdf を更新して、https://github.com/apache/iotdb/pull/12179 の @HTHou による https://projects.apache.org/project.html?iotdb の情報を更新します</li>
+<li>https://github.com/apache/iotdb/pull/12050 の @MrQuansy による TElasticframedTransport の Thrift ゼロコピー最適化</li>
+<li>https://github.com/apache/iotdb/pull/12174 の @Cpaulyz による時系列のカウント/削除の最適化 root.** または root.db.**</li>
+<li>サブスクリプション: ConfigNode でのサブスクリプション管理 (https://github.com/apache/iotdb/pull/12149 の @MiniSho による)</li>
+<li>https://github.com/apache/iotdb/pull/12182 の @dependabot による /iotdb-connector/grafana-plugin の 1.15.4 から 1.15.6 へのバンプフォローリダイレクト</li>
+<li>https://github.com/apache/iotdb/pull/12181 の @dependabot により org.apache.tomcat.embed:tomcat-embed-core を 9.0.83 から 9.0.86 にバンプします</li>
+<li>https://github.com/apache/iotdb/pull/12180 の @dependabot により、com.nimbusds:nimbus-jose-jwt を 9.34 から 9.37.2 にバンプします</li>
+<li>空の TsFile をフラッシュし、https://github.com/apache/iotdb/pull/12171 で @HTHou によって同時にクエリを実行するときのデッドロックを修正</li>
+<li>https://github.com/apache/iotdb/pull/12185 の @HTHou によりマスター バージョンを 1.3.2-SNAPSHOT に更新</li>
+<li>https://github.com/apache/iotdb/pull/12186の@CaideyipiによるThrift TransferでTimeoutChangeableTFastframedTransportが未使用のためタイムアウト変更が無効になるバグを修正</li>
+<li>[IOTDB-6312] https://github.com/apache/iotdb/pull/12191 で @JackieTien97 が間違ったパスワードを使用すると、正しいエラー メッセージがスローされる</li>
+<li>https://github.com/apache/iotdb/pull/12194 で @HTHou によるレートコンセンサスを使用してデータ領域を使用するとフラッシュコマンドが失敗する問題を修正</li>
+<li>https://github.com/apache/iotdb/pull/12172 の @Beyyes により、推定メモリと最大重複ページのクエリ メトリクスを追加</li>
+<li>https://github.com/apache/iotdb/pull/12187 の @Beyyes により、低速クエリのデフォルトのしきい値を 30 秒から 10 秒に変更</li>
+<li>https://github.com/apache/iotdb/pull/12196 の @JackieTien97 により、nodeurls の最初のノードが利用できない場合の SessionConnection の NPE を修正</li>
+<li>パイプ: CreateMultiTimeSeriesStatement によって引き起こされる timeseries が既に存在する例外を処理できない問題を修正し、https://github.com/apache/iotdb/pull/12198 の @SteveYurongSu による自動回復ショーケース用のスロー例外プロセッサを追加しました。</li>
+<li>https://github.com/apache/iotdb/pull/12199 の @Sh-Zh-7 により、マッピング可能な UDTF の入力列の最後に時刻列を追加します</li>
+<li>[IOTDB-6313] https://github.com/apache/iotdb/pull/12200 の @JackieTien97 による FILL(LINEAR) の不正な実装を修正</li>
+<li>[IOTDB-6314] https://github.com/apache/iotdb/pull/12204 の @ycycse による ExplainAnalyze をクエリとして扱う</li>
+<li>https://github.com/apache/iotdb/pull/12205 の @JackieTien97 による TsFileResourceManager のクエリ メトリックを追加</li>
+<li>https://github.com/apache/iotdb/pull/12207 の @dependabot による /iotdb-client/client-py の 22.3.0 から 24.3.0 への黒のバンプ</li>
+<li>https://github.com/apache/iotdb/pull/12084 の @dependabot による org.springframework:spring-web の 5.3.30 から 5.3.33 へのバンプ</li>
+<li>[IOTDB-6301] https://github.com/apache/iotdb/pull/12209 の @BUAAserein による単一レプリカの最初の挿入を最適化します。</li>
+<li>文字列デバイス ID を、https://github.com/apache/iotdb/pull/12177 の @shuwenwei によるインターフェイス IDeviceID に置き換えます</li>
+<li>Pipe: システムの再起動後に PipeMetaSyncProcedure をあまりにも多く実行しないようにします (https://github.com/apache/iotdb/pull/12213 の @SteveYurongSu により)</li>
+<li>https://github.com/apache/iotdb/pull/12193 の @HTHou による isClusterMode 構成を削除</li>
+<li>https://github.com/apache/iotdb/pull/12214 の @dependabot により org.apache.commons:commons-configuration2 を 2.9.0 から 2.10.1 にバンプします</li>
+<li>リファクタリング手順は、https://github.com/apache/iotdb/pull/12202 の @liyuheng55555 によるフレームワークの回復</li>
+<li>CN が誤って DN の機能を削除した場合、<code>SHOW FUNCTIONS</code> に「UNKNOWN」を表示します。 @Sh-Zh-7 著、https://github.com/apache/iotdb/pull/12208</li>
+<li>https://github.com/apache/iotdb/pull/12201 の @Sh-Zh-7 により、UDAF の入力列の末尾まで時間列を左回転します。</li>
+<li>IoTDB JVM GC オプションへの新機能の導入 (https://github.com/apache/iotdb/pull/12088 の @Pengzna による)</li>
+<li>パイプ: https://github.com/apache/iotdb/pull/12216 の @Caideyipi によって解析または報告されるべきではないフィルタリングされた空の tsFiles</li>
+<li>https://github.com/apache/iotdb/pull/12211 の @ColinLeeo による構成スナップショット パーサーをサポート</li>
+<li>パイプ サブスクリプション: https://github.com/apache/iotdb/pull/12138 の @VGalaxies によって DN 上のサブスクリプション エージェントを初期化します。</li>
+<li>https://github.com/apache/iotdb/pull/12218 の @ycycse による EXPLAIN ANALYZE の NPE 問題を修正</li>
+<li>https://github.com/apache/iotdb/pull/12203 の @shuwenwei による圧縮で一貫性のない系列データ型を許可します</li>
+<li>https://github.com/apache/iotdb/pull/12224 の @MrQuansy による辞書エンコーダーの重複検索を削除</li>
+<li>修正: https://github.com/apache/iotdb/pull/12225 の @ycycse により、TopK-Node より上のより一般的なタイプのノードを親として考慮する</li>
+<li>Pipe: https://github.com/apache/iotdb/pull/12210 の @Caideyipi によってユニバーサル集約フレームワークとして集約プロセッサが導入されました。</li>
+<li>https://github.com/apache/iotdb/pull/12229 の @liyuheng55555 による非アトミック プロシージャ ID 生成によって引き起こされるプロシージャの同時実行の問題を修正</li>
+<li>cn パーサーとコード スタイルを修正。 @ColinLeeo 著、https://github.com/apache/iotdb/pull/12231</li>
+<li>UDF: https://github.com/apache/iotdb/pull/12233 の @caozj1011 による周波数パラメーターなしのエンベロープ関数実行エラーを修正</li>
+<li>ログ: https://github.com/apache/iotdb/pull/12235 の @SteveYurongSu により、notifyLeaderReady、notifyLeaderChanged、およびプロシージャ ワーカーのログを追加します</li>
+<li>ハートビートを使用して DataNode の ConfigNodeList を更新 (https://github.com/apache/iotdb/pull/12232 の @liyuheng55555)</li>
+<li>[RatisConsensus] https://github.com/apache/iotdb/pull/12236 の @SzyWilliam による JavaUtils 依存関係を削除</li>
+<li>https://github.com/apache/iotdb/pull/12238 で @liyuheng55555 による GraalVM を使用している場合にユーザーに警告する</li>
+<li>https://github.com/apache/iotdb/pull/12165 の @liyuheng55555 によるリージョン移行の改善</li>
+<li>https://github.com/apache/iotdb/pull/12239 の @Pengzna により、IoTDB JVM オプションの -XX:-UseBiasedLock を削除</li>
+<li>機能: 一部のメソッドの可視性をリファクタリングして、他のパッケージに BasicAuthorizer 実装を追加できるようにしました。 @chrisdutz 著、https://github.com/apache/iotdb/pull/12195</li>
+<li>https://github.com/apache/iotdb/pull/12227 の @JackieTien97 により、各 Seq および Unseq リソースの注文時間と満たされた情報を記憶することで SeriesScanUtil を最適化します。</li>
+<li>サブスクリプション: https://github.com/apache/iotdb/pull/12217 の @DanielWang2035 による CN に関するいくつかの問題を修正</li>
+<li>https://github.com/apache/iotdb/pull/12237 の @CritasWang による cli クラスパスの変更</li>
+<li>https://github.com/apache/iotdb/pull/12241 の @liyuheng55555 による C++ client ビルドの問題を修正</li>
+<li>[RatisConsensus] https://github.com/apache/iotdb/pull/12242 の @SzyWilliam による強制スナップショットをサポートするためのバンプレート スナップショット バージョン</li>
+<li>https://github.com/apache/iotdb/pull/12223 の @HTHou による String 値型推論ロジックを最適化</li>
+<li>IoTConsensus: https://github.com/apache/iotdb/pull/12243 の @BUAAserein による TApplicationException が原因でバッチ送信の再試行をスキップする</li>
+<li>https://github.com/apache/iotdb/pull/12190 の @dependabot により、jackson.version を 2.15.3 から 2.15.4 にバンプします</li>
+<li>パイプ: https://github.com/apache/iotdb/pull/12245 の @SteveYurongSu による PipeResourceManagerHolder.&lt;clinit&gt; と PipePeriodicalJobExecutor によって引き起こされるデッドロックを修正</li>
+<li>[IOTDB-6316] https://github.com/apache/iotdb/pull/12244 の @JackieTien97 による圧縮とロードの間の潜在的な同時バグを修正</li>
+<li>サブスクリプション: トピック/コンシューマー グループがない場合にメタ同期を適切に停止する (https://github.com/apache/iotdb/pull/12247 の @DanielWang2035 による)</li>
+<li>サブスクリプション: サブスクリプション セッションとコンシューマとパイプを初期化します: https://github.com/apache/iotdb/pull/12228 の @VGalaxies による履歴エクストラクターによってリッスンされる、閉じられていない tsfile によって引き起こされるデータ ポイントの損失を修正します</li>
+<li>https://github.com/apache/iotdb/pull/12250 の @shuwenwei による RepairDataFileScanUtil の解凍バイト バッファを修正</li>
+<li>パイプ: https://github.com/apache/iotdb/pull/11998 の @Caideyipi によるパイプ tsFiles およびスキーマ領域スナップショット転送ロジックでの MOD 転送をサポート</li>
+<li>修正: https://github.com/apache/iotdb/pull/12240 の @ycycse による LimitNode を超える最適化では、より一般的なタイプのノードを考慮する</li>
+<li>https://github.com/apache/iotdb/pull/12252 の @liyuheng55555 による WAL アップグレード手順時に強制的にスナップショットを取得する</li>
+<li>https://github.com/apache/iotdb/pull/12255 の @shuwenwei による圧縮タスク優先度コンパレーターを変更</li>
+<li>https://github.com/apache/iotdb/pull/12248 の @2b3c511 による CSV インポートおよびエクスポート スクリプトに基づいた SQL ファイルのインポートおよびエクスポート機能を追加</li>
+<li>https://github.com/apache/iotdb/pull/12113 の @l2280212 により insertRecords を insertTablets に反転します</li>
+<li>https://github.com/apache/iotdb/pull/12249 の @jt2594838 による LZ4Uncompressor の誤った引数を修正</li>
+<li>サブスクリプション: DN とセッションに関するいくつかの問題を修正し、https://github.com/apache/iotdb/pull/12254 の @VGalaxies によって IT を改善しました</li>
+<li>パイプ: https://github.com/apache/iotdb/pull/12256 の @Caideyipi によるレシーバー側の DataNode リダイレクトと IT の強化とリファクタリングにより構成レシーバーがリセットされるときのハンドシェイク ロジックを追加しました</li>
+<li>https://github.com/apache/iotdb/pull/12246 の @liyuheng55555 によるリージョン移行関連の作業</li>
+<li>[IOTDB-6307] https://github.com/apache/iotdb/pull/12183 の @CRZbulabula によるマルチデータベース用の GCR アルゴリズム</li>
+<li>https://github.com/apache/iotdb/pull/12259 の @liyuheng55555 によるリージョン移行関連の作業</li>
+<li>[IOTDB-6308] https://github.com/apache/iotdb/pull/12184 の @CRZbulabula によるマルチデータベース用の CFD アルゴリズム</li>
+</ul>
+<p><strong>フル Changelog</strong>: https://github.com/apache/iotdb/compare/v1.3.1...v1.3.2</p>
+<hr />
+<blockquote>
+<p><strong>ソース</strong> <a href="https://github.com/apache/iotdb">apache/iotdb</a> · <code>v1.3.2</code> · 2024-06-27 · <a href="https://github.com/apache/iotdb/releases/tag/v1.3.2">アップストリーム リリース</a></p>
+</blockquote>
+<p><em>インデックス作成のためにそのままミラーリングされます。すべての権利は上流プロジェクトに帰属します。</em></p></div>   </div> <p class="muted" style="margin-top:var(--s8);font-size:12.5px;border-top:1px solid var(--line);padding-top:var(--s4)"> Release note は上流のプロジェクトによって公開され、インデックス作成のためにここにミラーリングされます。すべての権利はその作者に帰属します。 </p> <nav class="pager" aria-label="Release navigation"> <a href="/releases/iotdb/1.3.3"> <span class="k">← 次へ</span> <span class="t">v1.3.3</span> </a> <a href="/releases/iotdb/1.3.1"> <span class="k">前へ →</span> <span class="t">v1.3.1</span> </a> </nav> <aside class="ad-slot" aria-label="Advertisement" data-astro-cid-fgwukgf6><div class="ad-slot-label" data-astro-cid-fgwukgf6>Advertisement</div><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4184355057086168" data-ad-slot="9133765584" data-ad-format="auto" data-full-width-responsive="true" data-astro-cid-fgwukgf6></ins><script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script></aside> </article> <aside class="rail"> <div class="rail-card"> <div class="rail-title">Source</div> <ul class="rail-list"> <li> <a href="https://github.com/apache/iotdb/releases/tag/v1.3.2" target="_blank" rel="noopener"> <span>GitHub で見る</span> <span class="d">↗</span> </a> </li> <li> <a href="https://github.com/apache/iotdb" target="_blank" rel="noopener"> <span>apache/iotdb</span> <span class="d">↗</span> </a> </li> </ul> </div> <div class="rail-card rail-toc"> <div class="rail-title">このページの目次</div> <nav> <a href="#" class>機能と改善点</a><a href="#" class>バグ</a><a href="#" class>何が変わったのか</a> </nav> </div> <div class="rail-card"> <div class="rail-title">バージョン履歴</div> <ul class="rail-list"> <li> <a href="/releases/iotdb/2.0.11"> <span class="v">v2.0.11</span> <span class="d">26-09-11</span> </a> </li><li> <a href="/releases/iotdb/2.0.10"> <span class="v">v2.0.10</span> <span class="d">26-07-04</span> </a> </li><li> <a href="/releases/iotdb/2.0.8"> <span class="v">v2.0.8</span> <span class="d">26-04-13</span> </a> </li><li> <a href="/releases/iotdb/2.0.7"> <span class="v">v2.0.7</span> <span class="d">26-03-04</span> </a> </li><li> <a href="/releases/iotdb/1.3.7"> <span class="v">v1.3.7</span> <span class="d">26-03-04</span> </a> </li><li> <a href="/releases/iotdb/2.0.6"> <span class="v">v2.0.6</span> <span class="d">26-01-20</span> </a> </li><li> <a href="/releases/iotdb/1.3.6"> <span class="v">v1.3.6</span> <span class="d">26-01-07</span> </a> </li><li> <a href="/releases/iotdb/1.3.5"> <span class="v">v1.3.5</span> <span class="d">25-09-11</span> </a> </li> </ul> <a href="/ja/releases/iotdb" class="mono" style="display:inline-block;margin-top:var(--s3);font-size:11.5px;color:var(--ink-3)"> すべての 28 件を見る →
+</a> </div> </aside> </div> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/ja/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>オープンソースのリリース インテリジェンスが毎日公開されます。</p> </div> <div class="footer-col"> <h3>追跡</h3> <ul> <li><a href="/ja/releases">リリース</a></li> <li><a href="/ja/projects">プロジェクト</a></li> <li><a href="/ja/releases.xml">RSS フィード</a></li> </ul> </div> <div class="footer-col"> <h3>アーカイブ</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文アーカイブ</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技術ノート</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>情報</h3> <ul> <li><a href="/ja/method">仕組み</a></li> <li><a href="/privacy">Privacy policy</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release note は上流プロジェクトに属します。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="リリースを検索"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="リリース、プロジェクト、バージョンを検索…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ navigate</span> <span>↵ open</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

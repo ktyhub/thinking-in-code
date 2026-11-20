@@ -1,0 +1,176 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>深入理解Reactor并行流：Flux.parallel &amp; Flowable.parallel — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chaptor_reactor/10-Flux.parallel/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chaptor_reactor/10-Flux.parallel"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chaptor_reactor/10-Flux.parallel/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chaptor_reactor/10-Flux.parallel"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="深入理解Reactor并行流：Flux.parallel &#38; Flowable.parallel — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chaptor_reactor/10-Flux.parallel/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chaptor_reactor/10-Flux.parallel/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>chaptor_reactor</h3> <ul> <li> <a href="/zh/chaptor_reactor/1-Flux" class="lv0" title="Reactor源码解析：Flux.subscribe方法详解"> Reactor源码解析：Flux.subscribe方法详解 </a> </li><li> <a href="/zh/chaptor_reactor/2-Flux.push" class="lv0" title="2-Flux.push"> 2-Flux.push </a> </li><li> <a href="/zh/chaptor_reactor/3-Flux.handle" class="lv0" title="3-Flux.handle"> 3-Flux.handle </a> </li><li> <a href="/zh/chaptor_reactor/4-Momo" class="lv0" title="Mono"> Mono </a> </li><li> <a href="/zh/chaptor_reactor/5-BaseSubscriber" class="lv0" title="5-BaseSubscriber"> 5-BaseSubscriber </a> </li><li> <a href="/zh/chaptor_reactor/6-Scheduler" class="lv0" title="Reactor 3 调度器深度解析：异步编程的核心引擎"> Reactor 3 调度器深度解析：异步编程的核心引擎 </a> </li><li> <a href="/zh/chaptor_reactor/7-Schedulers.elastic" class="lv0" title="7-Schedulers.elastic"> 7-Schedulers.elastic </a> </li><li> <a href="/zh/chaptor_reactor/8-Flux.pushlishOn" class="lv0" title="深入理解Reactor中的publishOn操作符"> 深入理解Reactor中的publishOn操作符 </a> </li><li> <a href="/zh/chaptor_reactor/9-Flux.subscribeOn" class="lv0" title="深入理解Reactor中的subscribeOn操作符"> 深入理解Reactor中的subscribeOn操作符 </a> </li><li> <a href="/zh/chaptor_reactor/10-Flux.parallel" class="lv0" aria-current="page" title="深入理解Reactor并行流：Flux.parallel &#38; Flowable.parallel"> 深入理解Reactor并行流：Flux.parallel &amp; Flowable.parallel </a> </li><li> <a href="/zh/chaptor_reactor/11-ParallelFlux.runOn" class="lv0" title="深入解析ParallelFlux.runOn的调度实现机制"> 深入解析ParallelFlux.runOn的调度实现机制 </a> </li><li> <a href="/zh/chaptor_reactor/12-Filter" class="lv0" title="12-Filter"> 12-Filter </a> </li><li> <a href="/zh/chaptor_reactor/13-transform" class="lv0" title="13-transform"> 13-transform </a> </li><li> <a href="/zh/chaptor_reactor/14-​​buffer​​_window​​_groupBy" class="lv0" title="14-​​buffer​​_window​​_groupBy"> 14-​​buffer​​_window​​_groupBy </a> </li><li> <a href="/zh/chaptor_reactor/15-merge_mergeSequential" class="lv0" title="15-merge_mergeSequential"> 15-merge_mergeSequential </a> </li><li> <a href="/zh/chaptor_reactor/16-flatMap_flatMapSequential" class="lv0" title="16-flatMap_flatMapSequential"> 16-flatMap_flatMapSequential </a> </li><li> <a href="/zh/chaptor_reactor/17-concatMap" class="lv0" title="concatMap操作符深度解析：原理、源码与实战"> concatMap操作符深度解析：原理、源码与实战 </a> </li><li> <a href="/zh/chaptor_reactor/18-combineLatest" class="lv0" title="CombineLatest操作符深度解析：原理、源码与实战应用"> CombineLatest操作符深度解析：原理、源码与实战应用 </a> </li><li> <a href="/zh/chaptor_reactor/19-UnicastProcessor" class="lv0" title="UnicastProcessor深度解析：单订阅者处理器的工作原理与实践"> UnicastProcessor深度解析：单订阅者处理器的工作原理与实践 </a> </li><li> <a href="/zh/chaptor_reactor/20-DirectProcessor" class="lv0" title="DirectProcessor深度解析：无背压处理器的工作原理与实践"> DirectProcessor深度解析：无背压处理器的工作原理与实践 </a> </li><li> <a href="/zh/chaptor_reactor/21-EmitterProcessor" class="lv0" title="EmitterProcessor深度解析：多订阅者背压处理器的实现原理与实战指南"> EmitterProcessor深度解析：多订阅者背压处理器的实现原理与实战指南 </a> </li><li> <a href="/zh/chaptor_reactor/22-ReplayProcessor" class="lv0" title="ReplayProcessor深度解析：缓存重放机制与实现原理"> ReplayProcessor深度解析：缓存重放机制与实现原理 </a> </li><li> <a href="/zh/chaptor_reactor/23.TopicProcessor" class="lv0" title="TopicProcessor深度解析：多订阅者场景下的高效数据分发机制"> TopicProcessor深度解析：多订阅者场景下的高效数据分发机制 </a> </li><li> <a href="/zh/chaptor_reactor/24-Context" class="lv0" title="24-Context"> 24-Context </a> </li><li> <a href="/zh/chaptor_reactor/Flux" class="lv0" title="Flux"> Flux </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chaptor_reactor">chaptor_reactor</a><span class="sep">/</span><span>深入理解Reactor并行流：Flux.parallel &amp; Flowable.parallel</span> </nav> <div class="prose">  <h1 id="深入理解reactor并行流fluxparallel--flowableparallel">深入理解Reactor并行流：Flux.parallel &#x26; Flowable.parallel</h1>
+<h2 id="一核心作用与并行机制">一、核心作用与并行机制</h2>
+<p><code>Flux.parallel()</code>和<code>Flowable.parallel()</code>是Reactor实现数据流并行处理的核心API，其本质是通过<strong>分组订阅</strong>和<strong>独立调度</strong>将串行数据流转换为多个并行子流。关键特性如下：</p>
+<h3 id="1-并行度管理">1. 并行度管理</h3>
+<ul>
+<li><strong>默认值设定</strong>：并行度默认等于CPU核心数（<code>Runtime.getRuntime().availableProcessors()</code>）</li>
+<li><strong>动态分组</strong>：源数据根据订阅者数量均分到多个子组（如并行度4，数据会被分成4个分区）</li>
+<li><strong>元素分发</strong>：通过<code>RoundRobinPartitioner</code>实现轮询或范围分区策略</li>
+</ul>
+<h3 id="2-独立订阅通道">2. 独立订阅通道</h3>
+<p>每个并行子流拥有独立的：</p>
+<ul>
+<li>订阅生命周期</li>
+<li>请求计数器</li>
+<li>错误处理机制</li>
+<li>背压管理单元</li>
+</ul>
+<h3 id="3-消费调度增强">3. 消费调度增强</h3>
+<p>需配合<code>publishOn()</code>实现真正的并行消费：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">Flux.</span><span style="color:#6F42C1">range</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">, </span><span style="color:#005CC5">100</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">parallel</span><span style="color:#24292E">()          </span><span style="color:#6A737D">// 创建并行流</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">runOn</span><span style="color:#24292E">(Schedulers.</span><span style="color:#6F42C1">parallel</span><span style="color:#24292E">()) </span><span style="color:#6A737D">// 指定调度器</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">map</span><span style="color:#24292E">(i </span><span style="color:#D73A49">-></span><span style="color:#6F42C1"> heavyCalc</span><span style="color:#24292E">(i)) </span><span style="color:#6A737D">// 并行执行</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">sequential</span><span style="color:#24292E">()        </span><span style="color:#6A737D">// 合并结果</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">();</span></span></code></pre>
+<h2 id="二原理深度解析">二、原理深度解析</h2>
+<h3 id="1-并行处理流程">1. 并行处理流程</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">graph TD</span></span>
+<span class="line"><span style="color:#24292E">    A[源Flux] --> B[ParallelSource]</span></span>
+<span class="line"><span style="color:#24292E">    B --> C[分组策略]</span></span>
+<span class="line"><span style="color:#24292E">    C --> D[创建ParallelSubscription]</span></span>
+<span class="line"><span style="color:#24292E">    D --> E[订阅者注册]</span></span>
+<span class="line"><span style="color:#24292E">    E --> F[独立请求管理]</span></span>
+<span class="line"><span style="color:#24292E">    F --> G[多线程消费]</span></span></code></pre>
+<h3 id="2-关键类协作">2. 关键类协作</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 核心类结构</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> abstract</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> ParallelFlux</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> {</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> int</span><span style="color:#24292E"> parallelism;</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> ParallelGroup group;</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> abstract</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> subscribe</span><span style="color:#24292E">(ParallelSubscriber&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#D73A49"> super</span><span style="color:#D73A49"> T</span><span style="color:#24292E">>[] </span><span style="color:#E36209">subscribers</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 分组管理器</span></span>
+<span class="line"><span style="color:#D73A49">class</span><span style="color:#6F42C1"> ParallelGroup</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> AtomicLongArray requested;</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> int</span><span style="color:#24292E"> parallelism;</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> request</span><span style="color:#24292E">(</span><span style="color:#D73A49">long</span><span style="color:#E36209"> n</span><span style="color:#24292E">, </span><span style="color:#D73A49">int</span><span style="color:#E36209"> index</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        requested.</span><span style="color:#6F42C1">addAndGet</span><span style="color:#24292E">(index, n);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="3-请求协调机制">3. 请求协调机制</h3>
+<ul>
+<li><strong>AtomicLongArray</strong>：记录每个子组的请求数量（索引对应子组ID）</li>
+<li><strong>背压传播</strong>：当任一子组请求量不足时，整体流暂停生产</li>
+<li><strong>水印策略</strong>：通过<code>watermark</code>变量实现批量请求传递</li>
+</ul>
+<h2 id="三源码核心解读">三、源码核心解读</h2>
+<h3 id="1-parallel方法实现">1. parallel()方法实现</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> ParallelFlux</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> parallel</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">    int</span><span style="color:#24292E"> parallelism </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.parallelism </span><span style="color:#D73A49">!=</span><span style="color:#24292E"> Integer.MIN_VALUE </span></span>
+<span class="line"><span style="color:#D73A49">        ?</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.parallelism </span></span>
+<span class="line"><span style="color:#D73A49">        :</span><span style="color:#24292E"> Runtime.</span><span style="color:#6F42C1">getRuntime</span><span style="color:#24292E">().</span><span style="color:#6F42C1">availableProcessors</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ParallelFluxArray&#x3C;>(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, parallelism);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<ul>
+<li><strong>动态并行度</strong>：优先使用用户设置的并行度，否则使用CPU核心数</li>
+<li><strong>数据结构</strong>：使用<code>ParallelFluxArray</code>存储原始数据</li>
+</ul>
+<h3 id="2-订阅协调过程">2. 订阅协调过程</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> subscribe</span><span style="color:#24292E">(ParallelSubscriber</span><span style="color:#D73A49">&#x3C;?</span><span style="color:#005CC5"> super</span><span style="color:#24292E"> T</span><span style="color:#D73A49">></span><span style="color:#24292E">[] subscribers) {</span></span>
+<span class="line"><span style="color:#D73A49">    int</span><span style="color:#24292E"> n </span><span style="color:#D73A49">=</span><span style="color:#24292E"> subscribers.length;</span></span>
+<span class="line"><span style="color:#D73A49">    ParallelSubscription</span><span style="color:#24292E">[] subs </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#D73A49"> ParallelSubscription</span><span style="color:#24292E">[n];</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (</span><span style="color:#D73A49">int</span><span style="color:#24292E"> i </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">; i </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> n; i</span><span style="color:#D73A49">++</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        subs[i] </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ParallelSubscription</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, i);</span></span>
+<span class="line"><span style="color:#24292E">        subscribers[i].</span><span style="color:#6F42C1">onSubscribe</span><span style="color:#24292E">(subs[i]);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (ParallelSubscription sub </span><span style="color:#D73A49">:</span><span style="color:#24292E"> subs) {</span></span>
+<span class="line"><span style="color:#24292E">        sub.</span><span style="color:#6F42C1">request</span><span style="color:#24292E">(Long.MAX_VALUE); </span><span style="color:#6A737D">// 初始请求</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<ul>
+<li><strong>订阅数组</strong>：为每个子组创建独立订阅</li>
+<li><strong>批量请求</strong>：初始请求最大值触发数据生产</li>
+</ul>
+<h3 id="3-数据分发逻辑">3. 数据分发逻辑</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> onNext</span><span style="color:#24292E">(T t) {</span></span>
+<span class="line"><span style="color:#D73A49">    int</span><span style="color:#24292E"> idx </span><span style="color:#D73A49">=</span><span style="color:#24292E"> index.</span><span style="color:#6F42C1">getAndIncrement</span><span style="color:#24292E">() </span><span style="color:#D73A49">%</span><span style="color:#24292E"> parallelism;</span></span>
+<span class="line"><span style="color:#24292E">    subscribers[idx].</span><span style="color:#6F42C1">onNext</span><span style="color:#24292E">(t);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<ul>
+<li><strong>轮询分发</strong>：通过原子计数器实现循环分组</li>
+<li><strong>线程安全</strong>：使用<code>AtomicInteger</code>保证并发安全</li>
+</ul>
+<h2 id="四性能优化实践">四、性能优化实践</h2>
+<h3 id="1-并行度调优公式">1. 并行度调优公式</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">int</span><span style="color:#24292E"> parallelism </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Math.</span><span style="color:#6F42C1">min</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">    Runtime.</span><span style="color:#6F42C1">getRuntime</span><span style="color:#24292E">().</span><span style="color:#6F42C1">availableProcessors</span><span style="color:#24292E">() </span><span style="color:#D73A49">*</span><span style="color:#005CC5"> 2</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#24292E">    totalDataSize </span><span style="color:#D73A49">/</span><span style="color:#005CC5"> 10000</span></span>
+<span class="line"><span style="color:#24292E">);</span></span></code></pre>
+<h3 id="2-调度器选择策略">2. 调度器选择策略</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐Scheduler</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CPU密集计算</td>
+<td>Schedulers.parallel()</td>
+</tr>
+<tr>
+<td>I/O密集操作</td>
+<td>Schedulers.elastic()</td>
+</tr>
+<tr>
+<td>混合型任务</td>
+<td>自定义混合线程池</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-背压优化方案">3. 背压优化方案</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">parallelFlux</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">onBackpressureBuffer</span><span style="color:#24292E">(</span><span style="color:#005CC5">1024</span><span style="color:#24292E">) </span><span style="color:#6A737D">// 设置缓冲区</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">subscribeOn</span><span style="color:#24292E">(Schedulers.</span><span style="color:#6F42C1">boundedElastic</span><span style="color:#24292E">()) </span><span style="color:#6A737D">// 限制线程数</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">publishOn</span><span style="color:#24292E">(Schedulers.</span><span style="color:#6F42C1">parallel</span><span style="color:#24292E">()); </span><span style="color:#6A737D">// 消费调度</span></span></code></pre>
+<h2 id="五典型问题排查">五、典型问题排查</h2>
+<h3 id="1-数据倾斜问题">1. 数据倾斜问题</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 症状：部分子组处理完成，其他子组仍在运行</span></span>
+<span class="line"><span style="color:#6A737D">// 原因：数据分布不均</span></span>
+<span class="line"><span style="color:#6A737D">// 解决：自定义分区策略</span></span>
+<span class="line"><span style="color:#24292E">parallelFlux.</span><span style="color:#6F42C1">groupBy</span><span style="color:#24292E">(i </span><span style="color:#D73A49">-></span><span style="color:#24292E"> i </span><span style="color:#D73A49">%</span><span style="color:#005CC5"> 4</span><span style="color:#24292E">).</span><span style="color:#6F42C1">flatMap</span><span style="color:#24292E">(group </span><span style="color:#D73A49">-></span><span style="color:#24292E"> group.</span><span style="color:#6F42C1">parallel</span><span style="color:#24292E">());</span></span></code></pre>
+<h3 id="2-内存溢出风险">2. 内存溢出风险</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 症状：高并发时出现OOM</span></span>
+<span class="line"><span style="color:#6A737D">// 原因：未限制缓冲区大小</span></span>
+<span class="line"><span style="color:#6A737D">// 解决：设置合理缓冲区</span></span>
+<span class="line"><span style="color:#24292E">.</span><span style="color:#6F42C1">parallel</span><span style="color:#24292E">(</span><span style="color:#005CC5">4</span><span style="color:#24292E">).</span><span style="color:#6F42C1">runOn</span><span style="color:#24292E">(Schedulers.</span><span style="color:#6F42C1">parallel</span><span style="color:#24292E">(), </span><span style="color:#005CC5">1024</span><span style="color:#24292E">);</span></span></code></pre>
+<h3 id="3-线程泄漏场景">3. 线程泄漏场景</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">parallelFlux.</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">(); </span><span style="color:#6A737D">// 缺少调度器</span></span>
+<span class="line"><span style="color:#6A737D">// 解决：必须配合subscribeOn/publishOn</span></span></code></pre>
+<h2 id="六设计模式启示">六、设计模式启示</h2>
+<ol>
+<li><strong>分治模式</strong>：通过分组实现数据并行处理</li>
+<li><strong>策略模式</strong>：支持自定义分组策略（RoundRobinPartitioner）</li>
+<li><strong>观察者模式</strong>：每个子组独立维护订阅关系</li>
+</ol>
+<hr>
+<h2 id="总结">总结</h2>
+<p><code>Flux.parallel()</code>通过<strong>分组订阅</strong>和<strong>独立调度</strong>机制，实现了真正的并行数据处理能力。正确使用时需注意：</p>
+<ul>
+<li>合理设置并行度（CPU核心数×2）</li>
+<li>优先使用弹性调度器处理I/O密集型</li>
+</ul>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

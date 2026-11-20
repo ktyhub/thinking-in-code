@@ -1,0 +1,232 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**Zookeeper安装配置** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_zookeeper/3-install/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_zookeeper/3-install"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_zookeeper/3-install/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_zookeeper/3-install"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**Zookeeper安装配置** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_zookeeper/3-install/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_zookeeper/3-install/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>zookeeper</h3> <ul> <li> <a href="/zh/chapter_zookeeper/1-introduce" class="lv0" title="**Zookeeper的设计**"> **Zookeeper的设计** </a> </li><li> <a href="/zh/chapter_zookeeper/2-implement" class="lv0" title="**Zookeeper的实现**"> **Zookeeper的实现** </a> </li><li> <a href="/zh/chapter_zookeeper/3-install" class="lv0" aria-current="page" title="**Zookeeper安装配置**"> **Zookeeper安装配置** </a> </li><li> <a href="/zh/chapter_zookeeper/4-client" class="lv0" title="客户端的入门使用"> 客户端的入门使用 </a> </li><li> <a href="/zh/chapter_zookeeper/5-produce-and-consumer" class="lv0" title="**教你如何用Zookeeper开发锁与生产者消费者?**"> **教你如何用Zookeeper开发锁与生产者消费者?** </a> </li><li> <a href="/zh/chapter_zookeeper/6-watch" class="lv0" title="**Watch监听通知机制简介**"> **Watch监听通知机制简介** </a> </li><li> <a href="/zh/chapter_zookeeper/7-start-source" class="lv0" title="**服务器启动流程入个门**"> **服务器启动流程入个门** </a> </li><li> <a href="/zh/chapter_zookeeper/8-config" class="lv0" title="**配置信息是如何加载到内存空间的**"> **配置信息是如何加载到内存空间的** </a> </li><li> <a href="/zh/chapter_zookeeper/9-clear-log-start" class="lv0" title="**日志清理定时任务的启动**"> **日志清理定时任务的启动** </a> </li><li> <a href="/zh/chapter_zookeeper/10-init-main" class="lv0" title="**使用配置信息启动运行入口**"> **使用配置信息启动运行入口** </a> </li><li> <a href="/zh/chapter_zookeeper/11-reactor" class="lv0" title="**ServerCnxnFactory 服务器连接工厂对象的创建与属性初始化**"> **ServerCnxnFactory 服务器连接工厂对象的创建与属性初始化** </a> </li><li> <a href="/zh/chapter_zookeeper/12-quorumpeer-init" class="lv0" title="**管理协议的法定人对象QuorumPeer创建与初始化**"> **管理协议的法定人对象QuorumPeer创建与初始化** </a> </li><li> <a href="/zh/chapter_zookeeper/13-loaddatabase" class="lv0" title="**法定人对象QuorumPeer启动之加载磁盘快照与事务日志**"> **法定人对象QuorumPeer启动之加载磁盘快照与事务日志** </a> </li><li> <a href="/zh/chapter_zookeeper/14-reactor-io" class="lv0" title="**启服务端网络监听连接NIOServerCnxnFactory**"> **启服务端网络监听连接NIOServerCnxnFactory** </a> </li><li> <a href="/zh/chapter_zookeeper/15-election" class="lv0" title="**选举算法的准备等待选举**"> **选举算法的准备等待选举** </a> </li><li> <a href="/zh/chapter_zookeeper/16-lookforleader" class="lv0" title="**QuorumPeer主循环**"> **QuorumPeer主循环** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_zookeeper">zookeeper</a><span class="sep">/</span><span>**Zookeeper安装配置**</span> </nav> <div class="prose">  <h1 id="zookeeper安装配置"><strong>Zookeeper安装配置</strong></h1>
+<p>可以打开如下地址找到自己所需要的版本进行下载
+<a href="https://zookeeper.apache.org/releases.html#download">https://zookeeper.apache.org/releases.html#download</a>
+下载文件中一共有两个地址一个是带源码的下载一个是不带源码的下载可以根据自己需要进行下载， 下载完毕之后可以对文件进行解压，
+我们可以看下不带源码的安装目录其中主要包含了:</p>
+<ul>
+<li>bin目录下的脚本文件</li>
+<li>conf配置文件</li>
+<li>lib依赖库</li>
+<li>docs离线教程等</li>
+</ul>
+<h2 id="单个机器单个节点如何启动需要什么配置"><strong>单个机器单个节点如何启动需要什么配置？</strong></h2>
+<p><strong>独立模式</strong> 启动比较简单可以执行bin目录下面的启动脚本进行启动，不过在启动前我们先来简单的配置下配置文件，
+打开解压后的Zookeeper目录中的 <strong>conf</strong> 文件夹可以看到默认情况下会有个 <strong>zoo_sample.cfg</strong>
+文件先将配置文件名称修改为 <strong>zoo.cfg</strong> 确保zookeeper启动的时候可以识别，然后打开zoo.cfg文件添加如下配置</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="properties"><code><span class="line"><span style="color:#D73A49">        tickTime</span><span style="color:#24292E">=2000</span></span>
+<span class="line"><span style="color:#D73A49">        dataDir</span><span style="color:#24292E">=/var/lib/zookeeper</span></span>
+<span class="line"><span style="color:#D73A49">        clientPort</span><span style="color:#24292E">=2181</span></span></code></pre>
+<p>上面这些配置不是必须的直接启动也是可以的不过我们先来简单配置下配置文件，说明下这几个参数的含义：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tickTime</td>
+<td>Zookeeper使用的基本单位，以毫秒为单位。用于进行心跳，并且最小会话超时将是tickTime的两倍。</td>
+</tr>
+<tr>
+<td>dataDir</td>
+<td>存储内存中对应数据库快照的位置，以及数据库更新事物的日志。</td>
+</tr>
+<tr>
+<td>clientPort</td>
+<td>侦听客户端连接的端口</td>
+</tr>
+</tbody>
+</table>
+<p>配置文件创建好了那接下来如何启动呢，让我们打开bin目录可以看到有
+<strong>zkServer.sh</strong> 和 <strong>zkServer.cmd</strong> 。</p>
+<p>如果我们使用的操作系统是mac或者linux则执行命令zkServer.sh
+start如果我们用的是windows则执行命令zkServer.cmd start</p>
+<p>如何验证进程是否启动成功了呢?</p>
+<ul>
+<li>
+<p>可以通过查看java进程是否存在Zookeeper的进程</p>
+</li>
+<li>
+<p>验证端口2181是否已经处于监听状态，</p>
+</li>
+<li>
+<p>也可以执行 <code>zkServer.sh status</code></p>
+</li>
+<li>
+<p>另外我们也可以看下在解压的根目录下面会自动生成个logs文件夹zookeeper启动日志默认会打印在这里，如果说我们要定制化日志格式和修改日志目录可以打开conf配置目录下面配置下log4j的配置文件，log4j的详细配置可以参考log4j官网</p>
+</li>
+<li>
+<p>单机模式下的ookeeper部署，没有备份复制如果运行中的进程出现故障那么整个Zookeeper服务就不可以用了，如果我们处于开发环境可以使用这种方式简单快捷，如果在产线或者高可用场景下使用则需要配置集群模式，这个后面我们会详细说明。</p>
+</li>
+</ul>
+<h2 id="多个机器多个节点启动如何配置"><strong>多个机器多个节点启动如何配置？</strong></h2>
+<p>独立模式运行zookeeper方便部署和测试但是在生产环境应该在复制模式下运行zookeeper，同一个应用程序中的复制服务器组称为quorum，在复制模式下quorum组中的服务器都具有相同的配置文件，接
+下来我们就先看一个在复制模式下zoo.cfg文件的简单配置</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="properties"><code><span class="line"></span>
+<span class="line"><span style="color:#D73A49">tickTime</span><span style="color:#24292E">=2000</span></span>
+<span class="line"><span style="color:#D73A49">dataDir</span><span style="color:#24292E">=/var/lib/</span></span>
+<span class="line"><span style="color:#24292E">zookeeper</span></span>
+<span class="line"><span style="color:#D73A49">clientPort</span><span style="color:#24292E"> = 2181</span></span>
+<span class="line"><span style="color:#D73A49">initLimit</span><span style="color:#24292E">=5</span></span>
+<span class="line"><span style="color:#D73A49">syncLimit</span><span style="color:#24292E">=2</span></span>
+<span class="line"><span style="color:#D73A49">server.1</span><span style="color:#24292E">=zoo1:2888:3888</span></span>
+<span class="line"><span style="color:#D73A49">server.2</span><span style="color:#24292E">=zoo2:2888:3888</span></span>
+<span class="line"><span style="color:#D73A49">server.3</span><span style="color:#24292E">=zoo3:2888:3888</span></span></code></pre>
+<p>可以了解下与单机模式部署时新增的配置项</p>
+<table>
+<thead>
+<tr>
+<th>配置</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>initLimit</td>
+<td>zookeeper服务器连接到leader的超时时间长度(单位是tickTime)在这个配置中为5个心跳单位超时时间为，5✖️2000=10000毫秒</td>
+</tr>
+<tr>
+<td>syncLimit</td>
+<td>zookeeper服务器与leader之间的连接超时时间(单位是tickTime)</td>
+</tr>
+</tbody>
+</table>
+<p>接下来可以看到配置zookeeper服务地址信息的配置就是先来看一下等号前面的变量名server.x
+这个圆点符号后面的x序号代表着对应服务器的序号，配置了对应序号的机器要在数据目录中创建一个 <strong>myid文件</strong> 来写入序号，
+<strong>如果myid文件不存在就可能导致启动报错</strong> ，
+然后在来看值这里第一个配置的是 <strong>zoo1:2888:388</strong>8 一共三个部分：</p>
+<ul>
+<li>zoo1代表着第一个Zookeeper服务的地址</li>
+<li>然后配置在地址后面的 <strong>2888</strong> 端口用于集群内机器 <strong>follower到leader点对点通信使用</strong></li>
+<li>第三个端口 <strong>3888</strong> 配置的是进行 <strong>leader选举</strong> 使用的端口</li>
+</ul>
+<p><strong>Zookeeper集群的配置有如下步骤：</strong></p>
+<ol>
+<li><strong>安装Java JDK</strong> (ZooKeeper运行在Java版本1.8或更高版本(不支持JDK 8 LTS, JDK 11 LTS, JDK 12 – Java 9和10))</li>
+<li><strong>设置Java堆大小</strong> ,要确定正确的值，请使用负载测试，并确保远低于导致交换的使用限制,保守一点——对于一台4GB的机器，使用3GB的最大堆大小</li>
+<li>安装ZooKeeper服务器包可以从: <a href="http://zookeeper.apache.org/releases.html">http://zookeeper.apache.org/releases.html</a> 下载</li>
+<li>创建配置文件 <strong>zoo.cfg</strong> ,假如有3台节点情况下，集群配置至少需要如下的配置信息</li>
+</ol>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="properties"><code><span class="line"><span style="color:#D73A49">tickTime</span><span style="color:#24292E">=2000</span></span>
+<span class="line"><span style="color:#D73A49">dataDir</span><span style="color:#24292E">=/var/lib/zookeeper/</span></span>
+<span class="line"><span style="color:#D73A49">clientPort</span><span style="color:#24292E">=2181</span></span>
+<span class="line"><span style="color:#D73A49">initLimit</span><span style="color:#24292E">=5</span></span>
+<span class="line"><span style="color:#D73A49">syncLimit</span><span style="color:#24292E">=2</span></span>
+<span class="line"><span style="color:#D73A49">server.1</span><span style="color:#24292E">=zoo1:2888:3888</span></span>
+<span class="line"><span style="color:#D73A49">server.2</span><span style="color:#24292E">=zoo2:2888:3888</span></span>
+<span class="line"><span style="color:#D73A49">server.3</span><span style="color:#24292E">=zoo3:2888:3888 </span></span></code></pre>
+<p>这里我们新增了 server.id=host:port:port，等配置：</p>
+<ul>
+<li>server是常量</li>
+<li>id是当前服务器的id</li>
+<li>host是对应id服务器的主机地址</li>
+<li>第一个port是仲裁端口</li>
+<li>第二个port是选举端口</li>
+</ul>
+<p>上一步我们有个id
+需要我们在 <strong>dataDir目录创建myid文件</strong> ，myid文件由一行组成，只包含该机器id的文本。因此，服务器1的myid将包含文本“1”，而不包含其他内容。
+<strong>该id必须在整个系统中唯一</strong> ，<strong>取值范围为1 ~255</strong> 。</p>
+<p>重要提示:如果启用扩展特性，比如TTL节点(见下文)，由于内部限制，id必须在1到254之间。</p>
+<h2 id="zookeeper可靠性保障"><strong>ZooKeeper可靠性保障</strong></h2>
+<ul>
+<li>监督进程</li>
+<li>监控配置</li>
+<li>日志配置</li>
+<li>故障排除</li>
+<li>参数配置大全</li>
+</ul>
+<p><strong>跨机器的需求</strong></p>
+<p>要使ZooKeeper服务处于存活状态，必须有大多数正常的机器能够相互通信。
+要创建一个能够容忍F台机器故障的部署，您应该部署 <strong>2xF+1</strong> 台机器。</p>
+<p>因此，由 <strong>三台机器组成的部署可以处理一次故障</strong> ，而由 <strong>五台机器组成的部署可以处理两次故障</strong> 。</p>
+<p>请注意，部署6台机器只能处理2个故障，因为3台机器不是大多数。由于这个原因，ZooKeeper部署通常由奇数台机器组成。</p>
+<h3 id="数据目录清理"><strong>数据目录清理</strong></h3>
+<p>ZooKeeper数据目录包含的文件是：特定服务集成存储的Znode的持久副本。这些是快照和事务日志文件。
+当对Znode进行更改时，这些更改被追加到事务日志中。</p>
+<p>有时，当日志变大时，所有znode当前状态的快照将被写入文件系统，并为未来的事务创建一个新的事务日志文件。</p>
+<p>在快照过程中，ZooKeeper可能会继续将传入的事务追加到旧日志文件中。</p>
+<p>因此，可能会在快照之前的最后一个事务日志中找到一些比快照更新的事务。</p>
+<p>使用默认配置时，ZooKeeper服务器不会删除旧快照和日志文件(详见下面的autopurge)
+，这是运营商的责任。每个服务环境都是不同的，因此管理这些文件的需求可能因安装而异(例如备份)。</p>
+<p>数据的清理一般有3种方式：</p>
+<h4 id="运维人员编写清理脚本定期清理日志文件"><strong>运维人员编写清理脚本定期清理日志文件</strong></h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D">#!/bin/bash</span></span>
+<span class="line"><span style="color:#24292E">           </span></span>
+<span class="line"><span style="color:#6A737D">#snapshot file</span></span>
+<span class="line"><span style="color:#6F42C1">dir</span></span>
+<span class="line"><span style="color:#24292E">dataDir</span><span style="color:#D73A49">=</span><span style="color:#032F62">/home/nileader/taokeeper/zk_data/version-2</span></span>
+<span class="line"><span style="color:#6A737D">        #</span></span>
+<span class="line"><span style="color:#6F42C1">tran</span><span style="color:#032F62"> log</span></span>
+<span class="line"><span style="color:#6F42C1">dir</span></span>
+<span class="line"><span style="color:#24292E">dataLogDir</span><span style="color:#D73A49">=</span><span style="color:#032F62">/home/nileader/taokeeper/zk_log/version-2</span></span>
+<span class="line"><span style="color:#6A737D">        #</span></span>
+<span class="line"><span style="color:#6F42C1">zk</span><span style="color:#032F62"> log</span></span>
+<span class="line"><span style="color:#6F42C1">dir</span></span>
+<span class="line"><span style="color:#24292E">logDir</span><span style="color:#D73A49">=</span><span style="color:#032F62">/home/nileader/taokeeper/logs</span></span>
+<span class="line"><span style="color:#6A737D">#Leave 60</span></span>
+<span class="line"><span style="color:#6F42C1">files</span></span>
+<span class="line"><span style="color:#6F42C1">        count</span><span style="color:#032F62"> =</span><span style="color:#005CC5"> 60</span></span>
+<span class="line"><span style="color:#24292E">count</span><span style="color:#D73A49">=</span><span style="color:#24292E">$</span><span style="color:#032F62">[</span><span style="color:#24292E">$count </span><span style="color:#6F42C1">+1]</span></span>
+<span class="line"><span style="color:#6F42C1">ls</span><span style="color:#032F62"> -</span></span>
+<span class="line"><span style="color:#6F42C1">t</span><span style="color:#24292E"> $dataLogDir </span><span style="color:#032F62">/log</span><span style="color:#032F62"> .</span><span style="color:#005CC5">*</span><span style="color:#D73A49">|</span><span style="color:#6F42C1">tail</span><span style="color:#005CC5"> -n</span><span style="color:#032F62"> +</span><span style="color:#24292E">$count  </span><span style="color:#D73A49">|</span></span>
+<span class="line"><span style="color:#6F42C1">xargs</span><span style="color:#032F62"> rm</span><span style="color:#005CC5"> -f</span></span>
+<span class="line"><span style="color:#6F42C1">ls</span><span style="color:#032F62"> -</span></span>
+<span class="line"><span style="color:#6F42C1">t</span><span style="color:#24292E"> $dataDir </span><span style="color:#032F62">/snapshot</span><span style="color:#032F62"> .</span><span style="color:#005CC5">*</span><span style="color:#D73A49">|</span><span style="color:#6F42C1">tail</span><span style="color:#005CC5"> -n</span><span style="color:#032F62"> +</span><span style="color:#24292E">$count  </span><span style="color:#D73A49">|</span></span>
+<span class="line"><span style="color:#6F42C1">xargs</span><span style="color:#032F62"> rm</span><span style="color:#005CC5"> -f</span></span>
+<span class="line"><span style="color:#6F42C1">ls</span><span style="color:#032F62"> -</span></span>
+<span class="line"><span style="color:#6F42C1">t</span><span style="color:#24292E"> $logDir </span><span style="color:#032F62">/zookeeper.log</span><span style="color:#032F62"> .</span><span style="color:#005CC5">*</span><span style="color:#D73A49">|</span><span style="color:#6F42C1">tail</span><span style="color:#005CC5"> -n</span><span style="color:#032F62"> +</span><span style="color:#24292E">$count  </span><span style="color:#D73A49">|</span></span>
+<span class="line"><span style="color:#6F42C1">xargs</span><span style="color:#032F62"> rm</span><span style="color:#005CC5"> -f</span></span></code></pre>
+<p>以上这个脚本定义了删除对应两个目录中的文件，保留最新的60个文件，可以将他写到crontab中，设置为每天凌晨2点执行一次就可以了。</p>
+<h4 id="使用zk的工具类purgetxnlog"><strong>使用ZK的工具类PurgeTxnLog，</strong></h4>
+<p>使用ZK的工具类PurgeTxnLog
+它的实现了一种简单的历史文件清理策略，可以在这里看一下他的使用方法：<a href="http://zookeeper.apache.org/doc/r3.4.3/api/index.html%EF%BC%8C%E5%8F%AF%E4%BB%A5%E6%8C%87%E5%AE%9A%E8%A6%81%E6%B8%85%E7%90%86%E7%9A%84%E7%9B%AE%E5%BD%95%E5%92%8C%E9%9C%80%E8%A6%81%E4%BF%9D%E7%95%99%E7%9A%84%E6%96%87%E4%BB%B6%E6%95%B0%E7%9B%AE%EF%BC%8C%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8%E5%A6%82%E4%B8%8B%EF%BC%9A">http://zookeeper.apache.org/doc/r3.4.3/api/index.html，可以指定要清理的目录和需要保留的文件数目，简单使用如下：</a></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">java </span><span style="color:#D73A49">-</span></span>
+<span class="line"><span style="color:#24292E">cp zookeeper.jar</span><span style="color:#D73A49">:</span><span style="color:#24292E">lib</span><span style="color:#D73A49">/</span><span style="color:#24292E">slf4j</span><span style="color:#D73A49">-</span><span style="color:#24292E">api</span><span style="color:#D73A49">-</span><span style="color:#005CC5">1.6</span><span style="color:#24292E">.</span><span style="color:#B31D28;font-style:italic">1</span><span style="color:#24292E">.jar</span><span style="color:#D73A49">:</span><span style="color:#24292E">lib</span><span style="color:#D73A49">/</span><span style="color:#24292E">slf4j</span><span style="color:#D73A49">-</span><span style="color:#24292E">log4j12</span><span style="color:#D73A49">-</span><span style="color:#005CC5">1.6</span><span style="color:#24292E">.</span><span style="color:#B31D28;font-style:italic">1</span><span style="color:#24292E">.jar</span><span style="color:#D73A49">:</span><span style="color:#24292E">lib</span><span style="color:#D73A49">/</span><span style="color:#24292E">log4j</span><span style="color:#D73A49">-</span><span style="color:#005CC5">1.2</span><span style="color:#24292E">.</span><span style="color:#B31D28;font-style:italic">15</span><span style="color:#24292E">.jar</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#24292E">conf org.apache.zookeeper.server.PurgeTxnLog</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">dataDir</span><span style="color:#D73A49">>&#x3C;</span><span style="color:#24292E">snapDir</span><span style="color:#D73A49">></span><span style="color:#D73A49"> -</span><span style="color:#24292E">n</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">count</span><span style="color:#D73A49">></span></span></code></pre>
+<p>对于上面这个Java类的执行，ZK自己已经写好了脚本，在bin/zkCleanup.sh中，所以直接使用这个脚本也是可以执行清理工作的。</p>
+<h4 id="自动清理snapshot和事务日志的功能">自动清理snapshot和事务日志的功能</h4>
+<p>从3.4.0开始，zookeeper提供了自动清理snapshot和事务日志的功能，通过配置 <strong>autopurge.snapRetainCount</strong> 和 *
+<em>autopurge.purgeInterval</em>* 这两个参数能够实现定时清理了。这两个参数都是在zoo.cfg中配置的：</p>
+<ul>
+<li>autopurge.purgeInterval 这个参数指定了清理频率，单位是小时，需要填写一个1或更大的整数，默认是0，表示不开启自己清理功能。</li>
+<li>autopurge.snapRetainCount 这个参数和上面的参数搭配使用，这个参数指定了需要保留的文件数目。默认是保留3个。</li>
+</ul>
+<p><strong>调试日志清理(log4j)</strong>
+ZooKeeper 使用SLF4J作为其日志基础设施， 默认使用log4j日志，日志的清理我们可以通过log4j的配置来保留日志文件的大小和数量</p>
+<p><strong>监控</strong></p>
+<p>可以通过以下三种主要方式监控ZooKeeper服务:</p>
+<ul>
+<li>该命令通过端口使用4个字母单词</li>
+<li>与JMX</li>
+<li>使用zkServer.sh status命令</li>
+</ul>
+<p>我们可以将监控数据发送给zabbix，Prometheu，cat或者其他监控端这取决于我们监控方案的选择。</p>
+<p><strong>Zookeeper配置表格：</strong></p>
+<p><a href="https://zookeeper.apache.org/doc/r3.6.2/zookeeperAdmin.html#sc_configuration">https://zookeeper.apache.org/doc/r3.6.2/zookeeperAdmin.html#sc_configuration</a></p>
+<p><strong>Zookeeper命令表格：</strong></p>
+<p>ZooKeeper Commands
+<a href="https://zookeeper.apache.org/doc/r3.6.2/zookeeperAdmin.html#sc_zkCommands">https://zookeeper.apache.org/doc/r3.6.2/zookeeperAdmin.html#sc_zkCommands</a></p>
+<p><strong>数据文件管理：</strong></p>
+<p>Recovery - TxnLogToolkit
+More details can be found in this</p>
+<p><a href="https://zookeeper.apache.org/doc/current/zookeeperTools.html#zkTxnLogToolkit">https://zookeeper.apache.org/doc/current/zookeeperTools.html#zkTxnLogToolkit</a></p>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

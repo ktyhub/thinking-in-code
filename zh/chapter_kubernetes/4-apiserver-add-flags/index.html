@@ -1,0 +1,511 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>说明 — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_kubernetes/4-apiserver-add-flags/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_kubernetes/4-apiserver-add-flags"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_kubernetes/4-apiserver-add-flags/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_kubernetes/4-apiserver-add-flags"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="说明 — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_kubernetes/4-apiserver-add-flags/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_kubernetes/4-apiserver-add-flags/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>kubernetes</h3> <ul> <li> <a href="/zh/chapter_kubernetes/1-index" class="lv0" title="1-index"> 1-index </a> </li><li> <a href="/zh/chapter_kubernetes/2-apiserver" class="lv0" title="apiserver.go的main方法开始"> apiserver.go的main方法开始 </a> </li><li> <a href="/zh/chapter_kubernetes/3-apiserver-server-run-options" class="lv0" title="说明"> 说明 </a> </li><li> <a href="/zh/chapter_kubernetes/4-apiserver-add-flags" class="lv0" aria-current="page" title="说明"> 说明 </a> </li><li> <a href="/zh/chapter_kubernetes/5-apiserver-server-run" class="lv0" title="5-apiserver-server-run"> 5-apiserver-server-run </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_kubernetes">kubernetes</a><span class="sep">/</span><span>说明</span> </nav> <div class="prose">  <h1 id="说明">说明</h1>
+<p><code>AddFlags</code> 是 <code>ServerRunOptions</code> 结构体的一个方法，它接受一个 <code>*pflag.FlagSet</code> 类型的参数。这个方法的主要作用是向传入的 <code>FlagSet</code> 添加一系列的命令行标志。</p>
+<p>在这个方法中，我们可以看到有多个 <code>fs</code> 对象的方法调用，这些方法都是用来添加不同类型的标志的。例如，<code>fs.IPVar</code> 用于添加一个 IP 类型的标志，<code>fs.StringSliceVar</code> 用于添加一个字符串切片类型的标志，<code>fs.IntVar</code> 用于添加一个整数类型的标志，等等。</p>
+<p>每个添加标志的方法都有四个参数：</p>
+<ol>
+<li>一个指向变量的指针，这个变量用于存储从命令行解析出的标志值。</li>
+<li>标志的名称，这是在命令行中使用的标志的名称。</li>
+<li>标志的默认值，如果在命令行中没有提供这个标志，那么就会使用这个默认值。</li>
+<li>标志的使用说明，这个说明会在生成命令行帮助信息时使用。</li>
+</ol>
+<p>例如，下面这行代码：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#24292E">fs.</span><span style="color:#6F42C1">StringSliceVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.CorsAllowedOriginList, </span><span style="color:#032F62">"cors-allowed-origins"</span><span style="color:#24292E">, s.CorsAllowedOriginList, </span><span style="color:#032F62">""</span><span style="color:#D73A49">+</span></span></code></pre>
+<p>这行代码添加了一个名为 “cors-allowed-origins” 的标志，这个标志的值会被存储在 <code>s.CorsAllowedOriginList</code> 中，如果在命令行中没有提供这个标志，那么就会使用 <code>s.CorsAllowedOriginList</code> 作为默认值。</p>
+<p>最后，<code>utilfeature.DefaultFeatureGate.AddFlag(fs)</code> 这行代码是用来添加一些默认的特性门控标志的。</p>
+<h2 id="添加命令行标记的方法addflags">添加命令行标记的方法AddFlags</h2>
+<p><strong>位置：</strong> <code>cmd/kube-apiserver/app/options/options.go</code></p>
+<p><strong>说明：</strong>
+<code>AddFlags</code> 是 <code>ServerRunOptions</code> 结构体的一个方法，它接受一个 <code>*pflag.FlagSet</code> 类型的参数。这个方法的主要作用是向传入的 <code>FlagSet</code> 添加一系列的命令行标志。</p>
+<p><strong>源码：</strong></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// AddFlags adds flags for a specific APIServer to the specified FlagSet</span></span>
+<span class="line"><span style="color:#D73A49">func</span><span style="color:#24292E"> (</span><span style="color:#E36209">s </span><span style="color:#D73A49">*</span><span style="color:#6F42C1">ServerRunOptions</span><span style="color:#24292E">) </span><span style="color:#6F42C1">AddFlags</span><span style="color:#24292E">(</span><span style="color:#E36209">fs</span><span style="color:#D73A49"> *</span><span style="color:#6F42C1">pflag</span><span style="color:#24292E">.</span><span style="color:#6F42C1">FlagSet</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">	// Add the generic flags.</span></span>
+<span class="line"><span style="color:#6A737D">	//调用 GenericServerRunOptions 结构体的 AddUniversalFlags 方法，向 fs 添加一些通用的标志。</span></span>
+<span class="line"><span style="color:#24292E">	s.GenericServerRunOptions.</span><span style="color:#6F42C1">AddUniversalFlags</span><span style="color:#24292E">(fs)</span></span>
+<span class="line"><span style="color:#6A737D">	//添加一些与 Etcd 相关的标志</span></span>
+<span class="line"><span style="color:#24292E">	s.Etcd.</span><span style="color:#6F42C1">AddFlags</span><span style="color:#24292E">(fs)</span></span>
+<span class="line"><span style="color:#6A737D">	//添加一些与安全服务相关的标志</span></span>
+<span class="line"><span style="color:#24292E">	s.SecureServing.</span><span style="color:#6F42C1">AddFlags</span><span style="color:#24292E">(fs)</span></span>
+<span class="line"><span style="color:#6A737D">	//包括一些已经被弃用的标志。</span></span>
+<span class="line"><span style="color:#24292E">	s.SecureServing.</span><span style="color:#6F42C1">AddDeprecatedFlags</span><span style="color:#24292E">(fs)</span></span>
+<span class="line"><span style="color:#6A737D">	//向 fs 添加一些与非安全服务相关的标志，</span></span>
+<span class="line"><span style="color:#24292E">	s.InsecureServing.</span><span style="color:#6F42C1">AddFlags</span><span style="color:#24292E">(fs)</span></span>
+<span class="line"><span style="color:#6A737D">	//包括一些已经被弃用的标志。</span></span>
+<span class="line"><span style="color:#24292E">	s.InsecureServing.</span><span style="color:#6F42C1">AddDeprecatedFlags</span><span style="color:#24292E">(fs)</span></span>
+<span class="line"><span style="color:#6A737D">	//向 fs 添加一些与审计相关的标志</span></span>
+<span class="line"><span style="color:#24292E">	s.Audit.</span><span style="color:#6F42C1">AddFlags</span><span style="color:#24292E">(fs)</span></span>
+<span class="line"><span style="color:#6A737D">	//添加一些与特性相关的标志</span></span>
+<span class="line"><span style="color:#24292E">	s.Features.</span><span style="color:#6F42C1">AddFlags</span><span style="color:#24292E">(fs)</span></span>
+<span class="line"><span style="color:#6A737D">	//向 fs 添加一些与身份验证相关的标志</span></span>
+<span class="line"><span style="color:#24292E">	s.Authentication.</span><span style="color:#6F42C1">AddFlags</span><span style="color:#24292E">(fs)</span></span>
+<span class="line"><span style="color:#6A737D">	//向 fs 添加一些与授权相关的标志</span></span>
+<span class="line"><span style="color:#24292E">	s.Authorization.</span><span style="color:#6F42C1">AddFlags</span><span style="color:#24292E">(fs)</span></span>
+<span class="line"><span style="color:#6A737D">	//向 fs 添加一些与云提供商相关的标志</span></span>
+<span class="line"><span style="color:#24292E">	s.CloudProvider.</span><span style="color:#6F42C1">AddFlags</span><span style="color:#24292E">(fs)</span></span>
+<span class="line"><span style="color:#6A737D">	//向 fs 添加一些与存储序列化相关的标志</span></span>
+<span class="line"><span style="color:#24292E">	s.StorageSerialization.</span><span style="color:#6F42C1">AddFlags</span><span style="color:#24292E">(fs)</span></span>
+<span class="line"><span style="color:#6A737D">	//向 fs 添加一些与 API 启用相关的标志。</span></span>
+<span class="line"><span style="color:#24292E">	s.APIEnablement.</span><span style="color:#6F42C1">AddFlags</span><span style="color:#24292E">(fs)</span></span>
+<span class="line"><span style="color:#6A737D">	//向 fs 添加一些与准入控制相关的标志。</span></span>
+<span class="line"><span style="color:#24292E">	s.Admission.</span><span style="color:#6F42C1">AddFlags</span><span style="color:#24292E">(fs)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	// Note: the weird ""+ in below lines seems to be the only way to get gofmt to</span></span>
+<span class="line"><span style="color:#6A737D">	// arrange these text blocks sensibly. Grrr.</span></span>
+<span class="line"><span style="color:#6A737D">    //这行代码添加了一个名为 "event-ttl" 的标志，这个标志的值会被存储在 s.EventTTL 中，</span></span>
+<span class="line"><span style="color:#6A737D">	//如果在命令行中没有提供这个标志，那么就会使用 s.EventTTL 作为默认值。</span></span>
+<span class="line"><span style="color:#6A737D">	//这个标志的使用说明是 "Amount of time to retain events."</span></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">DurationVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.EventTTL, </span><span style="color:#032F62">"event-ttl"</span><span style="color:#24292E">, s.EventTTL,</span></span>
+<span class="line"><span style="color:#032F62">		"Amount of time to retain events."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">BoolVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.AllowPrivileged, </span><span style="color:#032F62">"allow-privileged"</span><span style="color:#24292E">, s.AllowPrivileged,</span></span>
+<span class="line"><span style="color:#032F62">		"If true, allow privileged containers. [default=false]"</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">BoolVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.EnableLogsHandler, </span><span style="color:#032F62">"enable-logs-handler"</span><span style="color:#24292E">, s.EnableLogsHandler,</span></span>
+<span class="line"><span style="color:#032F62">		"If true, install a /logs handler for the apiserver logs."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	// Deprecated in release 1.9</span></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">StringVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.SSHUser, </span><span style="color:#032F62">"ssh-user"</span><span style="color:#24292E">, s.SSHUser,</span></span>
+<span class="line"><span style="color:#032F62">		"If non-empty, use secure SSH proxy to the nodes, using this user name"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">MarkDeprecated</span><span style="color:#24292E">(</span><span style="color:#032F62">"ssh-user"</span><span style="color:#24292E">, </span><span style="color:#032F62">"This flag will be removed in a future version."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	// Deprecated in release 1.9</span></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">StringVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.SSHKeyfile, </span><span style="color:#032F62">"ssh-keyfile"</span><span style="color:#24292E">, s.SSHKeyfile,</span></span>
+<span class="line"><span style="color:#032F62">		"If non-empty, use secure SSH proxy to the nodes, using this user keyfile"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">MarkDeprecated</span><span style="color:#24292E">(</span><span style="color:#032F62">"ssh-keyfile"</span><span style="color:#24292E">, </span><span style="color:#032F62">"This flag will be removed in a future version."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">Int64Var</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.MaxConnectionBytesPerSec, </span><span style="color:#032F62">"max-connection-bytes-per-sec"</span><span style="color:#24292E">, s.MaxConnectionBytesPerSec, </span><span style="color:#032F62">""</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"If non-zero, throttle each user connection to this number of bytes/sec. "</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"Currently only applies to long-running requests."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">IntVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.MasterCount, </span><span style="color:#032F62">"apiserver-count"</span><span style="color:#24292E">, s.MasterCount,</span></span>
+<span class="line"><span style="color:#032F62">		"The number of apiservers running in the cluster, must be a positive number."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">StringVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.EndpointReconcilerType, </span><span style="color:#032F62">"endpoint-reconciler-type"</span><span style="color:#24292E">, </span><span style="color:#D73A49">string</span><span style="color:#24292E">(s.EndpointReconcilerType),</span></span>
+<span class="line"><span style="color:#032F62">		"Use an endpoint reconciler ("</span><span style="color:#D73A49">+</span><span style="color:#24292E">strings.</span><span style="color:#6F42C1">Join</span><span style="color:#24292E">(reconcilers.AllTypes.</span><span style="color:#6F42C1">Names</span><span style="color:#24292E">(), </span><span style="color:#032F62">", "</span><span style="color:#24292E">)</span><span style="color:#D73A49">+</span><span style="color:#032F62">")"</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	// See #14282 for details on how to test/try this option out.</span></span>
+<span class="line"><span style="color:#6A737D">	// TODO: remove this comment once this option is tested in CI.</span></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">IntVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.KubernetesServiceNodePort, </span><span style="color:#032F62">"kubernetes-service-node-port"</span><span style="color:#24292E">, s.KubernetesServiceNodePort, </span><span style="color:#032F62">""</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"If non-zero, the Kubernetes master service (which apiserver creates/maintains) will be "</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"of type NodePort, using this as the value of the port. If zero, the Kubernetes master "</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"service will be of type ClusterIP."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">IPNetVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.ServiceClusterIPRange, </span><span style="color:#032F62">"service-cluster-ip-range"</span><span style="color:#24292E">, s.ServiceClusterIPRange, </span><span style="color:#032F62">""</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"A CIDR notation IP range from which to assign service cluster IPs. This must not "</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"overlap with any IP ranges assigned to nodes for pods."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">Var</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.ServiceNodePortRange, </span><span style="color:#032F62">"service-node-port-range"</span><span style="color:#24292E">, </span><span style="color:#032F62">""</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"A port range to reserve for services with NodePort visibility. "</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"Example: '30000-32767'. Inclusive at both ends of the range."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	// Kubelet related flags:</span></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">BoolVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.KubeletConfig.EnableHttps, </span><span style="color:#032F62">"kubelet-https"</span><span style="color:#24292E">, s.KubeletConfig.EnableHttps,</span></span>
+<span class="line"><span style="color:#032F62">		"Use https for kubelet connections."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">StringSliceVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.KubeletConfig.PreferredAddressTypes, </span><span style="color:#032F62">"kubelet-preferred-address-types"</span><span style="color:#24292E">, s.KubeletConfig.PreferredAddressTypes,</span></span>
+<span class="line"><span style="color:#032F62">		"List of the preferred NodeAddressTypes to use for kubelet connections."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">UintVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.KubeletConfig.Port, </span><span style="color:#032F62">"kubelet-port"</span><span style="color:#24292E">, s.KubeletConfig.Port,</span></span>
+<span class="line"><span style="color:#032F62">		"DEPRECATED: kubelet port."</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">MarkDeprecated</span><span style="color:#24292E">(</span><span style="color:#032F62">"kubelet-port"</span><span style="color:#24292E">, </span><span style="color:#032F62">"kubelet-port is deprecated and will be removed."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">UintVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.KubeletConfig.ReadOnlyPort, </span><span style="color:#032F62">"kubelet-read-only-port"</span><span style="color:#24292E">, s.KubeletConfig.ReadOnlyPort,</span></span>
+<span class="line"><span style="color:#032F62">		"DEPRECATED: kubelet port."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">DurationVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.KubeletConfig.HTTPTimeout, </span><span style="color:#032F62">"kubelet-timeout"</span><span style="color:#24292E">, s.KubeletConfig.HTTPTimeout,</span></span>
+<span class="line"><span style="color:#032F62">		"Timeout for kubelet operations."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">StringVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.KubeletConfig.CertFile, </span><span style="color:#032F62">"kubelet-client-certificate"</span><span style="color:#24292E">, s.KubeletConfig.CertFile,</span></span>
+<span class="line"><span style="color:#032F62">		"Path to a client cert file for TLS."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">StringVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.KubeletConfig.KeyFile, </span><span style="color:#032F62">"kubelet-client-key"</span><span style="color:#24292E">, s.KubeletConfig.KeyFile,</span></span>
+<span class="line"><span style="color:#032F62">		"Path to a client key file for TLS."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">StringVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.KubeletConfig.CAFile, </span><span style="color:#032F62">"kubelet-certificate-authority"</span><span style="color:#24292E">, s.KubeletConfig.CAFile,</span></span>
+<span class="line"><span style="color:#032F62">		"Path to a cert file for the certificate authority."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	// TODO: delete this flag as soon as we identify and fix all clients that send malformed updates, like #14126.</span></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">BoolVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">validation.RepairMalformedUpdates, </span><span style="color:#032F62">"repair-malformed-updates"</span><span style="color:#24292E">, validation.RepairMalformedUpdates, </span><span style="color:#032F62">""</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"If true, server will do its best to fix the update request to pass the validation, "</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"e.g., setting empty UID in update request to its existing value. This flag can be turned off "</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"after we fix all the clients that send malformed updates."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">StringVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.ProxyClientCertFile, </span><span style="color:#032F62">"proxy-client-cert-file"</span><span style="color:#24292E">, s.ProxyClientCertFile, </span><span style="color:#032F62">""</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"Client certificate used to prove the identity of the aggregator or kube-apiserver "</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"when it must call out during a request. This includes proxying requests to a user "</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"api-server and calling out to webhook admission plugins. It is expected that this "</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"cert includes a signature from the CA in the --requestheader-client-ca-file flag. "</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"That CA is published in the 'extension-apiserver-authentication' configmap in "</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"the kube-system namespace. Components recieving calls from kube-aggregator should "</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"use that CA to perform their half of the mutual TLS verification."</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">StringVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.ProxyClientKeyFile, </span><span style="color:#032F62">"proxy-client-key-file"</span><span style="color:#24292E">, s.ProxyClientKeyFile, </span><span style="color:#032F62">""</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"Private key for the client certificate used to prove the identity of the aggregator or kube-apiserver "</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"when it must call out during a request. This includes proxying requests to a user "</span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">		"api-server and calling out to webhook admission plugins."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	fs.</span><span style="color:#6F42C1">BoolVar</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E">s.EnableAggregatorRouting, </span><span style="color:#032F62">"enable-aggregator-routing"</span><span style="color:#24292E">, s.EnableAggregatorRouting,</span></span>
+<span class="line"><span style="color:#032F62">		"Turns on aggregator routing requests to endoints IP rather than cluster IP."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>在 <code>options.go</code> 文件的 <code>AddFlags</code> 方法中，调用了多个方法来设置各种标志。以下是这些方法及其设置的标志的详细列表：</p>
+<ol>
+<li><code>s.GenericServerRunOptions.AddUniversalFlags(fs)</code></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>标志名字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>advertise-address</code></td>
+<td>用于设置 API 服务器向集群成员宣告的 IP 地址。这个地址必须能被集群的其他成员访问。如果为空，将使用 <code>--bind-address</code>。如果 <code>--bind-address</code> 未指定，将使用主机的默认接口。</td>
+</tr>
+<tr>
+<td><code>cors-allowed-origins</code></td>
+<td>用于设置允许 CORS 的源列表，以逗号分隔。允许的源可以是正则表达式，以支持子域匹配。如果此列表为空，CORS 将不会被启用。</td>
+</tr>
+<tr>
+<td><code>target-ram-mb</code></td>
+<td>用于设置 API 服务器的内存限制（MB），用于配置缓存等的大小。</td>
+</tr>
+<tr>
+<td><code>external-hostname</code></td>
+<td>用于设置生成此主服务器的外部化 URL 时使用的主机名（例如，Swagger API 文档）。</td>
+</tr>
+<tr>
+<td><code>master-service-namespace</code></td>
+<td>已弃用：从该命名空间中将 Kubernetes 主服务注入到 Pod 中。</td>
+</tr>
+<tr>
+<td><code>max-requests-inflight</code></td>
+<td>用于设置同时进行的非变更请求的最大数量。当服务器超过此数时，它将拒绝请求。零表示无限制。</td>
+</tr>
+<tr>
+<td><code>max-mutating-requests-inflight</code></td>
+<td>用于设置同时进行的变更请求的最大数量。当服务器超过此数时，它将拒绝请求。零表示无限制。</td>
+</tr>
+<tr>
+<td><code>request-timeout</code></td>
+<td>用于设置处理程序必须保持请求打开的持续时间，然后才能将其计时。这是请求的默认请求超时，但是可以通过诸如 <code>--min-request-timeout</code> 的标志覆盖特定类型的请求。</td>
+</tr>
+<tr>
+<td><code>min-request-timeout</code></td>
+<td>用于设置处理程序必须保持请求打开的最小秒数，然后才能将其计时。目前只有观察请求处理程序才会遵守此规则，该处理程序选择此数字以上的随机值作为连接超时，以分散负载。</td>
+</tr>
+</tbody>
+</table>
+<ol start="2">
+<li><code>s.Etcd.AddFlags(fs)</code></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>标志名字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>etcd-servers</code></td>
+<td>用于设置 etcd 服务器的列表，以逗号分隔。</td>
+</tr>
+<tr>
+<td><code>etcd-prefix</code></td>
+<td>用于设置 etcd 中 Kubernetes 对象的前缀。</td>
+</tr>
+<tr>
+<td><code>etcd-keyfile</code></td>
+<td>用于设置 etcd 的 SSL 密钥文件路径。</td>
+</tr>
+<tr>
+<td><code>etcd-certfile</code></td>
+<td>用于设置 etcd 的 SSL 证书文件路径。</td>
+</tr>
+<tr>
+<td><code>etcd-cafile</code></td>
+<td>用于设置 etcd 的 SSL 证书颁发机构文件路径。</td>
+</tr>
+<tr>
+<td><code>etcd-compaction-interval</code></td>
+<td>用于设置 etcd 的压缩间隔。</td>
+</tr>
+</tbody>
+</table>
+<ol start="3">
+<li><code>s.SecureServing.AddFlags(fs)</code></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>标志名字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bind-address</code></td>
+<td>用于设置服务器的监听地址。</td>
+</tr>
+<tr>
+<td><code>secure-port</code></td>
+<td>用于设置服务器的 HTTPS 端口。</td>
+</tr>
+<tr>
+<td><code>cert-dir</code></td>
+<td>用于设置存储证书的目录。</td>
+</tr>
+<tr>
+<td><code>tls-cert-file</code></td>
+<td>用于设置 TLS 服务证书文件的路径。</td>
+</tr>
+<tr>
+<td><code>tls-private-key-file</code></td>
+<td>用于设置 TLS 服务私钥文件的路径。</td>
+</tr>
+<tr>
+<td><code>tls-cipher-suites</code></td>
+<td>用于设置支持的 TLS 密码套件列表。</td>
+</tr>
+<tr>
+<td><code>tls-min-version</code></td>
+<td>用于设置支持的最小 TLS 版本。</td>
+</tr>
+<tr>
+<td><code>tls-sni-cert-key</code></td>
+<td>用于设置一个或多个 SNI 证书。</td>
+</tr>
+</tbody>
+</table>
+<ol start="4">
+<li><code>s.InsecureServing.AddFlags(fs)</code></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>标志名字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>insecure-bind-address</code></td>
+<td>用于设置非安全（HTTP）服务的监听地址。</td>
+</tr>
+<tr>
+<td><code>insecure-port</code></td>
+<td>用于设置非安全（HTTP）服务的监听端口。</td>
+</tr>
+</tbody>
+</table>
+<ol start="5">
+<li><code>s.Audit.AddFlags(fs)</code></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>标志名字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>audit-log-path</code></td>
+<td>用于设置审计日志文件的路径。</td>
+</tr>
+<tr>
+<td><code>audit-log-maxage</code></td>
+<td>用于设置审计日志文件的最大保留天数。</td>
+</tr>
+<tr>
+<td><code>audit-log-maxbackup</code></td>
+<td>用于设置审计日志文件的最大备份数。</td>
+</tr>
+<tr>
+<td><code>audit-log-maxsize</code></td>
+<td>用于设置审计日志文件的最大大小（MB）。</td>
+</tr>
+</tbody>
+</table>
+<ol start="6">
+<li><code>s.Features.AddFlags(fs)</code></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>标志名字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>feature-gates</code></td>
+<td>用于设置一组键=值对，用于描述 alpha/experimental 特性的特性门控。</td>
+</tr>
+</tbody>
+</table>
+<ol start="7">
+<li><code>s.Authentication.AddFlags(fs)</code></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>标志名字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>token-auth-file</code></td>
+<td>用于设置令牌认证文件的路径。</td>
+</tr>
+<tr>
+<td><code>oidc-issuer-url</code></td>
+<td>用于设置 OIDC 发行者 URL。</td>
+</tr>
+<tr>
+<td><code>oidc-client-id</code></td>
+<td>用于设置 OIDC 客户端 ID。</td>
+</tr>
+</tbody>
+</table>
+<ol start="8">
+<li><code>s.Authorization.AddFlags(fs)</code></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>标志名字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>authorization-mode</code></td>
+<td>用于设置授权模式。</td>
+</tr>
+<tr>
+<td><code>authorization-policy-file</code></td>
+<td>用于设置授权策略文件的路径。</td>
+</tr>
+</tbody>
+</table>
+<ol start="9">
+<li><code>s.CloudProvider.AddFlags(fs)</code></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>标志名字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cloud-provider</code></td>
+<td>用于设置云服务提供商，例如 ‘aws’、‘gce’、‘azure’、‘openstack’、‘vsphere’、或 ‘oci’。</td>
+</tr>
+<tr>
+<td><code>cloud-config</code></td>
+<td>用于设置云服务提供商配置文件的路径。</td>
+</tr>
+</tbody>
+</table>
+<ol start="10">
+<li><code>s.StorageSerialization.AddFlags(fs)</code></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>标志名字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>storage-versions</code></td>
+<td>用于设置 API 服务器支持的资源版本。</td>
+</tr>
+<tr>
+<td><code>default-storage-media-type</code></td>
+<td>用于设置 API 服务器默认的存储媒体类型。</td>
+</tr>
+</tbody>
+</table>
+<ol start="11">
+<li><code>s.APIEnablement.AddFlags(fs)</code></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>标志名字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>runtime-config</code></td>
+<td>用于设置一组键=值对，用于描述运行时配置。</td>
+</tr>
+</tbody>
+</table>
+<ol start="12">
+<li><code>s.Admission.AddFlags(fs)</code></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>标志名字</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enable-admission-plugins</code></td>
+<td>用于设置启用的准入控制插件列表。</td>
+</tr>
+<tr>
+<td><code>disable-admission-plugins</code></td>
+<td>用于设置禁用的准入控制插件列表。</td>
+</tr>
+</tbody>
+</table>
+<p>这些标志都是用于配置 API 服务器的运行参数。</p>
+<h2 id="用于初始化命令行标志方法initflags">用于初始化命令行标志方法InitFlags</h2>
+<p><strong>位置：</strong> <code>k8s.io/apiserver/pkg/util/flag/flags.go</code></p>
+<p><strong>说明：</strong>
+用于初始化命令行标志方法InitFlags。这个方法的主要作用是规范化、解析和记录命令行标志。
+<strong>源码：</strong></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// InitFlags normalizes, parses, then logs the command line flags</span></span>
+<span class="line"><span style="color:#D73A49">func</span><span style="color:#6F42C1"> InitFlags</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">	//设置标志名称的规范化函数。在这个例子中，它使用 WordSepNormalizeFunc 函数，该函数将所有包含 "" 的标志名称中的 "" 替换为 "-"。  </span></span>
+<span class="line"><span style="color:#24292E">	pflag.CommandLine.</span><span style="color:#6F42C1">SetNormalizeFunc</span><span style="color:#24292E">(WordSepNormalizeFunc)</span></span>
+<span class="line"><span style="color:#6A737D">	//将 Go 的标准 flag 包的所有标志添加到 pflag 的命令行标志集中。这允许你在使用 pflag 的同时，也能使用 Go 标准库中的 flag 包。  </span></span>
+<span class="line"><span style="color:#24292E">	pflag.CommandLine.</span><span style="color:#6F42C1">AddGoFlagSet</span><span style="color:#24292E">(goflag.CommandLine)</span></span>
+<span class="line"><span style="color:#6A737D">	//解析命令行参数。这将填充所有已定义的标志的值。  </span></span>
+<span class="line"><span style="color:#24292E">	pflag.</span><span style="color:#6F42C1">Parse</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#6A737D">	//遍历所有标志，并使用 glog 记录它们的名称和值。这对于调试和理解命令行参数如何影响程序的行为非常有用。 </span></span>
+<span class="line"><span style="color:#24292E">	pflag.</span><span style="color:#6F42C1">VisitAll</span><span style="color:#24292E">(</span><span style="color:#D73A49">func</span><span style="color:#24292E">(</span><span style="color:#E36209">flag</span><span style="color:#D73A49"> *</span><span style="color:#6F42C1">pflag</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Flag</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">		glog.</span><span style="color:#6F42C1">V</span><span style="color:#24292E">(</span><span style="color:#005CC5">2</span><span style="color:#24292E">).</span><span style="color:#6F42C1">Infof</span><span style="color:#24292E">(</span><span style="color:#032F62">"FLAG: --</span><span style="color:#005CC5">%s</span><span style="color:#032F62">=</span><span style="color:#005CC5">%q</span><span style="color:#032F62">"</span><span style="color:#24292E">, flag.Name, flag.Value)</span></span>
+<span class="line"><span style="color:#24292E">	})</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

@@ -1,0 +1,360 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**Dubbo的扩展机制** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_dubbo/4-extension-init/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_dubbo/4-extension-init"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_dubbo/4-extension-init/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_dubbo/4-extension-init"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**Dubbo的扩展机制** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_dubbo/4-extension-init/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_dubbo/4-extension-init/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>dubbo</h3> <ul> <li> <a href="/zh/chapter_dubbo/1-learn-from-a-demo" class="lv0" title="**从一个服务提供者的Demo说起**"> **从一个服务提供者的Demo说起** </a> </li><li> <a href="/zh/chapter_dubbo/2-serviceconfig-config" class="lv0" title="**启动服务前服务配置ServiceConfig类型是如何初始化的?**"> **启动服务前服务配置ServiceConfig类型是如何初始化的?** </a> </li><li> <a href="/zh/chapter_dubbo/3-model-init" class="lv0" title="**框架,应用程序,模块领域模型Model对象的初始化**"> **框架,应用程序,模块领域模型Model对象的初始化** </a> </li><li> <a href="/zh/chapter_dubbo/4-extension-init" class="lv0" aria-current="page" title="**Dubbo的扩展机制**"> **Dubbo的扩展机制** </a> </li><li> <a href="/zh/chapter_dubbo/5-getadaptiveextension" class="lv0" title="5-getadaptiveextension"> 5-getadaptiveextension </a> </li><li> <a href="/zh/chapter_dubbo/6-extension-wrapper" class="lv0" title="**Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析**"> **Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/7-extension-activate" class="lv0" title="**Dubbo的SPI扩展机制之自动激活扩展Activate源码解析**"> **Dubbo的SPI扩展机制之自动激活扩展Activate源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/8-dubbobootstrap" class="lv0" title="**Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化**"> **Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化** </a> </li><li> <a href="/zh/chapter_dubbo/9-application-config" class="lv0" title="**Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig**"> **Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig** </a> </li><li> <a href="/zh/chapter_dubbo/10-registryconfig" class="lv0" title="**Dubbo启动器DubboBootstrap添加注册中心配置信息RegistryConfig**"> **Dubbo启动器DubboBootstrap添加注册中心配置信息RegistryConfig** </a> </li><li> <a href="/zh/chapter_dubbo/11-protocolconfig" class="lv0" title="**Dubbo启动器DubboBootstrap添加协议配置信息ProtocolConfig**"> **Dubbo启动器DubboBootstrap添加协议配置信息ProtocolConfig** </a> </li><li> <a href="/zh/chapter_dubbo/12-start-life-cycle" class="lv0" title="**全局视野来看Dubbo3的服务启动生命周期**"> **全局视野来看Dubbo3的服务启动生命周期** </a> </li><li> <a href="/zh/chapter_dubbo/13-configcenter" class="lv0" title="**Dubbo的三大中心之配置中心**"> **Dubbo的三大中心之配置中心** </a> </li><li> <a href="/zh/chapter_dubbo/14-config-load" class="lv0" title="**Dubbo配置加载全解析**"> **Dubbo配置加载全解析** </a> </li><li> <a href="/zh/chapter_dubbo/15-metadata" class="lv0" title="**Dubbo的三大中心之元数据中心源码解析**"> **Dubbo的三大中心之元数据中心源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/16-moduledeployer" class="lv0" title="**模块发布器发布服务全过程**"> **模块发布器发布服务全过程** </a> </li><li> <a href="/zh/chapter_dubbo/17-provider-register" class="lv0" title="**Dubbo服务提供者的双注册原理**"> **Dubbo服务提供者的双注册原理** </a> </li><li> <a href="/zh/chapter_dubbo/18-metadataService-export" class="lv0" title="**Dubbo3元数据服务MetadataService的导出**"> **Dubbo3元数据服务MetadataService的导出** </a> </li><li> <a href="/zh/chapter_dubbo/19-consuemr-demo" class="lv0" title="**重新来过从一个服务消费者的Demo说起**"> **重新来过从一个服务消费者的Demo说起** </a> </li><li> <a href="/zh/chapter_dubbo/20-reference-config" class="lv0" title="**Dubbo3服务引用配置ReferenceConfig**"> **Dubbo3服务引用配置ReferenceConfig** </a> </li><li> <a href="/zh/chapter_dubbo/21-refer-services" class="lv0" title="**Dubbo3消费者引用服务入口**"> **Dubbo3消费者引用服务入口** </a> </li><li> <a href="/zh/chapter_dubbo/22-migration-invoker" class="lv0" title="**Dubbo3消费者自动感应决策应用级服务发现原理**"> **Dubbo3消费者自动感应决策应用级服务发现原理** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_dubbo">dubbo</a><span class="sep">/</span><span>**Dubbo的扩展机制**</span> </nav> <div class="prose">  <h1 id="dubbo的扩展机制"><strong>Dubbo的扩展机制</strong></h1>
+<h2 id="回顾我们前面使用到扩展场景"><strong>回顾我们前面使用到扩展场景</strong></h2>
+<p>在上一章中我们初始化应用模型对象的时候,了解到有几个地方用到了扩展机制来创建对象,
+这一章我们会详细来讲一下这个扩展对象的加载过程,这里我们先来回顾下哪些地方用到了扩展机制:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 使用扩展机制获取TypeBuilder</span></span>
+<span class="line"><span style="color:#24292E">Set&#x3C;</span><span style="color:#D73A49">TypeBuilder</span><span style="color:#24292E">> tbs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> model.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(TypeBuilder.class).</span><span style="color:#6F42C1">getSupportedExtensionInstances</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">      </span></span>
+<span class="line"><span style="color:#6A737D">//获取域模型初始化器ScopeModelInitializer扩展对象,执行初始化方法</span></span>
+<span class="line"><span style="color:#24292E">ExtensionLoader&#x3C;</span><span style="color:#D73A49">ScopeModelInitializer</span><span style="color:#24292E">> initializerExtensionLoader </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ScopeModelInitializer.class);</span></span>
+<span class="line"><span style="color:#24292E"> Set&#x3C;</span><span style="color:#D73A49">ScopeModelInitializer</span><span style="color:#24292E">> initializers </span><span style="color:#D73A49">=</span><span style="color:#24292E"> initializerExtensionLoader.</span><span style="color:#6F42C1">getSupportedExtensionInstances</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6A737D">// OrderedPropertiesConfiguration 中获取有序配置提供器对象</span></span>
+<span class="line"><span style="color:#24292E">ExtensionLoader&#x3C;</span><span style="color:#D73A49">OrderedPropertiesProvider</span><span style="color:#24292E">> propertiesProviderExtensionLoader </span><span style="color:#D73A49">=</span><span style="color:#24292E"> moduleModel.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(OrderedPropertiesProvider.class);</span></span>
+<span class="line"><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6A737D">// ApplicationModel中获取配置管理器对象</span></span>
+<span class="line"><span style="color:#24292E"> configManager </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (ConfigManager) </span><span style="color:#005CC5">this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ApplicationExt.class)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">getExtension</span><span style="color:#24292E">(ConfigManager.NAME);</span></span>
+<span class="line"><span style="color:#24292E">       </span></span>
+<span class="line"><span style="color:#6A737D">//ModuleModel中获取模块扩展对象</span></span>
+<span class="line"><span style="color:#24292E">Set&#x3C;</span><span style="color:#D73A49">ModuleExt</span><span style="color:#24292E">> exts </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ModuleExt.class).</span><span style="color:#6F42C1">getSupportedExtensionInstances</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ApplicationModel中获Environment对象</span></span>
+<span class="line"><span style="color:#24292E">environment </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (Environment) </span><span style="color:#005CC5">this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ApplicationExt.class)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">getExtension</span><span style="color:#24292E">(Environment.NAME);</span></span>
+<span class="line"><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6A737D">// ApplicationModel中获取应用初始化监听器ApplicationInitListener扩展对象</span></span>
+<span class="line"><span style="color:#24292E">ExtensionLoader&#x3C;</span><span style="color:#D73A49">ApplicationInitListener</span><span style="color:#24292E">> extensionLoader </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ApplicationInitListener.class);</span></span>
+<span class="line"><span style="color:#24292E">Set&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">> listenerNames </span><span style="color:#D73A49">=</span><span style="color:#24292E"> extensionLoader.</span><span style="color:#6F42C1">getSupportedExtensions</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">      </span></span>
+<span class="line"><span style="color:#6A737D">//ScopeModel中创建扩展访问器:</span></span>
+<span class="line"><span style="color:#005CC5">this</span><span style="color:#24292E">.extensionDirector </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ExtensionDirector</span><span style="color:#24292E">(parent </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> ?</span><span style="color:#24292E"> parent.</span><span style="color:#6F42C1">getExtensionDirector</span><span style="color:#24292E">() </span><span style="color:#D73A49">:</span><span style="color:#005CC5"> null</span><span style="color:#24292E">, scope, </span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span></code></pre>
+<p>有了以上的应用场景我们可以来看下扩展机制了</p>
+<h2 id="为什么要用到扩展机制"><strong>为什么要用到扩展机制?</strong></h2>
+<p>为什么要用到扩展这个想必每个编程人员都比较了解,一个好的程序是要遵循一定的设计规范比如设计模式中的 <strong>开闭原则</strong>
+英文全称是 Open Closed Principle，简写为 OCP,对扩展开放、对修改关闭:</p>
+<ul>
+<li><strong>对扩展开放：</strong> 指的是我们系统中的模块、类、方法对它们的提供者（开发者）应该是开放的，提供者可以对系统进行扩展（新增）新的功能。</li>
+<li><strong>对修改关闭：</strong> 指的是系统中的模块、类、方法对它们的使用者（调用者）应该是关闭的。使用者使用这些功能时，不会因为提供方新增了功能而导致使用者也进行相应修改。</li>
+</ul>
+<p>我们再来了解下Dubbo的一些基本特性:
+下面这句话是我摘自官网的:
+<em>Apache Dubbo 是一款微服务开发框架，它提供了 <strong>RPC通信</strong> 与 <strong>微服务治理</strong> 两大关键能力。这意味着，使用 Dubbo 开发的微服务，
+将具备相互之间的远程发现与通信能力， 同时利用 Dubbo 提供的丰富服务治理能力，可以实现诸如服务发现、负载均衡、流量调度等服务治理诉求。同时 Dubbo 是高度可扩展的，用户几乎可以在 <strong>任意功能点去定制自己的实现</strong> ，以改变框架的默认行为来满足自己的业务需求。
+Dubbo3 基于 Dubbo2 演进而来，在保持原有核心功能特性的同时， Dubbo3 在易用性、超大规模微服务实践、云原生基础设施适配、安全设计等几大方向上进行了全面升级。 以下文档都将基于 Dubbo3 展开。</em></p>
+<p><strong>对修改关闭的地方:</strong> 对于Apache Dubbo来说 不变的是RPC调用流程,微服务治理这些抽象的概念,我们可以用摘自官网的下面几个图表示:
+<img src="/img/chapter_dubbo/4-1-arch.png" alt="4-1-arch.png"></p>
+<center>图4.1 Dubbo架构图</center>
+<p>再来看一个调用链路的架构图</p>
+<p><img src="/img/chapter_dubbo/4-2-arch.png" alt="4-2-arch.png"></p>
+<center>图4.2 Dubbo RPC调用链路</center>
+<br>
+上面两个图整体来看都是Dubbo不变的地方涉及到服务的RPC调用和服务治理的一些概念与流程,但是对于每个环节又可以使用各种方式实现,比如序列化机制可以是Json,Java序列化,Hession2或者Protobuf等等,网络传输层可以是netty实现的tcp通信,也可以使用http协议,那Dubbo又是如何封装不变部分扩展这种可变部分呢?,那就是接下来要说的**微内核机制** ,这个我们待会说
+<p><strong>对扩展开放：</strong>  : 对于Apache Dubbo来说 变化的是RPC调用流程和微服务治理这些抽象的概念的具体实现,每个点应该用什么技术实现,又是用什么场景,这个可以用如下图来表示下:
+<img src="/img/chapter_dubbo/4-3-ext.png" alt="在这里插入图片描述"></p>
+<center>图4.3 Dubbo的扩展生态</center>
+<br>
+<p>看到这里 应该各位就明白了,我们写程序是为了业务,而针对不同的业务需求很多场景下我们是需要使用不同的实现来满足的,Dubbo使用微内核的架构,将具体的实现开放出来,让使用者可以根据自己的需求来选择,定制. Dubbo开放了很多的扩展点供大家扩展,可想而知使用Dubbo的灵活性是非常高的。</p>
+<p><strong>微内核架构:</strong>
+微内核架构由两大架构模块组成：<strong>核心系统</strong> 与 <strong>插件模块</strong> ,设计一个微内核体系关键工作全部集中于核心系统怎么构建。</p>
+<ul>
+<li><strong>核心系统</strong> : 负责和具体业务功能无关的通用功能，例如模块加载、模块间通信等,这个其实对应着Dubbo的SPI机制。</li>
+<li><strong>插件模块</strong> : 负责实现具体的业务逻辑，Dubbo,SPI接口与实现。</li>
+</ul>
+<h2 id="dubbo的扩展机制包含了哪些重要的组成部分"><strong>Dubbo的扩展机制包含了哪些重要的组成部分?</strong></h2>
+<p>前面我们说了为什么要使用扩展机制,这里我们来看下具体实现</p>
+<p>先将扩展包里面的代码截个图认识认识各类型的单词
+<img src="/img/chapter_dubbo/4-4-ext.png" alt="4-4-ext.png"></p>
+<p>顺便我们先简单看下类结构图,后续再详细看每个类型的解释:
+<img src="/img/chapter_dubbo/4-5-ext.png" alt="4-5-ext.png"></p>
+<p>为了后续看具体的扩展加载流程我们先看下以上类型的解释说明:</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ExtensionAccessor</strong></td>
+<td>扩展的统一访问器</td>
+</tr>
+<tr>
+<td><strong>ExtensionDirector</strong></td>
+<td>ExtensionDirector是一个作用域扩展加载程序管理器。ExtensionDirector支持多个级别，子级可以继承父级的扩展实例。查找和创建扩展实例的方法类似于Java classloader。</td>
+</tr>
+<tr>
+<td><strong>ExtensionScope</strong></td>
+<td>扩展SPI域,目前有FRAMEWORK,APPLICATION,MODULE,SELF</td>
+</tr>
+<tr>
+<td><strong>ExtensionLoader</strong></td>
+<td>ApplicationModel、DubboBootstrap和这个类目前被设计为单例或静态（本身完全静态或使用一些静态字段）。因此，从它们返回的实例属于process或classloader范围。如果想在一个进程中支持多个dubbo服务器，可能需要重构这三个类。</td>
+</tr>
+<tr>
+<td><strong>ExtensionPostProcessor</strong></td>
+<td>在扩展初始化之前或之后调用的后处理器。</td>
+</tr>
+<tr>
+<td><strong>LoadingStrategy</strong></td>
+<td>扩展加载策略,目前有3个扩展加载策略分别从不同文件目录加载扩展</td>
+</tr>
+<tr>
+<td><strong>DubboInternalLoadingStrategy</strong></td>
+<td>Dubbo内置的扩展加载策略,将加载文件目录为META-INF/dubbo/internal/的扩展</td>
+</tr>
+<tr>
+<td><strong>DubboLoadingStrategy</strong></td>
+<td>Dubbo普通的扩展加载策略,将加载目录为META-INF/dubbo/的扩展</td>
+</tr>
+<tr>
+<td><strong>ServicesLoadingStrategy</strong></td>
+<td>JAVA SPI加载策略 ,将加载目录为META-INF/services/的扩展</td>
+</tr>
+<tr>
+<td><strong>Wrapper</strong> 注解</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>SPI注解</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>ExtensionInjector</strong> 接口</td>
+<td>为SPI扩展提供资源的注入器。</td>
+</tr>
+<tr>
+<td><strong>ExtensionAccessorAware</strong></td>
+<td>SPI扩展可以实现这个感知接口，以获得适当的xtensionAccessor实例。</td>
+</tr>
+<tr>
+<td><strong>DisableInject注解</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>AdaptiveClassCodeGenerator</strong></td>
+<td>自适应类的代码生成器</td>
+</tr>
+<tr>
+<td><strong>Adaptive</strong> 注解</td>
+<td>为ExtensionLoader注入依赖扩展实例提供有用信息。</td>
+</tr>
+<tr>
+<td><strong>Activate</strong> 注解</td>
+<td>Activate。此注解对于使用给定条件自动激活某些扩展非常有用，例如：@Activate可用于在有多个实现时加载某些筛选器扩展。 <strong>group()</strong> 指定组条件。框架SPI定义了有效的组值。<strong>value()</strong> 指定URL条件中的参数键。SPI提供程序可以调用ExtensionLoader。getActivateExtension(URL、String、String)方法以查找具有给定条件的所有已激活扩展。</td>
+</tr>
+<tr>
+<td><strong>ActivateComparator</strong></td>
+<td>Activate扩展的排序器</td>
+</tr>
+<tr>
+<td><strong>MultiInstanceActivateComparator</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>WrapperComparator</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>AdaptiveExtensionInjector</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>SpiExtensionInjector</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="扩展加载创建之前的调用过程"><strong>扩展加载创建之前的调用过程</strong></h2>
+<h3 id="扩展的调用代码示例"><strong>扩展的调用代码示例</strong></h3>
+<p>了解了这么多与扩展相关的概念,接下来我们就来从前面的代码调用中找几个例子来看下扩展的调用过程:</p>
+<p>代码来源于FrameworkModel对象的初始化initialize()中的如下代码调用:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> TypeDefinitionBuilder.</span><span style="color:#6F42C1">initBuilders</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span></code></pre>
+<p>TypeDefinitionBuilder中初始化类型构建器代码如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">  public</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initBuilders</span><span style="color:#24292E">(FrameworkModel model) {</span></span>
+<span class="line"><span style="color:#24292E">        Set&#x3C;</span><span style="color:#D73A49">TypeBuilder</span><span style="color:#24292E">> tbs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> model.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(TypeBuilder.class).</span><span style="color:#6F42C1">getSupportedExtensionInstances</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        BUILDERS </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>(tbs);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="dubbo的分层模型获取扩展加载器对象"><strong>Dubbo的分层模型获取扩展加载器对象</strong></h3>
+<p>以上扩展调用的时候对于扩展加载器对象的获取代码如下所示,我们来看下它的调用链路</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">model.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(TypeBuilder.class)</span></span></code></pre>
+<p>getExtensionLoader方法来源于FrameworkModel类型的父类型ScopeModel的实现的接口ExtensionAccessor中的默认方法(JDK8 默认方法)</p>
+<p>ExtensionAccessor接口中的getExtensionLoader方法如下代码:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">default</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> ExtensionLoader</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> getExtensionLoader</span><span style="color:#24292E">(Class</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> type) {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionDirector</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(type);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>获取扩展加载器之前需要先获取扩展访问器:
+这里的链路先梳理下:</p>
+<p><strong>模型对象(FrameworkModel)-</strong>—> <strong>扩展访问器(ExtensionAccessor)</strong> ---> <strong>作用域扩展加载程序管理器(ExtensionDirector)</strong> ---></p>
+<p>这个getExtensionDirector()方法来源于FrameworkModel的抽象父类型ScopeModel中的getExtensionDirector()如下代码:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> ExtensionDirector </span><span style="color:#6F42C1">getExtensionDirector</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> extensionDirector;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>这里直接返回了extensionDirector,,不知道介绍到这里记得这个扩展加载程序管理器extensionDirector对象的由来不, 在上个章节<a href="/zh/chapter_dubbo/3-model-init.md">《3-框架,应用程序,模块领域模型Model对象的初始化》</a>中3.2.2 初始化ScopeModel的章节中的ScopeModel类型的初始化方法initialize()方法中我们提到过这个对象的创建,具体代码如下所示(这个代码比较简单):</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#005CC5">this</span><span style="color:#24292E">.extensionDirector </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ExtensionDirector</span><span style="color:#24292E">(parent </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> ?</span><span style="color:#24292E"> parent.</span><span style="color:#6F42C1">getExtensionDirector</span><span style="color:#24292E">() </span><span style="color:#D73A49">:</span><span style="color:#005CC5"> null</span><span style="color:#24292E">, scope, </span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">       </span></span></code></pre>
+<p>我们继续前面getExtensionLoader(type)方法调用逻辑,前面我们知道了这个扩展访问器的对象是ExtensionDirector,接下来我们看下ExtensionDirector中获取扩展加载器的代码(如下所示):
+在详细介绍扩展加载器对象获取之前我们先来看下当前我们要加载的扩展类型的源码,后续会用到:
+我们要加载的扩展类型TypeBuilder接口</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">SPI</span><span style="color:#24292E">(</span><span style="color:#005CC5">scope</span><span style="color:#D73A49"> =</span><span style="color:#24292E"> ExtensionScope.FRAMEWORK)</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> interface</span><span style="color:#6F42C1"> TypeBuilder</span><span style="color:#D73A49"> extends</span><span style="color:#6F42C1"> Prioritized</span><span style="color:#24292E"> {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    /**</span></span>
+<span class="line"><span style="color:#6A737D">     * Whether the build accept the class passed in.</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#D73A49">    boolean</span><span style="color:#6F42C1"> accept</span><span style="color:#24292E">(Class&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">> </span><span style="color:#E36209">clazz</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    /**</span></span>
+<span class="line"><span style="color:#6A737D">     * Build type definition with the type or class.</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#24292E">    TypeDefinition </span><span style="color:#6F42C1">build</span><span style="color:#24292E">(Type </span><span style="color:#E36209">type</span><span style="color:#24292E">, Class&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">> </span><span style="color:#E36209">clazz</span><span style="color:#24292E">, Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">TypeDefinition</span><span style="color:#24292E">> </span><span style="color:#E36209">typeCache</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>ExtensionDirector类型中获取扩展加载器的代码
+这个代码非常有意思 <strong>其实就是前面说到的域模型架构的数据访问架构</strong> 类似于JVM类加载器访问加载类的情况,但是这个顺序可能有所不同,Dubbo的扩展加载器是如何访问的呢?
+遵循以下顺序:</p>
+<ul>
+<li>先从 <strong>缓存中</strong> 查询扩展加载器</li>
+<li>如果前面没找到则查询扩展类型的scope所属域,如果是 <strong>当前域扩展</strong> 则从直接创建扩展加载器</li>
+<li>如果前面没找到就从 <strong>父扩展访问器</strong> 中查询,查询这个扩展是否数据父扩展域</li>
+<li>前面都没找到就尝试创建</li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> ExtensionLoader</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> getExtensionLoader</span><span style="color:#24292E">(Class</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> type) {</span></span>
+<span class="line"><span style="color:#6A737D">    	//如果扩展加载器已经被销毁则抛出异常</span></span>
+<span class="line"><span style="color:#6F42C1">        checkDestroyed</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //这里参数类型传的是TypeBuilder.class不为空</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (type </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Extension type == null"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //扩展类型不为接口也要抛出异常,这个TypeBuilder.class具体类型代码往上看,这个类型是一个接口</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">type.</span><span style="color:#6F42C1">isInterface</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Extension type ("</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> type </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ") is not an interface!"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //这个判断逻辑是判断这个扩展接口是有有@SPI注解,TypeBuilder是有的</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#6F42C1">withExtensionAnnotation</span><span style="color:#24292E">(type)) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Extension type ("</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> type </span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">                ") is not an extension, because it is NOT annotated with @"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> SPI.class.</span><span style="color:#6F42C1">getSimpleName</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "!"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // 1. find in local cache</span></span>
+<span class="line"><span style="color:#6A737D">        //被加载的扩展类型对应的扩展加载器会放到extensionLoadersMap这个ConcurrentHashMap类型的集合中方便缓存</span></span>
+<span class="line"><span style="color:#24292E">        ExtensionLoader&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> loader </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (ExtensionLoader</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E">) extensionLoadersMap.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(type);</span></span>
+<span class="line"><span style="color:#6A737D">		//查询扩展所属域,这个类型的扩展域是框架级别的ExtensionScope.FRAMEWORK</span></span>
+<span class="line"><span style="color:#6A737D">       //extensionScopeMap为ConcurrentHashMap类型的扩展域缓存集合</span></span>
+<span class="line"><span style="color:#24292E">        ExtensionScope scope </span><span style="color:#D73A49">=</span><span style="color:#24292E"> extensionScopeMap.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(type);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (scope </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            SPI annotation </span><span style="color:#D73A49">=</span><span style="color:#24292E"> type.</span><span style="color:#6F42C1">getAnnotation</span><span style="color:#24292E">(SPI.class);</span></span>
+<span class="line"><span style="color:#24292E">            scope </span><span style="color:#D73A49">=</span><span style="color:#24292E"> annotation.</span><span style="color:#6F42C1">scope</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            extensionScopeMap.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(type, scope);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">		//首次访问的时候当前类型的扩展加载器类型肯定是空的,会走如下两个逻辑中的其中一个进行创建扩展加载器</span></span>
+<span class="line"><span style="color:#6A737D">		//1)如果 扩展域为SELF 自给自足，为每个作用域创建一个实例，用于特殊的SPI扩展，如{@link ExtensionInjector}</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (loader </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> scope </span><span style="color:#D73A49">==</span><span style="color:#24292E"> ExtensionScope.SELF) {</span></span>
+<span class="line"><span style="color:#6A737D">            // create an instance in self scope</span></span>
+<span class="line"><span style="color:#24292E">            loader </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createExtensionLoader0</span><span style="color:#24292E">(type);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // 2. find in parent</span></span>
+<span class="line"><span style="color:#6A737D">        //3) 从父扩展加载器中查询当前扩展加载器是否存在,这里parent是空的先不考虑</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (loader </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.parent </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                loader </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.parent.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(type);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // 3. create it</span></span>
+<span class="line"><span style="color:#6A737D">        //4) 这个是我们本次会走的逻辑,大部分是会走这个逻辑来创建扩展加载器对象的</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (loader </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            loader </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createExtensionLoader</span><span style="color:#24292E">(type);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> loader;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>前面提到的withExtensionAnnotation判断代码如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> boolean</span><span style="color:#6F42C1"> withExtensionAnnotation</span><span style="color:#24292E">(Class</span><span style="color:#D73A49">&#x3C;?></span><span style="color:#24292E"> type) {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> type.</span><span style="color:#6F42C1">isAnnotationPresent</span><span style="color:#24292E">(SPI.class);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>ExtensionDirector类型的createExtensionLoader方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> ExtensionLoader</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> createExtensionLoader</span><span style="color:#24292E">(Class</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> type) {</span></span>
+<span class="line"><span style="color:#24292E">        ExtensionLoader&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> loader </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6A737D">        //当前类型注解的scope与当前扩展访问器ExtensionDirector的scope是否一致,不一致则抛出异常</span></span>
+<span class="line"><span style="color:#6A737D">        //当前类型ExtensionDirector的scope是在构造器中传递的,在Model对象初始化的时候创建的本类型</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">isScopeMatched</span><span style="color:#24292E">(type)) {</span></span>
+<span class="line"><span style="color:#6A737D">            // if scope is matched, just create it</span></span>
+<span class="line"><span style="color:#24292E">            loader </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createExtensionLoader0</span><span style="color:#24292E">(type);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">            // if scope is not matched, ignore it</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> loader;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>ExtensionDirector类型的createExtensionLoader0方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> private</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> ExtensionLoader</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> createExtensionLoader0</span><span style="color:#24292E">(Class</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> type) {</span></span>
+<span class="line"><span style="color:#6A737D"> 		//检查当前扩展访问器是否被销毁掉了</span></span>
+<span class="line"><span style="color:#6F42C1">        checkDestroyed</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        ExtensionLoader&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> loader;</span></span>
+<span class="line"><span style="color:#6A737D">        //为当前扩展类型创建一个扩展访问器并缓存到,当前成员变量extensionLoadersMap中</span></span>
+<span class="line"><span style="color:#24292E">        extensionLoadersMap.</span><span style="color:#6F42C1">putIfAbsent</span><span style="color:#24292E">(type, </span><span style="color:#D73A49">new</span><span style="color:#24292E"> ExtensionLoader&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">>(type, </span><span style="color:#005CC5">this</span><span style="color:#24292E">, scopeModel));</span></span>
+<span class="line"><span style="color:#24292E">        loader </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (ExtensionLoader</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E">) extensionLoadersMap.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(type);</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> loader;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="扩展加载器对象extensionloader的构造器"><strong>扩展加载器对象ExtensionLoader的构造器</strong></h3>
+<p>扩展加载器相对来说是比较复杂的实现内容比较多,用到哪里我们说下哪里,这里先来看ExtensionLoader的构造器代码如下所示:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6F42C1"> ExtensionLoader</span><span style="color:#24292E">(Class</span><span style="color:#D73A49">&#x3C;?></span><span style="color:#24292E"> type, ExtensionDirector extensionDirector, ScopeModel scopeModel) {</span></span>
+<span class="line"><span style="color:#6A737D"> 		//当前扩展加载器,需要加载的扩展的类型</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.type </span><span style="color:#D73A49">=</span><span style="color:#24292E"> type;</span></span>
+<span class="line"><span style="color:#6A737D">        //创建扩展加载器的扩展访问器对象</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.extensionDirector </span><span style="color:#D73A49">=</span><span style="color:#24292E"> extensionDirector;</span></span>
+<span class="line"><span style="color:#6A737D">        //从扩展访问器中获取扩展执行前后的回调器</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.extensionPostProcessors </span><span style="color:#D73A49">=</span><span style="color:#24292E"> extensionDirector.</span><span style="color:#6F42C1">getExtensionPostProcessors</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //创建实例化对象的策略对象</span></span>
+<span class="line"><span style="color:#6F42C1">        initInstantiationStrategy</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //如果当前扩展类型为扩展注入器类型则设置当前注入器变量为空,否则的话获取一个扩展注入器扩展对象</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.injector </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (type </span><span style="color:#D73A49">==</span><span style="color:#24292E"> ExtensionInjector.class </span><span style="color:#D73A49">?</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> :</span><span style="color:#24292E"> extensionDirector.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ExtensionInjector.class)</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">getAdaptiveExtension</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">         //创建Activate注解的排序器   </span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.activateComparator </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ActivateComparator</span><span style="color:#24292E">(extensionDirector);</span></span>
+<span class="line"><span style="color:#6A737D">        //为扩展加载器下的域模型对象赋值</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.scopeModel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> scopeModel;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>先来看 创建实例化对象的策略对象代码 initInstantiationStrategy();</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initInstantiationStrategy</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (ExtensionPostProcessor extensionPostProcessor </span><span style="color:#D73A49">:</span><span style="color:#24292E"> extensionPostProcessors) {</span></span>
+<span class="line"><span style="color:#6A737D">              //ScopeModelAwareExtensionProcessor在域模型对象时候为扩展访问器添加了这个域模型扩展处理器对象ScopeModelAwareExtensionProcessor,这个类型实现了ScopeModelAccessor域模型访问器可以用来获取域模型对象</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (extensionPostProcessor </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> ScopeModelAccessor) {</span></span>
+<span class="line"><span style="color:#24292E">          </span></span>
+<span class="line"><span style="color:#24292E">                instantiationStrategy </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> InstantiationStrategy</span><span style="color:#24292E">((ScopeModelAccessor) extensionPostProcessor);</span></span>
+<span class="line"><span style="color:#D73A49">                break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (instantiationStrategy </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            instantiationStrategy </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> InstantiationStrategy</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>再来看ExtensionInjector扩展对象的获取</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">//1)这里有个type为空的判断,普通的扩展类型肯定不是ExtensionInjector类型 这里必定会为每个非扩展注入ExtensionInjector类型创建一个ExtensionInjector类型的扩展对象,</span></span>
+<span class="line"><span style="color:#6A737D">//2) 这里代码会走extensionDirector.getExtensionLoader(ExtensionInjector.class)这一步进去之后的代码刚刚看过就不再看了,这个代码会创建一个为ExtensionInjector扩展对象的加载器对象ExtensionLoader</span></span>
+<span class="line"><span style="color:#6A737D">//3) getAdaptiveExtension() 这个方法就是通过扩展加载器获取具体的扩展对象的方法我们会详细说</span></span>
+<span class="line"><span style="color:#005CC5"> this</span><span style="color:#24292E">.injector </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (type </span><span style="color:#D73A49">==</span><span style="color:#24292E"> ExtensionInjector.class </span><span style="color:#D73A49">?</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> :</span><span style="color:#24292E"> extensionDirector.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ExtensionInjector.class)</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">getAdaptiveExtension</span><span style="color:#24292E">());</span></span></code></pre>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

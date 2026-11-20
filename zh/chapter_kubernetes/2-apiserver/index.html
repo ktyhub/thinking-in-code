@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>apiserver.go的main方法开始 — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_kubernetes/2-apiserver/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_kubernetes/2-apiserver"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_kubernetes/2-apiserver/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_kubernetes/2-apiserver"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="apiserver.go的main方法开始 — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_kubernetes/2-apiserver/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_kubernetes/2-apiserver/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>kubernetes</h3> <ul> <li> <a href="/zh/chapter_kubernetes/1-index" class="lv0" title="1-index"> 1-index </a> </li><li> <a href="/zh/chapter_kubernetes/2-apiserver" class="lv0" aria-current="page" title="apiserver.go的main方法开始"> apiserver.go的main方法开始 </a> </li><li> <a href="/zh/chapter_kubernetes/3-apiserver-server-run-options" class="lv0" title="说明"> 说明 </a> </li><li> <a href="/zh/chapter_kubernetes/4-apiserver-add-flags" class="lv0" title="说明"> 说明 </a> </li><li> <a href="/zh/chapter_kubernetes/5-apiserver-server-run" class="lv0" title="5-apiserver-server-run"> 5-apiserver-server-run </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_kubernetes">kubernetes</a><span class="sep">/</span><span>apiserver.go的main方法开始</span> </nav> <div class="prose">  <h1 id="apiservergo的main方法开始">apiserver.go的main方法开始</h1>
+<p><code>apiserver</code>模块在Kubernetes中扮演了非常重要的角色。它是Kubernetes集群中所有API的主要接口，负责处理和转发集群内部和外部的API请求。</p>
+<p>以下是<code>apiserver</code>的主要功能：</p>
+<ol>
+<li>
+<p>提供了Kubernetes API的RESTful接口，包括创建、获取、更新和删除（CRUD）资源的操作。</p>
+</li>
+<li>
+<p>提供了API版本控制，可以处理不同版本的API请求。</p>
+</li>
+<li>
+<p>提供了API认证和授权，确保只有经过验证和授权的请求才能访问API。</p>
+</li>
+<li>
+<p>提供了API请求的审计功能，可以记录和审计API请求的详细信息。</p>
+</li>
+<li>
+<p>提供了API资源的存储接口，将API资源的状态存储到etcd中。</p>
+</li>
+<li>
+<p>提供了API资源的监控和度量，可以监控API请求的性能和资源使用情况。</p>
+</li>
+</ol>
+<p>在<code>apiserver</code>模块的代码中，你可以看到很多与上述功能相关的代码，例如处理HTTP请求的<code>Run</code>方法，以及处理API资源存储的<code>installAPIResources</code>方法等。</p>
+<h2 id="apiserver的main方法">apiserver的main方法</h2>
+<p>这是一个Go语言的主程序文件，用于启动Kubernetes的API服务器。下面是对代码的详细解释：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#D73A49">package</span><span style="color:#6F42C1"> main</span></span>
+<span class="line"><span style="color:#6A737D">//1. 首先，代码导入了一些必要的包，包括标准库的包（如`fmt`, `math/rand`, `os`, `time`）</span></span>
+<span class="line"><span style="color:#6A737D">//和一些Kubernetes特定的包（如</span></span>
+<span class="line"><span style="color:#6A737D">//`k8s.io/apiserver/pkg/server`, </span></span>
+<span class="line"><span style="color:#6A737D">//`k8s.io/kubernetes/cmd/kube-apiserver/app`, </span></span>
+<span class="line"><span style="color:#6A737D">//`k8s.io/kubernetes/cmd/kube-apiserver/app/options`等）。</span></span>
+<span class="line"><span style="color:#6A737D">//还有两个特殊的导入，它们的导入路径前面有一个下划线（`_`），这在Go中被称为“空白导入”，主要用于触发包级别的副作用，例如注册客户端的度量和版本度量。</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> (</span></span>
+<span class="line"><span style="color:#032F62">	"</span><span style="color:#6F42C1">fmt</span><span style="color:#032F62">"</span></span>
+<span class="line"><span style="color:#032F62">	"</span><span style="color:#6F42C1">math/rand</span><span style="color:#032F62">"</span></span>
+<span class="line"><span style="color:#032F62">	"</span><span style="color:#6F42C1">os</span><span style="color:#032F62">"</span></span>
+<span class="line"><span style="color:#032F62">	"</span><span style="color:#6F42C1">time</span><span style="color:#032F62">"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62">	"</span><span style="color:#6F42C1">github.com/spf13/pflag</span><span style="color:#032F62">"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62">	"</span><span style="color:#6F42C1">k8s.io/apiserver/pkg/server</span><span style="color:#032F62">"</span></span>
+<span class="line"><span style="color:#032F62">	"</span><span style="color:#6F42C1">k8s.io/apiserver/pkg/util/flag</span><span style="color:#032F62">"</span></span>
+<span class="line"><span style="color:#032F62">	"</span><span style="color:#6F42C1">k8s.io/apiserver/pkg/util/logs</span><span style="color:#032F62">"</span></span>
+<span class="line"><span style="color:#032F62">	"</span><span style="color:#6F42C1">k8s.io/kubernetes/cmd/kube-apiserver/app</span><span style="color:#032F62">"</span></span>
+<span class="line"><span style="color:#032F62">	"</span><span style="color:#6F42C1">k8s.io/kubernetes/cmd/kube-apiserver/app/options</span><span style="color:#032F62">"</span></span>
+<span class="line"><span style="color:#24292E">	_ </span><span style="color:#032F62">"</span><span style="color:#6F42C1">k8s.io/kubernetes/pkg/client/metrics/prometheus</span><span style="color:#032F62">"</span><span style="color:#6A737D"> // for client metric registration</span></span>
+<span class="line"><span style="color:#24292E">	_ </span><span style="color:#032F62">"</span><span style="color:#6F42C1">k8s.io/kubernetes/pkg/version/prometheus</span><span style="color:#032F62">"</span><span style="color:#6A737D">        // for version metric registration</span></span>
+<span class="line"><span style="color:#032F62">	"</span><span style="color:#6F42C1">k8s.io/kubernetes/pkg/version/verflag</span><span style="color:#032F62">"</span></span>
+<span class="line"><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">func</span><span style="color:#6F42C1"> main</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">	//2. `main`函数是程序的入口点。它首先设置了随机数种子，</span></span>
+<span class="line"><span style="color:#6A737D">	//这是一个常见的做法，用于确保程序在每次运行时都能生成不同的随机数。</span></span>
+<span class="line"><span style="color:#24292E">	rand.</span><span style="color:#6F42C1">Seed</span><span style="color:#24292E">(time.</span><span style="color:#6F42C1">Now</span><span style="color:#24292E">().</span><span style="color:#6F42C1">UTC</span><span style="color:#24292E">().</span><span style="color:#6F42C1">UnixNano</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#6A737D">	//3. 然后，它创建了一个新的`ServerRunOptions`实例，</span></span>
+<span class="line"><span style="color:#6A737D">	//并将其标志添加到命令行解析器中。这些选项用于配置API服务器的运行。</span></span>
+<span class="line"><span style="color:#24292E">	s </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> options.</span><span style="color:#6F42C1">NewServerRunOptions</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">	s.</span><span style="color:#6F42C1">AddFlags</span><span style="color:#24292E">(pflag.CommandLine)</span></span>
+<span class="line"><span style="color:#6A737D">	//4. 接下来，它调用`flag.InitFlags()`和`logs.InitLogs()`来初始化命令行标志和日志系统。</span></span>
+<span class="line"><span style="color:#24292E">	flag.</span><span style="color:#6F42C1">InitFlags</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">	logs.</span><span style="color:#6F42C1">InitLogs</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#D73A49">	defer</span><span style="color:#24292E"> logs.</span><span style="color:#6F42C1">FlushLogs</span><span style="color:#24292E">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	//5. `verflag.PrintAndExitIfRequested()`是一个条件检查，如果用户在命令行中指定了打印版本信息的标志，那么程序将打印版本信息并退出。</span></span>
+<span class="line"><span style="color:#24292E">	verflag.</span><span style="color:#6F42C1">PrintAndExitIfRequested</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#6A737D">	//6. `server.SetupSignalHandler()`设置了一个信号处理器，用于在接收到终止信号时优雅地关闭服务器。</span></span>
+<span class="line"><span style="color:#24292E">	stopCh </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> server.</span><span style="color:#6F42C1">SetupSignalHandler</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#6A737D">	//7. 最后，它调用`app.Run(s, stopCh)`来启动API服务器。如果服务器启动失败，它将打印错误信息并退出程序。</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> app.</span><span style="color:#6F42C1">Run</span><span style="color:#24292E">(s, stopCh); err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">		fmt.</span><span style="color:#6F42C1">Fprintf</span><span style="color:#24292E">(os.Stderr, </span><span style="color:#032F62">"</span><span style="color:#005CC5">%v\n</span><span style="color:#032F62">"</span><span style="color:#24292E">, err)</span></span>
+<span class="line"><span style="color:#24292E">		os.</span><span style="color:#6F42C1">Exit</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>这个文件是Kubernetes项目的一部分，Kubernetes是一个开源的容器编排系统，用于自动化应用程序部署、扩展和管理。</p>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

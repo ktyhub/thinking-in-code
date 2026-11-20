@@ -1,0 +1,296 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**处理Poll的IO返回结果** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_kafka/10-handle-io/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_kafka/10-handle-io"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_kafka/10-handle-io/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_kafka/10-handle-io"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**处理Poll的IO返回结果** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_kafka/10-handle-io/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_kafka/10-handle-io/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>kafka</h3> <ul> <li> <a href="/zh/chapter_kafka/0-1-Kaka知识点全解析" class="lv0" title="Kaka入门级教程"> Kaka入门级教程 </a> </li><li> <a href="/zh/chapter_kafka/1-1-生产者例子发送数据生命周期" class="lv0" title="从一个生产者的Demo出发"> 从一个生产者的Demo出发 </a> </li><li> <a href="/zh/chapter_kafka/1-2-生产者KafkaProducer对象的初始化" class="lv0" title="2 生产者KafkaProducer对象的初始化"> 2 生产者KafkaProducer对象的初始化 </a> </li><li> <a href="/zh/chapter_kafka/1-introduce" class="lv0" title="**Kaka知识全解析**"> **Kaka知识全解析** </a> </li><li> <a href="/zh/chapter_kafka/2-high-performence" class="lv0" title="**Kaka高性能设计原理**"> **Kaka高性能设计原理** </a> </li><li> <a href="/zh/chapter_kafka/3-client-sample" class="lv0" title="**从一个Kafka的Demo说起**"> **从一个Kafka的Demo说起** </a> </li><li> <a href="/zh/chapter_kafka/3-KafkaProducer处理数据到发送批处理队列" class="lv0" title="3-KafkaProducer处理数据到发送批处理队列"> 3-KafkaProducer处理数据到发送批处理队列 </a> </li><li> <a href="/zh/chapter_kafka/4-kafka-producer" class="lv0" title="**KafkaProducer生产者对象的长篇源码解析简介**"> **KafkaProducer生产者对象的长篇源码解析简介** </a> </li><li> <a href="/zh/chapter_kafka/4-Send发送者线程的主限循环逻辑" class="lv0" title="4-Send发送者线程的主限循环逻辑"> 4-Send发送者线程的主限循环逻辑 </a> </li><li> <a href="/zh/chapter_kafka/5-生产者消息请求放入Kafka通道" class="lv0" title="5-生产者消息请求放入Kafka通道"> 5-生产者消息请求放入Kafka通道 </a> </li><li> <a href="/zh/chapter_kafka/5-sender" class="lv0" title="**Kafka的发送器对象的初始化**"> **Kafka的发送器对象的初始化** </a> </li><li> <a href="/zh/chapter_kafka/6-生产者执行IO事件" class="lv0" title="执行IO事件"> 执行IO事件 </a> </li><li> <a href="/zh/chapter_kafka/6-kafka-thread" class="lv0" title="**Kafka客户端的IO线程KafkaThread**"> **Kafka客户端的IO线程KafkaThread** </a> </li><li> <a href="/zh/chapter_kafka/7-消费者和生产者处理IO结果" class="lv0" title="7-消费者和生产者处理IO结果"> 7-消费者和生产者处理IO结果 </a> </li><li> <a href="/zh/chapter_kafka/7-kafka-producer-init" class="lv0" title="**生产者KafkaProducer对象的初始化**"> **生产者KafkaProducer对象的初始化** </a> </li><li> <a href="/zh/chapter_kafka/8-消费者例子拉取数据生命周期" class="lv0" title="8-消费者例子拉取数据生命周期"> 8-消费者例子拉取数据生命周期 </a> </li><li> <a href="/zh/chapter_kafka/8-send-producer-data" class="lv0" title="8-send-producer-data"> 8-send-producer-data </a> </li><li> <a href="/zh/chapter_kafka/9-消费者KafkaConsumer对象的初始化" class="lv0" title="9-消费者KafkaConsumer对象的初始化"> 9-消费者KafkaConsumer对象的初始化 </a> </li><li> <a href="/zh/chapter_kafka/9-execute-io" class="lv0" title="**执行IO事件**"> **执行IO事件** </a> </li><li> <a href="/zh/chapter_kafka/10-消费者订阅TOPIC" class="lv0" title="10-消费者订阅TOPIC"> 10-消费者订阅TOPIC </a> </li><li> <a href="/zh/chapter_kafka/10-handle-io" class="lv0" aria-current="page" title="**处理Poll的IO返回结果**"> **处理Poll的IO返回结果** </a> </li><li> <a href="/zh/chapter_kafka/11-消费者执行轮询消息poll方法" class="lv0" title="11-消费者执行轮询消息poll方法"> 11-消费者执行轮询消息poll方法 </a> </li><li> <a href="/zh/chapter_kafka/12-消费者尝试更新分配元数据updateAssignmentMetadataIfNeeded" class="lv0" title="12-消费者尝试更新分配元数据updateAssignmentMetadataIfNeeded"> 12-消费者尝试更新分配元数据updateAssignmentMetadataIfNeeded </a> </li><li> <a href="/zh/chapter_kafka/13-消费者Poll从服务端拉取数据" class="lv0" title="13-消费者Poll从服务端拉取数据"> 13-消费者Poll从服务端拉取数据 </a> </li><li> <a href="/zh/chapter_kafka/Kafka入门" class="lv0" title="简介"> 简介 </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_kafka">kafka</a><span class="sep">/</span><span>**处理Poll的IO返回结果**</span> </nav> <div class="prose">  <h1 id="处理poll的io返回结果"><strong>处理Poll的IO返回结果</strong></h1>
+<ul>
+<li>执行IO事件读取数据到接收队列 completedReceives：List<networkreceive></networkreceive></li>
+<li>处理完成的发送请求，主要处理无需响应的请求</li>
+<li>处理完成的接收：
+<ul>
+<li>元数据响应处理</li>
+<li>ApiVersion请求响应处理</li>
+<li>普通请求响应存放到List<clientresponse> responses</clientresponse></li>
+</ul>
+</li>
+<li>处理失去连接的状态</li>
+<li>处理完成连接的状态</li>
+<li>处理初始化Api版本请求的逻辑</li>
+<li>处理请求超时的逻辑</li>
+<li>执行response的回调方法onComplete</li>
+</ul>
+<p>NetworkClient的poll方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#24292E"> List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">ClientResponse</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> poll</span><span style="color:#24292E">(</span><span style="color:#D73A49">long</span><span style="color:#24292E"> timeout, </span><span style="color:#D73A49">long</span><span style="color:#24292E"> now) {</span></span>
+<span class="line"><span style="color:#6A737D">     //执行IO的方法省略掉了</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // process completed actions</span></span>
+<span class="line"><span style="color:#D73A49">    long</span><span style="color:#24292E"> updatedNow </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.time.</span><span style="color:#6F42C1">milliseconds</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">  </span></span>
+<span class="line"><span style="color:#24292E">    List&#x3C;</span><span style="color:#D73A49">ClientResponse</span><span style="color:#24292E">> responses </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>();</span></span>
+<span class="line"><span style="color:#6A737D">   //处理完成的发送请求</span></span>
+<span class="line"><span style="color:#6F42C1">    handleCompletedSends</span><span style="color:#24292E">(responses, updatedNow);</span></span>
+<span class="line"><span style="color:#6A737D">  //处理完成的接收</span></span>
+<span class="line"><span style="color:#6F42C1">    handleCompletedReceives</span><span style="color:#24292E">(responses, updatedNow);</span></span>
+<span class="line"><span style="color:#6A737D">  //处理失去连接的状态</span></span>
+<span class="line"><span style="color:#6F42C1">    handleDisconnections</span><span style="color:#24292E">(responses, updatedNow);</span></span>
+<span class="line"><span style="color:#6A737D">  //处理完成连接的状态</span></span>
+<span class="line"><span style="color:#6F42C1">    handleConnections</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">  //处理初始化Api版本请求的逻辑</span></span>
+<span class="line"><span style="color:#6F42C1">    handleInitiateApiVersionRequests</span><span style="color:#24292E">(updatedNow);</span></span>
+<span class="line"><span style="color:#6A737D">  //处理请求超时的逻辑</span></span>
+<span class="line"><span style="color:#6F42C1">    handleTimedOutRequests</span><span style="color:#24292E">(responses, updatedNow);</span></span>
+<span class="line"><span style="color:#6A737D">  //执行response的回调方法onComplete</span></span>
+<span class="line"><span style="color:#6F42C1">    completeResponses</span><span style="color:#24292E">(responses);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> responses;</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>NetworkClient的handleCompletedSends方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> handleCompletedSends</span><span style="color:#24292E">(List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">ClientResponse</span><span style="color:#D73A49">></span><span style="color:#24292E"> responses, </span><span style="color:#D73A49">long</span><span style="color:#24292E"> now) {</span></span>
+<span class="line"><span style="color:#6A737D">    // if no response is expected then when the send is completed, return it</span></span>
+<span class="line"><span style="color:#6A737D">   //前面IO 写数据事件执行发送数据之后会把数据存放在completedSends集合中</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (Send send </span><span style="color:#D73A49">:</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.selector.</span><span style="color:#6F42C1">completedSends</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">        InFlightRequest request </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.inFlightRequests.</span><span style="color:#6F42C1">lastSent</span><span style="color:#24292E">(send.</span><span style="color:#6F42C1">destination</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">      //是否期望有返回数据，当acks配置为0时候这里就为false不期望数据返回</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">request.expectResponse) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.inFlightRequests.</span><span style="color:#6F42C1">completeLastSent</span><span style="color:#24292E">(send.</span><span style="color:#6F42C1">destination</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">            responses.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(request.</span><span style="color:#6F42C1">completed</span><span style="color:#24292E">(</span><span style="color:#005CC5">null</span><span style="color:#24292E">, now));</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>NetworkClient的handleCompletedReceives方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> handleCompletedReceives</span><span style="color:#24292E">(List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">ClientResponse</span><span style="color:#D73A49">></span><span style="color:#24292E"> responses, </span><span style="color:#D73A49">long</span><span style="color:#24292E"> now) {</span></span>
+<span class="line"><span style="color:#6A737D">    //完成的数据接收在前面执行IO事件的时候执行了读取数据的逻辑，将读取到的数据放在了集合completedReceives中</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (NetworkReceive receive </span><span style="color:#D73A49">:</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.selector.</span><span style="color:#6F42C1">completedReceives</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">        String source </span><span style="color:#D73A49">=</span><span style="color:#24292E"> receive.</span><span style="color:#6F42C1">source</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        InFlightRequest req </span><span style="color:#D73A49">=</span><span style="color:#24292E"> inFlightRequests.</span><span style="color:#6F42C1">completeNext</span><span style="color:#24292E">(source);</span></span>
+<span class="line"><span style="color:#6A737D">        //解析消息体</span></span>
+<span class="line"><span style="color:#24292E">        Struct responseStruct </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> parseStructMaybeUpdateThrottleTimeMetrics</span><span style="color:#24292E">(receive.</span><span style="color:#6F42C1">payload</span><span style="color:#24292E">(), req.header,</span></span>
+<span class="line"><span style="color:#24292E">            throttleTimeSensor, now);</span></span>
+<span class="line"><span style="color:#6A737D">        //省略...</span></span>
+<span class="line"><span style="color:#6A737D">        // If the received response includes a throttle delay, throttle the connection.</span></span>
+<span class="line"><span style="color:#24292E">        AbstractResponse body </span><span style="color:#D73A49">=</span><span style="color:#24292E"> AbstractResponse.</span></span>
+<span class="line"><span style="color:#6F42C1">                parseResponse</span><span style="color:#24292E">(req.header.</span><span style="color:#6F42C1">apiKey</span><span style="color:#24292E">(), responseStruct, req.header.</span><span style="color:#6F42C1">apiVersion</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">        //省略...</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (req.isInternalRequest </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> body </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> MetadataResponse)</span></span>
+<span class="line"><span style="color:#6A737D">          //元数据的响应 则刷新元数据缓存</span></span>
+<span class="line"><span style="color:#24292E">            metadataUpdater.</span><span style="color:#6F42C1">handleCompletedMetadataResponse</span><span style="color:#24292E">(req.header, now, (MetadataResponse) body);</span></span>
+<span class="line"><span style="color:#D73A49">        else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (req.isInternalRequest </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> body </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> ApiVersionsResponse)</span></span>
+<span class="line"><span style="color:#6A737D">            //api版本的请求则处理api版本的逻辑</span></span>
+<span class="line"><span style="color:#6F42C1">            handleApiVersionsResponse</span><span style="color:#24292E">(responses, req, now, (ApiVersionsResponse) body);</span></span>
+<span class="line"><span style="color:#D73A49">        else</span></span>
+<span class="line"><span style="color:#6A737D">            //普通的网络请求则添加到响应集合待后续处理</span></span>
+<span class="line"><span style="color:#24292E">            responses.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(req.</span><span style="color:#6F42C1">completed</span><span style="color:#24292E">(body, now));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>NetworkClient的handleDisconnections方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> handleDisconnections</span><span style="color:#24292E">(List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">ClientResponse</span><span style="color:#D73A49">></span><span style="color:#24292E"> responses, </span><span style="color:#D73A49">long</span><span style="color:#24292E"> now) {</span></span>
+<span class="line"><span style="color:#6A737D">   //当出现关闭或者网络交互失败的时候就会将连接放入disconnected集合中</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (Map.Entry&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">ChannelState</span><span style="color:#24292E">> entry </span><span style="color:#D73A49">:</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.selector.</span><span style="color:#6F42C1">disconnected</span><span style="color:#24292E">().</span><span style="color:#6F42C1">entrySet</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">        String node </span><span style="color:#D73A49">=</span><span style="color:#24292E"> entry.</span><span style="color:#6F42C1">getKey</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        log.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Node {} disconnected."</span><span style="color:#24292E">, node);</span></span>
+<span class="line"><span style="color:#6A737D">       //处理失去连接的响应</span></span>
+<span class="line"><span style="color:#6F42C1">        processDisconnection</span><span style="color:#24292E">(responses, node, now, entry.</span><span style="color:#6F42C1">getValue</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D">    // we got a disconnect so we should probably refresh our metadata and see if that broker is dead</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.selector.</span><span style="color:#6F42C1">disconnected</span><span style="color:#24292E">().</span><span style="color:#6F42C1">size</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">        metadataUpdater.</span><span style="color:#6F42C1">requestUpdate</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>NetworkClient的handleConnections方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> handleConnections</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">    //首次连接成功之后会把连接的节点放入connected集合中</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (String node </span><span style="color:#D73A49">:</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.selector.</span><span style="color:#6F42C1">connected</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">        // We are now connected.  Note that we might not still be able to send requests. For instance,</span></span>
+<span class="line"><span style="color:#6A737D">        // if SSL is enabled, the SSL handshake happens after the connection is established.</span></span>
+<span class="line"><span style="color:#6A737D">        // Therefore, it is still necessary to check isChannelReady before attempting to send on this</span></span>
+<span class="line"><span style="color:#6A737D">        // connection.</span></span>
+<span class="line"><span style="color:#6A737D">        //</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (discoverBrokerVersions) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.connectionStates.</span><span style="color:#6F42C1">checkingApiVersions</span><span style="color:#24292E">(node);</span></span>
+<span class="line"><span style="color:#24292E">            nodesNeedingApiVersionsFetch.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(node, </span><span style="color:#D73A49">new</span><span style="color:#24292E"> ApiVersionsRequest.</span><span style="color:#6F42C1">Builder</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">            log.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Completed connection to node {}. Fetching API versions."</span><span style="color:#24292E">, node);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.connectionStates.</span><span style="color:#6F42C1">ready</span><span style="color:#24292E">(node);</span></span>
+<span class="line"><span style="color:#24292E">            log.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Completed connection to node {}. Ready."</span><span style="color:#24292E">, node);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>NetworkClient的handleInitiateApiVersionRequests方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> handleInitiateApiVersionRequests</span><span style="color:#24292E">(</span><span style="color:#D73A49">long</span><span style="color:#24292E"> now) {</span></span>
+<span class="line"><span style="color:#6A737D">    //这里发起一个新的请求来初始化Api版本</span></span>
+<span class="line"><span style="color:#24292E">    Iterator&#x3C;</span><span style="color:#D73A49">Map</span><span style="color:#24292E">.</span><span style="color:#D73A49">Entry</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">ApiVersionsRequest</span><span style="color:#24292E">.</span><span style="color:#D73A49">Builder</span><span style="color:#24292E">>> iter </span><span style="color:#D73A49">=</span><span style="color:#24292E"> nodesNeedingApiVersionsFetch.</span><span style="color:#6F42C1">entrySet</span><span style="color:#24292E">().</span><span style="color:#6F42C1">iterator</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">    while</span><span style="color:#24292E"> (iter.</span><span style="color:#6F42C1">hasNext</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">        Map.Entry&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">ApiVersionsRequest</span><span style="color:#24292E">.</span><span style="color:#D73A49">Builder</span><span style="color:#24292E">> entry </span><span style="color:#D73A49">=</span><span style="color:#24292E"> iter.</span><span style="color:#6F42C1">next</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        String node </span><span style="color:#D73A49">=</span><span style="color:#24292E"> entry.</span><span style="color:#6F42C1">getKey</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (selector.</span><span style="color:#6F42C1">isChannelReady</span><span style="color:#24292E">(node) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> inFlightRequests.</span><span style="color:#6F42C1">canSendMore</span><span style="color:#24292E">(node)) {</span></span>
+<span class="line"><span style="color:#24292E">            log.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Initiating API versions fetch from node {}."</span><span style="color:#24292E">, node);</span></span>
+<span class="line"><span style="color:#24292E">            ApiVersionsRequest.Builder apiVersionRequestBuilder </span><span style="color:#D73A49">=</span><span style="color:#24292E"> entry.</span><span style="color:#6F42C1">getValue</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            ClientRequest clientRequest </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> newClientRequest</span><span style="color:#24292E">(node, apiVersionRequestBuilder, now, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6F42C1">            doSend</span><span style="color:#24292E">(clientRequest, </span><span style="color:#005CC5">true</span><span style="color:#24292E">, now);</span></span>
+<span class="line"><span style="color:#24292E">            iter.</span><span style="color:#6F42C1">remove</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>NetworkClient的handleTimedOutRequests方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> handleTimedOutRequests</span><span style="color:#24292E">(List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">ClientResponse</span><span style="color:#D73A49">></span><span style="color:#24292E"> responses, </span><span style="color:#D73A49">long</span><span style="color:#24292E"> now) {</span></span>
+<span class="line"><span style="color:#6A737D">  //在飞行集合中如果存在某个节点的请求超时了则会触发关闭当前节点的连接信息</span></span>
+<span class="line"><span style="color:#6A737D">  //默认请求超时时间为30秒可以使用配置request.timeout.ms进行修改</span></span>
+<span class="line"><span style="color:#24292E">    List&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">> nodeIds </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.inFlightRequests.</span><span style="color:#6F42C1">nodesWithTimedOutRequests</span><span style="color:#24292E">(now);</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (String nodeId </span><span style="color:#D73A49">:</span><span style="color:#24292E"> nodeIds) {</span></span>
+<span class="line"><span style="color:#6A737D">        // close connection to the node</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.selector.</span><span style="color:#6F42C1">close</span><span style="color:#24292E">(nodeId);</span></span>
+<span class="line"><span style="color:#24292E">        log.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Disconnecting from node {} due to request timeout."</span><span style="color:#24292E">, nodeId);</span></span>
+<span class="line"><span style="color:#6F42C1">        processDisconnection</span><span style="color:#24292E">(responses, nodeId, now, ChannelState.LOCAL_CLOSE);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // we disconnected, so we should probably refresh our metadata</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">nodeIds.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">        metadataUpdater.</span><span style="color:#6F42C1">requestUpdate</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>NetworkClient的completeResponses方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> completeResponses</span><span style="color:#24292E">(List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">ClientResponse</span><span style="color:#D73A49">></span><span style="color:#24292E"> responses) {</span></span>
+<span class="line"><span style="color:#6A737D">  //调用完成请求的回调方法</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (ClientResponse response </span><span style="color:#D73A49">:</span><span style="color:#24292E"> responses) {</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            response.</span><span style="color:#6F42C1">onComplete</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            log.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Uncaught error in request completion:"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>下面是代码完整的流程解析</p>
+<ul>
+<li>
+<p>开始</p>
+</li>
+<li>
+<p>handleCompletedSends处理完成的发送请求</p>
+<ul>
+<li>handleCompletedSends处理完成的请求遍历Selector的completedSends然后遍历</li>
+<li>根据完成发送的node信息查询对应飞行窗口inFlightRequests中最后一个请求InFlightRequest</li>
+<li>如果最新的请求expectResponse为false则在*inFlightRequests中将最新请求从请求队列中移出</li>
+<li>封装响应数据ClientResponse到responses集合中List<clientresponse></clientresponse></li>
+</ul>
+</li>
+<li>
+<p>handleCompletedReceives处理完成的接收请求</p>
+<ul>
+<li>循环遍历selector的completedReceives中的NetworkReceive列表</li>
+<li>获取飞行窗口中对应节点node的内存队列中最老的请求数据NetworkClient.InFlightRequest</li>
+<li>解析响应数据parseStructMaybeUpdateThrottleTimeMetrics和parseResponse</li>
+<li>如果是内部请求并且是元数据请求则走内部处理逻辑</li>
+<li>如果是内部请求并且是ApiVersionsResponse类型则走api版本处理逻辑</li>
+<li>其他请求将响应加入List<clientresponse> responses集合中</clientresponse></li>
+</ul>
+</li>
+<li>
+<p>handleDisconnections处理失去连接的请求</p>
+<ul>
+<li>
+<p>遍历Selector的 Map&#x3C;String, ChannelState> disconnected 集合</p>
+<ul>
+<li>
+<p>processDisconnection处理失去连接的逻辑</p>
+</li>
+<li>
+<p>updateReconnectBackoff 退避指数计算处理</p>
+</li>
+<li>
+<p>从缓存apiVersions和nodesNeedingApiVersionsFetch中移除当前失去连接的节点</p>
+</li>
+<li>
+<p>根据失去连接的情况来处理：</p>
+<ul>
+<li>
+<p>AUTHENTICATION_FAILED  更新异常结果打印日志</p>
+</li>
+<li>
+<p>AUTHENTICATE  打印原因</p>
+</li>
+<li>
+<p>NOT_CONNECTED 		打印原因</p>
+</li>
+<li>
+<p>清理当前节点对应飞行窗口InFlightRequests中的请求队列中的数据</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>如果失去连接数大于0则标记请求更新元数据变量needUpdate为true下次io时候请求新的元数据</p>
+</li>
+</ul>
+</li>
+<li>
+<p>handleConnections 处理新连接</p>
+<ul>
+<li>遍历selector中的List<string> connected列表
+<ul>
+<li>切换节点连接状态为ConnectionState.READY</li>
+<li>重置异常authenticationException为null</li>
+<li>重置连接回退指数数据resetReconnectBackoff</li>
+</ul>
+</string></li>
+</ul>
+</li>
+<li>
+<p>handleInitiateApiVersionRequests 处理API versions信息查询的请求</p>
+<ul>
+<li>遍历前面handleCompletedReceives的响应结果中nodesNeedingApiVersionsFetch集合数据（apiVersionsResponse.error() != Errors.NONE满足这个条件时候会产生）
+<ul>
+<li>生成ApiVersionsRequest请求将其放在请求队列中等待io执行请求服务端</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>handleTimedOutRequests 处理具有超时请求的节点</p>
+<ul>
+<li>遍历飞行窗口中，所有节点对应的队列中的所有请求
+<ul>
+<li>
+<p>记录存在超时记录的节点id到List<string> nodeIds 超时判断条件为now - request.sendTimeMs  > request.requestTimeoutMs</string></p>
+</li>
+<li>
+<p>selector主动关闭与当前超时节点的连接</p>
+<ul>
+<li>获取当前节点的KafkaChannel主动调用关闭方法closed</li>
+</ul>
+</li>
+<li>
+<p>本地执行处理失去连接的逻辑processDisconnection</p>
+</li>
+<li>
+<p>如果失去连接数大于0则标记请求更新元数据变量needUpdate为true下次io时候请求新的元数据</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>completeResponses  完成响应结果的处理开始调用回调方法</p>
+<ul>
+<li>遍历本地处理逻辑处理的所有响应List<clientresponse> responses 前面已经将响应信息存放在了这里
+<ul>
+<li>调用每个response的response.onComplete();方法</li>
+<li>触发回调方法RequestCompletionHandler callback</li>
+</ul>
+</clientresponse></li>
+</ul>
+</li>
+</ul>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>hindsight v0.10.3 — STAGS NextStack</title><meta name="description" content="docs: changelog and blog post for v0.10.2 · fix(coding-agents): hold the deepen lock with a heartbeat, not a 30-minute TTL"><meta name="keywords" content="オープンソース release note、リリース トラッカー、changelog アグリゲーター、重大な変更、非推奨トラッカー、Kafka リリース、Spring Boot リリース、Kubernetes リリース"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/ja/releases/hindsight/0.10.3/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/ja/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/releases/hindsight/0.10.3/"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/releases/hindsight/0.10.3/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/releases/hindsight/0.10.3/"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="article"><meta property="og:title" content="hindsight v0.10.3 — STAGS NextStack"><meta property="og:description" content="docs: changelog and blog post for v0.10.2 · fix(coding-agents): hold the deepen lock with a heartbeat, not a 30-minute TTL"><meta property="og:url" content="https://www.stags.cn/ja/releases/hindsight/0.10.3/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="ja_JP"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="zh_CN"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"ja","description":"STAGS はインフラストラクチャおよび AI プロジェクトのリリースノートを索引化し、破壊的変更・非推奨・移行情報を英語優先の単一フィードで提供します。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"},{"@type":"TechArticle","@id":"https://www.stags.cn/ja/releases/hindsight/0.10.3/#article","headline":"hindsight v0.10.3 release notes","datePublished":"2026-10-08","inLanguage":"en","isPartOf":{"@id":"https://www.stags.cn/#website"},"about":{"@type":"SoftwareSourceCode","codeRepository":"https://github.com/vectorize-io/hindsight"}}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css">
+<style>.ad-slot[data-astro-cid-fgwukgf6]{margin:var(--s10) 0 0;padding-top:var(--s5);border-top:1px solid var(--line)}.ad-slot-label[data-astro-cid-fgwukgf6]{margin-bottom:var(--s3);font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4)}.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{display:block;min-height:100px}@media(min-width:640px){.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{min-height:250px}}
+</style></head> <body> <a class="skip" href="#main">本文へスキップ</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/ja/" class="brand" aria-label="STAGS NextStack — オープンソースのリリース情報"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/ja/releases">リリース</a><a href="/ja/projects">プロジェクト</a><a href="/ja/method">仕組み</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="リリースを検索"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">検索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="言語"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">日</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="言語"> <p class="langmenu-head">言語</p> <a class="langmenu-item" href="/releases/hindsight/0.10.3/" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/release_note/hindsight/hindsight_0.10.3" hreflang="zh-Hans" lang="zh-CN" data-on="false"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases/hindsight/0.10.3/" hreflang="ja" lang="ja" aria-current="true" data-on="true"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases/hindsight/0.10.3/" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases/hindsight/0.10.3/" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases/hindsight/0.10.3/" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases/hindsight/0.10.3/" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap"> <div class="detail"> <article> <header class="detail-hd"> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/ja/">ホーム</a> <span class="sep">/</span> <a href="/ja/releases">リリース</a> <span class="sep">/</span> <a href="/ja/releases/hindsight">hindsight</a> </nav> <h1 class="detail-title"> <span class="p">hindsight</span> v0.10.3 </h1> <div class="detail-meta"> <span class="chip chip--patch">パッチ</span> <span><span class="k">公開日</span>2026年10月8日</span>  <span class="sep" aria-hidden="true"></span> <a href="https://github.com/vectorize-io/hindsight" target="_blank" rel="noopener"> <span class="k">出典</span>vectorize-io/hindsight </a>   <span class="sep" aria-hidden="true"></span> <a href="/releases/hindsight/0.10.3/"> 英語原文 </a>  <span class="sep" aria-hidden="true"></span> <button class="btn btn--ghost btn--sm" type="button" data-copy="https://www.stags.cn/ja/releases/hindsight/0.10.3/">リンクをコピー</button> </div> </header> <div class="prose" style="margin-top:var(--s8)"> <p class="mt-notice" role="note">このページは機械翻訳です。内容は必ず英文原文をご確認ください。</p>  <div><p>#結果論v0.10.3</p>
+<h2>何が変わったのか</h2>
+<ul>
+<li>ドキュメント: changelog および https://github.com/vectorize-io/hindsight/pull/4915 の @nicoloboschi による v0.10.2 のブログ投稿</li>
+<li>fix(coding-agents): https://github.com/vectorize-io/hindsight/pull/4920 の @nicoloboschi による 30 分の TTL ではなく、ハートビートでディープロックを保持します。</li>
+<li>feat(coding-agents): 記憶を過去の記録として扱い、チームが独自のガイダンス (#4791) を追加できるようにします (https://github.com/vectorize-io/hindsight/pull/4922 の @nicoloboschi による)</li>
+<li>feat(coding-agents): https://github.com/vectorize-io/hindsight/pull/4535 の @cq-guojia による TraeCode (TRAE CN) ハーネスを追加</li>
+<li>fix(coding-agents): https://github.com/vectorize-io/hindsight/pull/4688 の @gfreschi による非会話 Codex コンテンツをフィルタリング</li>
+<li>ドキュメント: Hindsight Cloud の ui.hindsight.vectorize.io へのリンク (https://github.com/vectorize-io/hindsight/pull/4924 の @nicoloboschi による) をポイントします。</li>
+<li>fix(banks): 存在しないバンクの削除は何も行わず、500 ではありません (https://github.com/vectorize-io/hindsight/pull/4923 の @nicoloboschi による)</li>
+<li>修正(hermes): https://github.com/vectorize-io/hindsight/pull/4930 の @nicoloboschi による hindsight-all をインポートする代わりに、埋め込みデーモンをアウトプロセスで実行する</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/4932 の @cdbartholomew により、コーディングエージェントの IP アドレスを 10.7.2 にバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/4933 の @cdbartholomew による zapier 統合の 10.7.2 への IP アドレスのバンプ</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/4934 の @cdbartholomew によってルート ロックファイル内の undici を 7.30.0 にバンプします</li>
+<li>修正 (埋め込み): 親の PYTHONPATH を uvx hindsight-api デーモンから遠ざける (https://github.com/vectorize-io/hindsight/pull/4936 の @benfrank241 による)</li>
+<li>修正（コーディングエージェント）: https://github.com/vectorize-io/hindsight/pull/4942 の @nicoloboschi による履歴を削除する代わりに、429 秒間待機するようになりました。</li>
+<li>fix(recall): 一時ウィンドウを https://github.com/vectorize-io/hindsight/pull/4943 の @nicoloboschi によって宣言されたタプルとして full_recall します。</li>
+<li>修正 (hermes): PYTHONPATH を持たない子から埋め込みデーモンを起動する (https://github.com/vectorize-io/hindsight/pull/4946 の @nicoloboschi による)</li>
+<li>修正 (hermes): PM で修復ヒントをポイントし、https://github.com/vectorize-io/hindsight/pull/4949 の @ethernet8023 による重複した依存関係リストを削除</li>
+<li>修正 (hermes): 組み込みサーバーのダウンロードをアナウンスし、https://github.com/vectorize-io/hindsight/pull/4967 で @nicoloboschi によって client を一度ビルドします</li>
+<li>fix(mental-models): https://github.com/vectorize-io/hindsight/pull/4968 の @nicoloboschi によるメモリ ストアを通じてリフレッシュのスコープ ウォーターマークを読み取ります</li>
+<li>chore(types):無効な引数の種類をオンにし、https://github.com/vectorize-io/hindsight/pull/4975 で @nicoloboschi によって報告された 284 をクリアします</li>
+<li>修正(api): https://github.com/vectorize-io/hindsight/pull/4970 で @nicoloboschi によって操作バリデーターがバンク リスト スコープを宣言できるようにしました。</li>
+<li>修正（タイプ）: https://github.com/vectorize-io/hindsight/pull/4983 の @nicoloboschi により、latest_memory_updated_at の tags_match を TagsMatch (メインは赤) として入力します。</li>
+<li>chore(benchmarks): https://github.com/vectorize-io/hindsight/pull/4982 の @nicoloboschi によるデッドベンチマーク/共通パッケージを削除します。</li>
+<li>偉業(ドキュメント): https://github.com/vectorize-io/hindsight/pull/4981 の @nicoloboschi によるホームページの改善</li>
+<li>docs(eve): キャプチャ回帰スパン 0.51 ～ 0.68、https://github.com/vectorize-io/hindsight/pull/4984 の @benfrank241 によって eve 0.69.0 で修正されました</li>
+<li>docs(agent-plugin): https://github.com/vectorize-io/hindsight/pull/4980 の @benfrank241 による Codex の非互換性とバンク プレースホルダーの動作に関する文書</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/4987 の @cdbartholomew による hindsight-integration-tests で pyjwt を 2.15.1 にバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/4989 の @cdbartholomew による crewai 統合での pyjwt と oauthlib のバンプ</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/4990 の @cdbartholomew による openai-agents 統合で pyjwt を 2.15.1 にバンプします</li>
+<li>chore(deps): ルート package-lock.json のバンプ ブレース展開と fast-uri (https://github.com/vectorize-io/hindsight/pull/4992 の @cdbartholomew による)</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/4994 の @cdbartholomew による eve 統合でのバンプ undici</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/4997 の @cdbartholomew による zapier 統合におけるバンプ ブレース展開と undici</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/4988 の @cdbartholomew による claude-agent-sdk 統合で pyjwt を 2.15.1 にバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/4993 の @cdbartholomew による Cloudflare-oauth-proxy 統合でのバンプ undici</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/4995 の @cdbartholomew によるコーディング エージェント統合におけるバンプ ブレース拡張</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/4996 の @cdbartholomew による eliza 統合でのバンプ ブレース展開</li>
+<li>chore(deps): 黒曜石統合におけるバンプモーメント (https://github.com/vectorize-io/hindsight/pull/4998 の @cdbartholomew による)</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/4991 の @cdbartholomew によるストランド統合で pyjwt を 2.15.1 にバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/4986 の @cdbartholomew によりルート uv.lock で pyjwt を 2.15.1 にバンプします</li>
+<li>chore(deps): ルート package-lock.json の 16.3.7 の隣にあるバンプ (https://github.com/vectorize-io/hindsight/pull/5000 の @cdbartholomew による)</li>
+<li>ドキュメント (統合): @nicoloboschi による Notion Sync コミュニティ統合を https://github.com/vectorize-io/hindsight/pull/5004 に追加</li>
+<li>docs(integrations): コーディング エージェントごとのカード。「Codex」を検索すると、https://github.com/vectorize-io/hindsight/pull/5005 の @nicoloboschi によって見つかります。</li>
+<li>リファクタリング(メモリ): メモリ ストアのみがそのテーブルにアクセスできます (#4969) by @nicoloboschi (https://github.com/vectorize-io/hindsight/pull/4979)</li>
+<li>ブログ投稿を追加: @benfrank241 による 1 つの銀行、2 つの聴衆、2 つのブリーフ (https://github.com/vectorize-io/hindsight/pull/5001)</li>
+<li>ドキュメント (ブログ): 左側にコンテンツ リスト + クラウド CTA、右側に「トップに戻る」 by @nicoloboschi (https://github.com/vectorize-io/hindsight/pull/5020)</li>
+<li>修正(ドキュメント): https://github.com/vectorize-io/hindsight/pull/5033 の @nicoloboschi による 10k フォールバックではなく、ライブ GitHub スター数を表示します。</li>
+<li>feat(knowledge-base): ツリー上のタグフィルターと https://github.com/vectorize-io/hindsight/pull/5034 の @nicoloboschi による検索</li>
+<li>fix(recall,reflect): ソース テキストはドキュメントのタグ (#5030) に従います (https://github.com/vectorize-io/hindsight/pull/5036 の @nicoloboschi による)</li>
+<li>feat(entities): エンティティ リスト、詳細、グラフのタグ フィルター (#5031) by @nicoloboschi (https://github.com/vectorize-io/hindsight/pull/5038)</li>
+<li>テスト(システム): セマンティック スコア許容度は、https://github.com/vectorize-io/hindsight/pull/5044 の @nicoloboschi による埋め込みテキストの月を吸収します。</li>
+<li>test(ci): https://github.com/vectorize-io/hindsight/pull/5045 の @nicoloboschi により、テスト対象のコード以外の理由で失敗する 2 つのテストを修正</li>
+<li>修正（思い出）: 店舗所有銀行がシステム テストでヒットした 4 つのギャップ (https://github.com/vectorize-io/hindsight/pull/5042 の @nicoloboschi による)</li>
+<li>fix(system-tests): TypeSafe サーバーがワーカーを実行しない (https://github.com/vectorize-io/hindsight/pull/5056 の @nicoloboschi による)</li>
+<li>機能 (拡張機能): 共有バンクの読み取りと書き込みのための呼び出し元ごとのタグ スコープ (#5032) by @nicoloboschi (https://github.com/vectorize-io/hindsight/pull/5048)</li>
+<li>docs(observations): https://github.com/vectorize-io/hindsight/pull/5007 の @benfrank241 による、タグなしスコープの制限、env-var 検証、および移行セマンティクスを文書化します。</li>
+<li>fix(retain): https://github.com/vectorize-io/hindsight/pull/5055 の @nicoloboschi による単一バッチの保持が失敗した場合にストア セッションを中止する</li>
+<li>fix(retain): https://github.com/vectorize-io/hindsight/pull/5053 の @nicoloboschi によって、どのエンティティ名を文字通りに取得するかを店舗所有の銀行に指示します。</li>
+<li>ブログ投稿を追加: What Changes Now That Hindsight Is a Hermes Plugin (@benfrank241 著、https://github.com/vectorize-io/hindsight/pull/4879)</li>
+<li>修正(プロンプト): https://github.com/vectorize-io/hindsight/pull/5086 の @nicoloboschi による内部プロンプトのメモリ コンテキストの上限を 200 文字にしました</li>
+<li>feat(grok-bot): @cdbartholomew による Grok Bot と Cursor 用の Hindsight プラグインを https://github.com/vectorize-io/hindsight/pull/5069 に追加</li>
+<li>修正(python-client): https://github.com/vectorize-io/hindsight/pull/4962 の @rudycelekli による非有限再試行後の遅延を拒否</li>
+<li>修正(python-client): https://github.com/vectorize-io/hindsight/pull/4959 の @rudycelekli によるファイルの準備を非同期イベント ループから外します。</li>
+<li>修正(python-client): https://github.com/vectorize-io/hindsight/pull/4958 の @rudycelekli によるエクスポート アーカイブをダウンロードするときに HTTP エラーを拒否する</li>
+<li>修正(python-client): https://github.com/vectorize-io/hindsight/pull/4960 の @rudycelekli による手書きリクエスト URL 内の銀行 ID を保持</li>
+<li>修正(python-client): https://github.com/vectorize-io/hindsight/pull/4961 の @rudycelekli によるバンク構成の環境プロキシを優先する</li>
+<li>chore(deps): ag2 統合 uv.lock で urllib3 をバンプ (https://github.com/vectorize-io/hindsight/pull/5094 の @cdbartholomew による)</li>
+<li>chore(deps): エージェントとフレームワークの統合 uv.lock で urllib3 をバンプ (https://github.com/vectorize-io/hindsight/pull/5095 の @cdbartholomew による)</li>
+<li>chore(deps): llamaindex 統合 uv.lock で urllib3 をバンプ (https://github.com/vectorize-io/hindsight/pull/5110 の @cdbartholomew による)</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5097 の @cdbartholomew による agno 統合 uv.lock で urllib3 をバンプします</li>
+<li>chore(deps): ストランド統合 uv.lock で urllib3 をバンプ (https://github.com/vectorize-io/hindsight/pull/5115 の @cdbartholomew による)</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5117 の @cdbartholomew による hindsight-system-evals uv.lock で urllib3 をバンプします</li>
+<li>chore(deps): openai-agents 統合 uv.lock で urllib3 をバンプ (https://github.com/vectorize-io/hindsight/pull/5111 の @cdbartholomew による)</li>
+<li>chore(deps): Pipecat 統合 uv.lock で urllib3 をバンプ (https://github.com/vectorize-io/hindsight/pull/5112 の @cdbartholomew による)</li>
+<li>chore(deps): pydantic-ai 統合 uv.lock で urllib3 をバンプ (https://github.com/vectorize-io/hindsight/pull/5113 の @cdbartholomew による)</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5114 の @cdbartholomew による smolagents 統合 uv.lock で urllib3 をバンプします</li>
+<li>chore(deps): スーパーエージェント統合 uv.lock で urllib3 と pypdf をバンプ (https://github.com/vectorize-io/hindsight/pull/5116 の @cdbartholomew による)</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5118 の @cdbartholomew による hindsight-system-tests uv.lock で urllib3 をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5093 の @cdbartholomew によるルート uv.lock 内の文変換、urllib3 および litellm をバンプします。</li>
+<li>chore(deps): vapi 統合の urllib3 をバンプします。https://github.com/vectorize-io/hindsight/pull/5119 の @cdbartholomew による uv.lock をバンプします。</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5096 の @cdbartholomew によるエージェントコア統合 uv.lock で urllib3 をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5098 の @cdbartholomew による aider 統合 uv.lock で urllib3 をバンプします</li>
+<li>chore(deps): autogen 統合 uv.lock で urllib3 をバンプ (https://github.com/vectorize-io/hindsight/pull/5099 の @cdbartholomew による)</li>
+<li>chore(deps): claude-agent-sdk 統合の urllib3 をバンプする uv.lock (https://github.com/vectorize-io/hindsight/pull/5100 の @cdbartholomew による)</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5101 の @cdbartholomew によるコンポジオ統合 uv.lock で urllib3 をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5120 の @cdbartholomew により、root package-lock.json の 3.4.16 に dompurify をバンプします。</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5102 の @cdbartholomew による統合継続 uv.lock で urllib3 をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5103 の @cdbartholomew による crewai 統合 uv.lock の urllib3 をバンプします。</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5104 の @cdbartholomew によるカーソル統合 uv.lock での urllib3 のバンプ</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5105 の @cdbartholomew による diify 統合 uv.lock で urllib3 をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5106 の @cdbartholomew による google-adk 統合 uv.lock で urllib3 をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5107 の @cdbartholomew による、haystack 統合 uv.lock の urllib3 をバンプします。</li>
+<li>chore(deps): langgraph 統合 uv.lock で urllib3 をバンプ (https://github.com/vectorize-io/hindsight/pull/5108 の @cdbartholomew による)</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5109 の @cdbartholomew による litellm 統合 uv.lock で urllib3 と litellm をバンプします</li>
+<li>修正 (grok-bot): https://github.com/vectorize-io/hindsight/pull/5126 の @cdbartholomew によるライブ ドキュメント ページでプラグインのホームページを参照するようにしました。</li>
+<li>perf(transfer): インポートされたドキュメントをバッチ処理します。 https://github.com/vectorize-io/hindsight/pull/5091 の @nicoloboschi により、クラッシュしたインポートバンクをクリーンに再試行します</li>
+<li>feat(metrics): https://github.com/vectorize-io/hindsight/pull/5129 の @nicoloboschi による操作およびリコールフェーズのメトリクスのメモリーバックエンドラベルをオプトイン</li>
+<li>chore(deps): pg0-embedded &gt;= 0.15.2 (@jbellis による https://github.com/vectorize-io/hindsight/pull/5194 が必要)</li>
+<li>feat(system-evals): nDCG/リコールフロアを使用した BEIR 検索ベースライン (https://github.com/vectorize-io/hindsight/pull/5230 の @nicoloboschi による)</li>
+<li>修正（リコール）: https://github.com/vectorize-io/hindsight/pull/5231 の @nicoloboschi による観測グラフの展開に link_expansion_timeout を適用</li>
+<li>修正（リコール）: min_scores.reranker を拒否し、https://github.com/vectorize-io/hindsight/pull/5232 の @nicoloboschi による TypeSafe の下でリランカー スコアを公開しない</li>
+<li>修正 (統合): https://github.com/vectorize-io/hindsight/pull/4897 で @r266-tech によるリコール後に行われたタグ編集を保存します。</li>
+<li>fix(llm): https://github.com/vectorize-io/hindsight/pull/4927 の @FenjuFu による事前入力テンプレートから孤立終了タグの前の推論を削除 (#4926)</li>
+<li>修正(反映): https://github.com/vectorize-io/hindsight/pull/5236 の @nicoloboschi により、強制取得ステップをサイレントにスキップするのではなく、再試行します。</li>
+<li>修正（リコール）: https://github.com/vectorize-io/hindsight/pull/5237 の @nicoloboschi により、複数が同じメモリに到達したときに最も強いリンクを維持します</li>
+<li>修正(コーデックス): ChatGPT バックエンドが https://github.com/vectorize-io/hindsight/pull/5239 の @nicoloboschi によって読み取られるヘッダーの下にアカウント ID を送信します。</li>
+<li>fix(mcp): https://github.com/vectorize-io/hindsight/pull/5240 の @nicoloboschi によるバンクエイリアス検索に転送されたヘッダーを渡します。</li>
+<li>修正(mcp): https://github.com/vectorize-io/hindsight/pull/5244 の @nicoloboschi によるツール スキーマが再帰的でないように、trigger.tag_groups をプレーン JSON として取得します。</li>
+<li>ドキュメント: https://github.com/vectorize-io/hindsight/pull/5238 の @nicoloboschi による外部プル リクエストではなく、問題とディスカッションのみを受け入れます。</li>
+<li>修正 (反映): 回答とメンタル モデルは、https://github.com/vectorize-io/hindsight/pull/5246 の @nicoloboschi による実行ごとのエイリアスではなく、実際の ID を引用しています。</li>
+<li>修正(埋め込み): 単一バッチ呼び出しは、https://github.com/vectorize-io/hindsight/pull/5242 の @nicoloboschi によってバインドされた共有同時実行性を尊重します</li>
+<li>修正(保持): document_id のないアイテムを別のアイテムのドキュメントに決して折りたたまない (https://github.com/vectorize-io/hindsight/pull/5235 の @nicoloboschi による)</li>
+<li>修正 (gemini): ツール ループの途中で Gemini へのフェイルオーバーが 400 秒ではなくなりました (https://github.com/vectorize-io/hindsight/pull/5241 の @nicoloboschi による)</li>
+<li>fix(embeddings): モデル独自のトークナイザー (#5234) で入力上限をカウント (https://github.com/vectorize-io/hindsight/pull/5243 の @nicoloboschi による)</li>
+<li>ci(triage-labels): Gemini のラベル付けの問題、https://github.com/vectorize-io/hindsight/pull/5248 の @nicoloboschi による PR のラベル付けを停止</li>
+<li>fix(reflect): @nicoloboschi による https://github.com/vectorize-io/hindsight/pull/5249 の再現を保存する代わりに、不正な形式の完了ドキュメントを拒否します。</li>
+<li>修正 (統合): https://github.com/vectorize-io/hindsight/pull/5247 で @nicoloboschi による観測を作成するときにすべてのソースをカウントします</li>
+<li>fix(llm): https://github.com/vectorize-io/hindsight/pull/5245 の @nicoloboschi により、各マルチ LLM チェーン メンバーが独自のプロンプト キャッシュを構築できるようにします。</li>
+<li>修正(メンタルモデル): https://github.com/vectorize-io/hindsight/pull/4999 の @Tong-bit-art による拒否されたデルタ応答をテキストとして再生 (#4965)</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5254 の @cdbartholomew による zapier 統合での http-cache-semantics のバンプ</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5255 の @cdbartholomew によるコーディング エージェント統合での http-cache-semantics のバンプ</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5256 の @cdbartholomew による system-evals の urllib3 をバンプします</li>
+<li>chore(deps): ルート package-lock.json の http-cache-semantics を https://github.com/vectorize-io/hindsight/pull/5253 の @cdbartholomew によってバンプします</li>
+<li>chore(api): https://github.com/vectorize-io/hindsight/pull/4869 の @JayaKrishnaNamburu による後知恵の api Readme の例を更新</li>
+<li>修正(コントロールプレーン): https://github.com/vectorize-io/hindsight/pull/4777 の @divideby0 による Reflect Markdown タイポグラフィを復元</li>
+<li>test(reflect): 1 つの共有モック関数フィクスチャにより、新しいエージェント コールバックが https://github.com/vectorize-io/hindsight/pull/4776 の @nicoloboschi によってどこにでも着陸します。</li>
+<li>feat(coding-agents): https://github.com/vectorize-io/hindsight/pull/5263 の @nicoloboschi による WorkBuddy および CodeBuddy ハーネスを追加</li>
+<li>feat(claude-code): https://github.com/vectorize-io/hindsight/pull/4796 の @tilalx によるサーバー保持のクロード セットアップ トークン トークンから認証します。</li>
+<li>feat(llm): OpenAI 互換プロバイダーで json_object をスキップする設定 (#4935) by @nicoloboschi (https://github.com/vectorize-io/hindsight/pull/5261)</li>
+<li>fix(oracle): Oracle Text索引を使用したナレッジ・ページの検索 (https://github.com/vectorize-io/hindsight/pull/4804の@rodrigoedu94-pngによる)</li>
+<li>fix(oracle): https://github.com/vectorize-io/hindsight/pull/4805 の @rodrigoedu94-png による array_position(:list,col) の順序付けをサポート</li>
+<li>修正（反映）: https://github.com/vectorize-io/hindsight/pull/5264 の @nicoloboschi による分割合成バジェットに JSON ラッパーを含める</li>
+<li>docs(paperclip): https://github.com/vectorize-io/hindsight/pull/5266 の @benfrank241 によるワーカーと矛盾する正しい README 主張</li>
+<li>修正(paperclip): ツールにenabledAgentIdsを適用し、https://github.com/vectorize-io/hindsight/pull/5268の@benfrank241によるautoRetainラベルを修正</li>
+<li>ブログ: あなたの Paperclip 組織図にはメモリ境界があります by @benfrank241 (https://github.com/vectorize-io/hindsight/pull/5265)</li>
+<li>修正(開発): https://github.com/vectorize-io/hindsight/pull/5185 の @rudycelekli によるスクリプトの場所から起動ワークスペースを解決します。</li>
+<li>修正（エルメス）：https://github.com/vectorize-io/hindsight/pull/5059 の @vadimcomanescu により、何も保存されていなかった銀行を思い出して反映し、何も見つかりませんでした</li>
+<li>修正(deps): macOS litellm&lt;1.92 カーブアウトを削除し、litellm が https://github.com/vectorize-io/hindsight/pull/4838 の @vadimcomanescu によって macOS ホイールを出荷するようになりました。</li>
+<li>fix(metrics): https://github.com/vectorize-io/hindsight/pull/5063 の @kubaodias による正規表現テンプレートのパスではなく、ルート テンプレートによって HTTP メトリックにラベルを付ける</li>
+<li>修正 (反映): 予算が浅いため、https://github.com/vectorize-io/hindsight/pull/5250 の @nicoloboschi による検索 (#4567) ではなく、回答が短縮されます。</li>
+<li>feat(hermes): https://github.com/vectorize-io/hindsight/pull/4570 の @0xble により、統合に保持戦略の名前を付けます</li>
+<li>修正 (hermes): https://github.com/vectorize-io/hindsight/pull/5216 の @spiky02plateau によってプルーニングされた MEMORY.md ファクトが失われないように、組み込みメモリの書き込みを保持します。</li>
+<li>修正(python-client): https://github.com/vectorize-io/hindsight/pull/5138 の @rudycelekli によるベース URL の末尾のスラッシュを正規化</li>
+<li>修正(python-client): https://github.com/vectorize-io/hindsight/pull/5139 の @rudycelekli による銀行ヘルパーでの SDK ID の保持</li>
+<li>修正(python-client): https://github.com/vectorize-io/hindsight/pull/5140 の @rudycelekli によるメモリ リスト フィルター パリティの復元</li>
+<li>修正（監査）: https://github.com/vectorize-io/hindsight/pull/5092 の @G26karthik による監査書き込みの参照を維持し、シャットダウン時にそれらを排出します</li>
+<li>修正(langgraph): 空のターンで古いリコールコンテキストをクリア (https://github.com/vectorize-io/hindsight/pull/5143 の @rudycelekli による)</li>
+<li>修正(google-adk): https://github.com/vectorize-io/hindsight/pull/5148 の @rudycelekli による一時的な失敗後にバンク ミッションのセットアップを再試行</li>
+<li>fix(retain): https://github.com/vectorize-io/hindsight/pull/5040 の @rodrigoedu94-png により、Oracle 上でストリーミング保持チェックポイントを永続化します。</li>
+<li>feat(hermes): https://github.com/vectorize-io/hindsight/pull/5060 の @vadimcomanescu により、環境から保持コンテキスト、両方のインジケーター、およびリコール_同期を読み取ります</li>
+<li>修正（保持）: https://github.com/vectorize-io/hindsight/pull/4928 の @Sanderhoff-alt により、グループ化されたバッチでattachment_loaderとvlm_configを転送</li>
+<li>fix(mcp): リコールの max_tokens カウントを伝え、https://github.com/vectorize-io/hindsight/pull/4870 の @JayOfTheKeyboard によるコンパクトな JSON を返す</li>
+<li>修正 (google-adk): https://github.com/vectorize-io/hindsight/pull/5149 の @rudycelekli による元のメモリ タイムスタンプを保持する</li>
+<li>修正(リリース): https://github.com/vectorize-io/hindsight/pull/5186 の @rudycelekli によるツールのポータブル インプレース バージョン編集を使用</li>
+<li>修正(python-client): https://github.com/vectorize-io/hindsight/pull/5156 の @rudycelekli による単一保持戦略とスコープを保持</li>
+<li>style(paperclip): https://github.com/vectorize-io/hindsight/pull/5290 の @nicoloboschi によるより美しい形式で plugin.spec.ts をフォーマットします</li>
+<li>fix(cohere): https://github.com/vectorize-io/hindsight/pull/5155 の @rudycelekli によるリコール埋め込みにクエリ タスクを使用</li>
+<li>fix(oracle): result_metadata @&gt; バインドを https://github.com/vectorize-io/hindsight/pull/5164 の @rodrigoedu94-png による JSON_VALUE 比較として書き換えます</li>
+<li>fix(rei): https://github.com/vectorize-io/hindsight/pull/5150 の @rudycelekli による中断された推論応答を再試行します</li>
+<li>fix(test): 欠落しているmock_functionsフィクスチャを、https://github.com/vectorize-io/hindsight/pull/5293の@nicoloboschiによるuncovering-pageテストに接続します。</li>
+<li>fix(oracle): 大きなバイトとテキストを一時 LOB としてバインド (ORA-01461) by @rodrigoedu94-png (https://github.com/vectorize-io/hindsight/pull/5159)</li>
+<li>修正 (埋め込み): Windows デーモン ランチャーがターミナルを開けないようにする (https://github.com/vectorize-io/hindsight/pull/5291 の @nicoloboschi による)</li>
+<li>修正(反映): 完全なコンテキストは、https://github.com/vectorize-io/hindsight/pull/5292 の @nicoloboschi による必要なリコール ステップ (#4563) をスキップしなくなりました。</li>
+<li>feat(reranker): すべてのプロバイダーにわたる一般的な候補ごとのトークンの上限 (https://github.com/vectorize-io/hindsight/pull/5287 の @nicoloboschi による)</li>
+<li>修正 (ワーカー): 健全なバッチの親ごとの起動リカバリを回避 (https://github.com/vectorize-io/hindsight/pull/5178 の @BrianMcBrayer による)</li>
+<li>feat(hermes): https://github.com/vectorize-io/hindsight/pull/5087 の @Charles-HL による想起からトピックから外れた記憶を削除するために、recall_min_scores を追加</li>
+<li>ドキュメント (hermes): https://github.com/vectorize-io/hindsight/pull/4882 の @benfrank241 によるプラグイン カタログのセットアップ手順を更新</li>
+<li>修正(ai-sdk): https://github.com/vectorize-io/hindsight/pull/5153 の @rudycelekli によるリコール結果で要求されたソース チャンクを保持する</li>
+<li>修正(all-npm): https://github.com/vectorize-io/hindsight/pull/5147 の @rudycelekli によってデーモンを停止するときに呼び出し元の環境を保持する</li>
+<li>修正 (チャット): https://github.com/vectorize-io/hindsight/pull/5181 の @rudycelekli によって前方設定されたリコール タグ フィルター</li>
+<li>修正(smolagents): https://github.com/vectorize-io/hindsight/pull/5182 の @rudycelekli によって設定されたツールのデフォルトを尊重します</li>
+<li>修正 (エージェントコア): https://github.com/vectorize-io/hindsight/pull/5183 の @rudycelekli による SDK リフレクション テキストを返す</li>
+<li>test(agno): https://github.com/vectorize-io/hindsight/pull/5187 の @rudycelekli による SDK ユーザー エージェントの統合を期待します</li>
+<li>feat(hermes): https://github.com/vectorize-io/hindsight/pull/4686 の @jnbn によるプロジェクトごとのマルチバンク ルーティング</li>
+<li>修正(cli): エラー本文に https://github.com/vectorize-io/hindsight/pull/5179 の @rudycelekli による診断キーワードが記載されている場合に HTTP ステータスを保持する</li>
+<li>fix(embed): https://github.com/vectorize-io/hindsight/pull/5205 の @Mar-garet によって CLI コマンドに対して解決されたプロファイルを使用します</li>
+<li>修正(反映): https://github.com/vectorize-io/hindsight/pull/5163 で @SebastianThiebaud によって無効にされた場合に構造化抽出で温度を省略</li>
+<li>修正（リコール）: https://github.com/vectorize-io/hindsight/pull/5295 の @nicoloboschi によるランクによるリランク後の一時的ブーストを減衰させないようにしました (#4939)</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5352 の @cdbartholomew によるシステム テスト ロックファイルでの multidict のバンプ</li>
+<li>修正(反映): https://github.com/vectorize-io/hindsight/pull/5302 の @nicoloboschi による、モデルが回答とページで一度も見たことのないメモリ ID を置き換えます (#5166)</li>
+<li>修正(転送): 既存の銀行へのドキュメントのインポート時にバンク書き込みバリデーターを実行する (#5137) (https://github.com/vectorize-io/hindsight/pull/5308 の @nicoloboschi による)</li>
+<li>fix(llm): OpenRouter の構造化出力呼び出しを、https://github.com/vectorize-io/hindsight/pull/5304 の @nicoloboschi による response_format をサポートするアップストリームにのみルーティングします。</li>
+<li>修正（統合）: https://github.com/vectorize-io/hindsight/pull/5307 の @nicoloboschi による、source_fact_ids をバッチに固定し、何も引用しないアクション (#5273) を報告する</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5311 の @cdbartholomew によるルート npm ロックファイル内の脆弱なパッケージをバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5332 の @cdbartholomew による vapi ロックファイルの multidict をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5333 の @cdbartholomew によるスーパーエージェント ロックファイルの multidict をバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5319 の @cdbartholomew による n8n ロックファイルのソースマップ js をバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5320 の @cdbartholomew による flowise ロックファイル内のsource-map-js をバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5312 の @cdbartholomew による zapier ロックファイルの simple-git と postcss-selector-parser をバンプします</li>
+<li>chore(deps): langgraph-sdk をバンプし、https://github.com/vectorize-io/hindsight/pull/5331 の @cdbartholomew による langgraph ロックファイルの multidict を実行します</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5313 の @cdbartholomew によるコーディング エージェント ロックファイル内の proxy-addr、source-map-js、および smol-toml をバンプします。</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5329 の @cdbartholomew による litellm lockfile の fsspec と multidict をバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5336 の @cdbartholomew による Pipecat ロックファイルでの multidict のバンプ</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5327 の @cdbartholomew による smolagents ロックファイルの fsspec と multidict をバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5340 の @cdbartholomew による干し草のロックファイルで multidict をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5343 の @cdbartholomew による続行ロックファイルでの multidict のバンプ</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5345 の @cdbartholomew による claude-agent-sdk ロックファイルの multidict をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5326 の @cdbartholomew による埋め込みコントロール センター UI ロックファイルのソースマップ js をバンプします。</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5355 の @cdbartholomew による Rust client ロックファイルの rustls をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5349 の @cdbartholomew によるエージェントコア ロックファイルの multidict をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5335 の @cdbartholomew による pydantic-ai ロックファイルの multidict をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5337 の @cdbartholomew による openai-agents ロックファイルでの multidict のバンプ</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5350 の @cdbartholomew によるエージェント フレームワーク ロックファイルの multidict をバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5351 の @cdbartholomew による ag2 ロックファイルの multidict をバンプする</li>
+<li>修正 (ワーカー): https://github.com/vectorize-io/hindsight/pull/5190 の @rudycelekli によって有効にならなかった --max-retries/--log-level フラグを廃止します</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5353 の @cdbartholomew による system-evals ロックファイルでの multidict のバンプ</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5354 の @cdbartholomew による diify lockfile で werkzeug と multidict をバンプする</li>
+<li>雑務(deps): https://github.com/vectorize-io/hindsight/pull/5314の@cdbartholomewによるpaperclipロックファイルのsource-map-jsをバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5315 の @cdbartholomew による opencode lockfile のsource-map-js をバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5316 の @cdbartholomew による openclaw ロックファイルのsource-map-js をバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5317 の @cdbartholomew による黒曜石ロックファイルのソースマップ js をバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5318 の @cdbartholomew による nemoclaw ロックファイルのsource-map-js をバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5321 の @cdbartholomew による eve ロックファイルのsource-map-js をバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5322 の @cdbartholomew による eliza lockfile のsource-map-js をバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5323 の @cdbartholomew による Cloudflare-oauth-proxy ロックファイルのsource-map-js をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5324 の @cdbartholomew によるチャット ロックファイル内のsource-map-js をバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5325 の @cdbartholomew による ai-sdk ロックファイルのsource-map-js をバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5328 の @cdbartholomew による llamaindex ロックファイルの fsspec と multidict をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5330 の @cdbartholomew による crewai ロックファイルの fsspec と multidict をバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5334 の @cdbartholomew によるストランド ロックファイルのバンプ multidict</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5338 の @cdbartholomew によるメタミューズ ロックファイルでの multidict のバンプ</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5339 の @cdbartholomew による hermes lockfile での multidict のバンプ</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5341 の @cdbartholomew による google-adk ロックファイルの multidict をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5342 の @cdbartholomew によるカーソル ロックファイルでの multidict のバンプ</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5344 の @cdbartholomew によるコンポジオ ロックファイルの multidict をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5346 の @cdbartholomew による autogen ロックファイルの multidict をバンプする</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5347 の @cdbartholomew による aider lockfile での multidict のバンプ</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5348 の @cdbartholomew による agno lockfile での multidict のバンプ</li>
+<li>修正(api): https://github.com/vectorize-io/hindsight/pull/5358 の @nicoloboschi によって client が切断されたときに同期保持をキャンセル</li>
+<li>fix(hermes,embed): local_embedded デーモンの起動、再起動、Windows の起動 (https://github.com/vectorize-io/hindsight/pull/5360 の @nicoloboschi による)</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5359 の @cdbartholomew によるワークスペース ロックファイル内の fsspec、multidict、および mako をバンプします。</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5362 の @cdbartholomew による Cloudflare-oauth-proxy ロックファイルの急激なバンプ</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5363 の @cdbartholomew によるコーディング エージェント ロックファイル内の @modelcontextprotocol/sdk をバンプします</li>
+<li>chore(deps): https://github.com/vectorize-io/hindsight/pull/5361 の @cdbartholomew による root npm lockfile でシェル引用符とシャープをバンプします</li>
+<li>修正 (ストレージ): '%' を含むキーの GCS ダウンロード URL は NoSuchKey を返す (https://github.com/vectorize-io/hindsight/pull/5369 の @cdbartholomew により)</li>
+<li>fix(retain): https://github.com/vectorize-io/hindsight/pull/5365 の @cdbartholomew による、特大の再保持用に処理されたコンテンツ トークンをレポートします。</li>
+<li>fix(tests): Cohereバックエンドに実際のリクエストの同時実行性を与える (https://github.com/vectorize-io/hindsight/pull/5379の@nicoloboschiによる)</li>
+<li>修正 (ワーカー): 最終ステータスの書き込みをインラインで再試行し、https://github.com/vectorize-io/hindsight/pull/5380 の @nicoloboschi によって DB に到達できない場合は終了します</li>
+<li>ドキュメント: https://github.com/vectorize-io/hindsight/pull/5386 の @nicoloboschi によるドキュメント図については、hindsight-interfig を Giotto に置き換えます。</li>
+<li>修正（リコール）: https://github.com/vectorize-io/hindsight/pull/5388 の @nicoloboschi による、HTTP 400 で拒否する代わりにオーバーキャップ クエリをカットしました</li>
+<li>fix(retain): チャンク化された保持が https://github.com/vectorize-io/hindsight/pull/5387 で @nicoloboschi によって強制終了された場合に、実行中のサブバッチをキャンセルします。</li>
+<li>修正(保持): https://github.com/vectorize-io/hindsight/pull/5389 の @nicoloboschi によるドキュメントのコンテンツ ハッシュを条件としたストア所有の追加を作成します</li>
+<li>fix(reflect): Qwen の不正な形式の Done 呼び出しを存続させます。 https://github.com/vectorize-io/hindsight/pull/5356 の @nicoloboschi によるバッチ合成 (#5272) からのデルタ リフレッシュの上書きを停止します。</li>
+<li>test(retain): 追加やり直しをカバーし、https://github.com/vectorize-io/hindsight/pull/5392 の @nicoloboschi によって保持する必要があるメモリをアサートします。</li>
+<li>修正(エンティティ): https://github.com/vectorize-io/hindsight/pull/5395 の @nicoloboschi によるマージ フロアの下でトライグラム プローブを実行しないでください。</li>
+<li>docs(agno): https://github.com/vectorize-io/hindsight/pull/5303 の @nicoloboschi による統合ページから changelog をリンクします。</li>
+<li>雑用: https://github.com/vectorize-io/hindsight/pull/5364 の @cdbartholomew によるデフォルトの Gemini Flash モデルを gemini-3.8-flash に</li>
+<li>ドキュメント (サイト): コーディング エージェントとアシスタントの訪問者をホームページからルーティングします (https://github.com/vectorize-io/hindsight/pull/5390 の @nicoloboschi による)</li>
+<li>test(ci): Postgres ログを保存します test-api の 2 つの赤い図形は、https://github.com/vectorize-io/hindsight/pull/5398 の @nicoloboschi によって読み取るように指示されます。</li>
+<li>修正(更新): https://github.com/vectorize-io/hindsight/pull/5399 の @nicoloboschi による一時的なプロバイダーの障害時にナレッジ ページの更新を一時停止しないようにしました</li>
+<li>ドキュメント: ドキュメントのサイドバーに注目のブログ投稿を固定し、https://github.com/vectorize-io/hindsight/pull/5403 の @nicoloboschi によるブログ インデックスを固定します。</li>
+<li>feat(db): [DB POOL] 低速取得警告しきい値を https://github.com/vectorize-io/hindsight/pull/5397 の @nicoloboschi によって構成可能にします</li>
+<li>fix(llm): https://github.com/vectorize-io/hindsight/pull/5401 の @nicoloboschi により、すべてのプロバイダーの構造化出力スキーマ (#5275) から数値境界を削除します。</li>
+<li>fix(import): https://github.com/vectorize-io/hindsight/pull/5404 の @nicoloboschi によるテンプレートの再インポート時に変更されていないメンタル モデルとディレクティブをスキップ</li>
+<li>fix(retain): https://github.com/vectorize-io/hindsight/pull/5402 の @nicoloboschi によって同じように再度質問するのではなく、どのキーが間違っていたかをモデルに通知します</li>
+<li>修正(api): https://github.com/vectorize-io/hindsight/pull/5409 の @nicoloboschi により、エイリアス解決で欠落している API キーがヒットした場合にトレースバックで警告しない</li>
+<li>修正（コントロールプレーン）：リコールプロキシはhttps://github.com/vectorize-io/hindsight/pull/5410で@nicoloboschiによってsource_factsとsource_facts_truncatedを返します</li>
+<li>修正 (ワーカー): バックグラウンドで起動回復を実行するため、https://github.com/vectorize-io/hindsight/pull/5411 の @nicoloboschi によって要求がすぐに再開されます</li>
+<li>修正 (統合): 1 つの応答の書き込みを 1 つのストア バッチとして適用し、https://github.com/vectorize-io/hindsight/pull/5420 の @nicoloboschi によってそのアクションを同時に準備します。</li>
+<li>修正(統合): https://github.com/vectorize-io/hindsight/pull/5421 の @nicoloboschi によって適用される前に、応答のソースをまとめて読み取ります。</li>
+<li>修正（ワーカー）: https://github.com/vectorize-io/hindsight/pull/5396 の @nicoloboschi によって追加レースが失敗するのではなく、失われた追加レースを延期します。</li>
+<li>chore(consolidation): 未使用の any_memory_exists を削除し、https://github.com/vectorize-io/hindsight/pull/5430 の @nicoloboschi による古いコメントを修正</li>
+<li>修正(api): https://github.com/vectorize-io/hindsight/pull/5432 の @nicoloboschi により、キャッシュ TTL 内の別のプロセスによって削除されたバンクに対する 404 ストア コール</li>
+<li>https://github.com/vectorize-io/hindsight/pull/5437 の @nicoloboschi によって UTC で修正/Oracle が修正されました</li>
+<li>ドキュメント: @nicoloboschi による、ライブのホバリング可能なメモリ コンステレーションを含む全幅の概要ヒーロー (https://github.com/vectorize-io/hindsight/pull/5436)</li>
+<li>chore(deps): ルート package-lock.json の 16.3.8 の隣にあるバンプ (https://github.com/vectorize-io/hindsight/pull/5438 の @cdbartholomew による)</li>
+</ul>
+<h2>新しい貢献者</h2>
+<ul>
+<li>@cq-guojia が https://github.com/vectorize-io/hindsight/pull/4535 に初めて投稿しました</li>
+<li>@gfreschi が https://github.com/vectorize-io/hindsight/pull/4688 で最初の投稿を行いました</li>
+<li>@ethernet8023 が https://github.com/vectorize-io/hindsight/pull/4949 で最初の貢献をしました</li>
+<li>@rudycelekli が https://github.com/vectorize-io/hindsight/pull/4962 に初めて投稿しました</li>
+<li>@jbellis が https://github.com/vectorize-io/hindsight/pull/5194 で最初の投稿を行いました</li>
+<li>@FenjuFu が https://github.com/vectorize-io/hindsight/pull/4927 で最初の投稿を行いました</li>
+<li>@Tong-bit-art が https://github.com/vectorize-io/hindsight/pull/4999 に初めて投稿しました</li>
+<li>@JayaKrishnaNamburu が https://github.com/vectorize-io/hindsight/pull/4869 で最初の投稿を行いました</li>
+<li>@divideby0 が https://github.com/vectorize-io/hindsight/pull/4777 で最初の投稿を行いました</li>
+<li>@tilalx が https://github.com/vectorize-io/hindsight/pull/4796 で最初の投稿を行いました</li>
+<li>@vadimcomanescu が https://github.com/vectorize-io/hindsight/pull/5059 で最初の投稿を行いました</li>
+<li>@spiky02plateau が https://github.com/vectorize-io/hindsight/pull/5216 に初めて投稿しました</li>
+<li>@G26karthik が https://github.com/vectorize-io/hindsight/pull/5092 で最初の投稿を行いました</li>
+<li>@JayOfTheKeyboard が https://github.com/vectorize-io/hindsight/pull/4870 で最初の投稿を行いました</li>
+<li>@Charles-HL が https://github.com/vectorize-io/hindsight/pull/5087 で最初の貢献を行いました</li>
+<li>@jnbn が https://github.com/vectorize-io/hindsight/pull/4686 に初めて投稿しました</li>
+<li>@Mar-garet が https://github.com/vectorize-io/hindsight/pull/5205 に初めて投稿しました</li>
+<li>@SebastianThiebaud が https://github.com/vectorize-io/hindsight/pull/5163 で最初の貢献をしました</li>
+</ul>
+<p><strong>フル Changelog</strong>: https://github.com/vectorize-io/hindsight/compare/v0.10.2...v0.10.3</p>
+<hr />
+<blockquote>
+<p><strong>ソース</strong> <a href="https://github.com/vectorize-io/hindsight">vectorize-io/hindsight</a> · <code>v0.10.3</code> · 2026-10-08 · <a href="https://github.com/vectorize-io/hindsight/releases/tag/v0.10.3">アップストリーム リリース</a></p>
+</blockquote>
+<p><em>インデックス作成のためにそのままミラーリングされます。すべての権利は上流プロジェクトに帰属します。</em></p></div>   </div> <p class="muted" style="margin-top:var(--s8);font-size:12.5px;border-top:1px solid var(--line);padding-top:var(--s4)"> Release note は上流のプロジェクトによって公開され、インデックス作成のためにここにミラーリングされます。すべての権利はその作者に帰属します。 </p> <nav class="pager" aria-label="Release navigation"> <a href="/releases/hindsight/1.0.0"> <span class="k">← 次へ</span> <span class="t">v1.0.0</span> </a> <a href="/releases/hindsight/0.10.2"> <span class="k">前へ →</span> <span class="t">v0.10.2</span> </a> </nav> <aside class="ad-slot" aria-label="Advertisement" data-astro-cid-fgwukgf6><div class="ad-slot-label" data-astro-cid-fgwukgf6>Advertisement</div><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4184355057086168" data-ad-slot="9133765584" data-ad-format="auto" data-full-width-responsive="true" data-astro-cid-fgwukgf6></ins><script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script></aside> </article> <aside class="rail"> <div class="rail-card"> <div class="rail-title">Source</div> <ul class="rail-list"> <li> <a href="https://github.com/vectorize-io/hindsight/releases/tag/v0.10.3" target="_blank" rel="noopener"> <span>GitHub で見る</span> <span class="d">↗</span> </a> </li> <li> <a href="https://github.com/vectorize-io/hindsight" target="_blank" rel="noopener"> <span>vectorize-io/hindsight</span> <span class="d">↗</span> </a> </li> </ul> </div>  <div class="rail-card"> <div class="rail-title">バージョン履歴</div> <ul class="rail-list"> <li> <a href="/releases/hindsight/1.2.1"> <span class="v">v1.2.1</span> <span class="d">26-11-10</span> </a> </li><li> <a href="/releases/hindsight/1.2.0"> <span class="v">v1.2.0</span> <span class="d">26-11-03</span> </a> </li><li> <a href="/releases/hindsight/1.1.0"> <span class="v">v1.1.0</span> <span class="d">26-10-21</span> </a> </li><li> <a href="/releases/hindsight/1.0.0"> <span class="v">v1.0.0</span> <span class="d">26-10-13</span> </a> </li><li> <a href="/releases/hindsight/0.10.3" aria-current="true"> <span class="v">v0.10.3</span> <span class="d">26-10-08</span> </a> </li><li> <a href="/releases/hindsight/0.10.2"> <span class="v">v0.10.2</span> <span class="d">26-09-29</span> </a> </li> </ul> <a href="/ja/releases/hindsight" class="mono" style="display:inline-block;margin-top:var(--s3);font-size:11.5px;color:var(--ink-3)"> すべての 6 件を見る →
+</a> </div> </aside> </div> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/ja/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>オープンソースのリリース インテリジェンスが毎日公開されます。</p> </div> <div class="footer-col"> <h3>追跡</h3> <ul> <li><a href="/ja/releases">リリース</a></li> <li><a href="/ja/projects">プロジェクト</a></li> <li><a href="/ja/releases.xml">RSS フィード</a></li> </ul> </div> <div class="footer-col"> <h3>アーカイブ</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文アーカイブ</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技術ノート</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>情報</h3> <ul> <li><a href="/ja/method">仕組み</a></li> <li><a href="/privacy">Privacy policy</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release note は上流プロジェクトに属します。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="リリースを検索"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="リリース、プロジェクト、バージョンを検索…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ navigate</span> <span>↵ open</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

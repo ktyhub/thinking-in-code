@@ -1,0 +1,935 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>druid 28.0.0 — STAGS NextStack</title><meta name="description" content="Apache Druid 28.0.0 contains over 420 new features, bug fixes, performance enhancements, documentation improvements, and additional test coverage from 57 contributors."><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/release_note/druid/druid_druid-28.0.0/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/releases/druid/28.0.0"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/release_note/druid/druid_druid-28.0.0/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/releases/druid/28.0.0"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="article"><meta property="og:title" content="druid 28.0.0 — STAGS NextStack"><meta property="og:description" content="Apache Druid 28.0.0 contains over 420 new features, bug fixes, performance enhancements, documentation improvements, and additional test coverage from 57 contributors."><meta property="og:url" content="https://www.stags.cn/zh/release_note/druid/druid_druid-28.0.0/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"},{"@type":"TechArticle","@id":"https://www.stags.cn/zh/release_note/druid/druid_druid-28.0.0/#article","headline":"druid 28.0.0 release notes","datePublished":"2023-11-15","inLanguage":"zh-CN","isPartOf":{"@id":"https://www.stags.cn/#website"},"about":{"@type":"SoftwareSourceCode","codeRepository":"https://github.com/apache/druid"}}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css">
+<style>.ad-slot[data-astro-cid-fgwukgf6]{margin:var(--s10) 0 0;padding-top:var(--s5);border-top:1px solid var(--line)}.ad-slot-label[data-astro-cid-fgwukgf6]{margin-bottom:var(--s3);font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4)}.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{display:block;min-height:100px}@media(min-width:640px){.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{min-height:250px}}
+</style></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases/druid/28.0.0/" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/release_note/druid/druid_druid-28.0.0/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases/druid/28.0.0/" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases/druid/28.0.0/" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases/druid/28.0.0/" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases/druid/28.0.0/" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases/druid/28.0.0/" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap"> <div class="detail"> <article> <header class="detail-hd"> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/zh/">首页</a> <span class="sep">/</span> <a href="/zh/releases">版本发布</a> <span class="sep">/</span> <a href="/zh/releases/druid">druid</a> </nav> <h1 class="detail-title"> <span class="p">druid</span> 28.0.0 </h1> <div class="detail-meta"> <span class="chip chip--major">大版本</span> <span><span class="k">发布时间</span>2023年11月15日</span>  <span class="sep" aria-hidden="true"></span> <a href="https://github.com/apache/druid" target="_blank" rel="noopener"> <span class="k">来源</span>apache/druid </a>   <span class="sep" aria-hidden="true"></span> <a href="/releases/druid/28.0.0"> 英文原文 </a>  <span class="sep" aria-hidden="true"></span> <button class="btn btn--ghost btn--sm" type="button" data-copy="https://www.stags.cn/zh/release_note/druid/druid_druid-28.0.0/">复制链接</button> </div> </header> <div class="prose" style="margin-top:var(--s8)">   <h1 id="druid-druid-2800">druid druid-28.0.0</h1>
+<p>Apache Druid 28.0.0 包含超过 420 个新功能、错误修复、性能增强、文档改进以及来自 57 个贡献者的额外测试覆盖范围。</p>
+<p>请参阅<a href="https://github.com/apache/druid/issues?q=is%3Aclosed+milestone%3A28.0+sort%3Aupdated-desc+">完整的更改</a> 了解更多详细信息，包括错误修复。</p>
+<p>在升级到 Druid 28.0.0 之前，请查看<a href="https://github.com/apache/druid/issues/15326#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes">升级说明</a> 和<a href="https://github.com/apache/druid/issues/15326#28.0.0-upgrade-notes-and-incompatible-changes-incompatible-changes">不兼容的更改</a>。</p>
+<h1 id="-重要功能更改和弃用"><a name="28.0.0-important-changes-and-deprecations" href="#28.0.0-important-changes-and-deprecations">#</a> 重要功能、更改和弃用</h1>
+<p>在 Druid 28.0.0 中，我们对查询进行了实质性改进，使系统更加兼容 ANSI SQL。这包括处理 NULL 和布尔值以及布尔逻辑的更改。同时，Apache Calcite库已升级到最新版本。虽然我们已经记录了已知的查询行为更改，但请仔细阅读<a href="#upgrade-notes">升级说明</a> 部分。在将应用程序推广到广泛的生产场景之前测试您的应用程序，同时密切监视查询状态。</p>
+<h2 id="-sql-兼容性"><a name="28.0.0-important-changes-and-deprecations-sql-compatibility" href="#28.0.0-important-changes-and-deprecations-sql-compatibility">#</a> SQL 兼容性</h2>
+<p>Druid 继续使 SQL 查询执行与标准 SQL 的行为更加一致。但是，如果需要，可以使用功能标志来恢复旧的行为。</p>
+<h3 id="-三值逻辑"><a name="28.0.0-important-changes-and-deprecations-sql-compatibility-three-valued-logic" href="#28.0.0-important-changes-and-deprecations-sql-compatibility-three-valued-logic">#</a> 三值逻辑</h3>
+<p>当应用以下默认设置时，Druid 原生过滤器现在默认观察 SQL <a href="https://en.wikipedia.org/wiki/Three-valued_logic#SQL">三值逻辑</a>（<code>true</code>、<code>false</code> 或 <code>unknown</code>），而不是 Druid 的经典二态逻辑：</p>
+<ul>
+<li><code>druid.generic.useThreeValueLogicForNativeFilters = true</code></li>
+<li><code>druid.expressions.useStrictBooleans = true</code></li>
+<li><code>druid.generic.useDefaultValueForNull = false</code></li>
+</ul>
+<p><a href="https://github.com/apache/druid/pull/15058">#15058</a></p>
+<h3 id="-严格布尔值"><a name="28.0.0-important-changes-and-deprecations-sql-compatibility-strict-booleans" href="#28.0.0-important-changes-and-deprecations-sql-compatibility-strict-booleans">#</a> 严格布尔值</h3>
+<p><code>druid.expressions.useStrictBooleans</code> 现在默认启用。
+Druid 现在严格使用 <code>1</code> (true) 或 <code>0</code> (false) 处理布尔值。
+以前，true 和 false 可以分别表示为 <code>true</code> 和 <code>false</code> 以及 <code>1</code> 和 <code>0</code>。
+此外，Druid 现在为 <code>True &#x26;&#x26; NULL</code> 等布尔比较返回空值。</p>
+<p>如果您未在 <code>runtime.properties</code> 中显式配置此属性，集群现在将 LONG 类型用于任何摄取的布尔值以及用于转换和查询时间操作的布尔函数的输出。
+有关更多信息，请参阅<a href="#sql-compatibility-1">升级说明中的 SQL 兼容性</a>。</p>
+<p><a href="https://github.com/apache/druid/pull/14734">#14734</a></p>
+<h3 id="-null-处理"><a name="28.0.0-important-changes-and-deprecations-sql-compatibility-null-handling" href="#28.0.0-important-changes-and-deprecations-sql-compatibility-null-handling">#</a> NULL 处理</h3>
+<p><code>druid.generic.useDefaultValueForNull</code> 现在默认处于禁用状态。
+Druid 现在区分空记录和空记录。
+以前，Druid 可能会将空记录视为空或 null。
+有关更多信息，请参阅<a href="#sql-compatibility-1">升级说明中的 SQL 兼容性</a>。</p>
+<p><a href="https://github.com/apache/druid/pull/14792">#14792</a></p>
+<h2 id="-sql-规划器改进"><a name="28.0.0-important-changes-and-deprecations-sql-planner-improvements" href="#28.0.0-important-changes-and-deprecations-sql-planner-improvements">#</a> SQL 规划器改进</h2>
+<p>Druid 使用 Apache Calcite 进行 SQL 规划和优化。从德鲁伊28.0.0开始，方解石版本已从1.21升级到1.35。此次升级修复了 Calcite SQL 规划中的许多错误。</p>
+<h3 id="-动态参数"><a name="28.0.0-important-changes-and-deprecations-sql-planner-improvements-dynamic-parameters" href="#28.0.0-important-changes-and-deprecations-sql-planner-improvements-dynamic-parameters">#</a> 动态参数</h3>
+<p>作为方解石升级的一部分，动态参数的类型推断行为发生了变化。为了避免任何类型干扰问题，请在 SQL 查询中将所有动态参数显式 <code>CAST</code> 作为特定数据类型。例如，使用：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#D73A49">SELECT</span><span style="color:#24292E"> (</span><span style="color:#005CC5">1</span><span style="color:#D73A49"> *</span><span style="color:#005CC5"> CAST</span><span style="color:#24292E"> (? </span><span style="color:#D73A49">as</span><span style="color:#24292E"> DOUBLE))</span><span style="color:#D73A49">/</span><span style="color:#005CC5">2</span><span style="color:#D73A49"> as</span><span style="color:#24292E"> tmp</span></span></code></pre>
+<p>不要使用：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#D73A49">SELECT</span><span style="color:#24292E"> (</span><span style="color:#005CC5">1</span><span style="color:#D73A49"> *</span><span style="color:#24292E"> ?)</span><span style="color:#D73A49">/</span><span style="color:#005CC5">2</span><span style="color:#D73A49"> as</span><span style="color:#24292E"> tmp</span></span></code></pre>
+<h2 id="-异步查询和深度存储查询"><a name="28.0.0-important-changes-and-deprecations-async-query-and-query-from-deep-storage" href="#28.0.0-important-changes-and-deprecations-async-query-and-query-from-deep-storage">#</a> 异步查询和深度存储查询</h2>
+<p><a href="https://druid.apache.org/docs/latest/querying/query-deep-storage/">从深度存储查询</a> 不再是实验性功能。当您从深层存储中查询时，可以查询更多数据，而无需扩展历史服务以容纳更多数据。要受益于深度存储查询所提供的空间节省，请配置加载规则以从历史服务中卸载数据。</p>
+<h3 id="-支持多种结果格式"><a name="28.0.0-important-changes-and-deprecations-async-query-and-query-from-deep-storage-support-for-multiple-result-formats" href="#28.0.0-important-changes-and-deprecations-async-query-and-query-from-deep-storage-support-for-multiple-result-formats">#</a> 支持多种结果格式</h3>
+<p>来自深度存储的查询现在支持多种结果格式。
+以前，<code>/druid/v2/sql/statements/</code> 端点仅支持 <code>object</code> 格式的结果。现在，结果可以以 <code>resultFormat</code> 参数中指定的任何格式写入。
+有关 Druid SQL API 支持的结果参数的更多信息，请参阅<a href="https://druid.apache.org/docs/latest/api-reference/sql-api#responses">响应</a>。</p>
+<p><a href="https://github.com/apache/druid/pull/14571">#14571</a></p>
+<h3 id="-扩大深度存储查询的访问范围"><a name="28.0.0-important-changes-and-deprecations-async-query-and-query-from-deep-storage-broadened-access-for-queries-from-deep-storage" href="#28.0.0-important-changes-and-deprecations-async-query-and-query-from-deep-storage-broadened-access-for-queries-from-deep-storage">#</a> 扩大深度存储查询的访问范围</h3>
+<p>具有 <code>STATE</code> 权限的用户可以与状态 API 交互以进行深度存储的查询。以前，只有提交查询的用户才能使用这些 API。这使得 Web 控制台能够监控查询的运行状态。具有<code>STATE</code>权限的用户可以访问查询结果。</p>
+<p><a href="https://github.com/apache/druid/pull/14944">#14944</a></p>
+<h2 id="-msq-实时任务查询"><a name="28.0.0-important-changes-and-deprecations-msq-queries-for-realtime-tasks" href="#28.0.0-important-changes-and-deprecations-msq-queries-for-realtime-tasks">#</a> MSQ 实时任务查询</h2>
+<p>MSQ 任务引擎现在可以在查询结果中包含实时分段。为此，请使用 <code>includeSegmentSource</code> 上下文参数并将其设置为 <code>REALTIME</code>。</p>
+<p><a href="https://github.com/apache/druid/pull/15024">#15024</a></p>
+<h2 id="-msq-对-union-all-查询的支持"><a name="28.0.0-important-changes-and-deprecations-msq-support-for-union-all-queries" href="#28.0.0-important-changes-and-deprecations-msq-support-for-union-all-queries">#</a> MSQ 对 UNION ALL 查询的支持</h2>
+<p>现在，您可以使用 MSQ 任务引擎通过 <code>UnionDataSource</code> 运行 UNION ALL 查询。</p>
+<p><a href="https://github.com/apache/druid/pull/14981">#14981</a></p>
+<h2 id="-从多个-kafka-主题摄取到单个数据源"><a name="28.0.0-important-changes-and-deprecations-ingest-from-multiple-kafka-topics-to-a-single-datasource" href="#28.0.0-important-changes-and-deprecations-ingest-from-multiple-kafka-topics-to-a-single-datasource">#</a> 从多个 Kafka 主题摄取到单个数据源</h2>
+<p>现在，您可以使用单个主管将流数据从多个 Kafka 主题提取到数据源。
+您可以使用正则表达式模式作为 IO 配置中 <code>topicPattern</code> 的值来配置主管规范的主题。如果您向 Kafka 添加与正则表达式匹配的新主题，Druid 会自动开始从这些新主题中摄取。</p>
+<p>如果您为数据源启用多主题摄取，降级将导致 Supervisor 失败。
+有关更多信息，请参阅<a href="#stop-supervisors-that-ingest-from-multiple-kafka-topics-before-downgrading">在降级之前停止从多个 Kafka 主题摄取的主管</a>。</p>
+<p><a href="https://github.com/apache/druid/pull/14424">#14424</a>
+<a href="https://github.com/apache/druid/pull/14865">#14865</a></p>
+<h2 id="-sql-unnest-和摄取扁平化"><a name="28.0.0-important-changes-and-deprecations-sql-unnest-and-ingestion-flattening" href="#28.0.0-important-changes-and-deprecations-sql-unnest-and-ingestion-flattening">#</a> SQL UNNEST 和摄取扁平化</h2>
+<p>UNNEST 函数不再是实验性的。</p>
+<p>Druid 现在支持基于 SQL 的批量摄取和深度存储查询中的 UNNEST，因此您可以轻松扁平化数组。有关详细信息，请参阅 <a href="https://druid.apache.org/docs/latest/querying/sql/#unnest">UNNEST</a> 和 <a href="https://druid.apache.org/docs/latest/tutorials/tutorial-unnest-arrays/">取消列内数组的嵌套</a>。</p>
+<p>您不再需要包含上下文参数 <code>enableUnnest: true</code> 来使用 UNNEST。</p>
+<p><a href="https://github.com/apache/druid/pull/14886">#14886</a></p>
+<h3 id="-sql-unnest-的推荐语法"><a name="28.0.0-important-changes-and-deprecations-sql-unnest-and-ingestion-flattening-recommended-syntax-for-sql-unnest" href="#28.0.0-important-changes-and-deprecations-sql-unnest-and-ingestion-flattening-recommended-syntax-for-sql-unnest">#</a> SQL UNNEST 的推荐语法</h3>
+<p>SQL UNNEST 的推荐语法已更改。我们建议对大多数查询使用 CROSS JOIN 而不是逗号，以防止出现优先级问题。例如，使用：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#D73A49">SELECT</span><span style="color:#24292E"> column_alias_name1 </span><span style="color:#D73A49">FROM</span><span style="color:#24292E"> datasource </span><span style="color:#D73A49">CROSS JOIN</span><span style="color:#24292E"> UNNEST(source_expression1) </span><span style="color:#D73A49">AS</span><span style="color:#24292E"> table_alias_name1(column_alias_name1) </span><span style="color:#D73A49">CROSS JOIN</span><span style="color:#24292E"> UNNEST(source_expression2) </span><span style="color:#D73A49">AS</span><span style="color:#24292E"> table_alias_name2(column_alias_name2), ...</span></span></code></pre>
+<p>不要使用：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#D73A49">SELECT</span><span style="color:#24292E"> column_alias_name </span><span style="color:#D73A49">FROM</span><span style="color:#24292E"> datasource, UNNEST(source_expression1) </span><span style="color:#D73A49">AS</span><span style="color:#24292E"> table_alias_name1(column_alias_name1), UNNEST(source_expression2) </span><span style="color:#D73A49">AS</span><span style="color:#24292E"> table_alias_name2(column_alias_name2), ...</span></span></code></pre>
+<h2 id="-窗口函数实验"><a name="28.0.0-important-changes-and-deprecations-window-functions-%28experimental%29" href="#28.0.0-important-changes-and-deprecations-window-functions-%28experimental%29">#</a> 窗口函数（实验）</h2>
+<p>您可以使用 Apache Druid 中的<a href="https://druid.apache.org/docs/latest/querying/sql-window-functions">窗口函数</a> 根据行窗口中一行与同一窗口中其他行的关系来生成值。窗口是结果集中的一组相关行。例如，特定维度具有相同值的行。</p>
+<p>使用 <code>enableWindowing: true</code> 上下文参数在查询中启用窗口函数。</p>
+<p><a href="https://github.com/apache/druid/pull/15184">#15184</a></p>
+<h2 id="-并发追加和替换实验"><a name="28.0.0-important-changes-and-deprecations-concurrent-append-and-replace-%28experimental%29" href="#28.0.0-important-changes-and-deprecations-concurrent-append-and-replace-%28experimental%29">#</a> 并发追加和替换（实验）</h2>
+<p>Druid 28.0.0 添加了对并发追加和替换的实验性支持。
+此功能允许您安全地替换数据源某个时间间隔中的现有数据，同时将新数据附加到该时间间隔。最常见的应用之一是在该区间的压缩已经在进行时将新数据附加到区间。
+有关详细信息，请参阅<a href="https://druid.apache.org/docs/latest/data-management/automatic-compaction#concurrent-append-and-replace">并发追加和替换</a>。</p>
+<p>段锁定将被弃用并删除，以支持并发追加和替换，这在设计上要简单得多。通过并发追加和替换，Druid 不会因为主动实时摄取而锁定压缩作业。</p>
+<h3 id="-用于追加和替换批量摄取作业的任务锁"><a name="28.0.0-important-changes-and-deprecations-concurrent-append-and-replace-%28experimental%29-task-locks-for-append-and-replace-batch-ingestion-jobs" href="#28.0.0-important-changes-and-deprecations-concurrent-append-and-replace-%28experimental%29-task-locks-for-append-and-replace-batch-ingestion-jobs">#</a> 用于追加和替换批量摄取作业的任务锁</h3>
+<p>追加批量摄取作业现在可以共享锁。这允许您在同一时间内部运行多个追加批处理摄取作业。替换批量摄取作业仍然需要独占锁。这意味着您可以在给定的时间间隔内运行多个追加批量摄取作业和一个替换批量摄取作业。</p>
+<p><a href="https://github.com/apache/druid/pull/14407">#14407</a></p>
+<h3 id="-具有并发替换的流式摄取"><a name="28.0.0-important-changes-and-deprecations-concurrent-append-and-replace-%28experimental%29-streaming-ingestion-with-concurrent-replace" href="#28.0.0-important-changes-and-deprecations-concurrent-append-and-replace-%28experimental%29-streaming-ingestion-with-concurrent-replace">#</a> 具有并发替换的流式摄取</h3>
+<p>使用 <code>APPEND</code> 锁从 Kafka 和 Kinesis 读取的流作业现在可以与使用 <code>REPLACE</code> 锁运行的压缩同时进行摄取。流作业的分段粒度必须等于或小于并发替换作业的分段粒度。</p>
+<p><a href="https://github.com/apache/druid/pull/15039">#15039</a></p>
+<h1 id="-功能区域及相关变更"><a name="28.0.0-functional-area-and-related-changes" href="#28.0.0-functional-area-and-related-changes">#</a> 功能区域及相关变更</h1>
+<p>本节包含按区域分隔的详细 release note。</p>
+<h2 id="-web-控制台"><a name="28.0.0-functional-area-and-related-changes-web-console" href="#28.0.0-functional-area-and-related-changes-web-console">#</a> Web 控制台</h2>
+<h3 id="-添加了对分段加载查询上下文参数的-ui-支持"><a name="28.0.0-functional-area-and-related-changes-web-console-added-ui-support-for-segment-loading-query-context-parameter" href="#28.0.0-functional-area-and-related-changes-web-console-added-ui-support-for-segment-loading-query-context-parameter">#</a> 添加了对分段加载查询上下文参数的 UI 支持</h3>
+<p>Web 控制台支持 <code>waitUntilSegmentsLoad</code> 查询上下文参数。</p>
+<img width="1505" alt="waitUntilSegmentsLoad 上下文参数的 UI" src="https://github.com/apache/druid/assets/30999375/43fb8bb7-651b-4bfb-aac8-3f4e6388fc86">
+<p><a href="https://github.com/apache/druid/pull/15110">#15110</a></p>
+<h3 id="-添加了并发追加和替换开关"><a name="28.0.0-functional-area-and-related-changes-web-console-added-concurrent-append-and-replace-switches" href="#28.0.0-functional-area-and-related-changes-web-console-added-concurrent-append-and-replace-switches">#</a> 添加了并发追加和替换开关</h3>
+<p>Web 控制台包括并发追加和替换开关。</p>
+<p>以下屏幕截图显示了经典批量摄取向导中的并发追加和替换开关：
+<img width="1504" alt="经典批量摄取向导" src="https://github.com/apache/druid/assets/30999375/c07de29b-37fc-4673-925c-7b4904a42885"></p>
+<p>以下屏幕截图显示了压缩配置 UI 中的并发追加和替换开关：
+<img width="1504" alt="压缩配置 UI" src="https://github.com/apache/druid/assets/30999375/8d0da143-ce11-42b5-bdbf-2d46816d623b"></p>
+<p><a href="https://github.com/apache/druid/pull/15114">#15114</a></p>
+<h3 id="-添加了-ui-支持用于从多个-kafka-主题摄取到单个数据源"><a name="28.0.0-functional-area-and-related-changes-web-console-added-ui-support-for-ingesting-from-multiple-kafka-topics-to-a-single-datasource" href="#28.0.0-functional-area-and-related-changes-web-console-added-ui-support-for-ingesting-from-multiple-kafka-topics-to-a-single-datasource">#</a> 添加了 UI 支持，用于从多个 Kafka 主题摄取到单个数据源</h3>
+<p>Web 控制台支持使用单个主管将流数据从多个 Kafka 主题提取到数据源。</p>
+<img width="307" alt="Kafka 多主题摄取的 UI" src="https://github.com/apache/druid/assets/30999375/26f40b39-942c-46ab-b5b7-6f58b439439a">
+<p><a href="https://github.com/apache/druid/pull/14833">#14833</a></p>
+<h3 id="-其他-web-控制台改进"><a name="28.0.0-functional-area-and-related-changes-web-console-other-web-console-improvements" href="#28.0.0-functional-area-and-related-changes-web-console-other-web-console-improvements">#</a> 其他 Web 控制台改进</h3>
+<ul>
+<li>您现在可以将查询结果从 Web 控制台直接复制到 clipboard <a href="https://github.com/apache/druid/pull/14889">#14889</a></li>
+<li>Web 控制台现在在任务视图中显示 <code>query_controller</code> 任务的执行对话框，而不是通用的原始任务详细信息对话框。您仍然可以从省略号 (…) 菜单 <a href="https://github.com/apache/druid/pull/14930">#14930)</a> 访问原始任务详细信息</li>
+<li>现在您可以在 Web 控制台时间图表中选择一个水平范围来修改当前的 WHERE 子句 <a href="https://github.com/apache/druid/pull/14929">#14929</a></li>
+<li>现在可以在 Web 控制台中设置动态查询参数 <a href="https://github.com/apache/druid/pull/14921">#14921</a></li>
+<li>您现在可以在 Web 控制台中编辑协调器动态配置 <a href="https://github.com/apache/druid/pull/14791">#14791</a></li>
+<li>您现在可以美化 SQL 查询并使用 Kafka 输入格式展平 <a href="https://github.com/apache/druid/pull/14906">#14906</a></li>
+<li>当 CSV 或 TSV 样本包含 Druid 不接受的换行符时，现在会出现警告 <a href="https://github.com/apache/druid/pull/14783">#14783</a></li>
+<li>下载数据时现在可以选择格式 <a href="https://github.com/apache/druid/pull/14794">#14794</a></li>
+<li>提高了保留对话框中集群默认规则的清晰度 <a href="https://github.com/apache/druid/pull/14793">#14793</a></li>
+<li>Web 控制台现在可以检测查询文本中的内联查询，并允许您单独运行它们 <a href="https://github.com/apache/druid/pull/14801">#14810</a></li>
+<li>您现在可以重置主管的特定分区偏移量 <a href="https://github.com/apache/druid/pull/14863">#14863</a></li>
+</ul>
+<h2 id="-摄取"><a name="28.0.0-functional-area-and-related-changes-ingestion" href="#28.0.0-functional-area-and-related-changes-ingestion">#</a> 摄取</h2>
+<h3 id="-json-和自动列索引器"><a name="28.0.0-functional-area-and-related-changes-ingestion-json-and-auto-column-indexer" href="#28.0.0-functional-area-and-related-changes-ingestion-json-and-auto-column-indexer">#</a> JSON 和自动列索引器</h3>
+<p><code>json</code> 列类型现在相当于在基于 JSON 的批量摄取维度规范中使用 <code>auto</code>。将您的摄取规格升级到 <code>json</code>，以利用 <code>auto</code> 的特性和功能，包括以下内容：</p>
+<ul>
+<li>类型专业化，包括 ARRAY 类型列</li>
+<li>更好地支持字符串、长整型和双精度的嵌套数组</li>
+<li>更智能的索引利用</li>
+</ul>
+<p>使用 Druid 28.0.0 创建的 <code>json</code> 类型列不向后兼容早于 26.0.0 的 Druid 版本。
+如果您从这些版本之一升级，则可以继续以向后兼容的格式（版本 4）编写嵌套列。</p>
+<p>有关详细信息，请参阅<a href="#nested-column-format">升级说明中的嵌套列格式</a>。</p>
+<p><a href="https://github.com/apache/druid/pull/14955">#14955</a>
+<a href="https://github.com/apache/druid/pull/14456">#14456</a></p>
+<h3 id="-摄取状态"><a name="28.0.0-functional-area-and-related-changes-ingestion-ingestion-status" href="#28.0.0-functional-area-and-related-changes-ingestion-ingestion-status">#</a> 摄取状态</h3>
+<p>摄取报告现在包含一个 <code>segmentLoadStatus</code> 对象，该对象提供与摄取相关的信息，例如持续时间和总片段数。</p>
+<p><a href="https://github.com/apache/druid/pull/14322">#14322</a></p>
+<h3 id="-基于-sql-的摄取"><a name="28.0.0-functional-area-and-related-changes-ingestion-sql-based-ingestion" href="#28.0.0-functional-area-and-related-changes-ingestion-sql-based-ingestion">#</a> 基于 SQL 的摄取</h3>
+<h4 id="-能够摄取-array-类型"><a name="28.0.0-functional-area-and-related-changes-ingestion-sql-based-ingestion-ability-to-ingest-array-types" href="#28.0.0-functional-area-and-related-changes-ingestion-sql-based-ingestion-ability-to-ingest-array-types">#</a> 能够摄取 ARRAY 类型</h4>
+<p>基于 SQL 的摄取现在支持在 <a href="https://druid.apache.org/docs/latest/querying/arrays">ARRAY 类型列</a> 中存储 ARRAY 类型值，以及存储 VARCHAR 和数字类型数组。
+以前，MSQ 任务引擎将 ARRAY 类型值存储为 <a href="https://druid.apache.org/docs/latest/querying/multi-value-dimensions">多值维度</a>，而不是 ARRAY 类型列。</p>
+<p>MSQ 任务引擎现在包含 <code>arrayIngestMode</code> 查询上下文参数，该参数控制如何
+<code>ARRAY</code> 类型存储在 Druid 段中。
+将 <code>arrayIngestMode</code> 查询上下文参数设置为 <code>array</code> 以摄取 ARRAY 类型。</p>
+<p>在Druid 28.0.0中，为了向后兼容，<code>arrayIngestMode</code>的默认模式是<code>mvd</code>，它仅支持VARCHAR类型数组并将其存储为多值维度。此默认值可能会在未来版本中发生更改。</p>
+<p>有关如何迁移到新行为的信息，请参阅<a href="#ingestion-options-for-array-typed-columns">升级说明中 ARRAY 类型列的摄取选项</a>。
+有关 <code>ARRAY</code> 类型列的插入、筛选和分组行为的信息，请参阅<a href="https://druid.apache.org/docs/latest/querying/arrays">数组列</a>。</p>
+<p><a href="https://github.com/apache/druid/pull/15093">#15093</a></p>
+<h4 id="-数字数组类型支持"><a name="28.0.0-functional-area-and-related-changes-ingestion-sql-based-ingestion-numeric-array-type-support" href="#28.0.0-functional-area-and-related-changes-ingestion-sql-based-ingestion-numeric-array-type-support">#</a> 数字数组类型支持</h4>
+<p>基于行的框架以及 MSQ 任务引擎现在支持数值数组类型。这意味着所有使用或生成数组的查询都可以与 MSQ 任务引擎一起使用。还可以使用基于 SQL 的 MSQ 摄取来摄取数字数组。例如，像 <code>SELECT [1, 2]</code> 这样的查询现在是有效的，因为它们使用数字数组，而不是因不支持的列类型异常而失败。</p>
+<p><a href="https://github.com/apache/druid/pull/14900">#14900</a></p>
+<h4 id="-azure-blob-存储支持"><a name="28.0.0-functional-area-and-related-changes-ingestion-sql-based-ingestion-azure-blob-storage-support" href="#28.0.0-functional-area-and-related-changes-ingestion-sql-based-ingestion-azure-blob-storage-support">#</a> Azure Blob 存储支持</h4>
+<p>添加了对 Microsoft Azure Blob 存储的支持。
+现在，您可以将容错和持久存储与 Microsoft Azure Blob 存储结合使用。
+有关详细信息，请参阅<a href="https://druid.apache.org/docs/latest/multi-stage-query/reference#durable-storage">持久存储</a>。</p>
+<p><a href="https://github.com/apache/druid/pull/14660">#14660</a></p>
+<h4 id="-其他基于-sql-的摄取改进"><a name="28.0.0-functional-area-and-related-changes-ingestion-sql-based-ingestion-other-sql-based-ingestion-improvements" href="#28.0.0-functional-area-and-related-changes-ingestion-sql-based-ingestion-other-sql-based-ingestion-improvements">#</a> 其他基于 SQL 的摄取改进</h4>
+<ul>
+<li>为 MSQ 任务引擎添加了新的 <code>rowsPerPage</code> 上下文参数。
+使用 <code>rowsPerPage</code> 限制每页的行数。有关 MSQ 任务引擎的上下文参数的详细信息，请参阅<a href="https://druid.apache.org/docs/latest/multi-stage-query/reference#context-parameters">上下文参数</a> <a href="https://github.com/apache/druid/pull/14994">#14994</a></li>
+<li>当控制器离线时，Druid 现在会忽略 <code>postCounters</code> 上的 <code>ServiceClosedException</code> <a href="https://github.com/apache/druid/pull/14707">#14707</a></li>
+<li>改进了与 OVERWRITE 关键字相关的错误消息 <a href="https://github.com/apache/druid/pull/14870">#14870</a></li>
+</ul>
+<h3 id="-流式传输"><a name="28.0.0-functional-area-and-related-changes-ingestion-streaming-ingestion" href="#28.0.0-functional-area-and-related-changes-ingestion-streaming-ingestion">#</a> 流式传输</h3>
+<h4 id="-能够重置主管的偏移量"><a name="28.0.0-functional-area-and-related-changes-ingestion-streaming-ingestion-ability-to-reset-offsets-for-a-supervisor" href="#28.0.0-functional-area-and-related-changes-ingestion-streaming-ingestion-ability-to-reset-offsets-for-a-supervisor">#</a> 能够重置主管的偏移量</h4>
+<p>添加了新的 API 端点 <code>/druid/indexer/v1/supervisor/:supervisorId/resetOffsets</code> 来重置 Supervisor 的特定分区偏移量，而无需重置整个集合。
+该端点仅清除Kafka中指定的偏移量或Kinesis中的序列号，提示supervisor恢复数据读取。</p>
+<p><a href="https://github.com/apache/druid/pull/14772">#14772</a></p>
+<h4 id="-其他流媒体摄取改进"><a name="28.0.0-functional-area-and-related-changes-ingestion-streaming-ingestion-other-streaming-ingestion-improvements" href="#28.0.0-functional-area-and-related-changes-ingestion-streaming-ingestion-other-streaming-ingestion-improvements">#</a> 其他流媒体摄取改进</h4>
+<ul>
+<li>添加了 Jackson 的 <code>PropertyNamingStrategies</code> 来修复 Hadoop 摄取并使其与较新的 Jackson 兼容 <a href="https://github.com/apache/druid/pull/14671">#14671</a></li>
+<li>为 Kubernetes 任务调度的 <code>TaskLocation</code> 对象添加 pod 名称，使调试更容易 <a href="https://github.com/apache/druid/pull/14758">#14758</a></li>
+<li>为 <code>KubernetesTaskRunner</code> 添加了生命周期挂钩 <a href="https://github.com/apache/druid/pull/14790">#14790</a></li>
+<li>添加了 <code>SqlStatementResource</code> 和 <code>SqlTaskResource</code> 设置请求属性的新方法 <a href="https://github.com/apache/druid/pull/14878">#14878</a></li>
+<li>为 <code>DeterminePartitionsJob</code> 添加采样因子 <a href="https://github.com/apache/druid/pull/13840">#13840</a></li>
+<li>将 <code>usedClusterCapacity</code> 添加到 <code>GET</code> <code>/totalWorkerCapacity</code> 响应中。使用此 API 获取霸主的总摄取容量 <a href="https://github.com/apache/druid/pull/14888">#14888</a></li>
+<li>改进了 Kubernetes 任务运行程序性能 <a href="https://github.com/apache/druid/pull/14649">#14649</a></li>
+<li>改进了对长数据源名称的处理。以前，如果数据源名称太长，Kubernetes 任务运行程序会抛出错误 <a href="https://github.com/apache/druid/pull/14620">#14620</a></li>
+<li>改进了流媒体摄取完成超时错误消息 <a href="https://github.com/apache/druid/pull/14636">#14636</a></li>
+<li>Druid 现在在出现暂时性 S3 错误时重试获取 S3 任务日志 <a href="https://github.com/apache/druid/pull/14714">#14714</a></li>
+<li>Druid 现在报告基于 Kubernetes 的摄取的 <code>task/pending/time</code> 指标 <a href="https://github.com/apache/druid/pull/14698">#14698</a></li>
+<li>Druid 现在报告基于 Kubernetes 的摄取的 <code>k8s/peon/startup/time</code> 指标 <a href="https://github.com/apache/druid/pull/14771">#14771</a></li>
+<li><code>handoffConditionTimeout</code> 现在默认为 15 分钟 - 默认更改不会影响现有的主管 <a href="https://github.com/apache/druid/pull/14539">#14539</a></li>
+<li>修复了带有检查点解析的 NPE 以进行流式摄取 <a href="https://github.com/apache/druid/pull/14353">#14353</a></li>
+<li>修复了 Hadoop 摄取由于转换表达式而将数组写入 <code>objects.toString</code> 的问题 <a href="https://github.com/apache/druid/pull/15127">#15127</a></li>
+<li><code>PodTemplateTaskAdapter</code> 现在负责可查询任务 <a href="https://github.com/apache/druid/pull/14789">#14789</a></li>
+<li>滚动管理器现在在 <code>taskDuration</code> 重新启动 <a href="https://github.com/apache/druid/pull/14396">#14396</a></li>
+<li>如果故障状态允许重试，现在会重试 S3 <code>deleteObjects</code> 请求 <a href="https://github.com/apache/druid/pull/14776">#14776</a></li>
+<li>您现在可以将 Kafka 主题的名称提取到数据源 <a href="https://github.com/apache/druid/pull/14857">#14857</a></li>
+</ul>
+<h2 id="-查询"><a name="28.0.0-functional-area-and-related-changes-querying" href="#28.0.0-functional-area-and-related-changes-querying">#</a> 查询</h2>
+<h3 id="-改进了-lookup-功能"><a name="28.0.0-functional-area-and-related-changes-querying-improved-lookup-function" href="#28.0.0-functional-area-and-related-changes-querying-improved-lookup-function">#</a> 改进了 LOOKUP 功能</h3>
+<p>LOOKUP 函数现在接受可选常量字符串作为第三个参数。该字符串用于替换结果中的缺失值。例如，如果给定的 <code>store</code> 缺少 <code>store_to_country</code> 值，则查询 <code>LOOKUP(store, 'store_to_country', 'NA')</code> 将返回 <code>NA</code>。</p>
+<p><a href="https://github.com/apache/druid/pull/14956">#14956</a></p>
+<h3 id="-avg-函数"><a name="28.0.0-functional-area-and-related-changes-querying-avg-function" href="#28.0.0-functional-area-and-related-changes-querying-avg-function">#</a> AVG 函数</h3>
+<p>AVG 聚合函数现在返回 <code>double</code> 而不是 <code>long</code>。</p>
+<p><a href="https://github.com/apache/druid/pull/15089">#15089</a></p>
+<h3 id="-对-earliest-和-latest-运算符的改进"><a name="28.0.0-functional-area-and-related-changes-querying-improvements-to-earliest-and-latest-operators" href="#28.0.0-functional-area-and-related-changes-querying-improvements-to-earliest-and-latest-operators">#</a> 对 EARLIEST 和 LATEST 运算符的改进</h3>
+<p>改进了 EARLIEST 和 LATEST 运算符，如下所示：</p>
+<ul>
+<li>EARLIEST 和 LATEST 运算符现在在查询处理期间重写为 EARLIEST_BY 和 LATEST_BY，以使 <code>__time</code> 列引用显式指向 Calcite。 <a href="https://github.com/apache/druid/pull/15095">#15095</a></li>
+<li>现在，您可以对 STRING 列使用 EARLIEST/EARLIEST_BY 和 LATEST/LATEST_BY，而无需指定 <code>maxBytesPerValue</code> 参数。
+如果省略 <code>maxBytesPerValue</code> 参数，则缓冲区的聚合默认为 1024 字节。 <a href="https://github.com/apache/druid/pull/14848">#14848</a></li>
+</ul>
+<h3 id="-评估清晰度的函数"><a name="28.0.0-functional-area-and-related-changes-querying-functions-for-evaluating-distinctness" href="#28.0.0-functional-area-and-related-changes-querying-functions-for-evaluating-distinctness">#</a> 评估清晰度的函数</h3>
+<p>新的 SQL 和本机查询函数允许您评估两个表达式是否不同。
+如果表达式具有不同的值或者其中之一为 NULL，则它们是不同的。
+如果表达式的值相同或均为 NULL，则表达式不不同。</p>
+<p>由于这些函数在用作比较运算符时将 NULL 视为已知值，因此即使一个或两个表达式为 NULL，它们也始终返回 true 或 false。</p>
+<p>下表显示了等号 (=) 和 IS [NOT] DISTINCT FROM 之间的行为差异：</p>
+<table>
+<thead>
+<tr>
+<th>一个</th>
+<th>乙</th>
+<th>A = B</th>
+<th>A 与 B 没有区别</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>真实</td>
+<td>真实</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>假</td>
+<td>假</td>
+</tr>
+<tr>
+<td>0</td>
+<td>空</td>
+<td>未知</td>
+<td>假</td>
+</tr>
+<tr>
+<td>空</td>
+<td>空</td>
+<td>未知</td>
+<td>真实</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://github.com/apache/druid/pull/14976">#14976</a></p>
+<h3 id="-评估相等性的函数"><a name="28.0.0-functional-area-and-related-changes-querying-functions-for-evaluating-equalities" href="#28.0.0-functional-area-and-related-changes-querying-functions-for-evaluating-equalities">#</a> 评估相等性的函数</h3>
+<p>新的 SQL 和本机查询函数允许您评估条件是真还是假。这些函数与 <code>x == true</code> 和 <code>x != true</code> 的不同之处在于，即使变量为 null，它们也不会返回 null。</p>
+<table>
+<thead>
+<tr>
+<th>SQL 函数</th>
+<th>原生功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IS_TRUE</code></td>
+<td><code>istrue()</code></td>
+</tr>
+<tr>
+<td><code>IS_FALSE</code></td>
+<td><code>isfalse()</code></td>
+</tr>
+<tr>
+<td><code>IS_NOT_TRUE</code></td>
+<td><code>nottrue()</code></td>
+</tr>
+<tr>
+<td><code>IS_NOT_FALSE</code></td>
+<td><code>notfalse()</code></td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://github.com/apache/druid/pull/14977">#14977</a></p>
+<h3 id="-解码-base64-编码字符串的函数"><a name="28.0.0-functional-area-and-related-changes-querying-function-to-decode-base64-encoded-strings" href="#28.0.0-functional-area-and-related-changes-querying-function-to-decode-base64-encoded-strings">#</a> 解码 Base64 编码字符串的函数</h3>
+<p>新的 SQL 和本机查询函数 <code>decode_base64_utf8</code> 解码 Base64 编码的字符串并返回 UTF-8 编码的字符串。例如，<code>decode_base64_utf8('aGVsbG8=')</code>。</p>
+<p><a href="https://github.com/apache/druid/pull/14943">#14943</a></p>
+<h3 id="-改进的子查询护栏"><a name="28.0.0-functional-area-and-related-changes-querying-improved-subquery-guardrail" href="#28.0.0-functional-area-and-related-changes-querying-improved-subquery-guardrail">#</a> 改进的子查询护栏</h3>
+<p>您现在可以将 <code>maxSubqueryBytes</code> 护栏设置为以下之一：</p>
+<ul>
+<li>
+<p><code>disabled</code>：默认设置。 Druid 不会对子查询可以生成的字节数应用护栏。</p>
+</li>
+<li>
+<p><code>auto</code>：Druid 计算用于结果物化的内存量，作为堆固定内存的一部分。<br>
+在查询上下文中，Druid 使用以下公式来确定子查询可以生成的字节数上限：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>((total JVM space - memory occupied by lookups) * 0.5) / maximum queries that the system can handle concurrently</span></span></code></pre>
+</li>
+<li>
+<p>INTEGER：用于具体化子查询结果的字节数。如果您了解查询模式并希望优化内存使用，请设置特定值。<br>
+例如，将 <code>maxSubqueryBytes</code> 参数设置为 300000000 (<code>300 * 1000 * 1000</code>) 以实现 300 MB 的限制。
+将 <code>maxSubqueryBytes</code> 参数设置为 314572800 (<code>300 * 1024 * 1024</code>) 以实现 300 MiB 限制。</p>
+</li>
+</ul>
+<p><a href="https://github.com/apache/druid/pull/14808">#14808</a></p>
+<h3 id="-其他查询改进"><a name="28.0.0-functional-area-and-related-changes-querying-other-query-improvements" href="#28.0.0-functional-area-and-related-changes-querying-other-query-improvements">#</a> 其他查询改进</h3>
+<ul>
+<li>将过滤器添加到与 UNNEST 过滤器重写和下推配合使用的过滤器组中 <a href="https://github.com/apache/druid/pull/14777">#14777</a></li>
+<li>在代理上为 <a href="https://druid.apache.org/docs/latest/querying/groupbyquery.html">groupBy v2</a> 查询启用 <a href="https://druid.apache.org/docs/latest/querying/caching#whole-query-caching">整个查询缓存</a> <a href="https://github.com/apache/druid/pull/11595">#11595</a></li>
+<li>改进了最早的矢量化聚合器的性能 <a href="https://github.com/apache/druid/pull/14408">#14408</a></li>
+</ul>
+<h2 id="-集群管理"><a name="28.0.0-functional-area-and-related-changes-cluster-management" href="#28.0.0-functional-area-and-related-changes-cluster-management">#</a> 集群管理</h2>
+<h3 id="-未使用的段"><a name="28.0.0-functional-area-and-related-changes-cluster-stability-unused-segments" href="#28.0.0-functional-area-and-related-changes-cluster-stability-unused-segments">#</a> 未使用的段</h3>
+<p>现在，一旦片段被标记为未使用，德鲁伊就会停止加载和移动片段。这可以防止历史进程将时间花在多余的段加载上，这些段稍后将被卸载。您可以通过删除规则、覆盖或调用<a href="https://druid.apache.org/docs/latest/api-reference/data-management-api">数据管理 API</a> 将段标记为未使用。</p>
+<p><a href="https://github.com/apache/druid/pull/14644">#14644</a></p>
+<h3 id="-加密传输中的数据"><a name="28.0.0-functional-area-and-related-changes-cluster-management-encrypt-data-in-transit" href="#28.0.0-functional-area-and-related-changes-cluster-management-encrypt-data-in-transit">#</a> 加密传输中的数据</h3>
+<p><code>net.spy.memcached</code> client 已替换为 AWS ElastiCache client。此更改允许 Druid 使用 TLS 加密传输中的数据。</p>
+<p>使用以下属性配置它：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>描述</th>
+<th>默认</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>druid.cache.enableTls</code></td>
+<td>为 Memcached client 启用基于 TLS 的连接。布尔</td>
+<td>假</td>
+</tr>
+<tr>
+<td><code>druid.cache.clientMode</code></td>
+<td>Client模式。静态模式要求用户指定各个集群节点。动态模式使用 AWS Memcached 的 <a href="https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/AutoDiscovery.HowAutoDiscoveryWorks.html">自动发现</a> 功能。细绳。 <a href="https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/AutoDiscovery.Manual.html">“静态”</a> 或 <a href="https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/AutoDiscovery.Using.ModifyApp.Java.html">“动态”</a></td>
+<td>静态</td>
+</tr>
+<tr>
+<td><code>druid.cache.skipTlsHostnameVerification</code></td>
+<td>跳过 TLS 主机名验证。布尔值。</td>
+<td>真实</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://github.com/apache/druid/pull/14827/">#14827</a></p>
+<h3 id="-druid-分段表中的新元数据"><a name="28.0.0-functional-area-and-related-changes-cluster-management-new-metadata-in-the-druid-segments-table" href="#28.0.0-functional-area-and-related-changes-cluster-management-new-metadata-in-the-druid-segments-table">#</a> Druid 分段表中的新元数据</h3>
+<p>Druid 段表现在有一个名为 <code>used_status_last_updated</code> (VARCHAR (255)) 的列。此列是 UTC 日期字符串，对应于上次修改所用列的时间。</p>
+<p>请注意，这是对表的不兼容更改。有关升级信息，请参阅<a href="#upgrade-druid-segments-table">升级Druid段表</a>。</p>
+<p><a href="https://github.com/apache/druid/pull/12599">#12599</a></p>
+<h3 id="-其他集群管理改进"><a name="28.0.0-functional-area-and-related-changes-cluster-management-other-cluster-management-improvements" href="#28.0.0-functional-area-and-related-changes-cluster-management-other-cluster-management-improvements">#</a> 其他集群管理改进</h3>
+<ul>
+<li>您现在可以在 Peon 日志记录中使用多个控制台附加程序 <a href="https://github.com/apache/druid/pull/14521">#14521</a></li>
+<li>Indexer、Peon 和 Historical 进程的处理池的线程名称现在包含查询 ID <a href="https://github.com/apache/druid/pull/15059">#15059</a></li>
+<li>用于智能段加载的 <code>replicationThrottleLimit</code> 的值已从已用段总数的 2% 增加到 5%。运行开始时加载队列中的副本总数加上运行中分配的副本数保持小于或等于限制 <a href="https://github.com/apache/druid/pull/14913">#14913</a></li>
+<li><code>balancerComputeThreads</code> 的默认值现在根据 CPU 数量除以 2 计算。以前，该值为 <code>1</code>。智能段加载使用此计算值 <a href="https://github.com/apache/druid/pull/14902">#14902</a></li>
+<li>改进了 <code>InvalidNullByteFault</code> 错误。它们现在包含输出列名称而不是查询列名称，以便于使用 <a href="https://github.com/apache/druid/pull/14780">#14780</a></li>
+<li>改进了 <code>DruidLeaderClient</code> 找不到领导节点时的异常消息 <a href="https://github.com/apache/druid/pull/14775">#14775</a></li>
+<li>减少正常操作下的协调器日志记录 <a href="https://github.com/apache/druid/pull/14926">#14926</a></li>
+<li>使用嵌套值时，现在可以以非常小的性能成本更可预测堆的使用情况 <a href="https://github.com/apache/druid/pull/14919">#14919</a></li>
+<li><strong>无中层管理者的摄取</strong>：
+<ul>
+<li>使用无中间管理器摄取时，<code>sys.tasks</code> 元数据表和 Web 控制台现在显示 Kubernetes pod 名称，而不是 peon 位置 <a href="https://github.com/apache/druid/pull/14959">#14959</a></li>
+<li>添加了对无中间管理器摄取的支持，以零停机时间与使用中间管理器的 <code>WorkerTaskRunners</code> 进行迁移 <a href="https://github.com/apache/druid/pull/14918">#14918</a></li>
+</ul>
+</li>
+<li>Druid 扩展无法再将自定义协调员职责绑定到职责组 <code>IndexingServiceDuties</code> 和 <code>MetadataStoreManagementDuties</code>。这些是核心协调器内置流程，不应受到关税的影响。用户仍然可以定义具有自定义值班组和周期的 <code>CustomCoordinatorDuty</code> <a href="https://github.com/apache/druid/pull/14891">#14891</a></li>
+<li>Druid 现在根据层中历史进程之间的使用偏差自动调整 <code>balancerComputeThreads</code> 和 <code>maxSegmentsToMove</code> <a href="https://github.com/apache/druid/pull/14584">#14584</a></li>
+<li>删除了可配置属性 <code>druid.coordinator.compaction.skipLockedIntervals</code>，因为它应该始终是 <code>true</code> <a href="https://github.com/apache/druid/pull/14807">#14807</a></li>
+<li>更新了 mm-less 任务运行程序生命周期逻辑，以更好地匹配 HTTP 和 ZooKeeper 工作任务运行程序中的逻辑 <a href="https://github.com/apache/druid/pull/14895">#14895</a></li>
+</ul>
+<h2 id="-数据管理"><a name="28.0.0-functional-area-and-related-changes-data-management" href="#28.0.0-functional-area-and-related-changes-data-management">#</a> 数据管理</h2>
+<h3 id="-段分配的警报消息"><a name="28.0.0-functional-area-and-related-changes-data-management-alert-message-for-segment-assignments" href="#28.0.0-functional-area-and-related-changes-data-management-alert-message-for-segment-assignments">#</a> 段分配的警报消息</h3>
+<p>改进了在加载规则中指定无效层或没有规则应用于段时段分配的警报消息。</p>
+<p><a href="https://github.com/apache/druid/pull/14696">#14696</a></p>
+<h3 id="-未使用段的协调器-api"><a name="28.0.0-functional-area-and-related-changes-data-management-coordinator-api-for-unused-segments" href="#28.0.0-functional-area-and-related-changes-data-management-coordinator-api-for-unused-segments">#</a> 未使用段的协调器 API</h3>
+<p>添加 <code>includeUnused</code> 作为协调器 API 的可选参数。
+您可以向 <code>/druid/coordinator/v1/metadata/datasources/{dataSourceName}/segments/{segmentId}?includeUnused=true</code> 发送 <code>GET</code> 请求，以检索元数据存储中存储的特定段的元数据。</p>
+<p>如果设置了 <code>includeUnused</code> 参数，API 还会返回未使用的段。</p>
+<p><a href="https://github.com/apache/druid/pull/14846/">#14846</a></p>
+<h3 id="-终止任务改进"><a name="28.0.0-functional-area-and-related-changes-data-management-kill-task-improvements" href="#28.0.0-functional-area-and-related-changes-data-management-kill-task-improvements">#</a> 终止任务改进</h3>
+<ul>
+<li>添加了 <code>killTaskSlotRatio</code> 和 <code>maxKillTaskSlots</code> 动态配置属性，以允许控制 <code>KillUnusedSegments</code> 协调器任务生成的任务资源使用情况 <a href="https://github.com/apache/druid/pull/14769">#14769</a></li>
+<li><code>druid.coordinator.kill.period</code> 的值现在可以大于或等于 <code>druid.coordinator.period.indexingPeriod</code>。以前，它必须大于 <code>druid.coordinator.period.indexingPeriod</code>。此外，领导协调器现在跟踪数据源最后提交的 <code>kill</code> 任务，以避免提交重复的 <code>kill</code> 任务 <a href="https://github.com/apache/druid/pull/14831">#14831</a></li>
+<li>为缓冲期添加了新配置 <code>druid.coordinator.kill.bufferPeriod</code>。此配置定义了在 <code>KillUnusedSegment</code> 杀死某个段之前该段未使用的时间量。使用默认的 <code>PT24H</code>，如果您在 <code>2022-06-01T00:05:00.000Z</code> 将某个段标记为未使用，则直到 <code>2022-06-02T00:05:00.000Z</code> 或之后才能终止该段 <a href="https://github.com/apache/druid/pull/12599">#12599</a></li>
+<li>您现在可以为 <code>kill</code> 任务指定以下参数：
+<ul>
+<li><code>batchSize</code>: 一批 <code>kill</code> 中删除的最大段数 <a href="https://github.com/apache/druid/pull/14642">#14642</a></li>
+<li><code>limit</code>: <code>kill</code> 任务删除的最大段数 <a href="https://github.com/apache/druid/pull/14662">#14662</a></li>
+</ul>
+</li>
+<li>您现在可以通过批量删除存储在 S3 中的多个段来加速 <code>kill</code> 任务 <a href="https://github.com/apache/druid/pull/14131">#14131</a></li>
+<li>删除未使用段的终止任务现在会发布包含终止统计信息的任务报告，例如 <code>numSegmentsKilled</code>、<code>numBatchesProcessed</code> 和 <code>numSegmentsMarkedAsUnused</code> <a href="https://github.com/apache/druid/pull/15023">#15023</a></li>
+<li><code>IndexerSQLMetadataStorageCoordinator</code> 现在使用 JDBI <code>PreparedBatch</code>，而不是在事务内发出单个更新语句，以缓解扩展挑战 <a href="https://github.com/apache/druid/pull/14639">#14639</a></li>
+</ul>
+<h2 id="-指标和监控"><a name="28.0.0-functional-area-and-related-changes-metrics-and-monitoring" href="#28.0.0-functional-area-and-related-changes-metrics-and-monitoring">#</a> 指标和监控</h2>
+<h3 id="-新的摄取指标"><a name="28.0.0-functional-area-and-related-changes-metrics-and-monitoring-new-ingestion-metrics" href="#28.0.0-functional-area-and-related-changes-metrics-and-monitoring-new-ingestion-metrics">#</a> 新的摄取指标</h3>
+<table>
+<thead>
+<tr>
+<th>公制</th>
+<th>描述</th>
+<th>尺寸</th>
+<th>正常值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ingest/input/bytes</code></td>
+<td>解压缩之后但解析之前从输入源读取的字节数。这涵盖了所有读取的数据，包括最终未完全处理和摄取的数据。例如，这包括因无法解析或过滤而最终被拒绝的数据。</td>
+<td><code>dataSource</code>、<code>taskId</code>、<code>taskType</code>、<code>groupId</code>、<code>tags</code></td>
+<td>取决于读取的数据量。</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://github.com/apache/druid/pull/14582">#14582</a></p>
+<h3 id="-新查询指标"><a name="28.0.0-functional-area-and-related-changes-metrics-and-monitoring-new-query-metrics" href="#28.0.0-functional-area-and-related-changes-metrics-and-monitoring-new-query-metrics">#</a> 新查询指标</h3>
+<table>
+<thead>
+<tr>
+<th>公制</th>
+<th>描述</th>
+<th>尺寸</th>
+<th>正常值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mergeBuffer/pendingRequests</code></td>
+<td>等待从合并缓冲池获取一批缓冲区的请求数。</td>
+<td>此指标通过 Broker 的 <code>QueryCountStatsMonitor</code> 模块公开。</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://github.com/apache/druid/pull/15025">#15025</a></p>
+<h3 id="-新-zookeeper-指标"><a name="28.0.0-functional-area-and-related-changes-metrics-and-monitoring-new-zookeeper-metrics" href="#28.0.0-functional-area-and-related-changes-metrics-and-monitoring-new-zookeeper-metrics">#</a> 新 ZooKeeper 指标</h3>
+<table>
+<thead>
+<tr>
+<th>公制</th>
+<th>描述</th>
+<th>尺寸</th>
+<th>正常值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>zk/connected</code></td>
+<td>连接状态指示器。 <code>1</code> 为连接状态，<code>0</code> 为断开状态。每个监控周期发出一次。</td>
+<td>无</td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>zk/reconnect/time</code></td>
+<td>服务器在重新连接之前与 ZooKeeper 断开连接的时间（以毫秒为单位）。重新连接时发出。如果与 ZooKeeper 的连接永久丢失，则不会发出，因为在这种情况下，不会重新连接。</td>
+<td>无</td>
+<td>不存在</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://github.com/apache/druid/pull/14333">#14333</a></p>
+<h3 id="-代理的新子查询指标"><a name="28.0.0-functional-area-and-related-changes-metrics-and-monitoring-new-subquery-metrics-for-the-broker" href="#28.0.0-functional-area-and-related-changes-metrics-and-monitoring-new-subquery-metrics-for-the-broker">#</a> 代理的新子查询指标</h3>
+<p>新的 <code>SubqueryCountStatsMonitor</code> 发出与子查询及其执行相对应的指标。</p>
+<table>
+<thead>
+<tr>
+<th>公制</th>
+<th>描述</th>
+<th>尺寸</th>
+<th>正常值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>subquery/rowLimit/count</code></td>
+<td>结果具体化为行（堆上的 Java 对象）的子查询数。</td>
+<td>此指标仅在包含 <code>SubqueryCountStatsMonitor</code> 模块时可用。</td>
+<td></td>
+</tr>
+<tr>
+<td><code>subquery/byteLimit/count</code></td>
+<td>结果具体化为帧（Druid 的内部字节表示行）的子查询数量。</td>
+<td>此指标仅在包含 <code>SubqueryCountStatsMonitor</code> 模块时可用。</td>
+<td></td>
+</tr>
+<tr>
+<td><code>subquery/fallback/count</code></td>
+<td>无法具体化为帧的子查询数量</td>
+<td>此指标仅在包含 <code>SubqueryCountStatsMonitor</code> 模块时可用。</td>
+<td></td>
+</tr>
+<tr>
+<td><code>subquery/fallback/insufficientType/count</code></td>
+<td>由于行签名中类型信息不足而无法具体化为帧的子查询数。</td>
+<td>此指标仅在包含 <code>SubqueryCountStatsMonitor</code> 模块时可用。</td>
+<td></td>
+</tr>
+<tr>
+<td><code>subquery/fallback/unknownReason/count</code></td>
+<td>由于其他原因而无法具体化为帧的子查询数量。</td>
+<td>此指标仅在包含 <code>SubqueryCountStatsMonitor</code> 模块时可用。</td>
+<td></td>
+</tr>
+<tr>
+<td><code>query/rowLimit/exceeded/count</code></td>
+<td>内联子查询结果超出给定行限制的查询数</td>
+<td>此指标仅在包含 <code>SubqueryCountStatsMonitor</code> 模块时才可用。</td>
+<td></td>
+</tr>
+<tr>
+<td><code>query/byteLimit/exceeded/count</code></td>
+<td>内联子查询结果超出给定字节限制的查询数</td>
+<td>此指标仅在包含 <code>SubqueryCountStatsMonitor</code> 模块时才可用。</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://github.com/apache/druid/pull/14808">#14808</a></p>
+<h3 id="-新协调器指标"><a name="28.0.0-functional-area-and-related-changes-metrics-and-monitoring-new-coordinator-metrics" href="#28.0.0-functional-area-and-related-changes-metrics-and-monitoring-new-coordinator-metrics">#</a> 新协调器指标</h3>
+<table>
+<thead>
+<tr>
+<th>公制</th>
+<th>描述</th>
+<th>尺寸</th>
+<th>正常值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>killTask/availableSlot/count</code></td>
+<td>自动终止运行中可用于自动终止任务的可用任务槽数。这是任务槽的最大数量减去任何当前正在运行的自动终止任务。</td>
+<td></td>
+<td>变化</td>
+</tr>
+<tr>
+<td><code>killTask/maxSlot/count</code></td>
+<td>自动终止运行中可用于自动终止任务的最大任务槽数。</td>
+<td></td>
+<td>变化</td>
+</tr>
+<tr>
+<td><code>kill/task/count</code></td>
+<td>自动终止运行中发出的任务数。</td>
+<td></td>
+<td>变化</td>
+</tr>
+<tr>
+<td><code>kill/pendingSegments/count</code></td>
+<td>从元数据存储中删除的过时待处理段的数量。</td>
+<td><code>dataSource</code></td>
+<td>变化</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://github.com/apache/druid/pull/14782">#14782</a>
+<a href="https://github.com/apache/druid/pull/14951">#14951</a></p>
+<h3 id="-新的压缩指标"><a name="28.0.0-functional-area-and-related-changes-metrics-and-monitoring-new-compaction-metrics" href="#28.0.0-functional-area-and-related-changes-metrics-and-monitoring-new-compaction-metrics">#</a> 新的压缩指标</h3>
+<table>
+<thead>
+<tr>
+<th>公制</th>
+<th>描述</th>
+<th>尺寸</th>
+<th>正常值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>compact/segmentAnalyzer/fetchAndProcessMillis</code></td>
+<td>获取和处理段以推断要运行的压缩任务的架构所花费的时间。</td>
+<td><code>dataSource</code>、<code>taskId</code>、<code>taskType</code>、<code>groupId</code>、<code>tags</code></td>
+<td>各不相同。高值表示压缩任务将通过显式设置数据模式来加速。</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://github.com/apache/druid/pull/14752">#14752</a></p>
+<h3 id="-分段扫描指标"><a name="28.0.0-functional-area-and-related-changes-metrics-and-monitoring-segment-scan-metrics" href="#28.0.0-functional-area-and-related-changes-metrics-and-monitoring-segment-scan-metrics">#</a> 分段扫描指标</h3>
+<p>添加了一个新指标来计算 <code>druid.processing.numThreads</code> 在历史记录/索引器/Peon 上的使用情况。</p>
+<table>
+<thead>
+<tr>
+<th>公制</th>
+<th>描述</th>
+<th>尺寸</th>
+<th>正常值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>segment/scan/active</code></td>
+<td>当前扫描的段数。该指标还指示当前正在使用 <code>druid.processing.numThreads</code> 的线程数量。</td>
+<td></td>
+<td>接近 <code>druid.processing.numThreads</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="-新的-kafka-消费者指标"><a name="28.0.0-functional-area-and-related-changes-metrics-and-monitoring-new-kafka-consumer-metrics" href="#28.0.0-functional-area-and-related-changes-metrics-and-monitoring-new-kafka-consumer-metrics">#</a> 新的 Kafka 消费者指标</h3>
+<p>添加了以下 Kafka 消费者指标：</p>
+<ul>
+<li><code>kafka/consumer/bytesConsumed</code>：相当于 Kafka 消费者指标 <code>bytes-consumed-total</code>。仅针对 Kafka 任务发出。</li>
+<li><code>kafka/consumer/recordsConsumed</code>：相当于 Kafka 消费者指标 <code>records-consumed-total</code>。仅针对 Kafka 任务发出。</li>
+</ul>
+<p><a href="https://github.com/apache/druid/pull/14582">#14582</a></p>
+<h3 id="-服务心跳指标"><a name="28.0.0-functional-area-and-related-changes-metrics-and-monitoring-service%2Fheartbeat-metrics" href="#28.0.0-functional-area-and-related-changes-metrics-and-monitoring-service%2Fheartbeat-metrics">#</a> 服务/心跳指标</h3>
+<ul>
+<li>将 <code>service/heartbeat</code> 公制暴露给 <code>statsd-reporter</code> <a href="https://github.com/apache/druid/pull/14564">#14564</a></li>
+<li>修改了 <code>service/heartbeat</code> 公制以公开 <code>leader</code> 尺寸 <a href="https://github.com/apache/druid/pull/14593">#14593</a></li>
+</ul>
+<h3 id="-墓碑和段计数"><a name="28.0.0-functional-area-and-related-changes-metrics-and-monitoring-tombstone-and-segment-counts" href="#28.0.0-functional-area-and-related-changes-metrics-and-monitoring-tombstone-and-segment-counts">#</a> 墓碑和段计数</h3>
+<p>MSQ 中添加了 <code>ingest/tombstones/count</code> 和 <code>ingest/segments/count</code> 指标，用于在 Druid 完成发布段后报告逻辑删除和段的数量。</p>
+<p><a href="https://github.com/apache/druid/pull/14980">#14980</a></p>
+<h2 id="-扩展"><a name="28.0.0-functional-area-and-related-changes-extensions" href="#28.0.0-functional-area-and-related-changes-extensions">#</a> 扩展</h2>
+<h3 id="-kubernetes-的摄取任务负载"><a name="28.0.0-functional-area-and-related-changes-extensions-ingestion-task-payloads-for-kubernetes" href="#28.0.0-functional-area-and-related-changes-extensions-ingestion-task-payloads-for-kubernetes">#</a> Kubernetes 的摄取任务负载</h3>
+<p>现在，当您运行无 MiddleManager 的摄取作业时，您可以提供大于 128 KB 的压缩任务负载。</p>
+<p><a href="https://github.com/apache/druid/pull/14887">#14887</a></p>
+<h3 id="-prometheus-发射器"><a name="28.0.0-functional-area-and-related-changes-extensions-prometheus-emitter" href="#28.0.0-functional-area-and-related-changes-extensions-prometheus-emitter">#</a> Prometheus 发射器</h3>
+<p>Prometheus 发射器现在支持新的可选配置参数 <code>druid.emitter.prometheus.extraLabels</code>。
+这一新增功能提供了向 Prometheus 指标添加任意额外标签的灵活性，从而在跨多个 Druid 集群或其他维度管理和识别数据时提供更精细的控制。
+有关详细信息，请参阅 <a href="https://druid.apache.org/docs/latest/development/extensions-contrib/prometheus">Prometheus 发射器扩展</a>。</p>
+<p><a href="https://github.com/apache/druid/pull/14728">#14728</a></p>
+<h2 id="-文档改进"><a name="28.0.0-functional-area-and-related-changes-documentation-improvements" href="#28.0.0-functional-area-and-related-changes-documentation-improvements">#</a> 文档改进</h2>
+<p>我们已将指导您使用 Apache Druid 进行查询、摄取和数据管理的 Jupyter 笔记本移至新的 <a href="https://github.com/implydata/learn-druid">Learn Druid</a> 存储库。
+该存储库还包含一个 Docker Compose 文件，可帮助您启动并运行学习实验室。</p>
+<p><a href="https://github.com/apache/druid/pull/15136">#15136</a></p>
+<h1 id="-升级说明和不兼容的更改"><a name="28.0.0-upgrade-notes-and-incompatible-changes" href="#28.0.0-upgrade-notes-and-incompatible-changes">#</a> 升级说明和不兼容的更改</h1>
+<h2 id="-升级说明"><a name="28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes" href="#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes">#</a> 升级说明</h2>
+<h3 id="-升级-druid-段表"><a name="28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-upgrade-druid-segments-table" href="#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-upgrade-druid-segments-table">#</a> 升级 Druid 段表</h3>
+<p>Druid 28.0.0 在 Druid 元数据表中添加了一个新列，需要更新该表。</p>
+<p>如果 <code>druid.metadata.storage.connector.createTables</code> 设置为 <code>true</code> 并且元数据存储用户具有 DDL 权限，则段表会在启动时自动更新以包含新的 <code>used_status_last_updated</code> 列。升级不需要额外的工作。</p>
+<p>如果不满足其中任何一个要求，则需要执行升级前步骤。您必须在升级到 Druid 28.0.0 之前进行这些更新，否则协调器和霸主进程将失败。</p>
+<p>尽管您可以手动更改表以添加新的 <code>used_status_last_updated</code> 列，但 Druid 还提供了 CLI 工具来执行此操作。</p>
+<p><a href="https://github.com/apache/druid/pull/12599">#12599</a></p>
+<p>在下面的示例命令中：</p>
+<ul>
+<li><code>lib</code>是Druid lib目录</li>
+<li><code>extensions</code>是Druid扩展目录</li>
+<li><code>base</code> 对应配置中<code>druid.metadata.storage.tables.base</code> 的值，默认为<code>druid</code>。</li>
+<li><code>--connectURI</code> 参数对应于 <code>druid.metadata.storage.connector.connectURI</code> 的值。</li>
+<li><code>--user</code> 参数对应于 <code>druid.metadata.storage.connector.user</code> 的值。</li>
+<li><code>--password</code> 参数对应于 <code>druid.metadata.storage.connector.password</code> 的值。</li>
+<li><code>--action</code> 参数对应于您正在执行的更新操作。在这种情况下，它是<code>add-last-used-to-segments</code></li>
+</ul>
+<h4 id="-mysql-的升级步骤"><a name="28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-upgrade-druid-segments-table-upgrade-step-for-mysql" href="#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-upgrade-druid-segments-table-upgrade-step-for-mysql">#</a> MySQL 的升级步骤</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#005CC5">cd</span><span style="color:#24292E"> ${DRUID_ROOT}</span></span>
+<span class="line"><span style="color:#6F42C1">java</span><span style="color:#005CC5"> -classpath</span><span style="color:#032F62"> "lib/*"</span><span style="color:#005CC5"> -Dlog4j.configurationFile=conf/druid/cluster/_common/log4j2.xml</span><span style="color:#005CC5"> -Ddruid.extensions.directory=</span><span style="color:#032F62">"extensions"</span><span style="color:#005CC5"> -Ddruid.extensions.loadList=[\"mysql-metadata-storage\"]</span><span style="color:#005CC5"> -Ddruid.metadata.storage.type=mysql</span><span style="color:#032F62"> org.apache.druid.cli.Main</span><span style="color:#032F62"> tools</span><span style="color:#032F62"> metadata-update</span><span style="color:#005CC5"> --connectURI=</span><span style="color:#032F62">"&#x3C;mysql-uri>"</span><span style="color:#005CC5"> --user</span><span style="color:#032F62"> USER</span><span style="color:#005CC5"> --password</span><span style="color:#032F62"> PASSWORD</span><span style="color:#005CC5"> --base</span><span style="color:#032F62"> druid</span><span style="color:#005CC5"> --action</span><span style="color:#032F62"> add-used-flag-last-updated-to-segments</span></span></code></pre>
+<h4 id="-postgresql-的升级步骤"><a name="28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-upgrade-druid-segments-table-upgrade-step-for-postgresql" href="#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-upgrade-druid-segments-table-upgrade-step-for-postgresql">#</a> PostgreSQL 的升级步骤</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#005CC5">cd</span><span style="color:#24292E"> ${DRUID_ROOT}</span></span>
+<span class="line"><span style="color:#6F42C1">java</span><span style="color:#005CC5"> -classpath</span><span style="color:#032F62"> "lib/*"</span><span style="color:#005CC5"> -Dlog4j.configurationFile=conf/druid/cluster/_common/log4j2.xml</span><span style="color:#005CC5"> -Ddruid.extensions.directory=</span><span style="color:#032F62">"extensions"</span><span style="color:#005CC5"> -Ddruid.extensions.loadList=[\"postgresql-metadata-storage\"]</span><span style="color:#005CC5"> -Ddruid.metadata.storage.type=postgresql</span><span style="color:#032F62"> org.apache.druid.cli.Main</span><span style="color:#032F62"> tools</span><span style="color:#032F62"> metadata-update</span><span style="color:#005CC5"> --connectURI=</span><span style="color:#032F62">"&#x3C;postgresql-uri>"</span><span style="color:#005CC5"> --user</span><span style="color:#032F62">  USER</span><span style="color:#005CC5"> --password</span><span style="color:#032F62"> PASSWORD</span><span style="color:#005CC5"> --base</span><span style="color:#032F62"> druid</span><span style="color:#005CC5"> --action</span><span style="color:#032F62"> add-used-flag-last-updated-to-segments</span></span></code></pre>
+<h4 id="-手动升级步骤"><a name="28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-upgrade-druid-segments-table-manual-upgrade-step" href="#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-upgrade-druid-segments-table-manual-upgrade-step">#</a> 手动升级步骤</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>ALTER TABLE druid_segments</span></span>
+<span class="line"><span>ADD used_status_last_updated varchar(255);</span></span></code></pre>
+<h3 id="-sql-unnest-的推荐语法-1"><a name="28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-recommended-syntax-for-sql-unnest" href="#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-recommended-syntax-for-sql-unnest">#</a> SQL UNNEST 的推荐语法</h3>
+<p>SQL UNNEST 的推荐语法已更改。我们建议对大多数查询使用 CROSS JOIN 而不是逗号，以防止出现优先级问题。例如，使用：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#D73A49">SELECT</span><span style="color:#24292E"> column_alias_name1 </span><span style="color:#D73A49">FROM</span><span style="color:#24292E"> datasource </span><span style="color:#D73A49">CROSS JOIN</span><span style="color:#24292E"> UNNEST(source_expression1) </span><span style="color:#D73A49">AS</span><span style="color:#24292E"> table_alias_name1(column_alias_name1) </span><span style="color:#D73A49">CROSS JOIN</span><span style="color:#24292E"> UNNEST(source_expression2) </span><span style="color:#D73A49">AS</span><span style="color:#24292E"> table_alias_name2(column_alias_name2), ...</span></span></code></pre>
+<p>不要使用：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#D73A49">SELECT</span><span style="color:#24292E"> column_alias_name </span><span style="color:#D73A49">FROM</span><span style="color:#24292E"> datasource, UNNEST(source_expression1) </span><span style="color:#D73A49">AS</span><span style="color:#24292E"> table_alias_name1(column_alias_name1), UNNEST(source_expression2) </span><span style="color:#D73A49">AS</span><span style="color:#24292E"> table_alias_name2(column_alias_name2), ...</span></span></code></pre>
+<h3 id="-动态参数-1"><a name="28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-dynamic-parameters" href="#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-dynamic-parameters">#</a> 动态参数</h3>
+<p>Apache Calcite 版本已从 1.21 升级到 1.35。作为方解石升级的一部分，动态参数的类型推断行为发生了变化。为了避免任何类型干扰问题，请在 SQL 查询中将所有动态参数显式 <code>CAST</code> 作为特定数据类型。例如，使用：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#D73A49">SELECT</span><span style="color:#24292E"> (</span><span style="color:#005CC5">1</span><span style="color:#D73A49"> *</span><span style="color:#005CC5"> CAST</span><span style="color:#24292E"> (? </span><span style="color:#D73A49">as</span><span style="color:#24292E"> DOUBLE))</span><span style="color:#D73A49">/</span><span style="color:#005CC5">2</span><span style="color:#D73A49"> as</span><span style="color:#24292E"> tmp</span></span></code></pre>
+<p>不要使用：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#D73A49">SELECT</span><span style="color:#24292E"> (</span><span style="color:#005CC5">1</span><span style="color:#D73A49"> *</span><span style="color:#24292E"> ?)</span><span style="color:#D73A49">/</span><span style="color:#005CC5">2</span><span style="color:#D73A49"> as</span><span style="color:#24292E"> tmp</span></span></code></pre>
+<h3 id="-嵌套列格式"><a name="28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-nested-column-format" href="#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-nested-column-format">#</a> 嵌套列格式</h3>
+<p>使用 Druid 28.0.0 创建的 <code>json</code> 类型列不向后兼容早于 26.0.0 的 Druid 版本。
+如果您要从 Druid 26.0.0 之前的版本升级并且使用 <code>json</code> 列，请先升级到 Druid 26.0.0，然后再升级到 Druid 28.0.0。
+此外，要降级到早于 Druid 26.0.0 的版本，在进一步降级之前，应使用 Druid 26.0.0 或 27.0.0 重新摄取在 Druid 28.0.0 中创建的任何新段。</p>
+<p>从以前的版本升级时，您可以继续以向后兼容的格式（版本 4）编写嵌套列。</p>
+<p>在经典的批量摄取作业中，将 <code>formatVersion</code> 包含在 <code>dimensionsSpec</code> 属性的 <code>dimensions</code> 列表中。例如：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#032F62">      "dimensionsSpec"</span><span style="color:#24292E">: {</span></span>
+<span class="line"><span style="color:#005CC5">        "dimensions"</span><span style="color:#24292E">: [</span></span>
+<span class="line"><span style="color:#032F62">          "product"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#032F62">          "department"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">          {</span></span>
+<span class="line"><span style="color:#005CC5">            "type"</span><span style="color:#24292E">: </span><span style="color:#032F62">"json"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">            "name"</span><span style="color:#24292E">: </span><span style="color:#032F62">"shipTo"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">            "formatVersion"</span><span style="color:#24292E">: </span><span style="color:#005CC5">4</span></span>
+<span class="line"><span style="color:#24292E">          }</span></span>
+<span class="line"><span style="color:#24292E">        ]</span></span>
+<span class="line"><span style="color:#24292E">      },</span></span></code></pre>
+<p>要设置默认嵌套列版本，请在公共运行时属性中设置所需的格式版本。例如：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">druid.indexing.formats.nestedColumnFormatVersion</span><span style="color:#D73A49">=</span><span style="color:#005CC5">4</span></span></code></pre>
+<h3 id="-sql-兼容性-1"><a name="28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-sql-compatibility" href="#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-sql-compatibility">#</a> SQL 兼容性</h3>
+<p>从 Druid 28.0.0 开始，Druid 处理空值和布尔值的默认方式已经改变。</p>
+<p>对于空值，Druid 现在区分空字符串和没有数据的记录，以及空数字记录和 <code>0</code>。<br>
+您可以通过将 <code>druid.generic.useDefaultValueForNull</code> 设置为 <code>true</code> 来恢复到以前的行为。</p>
+<p>此属性会影响存储和查询，并且必须在所有 Druid 服务类型上设置，以便在摄取时和查询时都可用。将此设置恢复为旧值可恢复之前的行为，而无需重新引入。</p>
+<p>对于布尔值，Druid 现在严格使用 <code>1</code> (true) 或 <code>0</code> (false)。以前，true 和 false 可以分别表示为 <code>true</code> 和 <code>false</code> 以及 <code>1</code> 和 <code>0</code>。此外，Druid 现在为 <code>True &#x26;&#x26; NULL</code> 等布尔比较返回空值。</p>
+<p>您可以通过将 <code>druid.expressions.useStrictBooleans</code> 设置为 <code>false</code> 来恢复到以前的行为。
+此属性会影响存储和查询，并且必须在所有 Druid 服务类型上设置，以便在摄取时和查询时都可用。将此设置恢复为旧值可恢复之前的行为，而无需重新引入。</p>
+<p>下表说明了一些示例场景以及更改的影响。</p>
+<details><summary>显示表格</summary>
+<table>
+<thead>
+<tr>
+<th>查询</th>
+<th>德鲁伊 27.0.0 及更早版本</th>
+<th>德鲁伊28.0.0及更高版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>查询空字符串</td>
+<td>空字符串 (<code>''</code>) 或 null</td>
+<td>空字符串 (<code>''</code>)</td>
+</tr>
+<tr>
+<td>查询空字符串</td>
+<td>空或空</td>
+<td>空</td>
+</tr>
+<tr>
+<td>计数(*)</td>
+<td>所有行，包括空值</td>
+<td>所有行，包括空值</td>
+</tr>
+<tr>
+<td>计数（列）</td>
+<td>不包括空字符串的所有行</td>
+<td>包括空字符串但不包括空值的所有行</td>
+</tr>
+<tr>
+<td>表达式 100 &#x26;&#x26; 11</td>
+<td>11</td>
+<td>1</td>
+</tr>
+<tr>
+<td>表达式 100</td>
+<td></td>
+<td>11</td>
+</tr>
+<tr>
+<td>空 FLOAT/DOUBLE 列</td>
+<td>0.0</td>
+<td>空</td>
+</tr>
+<tr>
+<td>空长列</td>
+<td>0</td>
+<td>空</td>
+</tr>
+<tr>
+<td>空<code>__time</code>柱</td>
+<td>0，表示 1970-01-01 00:00:00 UTC</td>
+<td>1970-01-01 00:00:00 世界标准时间</td>
+</tr>
+<tr>
+<td>空 MVD 列</td>
+<td><code>''</code></td>
+<td>空</td>
+</tr>
+<tr>
+<td>阵列</td>
+<td>空</td>
+<td>空</td>
+</tr>
+<tr>
+<td>复杂</td>
+<td>无</td>
+<td>空</td>
+</tr>
+<tr>
+<td>&#x3C;/详情></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>在升级到 Druid 28.0.0 之前，请更新您的查询以考虑更改的行为，如以下部分所述。</p>
+<h4 id="-null-过滤器"><a name="28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-sql-compatibility-null-filters" href="#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-sql-compatibility-null-filters">#</a> NULL 过滤器</h4>
+<p>如果您的查询在过滤条件中使用 NULL 来匹配空值和空字符串，则应该为空字符串添加显式过滤子句。例如，将 <code>s IS NULL</code> 更新为 <code>s IS NULL OR s = ''</code>。</p>
+<h4 id="-count-个函数"><a name="28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-sql-compatibility-count-functions" href="#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-sql-compatibility-count-functions">#</a> COUNT 个函数</h4>
+<p><code>COUNT(column)</code> 现在计算空字符串。如果要继续从计数中排除空字符串，请将 <code>COUNT(column)</code> 替换为 <code>COUNT(column) FILTER(WHERE column &#x3C;> '')</code>。</p>
+<h4 id="-groupby-查询"><a name="28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-sql-compatibility-groupby-queries" href="#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-sql-compatibility-groupby-queries">#</a> GroupBy 查询</h4>
+<p>对包含空值的列进行 GroupBy 查询现在可以有附加条目，因为空值可以与空字符串共存。</p>
+<h3 id="-在降级之前停止从多个-kafka-主题摄取的-supervisor"><a name="28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-stop-supervisors-that-ingest-from-multiple-kafka-topics-before-downgrading" href="#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-stop-supervisors-that-ingest-from-multiple-kafka-topics-before-downgrading">#</a> 在降级之前停止从多个 Kafka 主题摄取的 Supervisor</h3>
+<p>如果您在 Druid 28.0.0 或更高版本中添加了从多个 Kafka 主题摄取的主管，请在降级到 Druid 28.0.0 之前的版本之前停止这些主管，因为主管在 Druid 28.0.0 之前的版本中会失败。</p>
+<h3 id="-lenientaggregatormerge-已弃用"><a name="28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-%60lenientaggregatormerge%60-deprecated" href="#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-%60lenientaggregatormerge%60-deprecated">#</a> <code>lenientAggregatorMerge</code> 已弃用</h3>
+<p>段元数据查询中的 <code>lenientAggregatorMerge</code> 属性已被弃用。它将在未来的版本中删除。
+请改用 <code>aggregatorMergeStrategy</code>。除了<code>lenientAggregatorMerge</code>的<code>strict</code>和<code>lenient</code>策略之外，<code>aggregatorMergeStrategy</code>还支持<code>latest</code>和<code>earliest</code>策略。</p>
+<p><a href="https://github.com/apache/druid/pull/14560">#14560</a>
+<a href="https://github.com/apache/druid/pull/14598">#14598</a></p>
+<h3 id="-代理并行合并配置选项"><a name="28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-broker-parallel-merge-config-options" href="#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-broker-parallel-merge-config-options">#</a> 代理并行合并配置选项</h3>
+<p><code>druid.processing.merge.pool.*</code> 和 <code>druid.processing.merge.task.*</code> 的路径已被展平以使用 <code>druid.processing.merge.*</code> 代替。配置的旧路径现已弃用，并将在未来版本中删除。迁移您的设置以使用新路径，因为将来旧路径将被忽略。</p>
+<p><a href="https://github.com/apache/druid/pull/14695">#14695</a></p>
+<h3 id="-array-类型列的摄取选项"><a name="28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-ingestion-options-for-array-typed-columns" href="#28.0.0-upgrade-notes-and-incompatible-changes-upgrade-notes-ingestion-options-for-array-typed-columns">#</a> ARRAY 类型列的摄取选项</h3>
+<p>从 Druid 28.0.0 开始，当您将查询上下文参数 <code>arrayIngestMode</code> 设置为 <code>array</code> 时，MSQ 任务引擎可以检测数组并将其摄取为 ARRAY 类型列。
+<code>arrayIngestMode</code> 上下文参数控制 ARRAY 类型值如何存储在 Druid 段中。</p>
+<p>当您将 <code>arrayIngestMode</code> 设置为 <code>array</code>（建议符合 SQL 要求）时，MSQ 任务引擎将所有 ARRAY 类型值存储在 <a href="https://druid.apache.org/docs/latest/querying/arrays">ARRAY 类型列</a> 中，并支持存储 VARCHAR 和数字类型数组。</p>
+<p>为了向后兼容，<code>arrayIngestMode</code> 默认为 <code>mvd</code>。当<code>"arrayIngestMode":"mvd"</code>时，Druid仅支持VARCHAR类型数组并将其存储为<a href="https://druid.apache.org/docs/latest/querying/multi-value-dimensions">多值字符串列</a>。</p>
+<p>当您将 <code>arrayIngestMode</code> 设置为 <code>none</code> 时，Druid 在尝试存储任何类型的数组时都会抛出异常。</p>
+<p>有关如何通过基于 SQL 的提取来提取 <code>ARRAY</code> 类型列的更多信息，请参阅<a href="https://druid.apache.org/docs/latest/querying/sql-data-types#arrays">SQL 数据类型</a> 和<a href="https://druid.apache.org/docs/latest/querying/arrays">数组列</a>。</p>
+<h2 id="-不兼容的更改"><a name="28.0.0-upgrade-notes-and-incompatible-changes-incompatible-changes" href="#28.0.0-upgrade-notes-and-incompatible-changes-incompatible-changes">#</a> 不兼容的更改</h2>
+<h3 id="-已删除-hadoop-2"><a name="28.0.0-upgrade-notes-and-incompatible-changes-incompatible-changes-removed-hadoop-2" href="#28.0.0-upgrade-notes-and-incompatible-changes-incompatible-changes-removed-hadoop-2">#</a> 已删除 Hadoop 2</h3>
+<p>对 Hadoop 2 的支持已被删除。
+如果您现在使用 Hadoop 2.x 进行摄取，请迁移到基于 SQL 的摄取或基于 JSON 的批量摄取。
+如果无法迁移到 Druid 的内置摄取，则必须先将 Hadoop 基础设施升级到 3.x+，然后再升级到 Druid 28.0.0。</p>
+<p><a href="https://github.com/apache/druid/pull/14763">#14763</a></p>
+<h3 id="-已删除-groupby-v1"><a name="28.0.0-upgrade-notes-and-incompatible-changes-incompatible-changes-removed-groupby-v1-" href="#28.0.0-upgrade-notes-and-incompatible-changes-incompatible-changes-removed-groupby-v1-">#</a> 已删除 GroupBy v1</h3>
+<p>GroupBy v1 引擎已被删除。请改用 GroupBy v2 引擎，它是多个版本的默认 GroupBy 引擎。
+对您的查询应该没有影响。</p>
+<p>此外，<code>AggregatorFactory.getRequiredColumns</code> 已被弃用，并将在未来版本中删除。如果您有实现 <code>AggregatorFactory</code> 的扩展，则应从您的实现中删除此方法。</p>
+<p><a href="https://github.com/apache/druid/pull/14866">#14866</a></p>
+<h3 id="-删除了协调器动态配置"><a name="28.0.0-upgrade-notes-and-incompatible-changes-incompatible-changes-removed-coordinator-dynamic-configs" href="#28.0.0-upgrade-notes-and-incompatible-changes-incompatible-changes-removed-coordinator-dynamic-configs">#</a> 删除了协调器动态配置</h3>
+<p><code>decommissioningMaxPercentOfMaxSegmentsToMove</code> 配置已被删除。
+此配置的用例现在由智能段加载处理，默认情况下启用。</p>
+<p><a href="https://github.com/apache/druid/pull/14923">#14923</a></p>
+<h3 id="-删除了-cachingcost-策略"><a name="28.0.0-upgrade-notes-and-incompatible-changes-incompatible-changes-removed-%60cachingcost%60-strategy" href="#28.0.0-upgrade-notes-and-incompatible-changes-incompatible-changes-removed-%60cachingcost%60-strategy">#</a> 删除了 <code>cachingCost</code> 策略</h3>
+<p><code>cachingCost</code> 段加载策略已被删除。
+使用<code>cost</code>代替，其优点与<code>cachingCost</code>相同。</p>
+<p>如果您设置了 <code>cachingCost</code>，系统会忽略此设置并自动使用 <code>cost</code>。</p>
+<p><a href="https://github.com/apache/druid/pull/14798">#14798</a></p>
+<h3 id="-删除了-insertcannotorderbydescending"><a name="28.0.0-upgrade-notes-and-incompatible-changes-incompatible-changes-removed-%60insertcannotorderbydescending%60" href="#28.0.0-upgrade-notes-and-incompatible-changes-incompatible-changes-removed-%60insertcannotorderbydescending%60">#</a> 删除了 <code>InsertCannotOrderByDescending</code></h3>
+<p>已弃用的 MSQ 故障 <code>InsertCannotOrderByDescending</code> 已被删除。</p>
+<p><a href="https://github.com/apache/druid/pull/14588">#14588</a></p>
+<h3 id="-删除了-handoff-api-的向后兼容性代码"><a name="28.0.0-upgrade-notes-and-incompatible-changes-incompatible-changes-removed-the-backward-compatibility-code-for-the-handoff-api" href="#28.0.0-upgrade-notes-and-incompatible-changes-incompatible-changes-removed-the-backward-compatibility-code-for-the-handoff-api">#</a> 删除了 Handoff API 的向后兼容性代码</h3>
+<p><code>CoordinatorBasedSegmentHandoffNotifier</code> 中 Handoff API 的向后兼容性代码已被删除。
+如果您要从早于 0.14.0 的 Druid 版本升级，请先升级到较新版本的 Druid，然后再升级到 Druid 28.0.0。</p>
+<p><a href="https://github.com/apache/druid/pull/14652">#14652</a></p>
+<h2 id="-开发者说明"><a name="28.0.0-upgrade-notes-and-incompatible-changes-developer-notes" href="#28.0.0-upgrade-notes-and-incompatible-changes-developer-notes">#</a> 开发者说明</h2>
+<h3 id="-依赖项更新"><a name="28.0.0-upgrade-notes-and-incompatible-changes-developer-notes-dependency-updates" href="#28.0.0-upgrade-notes-and-incompatible-changes-developer-notes-dependency-updates">#</a> 依赖项更新</h3>
+<p>以下依赖项的版本已更改：</p>
+<ul>
+<li>番石榴至 <code>31.1-jre</code>。如果您使用的扩展具有 Druid 的传递 Guava 依赖项，它可能会受到影响 <a href="https://github.com/apache/druid/pull/14767">#14767</a></li>
+<li>Google Client API 已从 1.26.0 升级到 2.0.0 <a href="https://github.com/apache/druid/pull/14414">#14414</a></li>
+<li>Apache Kafka 已升级为 3.5.1 <a href="https://github.com/apache/druid/pull/14721">#14721</a>
+*方解石已升级为1.35 <a href="https://github.com/apache/druid/pull/14510">#14510</a></li>
+<li><code>RoaringBitmap</code> 已从 0.9.0 升级为 0.9.49 <a href="https://github.com/apache/druid/pull/15006">#15006</a></li>
+<li><code>snappy-java</code> 已升级为 1.1.10.3 <a href="https://github.com/apache/druid/pull/14641">#14641</a></li>
+<li><code>decode-uri-component</code> 已升级为 0.2.2 <a href="https://github.com/apache/druid/pull/13481">#13481</a></li>
+<li><code>word-wrap</code> 已升级为 1.2.4 <a href="https://github.com/apache/druid/pull/14613">#14613</a></li>
+<li><code>tough-cookie</code> 已升级为 4.1.3 <a href="https://github.com/apache/druid/pull/14557">#14557</a></li>
+<li><code>qs</code> 已升级为 6.5.3 <a href="https://github.com/apache/druid/pull/13510">#13510</a></li>
+<li><code>api-util</code> 已升级为 2.1.3 <a href="https://github.com/apache/druid/pull/14852">#14852</a></li>
+<li><code>commons-cli</code> 已从 1.3.1 升级为 1.5.0 <a href="https://github.com/apache/druid/pull/14837">#14837</a></li>
+<li><code>tukaani:xz</code> 已从 1.8 升级为 1.9 <a href="https://github.com/apache/druid/pull/14839">#14839</a></li>
+<li><code>commons-compress</code> 已从 1.21 升级为 1.23.0 <a href="https://github.com/apache/druid/pull/14820">#14820</a></li>
+<li><code>protobuf.version</code> 已从 3.21.7 升级为 3.24.0 <a href="https://github.com/apache/druid/pull/14823">#14823</a></li>
+<li><code>dropwizard.metrics.version</code> 已从 4.0.0 升级为 4.2.19 <a href="https://github.com/apache/druid/pull/14824">#14824</a></li>
+<li><code>assertj-core</code> 已从 3.19.0 升级为 3.24.2 <a href="https://github.com/apache/druid/pull/14815">#14815</a></li>
+<li><code>maven-source-plugin</code> 已从 2.2.1 升级为 3.3.0 <a href="https://github.com/apache/druid/pull/14812">#14812</a></li>
+<li><code>scala-library</code> 已从 2.13.9 升级为 2.13.11 <a href="https://github.com/apache/druid/pull/14826">#14826</a></li>
+<li><code>oshi-core</code> 已从 6.4.2 升级为 6.4.4 <a href="https://github.com/apache/druid/pull/14814">#14814</a></li>
+<li><code>maven-surefire-plugin</code> 已从 3.0.0-M7 升级为 3.1.2 <a href="https://github.com/apache/druid/pull/14813">#14813</a></li>
+<li><code>apache-rat-plugin</code> 已从 0.12 升级为 0.15 <a href="https://github.com/apache/druid/pull/14817">#14817</a></li>
+<li><code>jclouds.version</code> 已从 1.9.1 升级为 2.0.3 <a href="https://github.com/apache/druid/pull/14746">#14746</a></li>
+<li><code>dropwizard.metrics:metrics-graphite</code> 已从 3.1.2 升级为 4.2.19 <a href="https://github.com/apache/druid/pull/14842">#14842</a></li>
+<li><code>postgresql</code> 已从 42.4.1 升级为 42.6.0 <a href="https://github.com/apache/druid/pull/13959">#13959</a></li>
+<li><code>org.mozilla:rhino</code>已升级<a href="https://github.com/apache/druid/pull/14765">#14765</a></li>
+<li><code>apache.curator.version</code> 已从 5.4.0 升级为 5.5.0 <a href="https://github.com/apache/druid/pull/14843">#14843</a></li>
+<li><code>jackson-databind</code> 已升级为 2.12.7 <a href="https://github.com/apache/druid/pull/14770">#14770</a></li>
+<li><code>icu4j</code>从55.1到73.2已从55.1升级到73.2 <a href="https://github.com/apache/druid/pull/14853">#14853</a></li>
+<li><code>joda-time</code> 已从 2.12.4 升级为 2.12.5 <a href="https://github.com/apache/druid/pull/14855">#14855</a></li>
+<li><code>tough-cookie</code> 已从 4.0.0 升级为 4.1.3 <a href="https://github.com/apache/druid/pull/14557">#14557</a></li>
+<li><code>word-wrap</code> 已从 1.2.3 升级为 1.2.4 <a href="https://github.com/apache/druid/pull/14613">#14613</a></li>
+<li><code>decode-uri-component</code> 已从 0.2.0 升级为 0.2.2 <a href="https://github.com/apache/druid/pull/13481">#13481</a></li>
+<li><code>snappy-java</code> 已从 1.1.10.1 升级为 1.1.10.3 <a href="https://github.com/apache/druid/pull/14641">#14641</a></li>
+<li>Hibernate 验证器版本已升级 <a href="https://github.com/apache/druid/pull/14757">#14757</a></li>
+<li>Java 依赖项的 Dependabot PR 限制已增加 <a href="https://github.com/apache/druid/pull/14804">#14804</a></li>
+<li><code>jetty</code> 已从 9.4.51.v20230217 升级为 9.4.53.v20231009 <a href="https://github.com/apache/druid/pull/15129">#15129</a></li>
+<li><code>netty4</code> 已从 4.1.94.Final 升级为 4.1.100.Final <a href="https://github.com/apache/druid/pull/15129">#15129</a></li>
+</ul>
+<h1 id="-制作人员"><a name="28.0.0-credits" href="#28.0.0-credits">#</a> 制作人员</h1>
+<p>@2bethere
+@317布莱恩
+@a2l007
+@abhishekagarwal87
+@abhishekrb19
+@adarshsanjeev
+@aho135
+@亚历山大赛达科夫
+@AmatyaAvadhanula
+@asdf2014
+@本克鲁格
+@capistrant
+@clintropolis
+@克里斯蒂安波帕
+@cryptoe
+@demo-kratia
+@dependabot[机器人]
+@ektravel
+@findingrish
+@gargvishesh
+@georgew5656
+@ginm
+@giuliotal
+@hardikbajaj
+@hqx871
+@imply-cheddar
+@Jaehui-Lee
+@jasonk000
+@jon-wei
+@kaisun2000
+@kfaraz
+@kgyrtkirk
+@LakshSingla
+@lorem—ipsum
+@maytasm
+@pagrawal10
+@潘红安
+@彼得马沙利奥
+@pranavbhole
+@rash67
+@rohangarg
+@SamWheating
+@sergioferragut
+@slfan1989
+@somu-暗示
+@suneet-s
+@techdocsmith
+@tejaswini-暗示
+@TSFenwick
+@沃吉维茨基
+@vtlim
+@作家吉尔
+@xvrl
+@yianni
+@永刚
+@yuanlihan
+@zachjsh</p>
+<hr>
+<blockquote>
+<p>📦 仓库：<a href="https://github.com/apache/druid">apache/druid</a> · 🏷️ 版本：<code>druid-28.0.0</code> · 📅 发布：2023-11-15 · <a href="https://github.com/apache/druid/releases/tag/druid-28.0.0">查看英文原版 Release</a></p>
+</blockquote>
+<p><em>本文由 NextStack 自动翻译，内容以官方英文原文为准。</em></p></details>   </div> <p class="muted" style="margin-top:var(--s8);font-size:12.5px;border-top:1px solid var(--line);padding-top:var(--s4)"> Release Note 由上游项目发布，本站仅索引镜像，版权归原作者所有。 </p> <nav class="pager" aria-label="Release navigation"> <a href="/zh/release_note/druid/druid_druid-28.0.1"> <span class="k">← 下一个</span> <span class="t">28.0.1</span> </a> <a href="/zh/release_note/druid/druid_druid-27.0.0"> <span class="k">上一个 →</span> <span class="t">27.0.0</span> </a> </nav> <aside class="ad-slot" aria-label="广告" data-astro-cid-fgwukgf6><div class="ad-slot-label" data-astro-cid-fgwukgf6>广告</div><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4184355057086168" data-ad-slot="9133765584" data-ad-format="auto" data-full-width-responsive="true" data-astro-cid-fgwukgf6></ins><script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script></aside> </article> <aside class="rail"> <div class="rail-card"> <div class="rail-title">Source</div> <ul class="rail-list"> <li> <a href="https://github.com/apache/druid/releases/tag/28.0.0" target="_blank" rel="noopener"> <span>GitHub 原文</span> <span class="d">↗</span> </a> </li> <li> <a href="https://github.com/apache/druid" target="_blank" rel="noopener"> <span>apache/druid</span> <span class="d">↗</span> </a> </li> </ul> </div> <div class="rail-card rail-toc"> <div class="rail-title">本页目录</div> <nav> <a href="#-sql-兼容性" class># SQL 兼容性</a><a href="#-三值逻辑" class="lv3"># 三值逻辑</a><a href="#-严格布尔值" class="lv3"># 严格布尔值</a><a href="#-null-处理" class="lv3"># NULL 处理</a><a href="#-sql-规划器改进" class># SQL 规划器改进</a><a href="#-动态参数" class="lv3"># 动态参数</a><a href="#-异步查询和深度存储查询" class># 异步查询和深度存储查询</a><a href="#-支持多种结果格式" class="lv3"># 支持多种结果格式</a><a href="#-扩大深度存储查询的访问范围" class="lv3"># 扩大深度存储查询的访问范围</a><a href="#-msq-实时任务查询" class># MSQ 实时任务查询</a><a href="#-msq-对-union-all-查询的支持" class># MSQ 对 UNION ALL 查询的支持</a><a href="#-从多个-kafka-主题摄取到单个数据源" class># 从多个 Kafka 主题摄取到单个数据源</a><a href="#-sql-unnest-和摄取扁平化" class># SQL UNNEST 和摄取扁平化</a><a href="#-sql-unnest-的推荐语法" class="lv3"># SQL UNNEST 的推荐语法</a><a href="#-窗口函数实验" class># 窗口函数（实验）</a><a href="#-并发追加和替换实验" class># 并发追加和替换（实验）</a><a href="#-用于追加和替换批量摄取作业的任务锁" class="lv3"># 用于追加和替换批量摄取作业的任务锁</a><a href="#-具有并发替换的流式摄取" class="lv3"># 具有并发替换的流式摄取</a><a href="#-web-控制台" class># Web 控制台</a><a href="#-添加了对分段加载查询上下文参数的-ui-支持" class="lv3"># 添加了对分段加载查询上下文参数的 UI 支持</a><a href="#-添加了并发追加和替换开关" class="lv3"># 添加了并发追加和替换开关</a><a href="#-添加了-ui-支持用于从多个-kafka-主题摄取到单个数据源" class="lv3"># 添加了 UI 支持，用于从多个 Kafka 主题摄取到单个数据源</a><a href="#-其他-web-控制台改进" class="lv3"># 其他 Web 控制台改进</a><a href="#-摄取" class># 摄取</a> </nav> </div> <div class="rail-card"> <div class="rail-title">版本历史</div> <ul class="rail-list"> <li> <a href="/zh/release_note/druid/druid_druid-39.0.0"> <span class="v">39.0.0</span> <span class="d">26-11-19</span> </a> </li><li> <a href="/zh/release_note/druid/druid_druid-38.0.0"> <span class="v">38.0.0</span> <span class="d">26-10-01</span> </a> </li><li> <a href="/zh/release_note/druid/druid_druid-37.0.0"> <span class="v">37.0.0</span> <span class="d">26-05-08</span> </a> </li><li> <a href="/zh/release_note/druid/druid_druid-36.0.0"> <span class="v">36.0.0</span> <span class="d">26-02-09</span> </a> </li><li> <a href="/zh/release_note/druid/druid_35.0.1"> <span class="v">35.0.1</span> <span class="d">25-12-15</span> </a> </li><li> <a href="/zh/release_note/druid/druid_35.0.0"> <span class="v">35.0.0</span> <span class="d">25-11-18</span> </a> </li><li> <a href="/zh/release_note/druid/druid_34.0.0"> <span class="v">34.0.0</span> <span class="d">25-08-11</span> </a> </li><li> <a href="/zh/release_note/druid/druid_druid-33.0.0"> <span class="v">33.0.0</span> <span class="d">25-04-29</span> </a> </li> </ul> <a href="/zh/releases/druid" class="mono" style="display:inline-block;margin-top:var(--s3);font-size:11.5px;color:var(--ink-3)"> 查看全部 31 条 →
+</a> </div> </aside> </div> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

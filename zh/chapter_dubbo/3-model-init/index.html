@@ -1,0 +1,888 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**框架,应用程序,模块领域模型Model对象的初始化** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_dubbo/3-model-init/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_dubbo/3-model-init"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_dubbo/3-model-init/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_dubbo/3-model-init"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**框架,应用程序,模块领域模型Model对象的初始化** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_dubbo/3-model-init/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_dubbo/3-model-init/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>dubbo</h3> <ul> <li> <a href="/zh/chapter_dubbo/1-learn-from-a-demo" class="lv0" title="**从一个服务提供者的Demo说起**"> **从一个服务提供者的Demo说起** </a> </li><li> <a href="/zh/chapter_dubbo/2-serviceconfig-config" class="lv0" title="**启动服务前服务配置ServiceConfig类型是如何初始化的?**"> **启动服务前服务配置ServiceConfig类型是如何初始化的?** </a> </li><li> <a href="/zh/chapter_dubbo/3-model-init" class="lv0" aria-current="page" title="**框架,应用程序,模块领域模型Model对象的初始化**"> **框架,应用程序,模块领域模型Model对象的初始化** </a> </li><li> <a href="/zh/chapter_dubbo/4-extension-init" class="lv0" title="**Dubbo的扩展机制**"> **Dubbo的扩展机制** </a> </li><li> <a href="/zh/chapter_dubbo/5-getadaptiveextension" class="lv0" title="5-getadaptiveextension"> 5-getadaptiveextension </a> </li><li> <a href="/zh/chapter_dubbo/6-extension-wrapper" class="lv0" title="**Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析**"> **Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/7-extension-activate" class="lv0" title="**Dubbo的SPI扩展机制之自动激活扩展Activate源码解析**"> **Dubbo的SPI扩展机制之自动激活扩展Activate源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/8-dubbobootstrap" class="lv0" title="**Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化**"> **Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化** </a> </li><li> <a href="/zh/chapter_dubbo/9-application-config" class="lv0" title="**Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig**"> **Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig** </a> </li><li> <a href="/zh/chapter_dubbo/10-registryconfig" class="lv0" title="**Dubbo启动器DubboBootstrap添加注册中心配置信息RegistryConfig**"> **Dubbo启动器DubboBootstrap添加注册中心配置信息RegistryConfig** </a> </li><li> <a href="/zh/chapter_dubbo/11-protocolconfig" class="lv0" title="**Dubbo启动器DubboBootstrap添加协议配置信息ProtocolConfig**"> **Dubbo启动器DubboBootstrap添加协议配置信息ProtocolConfig** </a> </li><li> <a href="/zh/chapter_dubbo/12-start-life-cycle" class="lv0" title="**全局视野来看Dubbo3的服务启动生命周期**"> **全局视野来看Dubbo3的服务启动生命周期** </a> </li><li> <a href="/zh/chapter_dubbo/13-configcenter" class="lv0" title="**Dubbo的三大中心之配置中心**"> **Dubbo的三大中心之配置中心** </a> </li><li> <a href="/zh/chapter_dubbo/14-config-load" class="lv0" title="**Dubbo配置加载全解析**"> **Dubbo配置加载全解析** </a> </li><li> <a href="/zh/chapter_dubbo/15-metadata" class="lv0" title="**Dubbo的三大中心之元数据中心源码解析**"> **Dubbo的三大中心之元数据中心源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/16-moduledeployer" class="lv0" title="**模块发布器发布服务全过程**"> **模块发布器发布服务全过程** </a> </li><li> <a href="/zh/chapter_dubbo/17-provider-register" class="lv0" title="**Dubbo服务提供者的双注册原理**"> **Dubbo服务提供者的双注册原理** </a> </li><li> <a href="/zh/chapter_dubbo/18-metadataService-export" class="lv0" title="**Dubbo3元数据服务MetadataService的导出**"> **Dubbo3元数据服务MetadataService的导出** </a> </li><li> <a href="/zh/chapter_dubbo/19-consuemr-demo" class="lv0" title="**重新来过从一个服务消费者的Demo说起**"> **重新来过从一个服务消费者的Demo说起** </a> </li><li> <a href="/zh/chapter_dubbo/20-reference-config" class="lv0" title="**Dubbo3服务引用配置ReferenceConfig**"> **Dubbo3服务引用配置ReferenceConfig** </a> </li><li> <a href="/zh/chapter_dubbo/21-refer-services" class="lv0" title="**Dubbo3消费者引用服务入口**"> **Dubbo3消费者引用服务入口** </a> </li><li> <a href="/zh/chapter_dubbo/22-migration-invoker" class="lv0" title="**Dubbo3消费者自动感应决策应用级服务发现原理**"> **Dubbo3消费者自动感应决策应用级服务发现原理** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_dubbo">dubbo</a><span class="sep">/</span><span>**框架,应用程序,模块领域模型Model对象的初始化**</span> </nav> <div class="prose">  <h1 id="框架应用程序模块领域模型model对象的初始化"><strong>框架,应用程序,模块领域模型Model对象的初始化</strong></h1>
+<p>在上一章中我们详细看了服务配置ServiceConfig类型的初始化，
+不过我们跳过了AbstractMethodConfig的构造器中创建模块模型对象的过程，
+那这一章我们就来看下模块模型对象的初始化过程:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#6F42C1"> AbstractMethodConfig</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">(ApplicationModel.</span><span style="color:#6F42C1">defaultModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getDefaultModule</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p><strong>那为什么会在Dubbo3的新版本中加入这个域模型呢</strong> ，主要有如下原因
+之前dubbo都是只有一个作用域的，通过静态类 属性共享
+增加域模型是为了:</p>
+<ol>
+<li>让Dubbo支持多应用的部署，这块一些大企业有诉求</li>
+<li>从架构设计上，解决静态属性资源共享、清理的问题</li>
+<li>分层模型将应用的管理和服务的管理分开</li>
+</ol>
+<p>可能比较抽象，可以具体点来看。
+Dubbo3中在启动时候需要启动配置中心、元数据中心，这个配置中心和元数据中心可以归应用模型来管理。
+Dubbo作为RPC框架又需要启动服务和引用服务，服务级别的管理就交给了这个模块模型来管理。
+分层次的管理方便我们理解和处理逻辑，父子级别的模型又方便了数据传递。</p>
+<p>了解过JVM类加载机制的同学应该就比较清楚JVM类加载过程中的数据访问模型。子类加载器先交给父类加载器查找，找不到再从子类加载器中查找。Dubbo的分层模型类似这样一种机制，这一章先来简单了解下，后面用到时候具体细说。</p>
+<h2 id="模型对象的关系"><strong>模型对象的关系</strong></h2>
+<p>为了不增加复杂性，我们这里仅仅列出模型对象类型类型之间的继承关系如下所示:
+<img src="/img/chapter_dubbo/3-model.png" alt="3-model.png"></p>
+<center>图3.1 模型对象的继承关系</center>
+<p>模型对象一共有4个，公共的属性和操作放在了域模型类型中，下面我们来详细说下这几个模型类型:</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ExtensionAccessor</strong></td>
+<td>- 扩展的统一访问器 - 用于获取扩展加载管理器ExtensionDirector对象 <strong>获取扩展对象ExtensionLoader</strong> 根据扩展名字 <strong>获取具体扩展对象</strong> - 获取自适应扩展对象- 获取默认扩展对象</td>
+</tr>
+<tr>
+<td><strong>ScopeModel</strong></td>
+<td>模型对象的公共抽象父类型  ，内部id用于表示模型树的层次结构  公共模型名称，可以被用户设置 描述信息 类加载器管理 父模型管理parent 当前模型的所属域ExtensionScope有: <strong>FRAMEWORK(框架)</strong> ，<strong>APPLICATION(应用)</strong> ，<strong>MODULE(模块)</strong> ，<strong>SELF(自给自足</strong> ，为每个作用域创建一个实例，用于特殊的SPI扩展，如ExtensionInjector) 具体的扩展加载程序管理器对象的管理: <strong>ExtensionDirector</strong> 域Bean工厂管理，一个内部共享的Bean工厂 <strong>ScopeBeanFactory</strong></td>
+</tr>
+<tr>
+<td><strong>FrameworkModel</strong></td>
+<td>dubbo框架模型，可与多个应用程序共享    	- FrameworkModel实例对象集合，allInstances ，所有ApplicationModel实例对象集合，applicationModels ，发布的ApplicationModel实例对象集合pubApplicationModels ，框架的服务存储库 <strong>FrameworkServiceRepository</strong> 类型对象(数据存储在内存中) ，内部的应用程序模型对象internalApplicationModel</td>
+</tr>
+<tr>
+<td><strong>ApplicationModel</strong></td>
+<td>表示正在使用Dubbo的应用程序，并存储基本 <strong>元数据信息</strong> ，以便在RPC调用过程中使用。 ApplicationModel包括许多关于 <strong>发布服务</strong> 的ProviderModel和许多关于订阅服务的Consumer Model。</td>
+</tr>
+<tr>
+<td><strong>ModuleModel</strong></td>
+<td>服务模块的模型」</td>
+</tr>
+</tbody>
+</table>
+<p>了解了这几个模型对象的关系我们可以了解到这几个模型对象的管理层级从框架到应用程序，然后到模块的管理(FrameworkModel->ApplicationModel->ModuleModel)，他们主要用来针对框架，应用程序，模块的 <strong>存储</strong> ，<strong>发布管理，</strong> ，<strong>配置管理</strong></p>
+<p>看来Dubbo3 针对应用服务治理与运维这一块也是在努力尝试.</p>
+<h3 id="abstractmethodconfig-配置对象中获取模型对象的调用"><strong>AbstractMethodConfig 配置对象中获取模型对象的调用</strong></h3>
+<p>模块模型(ModuleModel)参数对象的创建
+这个AbstractMethodConfig构造器在初始化的时候调调用了这么一行代码做为参数向父类型传递对象.</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">ApplicationModel.</span><span style="color:#6F42C1">defaultModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getDefaultModule</span><span style="color:#24292E">()</span></span></code></pre>
+<p>默认情况下使用ApplicationModel的静态方法获取默认的模型对象和默认的模块对象</p>
+<p><strong>ApplicationModel</strong> (应用程序领域模型)类型中获取默认模型对象的方法:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> public</span><span style="color:#D73A49"> static</span><span style="color:#24292E"> ApplicationModel </span><span style="color:#6F42C1">defaultModel</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">        // should get from default FrameworkModel, avoid out of sync</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> FrameworkModel.</span><span style="color:#6F42C1">defaultModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">defaultApplication</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>这里可以看到要想获取应用程序模型必须先通过框架领域模型来获取层级也是框架领域模型到应用程序领域模型</p>
+<h3 id="使用双重校验锁获取框架模型对象"><strong>使用双重校验锁获取框架模型对象</strong></h3>
+<p>FrameworkModel(框架模型)的默认模型获取工厂方法defaultModel()</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">	/**</span></span>
+<span class="line"><span style="color:#6A737D">	* 在源码的注释上有这么一句话:在销毁默认的 FrameworkModel 时， FrameworkModel.defaultModel() </span></span>
+<span class="line"><span style="color:#6A737D">	*或ApplicationModel.defaultModel() 将返回一个损坏的模型</span></span>
+<span class="line"><span style="color:#6A737D">	*可能会导致不可预知的问题。建议：尽量避免使用默认模型。</span></span>
+<span class="line"><span style="color:#6A737D">	*/</span></span>
+<span class="line"><span style="color:#D73A49">   public</span><span style="color:#D73A49"> static</span><span style="color:#24292E"> FrameworkModel </span><span style="color:#6F42C1">defaultModel</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">       //双重校验锁的形式创建单例对象</span></span>
+<span class="line"><span style="color:#24292E">        FrameworkModel instance </span><span style="color:#D73A49">=</span><span style="color:#24292E"> defaultInstance;</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (instance </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            synchronized</span><span style="color:#24292E"> (globalLock) {</span></span>
+<span class="line"><span style="color:#6A737D">            	//重置默认框架模型</span></span>
+<span class="line"><span style="color:#6F42C1">                resetDefaultFrameworkModel</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (defaultInstance </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    defaultInstance </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> FrameworkModel</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">                instance </span><span style="color:#D73A49">=</span><span style="color:#24292E"> defaultInstance;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        Assert.</span><span style="color:#6F42C1">notNull</span><span style="color:#24292E">(instance, </span><span style="color:#032F62">"Default FrameworkModel is null"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> instance;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="刷新重置默认框架模型对象"><strong>刷新重置默认框架模型对象</strong></h3>
+<p>FrameworkModel中的重置默认框架模型resetDefaultFrameworkModel</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">  private</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> resetDefaultFrameworkModel</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">  		//全局悲观锁，同一个时刻只能有一个线程执行重置操作</span></span>
+<span class="line"><span style="color:#D73A49">        synchronized</span><span style="color:#24292E"> (globalLock) {</span></span>
+<span class="line"><span style="color:#6A737D">        	//defaultInstance为当前成员变量FrameworkModel类型代表当前默认的FrameworkModel类型的实例对象</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (defaultInstance </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#24292E">defaultInstance.</span><span style="color:#6F42C1">isDestroyed</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">            FrameworkModel oldDefaultFrameworkModel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> defaultInstance;</span></span>
+<span class="line"><span style="color:#6A737D">            //存在实例模型列表则直接从内存缓存中查后续不需要创建了</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (allInstances.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">            	//当前存在的有FrameworkModel框架实例多个列表则取第一个为默认的</span></span>
+<span class="line"><span style="color:#24292E">                defaultInstance </span><span style="color:#D73A49">=</span><span style="color:#24292E"> allInstances.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#005CC5">0</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                defaultInstance </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (oldDefaultFrameworkModel </span><span style="color:#D73A49">!=</span><span style="color:#24292E"> defaultInstance) {</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (LOGGER.</span><span style="color:#6F42C1">isInfoEnabled</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOGGER.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Reset global default framework from "</span><span style="color:#D73A49"> +</span><span style="color:#6F42C1"> safeGetModelDesc</span><span style="color:#24292E">(oldDefaultFrameworkModel) </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " to "</span><span style="color:#D73A49"> +</span><span style="color:#6F42C1"> safeGetModelDesc</span><span style="color:#24292E">(defaultInstance));</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>上面单例做了很多的初始化操作，这里开始调用构造器来创建框架模型对象，如下代码:</p>
+<h2 id="创建frameworkmodel对象"><strong>创建FrameworkModel对象</strong></h2>
+<p>FrameworkModel()构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#6F42C1"> FrameworkModel</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">		//调用父类型ScopeModel传递参数，这个构造器的第一个参数为空代表这是一个顶层的域模型，第二个代表了这个是框架FRAMEWORK域，第三个false不是内部域</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">(</span><span style="color:#005CC5">null</span><span style="color:#24292E">, ExtensionScope.FRAMEWORK, </span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //内部id用于表示模型树的层次结构，如层次结构:</span></span>
+<span class="line"><span style="color:#6A737D">        //FrameworkModel（索引=1）->ApplicationModel（索引=2）->ModuleModel（索引=1，第一个用户模块）</span></span>
+<span class="line"><span style="color:#6A737D">        //这个index变量是static类型的为静态全局变量默认值从1开始，如果有多个框架模型对象则internalId编号从1开始依次递增</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setInternalId</span><span style="color:#24292E">(String.</span><span style="color:#6F42C1">valueOf</span><span style="color:#24292E">(index.</span><span style="color:#6F42C1">getAndIncrement</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#6A737D">        // register FrameworkModel instance early</span></span>
+<span class="line"><span style="color:#6A737D">        //将当前新创建的框架实例对象添加到容器中</span></span>
+<span class="line"><span style="color:#D73A49">        synchronized</span><span style="color:#24292E"> (globalLock) {</span></span>
+<span class="line"><span style="color:#6A737D">        	//将当前框架模型实例添加到所有框架模型缓存对象中</span></span>
+<span class="line"><span style="color:#24292E">            allInstances.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">            //如上面代码所示重置默认的框架模型对象，这里将会是缓存实例列表的第一个，新增了一个刷新默认实例对象</span></span>
+<span class="line"><span style="color:#6F42C1">            resetDefaultFrameworkModel</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (LOGGER.</span><span style="color:#6F42C1">isInfoEnabled</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">            LOGGER.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getDesc</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " is created"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //初始化框架模型领域对象</span></span>
+<span class="line"><span style="color:#6F42C1">        initialize</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>ExtensionScope.FRAMEWORK</p>
+<h3 id="初始化frameworkmodel"><strong>初始化FrameworkModel</strong></h3>
+<p>FrameworkModel框架模型的初始化方法initialize()</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    protected</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initialize</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">      //这里初始化之前先调用下父类型ScopeModel的初始化方法我们在下面来看</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">.</span><span style="color:#6F42C1">initialize</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">		//使用TypeDefinitionBuilder的静态方法initBuilders来初始化类型构建器TypeBuilder类型集合</span></span>
+<span class="line"><span style="color:#24292E">        TypeDefinitionBuilder.</span><span style="color:#6F42C1">initBuilders</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">		//框架服务存储仓库对象，可以用于快速查询服务提供者信息</span></span>
+<span class="line"><span style="color:#24292E">        serviceRepository </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> FrameworkServiceRepository</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">		//获取ScopeModelInitializer类型(域模型初始化器)的扩展加载器ExtensionLoader，每个扩展类型都会创建一个扩展加载器缓存起来</span></span>
+<span class="line"><span style="color:#24292E">        ExtensionLoader&#x3C;</span><span style="color:#D73A49">ScopeModelInitializer</span><span style="color:#24292E">> initializerExtensionLoader </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ScopeModelInitializer.class);</span></span>
+<span class="line"><span style="color:#6A737D">        //获取ScopeModelInitializer类型的支持的扩展集合，这里当前版本存在8个扩展类型实现</span></span>
+<span class="line"><span style="color:#24292E">        Set&#x3C;</span><span style="color:#D73A49">ScopeModelInitializer</span><span style="color:#24292E">> initializers </span><span style="color:#D73A49">=</span><span style="color:#24292E"> initializerExtensionLoader.</span><span style="color:#6F42C1">getSupportedExtensionInstances</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //遍历这些扩展实现调用他们的initializeFrameworkModel方法来传递FrameworkModel类型对象，细节我们待会再详细说下</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (ScopeModelInitializer initializer </span><span style="color:#D73A49">:</span><span style="color:#24292E"> initializers) {</span></span>
+<span class="line"><span style="color:#24292E">            initializer.</span><span style="color:#6F42C1">initializeFrameworkModel</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">		//创建一个内部的ApplicationModel类型，细节下面说</span></span>
+<span class="line"><span style="color:#24292E">        internalApplicationModel </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ApplicationModel</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //创建ApplicationConfig类型对象同时传递应用程序模型对象internalApplicationModel</span></span>
+<span class="line"><span style="color:#6A737D">        //获取ConfigManager类型对象，然后设置添加当前应用配置对象</span></span>
+<span class="line"><span style="color:#24292E">       internalApplicationModel.</span><span style="color:#6F42C1">getApplicationConfigManager</span><span style="color:#24292E">().</span><span style="color:#6F42C1">setApplication</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#D73A49">            new</span><span style="color:#6F42C1"> ApplicationConfig</span><span style="color:#24292E">(internalApplicationModel, CommonConstants.DUBBO_INTERNAL_APPLICATION));</span></span>
+<span class="line"><span style="color:#6A737D">            //设置公开的模块名字为常量DUBBO_INTERNAL_APPLICATION</span></span>
+<span class="line"><span style="color:#24292E">        internalApplicationModel.</span><span style="color:#6F42C1">setModelName</span><span style="color:#24292E">(CommonConstants.DUBBO_INTERNAL_APPLICATION);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>继续上面代码的调用链路，我们来看
+FrameworkModel的super.initialize();方法 调用父类型ScopeModel的initialize()方法</p>
+<h3 id="初始化scopemodel"><strong>初始化ScopeModel</strong></h3>
+<p>ScopeModel类型的初始化方法initialize():</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">protected</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initialize</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">		//初始化ExtensionDirector是一个作用域扩展加载程序管理器。</span></span>
+<span class="line"><span style="color:#6A737D">		//ExtensionDirector支持多个级别，子级可以继承父级的扩展实例。</span></span>
+<span class="line"><span style="color:#6A737D">		//查找和创建扩展实例的方法类似于Java classloader。</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.extensionDirector </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ExtensionDirector</span><span style="color:#24292E">(parent </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> ?</span><span style="color:#24292E"> parent.</span><span style="color:#6F42C1">getExtensionDirector</span><span style="color:#24292E">() </span><span style="color:#D73A49">:</span><span style="color:#005CC5"> null</span><span style="color:#24292E">, scope, </span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //这个参考了Spring的生命周期回调思想，添加一个扩展初始化的前后调用的处理器，在扩展初始化之前或之后调用的后处理器，参数类型为ExtensionPostProcessor</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.extensionDirector.</span><span style="color:#6F42C1">addExtensionPostProcessor</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> ScopeModelAwareExtensionProcessor</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">));</span></span>
+<span class="line"><span style="color:#6A737D">        //创建一个内部共享的域工厂对象，用于注册Bean，创建Bean，获取Bean，初始化Bean等</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.beanFactory </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ScopeBeanFactory</span><span style="color:#24292E">(parent </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> ?</span><span style="color:#24292E"> parent.</span><span style="color:#6F42C1">getBeanFactory</span><span style="color:#24292E">() </span><span style="color:#D73A49">:</span><span style="color:#005CC5"> null</span><span style="color:#24292E">, extensionDirector);</span></span>
+<span class="line"><span style="color:#6A737D">        //使用数据结构链表，创建销毁监听器容器，一般用于关闭进程，重置应用程序对象等操作时候调用</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.destroyListeners </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> LinkedList&#x3C;>();</span></span>
+<span class="line"><span style="color:#6A737D">        //使用ConcurrentHashMap属性集合</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.attributes </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ConcurrentHashMap&#x3C;>();</span></span>
+<span class="line"><span style="color:#6A737D">        //使用ConcurrentHashSet存储当前域下的类加载器</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.classLoaders </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ConcurrentHashSet&#x3C;>();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // Add Framework's ClassLoader by default</span></span>
+<span class="line"><span style="color:#6A737D">        //将当前类的加载器存入加载器集合classLoaders中</span></span>
+<span class="line"><span style="color:#24292E">        ClassLoader dubboClassLoader </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ScopeModel.class.</span><span style="color:#6F42C1">getClassLoader</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (dubboClassLoader </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">addClassLoader</span><span style="color:#24292E">(dubboClassLoader);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="初始类型定义构建器"><strong>初始类型定义构建器</strong></h3>
+<p>TypeDefinitionBuilder的初始化类型构造器方法initBuilders</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initBuilders</span><span style="color:#24292E">(FrameworkModel model) {</span></span>
+<span class="line"><span style="color:#24292E">        Set&#x3C;</span><span style="color:#D73A49">TypeBuilder</span><span style="color:#24292E">> tbs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> model.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(TypeBuilder.class).</span><span style="color:#6F42C1">getSupportedExtensionInstances</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        BUILDERS </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>(tbs);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h4 id="服务存储仓库对象的创建"><strong>服务存储仓库对象的创建</strong></h4>
+<p>FrameworkServiceRepository对象的初始化</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#6F42C1"> FrameworkServiceRepository</span><span style="color:#24292E">(FrameworkModel frameworkModel) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.frameworkModel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> frameworkModel;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="域模型初始化器的获取与初始化回调"><strong>域模型初始化器的获取与初始化回调</strong></h3>
+<p>域模型初始化器的获取与初始化(ScopeModelInitializer类型和initializeFrameworkModel方法)
+加载到的ScopeModelInitializer类型的SPI扩展实现</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">ExtensionLoader&#x3C;</span><span style="color:#D73A49">ScopeModelInitializer</span><span style="color:#24292E">> initializerExtensionLoader </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ScopeModelInitializer.class);</span></span>
+<span class="line"><span style="color:#6A737D">    //获取ScopeModelInitializer类型的支持的扩展集合，这里当前版本存在8个扩展类型实现</span></span>
+<span class="line"><span style="color:#24292E">    Set&#x3C;</span><span style="color:#D73A49">ScopeModelInitializer</span><span style="color:#24292E">> initializers </span><span style="color:#D73A49">=</span><span style="color:#24292E"> initializerExtensionLoader.</span><span style="color:#6F42C1">getSupportedExtensionInstances</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">    //遍历这些扩展实现调用他们的initializeFrameworkModel方法来传递FrameworkModel类型对象，细节我们待会再详细说下</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (ScopeModelInitializer initializer </span><span style="color:#D73A49">:</span><span style="color:#24292E"> initializers) {</span></span>
+<span class="line"><span style="color:#24292E">        initializer.</span><span style="color:#6F42C1">initializeFrameworkModel</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>通过Debug查到域模型初始化器的SPI扩展类型有如下8个:</p>
+<p><img src="/img/chapter_dubbo/3-spi.png" alt="3-spi.png"></p>
+<p>这里我随机找两个说一下吧:
+容错域模型初始化器:ClusterScopeModelInitializer的initializeFrameworkModel方法:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> ClusterScopeModelInitializer</span><span style="color:#D73A49"> implements</span><span style="color:#6F42C1"> ScopeModelInitializer</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initializeFrameworkModel</span><span style="color:#24292E">(FrameworkModel </span><span style="color:#E36209">frameworkModel</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        ScopeBeanFactory beanFactory </span><span style="color:#D73A49">=</span><span style="color:#24292E"> frameworkModel.</span><span style="color:#6F42C1">getBeanFactory</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        beanFactory.</span><span style="color:#6F42C1">registerBean</span><span style="color:#24292E">(RouterSnapshotSwitcher.class);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> CommonScopeModelInitializer</span><span style="color:#D73A49"> implements</span><span style="color:#6F42C1"> ScopeModelInitializer</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initializeFrameworkModel</span><span style="color:#24292E">(FrameworkModel </span><span style="color:#E36209">frameworkModel</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        ScopeBeanFactory beanFactory </span><span style="color:#D73A49">=</span><span style="color:#24292E"> frameworkModel.</span><span style="color:#6F42C1">getBeanFactory</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        beanFactory.</span><span style="color:#6F42C1">registerBean</span><span style="color:#24292E">(FrameworkExecutorRepository.class);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> ConfigScopeModelInitializer</span><span style="color:#D73A49"> implements</span><span style="color:#6F42C1"> ScopeModelInitializer</span><span style="color:#24292E"> {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initializeFrameworkModel</span><span style="color:#24292E">(FrameworkModel </span><span style="color:#E36209">frameworkModel</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        frameworkModel.</span><span style="color:#6F42C1">addDestroyListener</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> FrameworkModelCleaner</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="将内部应用配置对象创建与添加至应用模型中"><strong>将内部应用配置对象创建与添加至应用模型中</strong></h3>
+<p>创建ApplicationConfig对象让后将其添加至应用模型中
+内部应用程序模型，这里为应用配置管理器设置一个应用配置对象，将这个应用配置的模块名字配置名字设置为DUBBO_INTERNAL_APPLICATION，
+应用配置记录着我们常见的应用配置信息，如下面表格所示:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D"> //获取ConfigManager类型对象，然后设置添加当前应用配置对象</span></span>
+<span class="line"><span style="color:#24292E">   internalApplicationModel.</span><span style="color:#6F42C1">getApplicationConfigManager</span><span style="color:#24292E">().</span><span style="color:#6F42C1">setApplication</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#D73A49">        new</span><span style="color:#6F42C1"> ApplicationConfig</span><span style="color:#24292E">(internalApplicationModel, CommonConstants.DUBBO_INTERNAL_APPLICATION));</span></span>
+<span class="line"><span style="color:#6A737D">        //设置公开的模块名字为常量DUBBO_INTERNAL_APPLICATION</span></span>
+<span class="line"><span style="color:#24292E">    internalApplicationModel.</span><span style="color:#6F42C1">setModelName</span><span style="color:#24292E">(CommonConstants.DUBBO_INTERNAL_APPLICATION);</span></span></code></pre>
+<p>来自官网目前版本的配置解释:
+官网当前的配置描述知道到了元数据类型，后面我再补充几个</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>对应URL参数</th>
+<th>类型</th>
+<th>是否必填</th>
+<th>缺省值</th>
+<th>作用</th>
+<th>描述</th>
+<th>兼容性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>application</td>
+<td>string</td>
+<td>必填</td>
+<td></td>
+<td>服务治理</td>
+<td>当前应用名称，用于注册中心计算应用间依赖关系，注意：消费者和提供者应用名不要一样，此参数不是匹配条件，你当前项目叫什么名字就填什么，和提供者消费者角色无关，比如：kylin应用调用了morgan应用的服务，则kylin项目配成kylin，morgan项目配成morgan，可能kylin也提供其它服务给别人使用，但kylin项目永远配成kylin，这样注册中心将显示kylin依赖于morgan</td>
+<td>1.0.16以上版本</td>
+</tr>
+<tr>
+<td>version</td>
+<td>application.version</td>
+<td>string</td>
+<td>可选</td>
+<td></td>
+<td>服务治理</td>
+<td>当前应用的版本</td>
+<td>2.2.0以上版本</td>
+</tr>
+<tr>
+<td>owner</td>
+<td>owner</td>
+<td>string</td>
+<td>可选</td>
+<td></td>
+<td>服务治理</td>
+<td>应用负责人，用于服务治理，请填写负责人公司邮箱前缀</td>
+<td>2.0.5以上版本</td>
+</tr>
+<tr>
+<td>organization</td>
+<td>organization</td>
+<td>string</td>
+<td>可选</td>
+<td></td>
+<td>服务治理</td>
+<td>组织名称(BU或部门)，用于注册中心区分服务来源，此配置项建议不要使用autoconfig，直接写死在配置中，比如china,intl,itu,crm,asc,dw,aliexpress等</td>
+<td>2.0.0以上版本</td>
+</tr>
+<tr>
+<td>architecture</td>
+<td>architecture</td>
+<td>string</td>
+<td>可选</td>
+<td></td>
+<td>服务治理</td>
+<td>用于服务分层对应的架构。如，intl、china。不同的架构使用不同的分层。</td>
+<td>2.0.7以上版本</td>
+</tr>
+<tr>
+<td>environment</td>
+<td>environment</td>
+<td>string</td>
+<td>可选</td>
+<td></td>
+<td>服务治理</td>
+<td>应用环境，如：develop/test/product，不同环境使用不同的缺省值，以及作为只用于开发测试功能的限制条件</td>
+<td>2.0.0以上版本</td>
+</tr>
+<tr>
+<td>compiler</td>
+<td>compiler</td>
+<td>string</td>
+<td>可选</td>
+<td>javassist</td>
+<td>性能优化</td>
+<td>Java字节码编译器，用于动态类的生成，可选：jdk或javassist</td>
+<td>2.1.0以上版本</td>
+</tr>
+<tr>
+<td>logger</td>
+<td>logger</td>
+<td>string</td>
+<td>可选</td>
+<td>slf4j</td>
+<td>性能优化</td>
+<td>日志输出方式，可选：slf4j,jcl,log4j,log4j2,jdk</td>
+<td>2.2.0以上版本</td>
+</tr>
+<tr>
+<td>metadata-type</td>
+<td>metadata-type</td>
+<td>String</td>
+<td>可选</td>
+<td>local</td>
+<td>服务治理</td>
+<td>metadata 传递方式，是以 Provider 视角而言的，Consumer 侧配置无效，可选值有：remote - Provider 把 metadata 放到远端注册中心，Consumer 从注册中心获取local - Provider 把 metadata 放在本地，Consumer 从 Provider 处直接获取</td>
+<td>2.7.6以上版本</td>
+</tr>
+</tbody>
+</table>
+<p>当前在Dubbo3.0.7中还有一些的配置我下面列举下:</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>对应URL参数</th>
+<th>类型</th>
+<th>是否必填</th>
+<th>缺省值</th>
+<th>作用</th>
+<th>描述</th>
+<th>兼容性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>register-consumer</td>
+<td>register-consumer</td>
+<td>boolean</td>
+<td>可选</td>
+<td>false</td>
+<td>服务治理</td>
+<td>是否注册使用者实例，默认为false。</td>
+<td></td>
+</tr>
+<tr>
+<td>register-mode</td>
+<td>register-mode</td>
+<td>string</td>
+<td>可选</td>
+<td>all</td>
+<td>服务治理</td>
+<td>将interface/instance/all 地址注册到注册中心，默认为all。</td>
+<td></td>
+</tr>
+<tr>
+<td>enable-empty-protection</td>
+<td>enable-empty-protection</td>
+<td>boolean</td>
+<td>可选</td>
+<td>true</td>
+<td>服务治理</td>
+<td>在空地址通知上启用空保护，默认为true</td>
+<td></td>
+</tr>
+<tr>
+<td>protocol</td>
+<td>protocol</td>
+<td>string</td>
+<td>可选</td>
+<td>dubbo</td>
+<td>服务治理</td>
+<td>此应用程序的首选协议（名称）</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="创建applicationmodel对象"><strong>创建ApplicationModel对象</strong></h2>
+<p>ApplicationModel对象的初始化调用
+在前面 3.2.4 FrameworkModel框架模型的初始化方法initialize() 章节中，
+我们看到了代码ApplicationModel对象的初始化调用如下代码，这里我们来详细说一下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> internalApplicationModel </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ApplicationModel</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        internalApplicationModel.</span><span style="color:#6F42C1">getApplicationConfigManager</span><span style="color:#24292E">().</span><span style="color:#6F42C1">setApplication</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#D73A49">            new</span><span style="color:#6F42C1"> ApplicationConfig</span><span style="color:#24292E">(internalApplicationModel, CommonConstants.DUBBO_INTERNAL_APPLICATION));</span></span>
+<span class="line"><span style="color:#24292E">        internalApplicationModel.</span><span style="color:#6F42C1">setModelName</span><span style="color:#24292E">(CommonConstants.DUBBO_INTERNAL_APPLICATION);</span></span>
+<span class="line"><span style="color:#24292E">   </span></span></code></pre>
+<h3 id="applicationmodel的构造器"><strong>ApplicationModel的构造器</strong></h3>
+<p><code>ApplicationModel(FrameworkModel frameworkModel, boolean isInternal)</code>
+刚刚3.2.9那个地方我们看到了使用代码 <strong>new ApplicationModel(this, true)</strong> 来创建对象这里我们详细看下代码细节:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#6F42C1"> ApplicationModel</span><span style="color:#24292E">(FrameworkModel frameworkModel, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> isInternal) {</span></span>
+<span class="line"><span style="color:#6A737D">		//调用父类型ScopeModel传递参数，这个构造器的传递没与前面看到的FrameworkModel构造器的中的调用参数有些不同第一个参数我们为frameworkModel代表父域模型，第二个参数标记域为应用程序级别APPLICATION，第三个参数我们传递的为true代表为内部域</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">(frameworkModel, ExtensionScope.APPLICATION, isInternal);</span></span>
+<span class="line"><span style="color:#24292E">        Assert.</span><span style="color:#6F42C1">notNull</span><span style="color:#24292E">(frameworkModel, </span><span style="color:#032F62">"FrameworkModel can not be null"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //应用程序域成员变量记录frameworkModel对象</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.frameworkModel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> frameworkModel;</span></span>
+<span class="line"><span style="color:#6A737D">        //frameworkModel对象添加当前应用程序域对象</span></span>
+<span class="line"><span style="color:#24292E">        frameworkModel.</span><span style="color:#6F42C1">addApplication</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (LOGGER.</span><span style="color:#6F42C1">isInfoEnabled</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">            LOGGER.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getDesc</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " is created"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //初始化应用程序</span></span>
+<span class="line"><span style="color:#6F42C1">        initialize</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h4 id="将applicationmodel添加至frameworkmodel容器中"><strong>将ApplicationModel添加至FrameworkModel容器中</strong></h4>
+<p>FrameworkModel的添加应用程序方法addApplication:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">void</span><span style="color:#6F42C1"> addApplication</span><span style="color:#24292E">(ApplicationModel applicationModel) {</span></span>
+<span class="line"><span style="color:#6A737D">        // can not add new application if it's destroying</span></span>
+<span class="line"><span style="color:#6A737D">        //检查FrameworkModel对象是否已经被标记为销毁状态，如果已经被销毁了则抛出异常无需执行逻辑</span></span>
+<span class="line"><span style="color:#6F42C1">        checkDestroyed</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        synchronized</span><span style="color:#24292E"> (instLock) {</span></span>
+<span class="line"><span style="color:#6A737D">        	//如果还未添加过当前参数传递应用模型</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#005CC5">this</span><span style="color:#24292E">.applicationModels.</span><span style="color:#6F42C1">contains</span><span style="color:#24292E">(applicationModel)) {</span></span>
+<span class="line"><span style="color:#6A737D">            	//为当前应用模型生成内部id</span></span>
+<span class="line"><span style="color:#24292E">                applicationModel.</span><span style="color:#6F42C1">setInternalId</span><span style="color:#24292E">(</span><span style="color:#6F42C1">buildInternalId</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getInternalId</span><span style="color:#24292E">(), appIndex.</span><span style="color:#6F42C1">getAndIncrement</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#6A737D">                //添加到成员变量集合applicationModels中</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.applicationModels.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(applicationModel);</span></span>
+<span class="line"><span style="color:#6A737D">                //如果非内部的则也向公开应用模型集合pubApplicationModels中添加一下</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">applicationModel.</span><span style="color:#6F42C1">isInternal</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.pubApplicationModels.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(applicationModel);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#6F42C1">                resetDefaultAppModel</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>内部id生成算法buildInternalId方法代码如下:
+看代码胜过，文字解释</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> protected</span><span style="color:#24292E"> String </span><span style="color:#6F42C1">buildInternalId</span><span style="color:#24292E">(String parentInternalId, </span><span style="color:#D73A49">long</span><span style="color:#24292E"> childIndex) {</span></span>
+<span class="line"><span style="color:#6A737D">        // FrameworkModel    1</span></span>
+<span class="line"><span style="color:#6A737D">        // ApplicationModel  1.1</span></span>
+<span class="line"><span style="color:#6A737D">        // ModuleModel       1.1.1</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (StringUtils.</span><span style="color:#6F42C1">hasText</span><span style="color:#24292E">(parentInternalId)) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> parentInternalId </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "."</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> childIndex;</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#032F62"> ""</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> childIndex;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p><strong>重置默认的应用模型对象</strong>
+FrameworkModel 重置默认的应用模型对象 resetDefaultAppModel()方法
+与默认框架模型设置方式类似取集合的第一个，这里应用模型需要使用公开的应用模型的第一个做为默认应用模型，代码如下所示:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> resetDefaultAppModel</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">        synchronized</span><span style="color:#24292E"> (instLock) {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.defaultAppModel </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#005CC5">this</span><span style="color:#24292E">.defaultAppModel.</span><span style="color:#6F42C1">isDestroyed</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">            //取第一个公开的应用模型做为默认应用模型</span></span>
+<span class="line"><span style="color:#24292E">            ApplicationModel oldDefaultAppModel </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.defaultAppModel;</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (pubApplicationModels.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.defaultAppModel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> pubApplicationModels.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#005CC5">0</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.defaultAppModel </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (defaultInstance </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> this</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> oldDefaultAppModel </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.defaultAppModel) {</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (LOGGER.</span><span style="color:#6F42C1">isInfoEnabled</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOGGER.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Reset global default application from "</span><span style="color:#D73A49"> +</span><span style="color:#6F42C1"> safeGetModelDesc</span><span style="color:#24292E">(oldDefaultAppModel) </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " to "</span><span style="color:#D73A49"> +</span><span style="color:#6F42C1"> safeGetModelDesc</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">.defaultAppModel));</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="初始化applicationmodel"><strong>初始化ApplicationModel</strong></h3>
+<p>ApplicationModel的初始化initialize()方法
+在前面<strong>3.2.10 ApplicationModel的构造器ApplicationModel(FrameworkModel frameworkModel, boolean isInternal)</strong> 中的最后一行开始初始化应用模型我们还未详细说明下面可以来看下</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    protected</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initialize</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">    //这个是调用域模型来初始化基础信息如扩展访问器等，可以参考 3.2.5 ScopeModel类型的初始化方法initialize()章节</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">.</span><span style="color:#6F42C1">initialize</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //创建一个内部的模块模型对象</span></span>
+<span class="line"><span style="color:#24292E">        internalModule </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ModuleModel</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //创建一个独立服务存储对象</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.serviceRepository </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ServiceRepository</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">		//获取应用程序初始化监听器ApplicationInitListener扩展</span></span>
+<span class="line"><span style="color:#24292E">        ExtensionLoader&#x3C;</span><span style="color:#D73A49">ApplicationInitListener</span><span style="color:#24292E">> extensionLoader </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ApplicationInitListener.class);</span></span>
+<span class="line"><span style="color:#6A737D">        //如果存在应用程序初始化监听器扩展则执行这个初始化方法，在当前的版本还未看到有具体的扩展实现类型</span></span>
+<span class="line"><span style="color:#24292E">        Set&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">> listenerNames </span><span style="color:#D73A49">=</span><span style="color:#24292E"> extensionLoader.</span><span style="color:#6F42C1">getSupportedExtensions</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (String listenerName </span><span style="color:#D73A49">:</span><span style="color:#24292E"> listenerNames) {</span></span>
+<span class="line"><span style="color:#24292E">            extensionLoader.</span><span style="color:#6F42C1">getExtension</span><span style="color:#24292E">(listenerName).</span><span style="color:#6F42C1">init</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">		//初始化扩展(这个是应用程序生命周期的方法调用，这里调用初始化方法</span></span>
+<span class="line"><span style="color:#6F42C1">        initApplicationExts</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">		//获取域模型初始化器扩展对象列表，然后执行初始化方法</span></span>
+<span class="line"><span style="color:#24292E">        ExtensionLoader&#x3C;</span><span style="color:#D73A49">ScopeModelInitializer</span><span style="color:#24292E">> initializerExtensionLoader </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ScopeModelInitializer.class);</span></span>
+<span class="line"><span style="color:#24292E">        Set&#x3C;</span><span style="color:#D73A49">ScopeModelInitializer</span><span style="color:#24292E">> initializers </span><span style="color:#D73A49">=</span><span style="color:#24292E"> initializerExtensionLoader.</span><span style="color:#6F42C1">getSupportedExtensionInstances</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (ScopeModelInitializer initializer </span><span style="color:#D73A49">:</span><span style="color:#24292E"> initializers) {</span></span>
+<span class="line"><span style="color:#24292E">            initializer.</span><span style="color:#6F42C1">initializeApplicationModel</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="initapplicationexts--初始化应用程序扩展方法"><strong>initApplicationExts()  初始化应用程序扩展方法</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">   private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initApplicationExts</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">   //这个扩展实现一共有两个可以看下面那个图扩展类型为ConfigManager和Environment</span></span>
+<span class="line"><span style="color:#24292E">        Set&#x3C;</span><span style="color:#D73A49">ApplicationExt</span><span style="color:#24292E">> exts </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ApplicationExt.class).</span><span style="color:#6F42C1">getSupportedExtensionInstances</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (ApplicationExt ext </span><span style="color:#D73A49">:</span><span style="color:#24292E"> exts) {</span></span>
+<span class="line"><span style="color:#24292E">            ext.</span><span style="color:#6F42C1">initialize</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p><img src="/img/chapter_dubbo/3-ext.png" alt="在这里插入图片描述"></p>
+<h4 id="configmanager类型的initialize方法"><strong>ConfigManager类型的initialize方法</strong></h4>
+<p>先简单说下ConfigManager的作用，无锁配置管理器（通过ConcurrentHashMap），用于快速读取操作。写入操作锁带有配置类型的子配置映射，用于安全检查和添加新配置。
+其实ConfigManager实现类中并没有这个初始化方法initialize，不过ConfigManager的父类型AbstractConfigManager中是有initialize方法的，如下所示:</p>
+<p>AbstractConfigManager的初始化方法initialize</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initialize</span><span style="color:#24292E">() throws IllegalStateException {</span></span>
+<span class="line"><span style="color:#6A737D">    	//乐观锁判断是否初始化过</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">initialized.</span><span style="color:#6F42C1">compareAndSet</span><span style="color:#24292E">(</span><span style="color:#005CC5">false</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //从模块环境中获取组合配置，目前Environment中有6种重要的配置，我们后面详细说</span></span>
+<span class="line"><span style="color:#24292E">        CompositeConfiguration configuration </span><span style="color:#D73A49">=</span><span style="color:#24292E"> scopeModel.</span><span style="color:#6F42C1">getModelEnvironment</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getConfiguration</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // dubbo.config.mode获取配置模式，配置模式对应枚举类型ConfigMode，目前有这么几个STRICT，OVERRIDE，OVERRIDE_ALL，OVERRIDE_IF_ABSENT，IGNORE，这个配置决定了属性覆盖的顺序，当有同一个配置key多次出现时候，以最新配置为准，还是以最老的那个配置为准，还是配置重复则抛出异常，默认值为严格模式STRICT重复则抛出异常</span></span>
+<span class="line"><span style="color:#24292E">        String configModeStr </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (String) configuration.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(ConfigKeys.DUBBO_CONFIG_MODE);</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (StringUtils.</span><span style="color:#6F42C1">hasText</span><span style="color:#24292E">(configModeStr)) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.configMode </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ConfigMode.</span><span style="color:#6F42C1">valueOf</span><span style="color:#24292E">(configModeStr.</span><span style="color:#6F42C1">toUpperCase</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            String msg </span><span style="color:#D73A49">=</span><span style="color:#032F62"> "Illegal '"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> ConfigKeys.DUBBO_CONFIG_MODE </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "' config value ["</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> configModeStr </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "], available values "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> Arrays.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">(ConfigMode.</span><span style="color:#6F42C1">values</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">            logger.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(msg, e);</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(msg, e);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // dubbo.config.ignore-duplicated-interface</span></span>
+<span class="line"><span style="color:#6A737D">        //忽略重复的接口（服务/引用）配置。默认值为false</span></span>
+<span class="line"><span style="color:#24292E">        String ignoreDuplicatedInterfaceStr </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (String) configuration</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(ConfigKeys.DUBBO_CONFIG_IGNORE_DUPLICATED_INTERFACE);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (ignoreDuplicatedInterfaceStr </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.ignoreDuplicatedInterface </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Boolean.</span><span style="color:#6F42C1">parseBoolean</span><span style="color:#24292E">(ignoreDuplicatedInterfaceStr);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // print 打印配置信息</span></span>
+<span class="line"><span style="color:#24292E">        Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> map </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> LinkedHashMap&#x3C;>();</span></span>
+<span class="line"><span style="color:#24292E">        map.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(ConfigKeys.DUBBO_CONFIG_MODE, configMode);</span></span>
+<span class="line"><span style="color:#24292E">        map.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(ConfigKeys.DUBBO_CONFIG_IGNORE_DUPLICATED_INTERFACE, </span><span style="color:#005CC5">this</span><span style="color:#24292E">.ignoreDuplicatedInterface);</span></span>
+<span class="line"><span style="color:#24292E">        logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Config settings: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> map);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h4 id="environment类型的initialize方法"><strong>Environment类型的initialize方法</strong></h4>
+<p>这是一个与环境配置有关系的类型，我们先来简单了解下它的初始化方法，后期再详细说明:</p>
+<p>Environment类型的initialize方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initialize</span><span style="color:#24292E">() throws IllegalStateException {</span></span>
+<span class="line"><span style="color:#6A737D">    	//乐观锁判断是否进行过初始化</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (initialized.</span><span style="color:#6F42C1">compareAndSet</span><span style="color:#24292E">(</span><span style="color:#005CC5">false</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#6A737D">        	//PropertiesConfiguration从系统属性和dubbo.properties中获取配置</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.propertiesConfiguration </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> PropertiesConfiguration</span><span style="color:#24292E">(scopeModel);</span></span>
+<span class="line"><span style="color:#6A737D">            //SystemConfiguration获取的是JVM参数 启动命令中-D指定的</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.systemConfiguration </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> SystemConfiguration</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">            //EnvironmentConfiguration是从环境变量中获取的配置</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.environmentConfiguration </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> EnvironmentConfiguration</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">            //外部的Global配置config-center global/default config</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.externalConfiguration </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> InmemoryConfiguration</span><span style="color:#24292E">(</span><span style="color:#032F62">"ExternalConfig"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">            //外部的应用配置如:config-center中的应用配置</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.appExternalConfiguration </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> InmemoryConfiguration</span><span style="color:#24292E">(</span><span style="color:#032F62">"AppExternalConfig"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">            //本地应用配置 ， 如Spring Environment/PropertySources/application.properties</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.appConfiguration </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> InmemoryConfiguration</span><span style="color:#24292E">(</span><span style="color:#032F62">"AppConfig"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">			//服务迁移配置加载 dubbo2升级dubbo3的一些配置</span></span>
+<span class="line"><span style="color:#6F42C1">            loadMigrationRule</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D">	//服务迁移配置加载 JVM  > env >  代码路径dubbo-migration.yaml</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> loadMigrationRule</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">     //文件路径配置的key dubbo.migration.file</span></span>
+<span class="line"><span style="color:#6A737D">     // JVM参数中获取</span></span>
+<span class="line"><span style="color:#24292E">        String path </span><span style="color:#D73A49">=</span><span style="color:#24292E"> System.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(CommonConstants.DUBBO_MIGRATION_KEY);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (StringUtils.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">(path)) {</span></span>
+<span class="line"><span style="color:#6A737D">        //env环境变量中获取</span></span>
+<span class="line"><span style="color:#24292E">            path </span><span style="color:#D73A49">=</span><span style="color:#24292E"> System.</span><span style="color:#6F42C1">getenv</span><span style="color:#24292E">(CommonConstants.DUBBO_MIGRATION_KEY);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (StringUtils.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">(path)) {</span></span>
+<span class="line"><span style="color:#6A737D">            //类路径下获取文件dubbo-migration.yaml</span></span>
+<span class="line"><span style="color:#24292E">                path </span><span style="color:#D73A49">=</span><span style="color:#24292E"> CommonConstants.DEFAULT_DUBBO_MIGRATION_FILE;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.localMigrationRule </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ConfigUtils.</span><span style="color:#6F42C1">loadMigrationRule</span><span style="color:#24292E">(scopeModel.</span><span style="color:#6F42C1">getClassLoaders</span><span style="color:#24292E">(), path);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p><strong>ConfigUtils中读取迁移规则配置文件loadMigrationRule</strong>
+这个我们不细说了，贴一下代码感兴趣可以了解下，这个代码主要是读取文件到内存字符串:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> public</span><span style="color:#D73A49"> static</span><span style="color:#24292E"> String </span><span style="color:#6F42C1">loadMigrationRule</span><span style="color:#24292E">(Set</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">ClassLoader</span><span style="color:#D73A49">></span><span style="color:#24292E"> classLoaders, String fileName) {</span></span>
+<span class="line"><span style="color:#24292E">        String rawRule </span><span style="color:#D73A49">=</span><span style="color:#032F62"> ""</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">checkFileNameExist</span><span style="color:#24292E">(fileName)) {</span></span>
+<span class="line"><span style="color:#D73A49">            try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> (FileInputStream input </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> FileInputStream</span><span style="color:#24292E">(fileName)) {</span></span>
+<span class="line"><span style="color:#D73A49">                    return</span><span style="color:#6F42C1"> readString</span><span style="color:#24292E">(input);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                logger.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Failed to load "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> fileName </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " file from "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> fileName </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "(ignore this file): "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> e.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">(), e);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            List&#x3C;</span><span style="color:#D73A49">ClassLoader</span><span style="color:#24292E">> classLoadersToLoad </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> LinkedList&#x3C;>();</span></span>
+<span class="line"><span style="color:#24292E">            classLoadersToLoad.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(ClassUtils.</span><span style="color:#6F42C1">getClassLoader</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">            classLoadersToLoad.</span><span style="color:#6F42C1">addAll</span><span style="color:#24292E">(classLoaders);</span></span>
+<span class="line"><span style="color:#D73A49">            for</span><span style="color:#24292E"> (Set&#x3C;</span><span style="color:#D73A49">URL</span><span style="color:#24292E">> urls </span><span style="color:#D73A49">:</span><span style="color:#24292E"> ClassLoaderResourceLoader.</span><span style="color:#6F42C1">loadResources</span><span style="color:#24292E">(fileName, classLoadersToLoad).</span><span style="color:#6F42C1">values</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                for</span><span style="color:#24292E"> (URL url </span><span style="color:#D73A49">:</span><span style="color:#24292E"> urls) {</span></span>
+<span class="line"><span style="color:#24292E">                    InputStream is </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">openStream</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (is </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                        return</span><span style="color:#6F42C1"> readString</span><span style="color:#24292E">(is);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            logger.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Failed to load "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> fileName </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " file from "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> fileName </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "(ignore this file): "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> e.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">(), e);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> rawRule;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> static</span><span style="color:#24292E"> String </span><span style="color:#6F42C1">readString</span><span style="color:#24292E">(InputStream is) {</span></span>
+<span class="line"><span style="color:#24292E">        StringBuilder stringBuilder </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> StringBuilder</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        char</span><span style="color:#24292E">[] buffer </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#D73A49"> char</span><span style="color:#24292E">[</span><span style="color:#005CC5">10</span><span style="color:#24292E">];</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> (BufferedReader reader </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> BufferedReader</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> InputStreamReader</span><span style="color:#24292E">(is))) {</span></span>
+<span class="line"><span style="color:#D73A49">            int</span><span style="color:#24292E"> n;</span></span>
+<span class="line"><span style="color:#D73A49">            while</span><span style="color:#24292E"> ((n </span><span style="color:#D73A49">=</span><span style="color:#24292E"> reader.</span><span style="color:#6F42C1">read</span><span style="color:#24292E">(buffer)) </span><span style="color:#D73A49">!=</span><span style="color:#D73A49"> -</span><span style="color:#005CC5">1</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (n </span><span style="color:#D73A49">&#x3C;</span><span style="color:#005CC5"> 10</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    buffer </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Arrays.</span><span style="color:#6F42C1">copyOf</span><span style="color:#24292E">(buffer, n);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">                stringBuilder.</span><span style="color:#6F42C1">append</span><span style="color:#24292E">(String.</span><span style="color:#6F42C1">valueOf</span><span style="color:#24292E">(buffer));</span></span>
+<span class="line"><span style="color:#24292E">                buffer </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#D73A49"> char</span><span style="color:#24292E">[</span><span style="color:#005CC5">10</span><span style="color:#24292E">];</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (IOException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            logger.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Read migration file error."</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> stringBuilder.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    /**</span></span>
+<span class="line"><span style="color:#6A737D">     * check if the fileName can be found in filesystem</span></span>
+<span class="line"><span style="color:#6A737D">     *</span></span>
+<span class="line"><span style="color:#6A737D">     * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> fileName</span></span>
+<span class="line"><span style="color:#6A737D">     * </span><span style="color:#D73A49">@return</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> boolean</span><span style="color:#6F42C1"> checkFileNameExist</span><span style="color:#24292E">(String fileName) {</span></span>
+<span class="line"><span style="color:#24292E">        File file </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> File</span><span style="color:#24292E">(fileName);</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> file.</span><span style="color:#6F42C1">exists</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h2 id="创建modulemodel对象"><strong>创建ModuleModel对象</strong></h2>
+<p>前面ApplicationModel对象初始化的时候创建了ModuleModel如下代码:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">internalModule </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ModuleModel</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span></code></pre>
+<p>这里我们来看下这个它所对应的构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#6F42C1"> ModuleModel</span><span style="color:#24292E">(ApplicationModel applicationModel, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> isInternal) {</span></span>
+<span class="line"><span style="color:#6A737D">		//调用ScopeModel传递3个参数父模型，模型域为模块域，是否为内部模型参数为true</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">(applicationModel, ExtensionScope.MODULE, isInternal);</span></span>
+<span class="line"><span style="color:#24292E">        Assert.</span><span style="color:#6F42C1">notNull</span><span style="color:#24292E">(applicationModel, </span><span style="color:#032F62">"ApplicationModel can not be null"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //初始化成员变量applicationModel</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.applicationModel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> applicationModel;</span></span>
+<span class="line"><span style="color:#6A737D">        //将模块模型添加至应用模型中</span></span>
+<span class="line"><span style="color:#24292E">        applicationModel.</span><span style="color:#6F42C1">addModule</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, isInternal);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (LOGGER.</span><span style="color:#6F42C1">isInfoEnabled</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">            LOGGER.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getDesc</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " is created"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">		//初始化模块模型</span></span>
+<span class="line"><span style="color:#6F42C1">        initialize</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        Assert.</span><span style="color:#6F42C1">notNull</span><span style="color:#24292E">(serviceRepository, </span><span style="color:#032F62">"ModuleServiceRepository can not be null"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        Assert.</span><span style="color:#6F42C1">notNull</span><span style="color:#24292E">(moduleConfigManager, </span><span style="color:#032F62">"ModuleConfigManager can not be null"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        Assert.</span><span style="color:#6F42C1">assertTrue</span><span style="color:#24292E">(moduleConfigManager.</span><span style="color:#6F42C1">isInitialized</span><span style="color:#24292E">(), </span><span style="color:#032F62">"ModuleConfigManager can not be initialized"</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // notify application check state</span></span>
+<span class="line"><span style="color:#6A737D">        //获取应用程序发布对象，通知检查状态</span></span>
+<span class="line"><span style="color:#24292E">        ApplicationDeployer applicationDeployer </span><span style="color:#D73A49">=</span><span style="color:#24292E"> applicationModel.</span><span style="color:#6F42C1">getDeployer</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (applicationDeployer </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            applicationDeployer.</span><span style="color:#6F42C1">notifyModuleChanged</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, DeployState.PENDING);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="将模块模型添加至应用模型中"><strong>将模块模型添加至应用模型中</strong></h3>
+<p>如上面代码所示调用如下代码将模块模型添加到应用模型中:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> applicationModel.</span><span style="color:#6F42C1">addModule</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, isInternal);</span></span></code></pre>
+<p>这里我们来看下添加过程</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"></span>
+<span class="line"><span style="color:#D73A49">void</span><span style="color:#6F42C1"> addModule</span><span style="color:#24292E">(ModuleModel moduleModel, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> isInternal) {</span></span>
+<span class="line"><span style="color:#6A737D">		//加锁</span></span>
+<span class="line"><span style="color:#D73A49">        synchronized</span><span style="color:#24292E"> (moduleLock) {</span></span>
+<span class="line"><span style="color:#6A737D">        	//不存在则添加</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#005CC5">this</span><span style="color:#24292E">.moduleModels.</span><span style="color:#6F42C1">contains</span><span style="color:#24292E">(moduleModel)) {</span></span>
+<span class="line"><span style="color:#6A737D">            	//检查应用模型是否已销毁</span></span>
+<span class="line"><span style="color:#6F42C1">                checkDestroyed</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">                //添加至模块模型成员变量中</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.moduleModels.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(moduleModel);</span></span>
+<span class="line"><span style="color:#6A737D">                //设置模块模型内部id，这个内部id生成过程与上面将应用模型添加到框架模型中的方式是一致的</span></span>
+<span class="line"><span style="color:#6A737D">                //可以参考 3.3.2 将ApplicationModel添加至FrameworkModel容器中</span></span>
+<span class="line"><span style="color:#24292E">                moduleModel.</span><span style="color:#6F42C1">setInternalId</span><span style="color:#24292E">(</span><span style="color:#6F42C1">buildInternalId</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getInternalId</span><span style="color:#24292E">(), moduleIndex.</span><span style="color:#6F42C1">getAndIncrement</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#6A737D">                //如果不是内部模型则添加到公开模块模型中</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">isInternal) {</span></span>
+<span class="line"><span style="color:#24292E">                    pubModuleModels.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(moduleModel);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="初始化模块模型"><strong>初始化模块模型</strong></h3>
+<p>前面ModuleModel构造器中通过initialize()方法来进行初始化操作如下代码:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    protected</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initialize</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">    	//调用域模型ScopeModel的初始化，可以参考 3.2.5 ScopeModel类型的初始化方法initialize()章节</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">.</span><span style="color:#6F42C1">initialize</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //创建模块服务存储库对象</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.serviceRepository </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ModuleServiceRepository</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //创建模块配置管理对象</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.moduleConfigManager </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ModuleConfigManager</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //初始化模块配置管理对象</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.moduleConfigManager.</span><span style="color:#6F42C1">initialize</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">		//初始化模块配置扩展</span></span>
+<span class="line"><span style="color:#6F42C1">        initModuleExt</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">		</span></span>
+<span class="line"><span style="color:#6A737D">		//初始化域模型扩展</span></span>
+<span class="line"><span style="color:#24292E">        ExtensionLoader&#x3C;</span><span style="color:#D73A49">ScopeModelInitializer</span><span style="color:#24292E">> initializerExtensionLoader </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ScopeModelInitializer.class);</span></span>
+<span class="line"><span style="color:#24292E">        Set&#x3C;</span><span style="color:#D73A49">ScopeModelInitializer</span><span style="color:#24292E">> initializers </span><span style="color:#D73A49">=</span><span style="color:#24292E"> initializerExtensionLoader.</span><span style="color:#6F42C1">getSupportedExtensionInstances</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (ScopeModelInitializer initializer </span><span style="color:#D73A49">:</span><span style="color:#24292E"> initializers) {</span></span>
+<span class="line"><span style="color:#24292E">            initializer.</span><span style="color:#6F42C1">initializeModuleModel</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h4 id="模块服务存储库的创建"><strong>模块服务存储库的创建</strong></h4>
+<p>ModuleServiceRepository是模块模型中用来存储服务的通过如下代码调用</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">//创建模块服务存储库对象</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.serviceRepository </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ModuleServiceRepository</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">       </span></span></code></pre>
+<p>这里我们来看下模块服务存储库的构造器代码:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> public</span><span style="color:#6F42C1"> ModuleServiceRepository</span><span style="color:#24292E">(ModuleModel moduleModel) {</span></span>
+<span class="line"><span style="color:#6A737D"> 		//初始化模块模型</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.moduleModel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> moduleModel;</span></span>
+<span class="line"><span style="color:#6A737D">        //</span></span>
+<span class="line"><span style="color:#24292E">        frameworkServiceRepository </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ScopeModelUtil.</span><span style="color:#6F42C1">getFrameworkModel</span><span style="color:#24292E">(moduleModel).</span><span style="color:#6F42C1">getServiceRepository</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>ModuleServiceRepository存储库中使用框架存储库frameworkServiceRepository来间接存储
+这里我们看下怎么通过模块模型获取框架服务存储库frameworkServiceRepository:通过代码</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">ScopeModelUtil.</span><span style="color:#6F42C1">getFrameworkModel</span><span style="color:#24292E">(moduleModel).</span><span style="color:#6F42C1">getServiceRepository</span><span style="color:#24292E">()</span></span></code></pre>
+<p>ScopeModelUtil工具类获取getFrameworkModel代码如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> static</span><span style="color:#24292E"> FrameworkModel </span><span style="color:#6F42C1">getFrameworkModel</span><span style="color:#24292E">(ScopeModel scopeModel) {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (scopeModel </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> FrameworkModel.</span><span style="color:#6F42C1">defaultModel</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //通过成员变量获取(构造器初始化的时候将FrameworkModel赋值给了ApplicationModel的成员变量</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (scopeModel </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> ApplicationModel) {</span></span>
+<span class="line"><span style="color:#6A737D">        	//直接获取</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> ((ApplicationModel) scopeModel).</span><span style="color:#6F42C1">getFrameworkModel</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (scopeModel </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> ModuleModel) {</span></span>
+<span class="line"><span style="color:#24292E">            ModuleModel moduleModel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (ModuleModel) scopeModel;</span></span>
+<span class="line"><span style="color:#6A737D">            //间接通过ApplicationModel获取，不越级获取</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> moduleModel.</span><span style="color:#6F42C1">getApplicationModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getFrameworkModel</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (scopeModel </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> FrameworkModel) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> (FrameworkModel) scopeModel;</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Unable to get FrameworkModel from "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> scopeModel);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h4 id="模块配置管理器对象的创建与初始化"><strong>模块配置管理器对象的创建与初始化</strong></h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D"> //创建模块配置管理对象</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.moduleConfigManager </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ModuleConfigManager</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //初始化模块配置管理对象</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.moduleConfigManager.</span><span style="color:#6F42C1">initialize</span><span style="color:#24292E">();</span></span></code></pre>
+<p>ModuleConfigManager的构造器代码如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#6F42C1"> ModuleConfigManager</span><span style="color:#24292E">(ModuleModel moduleModel) {</span></span>
+<span class="line"><span style="color:#6A737D">	//向抽象的配置管理器AbstractConfigManager传递参数</span></span>
+<span class="line"><span style="color:#6A737D">	//模块模型参数，模块支持的配置类型集合</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">(moduleModel, Arrays.</span><span style="color:#6F42C1">asList</span><span style="color:#24292E">(ModuleConfig.class, ServiceConfigBase.class, ReferenceConfigBase.class, ProviderConfig.class, ConsumerConfig.class));</span></span>
+<span class="line"><span style="color:#6A737D">        //获取应用程序配置管理器</span></span>
+<span class="line"><span style="color:#24292E">        applicationConfigManager </span><span style="color:#D73A49">=</span><span style="color:#24292E"> moduleModel.</span><span style="color:#6F42C1">getApplicationModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getApplicationConfigManager</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span></code></pre>
+<p>ModuleConfigManager类型的初始化方法代码如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initialize</span><span style="color:#24292E">() throws IllegalStateException {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">initialized.</span><span style="color:#6F42C1">compareAndSet</span><span style="color:#24292E">(</span><span style="color:#005CC5">false</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //获取组合配置对象</span></span>
+<span class="line"><span style="color:#24292E">        CompositeConfiguration configuration </span><span style="color:#D73A49">=</span><span style="color:#24292E"> scopeModel.</span><span style="color:#6F42C1">getModelEnvironment</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getConfiguration</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // dubbo.config.mode</span></span>
+<span class="line"><span style="color:#6A737D">        //3.3.4.1提到过这里再重复一次 dubbo.config.mode获取配置模式，配置模式对应枚举类型ConfigMode，目前有这么几个STRICT，OVERRIDE，OVERRIDE_ALL，OVERRIDE_IF_ABSENT，IGNORE，这个配置决定了属性覆盖的顺序，当有同一个配置key多次出现时候，以最新配置为准，还是以最老的那个配置为准，还是配置重复则抛出异常，默认值为严格模式STRICT重复则抛出异常</span></span>
+<span class="line"><span style="color:#24292E">        String configModeStr </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (String) configuration.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(ConfigKeys.DUBBO_CONFIG_MODE);</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (StringUtils.</span><span style="color:#6F42C1">hasText</span><span style="color:#24292E">(configModeStr)) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.configMode </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ConfigMode.</span><span style="color:#6F42C1">valueOf</span><span style="color:#24292E">(configModeStr.</span><span style="color:#6F42C1">toUpperCase</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            String msg </span><span style="color:#D73A49">=</span><span style="color:#032F62"> "Illegal '"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> ConfigKeys.DUBBO_CONFIG_MODE </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "' config value ["</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> configModeStr </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "], available values "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> Arrays.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">(ConfigMode.</span><span style="color:#6F42C1">values</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">            logger.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(msg, e);</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(msg, e);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // dubbo.config.ignore-duplicated-interface</span></span>
+<span class="line"><span style="color:#6A737D">        //忽略重复的接口（服务/引用）配置。默认值为false</span></span>
+<span class="line"><span style="color:#24292E">        String ignoreDuplicatedInterfaceStr </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (String) configuration</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(ConfigKeys.DUBBO_CONFIG_IGNORE_DUPLICATED_INTERFACE);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (ignoreDuplicatedInterfaceStr </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.ignoreDuplicatedInterface </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Boolean.</span><span style="color:#6F42C1">parseBoolean</span><span style="color:#24292E">(ignoreDuplicatedInterfaceStr);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // print 打印配置信息到控制台</span></span>
+<span class="line"><span style="color:#24292E">        Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> map </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> LinkedHashMap&#x3C;>();</span></span>
+<span class="line"><span style="color:#24292E">        map.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(ConfigKeys.DUBBO_CONFIG_MODE, configMode);</span></span>
+<span class="line"><span style="color:#24292E">        map.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(ConfigKeys.DUBBO_CONFIG_IGNORE_DUPLICATED_INTERFACE, </span><span style="color:#005CC5">this</span><span style="color:#24292E">.ignoreDuplicatedInterface);</span></span>
+<span class="line"><span style="color:#24292E">        logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Config settings: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> map);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h4 id="模块配置扩展的初始化"><strong>模块配置扩展的初始化</strong></h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6F42C1">initModuleExt</span><span style="color:#24292E">();</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initModuleExt</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">//目前这里的扩展只支持有一个类型ModuleEnvironment</span></span>
+<span class="line"><span style="color:#24292E">        Set&#x3C;</span><span style="color:#D73A49">ModuleExt</span><span style="color:#24292E">> exts </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ModuleExt.class).</span><span style="color:#6F42C1">getSupportedExtensionInstances</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (ModuleExt ext </span><span style="color:#D73A49">:</span><span style="color:#24292E"> exts) {</span></span>
+<span class="line"><span style="color:#24292E">            ext.</span><span style="color:#6F42C1">initialize</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>ModuleEnvironment的初始化</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">  @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initialize</span><span style="color:#24292E">() throws IllegalStateException {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.orderedPropertiesConfiguration </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> OrderedPropertiesConfiguration</span><span style="color:#24292E">(moduleModel);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>OrderedPropertiesConfiguration对象的创建</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#6F42C1"> OrderedPropertiesConfiguration</span><span style="color:#24292E">(ModuleModel moduleModel) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.moduleModel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> moduleModel;</span></span>
+<span class="line"><span style="color:#6F42C1">        refresh</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> refresh</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#24292E">        properties </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Properties</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //有序的配置提供器扩展获取</span></span>
+<span class="line"><span style="color:#24292E">        ExtensionLoader&#x3C;</span><span style="color:#D73A49">OrderedPropertiesProvider</span><span style="color:#24292E">> propertiesProviderExtensionLoader </span><span style="color:#D73A49">=</span><span style="color:#24292E"> moduleModel.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(OrderedPropertiesProvider.class);</span></span>
+<span class="line"><span style="color:#24292E">        Set&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">> propertiesProviderNames </span><span style="color:#D73A49">=</span><span style="color:#24292E"> propertiesProviderExtensionLoader.</span><span style="color:#6F42C1">getSupportedExtensions</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (CollectionUtils.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">(propertiesProviderNames)) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">OrderedPropertiesProvider</span><span style="color:#24292E">> orderedPropertiesProviders </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>();</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (String propertiesProviderName </span><span style="color:#D73A49">:</span><span style="color:#24292E"> propertiesProviderNames) {</span></span>
+<span class="line"><span style="color:#24292E">            orderedPropertiesProviders.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(propertiesProviderExtensionLoader.</span><span style="color:#6F42C1">getExtension</span><span style="color:#24292E">(propertiesProviderName));</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        //order the propertiesProvider according the priority descending</span></span>
+<span class="line"><span style="color:#6A737D">        //根据优先级进行排序，值越小优先级越高</span></span>
+<span class="line"><span style="color:#24292E">        orderedPropertiesProviders.</span><span style="color:#6F42C1">sort</span><span style="color:#24292E">((a, b) </span><span style="color:#D73A49">-></span><span style="color:#24292E"> b.</span><span style="color:#6F42C1">priority</span><span style="color:#24292E">() </span><span style="color:#D73A49">-</span><span style="color:#24292E"> a.</span><span style="color:#6F42C1">priority</span><span style="color:#24292E">());</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        //override the properties. 目前没看到有具体的扩展实现</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (OrderedPropertiesProvider orderedPropertiesProvider </span><span style="color:#D73A49">:</span><span style="color:#24292E"> orderedPropertiesProviders) {</span></span>
+<span class="line"><span style="color:#24292E">            properties.</span><span style="color:#6F42C1">putAll</span><span style="color:#24292E">(orderedPropertiesProvider.</span><span style="color:#6F42C1">initProperties</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>chapter_kafka/8-send-producer-data — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_kafka/8-send-producer-data/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_kafka/8-send-producer-data"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_kafka/8-send-producer-data/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_kafka/8-send-producer-data"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="chapter_kafka/8-send-producer-data — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_kafka/8-send-producer-data/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_kafka/8-send-producer-data/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>kafka</h3> <ul> <li> <a href="/zh/chapter_kafka/0-1-Kaka知识点全解析" class="lv0" title="Kaka入门级教程"> Kaka入门级教程 </a> </li><li> <a href="/zh/chapter_kafka/1-1-生产者例子发送数据生命周期" class="lv0" title="从一个生产者的Demo出发"> 从一个生产者的Demo出发 </a> </li><li> <a href="/zh/chapter_kafka/1-2-生产者KafkaProducer对象的初始化" class="lv0" title="2 生产者KafkaProducer对象的初始化"> 2 生产者KafkaProducer对象的初始化 </a> </li><li> <a href="/zh/chapter_kafka/1-introduce" class="lv0" title="**Kaka知识全解析**"> **Kaka知识全解析** </a> </li><li> <a href="/zh/chapter_kafka/2-high-performence" class="lv0" title="**Kaka高性能设计原理**"> **Kaka高性能设计原理** </a> </li><li> <a href="/zh/chapter_kafka/3-client-sample" class="lv0" title="**从一个Kafka的Demo说起**"> **从一个Kafka的Demo说起** </a> </li><li> <a href="/zh/chapter_kafka/3-KafkaProducer处理数据到发送批处理队列" class="lv0" title="3-KafkaProducer处理数据到发送批处理队列"> 3-KafkaProducer处理数据到发送批处理队列 </a> </li><li> <a href="/zh/chapter_kafka/4-kafka-producer" class="lv0" title="**KafkaProducer生产者对象的长篇源码解析简介**"> **KafkaProducer生产者对象的长篇源码解析简介** </a> </li><li> <a href="/zh/chapter_kafka/4-Send发送者线程的主限循环逻辑" class="lv0" title="4-Send发送者线程的主限循环逻辑"> 4-Send发送者线程的主限循环逻辑 </a> </li><li> <a href="/zh/chapter_kafka/5-生产者消息请求放入Kafka通道" class="lv0" title="5-生产者消息请求放入Kafka通道"> 5-生产者消息请求放入Kafka通道 </a> </li><li> <a href="/zh/chapter_kafka/5-sender" class="lv0" title="**Kafka的发送器对象的初始化**"> **Kafka的发送器对象的初始化** </a> </li><li> <a href="/zh/chapter_kafka/6-生产者执行IO事件" class="lv0" title="执行IO事件"> 执行IO事件 </a> </li><li> <a href="/zh/chapter_kafka/6-kafka-thread" class="lv0" title="**Kafka客户端的IO线程KafkaThread**"> **Kafka客户端的IO线程KafkaThread** </a> </li><li> <a href="/zh/chapter_kafka/7-消费者和生产者处理IO结果" class="lv0" title="7-消费者和生产者处理IO结果"> 7-消费者和生产者处理IO结果 </a> </li><li> <a href="/zh/chapter_kafka/7-kafka-producer-init" class="lv0" title="**生产者KafkaProducer对象的初始化**"> **生产者KafkaProducer对象的初始化** </a> </li><li> <a href="/zh/chapter_kafka/8-消费者例子拉取数据生命周期" class="lv0" title="8-消费者例子拉取数据生命周期"> 8-消费者例子拉取数据生命周期 </a> </li><li> <a href="/zh/chapter_kafka/8-send-producer-data" class="lv0" aria-current="page" title="8-send-producer-data"> 8-send-producer-data </a> </li><li> <a href="/zh/chapter_kafka/9-消费者KafkaConsumer对象的初始化" class="lv0" title="9-消费者KafkaConsumer对象的初始化"> 9-消费者KafkaConsumer对象的初始化 </a> </li><li> <a href="/zh/chapter_kafka/9-execute-io" class="lv0" title="**执行IO事件**"> **执行IO事件** </a> </li><li> <a href="/zh/chapter_kafka/10-消费者订阅TOPIC" class="lv0" title="10-消费者订阅TOPIC"> 10-消费者订阅TOPIC </a> </li><li> <a href="/zh/chapter_kafka/10-handle-io" class="lv0" title="**处理Poll的IO返回结果**"> **处理Poll的IO返回结果** </a> </li><li> <a href="/zh/chapter_kafka/11-消费者执行轮询消息poll方法" class="lv0" title="11-消费者执行轮询消息poll方法"> 11-消费者执行轮询消息poll方法 </a> </li><li> <a href="/zh/chapter_kafka/12-消费者尝试更新分配元数据updateAssignmentMetadataIfNeeded" class="lv0" title="12-消费者尝试更新分配元数据updateAssignmentMetadataIfNeeded"> 12-消费者尝试更新分配元数据updateAssignmentMetadataIfNeeded </a> </li><li> <a href="/zh/chapter_kafka/13-消费者Poll从服务端拉取数据" class="lv0" title="13-消费者Poll从服务端拉取数据"> 13-消费者Poll从服务端拉取数据 </a> </li><li> <a href="/zh/chapter_kafka/Kafka入门" class="lv0" title="简介"> 简介 </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_kafka">kafka</a><span class="sep">/</span><span>8-send-producer-data</span> </nav> <div class="prose">  <h2 id="发送器sender类型的的sendproducerdata-模版方法"><strong>发送器Sender类型的的sendProducerData 模版方法</strong></h2>
+<p>当前方法的代码大纲如下：</p>
+<ul>
+<li>元数据相关：
+<ul>
+<li>集群信息缓存查询</li>
+<li>主题分区缓存查询</li>
+<li>无leader主题分区更新元数据</li>
+</ul>
+</li>
+<li>批处理数据相关：
+<ul>
+<li>遍历准备发送数据的节点</li>
+<li>批处理记录的创建</li>
+<li>所有请求添加到飞行窗口</li>
+</ul>
+</li>
+<li>批处理关联网络通道
+<ul>
+<li>遍历批处理batches列表转换为内存记录列表</li>
+<li>将本批次的内存记录列表数据放入飞行集合中</li>
+<li>请求头信息放入对应IO通道KafkaChannel</li>
+</ul>
+</li>
+</ul>
+<p>下面是发送器Sender类型的的sendProducerData 模版方法源码直接看的话会比较枯燥可以结合代码大纲进行了解，主要分为三大部分：<strong>元数据处理</strong> ，<strong>批处理记录与飞行窗口处理</strong> ，<strong>批处理存放到对应网络通道</strong>：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> long</span><span style="color:#6F42C1"> sendProducerData</span><span style="color:#24292E">(</span><span style="color:#D73A49">long</span><span style="color:#24292E"> now) {</span></span>
+<span class="line"><span style="color:#6A737D">  //-------------------------------元数据处理开始-------------------------------------//</span></span>
+<span class="line"><span style="color:#6A737D">  //**集群信息查询：**MetadataCache中获取集群元数据信息Cluster</span></span>
+<span class="line"><span style="color:#24292E">    Cluster cluster </span><span style="color:#D73A49">=</span><span style="color:#24292E"> metadata.</span><span style="color:#6F42C1">fetch</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">    // get the list of partitions with data ready to send</span></span>
+<span class="line"><span style="color:#6A737D">  //获取准备发送数据的分区列表，记录累加器中获取准备准备发送数据的主题分区</span></span>
+<span class="line"><span style="color:#24292E">    RecordAccumulator.ReadyCheckResult result </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.accumulator.</span><span style="color:#6F42C1">ready</span><span style="color:#24292E">(cluster, now);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // if there are any partitions whose leaders are not known yet, force metadata update</span></span>
+<span class="line"><span style="color:#6A737D">  //**无leader主题分区更新元数据：**如果存在主题分区对应的leader为空则强制更新无leader的主题分区对应的元数据</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">result.unknownLeaderTopics.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">        // The set of topics with unknown leader contains topics with leader election pending as well as</span></span>
+<span class="line"><span style="color:#6A737D">        // topics which may have expired. Add the topic again to metadata to ensure it is included</span></span>
+<span class="line"><span style="color:#6A737D">        // and request metadata update, since there are messages to send to the topic.</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (String topic </span><span style="color:#D73A49">:</span><span style="color:#24292E"> result.unknownLeaderTopics)</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.metadata.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(topic);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        log.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Requesting metadata update due to unknown leader topics from the batched records: {}"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">            result.unknownLeaderTopics);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.metadata.</span><span style="color:#6F42C1">requestUpdate</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // remove any nodes we aren't ready to send to</span></span>
+<span class="line"><span style="color:#6A737D">  //遍历准备发送数据的节点集合Set&#x3C;Node> readyNodes</span></span>
+<span class="line"><span style="color:#24292E">    Iterator&#x3C;</span><span style="color:#D73A49">Node</span><span style="color:#24292E">> iter </span><span style="color:#D73A49">=</span><span style="color:#24292E"> result.readyNodes.</span><span style="color:#6F42C1">iterator</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">    long</span><span style="color:#24292E"> notReadyTimeout </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Long.MAX_VALUE;</span></span>
+<span class="line"><span style="color:#D73A49">    while</span><span style="color:#24292E"> (iter.</span><span style="color:#6F42C1">hasNext</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">        Node node </span><span style="color:#D73A49">=</span><span style="color:#24292E"> iter.</span><span style="color:#6F42C1">next</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#005CC5">this</span><span style="color:#24292E">.client.</span><span style="color:#6F42C1">ready</span><span style="color:#24292E">(node, now)) {</span></span>
+<span class="line"><span style="color:#24292E">            iter.</span><span style="color:#6F42C1">remove</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            notReadyTimeout </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Math.</span><span style="color:#6F42C1">min</span><span style="color:#24292E">(notReadyTimeout, </span><span style="color:#005CC5">this</span><span style="color:#24292E">.client.</span><span style="color:#6F42C1">pollDelayMs</span><span style="color:#24292E">(node, now));</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D"> //-------------------------------元数据处理结束-------------------------------------//</span></span>
+<span class="line"><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6A737D">  //-----------------------------批处理记录与飞行窗口处理开始----------------------------//</span></span>
+<span class="line"><span style="color:#6A737D">  // create produce requests</span></span>
+<span class="line"><span style="color:#6A737D">  //RecordAccumulator记录累加器调用drain方法从批处理队列中排出所有映射节点对应的可以进行发送消息的批处理队列</span></span>
+<span class="line"><span style="color:#24292E">    Map&#x3C;</span><span style="color:#D73A49">Integer</span><span style="color:#24292E">, List&#x3C;</span><span style="color:#D73A49">ProducerBatch</span><span style="color:#24292E">>> batches </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.accumulator.</span><span style="color:#6F42C1">drain</span><span style="color:#24292E">(cluster, result.readyNodes, </span><span style="color:#005CC5">this</span><span style="color:#24292E">.maxRequestSize, now);</span></span>
+<span class="line"><span style="color:#6A737D">  //将所有请求添加到飞行窗口 </span></span>
+<span class="line"><span style="color:#6A737D">   //这个方法遍历所有的批处理记录将批处理存放在飞行窗口集合中</span></span>
+<span class="line"><span style="color:#6A737D">  //飞行集合： Map&#x3C;TopicPartition, List&#x3C;ProducerBatch>> inFlightBatches</span></span>
+<span class="line"><span style="color:#6F42C1">    addToInflightBatches</span><span style="color:#24292E">(batches);</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (guaranteeMessageOrder) {</span></span>
+<span class="line"><span style="color:#6A737D">        // Mute all the partitions drained</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (List&#x3C;</span><span style="color:#D73A49">ProducerBatch</span><span style="color:#24292E">> batchList </span><span style="color:#D73A49">:</span><span style="color:#24292E"> batches.</span><span style="color:#6F42C1">values</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">            for</span><span style="color:#24292E"> (ProducerBatch batch </span><span style="color:#D73A49">:</span><span style="color:#24292E"> batchList)</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.accumulator.</span><span style="color:#6F42C1">mutePartition</span><span style="color:#24292E">(batch.topicPartition);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    accumulator.</span><span style="color:#6F42C1">resetNextBatchExpiryTime</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">  //遍历inFlightBatches集合 查看消息是否超过了deliveryTimeoutMs</span></span>
+<span class="line"><span style="color:#6A737D">  //把超时的消息从飞行集合中移除，然后存放到expiredInflightBatches集合中</span></span>
+<span class="line"><span style="color:#24292E">    List&#x3C;</span><span style="color:#D73A49">ProducerBatch</span><span style="color:#24292E">> expiredInflightBatches </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getExpiredInflightBatches</span><span style="color:#24292E">(now);</span></span>
+<span class="line"><span style="color:#6A737D">  //遍历原始的批处理集合batches： ConcurrentMap&#x3C;TopicPartition, Deque&#x3C;ProducerBatch>>查看消息是否超过了deliveryTimeoutMs</span></span>
+<span class="line"><span style="color:#6A737D">  //把超时的批处理消息从批处理集合中移除然后放到expiredBatches集合中</span></span>
+<span class="line"><span style="color:#24292E">    List&#x3C;</span><span style="color:#D73A49">ProducerBatch</span><span style="color:#24292E">> expiredBatches </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.accumulator.</span><span style="color:#6F42C1">expiredBatches</span><span style="color:#24292E">(now);</span></span>
+<span class="line"><span style="color:#6A737D">  //待发送的飞行集合中的过期消息和批处理中的过期消息都放到一个集合中</span></span>
+<span class="line"><span style="color:#24292E">    expiredBatches.</span><span style="color:#6F42C1">addAll</span><span style="color:#24292E">(expiredInflightBatches);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Reset the producer id if an expired batch has previously been sent to the broker. Also update the metrics</span></span>
+<span class="line"><span style="color:#6A737D">    // for expired batches. see the documentation of @TransactionState.resetProducerId to understand why</span></span>
+<span class="line"><span style="color:#6A737D">    // we need to reset the producer id here.</span></span>
+<span class="line"><span style="color:#6A737D">  //</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">expiredBatches.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">        log.</span><span style="color:#6F42C1">trace</span><span style="color:#24292E">(</span><span style="color:#032F62">"Expired {} batches in accumulator"</span><span style="color:#24292E">, expiredBatches.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (ProducerBatch expiredBatch </span><span style="color:#D73A49">:</span><span style="color:#24292E"> expiredBatches) {</span></span>
+<span class="line"><span style="color:#24292E">        String errorMessage </span><span style="color:#D73A49">=</span><span style="color:#032F62"> "Expiring "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> expiredBatch.recordCount </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " record(s) for "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> expiredBatch.topicPartition</span></span>
+<span class="line"><span style="color:#D73A49">            +</span><span style="color:#032F62"> ":"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> (now </span><span style="color:#D73A49">-</span><span style="color:#24292E"> expiredBatch.createdMs) </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " ms has passed since batch creation"</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6F42C1">        failBatch</span><span style="color:#24292E">(expiredBatch, </span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">, NO_TIMESTAMP, </span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> TimeoutException</span><span style="color:#24292E">(errorMessage), </span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (transactionManager </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> expiredBatch.</span><span style="color:#6F42C1">inRetry</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">            // This ensures that no new batches are drained until the current in flight batches are fully resolved.</span></span>
+<span class="line"><span style="color:#24292E">            transactionManager.</span><span style="color:#6F42C1">markSequenceUnresolved</span><span style="color:#24292E">(expiredBatch.topicPartition);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    sensors.</span><span style="color:#6F42C1">updateProduceRequestMetrics</span><span style="color:#24292E">(batches);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // If we have any nodes that are ready to send + have sendable data, poll with 0 timeout so this can immediately</span></span>
+<span class="line"><span style="color:#6A737D">    // loop and try sending more data. Otherwise, the timeout will be the smaller value between next batch expiry</span></span>
+<span class="line"><span style="color:#6A737D">    // time, and the delay time for checking data availability. Note that the nodes may have data that isn't yet</span></span>
+<span class="line"><span style="color:#6A737D">    // sendable due to lingering, backing off, etc. This specifically does not include nodes with sendable data</span></span>
+<span class="line"><span style="color:#6A737D">    // that aren't ready to send since they would cause busy looping.</span></span>
+<span class="line"><span style="color:#D73A49">    long</span><span style="color:#24292E"> pollTimeout </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Math.</span><span style="color:#6F42C1">min</span><span style="color:#24292E">(result.nextReadyCheckDelayMs, notReadyTimeout);</span></span>
+<span class="line"><span style="color:#24292E">    pollTimeout </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Math.</span><span style="color:#6F42C1">min</span><span style="color:#24292E">(pollTimeout, </span><span style="color:#005CC5">this</span><span style="color:#24292E">.accumulator.</span><span style="color:#6F42C1">nextExpiryTimeMs</span><span style="color:#24292E">() </span><span style="color:#D73A49">-</span><span style="color:#24292E"> now);</span></span>
+<span class="line"><span style="color:#24292E">    pollTimeout </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Math.</span><span style="color:#6F42C1">max</span><span style="color:#24292E">(pollTimeout, </span><span style="color:#005CC5">0</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">result.readyNodes.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">        log.</span><span style="color:#6F42C1">trace</span><span style="color:#24292E">(</span><span style="color:#032F62">"Nodes with data ready to send: {}"</span><span style="color:#24292E">, result.readyNodes);</span></span>
+<span class="line"><span style="color:#6A737D">        // if some partitions are already ready to be sent, the select time would be 0;</span></span>
+<span class="line"><span style="color:#6A737D">        // otherwise if some partition already has some data accumulated but not ready yet,</span></span>
+<span class="line"><span style="color:#6A737D">        // the select time will be the time difference between now and its linger expiry time;</span></span>
+<span class="line"><span style="color:#6A737D">        // otherwise the select time will be the time difference between now and the metadata expiry time;</span></span>
+<span class="line"><span style="color:#24292E">        pollTimeout </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D">  //---------------------------批处理记录与飞行窗口处理结束----------------------------//</span></span>
+<span class="line"><span style="color:#24292E">  </span></span>
+<span class="line"><span style="color:#24292E">  </span></span>
+<span class="line"><span style="color:#6A737D">  //-----------------------------批处理存放到对应网络通道开始----------------------------// </span></span>
+<span class="line"><span style="color:#6F42C1">    sendProduceRequests</span><span style="color:#24292E">(batches, now);</span></span>
+<span class="line"><span style="color:#6A737D">  //-----------------------------批处理存放到对应网络通道结束----------------------------//</span></span>
+<span class="line"><span style="color:#24292E">  </span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> pollTimeout;</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="批处理消息存放到网络通道中"><strong>批处理消息存放到网络通道中</strong></h2>
+<p>前面对用户待发消息的批处理队列进行了处理得到最终需要发送的批处理消息集合然后遍历每个节点对应的批处理集合，将其存放在网络通道中等后续IO逻辑执行的时候将Kafka通道中存放的消息发送出去</p>
+<p>Sender类型的sendProduceRequests方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> sendProduceRequests</span><span style="color:#24292E">(Map</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">Integer, List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">ProducerBatch</span><span style="color:#D73A49">>></span><span style="color:#24292E"> collated, </span><span style="color:#D73A49">long</span><span style="color:#24292E"> now) {</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (Map.Entry&#x3C;</span><span style="color:#D73A49">Integer</span><span style="color:#24292E">, List&#x3C;</span><span style="color:#D73A49">ProducerBatch</span><span style="color:#24292E">>> entry </span><span style="color:#D73A49">:</span><span style="color:#24292E"> collated.</span><span style="color:#6F42C1">entrySet</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#6F42C1">        sendProduceRequest</span><span style="color:#24292E">(now, entry.</span><span style="color:#6F42C1">getKey</span><span style="color:#24292E">(), acks, requestTimeoutMs, entry.</span><span style="color:#6F42C1">getValue</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>单个节点的批处理列表进行处理为其创建网络请求对象然后存放到网络通道</p>
+<p>Sender类型的sendProduceRequest方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> sendProduceRequest</span><span style="color:#24292E">(</span><span style="color:#D73A49">long</span><span style="color:#24292E"> now, </span><span style="color:#D73A49">int</span><span style="color:#24292E"> destination, </span><span style="color:#D73A49">short</span><span style="color:#24292E"> acks, </span><span style="color:#D73A49">int</span><span style="color:#24292E"> timeout, List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">ProducerBatch</span><span style="color:#D73A49">></span><span style="color:#24292E"> batches) {</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (batches.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6A737D">		//内存记录内部通过字节缓冲区ByteBuffer来对记录进行存储（ByteBuffer有两种一种是堆字节缓冲，直接是直接内存字节缓冲区） 这里内存记录使用堆缓冲区HeapByteBuffer</span></span>
+<span class="line"><span style="color:#24292E">    Map&#x3C;</span><span style="color:#D73A49">TopicPartition</span><span style="color:#24292E">, </span><span style="color:#D73A49">MemoryRecords</span><span style="color:#24292E">> produceRecordsByPartition </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> HashMap&#x3C;>(batches.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">   </span></span>
+<span class="line"><span style="color:#D73A49">    final</span><span style="color:#24292E"> Map&#x3C;</span><span style="color:#D73A49">TopicPartition</span><span style="color:#24292E">, </span><span style="color:#D73A49">ProducerBatch</span><span style="color:#24292E">> recordsByPartition </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> HashMap&#x3C;>(batches.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // find the minimum magic version used when creating the record sets</span></span>
+<span class="line"><span style="color:#D73A49">    byte</span><span style="color:#24292E"> minUsedMagic </span><span style="color:#D73A49">=</span><span style="color:#24292E"> apiVersions.</span><span style="color:#6F42C1">maxUsableProduceMagic</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (ProducerBatch batch </span><span style="color:#D73A49">:</span><span style="color:#24292E"> batches) {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (batch.</span><span style="color:#6F42C1">magic</span><span style="color:#24292E">() </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> minUsedMagic)</span></span>
+<span class="line"><span style="color:#24292E">            minUsedMagic </span><span style="color:#D73A49">=</span><span style="color:#24292E"> batch.</span><span style="color:#6F42C1">magic</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D">   //遍历批处理队列</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (ProducerBatch batch </span><span style="color:#D73A49">:</span><span style="color:#24292E"> batches) {</span></span>
+<span class="line"><span style="color:#24292E">        TopicPartition tp </span><span style="color:#D73A49">=</span><span style="color:#24292E"> batch.topicPartition;</span></span>
+<span class="line"><span style="color:#24292E">        MemoryRecords records </span><span style="color:#D73A49">=</span><span style="color:#24292E"> batch.</span><span style="color:#6F42C1">records</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // down convert if necessary to the minimum magic used. In general, there can be a delay between the time</span></span>
+<span class="line"><span style="color:#6A737D">        // that the producer starts building the batch and the time that we send the request, and we may have</span></span>
+<span class="line"><span style="color:#6A737D">        // chosen the message format based on out-dated metadata. In the worst case, we optimistically chose to use</span></span>
+<span class="line"><span style="color:#6A737D">        // the new message format, but found that the broker didn't support it, so we need to down-convert on the</span></span>
+<span class="line"><span style="color:#6A737D">        // client before sending. This is intended to handle edge cases around cluster upgrades where brokers may</span></span>
+<span class="line"><span style="color:#6A737D">        // not all support the same message format version. For example, if a partition migrates from a broker</span></span>
+<span class="line"><span style="color:#6A737D">        // which is supporting the new magic version to one which doesn't, then we will need to convert.</span></span>
+<span class="line"><span style="color:#6A737D">        //版本兼容处理</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">records.</span><span style="color:#6F42C1">hasMatchingMagic</span><span style="color:#24292E">(minUsedMagic))</span></span>
+<span class="line"><span style="color:#24292E">            records </span><span style="color:#D73A49">=</span><span style="color:#24292E"> batch.</span><span style="color:#6F42C1">records</span><span style="color:#24292E">().</span><span style="color:#6F42C1">downConvert</span><span style="color:#24292E">(minUsedMagic, </span><span style="color:#005CC5">0</span><span style="color:#24292E">, time).</span><span style="color:#6F42C1">records</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">      </span></span>
+<span class="line"><span style="color:#6A737D">       //主题分区-内存记录映射 key：主题分区,value: 内存记录</span></span>
+<span class="line"><span style="color:#24292E">        produceRecordsByPartition.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(tp, records);</span></span>
+<span class="line"><span style="color:#6A737D">       //主题分区-批处理映射  key：主题分区，value: 生产者批处理</span></span>
+<span class="line"><span style="color:#24292E">        recordsByPartition.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(tp, batch);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">  	//事务逻辑</span></span>
+<span class="line"><span style="color:#24292E">    String transactionalId </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (transactionManager </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> transactionManager.</span><span style="color:#6F42C1">isTransactional</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">        transactionalId </span><span style="color:#D73A49">=</span><span style="color:#24292E"> transactionManager.</span><span style="color:#6F42C1">transactionalId</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">  </span></span>
+<span class="line"><span style="color:#6A737D">  //请求构建器 用于创建生产者请求对象ProduceRequest</span></span>
+<span class="line"><span style="color:#24292E">    ProduceRequest.Builder requestBuilder </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ProduceRequest.Builder.</span><span style="color:#6F42C1">forMagic</span><span style="color:#24292E">(minUsedMagic, acks, timeout,</span></span>
+<span class="line"><span style="color:#24292E">            produceRecordsByPartition, transactionalId);</span></span>
+<span class="line"><span style="color:#24292E">    RequestCompletionHandler callback </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> RequestCompletionHandler</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">        public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> onComplete</span><span style="color:#24292E">(ClientResponse </span><span style="color:#E36209">response</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6F42C1">            handleProduceResponse</span><span style="color:#24292E">(response, recordsByPartition, time.</span><span style="color:#6F42C1">milliseconds</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    };</span></span>
+<span class="line"><span style="color:#24292E">		</span></span>
+<span class="line"><span style="color:#6A737D">  //客户端请求对象创建 ClientRequest类型对象</span></span>
+<span class="line"><span style="color:#24292E">    String nodeId </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">(destination);</span></span>
+<span class="line"><span style="color:#24292E">    ClientRequest clientRequest </span><span style="color:#D73A49">=</span><span style="color:#24292E"> client.</span><span style="color:#6F42C1">newClientRequest</span><span style="color:#24292E">(nodeId, requestBuilder, now, acks </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">            requestTimeoutMs, callback);</span></span>
+<span class="line"><span style="color:#24292E">  </span></span>
+<span class="line"><span style="color:#24292E">    client.</span><span style="color:#6F42C1">send</span><span style="color:#24292E">(clientRequest, now);</span></span>
+<span class="line"><span style="color:#24292E">    log.</span><span style="color:#6F42C1">trace</span><span style="color:#24292E">(</span><span style="color:#032F62">"Sent produce request to {}: {}"</span><span style="color:#24292E">, nodeId, requestBuilder);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>KafkaClient 是一个封装客户端的一个接口，仅有的实现类型为NetworkClient</p>
+<p>NetworkClient的send方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> send</span><span style="color:#24292E">(ClientRequest request, </span><span style="color:#D73A49">long</span><span style="color:#24292E"> now) {</span></span>
+<span class="line"><span style="color:#6F42C1">    doSend</span><span style="color:#24292E">(request, </span><span style="color:#005CC5">false</span><span style="color:#24292E">, now);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>队列消息为待发送节点</p>
+<p>NetworkClient的doSend方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> doSend</span><span style="color:#24292E">(ClientRequest clientRequest, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> isInternalRequest, </span><span style="color:#D73A49">long</span><span style="color:#24292E"> now) {</span></span>
+<span class="line"><span style="color:#6A737D">    //发送之前的连接状态验证</span></span>
+<span class="line"><span style="color:#6F42C1">    ensureActive</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">    //节点id获取</span></span>
+<span class="line"><span style="color:#24292E">    String nodeId </span><span style="color:#D73A49">=</span><span style="color:#24292E"> clientRequest.</span><span style="color:#6F42C1">destination</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">    ////验证网络连接状态，飞行集合状态...</span></span>
+<span class="line"><span style="color:#24292E">    AbstractRequest.Builder&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">> builder </span><span style="color:#D73A49">=</span><span style="color:#24292E"> clientRequest.</span><span style="color:#6F42C1">requestBuilder</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">        //版本兼容处理 ...</span></span>
+<span class="line"><span style="color:#6A737D">        // The call to build may also throw UnsupportedVersionException, if there are essential</span></span>
+<span class="line"><span style="color:#6A737D">        // fields that cannot be represented in the chosen version.</span></span>
+<span class="line"><span style="color:#6F42C1">        doSend</span><span style="color:#24292E">(clientRequest, isInternalRequest, now, builder.</span><span style="color:#6F42C1">build</span><span style="color:#24292E">(version));</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (UnsupportedVersionException </span><span style="color:#E36209">unsupportedVersionException</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // If the version is not supported, skip sending the request over the wire.</span></span>
+<span class="line"><span style="color:#24292E">      ....</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>NetworkClient的doSend方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> doSend</span><span style="color:#24292E">(ClientRequest clientRequest, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> isInternalRequest, </span><span style="color:#D73A49">long</span><span style="color:#24292E"> now, AbstractRequest request) {</span></span>
+<span class="line"><span style="color:#24292E">    String destination </span><span style="color:#D73A49">=</span><span style="color:#24292E"> clientRequest.</span><span style="color:#6F42C1">destination</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">   //请求头处理</span></span>
+<span class="line"><span style="color:#24292E">    RequestHeader header </span><span style="color:#D73A49">=</span><span style="color:#24292E"> clientRequest.</span><span style="color:#6F42C1">makeHeader</span><span style="color:#24292E">(request.</span><span style="color:#6F42C1">version</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">    //省略掉debug日志代码...</span></span>
+<span class="line"><span style="color:#6A737D">    //目的地和请求头转发送对象 序列化为NetworkSend类型的网络发送实体对象</span></span>
+<span class="line"><span style="color:#24292E">    Send send </span><span style="color:#D73A49">=</span><span style="color:#24292E"> request.</span><span style="color:#6F42C1">toSend</span><span style="color:#24292E">(destination, header);</span></span>
+<span class="line"><span style="color:#6A737D">    //封装目的地，请求头，消息记录，发送时间等信息到飞行请求对象中</span></span>
+<span class="line"><span style="color:#24292E">    InFlightRequest inFlightRequest </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> InFlightRequest</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">            clientRequest,</span></span>
+<span class="line"><span style="color:#24292E">            header,</span></span>
+<span class="line"><span style="color:#24292E">            isInternalRequest,</span></span>
+<span class="line"><span style="color:#24292E">            request,</span></span>
+<span class="line"><span style="color:#24292E">            send,</span></span>
+<span class="line"><span style="color:#24292E">            now);</span></span>
+<span class="line"><span style="color:#6A737D">  //将待发请求都放到飞行管理器中中InFlightRequests类型为飞行管理器，</span></span>
+<span class="line"><span style="color:#6A737D">   //内部的飞行集合为requests对象类型为ap&#x3C;String, Deque&#x3C;NetworkClient.InFlightRequest>> key为destination也就是节点id，值</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.inFlightRequests.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(inFlightRequest);</span></span>
+<span class="line"><span style="color:#24292E">    selector.</span><span style="color:#6F42C1">send</span><span style="color:#24292E">(send);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>kafka Selector类型的的send方法队列给定的请求</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> send</span><span style="color:#24292E">(Send send) {</span></span>
+<span class="line"><span style="color:#24292E">    String connectionId </span><span style="color:#D73A49">=</span><span style="color:#24292E"> send.</span><span style="color:#6F42C1">destination</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">   //获取当前连接id的通道 Selector中的channels中缓存 每个连接id都会对应一个KafkaChannel</span></span>
+<span class="line"><span style="color:#24292E">    KafkaChannel channel </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> openOrClosingChannelOrFail</span><span style="color:#24292E">(connectionId);</span></span>
+<span class="line"><span style="color:#24292E">  </span></span>
+<span class="line"><span style="color:#6A737D">    //连接已经关闭就无需发送</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (closingChannels.</span><span style="color:#6F42C1">containsKey</span><span style="color:#24292E">(connectionId)) {</span></span>
+<span class="line"><span style="color:#6A737D">        // ensure notification via `disconnected`, leave channel in the state in which closing was triggered</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.failedSends.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(connectionId);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">            //将待发送的数据放入KafkaChannel</span></span>
+<span class="line"><span style="color:#24292E">            channel.</span><span style="color:#6F42C1">setSend</span><span style="color:#24292E">(send);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">           //....</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>KafkaChannel的setSend方法设置待发送数据</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> setSend</span><span style="color:#24292E">(Send send) {</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.send </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Attempt to begin a send operation with prior send operation still in progress, connection id is "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> id);</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.send </span><span style="color:#D73A49">=</span><span style="color:#24292E"> send;</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.transportLayer.</span><span style="color:#6F42C1">addInterestOps</span><span style="color:#24292E">(SelectionKey.OP_WRITE);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>NetworkSend类型的待发数据中存储的是请求目的地和请求头数据，而真实的数据是在飞行窗口中存储着的</p>
+<p>PlaintextTransportLayer类型的addInterestOps添加写事件</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> addInterestOps</span><span style="color:#24292E">(</span><span style="color:#D73A49">int</span><span style="color:#24292E"> ops) {</span></span>
+<span class="line"><span style="color:#24292E">    key.</span><span style="color:#6F42C1">interestOps</span><span style="color:#24292E">(key.</span><span style="color:#6F42C1">interestOps</span><span style="color:#24292E">() </span><span style="color:#D73A49">|</span><span style="color:#24292E"> ops);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>切换当前事件为写事件，等待IO逻辑来执行事件</p>
+<p>最后对上面代码做一个总结：</p>
+<p>消息请求放入Kafka通道</p>
+<ul>
+<li>开始调用sendProducerData方法</li>
+<li><strong>集群信息查询：</strong> MetadataCache中获取集群元数据信息Cluster</li>
+<li><strong>主题分区查询：</strong> 获取准备发送数据的分区列表，记录累加器中获取准备准备发送数据的主题分区
+<ul>
+<li>查询遍历缓存的主题分区与批处理队列集合ConcurrentMap&#x3C;TopicPartition, Deque<producerbatch>> batches
+<ul>
+<li>从主题分区信息中获取leader节点信息：Node leader</li>
+<li>根据批处理队列Deque<producerbatch> 中的第一个元素判断是否需要发送如果需要发送则将leader节点对象添加到准备发送节点集合Set<node> readyNodes中然后将其返回</node></producerbatch></li>
+</ul>
+</producerbatch></li>
+</ul>
+</li>
+<li><strong>无leader主题分区更新元数据：</strong> 如果存在主题分区对应的leader为空则强制更新无leader的主题分区对应的元数据</li>
+<li><strong>遍历准备发送数据的节点：</strong> 集合Set<node> readyNodes
+<ul>
+<li>连接移除或者无法正常建立连接的节点则直接移除</li>
+<li>如果连接状态建立正常则直接返回true继续</li>
+<li>如果还未建立连接状态则执行initiateConnect方法设置连接IO事件SelectionKey.OP_CONNECT
+<ul>
+<li>调用Selectable selector的connect方法
+<ul>
+<li>配置SocketChannel
+<ul>
+<li>configureBlocking(false)</li>
+<li>socket.setKeepAlive(true);</li>
+<li>socket.setSendBufferSize(sendBufferSize);</li>
+<li>socket.setReceiveBufferSize(receiveBufferSize);</li>
+<li>socket.setTcpNoDelay(true);</li>
+</ul>
+</li>
+<li>channel.connect(address);</li>
+<li>registerChannel(id, socketChannel, SelectionKey.OP_CONNECT);
+<ul>
+<li>socketChannel.register(nioSelector, interestedOps); 这里仅仅执行了事件的添加并未执行网络IO
+<ul>
+<li>interestedOps存放在SelectorImpl类型的INTERESTOPS对象中</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>ChannelBuilder进行调用buildChannel方法进行构建KafkaChannel
+<ul>
+<li>创建PlaintextTransportLayer类型对象</li>
+<li>创建PlaintextAuthenticator类型对象</li>
+<li>创建KafkaChannel类型对象</li>
+</ul>
+</li>
+<li>将KafkaChannel对象绑定在SelectionKey对象中</li>
+<li>将节点id nodeConnectionId与KafkaChannel存入通道集合Map&#x3C;String, KafkaChannel> channels</li>
+<li>IdleExpiryManager 连接过期管理器对当前连接进行管理
+<ul>
+<li>将连接的connectionId和连接创建时间存入IdleExpiryManager的LRU集合中Map&#x3C;String, Long> lruConnections</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</node></li>
+<li><strong>批处理记录的创建：</strong> RecordAccumulator记录累加器调用 <strong>drain方法</strong> 进行记录的创建
+<ul>
+<li>遍历当前所有准备好的节点集合Set<node> readyNodes;
+<ul>
+<li>从元数据中获取当前节点id的分区信息：List<partitioninfo> parts，然后循环分区数据
+<ul>
+<li>开始创建主题分区对象TopicPartition</li>
+<li>获取当前分区对应的批处理队列Deque<producerbatch> 从集合ConcurrentMap&#x3C;TopicPartition, Deque<producerbatch>> batches中获取</producerbatch></producerbatch></li>
+<li>获取第一个ProducerBatch</li>
+<li>batch.close();</li>
+<li>将批处理存放在List<producerbatch> ready集合中</producerbatch></li>
+<li>最终放到节点id映射批处理集合中进行返回：Map&#x3C;Integer, List<producerbatch>> batches</producerbatch></li>
+</ul>
+</partitioninfo></li>
+</ul>
+</node></li>
+</ul>
+</li>
+<li><strong>所有请求添加到飞行窗口</strong> ：将所有请求添加到飞行窗口addToInflightBatches(batches);
+<ul>
+<li>遍历批量处理列表</li>
+<li>获取当前分区的飞行窗口批处理列表，如果不存在则创建一个List<producerbatch> inflightBatchList</producerbatch></li>
+<li>飞行窗口中存放当前分区的批处理列表 Map&#x3C;TopicPartition, List<producerbatch>> inFlightBatches</producerbatch></li>
+</ul>
+</li>
+<li><strong>遍历批处理batches列表：  发送的请求处理 ** 调用 ** sendProduceRequests方法</strong> 开始遍历批处理batches列表 每个节点对应的每个批处理队列Map&#x3C;Integer, List<producerbatch>> batches
+<ul>
+<li>处理当前节点的批处理队列 List<producerbatch> batches</producerbatch></li>
+<li>遍历当前节点的批处理队列 List<producerbatch> batches
+<ul>
+<li>处理当前批处理消息ProducerBatch batch</li>
+<li>KafkaClient创建请求对象 <strong>ClientRequest</strong></li>
+<li>KafkaClient调用send方法发送ClientRequest</li>
+<li>调用NetworkClient的doSend执行发送逻辑
+<ul>
+<li>根据版本、ACK、和分区内存数据等变量 <strong>创建ProduceRequest对象</strong></li>
+<li>创建 <strong>请求头RequestHeader</strong></li>
+<li>将节点id destination变量和请求头RequestHeader对象封装为 <strong>NetworkSend对象</strong></li>
+<li>再将数据封装为 <strong>InFlightRequest inFlightRequest对象</strong></li>
+<li>将其添加到 <strong>InFlightRequests inFlightRequests集合中</strong></li>
+<li>调用Selectable的send方法
+<ul>
+<li>获取当前连接的KafkaChannel</li>
+<li>将待发送的任务NetworkSend对象存放在KafkaChannel通道中</li>
+<li>TransportLayer触发SelectionKey的interestOps设置 <strong>OP_WRITE</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</producerbatch></li>
+</ul>
+</producerbatch></li>
+<li>结束</li>
+</ul>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

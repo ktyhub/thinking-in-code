@@ -1,0 +1,307 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**全局视野来看Dubbo3的服务启动生命周期** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_dubbo/12-start-life-cycle/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_dubbo/12-start-life-cycle"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_dubbo/12-start-life-cycle/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_dubbo/12-start-life-cycle"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**全局视野来看Dubbo3的服务启动生命周期** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_dubbo/12-start-life-cycle/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_dubbo/12-start-life-cycle/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>dubbo</h3> <ul> <li> <a href="/zh/chapter_dubbo/1-learn-from-a-demo" class="lv0" title="**从一个服务提供者的Demo说起**"> **从一个服务提供者的Demo说起** </a> </li><li> <a href="/zh/chapter_dubbo/2-serviceconfig-config" class="lv0" title="**启动服务前服务配置ServiceConfig类型是如何初始化的?**"> **启动服务前服务配置ServiceConfig类型是如何初始化的?** </a> </li><li> <a href="/zh/chapter_dubbo/3-model-init" class="lv0" title="**框架,应用程序,模块领域模型Model对象的初始化**"> **框架,应用程序,模块领域模型Model对象的初始化** </a> </li><li> <a href="/zh/chapter_dubbo/4-extension-init" class="lv0" title="**Dubbo的扩展机制**"> **Dubbo的扩展机制** </a> </li><li> <a href="/zh/chapter_dubbo/5-getadaptiveextension" class="lv0" title="5-getadaptiveextension"> 5-getadaptiveextension </a> </li><li> <a href="/zh/chapter_dubbo/6-extension-wrapper" class="lv0" title="**Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析**"> **Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/7-extension-activate" class="lv0" title="**Dubbo的SPI扩展机制之自动激活扩展Activate源码解析**"> **Dubbo的SPI扩展机制之自动激活扩展Activate源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/8-dubbobootstrap" class="lv0" title="**Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化**"> **Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化** </a> </li><li> <a href="/zh/chapter_dubbo/9-application-config" class="lv0" title="**Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig**"> **Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig** </a> </li><li> <a href="/zh/chapter_dubbo/10-registryconfig" class="lv0" title="**Dubbo启动器DubboBootstrap添加注册中心配置信息RegistryConfig**"> **Dubbo启动器DubboBootstrap添加注册中心配置信息RegistryConfig** </a> </li><li> <a href="/zh/chapter_dubbo/11-protocolconfig" class="lv0" title="**Dubbo启动器DubboBootstrap添加协议配置信息ProtocolConfig**"> **Dubbo启动器DubboBootstrap添加协议配置信息ProtocolConfig** </a> </li><li> <a href="/zh/chapter_dubbo/12-start-life-cycle" class="lv0" aria-current="page" title="**全局视野来看Dubbo3的服务启动生命周期**"> **全局视野来看Dubbo3的服务启动生命周期** </a> </li><li> <a href="/zh/chapter_dubbo/13-configcenter" class="lv0" title="**Dubbo的三大中心之配置中心**"> **Dubbo的三大中心之配置中心** </a> </li><li> <a href="/zh/chapter_dubbo/14-config-load" class="lv0" title="**Dubbo配置加载全解析**"> **Dubbo配置加载全解析** </a> </li><li> <a href="/zh/chapter_dubbo/15-metadata" class="lv0" title="**Dubbo的三大中心之元数据中心源码解析**"> **Dubbo的三大中心之元数据中心源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/16-moduledeployer" class="lv0" title="**模块发布器发布服务全过程**"> **模块发布器发布服务全过程** </a> </li><li> <a href="/zh/chapter_dubbo/17-provider-register" class="lv0" title="**Dubbo服务提供者的双注册原理**"> **Dubbo服务提供者的双注册原理** </a> </li><li> <a href="/zh/chapter_dubbo/18-metadataService-export" class="lv0" title="**Dubbo3元数据服务MetadataService的导出**"> **Dubbo3元数据服务MetadataService的导出** </a> </li><li> <a href="/zh/chapter_dubbo/19-consuemr-demo" class="lv0" title="**重新来过从一个服务消费者的Demo说起**"> **重新来过从一个服务消费者的Demo说起** </a> </li><li> <a href="/zh/chapter_dubbo/20-reference-config" class="lv0" title="**Dubbo3服务引用配置ReferenceConfig**"> **Dubbo3服务引用配置ReferenceConfig** </a> </li><li> <a href="/zh/chapter_dubbo/21-refer-services" class="lv0" title="**Dubbo3消费者引用服务入口**"> **Dubbo3消费者引用服务入口** </a> </li><li> <a href="/zh/chapter_dubbo/22-migration-invoker" class="lv0" title="**Dubbo3消费者自动感应决策应用级服务发现原理**"> **Dubbo3消费者自动感应决策应用级服务发现原理** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_dubbo">dubbo</a><span class="sep">/</span><span>**全局视野来看Dubbo3的服务启动生命周期**</span> </nav> <div class="prose">  <h1 id="全局视野来看dubbo3的服务启动生命周期"><strong>全局视野来看Dubbo3的服务启动生命周期</strong></h1>
+<h2 id="启动方法简介"><strong>启动方法简介</strong></h2>
+<p>在说启动方法之前先把视野拉回第一章<a href="/zh/chapter_dubbo/1-learn-from-a-demo.md">《1-从一个服务提供者的Demo说起》</a>我们的Demo代码,下面只贴一下核心代码:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> Application</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> main</span><span style="color:#24292E">(</span><span style="color:#D73A49">String</span><span style="color:#24292E">[] </span><span style="color:#E36209">args</span><span style="color:#24292E">) </span><span style="color:#D73A49">throws</span><span style="color:#24292E"> Exception {</span></span>
+<span class="line"><span style="color:#6F42C1">            startWithBootstrap</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> startWithBootstrap</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">    	//前面的文章都在说这个服务配置对象的创建,中间又说了分层域模型,扩展加载机制</span></span>
+<span class="line"><span style="color:#24292E">        ServiceConfig&#x3C;</span><span style="color:#D73A49">DemoServiceImpl</span><span style="color:#24292E">> service </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ServiceConfig&#x3C;>();</span></span>
+<span class="line"><span style="color:#6A737D">        //为服务配置下服务接口和服务实现,下面两行用来初始化对象就不详细说了</span></span>
+<span class="line"><span style="color:#24292E">        service.</span><span style="color:#6F42C1">setInterface</span><span style="color:#24292E">(DemoService.class);</span></span>
+<span class="line"><span style="color:#24292E">        service.</span><span style="color:#6F42C1">setRef</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> DemoServiceImpl</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">        //这一个篇章主要说这里:</span></span>
+<span class="line"><span style="color:#24292E">        DubboBootstrap bootstrap </span><span style="color:#D73A49">=</span><span style="color:#24292E"> DubboBootstrap.</span><span style="color:#6F42C1">getInstance</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //初始化应用配置</span></span>
+<span class="line"><span style="color:#24292E">        bootstrap.</span><span style="color:#6F42C1">application</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> ApplicationConfig</span><span style="color:#24292E">(</span><span style="color:#032F62">"dubbo-demo-api-provider"</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#6A737D">        //初始化注册中心配置</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">registry</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> RegistryConfig</span><span style="color:#24292E">(</span><span style="color:#032F62">"zookeeper://127.0.0.1:2181"</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#6A737D">            //初始化协议配置</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">protocol</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> ProtocolConfig</span><span style="color:#24292E">(CommonConstants.DUBBO, </span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#6A737D">            //初始化服务配置</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">service</span><span style="color:#24292E">(service)</span></span>
+<span class="line"><span style="color:#6A737D">            //启动</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">start</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">await</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>前面我们介绍了Dubbo启动器DubboBootstrap类型对象的创建,又介绍了为DubboBootstrap启动器初始化各种配置信息,这一个博客就开始到了分析启动方法的位置了,Dubbo启动器借助Deployer发布器来启动和发布服务,发布器的启动过程包含了启动配置中心,加载配置,启动元数据中心,启动服务等操作都是比较重要又比较复杂的过程,这里我们先来看下启动过程的生命周期来为后面的内容做好铺垫。</p>
+<h2 id="启动器启动方法的调用逻辑start"><strong>启动器启动方法的调用逻辑start()</strong></h2>
+<p>这里我们就直接来看DubboBootstrap的start()方法:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> public</span><span style="color:#24292E"> DubboBootstrap </span><span style="color:#6F42C1">start</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D"> 		//调用重载的方法进行启动参数代表是否等待启动结束</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">(</span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#005CC5"> this</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>我们再来看重载的start方法:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#24292E"> DubboBootstrap </span><span style="color:#6F42C1">start</span><span style="color:#24292E">(</span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> wait) {</span></span>
+<span class="line"><span style="color:#6A737D">		//这个发布器是在ApplicationModel对象创建之后初始化的时候进行初始化的具体类型为DefaultApplicationDeployer</span></span>
+<span class="line"><span style="color:#24292E">        Future future </span><span style="color:#D73A49">=</span><span style="color:#24292E"> applicationDeployer.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">      </span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (wait) {</span></span>
+<span class="line"><span style="color:#D73A49">            try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">              //等待异步启动的结果</span></span>
+<span class="line"><span style="color:#24292E">                future.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">            	//启动失败则抛出一个异常</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(</span><span style="color:#032F62">"await dubbo application start finish failure"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#005CC5"> this</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h2 id="应用程序发布器defaultapplicationdeployer的启动方法"><strong>应用程序发布器DefaultApplicationDeployer的启动方法</strong></h2>
+<p>发布器是帮助我们发布服务和引用服务的,在Dubbo3中不论是服务提供者还是服务消费者如果想要启动服务都需要走这个启动方法的逻辑,所以务必重视</p>
+<p>我们直接来看DefaultApplicationDeployer的start()代码:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> Future </span><span style="color:#6F42C1">start</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">    	//启动锁，防止重复启动</span></span>
+<span class="line"><span style="color:#D73A49">        synchronized</span><span style="color:#24292E"> (startLock) {</span></span>
+<span class="line"><span style="color:#6A737D">            //发布器,状态已经设置为停止或者失败了就直接抛出异常</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">isStopping</span><span style="color:#24292E">() </span><span style="color:#D73A49">||</span><span style="color:#6F42C1"> isStopped</span><span style="color:#24292E">() </span><span style="color:#D73A49">||</span><span style="color:#6F42C1"> isFailed</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getIdentifier</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " is stopping or stopped, can not start again"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">            try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                // maybe call start again after add new module, check if any new module</span></span>
+<span class="line"><span style="color:#6A737D">                //可能在添加新模块后再次调用start，检查是否有任何新模块</span></span>
+<span class="line"><span style="color:#6A737D">                //这里遍历当前应用程序下的所有模块如果某个模块是PENDING状态则这里hasPendingModule的值为true</span></span>
+<span class="line"><span style="color:#D73A49">                boolean</span><span style="color:#24292E"> hasPendingModule </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> hasPendingModule</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">				//发布器状态正在启动中</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">isStarting</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">                    // currently, is starting, maybe both start by module and application</span></span>
+<span class="line"><span style="color:#6A737D">                    // if it has new modules, start them</span></span>
+<span class="line"><span style="color:#6A737D">                    //存在挂器的模块</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (hasPendingModule) {</span></span>
+<span class="line"><span style="color:#6A737D">                     	//启动模块</span></span>
+<span class="line"><span style="color:#6F42C1">                        startModules</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#6A737D">                    // if it is starting, reuse previous startFuture</span></span>
+<span class="line"><span style="color:#6A737D">                    //模块异步启动中</span></span>
+<span class="line"><span style="color:#D73A49">                    return</span><span style="color:#24292E"> startFuture;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                // if is started and no new module, just return</span></span>
+<span class="line"><span style="color:#6A737D">                //如果已启动且没有新模块，直接返回</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">isStarted</span><span style="color:#24292E">() </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#24292E">hasPendingModule) {</span></span>
+<span class="line"><span style="color:#D73A49">                    return</span><span style="color:#24292E"> CompletableFuture.</span><span style="color:#6F42C1">completedFuture</span><span style="color:#24292E">(</span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                // pending -> starting : first start app</span></span>
+<span class="line"><span style="color:#6A737D">                // started -> starting : re-start app</span></span>
+<span class="line"><span style="color:#6A737D">                //启动状态切换，将启动状态切换到STARTING（pending和started状态无需切换）</span></span>
+<span class="line"><span style="color:#6F42C1">                onStarting</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">				//核心初始化逻辑，这里主要做一些应用级别启动比如配置中心，元数据中心</span></span>
+<span class="line"><span style="color:#6F42C1">                initialize</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">				//启动模块（我们的服务提供和服务引用是在这个模块级别的）</span></span>
+<span class="line"><span style="color:#6F42C1">                doStart</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6F42C1">                onFailed</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getIdentifier</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " start failure"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#24292E"> e;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> startFuture;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>这个启动方法逻辑不多 主要三个方法我们重点来看：</p>
+<ul>
+<li>onStarting() 这个是启动之前的状态切换</li>
+<li>initialize()  应用的初始化逻辑 比如配置中心，元数据中心的初始化</li>
+<li>doStart() 启动模块比如启动我们的服务提供和服务引用的）</li>
+</ul>
+<p>继续看后面的细节吧，代码胜千言。</p>
+<h2 id="应用程序发布器对应用级别的初始化逻辑"><strong>应用程序发布器对应用级别的初始化逻辑</strong></h2>
+<p>这个我们先来看DefaultApplicationDeployer的初始化方法initialize()：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initialize</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">    	//状态判断 如果已经初始化过了就直接返回</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (initialized) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        // Ensure that the initialization is completed when concurrent calls</span></span>
+<span class="line"><span style="color:#6A737D">        //启动锁，确保在并发调用时完成初始化</span></span>
+<span class="line"><span style="color:#D73A49">        synchronized</span><span style="color:#24292E"> (startLock) {</span></span>
+<span class="line"><span style="color:#6A737D">        	//双重校验锁 如果已经初始化过了就直接返回</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (initialized) {</span></span>
+<span class="line"><span style="color:#D73A49">                return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">            // register shutdown hook</span></span>
+<span class="line"><span style="color:#6A737D">            //注册关闭钩子，这个逻辑基本每个中间件应用都必须要要做的事情了，正常关闭应用回收资源，一般没这个逻辑情况下容易出现一些异常，让我们开发人员很疑惑，而这个逻辑往往并不好处理的干净。</span></span>
+<span class="line"><span style="color:#6F42C1">            registerShutdownHook</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">			</span></span>
+<span class="line"><span style="color:#6A737D">			//启动配置中心，感觉Dubbo3耦合了这个玩意</span></span>
+<span class="line"><span style="color:#6F42C1">            startConfigCenter</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">			</span></span>
+<span class="line"><span style="color:#6A737D">			//加载配置，一般配置信息当前机器的来源：环境变量，JVM启动参数，配置文字</span></span>
+<span class="line"><span style="color:#6F42C1">            loadApplicationConfigs</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">			//初始化模块发布器 （发布服务提供和服务引用使用）</span></span>
+<span class="line"><span style="color:#6F42C1">            initModuleDeployers</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            // @since 2.7.8</span></span>
+<span class="line"><span style="color:#6A737D">            //启动元数据中心</span></span>
+<span class="line"><span style="color:#6F42C1">            startMetadataCenter</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">			</span></span>
+<span class="line"><span style="color:#6A737D">			//初始化完成</span></span>
+<span class="line"><span style="color:#24292E">            initialized </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> true</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (logger.</span><span style="color:#6F42C1">isInfoEnabled</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getIdentifier</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " has been initialized!"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span></code></pre>
+<p>这个是个生命周期整体概览的方法，将具体逻辑拆分到各个子方法中，是代码重构的一种策略，上面注释也很清楚了就不细说了，上面每个方法在后面会有单独的博客来分析。</p>
+<h2 id="应用下模块的启动服务的发布与引用"><strong>应用下模块的启动（服务的发布与引用）</strong></h2>
+<p>我们回过头来详细看DefaultApplicationDeployer的doStart()代码:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> doStart</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">		// 启动模块</span></span>
+<span class="line"><span style="color:#6F42C1">        startModules</span><span style="color:#24292E">();</span></span></code></pre>
+<p>DefaultApplicationDeployer的 startModules()方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> startModules</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">        // ensure init and start internal module first</span></span>
+<span class="line"><span style="color:#6A737D">        //确保初始化并首先启动内部模块,Dubbo3中将模块分为内部和外部，内部是核心代码已经提供的一些服务比如元数据服务，外部是我们自己写的服务</span></span>
+<span class="line"><span style="color:#6F42C1">        prepareInternalModule</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // filter and start pending modules, ignore new module during starting, throw exception of module start</span></span>
+<span class="line"><span style="color:#6A737D">        //启动所有的模块 （启动所有的服务）</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (ModuleModel moduleModel </span><span style="color:#D73A49">:</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>(applicationModel.</span><span style="color:#6F42C1">getModuleModels</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#6A737D">        	//这个状态默认就是PENDING的</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (moduleModel.</span><span style="color:#6F42C1">getDeployer</span><span style="color:#24292E">().</span><span style="color:#6F42C1">isPending</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">            	//模块启动器，发布服务</span></span>
+<span class="line"><span style="color:#24292E">                moduleModel.</span><span style="color:#6F42C1">getDeployer</span><span style="color:#24292E">().</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>这个模块的启动其实就是用来启动服务的 先启动内部服务，再启动外部服务
+内部服务有个元数据服务Dubbo3中每个服务都可以对外提供服务的元数据信息，来简化服务配置，不论是内部服务还是外部服务调用的代码逻辑都是模块发布器ModuleDeployer的start()方法，接下来我们详细看下模块发布器的生命周期函数。</p>
+<h2 id="模块发布器发布服务的过程"><strong>模块发布器发布服务的过程</strong></h2>
+<p>前面我们说到了所有的服务都是经过模块发布器，ModuleDeployer的start()方法来启动的，那我们接下来就来看看这个模块发布器的启动方法。</p>
+<p>ModuleDeployer的start()方法代码：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> synchronized</span><span style="color:#24292E"> Future </span><span style="color:#6F42C1">start</span><span style="color:#24292E">() throws IllegalStateException {</span></span>
+<span class="line"><span style="color:#6A737D">    	//模块发布器已经停止或者启动失败则直接抛出异常返回</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">isStopping</span><span style="color:#24292E">() </span><span style="color:#D73A49">||</span><span style="color:#6F42C1"> isStopped</span><span style="color:#24292E">() </span><span style="color:#D73A49">||</span><span style="color:#6F42C1"> isFailed</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getIdentifier</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " is stopping or stopped, can not start again"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">        	//启动中或者已经启动了则直接返回一个Future对象 </span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">isStarting</span><span style="color:#24292E">() </span><span style="color:#D73A49">||</span><span style="color:#6F42C1"> isStarted</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                return</span><span style="color:#24292E"> startFuture;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">			//切换模块启动状态为STARTING</span></span>
+<span class="line"><span style="color:#6F42C1">            onModuleStarting</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            // initialize</span></span>
+<span class="line"><span style="color:#6A737D">            //如果应用未初始化则初始化（非正常逻辑）</span></span>
+<span class="line"><span style="color:#24292E">            applicationDeployer.</span><span style="color:#6F42C1">initialize</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">            //模块发布器进行初始化</span></span>
+<span class="line"><span style="color:#6F42C1">            initialize</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            // export services</span></span>
+<span class="line"><span style="color:#6A737D">            //暴露服务</span></span>
+<span class="line"><span style="color:#6F42C1">            exportServices</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            // prepare application instance</span></span>
+<span class="line"><span style="color:#6A737D">            // exclude internal module to avoid wait itself</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (moduleModel </span><span style="color:#D73A49">!=</span><span style="color:#24292E"> moduleModel.</span><span style="color:#6F42C1">getApplicationModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getInternalModule</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                applicationDeployer.</span><span style="color:#6F42C1">prepareInternalModule</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            // refer services</span></span>
+<span class="line"><span style="color:#6A737D">			//引用服务</span></span>
+<span class="line"><span style="color:#6F42C1">            referServices</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            // if no async export/refer services, just set started</span></span>
+<span class="line"><span style="color:#6A737D">            //非异步启动则直接切换状态为STARTED</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (asyncExportingFutures.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">() </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> asyncReferringFutures.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6F42C1">                onModuleStarted</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">            //如果是异步的则等待服务发布和服务引用异步回调</span></span>
+<span class="line"><span style="color:#24292E">                frameworkExecutorRepository.</span><span style="color:#6F42C1">getSharedExecutor</span><span style="color:#24292E">().</span><span style="color:#6F42C1">submit</span><span style="color:#24292E">(() </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                        // wait for export finish</span></span>
+<span class="line"><span style="color:#6F42C1">                        waitExportFinish</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">                        // wait for refer finish</span></span>
+<span class="line"><span style="color:#6F42C1">                        waitReferFinish</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                        logger.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"wait for export/refer services occurred an exception"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                    } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                    	//异步回调完成 所有服务都启动了，再切换状态</span></span>
+<span class="line"><span style="color:#6F42C1">                        onModuleStarted</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                });</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6F42C1">            onModuleFailed</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getIdentifier</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " start failed: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> e, e);</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#24292E"> e;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> startFuture;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>好了整体的服务启动生命周期就如上代码，后续我们再详细来看每个细节。</p>
+<h2 id="发布器简介"><strong>发布器简介</strong></h2>
+<p>前面主要说了应用和模块的发布器的启动和初始化，下面简单了解下它们的关系，如下所示
+<img src="/img/chapter_dubbo/12-deployer.png" alt="12-deployer.png">
+可以发布器主要包含</p>
+<ul>
+<li>应用的发布器ApplicationDeployer用于初始化并启动应用程序实例</li>
+<li>模块发布器ModuleDeployer  模块（服务）的导出/引用服务</li>
+</ul>
+<p>两种发布器有各自的接口，他们都继承了抽象的发布器AbstractDeployer 封装了一些公共的操作比如状态切换，状态查询的逻辑。</p>
+<p>另外我们再来看下发布过程的状态枚举DeployState如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> enum</span><span style="color:#6F42C1"> DeployState</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">    /**</span></span>
+<span class="line"><span style="color:#6A737D">     * Unknown state</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#005CC5">    UNKNOWN</span><span style="color:#24292E">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    /**</span></span>
+<span class="line"><span style="color:#6A737D">     * Pending, wait for start</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#005CC5">    PENDING</span><span style="color:#24292E">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    /**</span></span>
+<span class="line"><span style="color:#6A737D">     * Starting</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#005CC5">    STARTING</span><span style="color:#24292E">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    /**</span></span>
+<span class="line"><span style="color:#6A737D">     * Started</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#005CC5">    STARTED</span><span style="color:#24292E">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    /**</span></span>
+<span class="line"><span style="color:#6A737D">     * Stopping</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#005CC5">    STOPPING</span><span style="color:#24292E">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    /**</span></span>
+<span class="line"><span style="color:#6A737D">     * Stopped</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#005CC5">    STOPPED</span><span style="color:#24292E">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    /**</span></span>
+<span class="line"><span style="color:#6A737D">     * Failed</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#005CC5">    FAILED</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>Dubbo这一块后续可以优化以下，这里的状态切换全部耦合在一起了，可以考虑使用状态机将状态与行为解耦。</p>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

@@ -1,0 +1,843 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Tool Calling函数注册与动态执行原理详解 — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_spring_ai/6-tool/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_spring_ai/6-tool"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_spring_ai/6-tool/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_spring_ai/6-tool"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="Tool Calling函数注册与动态执行原理详解 — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_spring_ai/6-tool/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_spring_ai/6-tool/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>spring_ai</h3> <ul> <li> <a href="/zh/chapter_spring_ai/1-official-website" class="lv0" title="概述"> 概述 </a> </li><li> <a href="/zh/chapter_spring_ai/2-sample" class="lv0" title="深入Spring AI：Java开发者构建智能应用的全栈指南"> 深入Spring AI：Java开发者构建智能应用的全栈指南 </a> </li><li> <a href="/zh/chapter_spring_ai/3-sample2" class="lv0" title="3-sample2"> 3-sample2 </a> </li><li> <a href="/zh/chapter_spring_ai/4-sample" class="lv0" title="Spring AI全面指南：从入门到精通"> Spring AI全面指南：从入门到精通 </a> </li><li> <a href="/zh/chapter_spring_ai/5-advisor" class="lv0" title="Spring AI Advisor：智能决策辅助引擎全面指南"> Spring AI Advisor：智能决策辅助引擎全面指南 </a> </li><li> <a href="/zh/chapter_spring_ai/6-tool" class="lv0" aria-current="page" title="Tool Calling函数注册与动态执行原理详解"> Tool Calling函数注册与动态执行原理详解 </a> </li><li> <a href="/zh/chapter_spring_ai/7-mcp" class="lv0" title="Spring AI MCP深度解析及MCP Server本地协同方案"> Spring AI MCP深度解析及MCP Server本地协同方案 </a> </li><li> <a href="/zh/chapter_spring_ai/8-mcp-local" class="lv0" title="8-mcp-local"> 8-mcp-local </a> </li><li> <a href="/zh/chapter_spring_ai/9-rag" class="lv0" title="9-rag"> 9-rag </a> </li><li> <a href="/zh/chapter_spring_ai/10-rag-advisor" class="lv0" title="10-rag-advisor"> 10-rag-advisor </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_spring_ai">spring_ai</a><span class="sep">/</span><span>Tool Calling函数注册与动态执行原理详解</span> </nav> <div class="prose">  <h1 id="tool-calling函数注册与动态执行原理详解">Tool Calling函数注册与动态执行原理详解</h1>
+<blockquote>
+<p>本文深入剖析大语言模型Tool Calling的工作原理、函数注册机制和动态执行流程，系统阐述如何在企业级应用中实现AI模型与外部工具的有机融合。通过丰富的示例代码和可视化图表，帮助开发者全面掌握这一关键技术。</p>
+</blockquote>
+<h2 id="一tool-calling技术概述">一、Tool Calling技术概述</h2>
+<h3 id="11-什么是tool-calling">1.1 什么是Tool Calling</h3>
+<p>Tool Calling（工具调用）是大语言模型（LLM）的重要能力扩展，允许AI模型根据上下文需要动态调用外部函数、API或服务，从而克服模型本身的局限性，实现与外部系统的交互。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">mindmap</span></span>
+<span class="line"><span style="color:#24292E">  root((Tool Calling))</span></span>
+<span class="line"><span style="color:#24292E">    技术原理</span></span>
+<span class="line"><span style="color:#24292E">      函数描述格式化</span></span>
+<span class="line"><span style="color:#24292E">      参数解析与验证</span></span>
+<span class="line"><span style="color:#24292E">      调用流程编排</span></span>
+<span class="line"><span style="color:#24292E">      结果整合反馈</span></span>
+<span class="line"><span style="color:#24292E">    实现方式</span></span>
+<span class="line"><span style="color:#24292E">      函数注册机制</span></span>
+<span class="line"><span style="color:#24292E">      动态执行引擎</span></span>
+<span class="line"><span style="color:#24292E">      类型系统适配</span></span>
+<span class="line"><span style="color:#24292E">      安全性保障</span></span>
+<span class="line"><span style="color:#24292E">    应用场景</span></span>
+<span class="line"><span style="color:#24292E">      数据查询</span></span>
+<span class="line"><span style="color:#24292E">      执行计算</span></span>
+<span class="line"><span style="color:#24292E">      控制外部系统</span></span>
+<span class="line"><span style="color:#24292E">      多工具协同</span></span>
+<span class="line"><span style="color:#24292E">    框架支持</span></span>
+<span class="line"><span style="color:#24292E">      OpenAI</span></span>
+<span class="line"><span style="color:#24292E">      Spring AI</span></span>
+<span class="line"><span style="color:#24292E">      LangChain</span></span>
+<span class="line"><span style="color:#24292E">      自定义实现</span></span></code></pre>
+<h3 id="12-核心工作流程">1.2 核心工作流程</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">sequenceDiagram</span></span>
+<span class="line"><span style="color:#24292E">    participant User as 用户</span></span>
+<span class="line"><span style="color:#24292E">    participant App as 应用程序</span></span>
+<span class="line"><span style="color:#24292E">    participant LLM as 语言模型</span></span>
+<span class="line"><span style="color:#24292E">    participant Tool as 外部工具</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    User->>+App: 发送请求</span></span>
+<span class="line"><span style="color:#24292E">    App->>App: 准备函数定义</span></span>
+<span class="line"><span style="color:#24292E">    App->>+LLM: 提交带函数定义的提示</span></span>
+<span class="line"><span style="color:#24292E">    LLM-->>-App: 返回函数调用意图</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    opt 需要调用工具</span></span>
+<span class="line"><span style="color:#24292E">        App->>+Tool: 执行函数调用</span></span>
+<span class="line"><span style="color:#24292E">        Tool-->>-App: 返回执行结果</span></span>
+<span class="line"><span style="color:#24292E">        App->>+LLM: 提交函数执行结果</span></span>
+<span class="line"><span style="color:#24292E">        LLM-->>-App: 生成最终回复</span></span>
+<span class="line"><span style="color:#24292E">    end</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    App-->>-User: 返回完整回答</span></span></code></pre>
+<h2 id="二函数注册机制深度解析">二、函数注册机制深度解析</h2>
+<h3 id="21-函数描述与schema定义">2.1 函数描述与Schema定义</h3>
+<p>Tool Calling的核心在于向模型提供清晰的函数定义，包括函数名称、描述、参数及其类型。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 导入所需的Spring AI相关类和接口</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.model.ChatResponse;</span></span>
+<span class="line"><span style="color:#6A737D">// 导入函数回调注册相关类</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.function.FunctionCallbackRegistry;</span></span>
+<span class="line"><span style="color:#6A737D">// 导入参数定义相关类</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.function.FunctionParameter;</span></span>
+<span class="line"><span style="color:#6A737D">// 导入Spring框架相关注解</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.stereotype.Service;</span></span>
+<span class="line"><span style="color:#6A737D">// 导入Java工具类</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> java.util.Arrays;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> java.util.List;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> java.util.Map;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 定义工具调用服务类</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Service</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> ToolCallingRegistrationService</span><span style="color:#24292E"> {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 创建函数注册表，存储所有可用工具函数</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> FunctionCallbackRegistry </span><span style="color:#6F42C1">createRegistry</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">        // 使用构建器模式创建函数注册表</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> FunctionCallbackRegistry.</span><span style="color:#6F42C1">builder</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#6A737D">            // 注册第一个工具函数：天气查询</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withFunction</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">                // 函数名称，模型将使用此名称进行调用</span></span>
+<span class="line"><span style="color:#032F62">                "getWeatherForecast"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">                // 函数的详细描述，帮助模型理解何时该使用此函数</span></span>
+<span class="line"><span style="color:#032F62">                "获取指定城市的实时天气信息，包括温度、湿度和天气状况"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">                // 定义函数参数列表</span></span>
+<span class="line"><span style="color:#24292E">                Arrays.</span><span style="color:#6F42C1">asList</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">                    // 第一个参数：城市名</span></span>
+<span class="line"><span style="color:#D73A49">                    new</span><span style="color:#6F42C1"> FunctionParameter</span><span style="color:#24292E">(</span><span style="color:#032F62">"city"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                                         "string"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                                         "要查询天气的城市名称，如：北京、上海"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#005CC5">                                         true</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#6A737D">                    // 第二个参数：单位选择（可选）</span></span>
+<span class="line"><span style="color:#D73A49">                    new</span><span style="color:#6F42C1"> FunctionParameter</span><span style="color:#24292E">(</span><span style="color:#032F62">"unit"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                                         "string"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                                         "温度单位，可选值：celsius（摄氏度）或fahrenheit（华氏度）"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#005CC5">                                         false</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">                ),</span></span>
+<span class="line"><span style="color:#6A737D">                // 实现函数调用逻辑</span></span>
+<span class="line"><span style="color:#24292E">                params </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                    // 从参数中获取城市名</span></span>
+<span class="line"><span style="color:#24292E">                    String city </span><span style="color:#D73A49">=</span><span style="color:#24292E"> params.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#032F62">"city"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">                    // 从参数中获取单位（如果未提供则默认为摄氏度）</span></span>
+<span class="line"><span style="color:#24292E">                    String unit </span><span style="color:#D73A49">=</span><span style="color:#24292E"> params.</span><span style="color:#6F42C1">containsKey</span><span style="color:#24292E">(</span><span style="color:#032F62">"unit"</span><span style="color:#24292E">) </span><span style="color:#D73A49">?</span><span style="color:#24292E"> params.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#032F62">"unit"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">() </span><span style="color:#D73A49">:</span><span style="color:#032F62"> "celsius"</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6A737D">                    // 调用外部天气服务（实际实现略）</span></span>
+<span class="line"><span style="color:#D73A49">                    return</span><span style="color:#6F42C1"> getWeatherData</span><span style="color:#24292E">(city, unit);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            )</span></span>
+<span class="line"><span style="color:#6A737D">            // 注册第二个工具函数：数据库查询</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withFunction</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">                // 函数名称</span></span>
+<span class="line"><span style="color:#032F62">                "queryDatabase"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">                // 函数描述</span></span>
+<span class="line"><span style="color:#032F62">                "查询产品数据库获取商品信息"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">                // 参数列表</span></span>
+<span class="line"><span style="color:#24292E">                Arrays.</span><span style="color:#6F42C1">asList</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">                    // 产品类别参数</span></span>
+<span class="line"><span style="color:#D73A49">                    new</span><span style="color:#6F42C1"> FunctionParameter</span><span style="color:#24292E">(</span><span style="color:#032F62">"category"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                                         "string"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                                         "产品类别，如：电子产品、服装、图书"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#005CC5">                                         true</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#6A737D">                    // 价格范围参数</span></span>
+<span class="line"><span style="color:#D73A49">                    new</span><span style="color:#6F42C1"> FunctionParameter</span><span style="color:#24292E">(</span><span style="color:#032F62">"priceRange"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                                         "string"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                                         "价格范围，格式：最低价格-最高价格，如：100-500"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#005CC5">                                         false</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">                ),</span></span>
+<span class="line"><span style="color:#6A737D">                // 实现函数逻辑</span></span>
+<span class="line"><span style="color:#24292E">                params </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                    // 解析参数</span></span>
+<span class="line"><span style="color:#24292E">                    String category </span><span style="color:#D73A49">=</span><span style="color:#24292E"> params.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#032F62">"category"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                    String priceRange </span><span style="color:#D73A49">=</span><span style="color:#24292E"> params.</span><span style="color:#6F42C1">getOrDefault</span><span style="color:#24292E">(</span><span style="color:#032F62">"priceRange"</span><span style="color:#24292E">, </span><span style="color:#032F62">"0-10000"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">                    // 调用数据库查询服务（实际实现略）</span></span>
+<span class="line"><span style="color:#D73A49">                    return</span><span style="color:#6F42C1"> queryProductDatabase</span><span style="color:#24292E">(category, priceRange);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            )</span></span>
+<span class="line"><span style="color:#6A737D">            // 构建函数注册表</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 模拟天气数据获取方法</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#24292E"> Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> </span><span style="color:#6F42C1">getWeatherData</span><span style="color:#24292E">(String </span><span style="color:#E36209">city</span><span style="color:#24292E">, String </span><span style="color:#E36209">unit</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 实际项目中会调用真实的天气API服务</span></span>
+<span class="line"><span style="color:#6A737D">        // 这里仅作示例</span></span>
+<span class="line"><span style="color:#6A737D">        // ...</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> Map.</span><span style="color:#6F42C1">of</span><span style="color:#24292E">(</span><span style="color:#032F62">"city"</span><span style="color:#24292E">, city, </span></span>
+<span class="line"><span style="color:#032F62">                     "temperature"</span><span style="color:#24292E">, </span><span style="color:#032F62">"26°C"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                     "humidity"</span><span style="color:#24292E">, </span><span style="color:#032F62">"65%"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                     "condition"</span><span style="color:#24292E">, </span><span style="color:#032F62">"晴朗"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 模拟数据库查询方法</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#24292E"> List&#x3C;Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">>> </span><span style="color:#6F42C1">queryProductDatabase</span><span style="color:#24292E">(String </span><span style="color:#E36209">category</span><span style="color:#24292E">, String </span><span style="color:#E36209">priceRange</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 实际项目中会查询真实数据库</span></span>
+<span class="line"><span style="color:#6A737D">        // 这里仅作示例</span></span>
+<span class="line"><span style="color:#6A737D">        // ...</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> List.</span><span style="color:#6F42C1">of</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">            Map.</span><span style="color:#6F42C1">of</span><span style="color:#24292E">(</span><span style="color:#032F62">"name"</span><span style="color:#24292E">, </span><span style="color:#032F62">"示例产品1"</span><span style="color:#24292E">, </span><span style="color:#032F62">"price"</span><span style="color:#24292E">, </span><span style="color:#005CC5">299</span><span style="color:#24292E">, </span><span style="color:#032F62">"inStock"</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#24292E">            Map.</span><span style="color:#6F42C1">of</span><span style="color:#24292E">(</span><span style="color:#032F62">"name"</span><span style="color:#24292E">, </span><span style="color:#032F62">"示例产品2"</span><span style="color:#24292E">, </span><span style="color:#032F62">"price"</span><span style="color:#24292E">, </span><span style="color:#005CC5">399</span><span style="color:#24292E">, </span><span style="color:#032F62">"inStock"</span><span style="color:#24292E">, </span><span style="color:#005CC5">false</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">        );</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="22-函数注册的核心流程">2.2 函数注册的核心流程</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">flowchart TD</span></span>
+<span class="line"><span style="color:#24292E">    A[开始函数注册] --> B[创建函数描述]</span></span>
+<span class="line"><span style="color:#24292E">    B --> C[定义参数Schema]</span></span>
+<span class="line"><span style="color:#24292E">    C --> D[实现回调逻辑]</span></span>
+<span class="line"><span style="color:#24292E">    D --> E[添加到注册表]</span></span>
+<span class="line"><span style="color:#24292E">    E --> F[注册安全检查]</span></span>
+<span class="line"><span style="color:#24292E">    F --> G[函数注册完成]</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    style A fill:#d5e8d4,stroke:#82b366</span></span>
+<span class="line"><span style="color:#24292E">    style G fill:#d5e8d4,stroke:#82b366</span></span>
+<span class="line"><span style="color:#24292E">    style D fill:#dae8fc,stroke:#6c8ebf</span></span>
+<span class="line"><span style="color:#24292E">    style F fill:#ffe6cc,stroke:#d79b00</span></span></code></pre>
+<h2 id="三动态执行引擎实现">三、动态执行引擎实现</h2>
+<h3 id="31-执行流程与状态管理">3.1 执行流程与状态管理</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 导入所需类库</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.ChatClient;</span></span>
+<span class="line"><span style="color:#6A737D">// 导入模型配置相关类</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.ChatOptions;</span></span>
+<span class="line"><span style="color:#6A737D">// 导入消息类型相关类</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.prompt.Prompt;</span></span>
+<span class="line"><span style="color:#6A737D">// 导入系统消息和用户消息类</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.prompt.SystemMessage;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.prompt.UserMessage;</span></span>
+<span class="line"><span style="color:#6A737D">// 导入日志记录类</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.slf4j.Logger;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.slf4j.LoggerFactory;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 定义工具执行服务</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Service</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> ToolExecutionService</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 创建日志记录器</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> Logger logger </span><span style="color:#D73A49">=</span><span style="color:#24292E"> LoggerFactory.</span><span style="color:#6F42C1">getLogger</span><span style="color:#24292E">(ToolExecutionService.class);</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 注入聊天客户端</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> ChatClient chatClient;</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 注入工具注册服务</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> ToolCallingRegistrationService registrationService;</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 构造函数依赖注入</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Autowired</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#6F42C1"> ToolExecutionService</span><span style="color:#24292E">(ChatClient </span><span style="color:#E36209">chatClient</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#24292E">                               ToolCallingRegistrationService </span><span style="color:#E36209">registrationService</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 保存聊天客户端引用</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.chatClient </span><span style="color:#D73A49">=</span><span style="color:#24292E"> chatClient;</span></span>
+<span class="line"><span style="color:#6A737D">        // 保存工具注册服务引用</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.registrationService </span><span style="color:#D73A49">=</span><span style="color:#24292E"> registrationService;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 处理用户查询并执行必要的工具调用</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> String </span><span style="color:#6F42C1">processQuery</span><span style="color:#24292E">(String </span><span style="color:#E36209">userQuery</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 创建系统提示，指导模型如何使用工具</span></span>
+<span class="line"><span style="color:#24292E">        SystemMessage systemMessage </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> SystemMessage</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">            "你是一个助手，可以帮助用户回答问题。"</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#032F62">            "你可以使用提供的工具函数回答有关天气和产品的问题。"</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#032F62">            "如果需要使用工具，先分析需要调用哪个工具函数，然后调用它。"</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#032F62">            "对于天气查询，使用getWeatherForecast函数。"</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#032F62">            "对于产品信息，使用queryDatabase函数。"</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#032F62">            "不要编造函数调用结果，只使用函数返回的真实信息。"</span></span>
+<span class="line"><span style="color:#24292E">        );</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 创建用户消息</span></span>
+<span class="line"><span style="color:#24292E">        UserMessage userMessage </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> UserMessage</span><span style="color:#24292E">(userQuery);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 创建完整提示，包含系统消息和用户消息</span></span>
+<span class="line"><span style="color:#24292E">        Prompt prompt </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Prompt</span><span style="color:#24292E">(systemMessage, userMessage);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 获取函数注册表</span></span>
+<span class="line"><span style="color:#24292E">        FunctionCallbackRegistry registry </span><span style="color:#D73A49">=</span><span style="color:#24292E"> registrationService.</span><span style="color:#6F42C1">createRegistry</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 创建聊天选项，包含函数回调注册</span></span>
+<span class="line"><span style="color:#24292E">        ChatOptions options </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ChatOptions.</span><span style="color:#6F42C1">builder</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#6A737D">            // 注入函数回调注册表</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withFunctionCallbacks</span><span style="color:#24292E">(registry)</span></span>
+<span class="line"><span style="color:#6A737D">            // 设置较低温度，提高函数调用精确性</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withTemperature</span><span style="color:#24292E">(</span><span style="color:#005CC5">0.2f</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#6A737D">            // 构建选项对象</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            </span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">            // 记录开始处理请求</span></span>
+<span class="line"><span style="color:#24292E">            logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"开始处理用户查询: {}"</span><span style="color:#24292E">, userQuery);</span></span>
+<span class="line"><span style="color:#24292E">            </span></span>
+<span class="line"><span style="color:#6A737D">            // 调用模型并传入函数回调</span></span>
+<span class="line"><span style="color:#24292E">            ChatResponse response </span><span style="color:#D73A49">=</span><span style="color:#24292E"> chatClient.</span><span style="color:#6F42C1">call</span><span style="color:#24292E">(prompt, options);</span></span>
+<span class="line"><span style="color:#24292E">            </span></span>
+<span class="line"><span style="color:#6A737D">            // 获取最终回答</span></span>
+<span class="line"><span style="color:#24292E">            String answer </span><span style="color:#D73A49">=</span><span style="color:#24292E"> response.</span><span style="color:#6F42C1">getResult</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getOutput</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getContent</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            </span></span>
+<span class="line"><span style="color:#6A737D">            // 记录处理完成</span></span>
+<span class="line"><span style="color:#24292E">            logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"查询处理完成，生成回答"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            </span></span>
+<span class="line"><span style="color:#6A737D">            // 返回回答</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> answer;</span></span>
+<span class="line"><span style="color:#24292E">            </span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">            // 记录错误</span></span>
+<span class="line"><span style="color:#24292E">            logger.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"处理查询时发生错误: {}"</span><span style="color:#24292E">, e.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">(), e);</span></span>
+<span class="line"><span style="color:#6A737D">            // 返回错误消息</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#032F62"> "抱歉，处理您的请求时出现了问题："</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> e.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="32-调用链路与异常处理">3.2 调用链路与异常处理</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">graph TD</span></span>
+<span class="line"><span style="color:#24292E">    A[接收用户请求] --> B{分析需调用工具?}</span></span>
+<span class="line"><span style="color:#24292E">    B -->|是| C[解析调用意图]</span></span>
+<span class="line"><span style="color:#24292E">    B -->|否| I[直接生成回答]</span></span>
+<span class="line"><span style="color:#24292E">    C --> D[验证参数]</span></span>
+<span class="line"><span style="color:#24292E">    D -->|验证失败| E[请求参数修正]</span></span>
+<span class="line"><span style="color:#24292E">    D -->|验证通过| F[执行函数调用]</span></span>
+<span class="line"><span style="color:#24292E">    F --> G[处理执行结果]</span></span>
+<span class="line"><span style="color:#24292E">    G --> H[返回结果给LLM]</span></span>
+<span class="line"><span style="color:#24292E">    H --> I</span></span>
+<span class="line"><span style="color:#24292E">    I --> J[返回最终回答]</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    subgraph 异常处理</span></span>
+<span class="line"><span style="color:#24292E">    F -->|执行异常| K[记录错误]</span></span>
+<span class="line"><span style="color:#24292E">    K --> L[生成错误回复]</span></span>
+<span class="line"><span style="color:#24292E">    L --> J</span></span>
+<span class="line"><span style="color:#24292E">    end</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    style B fill:#ffe6cc,stroke:#d79b00</span></span>
+<span class="line"><span style="color:#24292E">    style F fill:#d5e8d4,stroke:#82b366</span></span>
+<span class="line"><span style="color:#24292E">    style K fill:#f8cecc,stroke:#b85450</span></span></code></pre>
+<h2 id="四进阶应用与最佳实践">四、进阶应用与最佳实践</h2>
+<h3 id="41-多模型工具调用适配器">4.1 多模型工具调用适配器</h3>
+<p>不同AI模型供应商对工具调用的支持有所不同，以下是一个适配器模式实现：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 导入必要类库</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.ChatClient;</span></span>
+<span class="line"><span style="color:#6A737D">// 导入响应模型接口</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.model.ChatResponse;</span></span>
+<span class="line"><span style="color:#6A737D">// 导入函数调用相关类</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.function.FunctionCallback;</span></span>
+<span class="line"><span style="color:#6A737D">// 导入Java工具类</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> java.util.Map;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> java.util.HashMap;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> java.util.function.Function;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 创建模型适配器接口</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> interface</span><span style="color:#6F42C1"> ModelToolAdapter</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 声明注册工具方法</span></span>
+<span class="line"><span style="color:#D73A49">    void</span><span style="color:#6F42C1"> registerTool</span><span style="color:#24292E">(String </span><span style="color:#E36209">name</span><span style="color:#24292E">, String </span><span style="color:#E36209">description</span><span style="color:#24292E">, Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> </span><span style="color:#E36209">paramSchema</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#24292E">                     Function&#x3C;Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">>, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> </span><span style="color:#E36209">handler</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">    // 声明执行查询方法</span></span>
+<span class="line"><span style="color:#24292E">    String </span><span style="color:#6F42C1">executeQuery</span><span style="color:#24292E">(String </span><span style="color:#E36209">userQuery</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// OpenAI模型适配器实现</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Service</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> OpenAIToolAdapter</span><span style="color:#D73A49"> implements</span><span style="color:#6F42C1"> ModelToolAdapter</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 注入OpenAI聊天客户端</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> ChatClient openaiClient;</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 函数回调注册表构建器</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#24292E"> FunctionCallbackRegistry.Builder registryBuilder;</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 构造函数</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Autowired</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#6F42C1"> OpenAIToolAdapter</span><span style="color:#24292E">(ChatClient </span><span style="color:#E36209">openaiClient</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 保存客户端引用</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.openaiClient </span><span style="color:#D73A49">=</span><span style="color:#24292E"> openaiClient;</span></span>
+<span class="line"><span style="color:#6A737D">        // 初始化注册表构建器</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.registryBuilder </span><span style="color:#D73A49">=</span><span style="color:#24292E"> FunctionCallbackRegistry.</span><span style="color:#6F42C1">builder</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 实现工具注册方法</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> registerTool</span><span style="color:#24292E">(String </span><span style="color:#E36209">name</span><span style="color:#24292E">, String </span><span style="color:#E36209">description</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#24292E">                           Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> </span><span style="color:#E36209">paramSchema</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">                           Function&#x3C;Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">>, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> </span><span style="color:#E36209">handler</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 从参数模式中提取参数定义</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">FunctionParameter</span><span style="color:#24292E">> parameters </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> extractParameters</span><span style="color:#24292E">(paramSchema);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 添加函数到注册表</span></span>
+<span class="line"><span style="color:#24292E">        registryBuilder.</span><span style="color:#6F42C1">withFunction</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">            // 函数名称</span></span>
+<span class="line"><span style="color:#24292E">            name,</span></span>
+<span class="line"><span style="color:#6A737D">            // 函数描述</span></span>
+<span class="line"><span style="color:#24292E">            description,</span></span>
+<span class="line"><span style="color:#6A737D">            // 函数参数列表</span></span>
+<span class="line"><span style="color:#24292E">            parameters,</span></span>
+<span class="line"><span style="color:#6A737D">            // 函数处理器</span></span>
+<span class="line"><span style="color:#24292E">            paramMap </span><span style="color:#D73A49">-></span><span style="color:#24292E"> handler.</span><span style="color:#6F42C1">apply</span><span style="color:#24292E">(paramMap)</span></span>
+<span class="line"><span style="color:#24292E">        );</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 执行查询实现</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> String </span><span style="color:#6F42C1">executeQuery</span><span style="color:#24292E">(String </span><span style="color:#E36209">userQuery</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 构建提示</span></span>
+<span class="line"><span style="color:#24292E">        Prompt prompt </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Prompt</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">            // 系统消息，指导模型使用工具</span></span>
+<span class="line"><span style="color:#D73A49">            new</span><span style="color:#6F42C1"> SystemMessage</span><span style="color:#24292E">(</span><span style="color:#032F62">"你是一个可以使用工具的AI助手。根据需要调用合适的工具。"</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#6A737D">            // 用户查询</span></span>
+<span class="line"><span style="color:#D73A49">            new</span><span style="color:#6F42C1"> UserMessage</span><span style="color:#24292E">(userQuery)</span></span>
+<span class="line"><span style="color:#24292E">        );</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 构建聊天选项</span></span>
+<span class="line"><span style="color:#24292E">        ChatOptions options </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ChatOptions.</span><span style="color:#6F42C1">builder</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#6A737D">            // 设置函数回调注册表</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withFunctionCallbacks</span><span style="color:#24292E">(registryBuilder.</span><span style="color:#6F42C1">build</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#6A737D">            // 构建选项</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            </span></span>
+<span class="line"><span style="color:#6A737D">        // 调用模型并返回结果</span></span>
+<span class="line"><span style="color:#24292E">        ChatResponse response </span><span style="color:#D73A49">=</span><span style="color:#24292E"> openaiClient.</span><span style="color:#6F42C1">call</span><span style="color:#24292E">(prompt, options);</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> response.</span><span style="color:#6F42C1">getResult</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getOutput</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getContent</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 辅助方法：从参数模式中提取参数定义</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#24292E"> List&#x3C;</span><span style="color:#D73A49">FunctionParameter</span><span style="color:#24292E">> </span><span style="color:#6F42C1">extractParameters</span><span style="color:#24292E">(Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> </span><span style="color:#E36209">paramSchema</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 参数列表</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">FunctionParameter</span><span style="color:#24292E">> params </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>();</span></span>
+<span class="line"><span style="color:#6A737D">        // 遍历参数模式</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (Map.Entry&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> entry </span><span style="color:#D73A49">:</span><span style="color:#24292E"> paramSchema.</span><span style="color:#6F42C1">entrySet</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">            // 提取参数信息</span></span>
+<span class="line"><span style="color:#24292E">            @</span><span style="color:#D73A49">SuppressWarnings</span><span style="color:#24292E">(</span><span style="color:#032F62">"unchecked"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">            Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> paramInfo </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (Map</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">String, Object</span><span style="color:#D73A49">></span><span style="color:#24292E">) entry.</span><span style="color:#6F42C1">getValue</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">            // 创建参数对象</span></span>
+<span class="line"><span style="color:#24292E">            params.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> FunctionParameter</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">                // 参数名</span></span>
+<span class="line"><span style="color:#24292E">                entry.</span><span style="color:#6F42C1">getKey</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#6A737D">                // 参数类型</span></span>
+<span class="line"><span style="color:#24292E">                paramInfo.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#032F62">"type"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#6A737D">                // 参数描述</span></span>
+<span class="line"><span style="color:#24292E">                paramInfo.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#032F62">"description"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#6A737D">                // 是否必需</span></span>
+<span class="line"><span style="color:#24292E">                paramInfo.</span><span style="color:#6F42C1">containsKey</span><span style="color:#24292E">(</span><span style="color:#032F62">"required"</span><span style="color:#24292E">) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> (Boolean) paramInfo.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#032F62">"required"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">            ));</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        // 返回参数列表</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> params;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="42-安全与权限控制">4.2 安全与权限控制</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 导入所需类库</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.function.FunctionCallbackRegistry;</span></span>
+<span class="line"><span style="color:#6A737D">// 导入安全相关类</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.security.core.Authentication;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.security.core.context.SecurityContextHolder;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 创建安全工具服务</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Service</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> SecureToolService</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 函数与权限映射</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">String</span><span style="color:#24292E">> functionPermissions </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Map.</span><span style="color:#6F42C1">of</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">        // 天气查询 - 基本权限</span></span>
+<span class="line"><span style="color:#032F62">        "getWeatherForecast"</span><span style="color:#24292E">, </span><span style="color:#032F62">"ROLE_USER"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">        // 数据库查询 - 管理员权限</span></span>
+<span class="line"><span style="color:#032F62">        "queryDatabase"</span><span style="color:#24292E">, </span><span style="color:#032F62">"ROLE_ADMIN"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">        // 系统操作 - 系统管理权限</span></span>
+<span class="line"><span style="color:#032F62">        "performSystemOperation"</span><span style="color:#24292E">, </span><span style="color:#032F62">"ROLE_SYSTEM_ADMIN"</span></span>
+<span class="line"><span style="color:#24292E">    );</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 创建安全检查的函数注册表</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> FunctionCallbackRegistry </span><span style="color:#6F42C1">createSecureRegistry</span><span style="color:#24292E">(FunctionCallbackRegistry </span><span style="color:#E36209">baseRegistry</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 创建新的注册表构建器</span></span>
+<span class="line"><span style="color:#24292E">        FunctionCallbackRegistry.Builder secureBuilder </span><span style="color:#D73A49">=</span><span style="color:#24292E"> FunctionCallbackRegistry.</span><span style="color:#6F42C1">builder</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 获取所有已注册函数</span></span>
+<span class="line"><span style="color:#24292E">        Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">FunctionCallback</span><span style="color:#24292E">> registeredFunctions </span><span style="color:#D73A49">=</span><span style="color:#24292E"> baseRegistry.</span><span style="color:#6F42C1">getFunctions</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 为每个函数添加安全包装</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (Map.Entry&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">FunctionCallback</span><span style="color:#24292E">> entry </span><span style="color:#D73A49">:</span><span style="color:#24292E"> registeredFunctions.</span><span style="color:#6F42C1">entrySet</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">            // 获取函数名和回调</span></span>
+<span class="line"><span style="color:#24292E">            String functionName </span><span style="color:#D73A49">=</span><span style="color:#24292E"> entry.</span><span style="color:#6F42C1">getKey</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            FunctionCallback originalCallback </span><span style="color:#D73A49">=</span><span style="color:#24292E"> entry.</span><span style="color:#6F42C1">getValue</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            </span></span>
+<span class="line"><span style="color:#6A737D">            // 创建安全包装的回调</span></span>
+<span class="line"><span style="color:#24292E">            FunctionCallback secureCallback </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> FunctionCallback</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">                // 保持原函数名</span></span>
+<span class="line"><span style="color:#24292E">                originalCallback.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#6A737D">                // 保持原描述</span></span>
+<span class="line"><span style="color:#24292E">                originalCallback.</span><span style="color:#6F42C1">getDescription</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#6A737D">                // 保持原参数列表</span></span>
+<span class="line"><span style="color:#24292E">                originalCallback.</span><span style="color:#6F42C1">getParameters</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#6A737D">                // 创建安全代理处理器</span></span>
+<span class="line"><span style="color:#24292E">                params </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                    // 检查是否有权限执行此函数</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">hasPermission</span><span style="color:#24292E">(functionName)) {</span></span>
+<span class="line"><span style="color:#6A737D">                        // 有权限，执行原函数</span></span>
+<span class="line"><span style="color:#D73A49">                        return</span><span style="color:#24292E"> originalCallback.</span><span style="color:#6F42C1">getHandler</span><span style="color:#24292E">().</span><span style="color:#6F42C1">apply</span><span style="color:#24292E">(params);</span></span>
+<span class="line"><span style="color:#24292E">                    } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                        // 无权限，返回错误</span></span>
+<span class="line"><span style="color:#D73A49">                        return</span><span style="color:#24292E"> Map.</span><span style="color:#6F42C1">of</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">                            "error"</span><span style="color:#24292E">, </span><span style="color:#032F62">"权限不足"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#032F62">                            "message"</span><span style="color:#24292E">, </span><span style="color:#032F62">"您没有执行"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> functionName </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "的权限"</span></span>
+<span class="line"><span style="color:#24292E">                        );</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            );</span></span>
+<span class="line"><span style="color:#24292E">            </span></span>
+<span class="line"><span style="color:#6A737D">            // 添加安全包装的函数到新注册表</span></span>
+<span class="line"><span style="color:#24292E">            secureBuilder.</span><span style="color:#6F42C1">withFunction</span><span style="color:#24292E">(secureCallback);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 构建安全注册表</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> secureBuilder.</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 检查当前用户是否有权限执行函数</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> boolean</span><span style="color:#6F42C1"> hasPermission</span><span style="color:#24292E">(String </span><span style="color:#E36209">functionName</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 获取所需权限</span></span>
+<span class="line"><span style="color:#24292E">        String requiredRole </span><span style="color:#D73A49">=</span><span style="color:#24292E"> functionPermissions.</span><span style="color:#6F42C1">getOrDefault</span><span style="color:#24292E">(functionName, </span><span style="color:#032F62">"ROLE_ADMIN"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 获取当前认证信息</span></span>
+<span class="line"><span style="color:#24292E">        Authentication auth </span><span style="color:#D73A49">=</span><span style="color:#24292E"> SecurityContextHolder.</span><span style="color:#6F42C1">getContext</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getAuthentication</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 如果未认证，拒绝访问</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (auth </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#005CC5"> false</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 检查是否有所需权限</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> auth.</span><span style="color:#6F42C1">getAuthorities</span><span style="color:#24292E">().</span><span style="color:#6F42C1">stream</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">anyMatch</span><span style="color:#24292E">(ga </span><span style="color:#D73A49">-></span><span style="color:#24292E"> ga.</span><span style="color:#6F42C1">getAuthority</span><span style="color:#24292E">().</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(requiredRole));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 记录工具调用日志</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> logToolInvocation</span><span style="color:#24292E">(String </span><span style="color:#E36209">functionName</span><span style="color:#24292E">, Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> </span><span style="color:#E36209">params</span><span style="color:#24292E">, Object </span><span style="color:#E36209">result</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 获取当前用户</span></span>
+<span class="line"><span style="color:#24292E">        Authentication auth </span><span style="color:#D73A49">=</span><span style="color:#24292E"> SecurityContextHolder.</span><span style="color:#6F42C1">getContext</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getAuthentication</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        String username </span><span style="color:#D73A49">=</span><span style="color:#24292E"> auth </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> ?</span><span style="color:#24292E"> auth.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">() </span><span style="color:#D73A49">:</span><span style="color:#032F62"> "anonymous"</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 记录调用信息</span></span>
+<span class="line"><span style="color:#24292E">        log.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"工具调用: 函数={}, 用户={}, 参数={}"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#24292E">                functionName, username, params);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 敏感操作额外审计</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (functionName.</span><span style="color:#6F42C1">startsWith</span><span style="color:#24292E">(</span><span style="color:#032F62">"perform"</span><span style="color:#24292E">) </span><span style="color:#D73A49">||</span><span style="color:#24292E"> functionName.</span><span style="color:#6F42C1">contains</span><span style="color:#24292E">(</span><span style="color:#032F62">"write"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            log.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"敏感操作: 函数={}, 用户={}, 参数={}, 结果={}"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">                    functionName, username, params, result);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="五实战案例多功能智能助手">五、实战案例：多功能智能助手</h2>
+<h3 id="51-工具集成架构">5.1 工具集成架构</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">graph TB</span></span>
+<span class="line"><span style="color:#24292E">    A[用户界面] --> B[助手控制器]</span></span>
+<span class="line"><span style="color:#24292E">    B --> C{工具调度器}</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    C --> D[天气工具]</span></span>
+<span class="line"><span style="color:#24292E">    C --> E[数据库工具]</span></span>
+<span class="line"><span style="color:#24292E">    C --> F[日程工具]</span></span>
+<span class="line"><span style="color:#24292E">    C --> G[搜索工具]</span></span>
+<span class="line"><span style="color:#24292E">    C --> H[计算工具]</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    D --> I[天气API]</span></span>
+<span class="line"><span style="color:#24292E">    E --> J[(企业数据库)]</span></span>
+<span class="line"><span style="color:#24292E">    F --> K[日历系统]</span></span>
+<span class="line"><span style="color:#24292E">    G --> L[搜索引擎]</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    M[函数注册中心] --> C</span></span>
+<span class="line"><span style="color:#24292E">    N[安全管理器] --> C</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    style C fill:#dae8fc,stroke:#6c8ebf</span></span>
+<span class="line"><span style="color:#24292E">    style M fill:#d5e8d4,stroke:#82b366</span></span>
+<span class="line"><span style="color:#24292E">    style N fill:#ffe6cc,stroke:#d79b00</span></span></code></pre>
+<h3 id="52-完整实现代码">5.2 完整实现代码</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 导入所需类库</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.ChatClient;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.ChatOptions;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.model.ChatResponse;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.function.FunctionCallbackRegistry;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.prompt.Prompt;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.prompt.SystemMessage;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.prompt.UserMessage;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.web.bind.annotation.</span><span style="color:#005CC5">*</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.beans.factory.annotation.Autowired;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.stereotype.Component;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 创建智能助手控制器</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">RestController</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">RequestMapping</span><span style="color:#24292E">(</span><span style="color:#032F62">"/api/assistant"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> SmartAssistantController</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 注入服务</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> AssistantService assistantService;</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 构造函数注入</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Autowired</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#6F42C1"> SmartAssistantController</span><span style="color:#24292E">(AssistantService </span><span style="color:#E36209">assistantService</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 保存服务引用</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.assistantService </span><span style="color:#D73A49">=</span><span style="color:#24292E"> assistantService;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 创建聊天端点</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">PostMapping</span><span style="color:#24292E">(</span><span style="color:#032F62">"/chat"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> </span><span style="color:#6F42C1">chat</span><span style="color:#24292E">(@</span><span style="color:#D73A49">RequestBody</span><span style="color:#24292E"> Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">String</span><span style="color:#24292E">> </span><span style="color:#E36209">request</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 获取用户消息</span></span>
+<span class="line"><span style="color:#24292E">        String userMessage </span><span style="color:#D73A49">=</span><span style="color:#24292E"> request.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#032F62">"message"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        // 获取用户ID</span></span>
+<span class="line"><span style="color:#24292E">        String userId </span><span style="color:#D73A49">=</span><span style="color:#24292E"> request.</span><span style="color:#6F42C1">getOrDefault</span><span style="color:#24292E">(</span><span style="color:#032F62">"userId"</span><span style="color:#24292E">, </span><span style="color:#032F62">"anonymous"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 调用助手服务处理消息</span></span>
+<span class="line"><span style="color:#24292E">        String response </span><span style="color:#D73A49">=</span><span style="color:#24292E"> assistantService.</span><span style="color:#6F42C1">processUserMessage</span><span style="color:#24292E">(userId, userMessage);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 构建响应</span></span>
+<span class="line"><span style="color:#24292E">        Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> result </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> HashMap&#x3C;>();</span></span>
+<span class="line"><span style="color:#6A737D">        // 添加回复文本</span></span>
+<span class="line"><span style="color:#24292E">        result.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(</span><span style="color:#032F62">"response"</span><span style="color:#24292E">, response);</span></span>
+<span class="line"><span style="color:#6A737D">        // 添加时间戳</span></span>
+<span class="line"><span style="color:#24292E">        result.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(</span><span style="color:#032F62">"timestamp"</span><span style="color:#24292E">, System.</span><span style="color:#6F42C1">currentTimeMillis</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 返回结果</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> result;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 创建助手服务</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Service</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">RequiredArgsConstructor</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> AssistantService</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 注入聊天客户端</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> ChatClient chatClient;</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 注入工具服务</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> WeatherToolService weatherService;</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> DatabaseToolService databaseService;</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> CalendarToolService calendarService;</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> CalculationToolService calculationService;</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 用户会话存储</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, List&#x3C;</span><span style="color:#D73A49">Message</span><span style="color:#24292E">>> sessionStore </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ConcurrentHashMap&#x3C;>();</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 处理用户消息</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> String </span><span style="color:#6F42C1">processUserMessage</span><span style="color:#24292E">(String </span><span style="color:#E36209">userId</span><span style="color:#24292E">, String </span><span style="color:#E36209">message</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 获取或创建用户会话</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">Message</span><span style="color:#24292E">> conversation </span><span style="color:#D73A49">=</span><span style="color:#24292E"> sessionStore.</span><span style="color:#6F42C1">computeIfAbsent</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">            // 用户ID</span></span>
+<span class="line"><span style="color:#24292E">            userId,</span></span>
+<span class="line"><span style="color:#6A737D">            // 如果不存在则创建新会话</span></span>
+<span class="line"><span style="color:#24292E">            k </span><span style="color:#D73A49">-></span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>()</span></span>
+<span class="line"><span style="color:#24292E">        );</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 添加用户消息到会话</span></span>
+<span class="line"><span style="color:#24292E">        conversation.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> UserMessage</span><span style="color:#24292E">(message));</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 如果会话过长则裁剪</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (conversation.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 20</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">            // 保留最近10条消息</span></span>
+<span class="line"><span style="color:#24292E">            conversation </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>(conversation.</span><span style="color:#6F42C1">subList</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">                conversation.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">() </span><span style="color:#D73A49">-</span><span style="color:#005CC5"> 10</span><span style="color:#24292E">, conversation.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#6A737D">            // 更新会话存储</span></span>
+<span class="line"><span style="color:#24292E">            sessionStore.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(userId, conversation);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 创建系统消息</span></span>
+<span class="line"><span style="color:#24292E">        SystemMessage systemMessage </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> SystemMessage</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">            "你是一个智能助手，能够帮助用户回答问题和完成任务。"</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#032F62">            "你可以使用以下工具：</span><span style="color:#005CC5">\n</span><span style="color:#032F62">"</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#032F62">            "1. getWeather - 查询天气信息</span><span style="color:#005CC5">\n</span><span style="color:#032F62">"</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#032F62">            "2. queryDatabase - 查询产品数据</span><span style="color:#005CC5">\n</span><span style="color:#032F62">"</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#032F62">            "3. createEvent - 创建日历事件</span><span style="color:#005CC5">\n</span><span style="color:#032F62">"</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#032F62">            "4. calculate - 执行复杂计算</span><span style="color:#005CC5">\n</span><span style="color:#032F62">"</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#032F62">            "根据用户需求选择合适的工具，或直接回答。"</span></span>
+<span class="line"><span style="color:#24292E">        );</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 创建完整对话列表</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">Message</span><span style="color:#24292E">> fullConversation </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>();</span></span>
+<span class="line"><span style="color:#6A737D">        // 添加系统消息</span></span>
+<span class="line"><span style="color:#24292E">        fullConversation.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(systemMessage);</span></span>
+<span class="line"><span style="color:#6A737D">        // 添加历史会话</span></span>
+<span class="line"><span style="color:#24292E">        fullConversation.</span><span style="color:#6F42C1">addAll</span><span style="color:#24292E">(conversation);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 创建提示</span></span>
+<span class="line"><span style="color:#24292E">        Prompt prompt </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Prompt</span><span style="color:#24292E">(fullConversation);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 创建工具注册表</span></span>
+<span class="line"><span style="color:#24292E">        FunctionCallbackRegistry registry </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createToolRegistry</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 创建聊天选项</span></span>
+<span class="line"><span style="color:#24292E">        ChatOptions options </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ChatOptions.</span><span style="color:#6F42C1">builder</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#6A737D">            // 添加工具注册表</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withFunctionCallbacks</span><span style="color:#24292E">(registry)</span></span>
+<span class="line"><span style="color:#6A737D">            // 设置温度参数</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withTemperature</span><span style="color:#24292E">(</span><span style="color:#005CC5">0.7f</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#6A737D">            // 构建选项</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">            // 调用模型获取回复</span></span>
+<span class="line"><span style="color:#24292E">            ChatResponse response </span><span style="color:#D73A49">=</span><span style="color:#24292E"> chatClient.</span><span style="color:#6F42C1">call</span><span style="color:#24292E">(prompt, options);</span></span>
+<span class="line"><span style="color:#24292E">            </span></span>
+<span class="line"><span style="color:#6A737D">            // 获取回复内容</span></span>
+<span class="line"><span style="color:#24292E">            String aiResponse </span><span style="color:#D73A49">=</span><span style="color:#24292E"> response.</span><span style="color:#6F42C1">getResult</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getOutput</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getContent</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            </span></span>
+<span class="line"><span style="color:#6A737D">            // 添加AI回复到会话</span></span>
+<span class="line"><span style="color:#24292E">            conversation.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> AssistantMessage</span><span style="color:#24292E">(aiResponse));</span></span>
+<span class="line"><span style="color:#24292E">            </span></span>
+<span class="line"><span style="color:#6A737D">            // 返回回复</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> aiResponse;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">            // 记录错误</span></span>
+<span class="line"><span style="color:#24292E">            log.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"处理消息时出错: {}"</span><span style="color:#24292E">, e.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">(), e);</span></span>
+<span class="line"><span style="color:#6A737D">            // 返回错误消息</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#032F62"> "抱歉，我处理您的请求时遇到了问题: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> e.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 创建工具注册表</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#24292E"> FunctionCallbackRegistry </span><span style="color:#6F42C1">createToolRegistry</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> FunctionCallbackRegistry.</span><span style="color:#6F42C1">builder</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#6A737D">            // 添加天气工具</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withFunction</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">                // 函数名称</span></span>
+<span class="line"><span style="color:#032F62">                "getWeather"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">                // 函数描述</span></span>
+<span class="line"><span style="color:#032F62">                "查询指定城市的天气信息"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">                // 参数列表</span></span>
+<span class="line"><span style="color:#24292E">                List.</span><span style="color:#6F42C1">of</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">                    // 城市参数</span></span>
+<span class="line"><span style="color:#D73A49">                    new</span><span style="color:#6F42C1"> FunctionParameter</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">                        "city"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                        "string"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                        "要查询天气的城市名称"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#005CC5">                        true</span></span>
+<span class="line"><span style="color:#24292E">                    )</span></span>
+<span class="line"><span style="color:#24292E">                ),</span></span>
+<span class="line"><span style="color:#6A737D">                // 处理函数</span></span>
+<span class="line"><span style="color:#24292E">                params </span><span style="color:#D73A49">-></span><span style="color:#24292E"> weatherService.</span><span style="color:#6F42C1">getWeather</span><span style="color:#24292E">(params.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#032F62">"city"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">            )</span></span>
+<span class="line"><span style="color:#6A737D">            // 添加数据库查询工具</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withFunction</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">                // 函数名称</span></span>
+<span class="line"><span style="color:#032F62">                "queryDatabase"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">                // 函数描述</span></span>
+<span class="line"><span style="color:#032F62">                "查询产品数据库"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">                // 参数列表</span></span>
+<span class="line"><span style="color:#24292E">                List.</span><span style="color:#6F42C1">of</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">                    // 类别参数</span></span>
+<span class="line"><span style="color:#D73A49">                    new</span><span style="color:#6F42C1"> FunctionParameter</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">                        "category"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                        "string"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                        "产品类别"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#005CC5">                        true</span></span>
+<span class="line"><span style="color:#24292E">                    ),</span></span>
+<span class="line"><span style="color:#6A737D">                    // 价格限制参数</span></span>
+<span class="line"><span style="color:#D73A49">                    new</span><span style="color:#6F42C1"> FunctionParameter</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">                        "maxPrice"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                        "number"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                        "最高价格"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#005CC5">                        false</span></span>
+<span class="line"><span style="color:#24292E">                    )</span></span>
+<span class="line"><span style="color:#24292E">                ),</span></span>
+<span class="line"><span style="color:#6A737D">                // 处理函数</span></span>
+<span class="line"><span style="color:#24292E">                params </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                    // 获取类别</span></span>
+<span class="line"><span style="color:#24292E">                    String category </span><span style="color:#D73A49">=</span><span style="color:#24292E"> params.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#032F62">"category"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">                    // 获取价格限制，默认无限制</span></span>
+<span class="line"><span style="color:#24292E">                    Double maxPrice </span><span style="color:#D73A49">=</span><span style="color:#24292E"> params.</span><span style="color:#6F42C1">containsKey</span><span style="color:#24292E">(</span><span style="color:#032F62">"maxPrice"</span><span style="color:#24292E">) </span></span>
+<span class="line"><span style="color:#D73A49">                        ?</span><span style="color:#24292E"> Double.</span><span style="color:#6F42C1">parseDouble</span><span style="color:#24292E">(params.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#032F62">"maxPrice"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#D73A49">                        :</span><span style="color:#24292E"> Double.MAX_VALUE;</span></span>
+<span class="line"><span style="color:#6A737D">                    // 调用数据库服务</span></span>
+<span class="line"><span style="color:#D73A49">                    return</span><span style="color:#24292E"> databaseService.</span><span style="color:#6F42C1">queryProducts</span><span style="color:#24292E">(category, maxPrice);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            )</span></span>
+<span class="line"><span style="color:#6A737D">            // 添加日历工具</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withFunction</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">                // 函数名称</span></span>
+<span class="line"><span style="color:#032F62">                "createEvent"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">                // 函数描述</span></span>
+<span class="line"><span style="color:#032F62">                "在日历中创建新事件"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">                // 参数列表</span></span>
+<span class="line"><span style="color:#24292E">                List.</span><span style="color:#6F42C1">of</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">                    // 事件标题</span></span>
+<span class="line"><span style="color:#D73A49">                    new</span><span style="color:#6F42C1"> FunctionParameter</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">                        "title"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                        "string"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                        "事件标题"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#005CC5">                        true</span></span>
+<span class="line"><span style="color:#24292E">                    ),</span></span>
+<span class="line"><span style="color:#6A737D">                    // 事件日期</span></span>
+<span class="line"><span style="color:#D73A49">                    new</span><span style="color:#6F42C1"> FunctionParameter</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">                        "date"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                        "string"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                        "事件日期，格式YYYY-MM-DD"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#005CC5">                        true</span></span>
+<span class="line"><span style="color:#24292E">                    ),</span></span>
+<span class="line"><span style="color:#6A737D">                    // 事件时间</span></span>
+<span class="line"><span style="color:#D73A49">                    new</span><span style="color:#6F42C1"> FunctionParameter</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">                        "time"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                        "string"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                        "事件时间，格式HH:MM"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#005CC5">                        true</span></span>
+<span class="line"><span style="color:#24292E">                    )</span></span>
+<span class="line"><span style="color:#24292E">                ),</span></span>
+<span class="line"><span style="color:#6A737D">                // 处理函数</span></span>
+<span class="line"><span style="color:#24292E">                params </span><span style="color:#D73A49">-></span><span style="color:#24292E"> calendarService.</span><span style="color:#6F42C1">createEvent</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">                    params.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#032F62">"title"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                    params.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#032F62">"date"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                    params.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#032F62">"time"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">                )</span></span>
+<span class="line"><span style="color:#24292E">            )</span></span>
+<span class="line"><span style="color:#6A737D">            // 添加计算工具</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withFunction</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">                // 函数名称</span></span>
+<span class="line"><span style="color:#032F62">                "calculate"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">                // 函数描述</span></span>
+<span class="line"><span style="color:#032F62">                "执行数学计算"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">                // 参数列表</span></span>
+<span class="line"><span style="color:#24292E">                List.</span><span style="color:#6F42C1">of</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">                    // 表达式参数</span></span>
+<span class="line"><span style="color:#D73A49">                    new</span><span style="color:#6F42C1"> FunctionParameter</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">                        "expression"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                        "string"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#032F62">                        "数学表达式"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#005CC5">                        true</span></span>
+<span class="line"><span style="color:#24292E">                    )</span></span>
+<span class="line"><span style="color:#24292E">                ),</span></span>
+<span class="line"><span style="color:#6A737D">                // 处理函数</span></span>
+<span class="line"><span style="color:#24292E">                params </span><span style="color:#D73A49">-></span><span style="color:#24292E"> calculationService.</span><span style="color:#6F42C1">evaluate</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">                    params.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#032F62">"expression"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">                )</span></span>
+<span class="line"><span style="color:#24292E">            )</span></span>
+<span class="line"><span style="color:#6A737D">            // 构建注册表</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="六未来展望与技术趋势">六、未来展望与技术趋势</h2>
+<p>随着LLM技术的快速发展，Tool Calling将朝着以下方向演进：</p>
+<ol>
+<li><strong>自主工具发现与API适配</strong>：模型能够自主发现可用工具和学习使用新API</li>
+<li><strong>多工具协同解决复杂任务</strong>：模型能够协调多个工具共同完成复杂工作流</li>
+<li><strong>自动化工具创建</strong>：动态生成新工具函数来扩展自身能力</li>
+<li><strong>精细的上下文理解</strong>：更精准地理解何时以及如何使用工具</li>
+</ol>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">timeline</span></span>
+<span class="line"><span style="color:#24292E">  title Tool Calling 技术演进路线</span></span>
+<span class="line"><span style="color:#24292E">  2023 : 基础函数调用能力</span></span>
+<span class="line"><span style="color:#24292E">       : 简单参数解析</span></span>
+<span class="line"><span style="color:#24292E">       : 单一函数执行</span></span>
+<span class="line"><span style="color:#24292E">  2024 : 多工具集成</span></span>
+<span class="line"><span style="color:#24292E">       : 复杂参数处理</span></span>
+<span class="line"><span style="color:#24292E">       : 调用流编排</span></span>
+<span class="line"><span style="color:#24292E">       : 上下文保持</span></span>
+<span class="line"><span style="color:#24292E">  2025 : 自主工具发现</span></span>
+<span class="line"><span style="color:#24292E">       : 动态API适配</span></span>
+<span class="line"><span style="color:#24292E">       : 工具链协同</span></span>
+<span class="line"><span style="color:#24292E">  2026 : 自动工具创建</span></span>
+<span class="line"><span style="color:#24292E">       : 端到端任务执行</span></span>
+<span class="line"><span style="color:#24292E">       : 自优化工作流</span></span></code></pre>
+<h2 id="七总结">七、总结</h2>
+<p>Tool Calling 函数注册与动态执行机制是现代AI应用的核心能力，通过将AI模型与外部工具、系统和数据源相连接，极大扩展了模型的实用性和适用场景。Spring AI等框架通过提供统一的抽象层，使得这一复杂功能变得易于实现和管理。</p>
+<p>企业在实施过程中，应特别注重以下几点：</p>
+<ol>
+<li>函数定义的清晰度与完备性</li>
+<li>安全权限控制与访问审计</li>
+<li>异常处理与优雅降级</li>
+<li>性能优化与响应速度</li>
+</ol>
+<p>通过掌握Tool Calling技术，开发者能够构建真正实用的、能够与现实世界交互的智能应用，为用户提供更高效、更精准的服务。</p>
+<hr>
+<blockquote>
+<p>参考资料：</p>
+<ol>
+<li>Spring AI官方文档</li>
+<li>OpenAI Function Calling API文档</li>
+<li>LangChain Tool Integration指南</li>
+<li>“Building AI Applications with Spring AI” - Spring社区文章</li>
+</ol>
+</blockquote>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

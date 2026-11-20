@@ -1,0 +1,177 @@
+<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ragflow v0.25.3 — STAGS NextStack</title><meta name="description" content="Data source and parsing: Added column-level semantic/metadata control for the spreadsheet file parser; introduced ETag optimization for incremental synchronization of S3 data sources to avoid unnecessary file transfers."><meta name="keywords" content="オープンソース release note、リリース トラッカー、changelog アグリゲーター、重大な変更、非推奨トラッカー、Kafka リリース、Spring Boot リリース、Kubernetes リリース"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/ja/releases/ragflow/0.25.3/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/ja/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/releases/ragflow/0.25.3/"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/releases/ragflow/0.25.3/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/releases/ragflow/0.25.3/"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="article"><meta property="og:title" content="ragflow v0.25.3 — STAGS NextStack"><meta property="og:description" content="Data source and parsing: Added column-level semantic/metadata control for the spreadsheet file parser; introduced ETag optimization for incremental synchronization of S3 data sources to avoid unnecessary file transfers."><meta property="og:url" content="https://www.stags.cn/ja/releases/ragflow/0.25.3/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="ja_JP"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="zh_CN"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"ja","description":"STAGS はインフラストラクチャおよび AI プロジェクトのリリースノートを索引化し、破壊的変更・非推奨・移行情報を英語優先の単一フィードで提供します。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"},{"@type":"TechArticle","@id":"https://www.stags.cn/ja/releases/ragflow/0.25.3/#article","headline":"ragflow v0.25.3 release notes","datePublished":"2026-05-13","inLanguage":"en","isPartOf":{"@id":"https://www.stags.cn/#website"},"about":{"@type":"SoftwareSourceCode","codeRepository":"https://github.com/infiniflow/ragflow"}}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css">
+<style>.ad-slot[data-astro-cid-fgwukgf6]{margin:var(--s10) 0 0;padding-top:var(--s5);border-top:1px solid var(--line)}.ad-slot-label[data-astro-cid-fgwukgf6]{margin-bottom:var(--s3);font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4)}.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{display:block;min-height:100px}@media(min-width:640px){.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{min-height:250px}}
+</style></head> <body> <a class="skip" href="#main">本文へスキップ</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/ja/" class="brand" aria-label="STAGS NextStack — オープンソースのリリース情報"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/ja/releases">リリース</a><a href="/ja/projects">プロジェクト</a><a href="/ja/method">仕組み</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="リリースを検索"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">検索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="言語"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">日</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="言語"> <p class="langmenu-head">言語</p> <a class="langmenu-item" href="/releases/ragflow/0.25.3/" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/release_note/ragflow/ragflow_v0.25.3" hreflang="zh-Hans" lang="zh-CN" data-on="false"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases/ragflow/0.25.3/" hreflang="ja" lang="ja" aria-current="true" data-on="true"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases/ragflow/0.25.3/" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases/ragflow/0.25.3/" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases/ragflow/0.25.3/" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases/ragflow/0.25.3/" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap"> <div class="detail"> <article> <header class="detail-hd"> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/ja/">ホーム</a> <span class="sep">/</span> <a href="/ja/releases">リリース</a> <span class="sep">/</span> <a href="/ja/releases/ragflow">ragflow</a> </nav> <h1 class="detail-title"> <span class="p">ragflow</span> v0.25.3 </h1> <div class="detail-meta"> <span class="chip chip--patch">パッチ</span> <span><span class="k">公開日</span>2026年5月13日</span>  <span class="sep" aria-hidden="true"></span> <a href="https://github.com/infiniflow/ragflow" target="_blank" rel="noopener"> <span class="k">出典</span>infiniflow/ragflow </a>   <span class="sep" aria-hidden="true"></span> <a href="/releases/ragflow/0.25.3/"> 英語原文 </a>  <span class="sep" aria-hidden="true"></span> <button class="btn btn--ghost btn--sm" type="button" data-copy="https://www.stags.cn/ja/releases/ragflow/0.25.3/">リンクをコピー</button> </div> </header> <div class="prose" style="margin-top:var(--s8)"> <p class="mt-notice" role="note">このページは機械翻訳です。内容は必ず英文原文をご確認ください。</p>  <div><p>#ラグフローv0.25.3</p>
+<h1>まとめ</h1>
+<h2>新機能</h2>
+<ul>
+<li>データ ソースと解析: スプレッドシート ファイル パーサーに列レベルのセマンティック/メタデータ制御を追加しました。不必要なファイル転送を回避するために、S3 データ ソースの増分同期のための ETag 最適化が導入されました。</li>
+<li>コンテンツ、メタデータ、主キーなどの特定の役割をテーブル列に割り当てることができます。 <a href="https://github.com/infiniflow/ragflow/pull/13710">#13710</a></li>
+</ul>
+<h2>改善点</h2>
+<ul>
+<li>API リファクタリングとセキュリティ
+<ul>
+<li>Web API の RESTful 規約への移行を継続し、すべてのレガシー エンドポイントに対する下位互換性を確保します。</li>
+<li><code>POST /api/v1/messages</code> の <code>user_id</code> を認証された JWT プリンシパルにバインドします。 <a href="https://github.com/infiniflow/ragflow/pull/14745">#14745</a></li>
+<li>動的および間接的なコード実行バイパスからサンドボックス エグゼキュータを保護します。 <a href="https://github.com/infiniflow/ragflow/pull/14690">#14690</a></li>
+<li>LLMリクエストのタイムアウト制御</li>
+<li>同時実行性の高いブロッキング呼び出しスレッド プール</li>
+</ul>
+</li>
+<li>インジェストサーバーの起動時間を短縮します。 <a href="https://github.com/infiniflow/ragflow/pull/14894">#14894</a></li>
+</ul>
+<h2>バグ修正</h2>
+<ul>
+<li>マルチシート Excel ワークブック内の画像の範囲がシートごとに設定されていないため、異なるワークシート間で画像が誤って属性付けされることがありました。 <a href="https://github.com/infiniflow/ragflow/pull/14120">#14120</a></li>
+<li>反復項目のエイリアス渡し</li>
+<li>ツールパラメータテンプレートの解析</li>
+<li>コード実行添付出力</li>
+<li>火山モデルの追加修正</li>
+</ul>
+<h2>何が変わったのか</h2>
+<ul>
+<li>Go: プロバイダーを実装: Baidu by @Haruko386 (https://github.com/infiniflow/ragflow/pull/14741)</li>
+<li>機能 (コネクタ): 増分 S3 インジェストのための ETag ベースのバイパス (#14628) by @hunnyboy1217 (https://github.com/infiniflow/ragflow/pull/14677)</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14742 の @JinHai-CN による Baidu のリランクの問題を修正</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14743 の @JinHai-CN によるシリコンフローの再ランクの問題を修正</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14630 の @pandadev66 による OpenAI ドライバーでのエンコード (埋め込み) の実装</li>
+<li>修正: Radio.Group cloneElement が非要素の子でクラッシュする (https://github.com/infiniflow/ragflow/pull/14407 の @JimZhang-lab による)</li>
+<li>fix(auth): https://github.com/infiniflow/ragflow/pull/14569 の @mhtkarakose による _load_user のセッションベースの認証にフォールバックします</li>
+<li>修正: https://github.com/infiniflow/ragflow/pull/14601 の @wanghualoong によるツール コンポーネント パラメーターのテンプレート文字列を解決します。</li>
+<li>https://github.com/infiniflow/ragflow/pull/14555 の @Qwerrty574 による HuggingfaceRerank の Base_url 処理を修正</li>
+<li>https://github.com/infiniflow/ragflow/pull/13710 の @ahmadintisar による機能/テーブル パーサー列の役割</li>
+<li>機能: https://github.com/infiniflow/ragflow/pull/14705 の @vincentlambert による LiteLLM を介したビジョン/イメージ 2 テキスト推論用の BedrockCV の追加</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14702 の @bittoby によって Volcengine ドライバーに ListModels を実装します。</li>
+<li>功績: https://github.com/infiniflow/ragflow/pull/14553 の @ParasSondhi により、ARG でサンドボックス Docker ファイル ミラーをオプションにしました</li>
+<li>fix(llm): https://github.com/infiniflow/ragflow/pull/14313 の @Ricardo-M-L により LLM 統合レイヤーの HTTP リクエストにタイムアウトを追加</li>
+<li>Go: Google Gemini ドライバーにエンコード (埋め込み) を実装 (https://github.com/infiniflow/ragflow/pull/14682 の @Joseff531 による)</li>
+<li>修正(実行): https://github.com/infiniflow/ragflow/pull/14660 の @zeus1959 により Google CheckConnection を ListModels に接続します</li>
+<li>修正 (Go): Aliyun ドライバーの正しい Name() と地域 URL フォールバック (https://github.com/infiniflow/ragflow/pull/14673 の @Joseff531 による)</li>
+<li>修正: https://github.com/infiniflow/ragflow/pull/14690 の @Sp1kyss によるサンドボックス エグゼキューターの 2 つのセキュリティ アナライザー バイパス パスを閉じる</li>
+<li>修正: https://github.com/infiniflow/ragflow/pull/14556 の @vincentlambert による retrieval_by_children で欠落している親チャンクを処理</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14698 の @bittoby による Gitee AI ドライバーでのエンコード (埋め込み) の実装</li>
+<li>fix(keyword_extraction): https://github.com/infiniflow/ragflow/pull/14540 の @Qinsanz によるキーワード区切り文字として中国語のカンマ/セミコロン/改行を受け入れる</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14688 の @pandadev66 による vLLM ドライバーでのエンコード (埋め込み) の実装</li>
+<li>修正: https://github.com/infiniflow/ragflow/pull/14265 の @07heco によるすべてのレビュー コメントに対処する再ランク モジュールの完全な堅牢性修正</li>
+<li>修正(プロンプト): https://github.com/infiniflow/ragflow/pull/14164 の @hyl64 による message_fit_in のシステム バジェットを予約</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14664 の @jack-stormentswe により、Ollama ドライバーにエンコード (埋め込み) を実装します。</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14700 の @bittoby による NVIDIA ドライバーでのエンコード (埋め込み) の実装</li>
+<li>Perf(Go): https://github.com/infiniflow/ragflow/pull/14719 の @Joseff531 による 32 項目チャンクによるバッチ SiliconFlow Encode リクエスト</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14694 の @pandadev66 による LM Studio ドライバーでのエンコード (埋め込み) の実装</li>
+<li>修正 (Go): https://github.com/infiniflow/ragflow/pull/14717 の @Joseff531 による不正な応答で OpenRouter Encode が大声で失敗するようにする</li>
+<li>リファクタリング: https://github.com/infiniflow/ragflow/pull/14668 の @web-dev0521 により、file_service の ThreadPoolExecutor ライフサイクルとタスク実行プログラムを整理しました。</li>
+<li>GraphRAG 機能 - パート 1 - https://github.com/infiniflow/ragflow/pull/14670 の @wangq8 によりエンティティとリレーションを抽出するためのスペースを追加</li>
+<li>修正: https://github.com/infiniflow/ragflow/pull/14120 の @fplust による Excel パーサーのシートによる pending_cell_images のスコープ</li>
+<li>修正(dify): https://github.com/infiniflow/ragflow/pull/14169 の @Achieve3318 によるガード取得引数のエラー動作</li>
+<li>修正: https://github.com/infiniflow/ragflow/pull/14745 の @jony376 による JWT 認証の認証済みユーザーにメモリ メッセージ <code>user_id</code> をバインド</li>
+<li>修正: https://github.com/infiniflow/ragflow/pull/14759 の @buua436 によるデータセット検索の再ランク ID タイプ</li>
+<li>修正: https://github.com/infiniflow/ragflow/pull/14764 の @buua436 による共有データセット チャンク インデックス ルックアップ</li>
+<li>修正: https://github.com/infiniflow/ragflow/pull/14144 の @Ricardo-M-L による file_service.py の ThreadPoolExecutor のコンテキスト マネージャーを使用する</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14757 の @JinHai-CN による埋め込みインターフェイスのリファクタリング</li>
+<li>修正: 安全な引数ガードと、https://github.com/infiniflow/ragflow/pull/14060 内の @paulhuiseismic による冗長な redis 呼び出しを削除</li>
+<li>修正: https://github.com/infiniflow/ragflow/pull/13941 の @tmimmanuel による、高同時実行サポートのためにブロック DB/Redis 呼び出しをスレッド プールにオフロードする (#13825)</li>
+<li>リファクト: https://github.com/infiniflow/ragflow/pull/13627 の @Sank-WoT によるプライベート ヘルパー _visibility_and_status_filter を追加しました。</li>
+<li>修正: https://github.com/infiniflow/ragflow/pull/13352 の @as-ondewo によってチャンクが取得可能になる前に、ドキュメントの解析ステータスが DONE に設定される</li>
+<li>fix(web): https://github.com/infiniflow/ragflow/pull/14122 の @yshchm による引用参照の不完全な Docx プレビューを修正</li>
+<li>修正: OCR.detect() が真実の None タプルを返し、https://github.com/infiniflow/ragflow/pull/13951 の @octo-patch による NoneType 添字クラッシュの原因となる</li>
+<li>雑用: https://github.com/infiniflow/ragflow/pull/14756 の @box4wangjing による読みやすさを向上させるためにいくつかのコメントを修正</li>
+<li>修正(opensearch): https://github.com/infiniflow/ragflow/pull/14577 の @tmimmanuel により OSConnection に doc-meta ディスパッチ サーフェスを実装</li>
+<li>Go: @JinHai-CN による開発ガイド ドキュメントを https://github.com/infiniflow/ragflow/pull/14785 に追加</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14778 の @RenzoMXD による NVIDIA ドライバーでの Rerank の実装</li>
+<li>修正: @buua436 によって出力された codeexec 添付ファイルを https://github.com/infiniflow/ragflow/pull/14787 に追加</li>
+<li>Go: プロバイダーを実装: CoHere と FishAudio by @Haruko386 (https://github.com/infiniflow/ragflow/pull/14790)</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14794 の @JinHai-CN による取得テスト エラーを修正</li>
+<li>[バグ]: REDIS エラー #12870 (@raminmardani 著、https://github.com/infiniflow/ragflow/pull/13875)</li>
+<li>修正(dify): https://github.com/infiniflow/ragflow/pull/13837 の @Lntanohuang によるヘルス チェックのための GET メソッドのサポートを /dify/retrieval に追加</li>
+<li>feat(raptor): https://github.com/infiniflow/ragflow/pull/14679 の @CaptainTimon によるオリジナル空間ランキングと安全な移行を備えた Psi ツリー ビルダーを追加</li>
+<li>雑用 (deps): https://github.com/infiniflow/ragflow/pull/14824 の @dependabot[bot] によって /agent/sandbox 内の urllib3 を 2.6.3 から 2.7.0 にバンプします</li>
+<li>リファクタリング(Go): https://github.com/infiniflow/ragflow/pull/14822 の @Haruko386 により、huggingface プロバイダーのハードコードを削除</li>
+<li>fix(agent): https://github.com/infiniflow/ragflow/pull/14146 の @hyl64 による子ノードでの反復項目のエイリアスをサポート</li>
+<li>Go: プロバイダーを実装: StepFun by @tmimmanuel (https://github.com/infiniflow/ragflow/pull/14815)</li>
+<li>修正 (ドキュメント): https://github.com/infiniflow/ragflow/pull/13838 の @majiayu000 による壊れたナレッジ グラフ構築リンクを修正</li>
+<li>修正: https://github.com/infiniflow/ragflow/pull/14829 の @buua436 によるエージェントのバグ</li>
+<li>リファクト: サンドボックス クイックスタート.md &amp; https://github.com/infiniflow/ragflow/pull/14786 の @Magicbook1108 によるコード実行コンポーネントのチュートリアルを追加</li>
+<li>テスト: https://github.com/infiniflow/ragflow/pull/14170 の @Achieve3318 によるリスト値とスカラー値の集約エッジ ケース</li>
+<li>Go: プロバイダーの実装: Baichuan by @Haruko386 (https://github.com/infiniflow/ragflow/pull/14832)</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14819 の @tmimmanuel による Upstage ドライバーでの Embed (埋め込み) の実装</li>
+<li>https://github.com/infiniflow/ragflow/pull/14833 の @wangq8 による起動時間の高速化</li>
+<li>GO: https://github.com/infiniflow/ragflow/pull/14834 の @buua436 による GET /api/v1/datasets/:dataset_id を実装します。</li>
+<li>Go: @JinHai-CN による ASR、TTS、OCR コマンドを https://github.com/infiniflow/ragflow/pull/14836 に追加</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14837 の @buua436 によるデータセットの時間単位を修正</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14807 の @tmimmanuel による Mistral ドライバーへの Embed (埋め込み) の実装</li>
+<li>Go: プロバイダーの実装: Jina by @Haruko386 (https://github.com/infiniflow/ragflow/pull/14838)</li>
+<li>修正: https://github.com/infiniflow/ragflow/pull/14828 の @oxtensor により OpenAI モデル リストで gpt-5.5 と gpt-5.4 を公開</li>
+<li>機能: ループ ノード内で待機ノードがメッセージ ノードの前にある場合、送信メッセージは 2 つの別々のメッセージに分割されます。 @cike8899 著、https://github.com/infiniflow/ragflow/pull/14839</li>
+<li>https://github.com/infiniflow/ragflow/pull/14841 で @wangq8 によって追加されたときにデータセット リストの検索を許可するように #14801 を修正しました</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14843 で @JinHai-CN によるモデルを使用する場合のモデル タイプ チェックを修正</li>
+<li>ドキュメント: Bitbucket をデータ ソースとして追加する方法。 @writinwaters 著、https://github.com/infiniflow/ragflow/pull/14846</li>
+<li>修正: https://github.com/infiniflow/ragflow/pull/14791 の @yaoper によるオーディオ対応拡張子リスト内の重複した .wav と .aac を削除</li>
+<li>修正(api): https://github.com/infiniflow/ragflow/pull/14775 の @dale053 によるリスト チャットと検索アプリの owner_id を承認</li>
+<li>https://github.com/infiniflow/ragflow/pull/14872 の @wangq8 による REST API 下位互換性を追加</li>
+<li>修正: @shawnxiao105-afk による https://github.com/infiniflow/ragflow/pull/13938 への埋め込み前に空白のみのチャンクをガード</li>
+<li>修正 (Go): https://github.com/infiniflow/ragflow/pull/14721 の @Joseff531 による不正な応答で Baidu エンコードが大音量で失敗するようにする</li>
+<li>https://github.com/infiniflow/ragflow/pull/14879 の @wangq8 による UI で削除グラフラグが有効にならない問題を修正</li>
+<li>修正: ナレッジ ブロック作成時のテキスト フィールドのサイズ変更機能… by @stardyun (https://github.com/infiniflow/ragflow/pull/14212)</li>
+<li>Go: プロバイダーを実装: Novita.ai by @tmimmanuel (https://github.com/infiniflow/ragflow/pull/14850)</li>
+<li>雑用: https://github.com/infiniflow/ragflow/pull/14871 の @6ba3i によるテストを RESTful api に移行する</li>
+<li>https://github.com/infiniflow/ragflow/pull/14883 の @wangq8 による重複ルートを削除</li>
+<li>Go: プロバイダーを実装: LongCat by @tmimmanuel (https://github.com/infiniflow/ragflow/pull/14809)</li>
+<li>修正: フォームの初期化中に埋め込みモデルを設定します。 @dcc123456 著、https://github.com/infiniflow/ragflow/pull/14889</li>
+<li>Go: ZhipuAI ドライバーに ListModels を実装 (https://github.com/infiniflow/ragflow/pull/14886 の @pandadev66 による)</li>
+<li>修正: https://github.com/infiniflow/ragflow/pull/14885 で @buua436 によってオーバーライドされた api キーを追加します。</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14891 の @JinHai-CN による OCR コマンドを修正</li>
+<li>https://github.com/infiniflow/ragflow/pull/14894 の @wangq8 によるラグフロー サーバーの高速化</li>
+<li>ドキュメント: README の v0.25.3 へのバージョン参照と、https://github.com/infiniflow/ragflow/pull/14896 の @asiroliu によるドキュメントを更新します。</li>
+<li>Go: https://github.com/infiniflow/ragflow/pull/14813 の @tmimmanuel による LocalAI ドライバーでの Rerank の実装</li>
+<li>ドキュメント: https://github.com/infiniflow/ragflow/pull/14898 の @writinwaters によるドラフト 0.25.3 release note</li>
+<li>無限大へのバンプ v0.7.0-dev7 by @JinHai-CN (https://github.com/infiniflow/ragflow/pull/14897)</li>
+<li>ドキュメント: https://github.com/infiniflow/ragflow/pull/14899 の @writinwaters による v0.25.3 release note のドラフトを更新</li>
+<li>修正: https://github.com/infiniflow/ragflow/pull/14782 の @jony376 による取得フローで <code>tenant_rerank_id</code> のテナント認証を強制する</li>
+<li>https://github.com/infiniflow/ragflow/pull/14900 の @JinHai-CN による go コンパイルを修正</li>
+</ul>
+<h2>新しい貢献者</h2>
+<ul>
+<li>@hunnyboy1217 が https://github.com/infiniflow/ragflow/pull/14677 に初めて投稿しました</li>
+<li>@JimZhang-lab が https://github.com/infiniflow/ragflow/pull/14407 に初めて貢献しました</li>
+<li>@mhtkarakose が https://github.com/infiniflow/ragflow/pull/14569 に初めて投稿しました</li>
+<li>@Qwerrty574 が https://github.com/infiniflow/ragflow/pull/14555 に初めて投稿しました</li>
+<li>@zeus1959 が https://github.com/infiniflow/ragflow/pull/14660 に初めて投稿しました</li>
+<li>@Sp1kyss は https://github.com/infiniflow/ragflow/pull/14690 で最初の投稿を行いました</li>
+<li>@Qinsanz が https://github.com/infiniflow/ragflow/pull/14540 に初めて投稿しました</li>
+<li>@07heco が https://github.com/infiniflow/ragflow/pull/14265 に初めて投稿しました</li>
+<li>@fplust が https://github.com/infiniflow/ragflow/pull/14120 で最初の投稿を行いました</li>
+<li>@yshchm が https://github.com/infiniflow/ragflow/pull/14122 に初めて投稿しました</li>
+<li>@box4wangjing が https://github.com/infiniflow/ragflow/pull/14756 に初めて投稿しました</li>
+<li>@CaptainTimon が https://github.com/infiniflow/ragflow/pull/14679 で最初の貢献をしました</li>
+<li>@oxtensor が https://github.com/infiniflow/ragflow/pull/14828 で最初の貢献を行いました</li>
+<li>@yaoper が https://github.com/infiniflow/ragflow/pull/14791 で最初の投稿を行いました</li>
+<li>@shawnxiao105-afk が https://github.com/infiniflow/ragflow/pull/13938 に初めて投稿しました</li>
+<li>@stardyun が https://github.com/infiniflow/ragflow/pull/14212 で最初の投稿を行いました</li>
+</ul>
+<p><strong>フル Changelog</strong>: https://github.com/infiniflow/ragflow/compare/v0.25.2...v0.25.3</p>
+<hr />
+<blockquote>
+<p><strong>ソース</strong> <a href="https://github.com/infiniflow/ragflow">infiniflow/ragflow</a> · <code>v0.25.3</code> · 2026-05-13 · <a href="https://github.com/infiniflow/ragflow/releases/tag/v0.25.3">アップストリーム リリース</a>
+<em>インデックス作成のためにそのままミラーリングされます。すべての権利は上流プロジェクトに帰属します。</em></p>
+</blockquote></div>   </div> <p class="muted" style="margin-top:var(--s8);font-size:12.5px;border-top:1px solid var(--line);padding-top:var(--s4)"> Release note は上流のプロジェクトによって公開され、インデックス作成のためにここにミラーリングされます。すべての権利はその作者に帰属します。 </p> <nav class="pager" aria-label="Release navigation"> <a href="/releases/ragflow/0.25.4"> <span class="k">← 次へ</span> <span class="t">v0.25.4</span> </a> <a href="/releases/ragflow/0.25.2"> <span class="k">前へ →</span> <span class="t">v0.25.2</span> </a> </nav> <aside class="ad-slot" aria-label="Advertisement" data-astro-cid-fgwukgf6><div class="ad-slot-label" data-astro-cid-fgwukgf6>Advertisement</div><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4184355057086168" data-ad-slot="9133765584" data-ad-format="auto" data-full-width-responsive="true" data-astro-cid-fgwukgf6></ins><script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script></aside> </article> <aside class="rail"> <div class="rail-card"> <div class="rail-title">Source</div> <ul class="rail-list"> <li> <a href="https://github.com/infiniflow/ragflow/releases/tag/v0.25.3" target="_blank" rel="noopener"> <span>GitHub で見る</span> <span class="d">↗</span> </a> </li> <li> <a href="https://github.com/infiniflow/ragflow" target="_blank" rel="noopener"> <span>infiniflow/ragflow</span> <span class="d">↗</span> </a> </li> </ul> </div> <div class="rail-card rail-toc"> <div class="rail-title">このページの目次</div> <nav> <a href="#" class>新機能</a><a href="#" class>改善点</a><a href="#" class>バグ修正</a><a href="#" class>何が変わったのか</a><a href="#" class>新しい貢献者</a> </nav> </div> <div class="rail-card"> <div class="rail-title">バージョン履歴</div> <ul class="rail-list"> <li> <a href="/releases/ragflow/1.0.0"> <span class="v">v1.0.0</span> <span class="d">26-11-06</span> </a> </li><li> <a href="/releases/ragflow/1.0.0-rc3"> <span class="v">v1.0.0-rc3</span> <span class="d">26-10-30</span> </a> </li><li> <a href="/releases/ragflow/0.27.3"> <span class="v">v0.27.3</span> <span class="d">26-10-23</span> </a> </li><li> <a href="/releases/ragflow/1.0.0-rc2"> <span class="v">v1.0.0-rc2</span> <span class="d">26-10-16</span> </a> </li><li> <a href="/releases/ragflow/1.0.0-rc1"> <span class="v">v1.0.0-rc1</span> <span class="d">26-09-29</span> </a> </li><li> <a href="/releases/ragflow/0.27.2"> <span class="v">v0.27.2</span> <span class="d">26-09-10</span> </a> </li><li> <a href="/releases/ragflow/0.27.1"> <span class="v">v0.27.1</span> <span class="d">26-08-28</span> </a> </li><li> <a href="/releases/ragflow/0.27.0"> <span class="v">v0.27.0</span> <span class="d">26-08-19</span> </a> </li> </ul> <a href="/ja/releases/ragflow" class="mono" style="display:inline-block;margin-top:var(--s3);font-size:11.5px;color:var(--ink-3)"> すべての 32 件を見る →
+</a> </div> </aside> </div> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/ja/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>オープンソースのリリース インテリジェンスが毎日公開されます。</p> </div> <div class="footer-col"> <h3>追跡</h3> <ul> <li><a href="/ja/releases">リリース</a></li> <li><a href="/ja/projects">プロジェクト</a></li> <li><a href="/ja/releases.xml">RSS フィード</a></li> </ul> </div> <div class="footer-col"> <h3>アーカイブ</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文アーカイブ</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技術ノート</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>情報</h3> <ul> <li><a href="/ja/method">仕組み</a></li> <li><a href="/privacy">Privacy policy</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release note は上流プロジェクトに属します。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="リリースを検索"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="リリース、プロジェクト、バージョンを検索…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ navigate</span> <span>↵ open</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>入门 — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_linux/ebpf/ebpf_hello/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_linux/ebpf/ebpf_hello"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_linux/ebpf/ebpf_hello/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_linux/ebpf/ebpf_hello"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="入门 — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_linux/ebpf/ebpf_hello/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_linux/ebpf/ebpf_hello/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>linux</h3> <ul> <li> <a href="/zh/chapter_linux/ebpf/1-ebpf" class="lv1" title="eBPF为什么很重要以及它的发展史"> eBPF为什么很重要以及它的发展史 </a> </li><li> <a href="/zh/chapter_linux/ebpf/ebpf_hello" class="lv1" aria-current="page" title="入门"> 入门 </a> </li><li> <a href="/zh/chapter_linux/io/PageCache" class="lv1" title="PageCache"> PageCache </a> </li><li> <a href="/zh/chapter_linux/mm/pagecache" class="lv1" title="pagecache"> pagecache </a> </li><li> <a href="/zh/chapter_linux/net/2-网络排查" class="lv1" title="2-网络排查"> 2-网络排查 </a> </li><li> <a href="/zh/chapter_linux/net/net_in" class="lv1" title="1-网络是如何进来的"> 1-网络是如何进来的 </a> </li><li> <a href="/zh/chapter_linux/problem/5-linux问题分析" class="lv1" title="5-linux问题分析"> 5-linux问题分析 </a> </li><li> <a href="/zh/chapter_linux/problem/6-Dubbo超时问题" class="lv1" title="6-Dubbo超时问题"> 6-Dubbo超时问题 </a> </li><li> <a href="/zh/chapter_linux/problem/cpu" class="lv1" title="uptime"> uptime </a> </li><li> <a href="/zh/chapter_linux/problem/disk" class="lv1" title="3-磁盘问题排查常用命令"> 3-磁盘问题排查常用命令 </a> </li><li> <a href="/zh/chapter_linux/problem/memory" class="lv1" title="2-内存问题排查常用命令"> 2-内存问题排查常用命令 </a> </li><li> <a href="/zh/chapter_linux/problem/net" class="lv1" title="4-网络问题排查常用命令"> 4-网络问题排查常用命令 </a> </li><li> <a href="/zh/chapter_linux/problem/strace工具" class="lv1" title="strace工具"> strace工具 </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_linux">linux</a><span class="sep">/</span><a href="/zh/chapter_linux/ebpf">ebpf</a><span class="sep">/</span><span>入门</span> </nav> <div class="prose">  <p><strong>简介</strong></p>
+<p>前面的的文章介绍了eBPF的由来，可以了解到eBPF可以用于操作系统底层的高性能的网络、可观察性和安全工具等场景，eBPF过于底层，不过eBPF开放的程序并没有想象的复杂。</p>
+<p>下面就直接从一个来自ebpf-beginners项目中的Demo来入手，从浅到深了解整个Demo的运行机制。</p>
+<h1 id="入门">入门</h1>
+<h2 id="运行环境">运行环境</h2>
+<p>从2014年的内核版本3.18开始，BPF演变成我们所谓的“扩展BPF”或“eBPF”。随后在 Linux 4.1 版本中得到了进一步的改进和扩展。</p>
+<p>目前，eBPF 技术已经被广泛地应用于 Linux 系统中，包括主机内核和容器内核。不同版本的内核对 eBPF 的支持程度可能会有所不同，但是大多数常见的 Linux 发行版都已经支持 eBPF 技术。例如，Ubuntu 16.04 及以上版本、Debian 9 及以上版本、CentOS 7 及以上版本等都支持 eBPF 技术。</p>
+<p>需要注意的是，eBPF 程序的功能和接口可能会随着内核版本的更新而发生变化，因此在开发和使用 eBPF 程序时需要考虑内核版本的兼容性。</p>
+<p>一般来说，较新的内核版本通常会包含更多的功能和修复更多的漏洞，因此更加稳定和安全。在使用 eBPF 技术时，建议使用最新的稳定版内核，以获得最好的性能和安全性。</p>
+<p>目前，Linux 内核的稳定版本是 5.15.x，而长期支持版本是 5.10.x。这些版本都已经得到了广泛的测试和验证，并且在生产环境中得到了广泛的应用。当然如果环境不允许可以尝试在4.X版本中运行。</p>
+<p>在Linux下使用Python执行eBPF程序，需要安装以下工具和库：</p>
+<p><strong>Python开发环境</strong></p>
+<p>您需要安装Python解释器和相关的开发工具，例如pip包管理器和setuptools。</p>
+<p><strong>bcc（BPF Compiler Collection）</strong></p>
+<p>这是一个开源工具集，包含了许多用于编译、加载和执行eBPF程序的工具和库。您可以使用pip安装bcc：</p>
+<ul>
+<li></li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>sudo pip install bcc</span></span></code></pre>
+<p>或者</p>
+<ul>
+<li></li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>yum install bcc</span></span></code></pre>
+<p><strong>libbpf</strong></p>
+<p>这是一个用于在用户空间加载和执行eBPF程序的库。它是bcc的一部分，但也可以单独使用。您可以使用以下命令安装libbpf：</p>
+<ul>
+<li></li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>arduinoCopy codesudo apt-get install libbpf-dev</span></span></code></pre>
+<p><strong>其他依赖项</strong></p>
+<p>根据具体需求，您可能还需要安装其他依赖项，例如内核头文件和clang编译器。</p>
+<p>需要注意的是eBPF程序需要在特权模式下运行，因此您需要使用sudo或root权限来执行Python脚本。</p>
+<h2 id="hello-world程序">Hello World程序</h2>
+<p>这里我们主要通过Python来间接挂载eBPF程序到内核执行，首先来贴一下Hello World的代码，这个Demo每一行都进行了注释标注。</p>
+<ul>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>#!/usr/bin/python3  # 指定Python解释器版本为3from bcc import BPF # 导入BCC库# 定义BPF程序，该程序会在execve系统调用前打印"Helloprogram = r"""  int hello(void *ctx) {    bpf_trace_printk("Hello World!");     return 0;}"""# 创建BPF对象并加载程序 # 这里的 BPF(text=program) 是一个指示符，用于表示后面的文本应该被视为 BPF 程序的代码b = BPF(text=program)# 获取execve系统调用的函数名# 获取给定系统调用号对应的系统调用函数名或符号名。# execve() 函数是进程创建和管理中非常重要的一部分，它允许进程在运行时动态地加载和替换程序，从而实现了很多高级的功能，例如进程间通信、动态库加载和插件系统等。在 Linux 系统中，几乎所有的命令行程序都是通过 execve() 函数来启动的。syscall = b.get_syscall_fnname("execve") # 将hello函数附加到execve系统调用的入口点# 将一个 eBPF 程序附加到内核中的一个函数上，以便在函数执行时触发 eBPF 程序的执行# 具体来说，attach_kprobe() 函数可以用于在内核中的任何一个函数的入口或出口处插入一个 eBPF 程序，以便监视函数的行为或修改函数的参数和返回值。这个函数通常被用于内核调试和性能分析工具中，以便更好地了解内核函数的行为和性能。b.attach_kprobe(event=syscall, fn_name="hello")# 打印跟踪信息# trace_print() 函数是 libbpf 库中的一个函数，用于将 eBPF 程序中的 printf() 输出重定向到用户空间。由于 eBPF 程序不能直接访问用户空间，因此无法使用标准的 printf() 函数输出调试信息。而 trace_print() 函数提供了一种简单的方法来获取 eBPF 程序的输出，以便进行调试和分析。b.trace_print()</span></span></code></pre>
+<p>这段 Python 代码使用 BCC 库编写了一个简单的 eBPF 程序，该程序会在 <code>execve()</code> 系统调用前打印一条消息 “Hello World!”。具体来说，它的主要步骤如下：</p>
+<ol>
+<li>定义一个名为 <code>hello</code> 的 eBPF 函数，该函数会调用 <code>bpf_trace_printk()</code> 函数打印一条消息 “Hello World!”。</li>
+<li>创建一个 BPF 对象，并使用 <code>BPF(text=program)</code> 将定义的 eBPF 程序加载到 BPF 对象中。</li>
+<li>使用 <code>get_syscall_fnname()</code> 函数获取 <code>execve()</code> 系统调用的函数名。</li>
+<li>使用 <code>attach_kprobe()</code> 函数将 <code>hello()</code> 函数附加到 <code>execve()</code> 系统调用的入口点。</li>
+<li>使用 <code>trace_print()</code> 函数打印 eBPF 程序的输出。</li>
+</ol>
+<p>当您运行这段代码时，它将在控制台上输出 “Hello World!”，这是由 eBPF 程序打印的。这意味着 eBPF 程序已经成功地附加到 <code>execve()</code> 系统调用上，并在系统调用执行前打印了一条消息</p>
+<p>这个Demo中一共包含了两部分代码：</p>
+<ul>
+<li>一部分用Python编写代码，在用户空间执行用于加载hello world的程序到内核空间。</li>
+<li>另外一部分用C语言编写的hello world代码将会在内核中执行。</li>
+</ul>
+<p>![图片](data:image/svg+xml,%3C%3Fxml version=‘1.0’ encoding=‘UTF-8’%3F%3E%3Csvg width=‘1px’ height=‘1px’ viewBox=‘0 0 1 1’ version=‘1.1’ xmlns=‘<a href="http://www.w3.org/2000/svg">http://www.w3.org/2000/svg</a>’ xmlns:xlink=‘<a href="http://www.w3.org/1999/xlink&#x27;%3E%3Ctitle%3E%3C/title%3E%3Cg">http://www.w3.org/1999/xlink’%3E%3Ctitle%3E%3C/title%3E%3Cg</a> stroke=‘none’ stroke-width=‘1’ fill=‘none’ fill-rule=‘evenodd’ fill-opacity=‘0’%3E%3Cg transform=‘translate(-249.000000, -126.000000)’ fill=‘%23FFFFFF’%3E%3Crect x=‘249’ y=‘126’ width=‘1’ height=‘1’%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E)</p>
+<p>这段代码在内核中经过了如下图所示的步骤：</p>
+<p><img src="/img/chapter_linux/img_5.png" alt="图片"></p>
+<p><img src="/img/chapter_linux/img_6.png" alt="图片"></p>
+<ol>
+<li>首先，<code>BPF(text=program)</code>  语句创建了一个 BPF 对象，并将 eBPF 程序加载到对象中。在加载过程中，BCC 库会将 eBPF 程序编译成内核可执行的字节码，并将字节码加载到内核中的 BPF 子系统中。</li>
+<li>然后，<code>b.attach_kprobe(event=syscall, fn_name="hello")</code> 语句将 hello 函数附加到 execve 系统调用的入口点。这个过程会在内核中创建一个 kprobe，它会在 execve 系统调用的入口点处插入一段代码，以便触发 hello 函数的执行。</li>
+<li>当有进程调用 execve 系统调用时，kprobe 就会被触发，从而执行 hello 函数。hello 函数会在内核中打印 “Hello World!”，并返回执行结果。</li>
+<li>最后，<code>b.trace_print()</code> 语句会将 hello 函数的输出重定向到用户空间，并打印出来。这个过程是通过将 eBPF 程序中的输出重定向到 trace_pipe 文件中，并使用 <code>trace_print()</code> 函数从文件中读取输出来实现的。</li>
+</ol>
+<p>在内核中动态地插入了一段代码，并实现了对进程行为的跟踪和分析。这种方法具有高效、安全、灵活。</p>
+<h2 id="其他参考插图">其他参考插图</h2>
+<p><img src="/img/chapter_linux/img_7.png" alt="图片"></p>
+<p><img src="/img/chapter_linux/img_8.png" alt="图片"></p>
+<p>图片来源(<a href="http://www.brendangregg.com">www.brendangregg.com</a>)</p>
+<h1 id="总结">总结</h1>
+<p>通过前面的示例可以看到借助eBPF来在用户空间对操作系统内核的调用是非常简单的。</p>
+<ul>
+<li><strong>动态修改：</strong> eBPF程序可用于动态改变系统的行为。无需重新启动计算机或重新启动现有进程。eBPF代码在附加到事件后立即开始生效。</li>
+<li><strong>独立运行：</strong> 无需更改其他应用程序的任何内容，即可访问eBPF。无论你在那台机器上有终端访问权限，如果你在其中运行一个可执行文件，它将使用execve()系统调用，如果你有hello程序连接到该系统调用，它将被触发以生成跟踪输出。</li>
+</ul>
+<p>更多内容可以微信搜索《中间件源码》进行订阅。</p>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

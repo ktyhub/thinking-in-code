@@ -1,0 +1,881 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**模块发布器发布服务全过程** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_dubbo/16-moduledeployer/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_dubbo/16-moduledeployer"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_dubbo/16-moduledeployer/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_dubbo/16-moduledeployer"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**模块发布器发布服务全过程** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_dubbo/16-moduledeployer/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_dubbo/16-moduledeployer/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>dubbo</h3> <ul> <li> <a href="/zh/chapter_dubbo/1-learn-from-a-demo" class="lv0" title="**从一个服务提供者的Demo说起**"> **从一个服务提供者的Demo说起** </a> </li><li> <a href="/zh/chapter_dubbo/2-serviceconfig-config" class="lv0" title="**启动服务前服务配置ServiceConfig类型是如何初始化的?**"> **启动服务前服务配置ServiceConfig类型是如何初始化的?** </a> </li><li> <a href="/zh/chapter_dubbo/3-model-init" class="lv0" title="**框架,应用程序,模块领域模型Model对象的初始化**"> **框架,应用程序,模块领域模型Model对象的初始化** </a> </li><li> <a href="/zh/chapter_dubbo/4-extension-init" class="lv0" title="**Dubbo的扩展机制**"> **Dubbo的扩展机制** </a> </li><li> <a href="/zh/chapter_dubbo/5-getadaptiveextension" class="lv0" title="5-getadaptiveextension"> 5-getadaptiveextension </a> </li><li> <a href="/zh/chapter_dubbo/6-extension-wrapper" class="lv0" title="**Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析**"> **Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/7-extension-activate" class="lv0" title="**Dubbo的SPI扩展机制之自动激活扩展Activate源码解析**"> **Dubbo的SPI扩展机制之自动激活扩展Activate源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/8-dubbobootstrap" class="lv0" title="**Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化**"> **Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化** </a> </li><li> <a href="/zh/chapter_dubbo/9-application-config" class="lv0" title="**Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig**"> **Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig** </a> </li><li> <a href="/zh/chapter_dubbo/10-registryconfig" class="lv0" title="**Dubbo启动器DubboBootstrap添加注册中心配置信息RegistryConfig**"> **Dubbo启动器DubboBootstrap添加注册中心配置信息RegistryConfig** </a> </li><li> <a href="/zh/chapter_dubbo/11-protocolconfig" class="lv0" title="**Dubbo启动器DubboBootstrap添加协议配置信息ProtocolConfig**"> **Dubbo启动器DubboBootstrap添加协议配置信息ProtocolConfig** </a> </li><li> <a href="/zh/chapter_dubbo/12-start-life-cycle" class="lv0" title="**全局视野来看Dubbo3的服务启动生命周期**"> **全局视野来看Dubbo3的服务启动生命周期** </a> </li><li> <a href="/zh/chapter_dubbo/13-configcenter" class="lv0" title="**Dubbo的三大中心之配置中心**"> **Dubbo的三大中心之配置中心** </a> </li><li> <a href="/zh/chapter_dubbo/14-config-load" class="lv0" title="**Dubbo配置加载全解析**"> **Dubbo配置加载全解析** </a> </li><li> <a href="/zh/chapter_dubbo/15-metadata" class="lv0" title="**Dubbo的三大中心之元数据中心源码解析**"> **Dubbo的三大中心之元数据中心源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/16-moduledeployer" class="lv0" aria-current="page" title="**模块发布器发布服务全过程**"> **模块发布器发布服务全过程** </a> </li><li> <a href="/zh/chapter_dubbo/17-provider-register" class="lv0" title="**Dubbo服务提供者的双注册原理**"> **Dubbo服务提供者的双注册原理** </a> </li><li> <a href="/zh/chapter_dubbo/18-metadataService-export" class="lv0" title="**Dubbo3元数据服务MetadataService的导出**"> **Dubbo3元数据服务MetadataService的导出** </a> </li><li> <a href="/zh/chapter_dubbo/19-consuemr-demo" class="lv0" title="**重新来过从一个服务消费者的Demo说起**"> **重新来过从一个服务消费者的Demo说起** </a> </li><li> <a href="/zh/chapter_dubbo/20-reference-config" class="lv0" title="**Dubbo3服务引用配置ReferenceConfig**"> **Dubbo3服务引用配置ReferenceConfig** </a> </li><li> <a href="/zh/chapter_dubbo/21-refer-services" class="lv0" title="**Dubbo3消费者引用服务入口**"> **Dubbo3消费者引用服务入口** </a> </li><li> <a href="/zh/chapter_dubbo/22-migration-invoker" class="lv0" title="**Dubbo3消费者自动感应决策应用级服务发现原理**"> **Dubbo3消费者自动感应决策应用级服务发现原理** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_dubbo">dubbo</a><span class="sep">/</span><span>**模块发布器发布服务全过程**</span> </nav> <div class="prose">  <h1 id="模块发布器发布服务全过程"><strong>模块发布器发布服务全过程</strong></h1>
+<h2 id="简介"><strong>简介</strong></h2>
+<p>Dubbo做为服务治理框架,比较核心的就是服务相关的概念,这里我先贴个找到的关于Dubbo工作原理的架构图:
+<img src="/img/chapter_dubbo/16-dubbo-1.png" alt="16-dubbo-1.png">
+如果按完整服务启动与订阅的顺序我们可以归结为以下6点:</p>
+<ul>
+<li>导出服务(提供者)
+<ul>
+<li>服务提供方通过指定端口对外暴露服务</li>
+</ul>
+</li>
+<li>注册服务(提供者)
+<ul>
+<li>提供方向注册中心注册自己的信息</li>
+</ul>
+</li>
+<li>(服务发现)-订阅服务(消费者)
+<ul>
+<li>服务调用方通过注册中心订阅自己感兴趣的服务</li>
+</ul>
+</li>
+<li>(服务发现)-服务推送(消费者)
+<ul>
+<li>注册中心向调用方推送地址列表</li>
+</ul>
+</li>
+<li>调用服务(消费者调用提供者)
+<ul>
+<li>调用方选择一个地址发起RPC调用</li>
+</ul>
+</li>
+<li>监控服务
+<ul>
+<li>服务提供方和调用方的统计数据由监控模块收集展示</li>
+</ul>
+</li>
+</ul>
+<p>上面的完整的服务启动订阅与调用流程不仅仅适用于Dubbo 同样也适用于其他服务治理与发现的模型, 一般服务发现与服务调用的思路就是这样的,我们将以上内容扩展,暴漏服务可以使用http,tcp,udp等各种协议,注册服务可以注册到Redis,Dns,Etcd,Zookeeper等注册中心中,订阅服务可以主动去注册中心查询服务列表,服务发现可以让注册中心将服务数据动态推送给消费者.Dubbo其实就是基于这种简单的服务模型来扩展出各种功能的支持,来满足服务治理的各种场景,了解了这里可能各位同学就想着自行开发一个简单的微服务框架了。</p>
+<p>回到主题,从以上的服务完整发布调用流程可以看到,所有的功能都是由导出服务(提供者)开始的,只有提供者先提供了服务才可以有真正的服务让消费者调用。</p>
+<p>之前的博客内容 链接:<a href="/zh/chapter_dubbo/12-start-life-cycle">&#x3C;&#x3C;12-全局视野来看Dubbo3.0.8的服务启动生命周期>></a> 我们了解了 DefaultModuleDeployer模块器启动的流程,其中在start代码的模版方法中开始了导出服务的功能,这里我们来详细看下服务发布的全过程:</p>
+<p>入口代码: DefaultModuleDeployer的发布服务方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> exportServices</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D"> 		//从配置管缓存中查询缓存的所有的服务配置然后逐个服务发布</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (ServiceConfigBase sc </span><span style="color:#D73A49">:</span><span style="color:#24292E"> configManager.</span><span style="color:#6F42C1">getServices</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6F42C1">            exportServiceInternal</span><span style="color:#24292E">(sc);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h2 id="导出服务的入口"><strong>导出服务的入口</strong></h2>
+<p>入口代码: DefaultModuleDeployer的发布服务方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> exportServices</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D"> 		//从配置管缓存中查询缓存的所有的服务配置然后逐个服务发布</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (ServiceConfigBase sc </span><span style="color:#D73A49">:</span><span style="color:#24292E"> configManager.</span><span style="color:#6F42C1">getServices</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6F42C1">            exportServiceInternal</span><span style="color:#24292E">(sc);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>主要流程为遍历初始化的服务配置列表然后逐个服务开始到处
+内部导出服务代码:
+exportServiceInternal方法:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> exportServiceInternal</span><span style="color:#24292E">(ServiceConfigBase sc) {</span></span>
+<span class="line"><span style="color:#24292E"> 	</span></span>
+<span class="line"><span style="color:#24292E">        ServiceConfig&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">> serviceConfig </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (ServiceConfig</span><span style="color:#D73A49">&#x3C;?></span><span style="color:#24292E">) sc;</span></span>
+<span class="line"><span style="color:#6A737D">        //服务配置刷新 配置优先级覆盖</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">serviceConfig.</span><span style="color:#6F42C1">isRefreshed</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">            serviceConfig.</span><span style="color:#6F42C1">refresh</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //服务已经导出过了就直接返回</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (sc.</span><span style="color:#6F42C1">isExported</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //是否异步方式导出 全局配置或者服务级其中一个配置了异步则异步处理</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (exportAsync </span><span style="color:#D73A49">||</span><span style="color:#24292E"> sc.</span><span style="color:#6F42C1">shouldExportAsync</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">        //异步其实就是使用线程来导出服务serviceExportExecutor</span></span>
+<span class="line"><span style="color:#24292E">            ExecutorService executor </span><span style="color:#D73A49">=</span><span style="color:#24292E"> executorRepository.</span><span style="color:#6F42C1">getServiceExportExecutor</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            CompletableFuture&#x3C;</span><span style="color:#D73A49">Void</span><span style="color:#24292E">> future </span><span style="color:#D73A49">=</span><span style="color:#24292E"> CompletableFuture.</span><span style="color:#6F42C1">runAsync</span><span style="color:#24292E">(() </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">sc.</span><span style="color:#6F42C1">isExported</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                        sc.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                        exportedServices.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(sc);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">t</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    logger.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getIdentifier</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " export async catch error : "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> t.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">(), t);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }, executor);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">            asyncExportingFutures.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(future);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">        	//同步导出服务</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">sc.</span><span style="color:#6F42C1">isExported</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                sc.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                exportedServices.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(sc);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>这个逻辑里面做了一些基本的操作,可以直接看注释然后调用ServiceConfig的export的来导出服务,继续往后看服务配置的导出服务方法。</p>
+<h2 id="服务配置导出服务模板方法"><strong>服务配置导出服务模板方法</strong></h2>
+<p>核心的服务导出代码是在服务配置中来做的ServiceConfig的 export() 方法
+ServiceConfig的 export() 方法代码如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> export</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">    	//已经导出过服务直接放那会</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.exported) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // ensure start module, compatible with old api usage</span></span>
+<span class="line"><span style="color:#6A737D">        //确保模块启动了(基本的初始化操作执行了)</span></span>
+<span class="line"><span style="color:#6F42C1">        getScopeModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getDeployer</span><span style="color:#24292E">().</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">		//悲观锁</span></span>
+<span class="line"><span style="color:#D73A49">        synchronized</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        	//双重校验</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.exported) {</span></span>
+<span class="line"><span style="color:#D73A49">                return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">			//配置是否刷新 前面初始化时候已经刷新过配置</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#005CC5">this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">isRefreshed</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">refresh</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">            //服务导出配置配置为false则不导出</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">shouldExport</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">            	//服务发布前初始化一下元数据对象</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">init</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">			</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">shouldDelay</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">                	//配置了服务的延迟发布配置则走延迟发布逻辑</span></span>
+<span class="line"><span style="color:#6F42C1">                    doDelayExport</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                	//导出服务</span></span>
+<span class="line"><span style="color:#6F42C1">                    doExport</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="服务配置导出服务前的初始化方法"><strong>服务配置导出服务前的初始化方法</strong></h3>
+<p>ServiceConfig 导出服务之前的初始化方法init</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> init</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.initialized.</span><span style="color:#6F42C1">compareAndSet</span><span style="color:#24292E">(</span><span style="color:#005CC5">false</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#6A737D">        	//加载服务监听器 这里暂时没有服务监听器扩展</span></span>
+<span class="line"><span style="color:#6A737D">            // load ServiceListeners from extension</span></span>
+<span class="line"><span style="color:#24292E">            ExtensionLoader&#x3C;</span><span style="color:#D73A49">ServiceListener</span><span style="color:#24292E">> extensionLoader </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ServiceListener.class);</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.serviceListeners.</span><span style="color:#6F42C1">addAll</span><span style="color:#24292E">(extensionLoader.</span><span style="color:#6F42C1">getSupportedExtensionInstances</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //服务提供者配置传递给元数据配置对象 一个服务提供者配置会有一个元数据配置，服务配置</span></span>
+<span class="line"><span style="color:#6F42C1">        initServiceMetadata</span><span style="color:#24292E">(provider);</span></span>
+<span class="line"><span style="color:#6A737D">        //元数据</span></span>
+<span class="line"><span style="color:#24292E">        serviceMetadata.</span><span style="color:#6F42C1">setServiceType</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getInterfaceClass</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#24292E">        serviceMetadata.</span><span style="color:#6F42C1">setTarget</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getRef</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">        //元数据的key格式为 group/服务接口:版本号</span></span>
+<span class="line"><span style="color:#24292E">        serviceMetadata.</span><span style="color:#6F42C1">generateServiceKey</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h2 id="服务配置导出服务模板方法2"><strong>服务配置导出服务模板方法2</strong></h2>
+<p>ServiceConfig 导出服务核心逻辑</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">protected</span><span style="color:#D73A49"> synchronized</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> doExport</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">		//取消发布</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (unexported) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(</span><span style="color:#032F62">"The service "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> interfaceClass.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " has already unexported!"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //已经发布</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (exported) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">		//服务路径 为空则设置为接口名，本例子中为link.elastic.dubbo.entity.DemoService</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (StringUtils.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">(path)) {</span></span>
+<span class="line"><span style="color:#24292E">            path </span><span style="color:#D73A49">=</span><span style="color:#24292E"> interfaceName;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //导出URL</span></span>
+<span class="line"><span style="color:#6F42C1">        doExportUrls</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //</span></span>
+<span class="line"><span style="color:#6F42C1">        exported</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="导出服务的url配置逻辑"><strong>导出服务的URL配置逻辑</strong></h3>
+<p>ServiceConfig 导出URL核心逻辑</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> doExportUrls</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">        //模块服务存储库</span></span>
+<span class="line"><span style="color:#24292E">        ModuleServiceRepository repository </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getScopeModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getServiceRepository</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        ServiceDescriptor serviceDescriptor;</span></span>
+<span class="line"><span style="color:#6A737D">        //ref为服务实现类型 这里对应我们例子的DemoServiceImpl</span></span>
+<span class="line"><span style="color:#D73A49">        final</span><span style="color:#D73A49"> boolean</span><span style="color:#24292E"> serverService </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ref </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> ServerService;</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E">(serverService){</span></span>
+<span class="line"><span style="color:#24292E">            serviceDescriptor</span><span style="color:#D73A49">=</span><span style="color:#24292E">((ServerService) ref).</span><span style="color:#6F42C1">getServiceDescriptor</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            repository.</span><span style="color:#6F42C1">registerService</span><span style="color:#24292E">(serviceDescriptor);</span></span>
+<span class="line"><span style="color:#24292E">        }</span><span style="color:#D73A49">else</span><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#6A737D">        	//我们代码走这个逻辑 注册服务 这个注册不是向注册中心注册 这个是解析服务接口将服务方法等描述信息存放在了服务存储ModuleServiceRepository类型对象的成员变量services中</span></span>
+<span class="line"><span style="color:#24292E">            serviceDescriptor </span><span style="color:#D73A49">=</span><span style="color:#24292E"> repository.</span><span style="color:#6F42C1">registerService</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getInterfaceClass</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //提供者领域模型， 提供者领域模型 封装了一些提供者需要的就基本属性同时内部解析封装方法信息 ProviderMethodModel 列表 ， 服务标识符 格式group/服务接:版本号</span></span>
+<span class="line"><span style="color:#24292E">        providerModel </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ProviderModel</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getUniqueServiceName</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#6A737D">        	//服务实现类DemoServiceImpl</span></span>
+<span class="line"><span style="color:#24292E">            ref,</span></span>
+<span class="line"><span style="color:#6A737D">            //服务描述符 描述符里面包含了服务接口的方法信息，不过服务接口通过反射也可以拿到方法信息</span></span>
+<span class="line"><span style="color:#24292E">            serviceDescriptor,</span></span>
+<span class="line"><span style="color:#6A737D">            //服务配置</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">            //当前所处模型</span></span>
+<span class="line"><span style="color:#6F42C1">            getScopeModel</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#6A737D">            //当前服务接口的元数据对象</span></span>
+<span class="line"><span style="color:#24292E">            serviceMetadata);</span></span>
+<span class="line"><span style="color:#24292E">		</span></span>
+<span class="line"><span style="color:#6A737D">		//模块服务存储库存储提供者模型对象ModuleServiceRepository</span></span>
+<span class="line"><span style="color:#24292E">        repository.</span><span style="color:#6F42C1">registerProvider</span><span style="color:#24292E">(providerModel);</span></span>
+<span class="line"><span style="color:#6A737D">		//获取配置的注册中心列表 ，同时将注册中心配置转URL （在Dubbo中URL就是配置信息的一种形式）</span></span>
+<span class="line"><span style="color:#6A737D">		//这里会获取到两个  由dubbo.application.register-mode 双注册配置决定</span></span>
+<span class="line"><span style="color:#6A737D">		//注册中心 registry://127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=9008&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653703292768</span></span>
+<span class="line"><span style="color:#6A737D">	  //service-discovery-registry://8.131.79.126:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=10275&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653704425920</span></span>
+<span class="line"><span style="color:#6A737D">	  //参数dubbo是dubbo协议的版本不是Dubbo版本 Dubbo RPC protocol version, for compatibility, it must not be between 2.0.10 ~ 2.6.2</span></span>
+<span class="line"><span style="color:#6A737D">	   //这里后面详细说下 服务双注册  dubbo.application.register-mode</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">URL</span><span style="color:#24292E">> registryURLs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ConfigValidationUtils.</span><span style="color:#6F42C1">loadRegistries</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (ProtocolConfig protocolConfig </span><span style="color:#D73A49">:</span><span style="color:#24292E"> protocols) {</span></span>
+<span class="line"><span style="color:#24292E">            String pathKey </span><span style="color:#D73A49">=</span><span style="color:#24292E"> URL.</span><span style="color:#6F42C1">buildKey</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getContextPath</span><span style="color:#24292E">(protocolConfig)</span></span>
+<span class="line"><span style="color:#24292E">                    .</span><span style="color:#6F42C1">map</span><span style="color:#24292E">(p </span><span style="color:#D73A49">-></span><span style="color:#24292E"> p </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "/"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> path)</span></span>
+<span class="line"><span style="color:#24292E">                    .</span><span style="color:#6F42C1">orElse</span><span style="color:#24292E">(path), group, version);</span></span>
+<span class="line"><span style="color:#6A737D">            // stub service will use generated service name</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E">(</span><span style="color:#D73A49">!</span><span style="color:#24292E">serverService) {</span></span>
+<span class="line"><span style="color:#6A737D">                // In case user specified path, register service one more time to map it to path.</span></span>
+<span class="line"><span style="color:#6A737D">                //模块服务存储库ModuleServiceRepository存储服务接口信息</span></span>
+<span class="line"><span style="color:#24292E">               repository.</span><span style="color:#6F42C1">registerService</span><span style="color:#24292E">(pathKey, interfaceClass);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">            //导出根据协议导出配置到注册中心</span></span>
+<span class="line"><span style="color:#6F42C1">            doExportUrlsFor1Protocol</span><span style="color:#24292E">(protocolConfig, registryURLs);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span></code></pre>
+<h3 id="应用级和接口级服务注册地址获取"><strong>应用级和接口级服务注册地址获取</strong></h3>
+<p>这里主要看下注册中心的获取，这里涉及到服务的双注册配置</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">List&#x3C;</span><span style="color:#D73A49">URL</span><span style="color:#24292E">> registryURLs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ConfigValidationUtils.</span><span style="color:#6F42C1">loadRegistries</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span></code></pre>
+<p>关于loadRegistries方法的详情我们就不看了主要看loadRegistries方法中调用的genCompatibleRegistries添加服务发现注册中心</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">  /**</span></span>
+<span class="line"><span style="color:#6A737D">   * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> scopeModel</span><span style="color:#6A737D"> 域模型</span></span>
+<span class="line"><span style="color:#6A737D">   * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> registryList</span><span style="color:#6A737D"> 配置的注册中心列表 例如：registry://127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=9008&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653703292768</span></span>
+<span class="line"><span style="color:#6A737D">   * </span></span>
+<span class="line"><span style="color:#6A737D">   *  </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> provider</span><span style="color:#6A737D"> 是否为服务提供者 这里Demo为true</span></span>
+<span class="line"><span style="color:#6A737D">   */</span></span>
+<span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> static</span><span style="color:#24292E"> List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">URL</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> genCompatibleRegistries</span><span style="color:#24292E">(ScopeModel scopeModel, List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">URL</span><span style="color:#D73A49">></span><span style="color:#24292E"> registryList, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> provider) {</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">URL</span><span style="color:#24292E">> result </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>(registryList.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">        //遍历所有的注册中心 为每个注册中心增加兼容的服务发现注册中心地址配置</span></span>
+<span class="line"><span style="color:#24292E">        registryList.</span><span style="color:#6F42C1">forEach</span><span style="color:#24292E">(registryURL </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">           //是否为提供者 </span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (provider) {</span></span>
+<span class="line"><span style="color:#6A737D">                // for registries enabled service discovery, automatically register interface compatible addresses.</span></span>
+<span class="line"><span style="color:#24292E">                </span></span>
+<span class="line"><span style="color:#24292E">                String registerMode;</span></span>
+<span class="line"><span style="color:#6A737D">                //注册协议配置了service-discovery-registry 走这个逻辑</span></span>
+<span class="line"><span style="color:#6A737D">                //前面这个逻辑是直接接给result结果中添加应用级注册，如果是all配置则增加接口级注册信息</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (SERVICE_REGISTRY_PROTOCOL.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(registryURL.</span><span style="color:#6F42C1">getProtocol</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#24292E">                    registerMode </span><span style="color:#D73A49">=</span><span style="color:#24292E"> registryURL.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REGISTER_MODE_KEY, ConfigurationUtils.</span><span style="color:#6F42C1">getCachedDynamicProperty</span><span style="color:#24292E">(scopeModel, DUBBO_REGISTER_MODE_DEFAULT_KEY, DEFAULT_REGISTER_MODE_INSTANCE));</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#6F42C1">isValidRegisterMode</span><span style="color:#24292E">(registerMode)) {</span></span>
+<span class="line"><span style="color:#24292E">                        registerMode </span><span style="color:#D73A49">=</span><span style="color:#24292E"> DEFAULT_REGISTER_MODE_INSTANCE;</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#6A737D">                    //这里配置的就是应用级配置 则先添加应用级地址，再根据条件判断是否添加接口级注册中心地址</span></span>
+<span class="line"><span style="color:#24292E">                    result.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(registryURL);</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (DEFAULT_REGISTER_MODE_ALL.</span><span style="color:#6F42C1">equalsIgnoreCase</span><span style="color:#24292E">(registerMode)</span></span>
+<span class="line"><span style="color:#D73A49">                        &#x26;&#x26;</span><span style="color:#6F42C1"> registryNotExists</span><span style="color:#24292E">(registryURL, registryList, REGISTRY_PROTOCOL)) {</span></span>
+<span class="line"><span style="color:#24292E">                        URL interfaceCompatibleRegistryURL </span><span style="color:#D73A49">=</span><span style="color:#24292E"> URLBuilder.</span><span style="color:#6F42C1">from</span><span style="color:#24292E">(registryURL)</span></span>
+<span class="line"><span style="color:#24292E">                            .</span><span style="color:#6F42C1">setProtocol</span><span style="color:#24292E">(REGISTRY_PROTOCOL)</span></span>
+<span class="line"><span style="color:#24292E">                            .</span><span style="color:#6F42C1">removeParameter</span><span style="color:#24292E">(REGISTRY_TYPE_KEY)</span></span>
+<span class="line"><span style="color:#24292E">                            .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                        result.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(interfaceCompatibleRegistryURL);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                	//正常情况下我们的配置会走这个逻辑</span></span>
+<span class="line"><span style="color:#6A737D">                	// 获取服务注册的注册模式 配置为dubbo.application.register-mode 默认值为all 既注册接口数据又注册应用级信息</span></span>
+<span class="line"><span style="color:#24292E">                    registerMode </span><span style="color:#D73A49">=</span><span style="color:#24292E"> registryURL.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REGISTER_MODE_KEY, ConfigurationUtils.</span><span style="color:#6F42C1">getCachedDynamicProperty</span><span style="color:#24292E">(scopeModel, DUBBO_REGISTER_MODE_DEFAULT_KEY, DEFAULT_REGISTER_MODE_ALL));</span></span>
+<span class="line"><span style="color:#24292E">                    </span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#6F42C1">isValidRegisterMode</span><span style="color:#24292E">(registerMode)) {</span></span>
+<span class="line"><span style="color:#24292E">                        registerMode </span><span style="color:#D73A49">=</span><span style="color:#24292E"> DEFAULT_REGISTER_MODE_INTERFACE;</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#6A737D">                     //根据逻辑条件判断是否添加应用级注册中心地址</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> ((DEFAULT_REGISTER_MODE_INSTANCE.</span><span style="color:#6F42C1">equalsIgnoreCase</span><span style="color:#24292E">(registerMode) </span><span style="color:#D73A49">||</span><span style="color:#24292E"> DEFAULT_REGISTER_MODE_ALL.</span><span style="color:#6F42C1">equalsIgnoreCase</span><span style="color:#24292E">(registerMode))</span></span>
+<span class="line"><span style="color:#D73A49">                        &#x26;&#x26;</span><span style="color:#6F42C1"> registryNotExists</span><span style="color:#24292E">(registryURL, registryList, SERVICE_REGISTRY_PROTOCOL)) {</span></span>
+<span class="line"><span style="color:#24292E">                        URL serviceDiscoveryRegistryURL </span><span style="color:#D73A49">=</span><span style="color:#24292E"> URLBuilder.</span><span style="color:#6F42C1">from</span><span style="color:#24292E">(registryURL)</span></span>
+<span class="line"><span style="color:#24292E">                            .</span><span style="color:#6F42C1">setProtocol</span><span style="color:#24292E">(SERVICE_REGISTRY_PROTOCOL)</span></span>
+<span class="line"><span style="color:#24292E">                            .</span><span style="color:#6F42C1">removeParameter</span><span style="color:#24292E">(REGISTRY_TYPE_KEY)</span></span>
+<span class="line"><span style="color:#24292E">                            .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                        result.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(serviceDiscoveryRegistryURL);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#6A737D">   					//根据逻辑条件判断是否添加接口级注册中心地址</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (DEFAULT_REGISTER_MODE_INTERFACE.</span><span style="color:#6F42C1">equalsIgnoreCase</span><span style="color:#24292E">(registerMode) </span><span style="color:#D73A49">||</span><span style="color:#24292E"> DEFAULT_REGISTER_MODE_ALL.</span><span style="color:#6F42C1">equalsIgnoreCase</span><span style="color:#24292E">(registerMode)) {</span></span>
+<span class="line"><span style="color:#24292E">                        result.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(registryURL);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">                FrameworkStatusReportService reportService </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ScopeModelUtil.</span><span style="color:#6F42C1">getApplicationModel</span><span style="color:#24292E">(scopeModel).</span><span style="color:#6F42C1">getBeanFactory</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getBean</span><span style="color:#24292E">(FrameworkStatusReportService.class);</span></span>
+<span class="line"><span style="color:#24292E">                reportService.</span><span style="color:#6F42C1">reportRegistrationStatus</span><span style="color:#24292E">(reportService.</span><span style="color:#6F42C1">createRegistrationReport</span><span style="color:#24292E">(registerMode));</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                result.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(registryURL);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> result;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>这个方法是根据服务注册模式来判断使用接口级注册地址还是应用级注册地址分别如下所示：
+配置信息：
+dubbo.application.register-mode
+配置值：</p>
+<ul>
+<li>interface
+<ul>
+<li>接口级注册</li>
+</ul>
+</li>
+<li>instance
+<ul>
+<li>应用级注册</li>
+</ul>
+</li>
+<li>all
+<ul>
+<li>接口级别和应用级都注册</li>
+</ul>
+</li>
+</ul>
+<p>接口级注册地址：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">registry</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=9008&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653703292768</span></span></code></pre>
+<p>应用级注册地址：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">service</span><span style="color:#D73A49">-</span><span style="color:#24292E">discovery</span><span style="color:#D73A49">-</span><span style="color:#24292E">registry</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//8.131.79.126:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=10275&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653704425920</span></span></code></pre>
+<h2 id="导出服务配置到本地和注册中心"><strong>导出服务配置到本地和注册中心</strong></h2>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6F42C1"> doExportUrlsFor1Protocol</span><span style="color:#24292E">(protocolConfig, registryURLs);</span></span></code></pre>
+<p>protocolConfig为：dubbo协议的配置
+&#x3C;dubbo:protocol port=“-1” name=“dubbo” /></p>
+<p>registryURLs目前有两个 应用级注册地址和接口级注册地址：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">registry</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=9008&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653703292768</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">service</span><span style="color:#D73A49">-</span><span style="color:#24292E">discovery</span><span style="color:#D73A49">-</span><span style="color:#24292E">registry</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//8.131.79.126:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=10275&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653704425920</span></span></code></pre>
+<h3 id="导出服务配置的doexporturlsfor1protocol方法"><strong>导出服务配置的doExportUrlsFor1Protocol方法</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> doExportUrlsFor1Protocol</span><span style="color:#24292E">(ProtocolConfig protocolConfig, List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">URL</span><span style="color:#D73A49">></span><span style="color:#24292E"> registryURLs) {</span></span>
+<span class="line"><span style="color:#6A737D">       //生成协议配置具体可见下图中的元数据配置中的attachments</span></span>
+<span class="line"><span style="color:#24292E">        Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">String</span><span style="color:#24292E">> map </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> buildAttributes</span><span style="color:#24292E">(protocolConfig);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // remove null key and null value</span></span>
+<span class="line"><span style="color:#6A737D">        //移除空值 简化配置</span></span>
+<span class="line"><span style="color:#24292E">        map.</span><span style="color:#6F42C1">keySet</span><span style="color:#24292E">().</span><span style="color:#6F42C1">removeIf</span><span style="color:#24292E">(key </span><span style="color:#D73A49">-></span><span style="color:#24292E"> key </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> ||</span><span style="color:#24292E"> map.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(key) </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        // init serviceMetadata attachments</span></span>
+<span class="line"><span style="color:#6A737D">        //协议配置放到元数据对象中</span></span>
+<span class="line"><span style="color:#24292E">        serviceMetadata.</span><span style="color:#6F42C1">getAttachments</span><span style="color:#24292E">().</span><span style="color:#6F42C1">putAll</span><span style="color:#24292E">(map);</span></span>
+<span class="line"><span style="color:#24292E">	</span></span>
+<span class="line"><span style="color:#6A737D">		//协议配置 + 默认协议配置转URL类型的配置存储</span></span>
+<span class="line"><span style="color:#24292E">        URL url </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> buildUrl</span><span style="color:#24292E">(protocolConfig, map);</span></span>
+<span class="line"><span style="color:#6A737D">		//导出url</span></span>
+<span class="line"><span style="color:#6F42C1">        exportUrl</span><span style="color:#24292E">(url, registryURLs);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span></code></pre>
+<p><img src="/img/chapter_dubbo/16-dubbo-2.png" alt="16-dubbo-2.png"></p>
+<h3 id="导出服务配置模板方法"><strong>导出服务配置模板方法</strong></h3>
+<p>继续看导出服务的模板方法，分为本地导出和注册中心导出
+//参数url为协议配置url可以参考：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">dubbo</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//192.168.1.9:20880/link.elastic.dubbo.entity.DemoService?anyhost=true&#x26;application=dubbo-demo-api-provider&#x26;background=false&#x26;bind.ip=192.168.1.9&#x26;bind.port=20880&#x26;deprecated=false&#x26;dubbo=2.0.2&#x26;dynamic=true&#x26;generic=false&#x26;interface=link.elastic.dubbo.entity.DemoService&#x26;methods=sayHello,sayHelloAsync&#x26;pid=10953&#x26;release=3.0.8&#x26;side=provider&#x26;timestamp=1653705630518</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> exportUrl</span><span style="color:#24292E">(URL url, List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">URL</span><span style="color:#D73A49">></span><span style="color:#24292E"> registryURLs) {</span></span>
+<span class="line"><span style="color:#24292E">        String scope </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(SCOPE_KEY);</span></span>
+<span class="line"><span style="color:#6A737D">        // don't export when none is configured</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">SCOPE_NONE.</span><span style="color:#6F42C1">equalsIgnoreCase</span><span style="color:#24292E">(scope)) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            // export to local if the config is not remote (export to remote only when config is remote)</span></span>
+<span class="line"><span style="color:#6A737D">            //未明确指定远程导出 则开启本地导出</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">SCOPE_REMOTE.</span><span style="color:#6F42C1">equalsIgnoreCase</span><span style="color:#24292E">(scope)) {</span></span>
+<span class="line"><span style="color:#6F42C1">                exportLocal</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">			//未明确指定本地导出 则开启远程导出</span></span>
+<span class="line"><span style="color:#6A737D">            // export to remote if the config is not local (export to local only when config is local)</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">SCOPE_LOCAL.</span><span style="color:#6F42C1">equalsIgnoreCase</span><span style="color:#24292E">(scope)) {</span></span>
+<span class="line"><span style="color:#24292E">                url </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> exportRemote</span><span style="color:#24292E">(url, registryURLs);</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#6F42C1">isGeneric</span><span style="color:#24292E">(generic) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">isInternal</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                    MetadataUtils.</span><span style="color:#6F42C1">publishServiceDefinition</span><span style="color:#24292E">(url, providerModel.</span><span style="color:#6F42C1">getServiceModel</span><span style="color:#24292E">(), </span><span style="color:#6F42C1">getApplicationModel</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.urls.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h2 id="导出服务到本地"><strong>导出服务到本地</strong></h2>
+<p>本地调用使用了 injvm 协议，是一个伪协议，它不开启端口，不发起远程调用，只在 JVM 内直接关联，但执行 Dubbo 的 Filter 链。</p>
+<p>直接通过代码来看吧</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> exportLocal</span><span style="color:#24292E">(URL url) {</span></span>
+<span class="line"><span style="color:#6A737D">       //协议转为injvm 代表本地导出 host为127.0.0.1</span></span>
+<span class="line"><span style="color:#24292E">        URL local </span><span style="color:#D73A49">=</span><span style="color:#24292E"> URLBuilder.</span><span style="color:#6F42C1">from</span><span style="color:#24292E">(url)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">setProtocol</span><span style="color:#24292E">(LOCAL_PROTOCOL)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">setHost</span><span style="color:#24292E">(LOCALHOST_VALUE)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">setPort</span><span style="color:#24292E">(</span><span style="color:#005CC5">0</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        local </span><span style="color:#D73A49">=</span><span style="color:#24292E"> local.</span><span style="color:#6F42C1">setScopeModel</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">setServiceModel</span><span style="color:#24292E">(providerModel);</span></span>
+<span class="line"><span style="color:#6F42C1">        doExportUrl</span><span style="color:#24292E">(local, </span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Export dubbo service "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> interfaceClass.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " to local registry url : "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> local);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="doexporturl方法"><strong>doExportUrl方法</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> doExportUrl</span><span style="color:#24292E">(URL url, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> withMetaData) {</span></span>
+<span class="line"><span style="color:#6A737D">		//这里是由adaptor扩展类型处理过的 我们直接看默认的类型javassist 对应JavassistProxyFactory代理工厂 获取调用对象 （</span></span>
+<span class="line"><span style="color:#24292E">        Invoker&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">> invoker </span><span style="color:#D73A49">=</span><span style="color:#24292E"> proxyFactory.</span><span style="color:#6F42C1">getInvoker</span><span style="color:#24292E">(ref, (Class) interfaceClass, url);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (withMetaData) {</span></span>
+<span class="line"><span style="color:#24292E">            invoker </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> DelegateProviderMetaDataInvoker</span><span style="color:#24292E">(invoker, </span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        Exporter&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">> exporter </span><span style="color:#D73A49">=</span><span style="color:#24292E"> protocolSPI.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(invoker);</span></span>
+<span class="line"><span style="color:#24292E">        exporters.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(exporter);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="javassistproxyfactory类型的getinvoker方法"><strong>JavassistProxyFactory类型的getInvoker方法</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Invoker</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> getInvoker</span><span style="color:#24292E">(T proxy, Class</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> type, URL url) {</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">            // TODO Wrapper cannot handle this scenario correctly: the classname contains '$'</span></span>
+<span class="line"><span style="color:#6A737D">            // 创建实际服务提供者的代理类型，代理类型后缀为DubboWrap在这里类型为 link.elastic.dubbo.entity.DemoServiceImplDubboWrap0</span></span>
+<span class="line"><span style="color:#D73A49">            final</span><span style="color:#24292E"> Wrapper wrapper </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Wrapper.</span><span style="color:#6F42C1">getWrapper</span><span style="color:#24292E">(proxy.</span><span style="color:#6F42C1">getClass</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">().</span><span style="color:#6F42C1">indexOf</span><span style="color:#24292E">(</span><span style="color:#032F62">'$'</span><span style="color:#24292E">) </span><span style="color:#D73A49">&#x3C;</span><span style="color:#005CC5"> 0</span><span style="color:#D73A49"> ?</span><span style="color:#24292E"> proxy.</span><span style="color:#6F42C1">getClass</span><span style="color:#24292E">() </span><span style="color:#D73A49">:</span><span style="color:#24292E"> type);</span></span>
+<span class="line"><span style="color:#6A737D">            //创建一个匿名内部类对象 继承自AbstractProxyInvoker的Invoker对象</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> AbstractProxyInvoker&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">>(proxy, type, url) {</span></span>
+<span class="line"><span style="color:#24292E">                @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">                protected</span><span style="color:#24292E"> Object </span><span style="color:#6F42C1">doInvoke</span><span style="color:#24292E">(T </span><span style="color:#E36209">proxy</span><span style="color:#24292E">, String </span><span style="color:#E36209">methodName</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">                                          Class&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">>[] </span><span style="color:#E36209">parameterTypes</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#D73A49">                                          Object</span><span style="color:#24292E">[] </span><span style="color:#E36209">arguments</span><span style="color:#24292E">) </span><span style="color:#D73A49">throws</span><span style="color:#24292E"> Throwable {</span></span>
+<span class="line"><span style="color:#D73A49">                    return</span><span style="color:#24292E"> wrapper.</span><span style="color:#6F42C1">invokeMethod</span><span style="color:#24292E">(proxy, methodName, parameterTypes, arguments);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            };</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">fromJavassist</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">            // try fall back to JDK proxy factory</span></span>
+<span class="line"><span style="color:#24292E">            ...</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="使用协议导出调用对象-export"><strong>使用协议导出调用对象 export</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> Exporter&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">> exporter </span><span style="color:#D73A49">=</span><span style="color:#24292E"> protocolSPI.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(invoker);</span></span></code></pre>
+<p>这个使用了Adaptor扩展和Wrapper机制Debug起来不太方便这里贴一下调用堆栈<img src="/imgs/blog/source-blog/16-deploy3.png" alt="在这里插入图片描述"></p>
+<h3 id="协议序列化机制protocolserializationwrapper"><strong>协议序列化机制ProtocolSerializationWrapper</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">   @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Exporter</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> export</span><span style="color:#24292E">(Invoker</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> invoker) throws RpcException {</span></span>
+<span class="line"><span style="color:#6A737D">        //这里主要逻辑是将服务提供者url添加到服务存储仓库中</span></span>
+<span class="line"><span style="color:#6F42C1">        getFrameworkModel</span><span style="color:#24292E">(invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">()).</span><span style="color:#6F42C1">getServiceRepository</span><span style="color:#24292E">().</span><span style="color:#6F42C1">registerProviderUrl</span><span style="color:#24292E">(invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> protocol.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(invoker);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="协议过滤器wrapper-protocolfilterwrapper"><strong>协议过滤器Wrapper ProtocolFilterWrapper</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Exporter</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> export</span><span style="color:#24292E">(Invoker</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> invoker) throws RpcException {</span></span>
+<span class="line"><span style="color:#6A737D">        //注册中心的协议导出直接执行</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (UrlUtils.</span><span style="color:#6F42C1">isRegistry</span><span style="color:#24292E">(invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> protocol.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(invoker);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //过滤器调用链FilterChainBuilder的扩展对象查询</span></span>
+<span class="line"><span style="color:#24292E">        FilterChainBuilder builder </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getFilterChainBuilder</span><span style="color:#24292E">(invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">       	//这里分为2步 生成过滤器调用链 然后使用链表中的节点调用  这里值查询provider类型的过滤器</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> protocol.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(builder.</span><span style="color:#6F42C1">buildInvokerChain</span><span style="color:#24292E">(invoker, SERVICE_FILTER_KEY, CommonConstants.PROVIDER));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>过滤器调用链的生成 对用DefaultFilterChainBuilder类型的buildInvokerChain方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Invoker</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> buildInvokerChain</span><span style="color:#24292E">(</span><span style="color:#D73A49">final</span><span style="color:#24292E"> Invoker</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> originalInvoker, String key, String group) {</span></span>
+<span class="line"><span style="color:#6A737D">    	//originalInvoker代表真正的服务调用器</span></span>
+<span class="line"><span style="color:#24292E">        Invoker&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> last </span><span style="color:#D73A49">=</span><span style="color:#24292E"> originalInvoker;</span></span>
+<span class="line"><span style="color:#24292E">        URL url </span><span style="color:#D73A49">=</span><span style="color:#24292E"> originalInvoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">ModuleModel</span><span style="color:#24292E">> moduleModels </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getModuleModelsFromUrl</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">Filter</span><span style="color:#24292E">> filters;</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (moduleModels </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> moduleModels.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 1</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        //类型Filter key为service.filter 分组为provider 所有提供者过滤器拉取</span></span>
+<span class="line"><span style="color:#24292E">            filters </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ScopeModelUtil.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(Filter.class, moduleModels.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#005CC5">0</span><span style="color:#24292E">)).</span><span style="color:#6F42C1">getActivateExtension</span><span style="color:#24292E">(url, key, group);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (moduleModels </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> moduleModels.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 1</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            filters </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>();</span></span>
+<span class="line"><span style="color:#24292E">            List&#x3C;</span><span style="color:#D73A49">ExtensionDirector</span><span style="color:#24292E">> directors </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>();</span></span>
+<span class="line"><span style="color:#D73A49">            for</span><span style="color:#24292E"> (ModuleModel moduleModel </span><span style="color:#D73A49">:</span><span style="color:#24292E"> moduleModels) {</span></span>
+<span class="line"><span style="color:#24292E">                List&#x3C;</span><span style="color:#D73A49">Filter</span><span style="color:#24292E">> tempFilters </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ScopeModelUtil.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(Filter.class, moduleModel).</span><span style="color:#6F42C1">getActivateExtension</span><span style="color:#24292E">(url, key, group);</span></span>
+<span class="line"><span style="color:#24292E">                filters.</span><span style="color:#6F42C1">addAll</span><span style="color:#24292E">(tempFilters);</span></span>
+<span class="line"><span style="color:#24292E">                directors.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(moduleModel.</span><span style="color:#6F42C1">getExtensionDirector</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">            filters </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> sortingAndDeduplication</span><span style="color:#24292E">(filters, directors);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            filters </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ScopeModelUtil.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(Filter.class, </span><span style="color:#005CC5">null</span><span style="color:#24292E">).</span><span style="color:#6F42C1">getActivateExtension</span><span style="color:#24292E">(url, key, group);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">		//倒序拼接，将过滤器的调用对象添加到链表中  最后倒序遍历之后 last节点指向了调用链路链表头节点的对象</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">CollectionUtils.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">(filters)) {</span></span>
+<span class="line"><span style="color:#D73A49">            for</span><span style="color:#24292E"> (</span><span style="color:#D73A49">int</span><span style="color:#24292E"> i </span><span style="color:#D73A49">=</span><span style="color:#24292E"> filters.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">() </span><span style="color:#D73A49">-</span><span style="color:#005CC5"> 1</span><span style="color:#24292E">; i </span><span style="color:#D73A49">>=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">; i</span><span style="color:#D73A49">--</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                final</span><span style="color:#24292E"> Filter filter </span><span style="color:#D73A49">=</span><span style="color:#24292E"> filters.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(i);</span></span>
+<span class="line"><span style="color:#D73A49">                final</span><span style="color:#24292E"> Invoker&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> next </span><span style="color:#D73A49">=</span><span style="color:#24292E"> last;</span></span>
+<span class="line"><span style="color:#6A737D">                //每个invoker对象中都有originalInvoker对象</span></span>
+<span class="line"><span style="color:#24292E">                last </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> CopyOfFilterChainNode&#x3C;>(originalInvoker, next, filter);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> CallbackRegistrationInvoker&#x3C;>(last, filters);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> last;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p><img src="/img/chapter_dubbo/16-wrapper.png" alt="16-wrapper.png"></p>
+<h3 id="协议监听器wrapper-protocollistenerwrapper"><strong>协议监听器Wrapper ProtocolListenerWrapper</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Exporter</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> export</span><span style="color:#24292E">(Invoker</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> invoker) throws RpcException {</span></span>
+<span class="line"><span style="color:#6A737D">        //注册中心地址则直接导出</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (UrlUtils.</span><span style="color:#6F42C1">isRegistry</span><span style="color:#24292E">(invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> protocol.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(invoker);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        // 先导出对象 再创建过滤器包装对象 执行监听器逻辑</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ListenerExporterWrapper&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">>(protocol.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(invoker),</span></span>
+<span class="line"><span style="color:#24292E">                Collections.</span><span style="color:#6F42C1">unmodifiableList</span><span style="color:#24292E">(ScopeModelUtil.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ExporterListener.class, invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">                        .</span><span style="color:#6F42C1">getActivateExtension</span><span style="color:#24292E">(invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">(), EXPORTER_LISTENER_KEY)));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="qos的协议wrapper-qosprotocolwrapper"><strong>QOS的协议Wrapper QosProtocolWrapper</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Exporter</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> export</span><span style="color:#24292E">(Invoker</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> invoker) throws RpcException {</span></span>
+<span class="line"><span style="color:#6A737D">         //注册中心导出的时候开启QOS 默认端口22222</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (UrlUtils.</span><span style="color:#6F42C1">isRegistry</span><span style="color:#24292E">(invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#6F42C1">            startQosServer</span><span style="color:#24292E">(invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> protocol.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(invoker);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> protocol.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(invoker);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="injvmprotocol-的导出方法"><strong>InjvmProtocol 的导出方法</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">  @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Exporter</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> export</span><span style="color:#24292E">(Invoker</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> invoker) throws RpcException {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> InjvmExporter&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">>(invoker, invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getServiceKey</span><span style="color:#24292E">(), exporterMap);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span></code></pre>
+<h2 id="导出服务到注册中心"><strong>导出服务到注册中心</strong></h2>
+<p>前面 导出服务配置模板方法 中我们看到了服务导出会导出到本地和远程，接下来就看下导出到远程的方法exportRemote
+参数url:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">dubbo</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//192.168.1.9:20880/link.elastic.dubbo.entity.DemoService?anyhost=true&#x26;application=dubbo-demo-api-provider&#x26;background=false&#x26;bind.ip=192.168.1.9&#x26;bind.port=20880&#x26;deprecated=false&#x26;dubbo=2.0.2&#x26;dynamic=true&#x26;generic=false&#x26;interface=link.elastic.dubbo.entity.DemoService&#x26;methods=sayHello,sayHelloAsync&#x26;pid=12865&#x26;release=3.0.8&#x26;side=provider&#x26;timestamp=1653708351378</span></span></code></pre>
+<p>参数registryURLs目前有两个 应用级注册地址和接口级注册地址：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">registry</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=9008&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653703292768</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">service</span><span style="color:#D73A49">-</span><span style="color:#24292E">discovery</span><span style="color:#D73A49">-</span><span style="color:#24292E">registry</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//8.131.79.126:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=10275&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653704425920</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#24292E"> URL </span><span style="color:#6F42C1">exportRemote</span><span style="color:#24292E">(URL url, List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">URL</span><span style="color:#D73A49">></span><span style="color:#24292E"> registryURLs) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (CollectionUtils.</span><span style="color:#6F42C1">isNotEmpty</span><span style="color:#24292E">(registryURLs)) {</span></span>
+<span class="line"><span style="color:#6A737D">        	//遍历所有注册地址与注册模式 逐个注册</span></span>
+<span class="line"><span style="color:#D73A49">            for</span><span style="color:#24292E"> (URL registryURL </span><span style="color:#D73A49">:</span><span style="color:#24292E"> registryURLs) {</span></span>
+<span class="line"><span style="color:#6A737D">              //为协议URL 添加应用级注册service-discovery-registry参数service-name-mapping为true</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (SERVICE_REGISTRY_PROTOCOL.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(registryURL.</span><span style="color:#6F42C1">getProtocol</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#24292E">                    url </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">addParameterIfAbsent</span><span style="color:#24292E">(SERVICE_NAME_MAPPING_KEY, </span><span style="color:#032F62">"true"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                //if protocol is only injvm ,not register</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (LOCAL_PROTOCOL.</span><span style="color:#6F42C1">equalsIgnoreCase</span><span style="color:#24292E">(url.</span><span style="color:#6F42C1">getProtocol</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#D73A49">                    continue</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#6A737D">				//为协议url 添加动态配置dynamic</span></span>
+<span class="line"><span style="color:#24292E">                url </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">addParameterIfAbsent</span><span style="color:#24292E">(DYNAMIC_KEY, registryURL.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(DYNAMIC_KEY));</span></span>
+<span class="line"><span style="color:#6A737D">                //监控配置暂时为null</span></span>
+<span class="line"><span style="color:#24292E">                URL monitorUrl </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ConfigValidationUtils.</span><span style="color:#6F42C1">loadMonitor</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, registryURL);</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (monitorUrl </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    url </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">putAttribute</span><span style="color:#24292E">(MONITOR_KEY, monitorUrl);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                // For providers, this is used to enable custom proxy to generate invoker</span></span>
+<span class="line"><span style="color:#24292E">                String proxy </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(PROXY_KEY);</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (StringUtils.</span><span style="color:#6F42C1">isNotEmpty</span><span style="color:#24292E">(proxy)) {</span></span>
+<span class="line"><span style="color:#24292E">                    registryURL </span><span style="color:#D73A49">=</span><span style="color:#24292E"> registryURL.</span><span style="color:#6F42C1">addParameter</span><span style="color:#24292E">(PROXY_KEY, proxy);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">				//开始注册服务了 打印个认知 提示下</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (logger.</span><span style="color:#6F42C1">isInfoEnabled</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REGISTER_KEY, </span><span style="color:#005CC5">true</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">                        logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Register dubbo service "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> interfaceClass.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " url "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> url </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " to registry "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> registryURL.</span><span style="color:#6F42C1">getAddress</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                    } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                        logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Export dubbo service "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> interfaceClass.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " to url "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> url);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">                doExportUrl</span><span style="color:#24292E">(registryURL.</span><span style="color:#6F42C1">putAttribute</span><span style="color:#24292E">(EXPORT_KEY, url), </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (logger.</span><span style="color:#6F42C1">isInfoEnabled</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Export dubbo service "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> interfaceClass.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " to url "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> url);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">            doExportUrl</span><span style="color:#24292E">(url, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> url;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="doexporturl方法-1"><strong>doExportUrl方法</strong></h3>
+<p>与 前面doExportUrl方法 导出本地协议是一样的逻辑 ，我们来看看点不同地方</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> doExportUrl</span><span style="color:#24292E">(URL url, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> withMetaData) {</span></span>
+<span class="line"><span style="color:#24292E">        Invoker&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">> invoker </span><span style="color:#D73A49">=</span><span style="color:#24292E"> proxyFactory.</span><span style="color:#6F42C1">getInvoker</span><span style="color:#24292E">(ref, (Class) interfaceClass, url);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (withMetaData) {</span></span>
+<span class="line"><span style="color:#6A737D">          //远程服务导出逐个值为true 元数据invoker包装一下</span></span>
+<span class="line"><span style="color:#24292E">            invoker </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> DelegateProviderMetaDataInvoker</span><span style="color:#24292E">(invoker, </span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        Exporter&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">> exporter </span><span style="color:#D73A49">=</span><span style="color:#24292E"> protocolSPI.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(invoker);</span></span>
+<span class="line"><span style="color:#24292E">        exporters.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(exporter);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>与本地导出ProtocolFilterWrapper的不同之处
+服务发现service-discovery-registry的导出UrlUtils.isRegistry(invoker.getUrl() 判断结果为true会走这个逻辑</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Exporter</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> export</span><span style="color:#24292E">(Invoker</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> invoker) throws RpcException {</span></span>
+<span class="line"><span style="color:#6A737D">        //注册中心的协议导出直接执行</span></span>
+<span class="line"><span style="color:#6A737D">        // 服务发现service-discovery-registry的导出会走这个逻辑</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (UrlUtils.</span><span style="color:#6F42C1">isRegistry</span><span style="color:#24292E">(invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> protocol.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(invoker);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //过滤器调用链FilterChainBuilder的扩展对象查询</span></span>
+<span class="line"><span style="color:#24292E">        FilterChainBuilder builder </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getFilterChainBuilder</span><span style="color:#24292E">(invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">       	//这里分为2步 生成过滤器调用链 然后使用链表中的节点调用  这里值查询provider类型的过滤器</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> protocol.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(builder.</span><span style="color:#6F42C1">buildInvokerChain</span><span style="color:#24292E">(invoker, SERVICE_FILTER_KEY, CommonConstants.PROVIDER));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>与 协议监听器Wrapper ProtocolListenerWrapper 的不同之处</p>
+<p>服务发现service-discovery-registry的导出UrlUtils.isRegistry(invoker.getUrl() 判断结果为true会走这个逻辑</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Exporter</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> export</span><span style="color:#24292E">(Invoker</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> invoker) throws RpcException {</span></span>
+<span class="line"><span style="color:#6A737D">        //注册中心地址则直接导出</span></span>
+<span class="line"><span style="color:#6A737D">         // 服务发现service-discovery-registry的导出会走这个逻辑</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (UrlUtils.</span><span style="color:#6F42C1">isRegistry</span><span style="color:#24292E">(invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> protocol.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(invoker);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        // 先导出对象 再创建过滤器包装对象 执行监听器逻辑</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ListenerExporterWrapper&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">>(protocol.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(invoker),</span></span>
+<span class="line"><span style="color:#24292E">                Collections.</span><span style="color:#6F42C1">unmodifiableList</span><span style="color:#24292E">(ScopeModelUtil.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ExporterListener.class, invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">                        .</span><span style="color:#6F42C1">getActivateExtension</span><span style="color:#24292E">(invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">(), EXPORTER_LISTENER_KEY)));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>与前面 QOS的协议Wrapper QosProtocolWrapper 不同之处</p>
+<p>服务发现service-discovery-registry的导出UrlUtils.isRegistry(invoker.getUrl() 判断结果为true会走这个逻辑</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Exporter</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> export</span><span style="color:#24292E">(Invoker</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> invoker) throws RpcException {</span></span>
+<span class="line"><span style="color:#6A737D">         //注册中心导出的时候开启QOS 默认端口22222</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (UrlUtils.</span><span style="color:#6F42C1">isRegistry</span><span style="color:#24292E">(invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#6F42C1">            startQosServer</span><span style="color:#24292E">(invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> protocol.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(invoker);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> protocol.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(invoker);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>启动QOS服务startQosServer</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> startQosServer</span><span style="color:#24292E">(URL url) {</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">hasStarted.</span><span style="color:#6F42C1">compareAndSet</span><span style="color:#24292E">(</span><span style="color:#005CC5">false</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#D73A49">                return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">            boolean</span><span style="color:#24292E"> qosEnable </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(QOS_ENABLE, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">qosEnable) {</span></span>
+<span class="line"><span style="color:#24292E">                logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"qos won't be started because it is disabled. "</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#032F62">                        "Please check dubbo.application.qos.enable is configured either in system property, "</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#032F62">                        "dubbo.properties or XML/spring-boot configuration."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">                return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">            String host </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(QOS_HOST);</span></span>
+<span class="line"><span style="color:#D73A49">            int</span><span style="color:#24292E"> port </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(QOS_PORT, QosConstants.DEFAULT_PORT);</span></span>
+<span class="line"><span style="color:#D73A49">            boolean</span><span style="color:#24292E"> acceptForeignIp </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Boolean.</span><span style="color:#6F42C1">parseBoolean</span><span style="color:#24292E">(url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(ACCEPT_FOREIGN_IP, </span><span style="color:#032F62">"false"</span><span style="color:#24292E">));</span></span>
+<span class="line"><span style="color:#24292E">            Server server </span><span style="color:#D73A49">=</span><span style="color:#24292E"> frameworkModel.</span><span style="color:#6F42C1">getBeanFactory</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getBean</span><span style="color:#24292E">(Server.class);</span></span>
+<span class="line"><span style="color:#24292E">            server.</span><span style="color:#6F42C1">setHost</span><span style="color:#24292E">(host);</span></span>
+<span class="line"><span style="color:#24292E">            server.</span><span style="color:#6F42C1">setPort</span><span style="color:#24292E">(port);</span></span>
+<span class="line"><span style="color:#24292E">            server.</span><span style="color:#6F42C1">setAcceptForeignIp</span><span style="color:#24292E">(acceptForeignIp);</span></span>
+<span class="line"><span style="color:#24292E">            server.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">throwable</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            logger.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Fail to start qos server: "</span><span style="color:#24292E">, throwable);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span></code></pre>
+<p>QOS的Server的启动方法start</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> start</span><span style="color:#24292E">() throws Throwable {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">started.</span><span style="color:#6F42C1">compareAndSet</span><span style="color:#24292E">(</span><span style="color:#005CC5">false</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //1个主线程</span></span>
+<span class="line"><span style="color:#24292E">        boss </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> NioEventLoopGroup</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">, </span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> DefaultThreadFactory</span><span style="color:#24292E">(</span><span style="color:#032F62">"qos-boss"</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">));</span></span>
+<span class="line"><span style="color:#6A737D">        //0个从线程</span></span>
+<span class="line"><span style="color:#24292E">        worker </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> NioEventLoopGroup</span><span style="color:#24292E">(</span><span style="color:#005CC5">0</span><span style="color:#24292E">, </span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> DefaultThreadFactory</span><span style="color:#24292E">(</span><span style="color:#032F62">"qos-worker"</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">));</span></span>
+<span class="line"><span style="color:#6A737D">        //服务端启动器，和参数设置</span></span>
+<span class="line"><span style="color:#24292E">        ServerBootstrap serverBootstrap </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ServerBootstrap</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        serverBootstrap.</span><span style="color:#6F42C1">group</span><span style="color:#24292E">(boss, worker);</span></span>
+<span class="line"><span style="color:#24292E">        serverBootstrap.</span><span style="color:#6F42C1">channel</span><span style="color:#24292E">(NioServerSocketChannel.class);</span></span>
+<span class="line"><span style="color:#24292E">        serverBootstrap.</span><span style="color:#6F42C1">option</span><span style="color:#24292E">(ChannelOption.SO_REUSEADDR, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        serverBootstrap.</span><span style="color:#6F42C1">childOption</span><span style="color:#24292E">(ChannelOption.TCP_NODELAY, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        serverBootstrap.</span><span style="color:#6F42C1">childHandler</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#24292E"> ChannelInitializer&#x3C;</span><span style="color:#D73A49">Channel</span><span style="color:#24292E">>() {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">            @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">            protected</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initChannel</span><span style="color:#24292E">(Channel </span><span style="color:#E36209">ch</span><span style="color:#24292E">) </span><span style="color:#D73A49">throws</span><span style="color:#24292E"> Exception {</span></span>
+<span class="line"><span style="color:#24292E">                ch.</span><span style="color:#6F42C1">pipeline</span><span style="color:#24292E">().</span><span style="color:#6F42C1">addLast</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> QosProcessHandler</span><span style="color:#24292E">(frameworkModel, welcome, acceptForeignIp));</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        });</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (StringUtils.</span><span style="color:#6F42C1">isBlank</span><span style="color:#24292E">(host)) {</span></span>
+<span class="line"><span style="color:#24292E">                serverBootstrap.</span><span style="color:#6F42C1">bind</span><span style="color:#24292E">(port).</span><span style="color:#6F42C1">sync</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                serverBootstrap.</span><span style="color:#6F42C1">bind</span><span style="color:#24292E">(host, port).</span><span style="color:#6F42C1">sync</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">            logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"qos-server bind localhost:"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> port);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">throwable</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            logger.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"qos-server can not bind localhost:"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> port, throwable);</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#24292E"> throwable;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>QOS处理器为QosProcessHandler关于QosProcessHandler的细节这里先不说</p>
+<p>最后一个不同的地方调用链路走的这个 RegistryProtocol</p>
+<h3 id="通过注册协议导出服务与注册服务的流程"><strong>通过注册协议导出服务与注册服务的流程</strong></h3>
+<p>RegistryProtocol的导出方法：
+这个方法非常重要也是服务注册的核心代码，先概括下包含了哪些步骤</p>
+<ul>
+<li>覆盖配置</li>
+<li>导出协议端口开启TCP服务</li>
+<li>注册到注册中心</li>
+<li>通知服务启动了</li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Exporter</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> export</span><span style="color:#24292E">(</span><span style="color:#D73A49">final</span><span style="color:#24292E"> Invoker</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> originInvoker) throws RpcException {</span></span>
+<span class="line"><span style="color:#6A737D">       //service-discovery-registry://8.131.79.126:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=14256&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653710477057</span></span>
+<span class="line"><span style="color:#24292E">        URL registryUrl </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getRegistryUrl</span><span style="color:#24292E">(originInvoker);</span></span>
+<span class="line"><span style="color:#6A737D">        // url to export locally</span></span>
+<span class="line"><span style="color:#6A737D">        //dubbo://192.168.1.9:20880/link.elastic.dubbo.entity.DemoService?anyhost=true&#x26;application=dubbo-demo-api-provider&#x26;background=false&#x26;bind.ip=192.168.1.9&#x26;bind.port=20880&#x26;deprecated=false&#x26;dubbo=2.0.2&#x26;dynamic=true&#x26;generic=false&#x26;interface=link.elastic.dubbo.entity.DemoService&#x26;methods=sayHello,sayHelloAsync&#x26;pid=14256&#x26;release=3.0.8&#x26;service-name-mapping=true&#x26;side=provider&#x26;timestamp=1653710479073</span></span>
+<span class="line"><span style="color:#24292E">        URL providerUrl </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getProviderUrl</span><span style="color:#24292E">(originInvoker);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // Subscribe the override data</span></span>
+<span class="line"><span style="color:#6A737D">        // FIXME When the provider subscribes, it will affect the scene : a certain JVM exposes the service and call</span></span>
+<span class="line"><span style="color:#6A737D">        //  the same service. Because the subscribed is cached key with the name of the service, it causes the</span></span>
+<span class="line"><span style="color:#6A737D">        //  subscription information to cover.</span></span>
+<span class="line"><span style="color:#6A737D">        //provider://192.168.1.9:20880/link.elastic.dubbo.entity.DemoService?anyhost=true&#x26;application=dubbo-demo-api-provider&#x26;background=false&#x26;bind.ip=192.168.1.9&#x26;bind.port=20880&#x26;category=configurators&#x26;check=false&#x26;deprecated=false&#x26;dubbo=2.0.2&#x26;dynamic=true&#x26;generic=false&#x26;interface=link.elastic.dubbo.entity.DemoService&#x26;methods=sayHello,sayHelloAsync&#x26;pid=14256&#x26;release=3.0.8&#x26;service-name-mapping=true&#x26;side=provider&#x26;timestamp=1653710479073</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#D73A49">        final</span><span style="color:#24292E"> URL overrideSubscribeUrl </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getSubscribedOverrideUrl</span><span style="color:#24292E">(providerUrl);</span></span>
+<span class="line"><span style="color:#6A737D">        //override配置</span></span>
+<span class="line"><span style="color:#D73A49">        final</span><span style="color:#24292E"> OverrideListener overrideSubscribeListener </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> OverrideListener</span><span style="color:#24292E">(overrideSubscribeUrl, originInvoker);</span></span>
+<span class="line"><span style="color:#24292E">        Map&#x3C;</span><span style="color:#D73A49">URL</span><span style="color:#24292E">, </span><span style="color:#D73A49">NotifyListener</span><span style="color:#24292E">> overrideListeners </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getProviderConfigurationListener</span><span style="color:#24292E">(providerUrl).</span><span style="color:#6F42C1">getOverrideListeners</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        overrideListeners.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(registryUrl, overrideSubscribeListener);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        providerUrl </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> overrideUrlWithConfig</span><span style="color:#24292E">(providerUrl, overrideSubscribeListener);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        //export invoker</span></span>
+<span class="line"><span style="color:#D73A49">        final</span><span style="color:#24292E"> ExporterChangeableWrapper&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> exporter </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> doLocalExport</span><span style="color:#24292E">(originInvoker, providerUrl);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // url to registry</span></span>
+<span class="line"><span style="color:#6A737D">        //通过URL获取 注册中心Registry操作对象</span></span>
+<span class="line"><span style="color:#D73A49">        final</span><span style="color:#24292E"> Registry registry </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getRegistry</span><span style="color:#24292E">(registryUrl);</span></span>
+<span class="line"><span style="color:#6A737D">        //需要向注册中心注册地址转换</span></span>
+<span class="line"><span style="color:#6A737D">        //dubbo://192.168.1.9:20880/link.elastic.dubbo.entity.DemoService?anyhost=true&#x26;application=dubbo-demo-api-provider&#x26;background=false&#x26;deprecated=false&#x26;dubbo=2.0.2&#x26;dynamic=true&#x26;generic=false&#x26;interface=link.elastic.dubbo.entity.DemoService&#x26;methods=sayHello,sayHelloAsync&#x26;pid=14656&#x26;release=3.0.8&#x26;service-name-mapping=true&#x26;side=provider&#x26;timestamp=1653711086189</span></span>
+<span class="line"><span style="color:#D73A49">        final</span><span style="color:#24292E"> URL registeredProviderUrl </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getUrlToRegistry</span><span style="color:#24292E">(providerUrl, registryUrl);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // decide if we need to delay publish (provider itself and registry should both need to register)</span></span>
+<span class="line"><span style="color:#D73A49">        boolean</span><span style="color:#24292E"> register </span><span style="color:#D73A49">=</span><span style="color:#24292E"> providerUrl.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REGISTER_KEY, </span><span style="color:#005CC5">true</span><span style="color:#24292E">) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> registryUrl.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REGISTER_KEY, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //是否向注册中心注册</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (register) {</span></span>
+<span class="line"><span style="color:#6F42C1">            register</span><span style="color:#24292E">(registry, registeredProviderUrl);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // register stated url on provider model</span></span>
+<span class="line"><span style="color:#6F42C1">        registerStatedUrl</span><span style="color:#24292E">(registryUrl, registeredProviderUrl, register);</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        exporter.</span><span style="color:#6F42C1">setRegisterUrl</span><span style="color:#24292E">(registeredProviderUrl);</span></span>
+<span class="line"><span style="color:#24292E">        exporter.</span><span style="color:#6F42C1">setSubscribeUrl</span><span style="color:#24292E">(overrideSubscribeUrl);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">registry.</span><span style="color:#6F42C1">isServiceDiscovery</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">            // Deprecated! Subscribe to override rules in 2.6.x or before.</span></span>
+<span class="line"><span style="color:#24292E">            registry.</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">(overrideSubscribeUrl, overrideSubscribeListener);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">		//内置监听器通知 这个不是通知消费者的</span></span>
+<span class="line"><span style="color:#6F42C1">        notifyExport</span><span style="color:#24292E">(exporter);</span></span>
+<span class="line"><span style="color:#6A737D">        //Ensure that a new exporter instance is returned every time export</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> DestroyableExporter&#x3C;>(exporter);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h2 id="dolocalexport本地导出协议开启端口"><strong>doLocalExport本地导出协议开启端口</strong></h2>
+<p>前面已经看过了本地协议JVM协议的服务导出和注册中心配置的导出，这里可以直接看一些关键代码：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">  private</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> ExporterChangeableWrapper</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> doLocalExport</span><span style="color:#24292E">(</span><span style="color:#D73A49">final</span><span style="color:#24292E"> Invoker</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> originInvoker, URL providerUrl) {</span></span>
+<span class="line"><span style="color:#24292E">        String key </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getCacheKey</span><span style="color:#24292E">(originInvoker);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> (ExporterChangeableWrapper</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E">) bounds.</span><span style="color:#6F42C1">computeIfAbsent</span><span style="color:#24292E">(key, s </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            Invoker&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">> invokerDelegate </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> InvokerDelegate&#x3C;>(originInvoker, providerUrl);</span></span>
+<span class="line"><span style="color:#6A737D">            //代码中用的这个protoco对象是dubbo自动生成的适配器对象protocol$Adaptive 适配器对象会根据当前协议的参数来查询具体的协议扩展对象</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ExporterChangeableWrapper&#x3C;>((Exporter</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E">) protocol.</span><span style="color:#6F42C1">export</span><span style="color:#24292E">(invokerDelegate), originInvoker);</span></span>
+<span class="line"><span style="color:#24292E">        });</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>上面这个protocol$Adaptive 协议的export导出方法与之前的一样也会经历下面几个过程，具体细节可以参考JVM协议的导出：</p>
+<ul>
+<li>ProtocolSerializationWrapper</li>
+<li>ProtocolFilterWrapper</li>
+<li>ProtocolListenerWrapper</li>
+<li>QosProtocolWrapper</li>
+<li>唯一不同的是我们这里对应的协议扩展类型为DubboProtocol、
+接下来来看下DubboProtocol的导出服务export方法实现：</li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Exporter</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> export</span><span style="color:#24292E">(Invoker</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> invoker) throws RpcException {</span></span>
+<span class="line"><span style="color:#6F42C1">        checkDestroyed</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //服务提供者的url参考例子dubbo://192.168.1.9:20880/link.elastic.dubbo.entity.DemoService?anyhost=true&#x26;application=dubbo-demo-api-provider&#x26;background=false&#x26;bind.ip=192.168.1.9&#x26;bind.port=20880&#x26;deprecated=false&#x26;dubbo=2.0.2&#x26;dynamic=true&#x26;generic=false&#x26;interface=link.elastic.dubbo.entity.DemoService&#x26;methods=sayHello,sayHelloAsync&#x26;pid=6043&#x26;release=3.0.8&#x26;service-name-mapping=true&#x26;side=provider&#x26;timestamp=1654224285437</span></span>
+<span class="line"><span style="color:#24292E">        URL url </span><span style="color:#D73A49">=</span><span style="color:#24292E"> invoker.</span><span style="color:#6F42C1">getUrl</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // export service.</span></span>
+<span class="line"><span style="color:#6A737D">        //生成服务的key参考：link.elastic.dubbo.entity.DemoService:20880</span></span>
+<span class="line"><span style="color:#24292E">        String key </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> serviceKey</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#6A737D">        //创建导出服务用的导出器DubboExporter</span></span>
+<span class="line"><span style="color:#24292E">        DubboExporter&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> exporter </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> DubboExporter&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">>(invoker, key, exporterMap);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        //export a stub service for dispatching event</span></span>
+<span class="line"><span style="color:#6A737D">        //stub配置校验</span></span>
+<span class="line"><span style="color:#24292E">        Boolean isStubSupportEvent </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(STUB_EVENT_KEY, DEFAULT_STUB_EVENT);</span></span>
+<span class="line"><span style="color:#24292E">        Boolean isCallbackservice </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(IS_CALLBACK_SERVICE, </span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (isStubSupportEvent </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#24292E">isCallbackservice) {</span></span>
+<span class="line"><span style="color:#24292E">            String stubServiceMethods </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(STUB_EVENT_METHODS_KEY);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (stubServiceMethods </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> ||</span><span style="color:#24292E"> stubServiceMethods.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (logger.</span><span style="color:#6F42C1">isWarnEnabled</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                    logger.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(</span><span style="color:#032F62">"consumer ["</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(INTERFACE_KEY) </span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">                            "], has set stubproxy support event ,but no stub methods founded."</span><span style="color:#24292E">));</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">		//创建服务开启服务端口</span></span>
+<span class="line"><span style="color:#6F42C1">        openServer</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#6A737D">        //</span></span>
+<span class="line"><span style="color:#6F42C1">        optimizeSerialization</span><span style="color:#24292E">(url);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> exporter;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="开启服务端口"><strong>开启服务端口</strong></h3>
+<p>这里就到了RPC协议的TCP通信模块了，对应DubboProtocol 的    openServer(url);方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> openServer</span><span style="color:#24292E">(URL url) {</span></span>
+<span class="line"><span style="color:#6F42C1">        checkDestroyed</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        // find server. 地址作为key这里是192.168.1.9:20880</span></span>
+<span class="line"><span style="color:#24292E">        String key </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getAddress</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        // client can export a service which only for server to invoke</span></span>
+<span class="line"><span style="color:#6A737D">        //默认提供者开启服务，消费者是不能开启服务的</span></span>
+<span class="line"><span style="color:#D73A49">        boolean</span><span style="color:#24292E"> isServer </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(IS_SERVER_KEY, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (isServer) {</span></span>
+<span class="line"><span style="color:#6A737D">            //协议服务器 下面一个双重校验锁检查，如果为空则创建服务</span></span>
+<span class="line"><span style="color:#24292E">            ProtocolServer server </span><span style="color:#D73A49">=</span><span style="color:#24292E"> serverMap.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(key);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (server </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                synchronized</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    server </span><span style="color:#D73A49">=</span><span style="color:#24292E"> serverMap.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(key);</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (server </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                        serverMap.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(key, </span><span style="color:#6F42C1">createServer</span><span style="color:#24292E">(url));</span></span>
+<span class="line"><span style="color:#24292E">                    }</span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                        server.</span><span style="color:#6F42C1">reset</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                // server supports reset, use together with override</span></span>
+<span class="line"><span style="color:#24292E">                server.</span><span style="color:#6F42C1">reset</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>为当前地址创建协议服务对应方法如下：
+DubboProtocol的createServer方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#24292E"> ProtocolServer </span><span style="color:#6F42C1">createServer</span><span style="color:#24292E">(URL url) {</span></span>
+<span class="line"><span style="color:#6A737D">  		//下面将url增加了心跳参数最终如下dubbo://192.168.1.9:20880/link.elastic.dubbo.entity.DemoService?anyhost=true&#x26;application=dubbo-demo-api-provider&#x26;background=false&#x26;bind.ip=192.168.1.9&#x26;bind.port=20880&#x26;channel.readonly.sent=true&#x26;codec=dubbo&#x26;deprecated=false&#x26;dubbo=2.0.2&#x26;dynamic=true&#x26;generic=false&#x26;heartbeat=60000&#x26;interface=link.elastic.dubbo.entity.DemoService&#x26;methods=sayHello,sayHelloAsync&#x26;pid=6700&#x26;release=3.0.8&#x26;service-name-mapping=true&#x26;side=provider&#x26;timestamp=1654225251112</span></span>
+<span class="line"><span style="color:#24292E">        url </span><span style="color:#D73A49">=</span><span style="color:#24292E"> URLBuilder.</span><span style="color:#6F42C1">from</span><span style="color:#24292E">(url)</span></span>
+<span class="line"><span style="color:#6A737D">                // send readonly event when server closes, it's enabled by default</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">addParameterIfAbsent</span><span style="color:#24292E">(CHANNEL_READONLYEVENT_SENT_KEY, Boolean.TRUE.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#6A737D">                // enable heartbeat by default</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">addParameterIfAbsent</span><span style="color:#24292E">(HEARTBEAT_KEY, String.</span><span style="color:#6F42C1">valueOf</span><span style="color:#24292E">(DEFAULT_HEARTBEAT))</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">addParameter</span><span style="color:#24292E">(CODEC_KEY, DubboCodec.NAME)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">       //这里服务端使用的网络库这里是默认值netty</span></span>
+<span class="line"><span style="color:#24292E">        String str </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(SERVER_KEY, DEFAULT_REMOTING_SERVER);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (StringUtils.</span><span style="color:#6F42C1">isNotEmpty</span><span style="color:#24292E">(str) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#24292E">url.</span><span style="color:#6F42C1">getOrDefaultFrameworkModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(Transporter.class).</span><span style="color:#6F42C1">hasExtension</span><span style="color:#24292E">(str)) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> RpcException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Unsupported server type: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> str </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ", url: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> url);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">		//dubbo交换器层对象创建</span></span>
+<span class="line"><span style="color:#24292E">        ExchangeServer server;</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">        	//这个方法会绑定端口，关于交换器与传输网络层到后面统一说</span></span>
+<span class="line"><span style="color:#6A737D">        	//这里通过绑定url和请求处理器来创建交换器对象</span></span>
+<span class="line"><span style="color:#24292E">            server </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Exchangers.</span><span style="color:#6F42C1">bind</span><span style="color:#24292E">(url, requestHandler);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (RemotingException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> RpcException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Fail to start server(url: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> url </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ") "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> e.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">(), e);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        str </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(CLIENT_KEY);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (StringUtils.</span><span style="color:#6F42C1">isNotEmpty</span><span style="color:#24292E">(str)) {</span></span>
+<span class="line"><span style="color:#24292E">            Set&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">> supportedTypes </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getOrDefaultFrameworkModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(Transporter.class).</span><span style="color:#6F42C1">getSupportedExtensions</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">supportedTypes.</span><span style="color:#6F42C1">contains</span><span style="color:#24292E">(str)) {</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> RpcException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Unsupported client type: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> str);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        DubboProtocolServer protocolServer </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> DubboProtocolServer</span><span style="color:#24292E">(server);</span></span>
+<span class="line"><span style="color:#6A737D">        //关闭等待时长默认为10秒</span></span>
+<span class="line"><span style="color:#6F42C1">        loadServerProperties</span><span style="color:#24292E">(protocolServer);</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> protocolServer;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h2 id="向注册中心注册服务register"><strong>向注册中心注册服务register</strong></h2>
+<p>这个细节在下个博客中说涉及到Dubbo3的双注册</p>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

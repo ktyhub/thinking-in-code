@@ -1,0 +1,253 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**生产者KafkaProducer对象的初始化** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_kafka/7-kafka-producer-init/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_kafka/7-kafka-producer-init"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_kafka/7-kafka-producer-init/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_kafka/7-kafka-producer-init"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**生产者KafkaProducer对象的初始化** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_kafka/7-kafka-producer-init/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_kafka/7-kafka-producer-init/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>kafka</h3> <ul> <li> <a href="/zh/chapter_kafka/0-1-Kaka知识点全解析" class="lv0" title="Kaka入门级教程"> Kaka入门级教程 </a> </li><li> <a href="/zh/chapter_kafka/1-1-生产者例子发送数据生命周期" class="lv0" title="从一个生产者的Demo出发"> 从一个生产者的Demo出发 </a> </li><li> <a href="/zh/chapter_kafka/1-2-生产者KafkaProducer对象的初始化" class="lv0" title="2 生产者KafkaProducer对象的初始化"> 2 生产者KafkaProducer对象的初始化 </a> </li><li> <a href="/zh/chapter_kafka/1-introduce" class="lv0" title="**Kaka知识全解析**"> **Kaka知识全解析** </a> </li><li> <a href="/zh/chapter_kafka/2-high-performence" class="lv0" title="**Kaka高性能设计原理**"> **Kaka高性能设计原理** </a> </li><li> <a href="/zh/chapter_kafka/3-client-sample" class="lv0" title="**从一个Kafka的Demo说起**"> **从一个Kafka的Demo说起** </a> </li><li> <a href="/zh/chapter_kafka/3-KafkaProducer处理数据到发送批处理队列" class="lv0" title="3-KafkaProducer处理数据到发送批处理队列"> 3-KafkaProducer处理数据到发送批处理队列 </a> </li><li> <a href="/zh/chapter_kafka/4-kafka-producer" class="lv0" title="**KafkaProducer生产者对象的长篇源码解析简介**"> **KafkaProducer生产者对象的长篇源码解析简介** </a> </li><li> <a href="/zh/chapter_kafka/4-Send发送者线程的主限循环逻辑" class="lv0" title="4-Send发送者线程的主限循环逻辑"> 4-Send发送者线程的主限循环逻辑 </a> </li><li> <a href="/zh/chapter_kafka/5-生产者消息请求放入Kafka通道" class="lv0" title="5-生产者消息请求放入Kafka通道"> 5-生产者消息请求放入Kafka通道 </a> </li><li> <a href="/zh/chapter_kafka/5-sender" class="lv0" title="**Kafka的发送器对象的初始化**"> **Kafka的发送器对象的初始化** </a> </li><li> <a href="/zh/chapter_kafka/6-生产者执行IO事件" class="lv0" title="执行IO事件"> 执行IO事件 </a> </li><li> <a href="/zh/chapter_kafka/6-kafka-thread" class="lv0" title="**Kafka客户端的IO线程KafkaThread**"> **Kafka客户端的IO线程KafkaThread** </a> </li><li> <a href="/zh/chapter_kafka/7-消费者和生产者处理IO结果" class="lv0" title="7-消费者和生产者处理IO结果"> 7-消费者和生产者处理IO结果 </a> </li><li> <a href="/zh/chapter_kafka/7-kafka-producer-init" class="lv0" aria-current="page" title="**生产者KafkaProducer对象的初始化**"> **生产者KafkaProducer对象的初始化** </a> </li><li> <a href="/zh/chapter_kafka/8-消费者例子拉取数据生命周期" class="lv0" title="8-消费者例子拉取数据生命周期"> 8-消费者例子拉取数据生命周期 </a> </li><li> <a href="/zh/chapter_kafka/8-send-producer-data" class="lv0" title="8-send-producer-data"> 8-send-producer-data </a> </li><li> <a href="/zh/chapter_kafka/9-消费者KafkaConsumer对象的初始化" class="lv0" title="9-消费者KafkaConsumer对象的初始化"> 9-消费者KafkaConsumer对象的初始化 </a> </li><li> <a href="/zh/chapter_kafka/9-execute-io" class="lv0" title="**执行IO事件**"> **执行IO事件** </a> </li><li> <a href="/zh/chapter_kafka/10-消费者订阅TOPIC" class="lv0" title="10-消费者订阅TOPIC"> 10-消费者订阅TOPIC </a> </li><li> <a href="/zh/chapter_kafka/10-handle-io" class="lv0" title="**处理Poll的IO返回结果**"> **处理Poll的IO返回结果** </a> </li><li> <a href="/zh/chapter_kafka/11-消费者执行轮询消息poll方法" class="lv0" title="11-消费者执行轮询消息poll方法"> 11-消费者执行轮询消息poll方法 </a> </li><li> <a href="/zh/chapter_kafka/12-消费者尝试更新分配元数据updateAssignmentMetadataIfNeeded" class="lv0" title="12-消费者尝试更新分配元数据updateAssignmentMetadataIfNeeded"> 12-消费者尝试更新分配元数据updateAssignmentMetadataIfNeeded </a> </li><li> <a href="/zh/chapter_kafka/13-消费者Poll从服务端拉取数据" class="lv0" title="13-消费者Poll从服务端拉取数据"> 13-消费者Poll从服务端拉取数据 </a> </li><li> <a href="/zh/chapter_kafka/Kafka入门" class="lv0" title="简介"> 简介 </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_kafka">kafka</a><span class="sep">/</span><span>**生产者KafkaProducer对象的初始化**</span> </nav> <div class="prose">  <h1 id="生产者kafkaproducer对象的初始化"><strong>生产者KafkaProducer对象的初始化</strong></h1>
+<h2 id="简介"><strong>简介</strong></h2>
+<p>这个类型是将记录发布到Kafka群集的Kafka客户端。
+生产者是线程安全的，跨线程共享单个生产者实例通常比拥有多个实例快。</p>
+<p>下面是一个使用生产者发送记录的简单示例，其中包含序列号作为键/值对的字符串。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> Properties props </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Properties</span><span style="color:#24292E">();   </span></span>
+<span class="line"><span style="color:#24292E"> props.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(</span><span style="color:#032F62">"bootstrap.servers"</span><span style="color:#24292E">, </span><span style="color:#032F62">"localhost:9092"</span><span style="color:#24292E">);   </span></span>
+<span class="line"><span style="color:#24292E"> props.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(</span><span style="color:#032F62">"acks"</span><span style="color:#24292E">, </span><span style="color:#032F62">"all"</span><span style="color:#24292E">);   </span></span>
+<span class="line"><span style="color:#24292E"> props.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(</span><span style="color:#032F62">"key.serializer"</span><span style="color:#24292E">, </span><span style="color:#032F62">"org.apache.kafka.common.serialization.StringSerializer"</span><span style="color:#24292E">);   </span></span>
+<span class="line"><span style="color:#24292E"> props.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(</span><span style="color:#032F62">"value.serializer"</span><span style="color:#24292E">, </span><span style="color:#032F62">"org.apache.kafka.common.serialization.StringSerializer"</span><span style="color:#24292E">);    Producer&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">String</span><span style="color:#24292E">> producer </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> KafkaProducer&#x3C;>(props);   </span></span>
+<span class="line"><span style="color:#D73A49"> for</span><span style="color:#24292E"> (</span><span style="color:#D73A49">int</span><span style="color:#24292E"> i </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">; i </span><span style="color:#D73A49">&#x3C;</span><span style="color:#005CC5"> 100</span><span style="color:#24292E">; i</span><span style="color:#D73A49">++</span><span style="color:#24292E">)       </span></span>
+<span class="line"><span style="color:#24292E">     producer.</span><span style="color:#6F42C1">send</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#24292E"> ProducerRecord&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">String</span><span style="color:#24292E">>(</span><span style="color:#032F62">"my-topic"</span><span style="color:#24292E">, Integer.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">(i), Integer.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">(i)));      </span></span>
+<span class="line"><span style="color:#24292E"> producer.</span><span style="color:#6F42C1">close</span><span style="color:#24292E">();</span></span></code></pre>
+<p>生产者包括一个缓冲区池，其中保存尚未传输到服务器的记录，以及一个后台I/O线程，负责将这些记录转换为请求并将其传输到集群。使用后未关闭生产者将泄漏这些资源。</p>
+<ul>
+<li>
+<p><strong>send() 方法是异步的</strong> 。调用时，它将记录添加到挂起<strong>记录发送的缓冲区</strong>中，并立即返回。这使制作人能够将单个记录批处理在一起，以提高效率</p>
+</li>
+<li>
+<p><strong>acks配置控制将请求视为完成的条件</strong> 。默认设置“all”将导致阻止记录的完全提交，这是最慢但最持久的设置。</p>
+</li>
+<li>
+<p><strong>如果请求失败，生产者可以自动重试</strong> 。重试设置默认为整数Integer.MAX_VALUE，建议使用<strong>delivery.timeout.ms</strong> 控制重试行为，而不是重试。</p>
+</li>
+<li>
+<p><strong>生产者为每个分区维护未发送记录的缓冲区</strong> 。这些缓冲区的大小由 <strong>batch.size</strong> 配置。将其变大可能会导致更多的批处理，但需要更多的内存（因为通常每个活动分区都有一个这样的缓冲区）。</p>
+</li>
+<li>
+<p>默认情况下，<strong>即使缓冲区中有额外的未使用空间，也可以立即发送缓冲区</strong> 。但是，如果要减少请求数，可以设置<strong>linger.ms</strong> 设置为大于0的值。这将指示生产者在 <strong>发送请求之前等待该毫秒数</strong> ，希望更多记录将到达以填充同一批。这<strong>类似于TCP中的Nagle算法</strong> 。例如，在上面的代码片段中，可能所有100条记录都将在一个请求中发送，因为我们将延迟时间设置为1毫秒。然而，如果我们没有填满缓冲区，这个设置会给等待更多记录到达的请求增加1毫秒的延迟。请注意，及时到达的记录通常会一起批处理，即使存在 linger.ms=0。因此，在负载比较大的情况下，无论延迟linger配置如何，都会进行批处理；但是，如果将其设置为大于0的值，则在不处于最大负载的情况下，可能会导致更少、更高效的请求，而代价是<strong>很小的延迟</strong></p>
+</li>
+<li>
+<p><strong>buffer.memory控制生产者可用于缓冲的内存总量</strong> 。如果记录的发送速度超过了它们传输到服务器的速度，那么该缓冲区空间将耗尽。当<strong>缓冲区空间耗尽时，其他发送调用将被阻止</strong> 。阻止时间的阈值由<strong>max.block.m</strong>确定。之后，它抛出<strong>TimeoutException</strong> 。</p>
+</li>
+<li>
+<p><strong>key.serializer</strong> 和<strong>value.serializer</strong> 指示如何将用户随其ProducerRecord提供的<strong>键和值对象转换为字节</strong> 。对于简单的字符串或字节类型，可以使用包含的org.apache.kafka.common.serialization.ByteArraySerializer或org.apache.kafka.common.serialization.StringSerializer 。</p>
+</li>
+<li>
+<p>从<strong>Kafka 0.11开始</strong> ，KafkaProducer支持<strong>两种附加模式</strong>：<strong>幂等生产者</strong>和<strong>事务生产者</strong> 。<strong>幂等生产者将Kafka的传递语义从至少一次传递加强到了完全一次传递</strong> 。特别是<strong>生产者重试将不再引入重复</strong> 。<strong>事务生产者允许应用程序将消息原子的发送到多个分区（和主题！）</strong></p>
+</li>
+<li>
+<p>从<strong>Kafka  3.0开始</strong> ，<strong>enable.idempotence配置默认为true</strong> 。启用幂等时，<strong>重试配置将默认为Integer.MAX_VALUE，acks配置将默认为all</strong> 。幂等生产者没有API更改，因此不需要修改现有应用程序来利用此功能</p>
+</li>
+<li>
+<p>为了利用幂等生产者，必须避免应用程序级的重新发送，因为这些数据不能重复消除。因此，如果应用程序启用了幂等性，建议不要设置重试配置，因为它将默认为Integer.MAX_VALUE。此外，如果发送（ProducerRecord）返回错误，即使无限次重试（例如，如果消息在发送之前在缓冲区中过期），则建议关闭生产者并检查最后生成的消息的内容，以确保其不重复。最后，生产者只能保证在单个会话中发送的消息的幂等性。</p>
+</li>
+<li>
+<p>要使用事务生产者和助理API，必须设置transactional.id配置属性。如果transactional.id设置后，幂等性将自动启用，同时生产者配置幂等性所依赖的。此外，应配置事务中包含的主题以确保持久性。特别是， replication.factor应至少为3，这些主题的min.insync.replicas应设置为2。最后，为了从端到端实现事务性保证，还必须将使用者配置为只读提交的消息</p>
+</li>
+<li>
+<p>transactional.id的目的是支持跨单个生产者实例的多个会话进行事务恢复。它通常是从分区的、有状态的应用程序中的碎片标识符派生出来的。因此，对于在分区应用程序中运行的每个生产者实例，它应该是唯一的。
+所有新的事务性API都处于阻塞状态，并且在出现故障时会引发异常。下面的示例说明了如何使用新的API。它与上面的示例类似，只是所有100条消息都是单个事务的一部分</p>
+</li>
+</ul>
+<h2 id="构造器代码"><strong>构造器代码</strong></h2>
+<h3 id="构造器代码逻辑大纲"><strong>构造器代码逻辑大纲</strong></h3>
+<ul>
+<li>开始</li>
+<li>配置转换
+<ul>
+<li>Properties配置转 Map&#x3C;String, Object></li>
+<li>Map&#x3C;String, Object>配置 转ProducerConfig</li>
+</ul>
+</li>
+<li>KafkaProducer基础属性初始化
+<ul>
+<li>producerConfig</li>
+<li>time</li>
+<li>clientId 默认为producer-自增长的id</li>
+</ul>
+</li>
+<li>可观测性对象的初始化
+<ul>
+<li>初始化Logger类型日志 对象log</li>
+<li>初始化监控指标配置 MetricConfig类型对象</li>
+<li>加载指标报告器 List<metricsreporter></metricsreporter></li>
+<li>JmxReporter对象初始 化</li>
+<li>KafkaProducerMetrics监 控指对象创建标对象</li>
+</ul>
+</li>
+<li>消息发送相关对象初始化
+<ul>
+<li>分区器Partitioner类型对 象初始化</li>
+<li>keySerializer对象创建序 列化KEY使用</li>
+<li>valueSerializer对象创建 序列化VALUE使用</li>
+</ul>
+</li>
+<li>过滤器拦截器增强功能对象初始化
+<ul>
+<li>ProducerInterceptors 生产者拦截器对象初始 化</li>
+<li>ClusterResourceListeners 集群资源监听器</li>
+</ul>
+</li>
+<li>其他对象的初始化
+<ul>
+<li>RecordAccumulator记录 累加器初始化</li>
+<li>ProducerMetadata 生产者元数据对象初始 化</li>
+</ul>
+</li>
+<li>发送器创建于IO线程的启动调用
+<ul>
+<li>Sender发送器对象初始 化</li>
+<li>KafkaThread IO线程对 象创建</li>
+<li>ioThread.start()启动IO 线程</li>
+</ul>
+</li>
+<li>注册AppInfo信息到JMX</li>
+<li>结束</li>
+</ul>
+<p>KafkaProducer的构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#6F42C1"> KafkaProducer</span><span style="color:#24292E">(Properties properties) {</span></span>
+<span class="line"><span style="color:#6A737D">        //配置转换 Properties配置转 Map&#x3C;String, Object></span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">(</span><span style="color:#6F42C1">propsToMap</span><span style="color:#24292E">(properties), </span><span style="color:#005CC5">null</span><span style="color:#24292E">, </span><span style="color:#005CC5">null</span><span style="color:#24292E">, </span><span style="color:#005CC5">null</span><span style="color:#24292E">, </span><span style="color:#005CC5">null</span><span style="color:#24292E">, </span><span style="color:#005CC5">null</span><span style="color:#24292E">, Time.SYSTEM);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>KafkaProducer 重载的构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6F42C1">KafkaProducer</span><span style="color:#24292E">(Map</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">String, Object</span><span style="color:#D73A49">></span><span style="color:#24292E"> configs,</span></span>
+<span class="line"><span style="color:#24292E">              Serializer</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">K</span><span style="color:#D73A49">></span><span style="color:#24292E"> keySerializer,</span></span>
+<span class="line"><span style="color:#24292E">              Serializer</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">V</span><span style="color:#D73A49">></span><span style="color:#24292E"> valueSerializer,</span></span>
+<span class="line"><span style="color:#24292E">              ProducerMetadata metadata,</span></span>
+<span class="line"><span style="color:#24292E">              KafkaClient kafkaClient,</span></span>
+<span class="line"><span style="color:#24292E">              ProducerInterceptors interceptors,</span></span>
+<span class="line"><span style="color:#24292E">              Time time) {</span></span>
+<span class="line"><span style="color:#6A737D">   //配置转换 Map&#x3C;String, Object>配置 转ProducerConfig</span></span>
+<span class="line"><span style="color:#24292E">    ProducerConfig config </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ProducerConfig</span><span style="color:#24292E">(ProducerConfig.</span><span style="color:#6F42C1">addSerializerToConfig</span><span style="color:#24292E">(configs, keySerializer,</span></span>
+<span class="line"><span style="color:#24292E">            valueSerializer));</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">      //KafkaProducer基础属性初始化</span></span>
+<span class="line"><span style="color:#24292E">        Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> userProvidedConfigs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">originals</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.producerConfig </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config;</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.time </span><span style="color:#D73A49">=</span><span style="color:#24292E"> time;</span></span>
+<span class="line"><span style="color:#24292E">        String clientId </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getString</span><span style="color:#24292E">(ProducerConfig.CLIENT_ID_CONFIG);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (clientId.</span><span style="color:#6F42C1">length</span><span style="color:#24292E">() </span><span style="color:#D73A49">&#x3C;=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">            clientId </span><span style="color:#D73A49">=</span><span style="color:#032F62"> "producer-"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> PRODUCER_CLIENT_ID_SEQUENCE.</span><span style="color:#6F42C1">getAndIncrement</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.clientId </span><span style="color:#D73A49">=</span><span style="color:#24292E"> clientId;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        String transactionalId </span><span style="color:#D73A49">=</span><span style="color:#24292E"> userProvidedConfigs.</span><span style="color:#6F42C1">containsKey</span><span style="color:#24292E">(ProducerConfig.TRANSACTIONAL_ID_CONFIG) </span><span style="color:#D73A49">?</span></span>
+<span class="line"><span style="color:#24292E">                (String) userProvidedConfigs.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(ProducerConfig.TRANSACTIONAL_ID_CONFIG) </span><span style="color:#D73A49">:</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6A737D">       //初始化Logger类型日志 对象log</span></span>
+<span class="line"><span style="color:#24292E">        LogContext logContext;</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (transactionalId </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">            logContext </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> LogContext</span><span style="color:#24292E">(String.</span><span style="color:#6F42C1">format</span><span style="color:#24292E">(</span><span style="color:#032F62">"[Producer clientId=%s] "</span><span style="color:#24292E">, clientId));</span></span>
+<span class="line"><span style="color:#D73A49">        else</span></span>
+<span class="line"><span style="color:#24292E">            logContext </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> LogContext</span><span style="color:#24292E">(String.</span><span style="color:#6F42C1">format</span><span style="color:#24292E">(</span><span style="color:#032F62">"[Producer clientId=%s, transactionalId=%s] "</span><span style="color:#24292E">, clientId, transactionalId));</span></span>
+<span class="line"><span style="color:#24292E">        log </span><span style="color:#D73A49">=</span><span style="color:#24292E"> logContext.</span><span style="color:#6F42C1">logger</span><span style="color:#24292E">(KafkaProducer.class);</span></span>
+<span class="line"><span style="color:#24292E">        log.</span><span style="color:#6F42C1">trace</span><span style="color:#24292E">(</span><span style="color:#032F62">"Starting the Kafka producer"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">			</span></span>
+<span class="line"><span style="color:#6A737D">      	//初始化监控指标配置 MetricConfig类型对象</span></span>
+<span class="line"><span style="color:#24292E">        Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">String</span><span style="color:#24292E">> metricTags </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Collections.</span><span style="color:#6F42C1">singletonMap</span><span style="color:#24292E">(</span><span style="color:#032F62">"client-id"</span><span style="color:#24292E">, clientId);</span></span>
+<span class="line"><span style="color:#24292E">        MetricConfig metricConfig </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> MetricConfig</span><span style="color:#24292E">().</span><span style="color:#6F42C1">samples</span><span style="color:#24292E">(config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ProducerConfig.METRICS_NUM_SAMPLES_CONFIG))</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">timeWindow</span><span style="color:#24292E">(config.</span><span style="color:#6F42C1">getLong</span><span style="color:#24292E">(ProducerConfig.METRICS_SAMPLE_WINDOW_MS_CONFIG), TimeUnit.MILLISECONDS)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">recordLevel</span><span style="color:#24292E">(Sensor.RecordingLevel.</span><span style="color:#6F42C1">forName</span><span style="color:#24292E">(config.</span><span style="color:#6F42C1">getString</span><span style="color:#24292E">(ProducerConfig.METRICS_RECORDING_LEVEL_CONFIG)))</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">tags</span><span style="color:#24292E">(metricTags);</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">MetricsReporter</span><span style="color:#24292E">> reporters </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getConfiguredInstances</span><span style="color:#24292E">(ProducerConfig.METRIC_REPORTER_CLASSES_CONFIG,</span></span>
+<span class="line"><span style="color:#24292E">                MetricsReporter.class,</span></span>
+<span class="line"><span style="color:#24292E">                Collections.</span><span style="color:#6F42C1">singletonMap</span><span style="color:#24292E">(ProducerConfig.CLIENT_ID_CONFIG, clientId));</span></span>
+<span class="line"><span style="color:#24292E">        reporters.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> JmxReporter</span><span style="color:#24292E">(JMX_PREFIX));</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.metrics </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Metrics</span><span style="color:#24292E">(metricConfig, reporters, time);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.partitioner </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getConfiguredInstance</span><span style="color:#24292E">(ProducerConfig.PARTITIONER_CLASS_CONFIG, Partitioner.class);</span></span>
+<span class="line"><span style="color:#D73A49">        long</span><span style="color:#24292E"> retryBackoffMs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getLong</span><span style="color:#24292E">(ProducerConfig.RETRY_BACKOFF_MS_CONFIG);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (keySerializer </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.keySerializer </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getConfiguredInstance</span><span style="color:#24292E">(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,</span></span>
+<span class="line"><span style="color:#24292E">                                                                                     Serializer.class);</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.keySerializer.</span><span style="color:#6F42C1">configure</span><span style="color:#24292E">(config.</span><span style="color:#6F42C1">originals</span><span style="color:#24292E">(), </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            config.</span><span style="color:#6F42C1">ignore</span><span style="color:#24292E">(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG);</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.keySerializer </span><span style="color:#D73A49">=</span><span style="color:#24292E"> keySerializer;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (valueSerializer </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.valueSerializer </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getConfiguredInstance</span><span style="color:#24292E">(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,</span></span>
+<span class="line"><span style="color:#24292E">                                                                                       Serializer.class);</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.valueSerializer.</span><span style="color:#6F42C1">configure</span><span style="color:#24292E">(config.</span><span style="color:#6F42C1">originals</span><span style="color:#24292E">(), </span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            config.</span><span style="color:#6F42C1">ignore</span><span style="color:#24292E">(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG);</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.valueSerializer </span><span style="color:#D73A49">=</span><span style="color:#24292E"> valueSerializer;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // load interceptors and make sure they get clientId</span></span>
+<span class="line"><span style="color:#24292E">        userProvidedConfigs.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(ProducerConfig.CLIENT_ID_CONFIG, clientId);</span></span>
+<span class="line"><span style="color:#24292E">        ProducerConfig configWithClientId </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ProducerConfig</span><span style="color:#24292E">(userProvidedConfigs, </span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;ProducerInterceptor&#x3C;</span><span style="color:#D73A49">K</span><span style="color:#24292E">, </span><span style="color:#D73A49">V</span><span style="color:#24292E">>> interceptorList </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (List) configWithClientId.</span><span style="color:#6F42C1">getConfiguredInstances</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">                ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, ProducerInterceptor.class);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (interceptors </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.interceptors </span><span style="color:#D73A49">=</span><span style="color:#24292E"> interceptors;</span></span>
+<span class="line"><span style="color:#D73A49">        else</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.interceptors </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ProducerInterceptors&#x3C;>(interceptorList);</span></span>
+<span class="line"><span style="color:#24292E">        ClusterResourceListeners clusterResourceListeners </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> configureClusterResourceListeners</span><span style="color:#24292E">(keySerializer,</span></span>
+<span class="line"><span style="color:#24292E">                valueSerializer, interceptorList, reporters);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.maxRequestSize </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ProducerConfig.MAX_REQUEST_SIZE_CONFIG);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.totalMemorySize </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getLong</span><span style="color:#24292E">(ProducerConfig.BUFFER_MEMORY_CONFIG);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.compressionType </span><span style="color:#D73A49">=</span><span style="color:#24292E"> CompressionType.</span><span style="color:#6F42C1">forName</span><span style="color:#24292E">(config.</span><span style="color:#6F42C1">getString</span><span style="color:#24292E">(ProducerConfig.COMPRESSION_TYPE_CONFIG));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.maxBlockTimeMs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getLong</span><span style="color:#24292E">(ProducerConfig.MAX_BLOCK_MS_CONFIG);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.transactionManager </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> configureTransactionState</span><span style="color:#24292E">(config, logContext, log);</span></span>
+<span class="line"><span style="color:#D73A49">        int</span><span style="color:#24292E"> deliveryTimeoutMs </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> configureDeliveryTimeout</span><span style="color:#24292E">(config, log);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.apiVersions </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ApiVersions</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.accumulator </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> RecordAccumulator</span><span style="color:#24292E">(logContext,</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ProducerConfig.BATCH_SIZE_CONFIG),</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.compressionType,</span></span>
+<span class="line"><span style="color:#6F42C1">                lingerMs</span><span style="color:#24292E">(config),</span></span>
+<span class="line"><span style="color:#24292E">                retryBackoffMs,</span></span>
+<span class="line"><span style="color:#24292E">                deliveryTimeoutMs,</span></span>
+<span class="line"><span style="color:#24292E">                metrics,</span></span>
+<span class="line"><span style="color:#24292E">                PRODUCER_METRIC_GROUP_NAME,</span></span>
+<span class="line"><span style="color:#24292E">                time,</span></span>
+<span class="line"><span style="color:#24292E">                apiVersions,</span></span>
+<span class="line"><span style="color:#24292E">                transactionManager,</span></span>
+<span class="line"><span style="color:#D73A49">                new</span><span style="color:#6F42C1"> BufferPool</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">.totalMemorySize, config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ProducerConfig.BATCH_SIZE_CONFIG), metrics, time, PRODUCER_METRIC_GROUP_NAME));</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">InetSocketAddress</span><span style="color:#24292E">> addresses </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ClientUtils.</span><span style="color:#6F42C1">parseAndValidateAddresses</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getList</span><span style="color:#24292E">(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG),</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getString</span><span style="color:#24292E">(ProducerConfig.CLIENT_DNS_LOOKUP_CONFIG));</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (metadata </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.metadata </span><span style="color:#D73A49">=</span><span style="color:#24292E"> metadata;</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.metadata </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ProducerMetadata</span><span style="color:#24292E">(retryBackoffMs,</span></span>
+<span class="line"><span style="color:#24292E">                    config.</span><span style="color:#6F42C1">getLong</span><span style="color:#24292E">(ProducerConfig.METADATA_MAX_AGE_CONFIG),</span></span>
+<span class="line"><span style="color:#24292E">                    logContext,</span></span>
+<span class="line"><span style="color:#24292E">                    clusterResourceListeners,</span></span>
+<span class="line"><span style="color:#24292E">                    Time.SYSTEM);</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.metadata.</span><span style="color:#6F42C1">bootstrap</span><span style="color:#24292E">(addresses, time.</span><span style="color:#6F42C1">milliseconds</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.errors </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.metrics.</span><span style="color:#6F42C1">sensor</span><span style="color:#24292E">(</span><span style="color:#032F62">"errors"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.sender </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> newSender</span><span style="color:#24292E">(logContext, kafkaClient, </span><span style="color:#005CC5">this</span><span style="color:#24292E">.metadata);</span></span>
+<span class="line"><span style="color:#24292E">        String ioThreadName </span><span style="color:#D73A49">=</span><span style="color:#24292E"> NETWORK_THREAD_PREFIX </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " | "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> clientId;</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.ioThread </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> KafkaThread</span><span style="color:#24292E">(ioThreadName, </span><span style="color:#005CC5">this</span><span style="color:#24292E">.sender, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.ioThread.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        config.</span><span style="color:#6F42C1">logUnused</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        AppInfoParser.</span><span style="color:#6F42C1">registerAppInfo</span><span style="color:#24292E">(JMX_PREFIX, clientId, metrics, time.</span><span style="color:#6F42C1">milliseconds</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        log.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Kafka producer started"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">t</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // call close methods if internal objects are already constructed this is to prevent resource leak. see KAFKA-2121</span></span>
+<span class="line"><span style="color:#6F42C1">        close</span><span style="color:#24292E">(Duration.</span><span style="color:#6F42C1">ofMillis</span><span style="color:#24292E">(</span><span style="color:#005CC5">0</span><span style="color:#24292E">), </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        // now propagate the exception</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> KafkaException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Failed to construct kafka producer"</span><span style="color:#24292E">, t);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>seatunnel 2.3.3 — STAGS NextStack</title><meta name="description" content="[Translation] [Spark] Fix SeaTunnelRowConvertor fail to convert when schema contains row type (#5170)"><meta name="keywords" content="open source release notes, release tracker, changelog aggregator, breaking changes, deprecation tracker, Kafka releases, Spring Boot releases, Kubernetes releases"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/releases/seatunnel/2.3.3/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/releases/seatunnel/2.3.3/"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/release_note/seatunnel/seatunnel_2.3.3"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/releases/seatunnel/2.3.3/"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="article"><meta property="og:title" content="seatunnel 2.3.3 — STAGS NextStack"><meta property="og:description" content="[Translation] [Spark] Fix SeaTunnelRowConvertor fail to convert when schema contains row type (#5170)"><meta property="og:url" content="https://www.stags.cn/releases/seatunnel/2.3.3/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="en_US"><meta property="og:locale:alternate" content="zh_CN"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"en","description":"STAGS indexes release notes from infrastructure and AI projects — breaking changes, deprecations and migrations — in one English-first feed.","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"},{"@type":"TechArticle","@id":"https://www.stags.cn/releases/seatunnel/2.3.3/#article","headline":"seatunnel 2.3.3 release notes","datePublished":"2023-08-22","inLanguage":"en","isPartOf":{"@id":"https://www.stags.cn/#website"},"about":{"@type":"SoftwareSourceCode","codeRepository":"https://github.com/apache/seatunnel"}}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css">
+<style>.ad-slot[data-astro-cid-fgwukgf6]{margin:var(--s10) 0 0;padding-top:var(--s5);border-top:1px solid var(--line)}.ad-slot-label[data-astro-cid-fgwukgf6]{margin-bottom:var(--s3);font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4)}.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{display:block;min-height:100px}@media(min-width:640px){.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{min-height:250px}}
+</style></head> <body> <a class="skip" href="#main">Skip to content</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/" class="brand" aria-label="STAGS NextStack — Open-source release intelligence"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/releases">Releases</a><a href="/projects">Projects</a><a href="/topics">Topics</a><a href="/compare">Compare</a><a href="/method">Method</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="Search releases"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">Search</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="Language"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">EN</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="Language"> <p class="langmenu-head">Language</p> <a class="langmenu-item" href="/releases/seatunnel/2.3.3/" hreflang="en" lang="en" aria-current="true" data-on="true"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/release_note/seatunnel/seatunnel_2.3.3" hreflang="zh-Hans" lang="zh-CN" data-on="false"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases/seatunnel/2.3.3/" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases/seatunnel/2.3.3/" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases/seatunnel/2.3.3/" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases/seatunnel/2.3.3/" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases/seatunnel/2.3.3/" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap"> <div class="detail"> <article> <header class="detail-hd"> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">Home</a> <span class="sep">/</span> <a href="/releases">Releases</a> <span class="sep">/</span> <a href="/releases/seatunnel">seatunnel</a> </nav> <h1 class="detail-title"> <span class="p">seatunnel</span> 2.3.3 </h1> <div class="detail-meta"> <span class="chip chip--patch">patch</span> <span><span class="k">Published</span>Aug 22, 2023</span>  <span class="sep" aria-hidden="true"></span> <a href="https://github.com/apache/seatunnel" target="_blank" rel="noopener"> <span class="k">Source</span>apache/seatunnel </a>   <span class="sep" aria-hidden="true"></span> <a href="/zh/release_note/seatunnel/seatunnel_2.3.3"> Chinese translation </a>  <span class="sep" aria-hidden="true"></span> <button class="btn btn--ghost btn--sm" type="button" data-copy="https://www.stags.cn/releases/seatunnel/2.3.3/">Copy link</button> </div> </header> <div class="prose" style="margin-top:var(--s8)">   <h1 id="seatunnel-233">seatunnel 2.3.3</h1>
+<h1 id="233-release-note">2.3.3 Release Note</h1>
+<h2 id="bug-fix">Bug fix</h2>
+<h3 id="core">Core</h3>
+<ul>
+<li>[Translation] [Spark] Fix SeaTunnelRowConvertor fail to convert when schema contains row type (#5170)</li>
+</ul>
+<h3 id="connector">Connector</h3>
+<ul>
+<li>[Connector] [Jdbc] Fix the problem of JdbcOutputFormat database connection leak (#4802)</li>
+<li>[Connector-V2] [AmazonDynamoDB] Fix the problem that all table data cannot be obtained (#5146)</li>
+<li>[Connector-V2] [CDC-base] Fix cdc connection does not close (#4922)</li>
+<li>[Connector-V2] [Clickhouse] Fix clickhouse source connector read Nullable() type is not null,example:Nullable(Float64) while value is null the result is 0.0 (#5080)</li>
+<li>[Connector-V2] [ClickhouseFile] Fix ClickhouseFile write file failed when field value is null (#4937)</li>
+<li>[Connector-V2] [Doris] Add streamload Content-type for doris URLdecode error (#4880)</li>
+<li>[Connector-V2] [E2E] Fix maven scope (#4901)</li>
+<li>[Connector-V2] [File-Base] Fix Hadoop Kerberos authentication related issues (#5171)</li>
+<li>[Connector-V2] [Flink-runtime] Flink register table Environment  The running mode is set to<code>job.mode</code> (#4826)</li>
+<li>[Connector-V2] [HbaseSink] Fix default timestamp (#4958)</li>
+<li>[Connector-V2] [Hive] Support user-defined hive-site.xml (#4965)</li>
+<li>[Connector-V2] [Jdbc] Support postgresql json type  (#5194)</li>
+<li>[Connector-V2] [Jdbc] Fix XA Transaction bug (#5020)</li>
+<li>[Connector-V2] [Jdbc] Modify error comment in JdbcSourceConfigFactory (#5088)</li>
+<li>[Connector-V2] [Jdbc-Oracle] Fix the Oracle number type mapping problem (#5209)</li>
+<li>[Connector-V2] [Jdbc-Postgres] PostgreSQL versions below 9.5 are compatible use cdc sync problem (#5120)</li>
+<li>[Connector-V2] [JindoOssFile] Fix plugin-mapping.properties (#5215)</li>
+<li>[Connector-V2] [LocalFileSink] Fix LocalFile Sink file_format_type (#5118)</li>
+<li>[Connector-V2] [Mongodb] Fix document error content and remove redundant code (#4982)</li>
+<li>[Connector-V2] [Mongodb] Compatible with historical parameters (#4997)</li>
+<li>[Connector-V2] [MongoDB-CDC] Incremental data kind error in snapshot phase (#5184)</li>
+<li>[Connector-V2] [MongoDB-CDC] Solve startup resume token is negative (#5143)</li>
+<li>[Connector-V2] [MongoDB-CDC] Refine data format to adapt to universal logic (#5162)</li>
+<li>[Connector-V2] [MongoDB-CDC] Fix array index anomalies caused by #5057 (#5195)</li>
+<li>[Connector-V2] [MySql-CDC] Fix jdbc connection leak for mysql (#5037)</li>
+<li>[Connector-V2] [MySql-CDC] Fix mysql bit column to java byte (#4817)</li>
+<li>[Connector-V2] [MySql-CDC] Fix listener not released when BinlogClient reuse (#5011)</li>
+<li>[Connector-V2] [MySql-CDC] ServerId from int to long (#5033) (#5035)</li>
+<li>[Connector-V2] [Paimon] Bump paimon-bundle version to 0.4.0-incubating (#5219)</li>
+<li>[Connector-V2] [Redis] Fix redis nodes format error (#4981)</li>
+<li>[Connector-V2] [StarRocks] Fix StarRocksJsonSerializer will transform array/map/row to string (#5281)</li>
+<li>[Connector-V2] [StarRocks] Fix code style (#4966)</li>
+</ul>
+<h3 id="zetast-engine">Zeta(ST-Engine)</h3>
+<ul>
+<li>[Zeta] Resolved the issue causing checkpoints to halt on tolerable-failure=0 (#5263)</li>
+<li>[Zeta] Fix the issue of two identical IDs appearing when executing seatunnel.sh -l as the job resumes (#5191)</li>
+<li>[Zeta] Fix SinkFlowLifeCycle without init lastCommitInfo (#5152)</li>
+<li>[Zeta] Fix MultipleTableJobConfigParser ignore env option (#5067)</li>
+<li>[Zeta] Fix checkpoint error report without msg (#5137)</li>
+<li>[Zeta] [REST-API] Fix class not found exception (#5063)</li>
+<li>[Zeta] [REST-API] Fix browser long type intercept (#5267)</li>
+<li>[Zeta] Fix task state memory leak (#5139)</li>
+<li>[Zeta] Fix when execute seatunnel.sh, console may print error (#4984)</li>
+<li>[Zeta] Fixed the issue of duplicated metrics caused by job fault tolerance or restore (#5214)</li>
+<li>[Zeta] Avoid Redundant Job Submissions by Checking Job Status (#5229)</li>
+<li>[Zeta] Fix the serialization issue of GetMetricsOperation during multi-node operation (#5206)</li>
+<li>[Zeta] Fix after the savepoint job is restored, the checkpoint file cannot be generated #4985 (#5051)</li>
+<li>[Zeta] Fixed multi-table job data loss and latency issues (#149) (#5031)</li>
+<li>[Zeta] Fix the HdfsStorage can not delete checkpoint file #5046 (#5054)</li>
+<li>[Zeta] Fix if the initialization task throws an error and the task can not return to master (#4888)</li>
+</ul>
+<h3 id="test">TEST</h3>
+<ul>
+<li>[Test] Split updated modules integration test for part 5 (#5208)</li>
+<li>[Test] Add code style check when docs changed (#5183)</li>
+<li>[Test] Turn on the testSavepoint test (#5199)</li>
+<li>[Test] Fix the CI Job name error (#5032)</li>
+<li>[Test] [E2E] Fix testGetErrorInfo case error (#5282)</li>
+<li>[Test] [Kafka] Kafka e2e error (#5200)</li>
+<li>[Test] [MongoDB-CDC] Fix mongodb cdc e2e instability (#5128)</li>
+<li>[Test] Declare files that will always have UNIX line endings on checkout (#5221)</li>
+<li>[Test] Fixed a minor bug (#5274)</li>
+<li>[Test] Fixed IMap file storage e2e bug (#5237)</li>
+<li>[Test] Split updated modules integration test for part 4 (#5028)</li>
+<li>[Test] Fix zeta ci error (#5254)</li>
+</ul>
+<h3 id="others">Others</h3>
+<ul>
+<li>Update the project description (#4967)</li>
+<li>Update version to 2.3.3-SNAPSHOT (#5043)</li>
+<li>Fix com.google.common.base.Preconditions to seatunnel shade one (#5284)</li>
+<li>Fix style error (#5280)</li>
+<li>Fix code style (#5092)</li>
+</ul>
+<h2 id="improve">Improve</h2>
+<h3 id="core-1">Core</h3>
+<ul>
+<li>[API &#x26; Zeta] Using connector custom serializer encode/decode states (#5238)</li>
+<li>[API]Improve savemode api (#4767)</li>
+</ul>
+<h3 id="connector-1">Connector</h3>
+<ul>
+<li>[CDC Base] Add some split parameters to the optionRule (#5161)</li>
+<li>[CDC Base] Support exactly-once of cdc and fix the BinlogOffset comparing bug (#5057)</li>
+<li>[CDC Base] Add a fast sampling method that supports character types (#5179)</li>
+<li>[CDC Base] Change driver scope to provider (#5002)</li>
+<li>[CDC Base] Remove  driver for cdc connector (#4952)</li>
+<li>[Connector-V2] [File] Optimize files commit order (#5045)</li>
+<li>[Connector-V2] [HiveSink] Remove drop partition when abort (#4940)</li>
+<li>[Connector-V2] [Jdbc] Remove scheduler in JDBC sink #4736 (#5168)</li>
+<li>[Connector-V2] [Jdbc] Check url not null throw friendly message (#5097)</li>
+<li>[Connector-V2] [Jdbc] Support for Decimal types as splict keys (#4634)</li>
+<li>[Connector-V2] [Mongodb] Sink support transaction update/writing (#5034)</li>
+<li>[Connector-V2] [Mongodb] Optimize reading logic (#5001)</li>
+<li>[Connector-V2] [Neo4j] Supports neo4j sink batch write and update docs (#4841)</li>
+<li>[Connector-V2] [OSS-Jindo] Optimize jindo oss connector (#4964)</li>
+<li>[Connector-V2] [Tablestore sink] Remove scheduler in Tablestore sink (#5272)</li>
+</ul>
+<h3 id="transform">Transform</h3>
+<ul>
+<li>[Transform-V2] [SQL] Support use catalogTableName as SQL expression (#5273)</li>
+</ul>
+<h3 id="ci">CI</h3>
+<ul>
+<li>[CI/CD] Remove ‘paths-ignore’, enable the code style check for markdown files (#5286)</li>
+</ul>
+<h3 id="zetast-engine-1">Zeta(ST-Engine)</h3>
+<ul>
+<li>[Zeta] Upgrade the key log output level (#4993)</li>
+<li>[Zeta] Don’t trigger handleSaveMode when restore (#5192)</li>
+<li>[Zeta] Move checkpoint notify complete in checkpoint stage (#5185)</li>
+<li>[Zeta] Add sleep for Task to reduce CPU cost (#5117)</li>
+<li>[Zeta] Add an interface for batch retrieval of JobMetrics (#4576)</li>
+<li>[Zeta] Move imap storage file dependency packages to submodules (#5218)</li>
+<li>[Zeta] Improve CheckpointCoordinator log error when report error from task (#178) (#5134)</li>
+<li>[Zeta] Improve CheckpointCoordinator notify complete when restore (#5136)</li>
+</ul>
+<h2 id="feature">Feature</h2>
+<h3 id="connector-2">Connector</h3>
+<ul>
+<li>[Connector-V2] [CDC-base] Support tables without primary keys (with unique keys) (#163) (#5150)</li>
+<li>[Connector-V2] [CDC-base] Support disable/enable exactly once for INITIAL (#4921)</li>
+<li>[Connector-V2] [CDC-base] Change the time zone to the default time zone (#5030)</li>
+<li>[Connector-V2] [CDC-base] Support string type shard fields (#5147)</li>
+<li>[Connector-V2] [Clickhouse] Add clickhouse connector time zone key,default system time zone (#5078)</li>
+<li>[Connector-V2] [Clickhouse] Clickhouse writes with checkpoints (#4999)</li>
+<li>[Connector-V2] [Doris] Add doris factory type convertor (#5061)</li>
+<li>[Connector-V2] [File] Add config of ‘file_filter_pattern’, which used for filtering files (#5153)</li>
+<li>[Connector-V2] [File] Add cos source&#x26;sink (#4979)</li>
+<li>[Connector-V2] [Hive] Hive add option because web need (#5154)</li>
+<li>[Connector-V2] [Jdbc] Add JDBC Catalog auto create table (#4917)</li>
+<li>[Connector-V2] [Jdbc] Add oceanbase dialect factory (#4989)</li>
+<li>[Connector-V2] [Jdbc] JDBC source support string type as partition key (#4947)</li>
+<li>[Connector-V2] [Jdbc-DM] Add DM upsert support (#5073)</li>
+<li>[Connector-V2] [Kafka] Support read debezium format message from kafka (#5066)</li>
+<li>[Connector-V2] [Kafka] Connector-kafka source support data conversion extracted by kafka connect source (#4516)</li>
+<li>[Connector-V2] [Mongodb] Mongodb support cdc sink (#4833)</li>
+<li>[Connector-V2] [Mongodb-CDC] Support source mongodb cdc (#4923)</li>
+<li>[Connector-V2] [Mysql-CDC] Conversion of tinyint(1) to bool is supported (#5105)</li>
+<li>[Connector-V2] [Redis] Support redis to set expiration time (#4975)</li>
+</ul>
+<h3 id="zetast-engine-2">Zeta(ST-Engine)</h3>
+<ul>
+<li>[Zeta] [CDC-base] Support schema evolution framework(DDL) (#5125)</li>
+<li>[Zeta] [REST-API] Add REST API To Submit Job (#5107)</li>
+<li>[Zeta] Checkpoint support hdfs ha mode (#4942)</li>
+<li>[Zeta] The expiration time of a historical Job can be config (#5180)</li>
+<li>[Zeta] Support history service record job execute error (#5114)</li>
+<li>[Zeta] Configuration files support user variable replacement (#4969)</li>
+</ul>
+<h3 id="transform-1">Transform</h3>
+<ul>
+<li>[Transform-V2] [SQL] Support ‘select *’ and ‘like’ clause for SQL Transform plugin (#4991)</li>
+</ul>
+<h3 id="ci-1">CI</h3>
+<ul>
+<li>[CI] Update action config to support run CI on fork repo (#5065)</li>
+<li>[E2E] [FtpFile] Add ftp file e2e test case (#4647)</li>
+</ul>
+<h2 id="docs">Docs</h2>
+<ul>
+<li>[Connector-V2][Clickhouse] Reconstruct the clickhouse connector doc (#5085)</li>
+<li>[Connector-V2][Doris] Reconstruct the Doris connector document (#4903)</li>
+<li>[Connector-V2][HDFS] Refactor connector-v2 docs using unified format HDFS (#4871)</li>
+<li>[Connector-V2][Http] Reconstruct the Http connector document (#4962)</li>
+<li>[Connector-V2][Hudi] Reconstruct the Hudi connector document (#4905)</li>
+<li>[Connector-V2][Jdbc] Change the line boundary store value type to BigDecimal (#4900)</li>
+<li>[Connector-V2][Jdbc-DB2、Jdbc-Vertica] Improve DB2 Source Vertica Source &#x26; DB2 Sink Vertica Sink document (#5102)</li>
+<li>[Connector-V2][Jdbc-Oracle] Add JDBC Oracle Documentation (#5239)</li>
+<li>[Connector-V2][Kafka] Reconstruct the kafka connector document (#4778)</li>
+<li>[Connector-V2][MyHours] Reconstruct the MyHours connector document (#5129)</li>
+<li>[Connector-V2][PostgreSQL] Refactor connector-v2 docs using unified format PostgreSQL #4590 (#4757)</li>
+<li>[Connector-V2][S3File] Improve S3File Source &#x26; S3File Sink document (#5101)</li>
+<li>[Connector-V2][SelectDB-Cloud] Reconstruct the SelectDB-Cloud connector document (#5130)</li>
+<li>[Connector-V2][StarRocks] Reconstruct the StarRocks connector document (#5132)</li>
+<li>[Connector-V2][StarRocks] StarRocks <code>nodeUrls</code> property name fix (#4951)</li>
+<li>[README] Remove useless github workflow, and adjust description of ‘engineering structure’ (#4305)</li>
+<li>[Zeta] Add savepoint doc (#5081)</li>
+<li>Update bug-report.yml (#5160)</li>
+<li>Add Value types in Java to Schema feature (#5087)</li>
+<li>Documentation and partial word optimization (#4936)</li>
+<li>Change repository name from incubator-seatunnel to seatunnel (#4868)</li>
+<li>Update .asf.yaml (#5242)</li>
+<li>Update the Readme (#4968)</li>
+<li>Set Up with Kubernetes, dockerfile document error in constructing docker image (#5022)</li>
+<li>Fix Dockerfile and seatunnel-flink.yaml in Set Up with Kubernetes (#4793)</li>
+<li>Change the transform website url (#4954)</li>
+<li>Update quick-start-seatunnel-engine.md (#4943)</li>
+<li>Remove <code>incubating</code> keyword in document (#5257)</li>
+</ul>
+<hr>
+<blockquote>
+<p><strong>Source</strong> <a href="https://github.com/apache/seatunnel">apache/seatunnel</a> · <code>2.3.3</code> · 2023-08-22 · <a href="https://github.com/apache/seatunnel/releases/tag/2.3.3">upstream release</a></p>
+</blockquote>
+<p><em>Mirrored verbatim for indexing. All rights belong to the upstream project.</em></p>   </div> <p class="muted" style="margin-top:var(--s8);font-size:12.5px;border-top:1px solid var(--line);padding-top:var(--s4)"> Release notes are published by the upstream project and mirrored here for indexing. All rights belong to their authors. </p> <nav class="pager" aria-label="Release navigation"> <a href="/releases/seatunnel/2.3.4"> <span class="k">← Next</span> <span class="t">2.3.4</span> </a> <a href="/releases/seatunnel/2.3.2"> <span class="k">Previous →</span> <span class="t">2.3.2</span> </a> </nav> <aside class="ad-slot" aria-label="Advertisement" data-astro-cid-fgwukgf6><div class="ad-slot-label" data-astro-cid-fgwukgf6>Advertisement</div><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4184355057086168" data-ad-slot="9133765584" data-ad-format="auto" data-full-width-responsive="true" data-astro-cid-fgwukgf6></ins><script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script></aside> </article> <aside class="rail"> <div class="rail-card"> <div class="rail-title">Source</div> <ul class="rail-list"> <li> <a href="https://github.com/apache/seatunnel/releases/tag/2.3.3" target="_blank" rel="noopener"> <span>Original on GitHub</span> <span class="d">↗</span> </a> </li> <li> <a href="https://github.com/apache/seatunnel" target="_blank" rel="noopener"> <span>apache/seatunnel</span> <span class="d">↗</span> </a> </li> </ul> </div> <div class="rail-card rail-toc"> <div class="rail-title">On this page</div> <nav> <a href="#bug-fix" class>Bug fix</a><a href="#core" class="lv3">Core</a><a href="#connector" class="lv3">Connector</a><a href="#zetast-engine" class="lv3">Zeta(ST-Engine)</a><a href="#test" class="lv3">TEST</a><a href="#others" class="lv3">Others</a><a href="#improve" class>Improve</a><a href="#core-1" class="lv3">Core</a><a href="#connector-1" class="lv3">Connector</a><a href="#transform" class="lv3">Transform</a><a href="#ci" class="lv3">CI</a><a href="#zetast-engine-1" class="lv3">Zeta(ST-Engine)</a><a href="#feature" class>Feature</a><a href="#connector-2" class="lv3">Connector</a><a href="#zetast-engine-2" class="lv3">Zeta(ST-Engine)</a><a href="#transform-1" class="lv3">Transform</a><a href="#ci-1" class="lv3">CI</a><a href="#docs" class>Docs</a> </nav> </div> <div class="rail-card"> <div class="rail-title">Version history</div> <ul class="rail-list"> <li> <a href="/releases/seatunnel/3.1.0"> <span class="v">3.1.0</span> <span class="d">26-11-17</span> </a> </li><li> <a href="/releases/seatunnel/3.0.0"> <span class="v">v3.0.0</span> <span class="d">26-09-29</span> </a> </li><li> <a href="/releases/seatunnel/2.3.13"> <span class="v">2.3.13</span> <span class="d">26-03-14</span> </a> </li><li> <a href="/releases/seatunnel/2.3.12"> <span class="v">2.3.12</span> <span class="d">25-09-12</span> </a> </li><li> <a href="/releases/seatunnel/2.3.11"> <span class="v">2.3.11</span> <span class="d">25-05-27</span> </a> </li><li> <a href="/releases/seatunnel/2.3.10"> <span class="v">2.3.10</span> <span class="d">25-03-26</span> </a> </li><li> <a href="/releases/seatunnel/2.3.9"> <span class="v">2.3.9</span> <span class="d">25-01-19</span> </a> </li><li> <a href="/releases/seatunnel/2.3.8"> <span class="v">2.3.8</span> <span class="d">24-10-14</span> </a> </li> </ul> <a href="/releases/seatunnel" class="mono" style="display:inline-block;margin-top:var(--s3);font-size:11.5px;color:var(--ink-3)"> View all 20 →
+</a> </div> </aside> </div> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>Open-source release intelligence, published daily.</p> </div> <div class="footer-col"> <h3>Track</h3> <ul> <li><a href="/releases">Releases</a></li> <li><a href="/projects">Projects</a></li> <li><a href="/releases.xml">RSS feed</a></li> </ul> </div> <div class="footer-col"> <h3>Archive</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">Chinese archive</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">Technical notes</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>Meta</h3> <ul> <li><a href="/method">Method</a></li> <li><a href="/privacy">Privacy policy</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release notes belong to their upstream projects.</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="Search releases"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="Search releases, projects, versions…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ navigate</span> <span>↵ open</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

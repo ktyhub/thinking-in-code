@@ -1,0 +1,88 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>InnoDB的MVCC实现机制 — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_mysql/3-innodb_mvcc/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_mysql/3-innodb_mvcc"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_mysql/3-innodb_mvcc/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_mysql/3-innodb_mvcc"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="InnoDB的MVCC实现机制 — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_mysql/3-innodb_mvcc/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_mysql/3-innodb_mvcc/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>mysql</h3> <ul> <li> <a href="/zh/chapter_mysql/1-transaction-concept" class="lv0" title="MySQL事务基本概念"> MySQL事务基本概念 </a> </li><li> <a href="/zh/chapter_mysql/2-lock" class="lv0" title="2-lock"> 2-lock </a> </li><li> <a href="/zh/chapter_mysql/3-innodb_mvcc" class="lv0" aria-current="page" title="InnoDB的MVCC实现机制"> InnoDB的MVCC实现机制 </a> </li><li> <a href="/zh/chapter_mysql/4-redolog" class="lv0" title="4-redolog"> 4-redolog </a> </li><li> <a href="/zh/chapter_mysql/5-undolog" class="lv0" title="5-undolog"> 5-undolog </a> </li><li> <a href="/zh/chapter_mysql/6-binlog" class="lv0" title="深入理解MySQL BinLog：原理、机制与实战"> 深入理解MySQL BinLog：原理、机制与实战 </a> </li><li> <a href="/zh/chapter_mysql/7-transaction" class="lv0" title="MySQL事务流程深度解析：从执行到恢复的全链路原理与实战"> MySQL事务流程深度解析：从执行到恢复的全链路原理与实战 </a> </li><li> <a href="/zh/chapter_mysql/8-xatransaction" class="lv0" title="MySQL XA事务深度解析与实战"> MySQL XA事务深度解析与实战 </a> </li><li> <a href="/zh/chapter_mysql/9-springtransaction" class="lv0" title="Spring事务管理核心原理与实战"> Spring事务管理核心原理与实战 </a> </li><li> <a href="/zh/chapter_mysql/10-distransaction" class="lv0" title="分布式系统架构核心原理与实战"> 分布式系统架构核心原理与实战 </a> </li><li> <a href="/zh/chapter_mysql/11-distransaction-2" class="lv0" title="分布式事务场景深度解析与实战"> 分布式事务场景深度解析与实战 </a> </li><li> <a href="/zh/chapter_mysql/12-distransaction-3" class="lv0" title="分布式系统数据一致性原理与实战"> 分布式系统数据一致性原理与实战 </a> </li><li> <a href="/zh/chapter_mysql/13-cap" class="lv0" title="CAP理论与强一致性分布式事务解决方案"> CAP理论与强一致性分布式事务解决方案 </a> </li><li> <a href="/zh/chapter_mysql/14-final-equals" class="lv0" title="最终一致性分布式事务深度解析与实战"> 最终一致性分布式事务深度解析与实战 </a> </li><li> <a href="/zh/chapter_mysql/15-notify" class="lv0" title="最大努力通知型分布式事务解决方案"> 最大努力通知型分布式事务解决方案 </a> </li><li> <a href="/zh/chapter_mysql/16-xa" class="lv0" title="16-xa"> 16-xa </a> </li><li> <a href="/zh/chapter_mysql/problem" class="lv0" title="空回滚问题详解"> 空回滚问题详解 </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_mysql">mysql</a><span class="sep">/</span><span>InnoDB的MVCC实现机制</span> </nav> <div class="prose">  <h1 id="innodb的mvcc实现机制">InnoDB的MVCC实现机制</h1>
+<h2 id="1-mvcc核心机制">1. MVCC核心机制</h2>
+<p>InnoDB通过<strong>多版本并发控制（MVCC）<strong>实现可重复读（Repeatable Read）隔离级别，其核心是通过</strong>数据行版本管理</strong>和**��见性规则**，在非阻塞读（快照读）场景下保证事务一致性。</p>
+<h2 id="2-数据行版本控制">2. 数据行版本控制</h2>
+<ul>
+<li><strong>隐藏列</strong>：每行记录包含两个隐藏字段：
+<ul>
+<li><code>DB_TRX_ID</code>：记录最后一次修改（插入/更新）该行的<strong>事务ID</strong>。</li>
+<li><code>DB_ROLL_PTR</code>：指向该行在<strong>Undo Log</strong>中的历史版本指针。</li>
+</ul>
+</li>
+<li><strong>版本链</strong>：每次更新操作会生成新版本，旧版本通过<code>DB_ROLL_PTR</code>链接形成版本链。</li>
+</ul>
+<h2 id="3-操作对版本的影响">3. 操作对版本的影响</h2>
+<ul>
+<li><strong>插入操作</strong>：
+<ul>
+<li>新插入的行设置<code>DB_TRX_ID</code>为当前事务ID，<code>DB_ROLL_PTR</code>为空。</li>
+</ul>
+</li>
+<li><strong>更新操作</strong>：
+<ul>
+<li>旧版本数据被复制到Undo Log，新版本设置<code>DB_TRX_ID</code>为当前事务ID，<code>DB_ROLL_PTR</code>指向Undo Log中的旧版本。</li>
+</ul>
+</li>
+<li><strong>删除操作</strong>：
+<ul>
+<li>标记行记录为删除（设置<code>DB_ROLL_PTR</code>为删除标识），而非物理删除。</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-可见性判断规则read-view">4. 可见性判断规则（Read View）</h2>
+<ul>
+<li><strong>Read View</strong>：事务开启时生成，包含当前活跃事务ID列表（<code>m_ids</code>）和最小/最大事务ID（<code>m_low_limit_id</code>、<code>m_up_limit_id</code>）。</li>
+<li><strong>可见性条件</strong>：
+<ol>
+<li><strong>插入可见</strong>：行的<code>DB_TRX_ID</code> &#x3C; <code>m_low_limit_id</code> 或在<code>m_ids</code>列表中（即事务已提交）。</li>
+<li><strong>删除可见</strong>：行的<code>DB_ROLL_PTR</code>未被标记为删除，或标记删除的事务ID &#x3C; 当前事务ID。</li>
+</ol>
+</li>
+<li><strong>快照读</strong>：根据Read View过滤版本链，返回符合条件（对当前事务可见）的最新版本。</li>
+</ul>
+<h2 id="5-与事务隔离级别的关系">5. 与事务隔离级别的关系</h2>
+<ul>
+<li><strong>可重复读（RR）</strong>：通过MVCC和Read View实现，事务全程使用同一Read View，避免幻读。</li>
+<li><strong>读已提交（RC）</strong>：每次查询生成新的Read View，可能看到其他事务已提交的数据。</li>
+</ul>
+<h2 id="6-优缺点">6. 优缺点</h2>
+<ul>
+<li><strong>优点</strong>：
+<ul>
+<li><strong>非阻塞读</strong>：读操作不加锁，提升并发性能。</li>
+<li><strong>减少锁竞争</strong>：写操作仅锁定必要行，避免全表锁。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：
+<ul>
+<li><strong>存储开销</strong>：需维护Undo Log和版本链。</li>
+<li><strong>内存消耗</strong>：Read View需保存活跃事务列表。</li>
+</ul>
+</li>
+</ul>
+<h2 id="7-其他关键机制">7. 其他关键机制</h2>
+<ul>
+<li><strong>Undo Log</strong>：存储旧版本数据，用于回滚和MVCC版本链。</li>
+<li><strong>间隙锁（Gap Lock）</strong>：防止幻读，锁定索引记录之间的间隙。</li>
+<li><strong>死锁处理</strong>：通过等待图（Wait-for Graph）检测并回滚死锁事务。</li>
+</ul>
+<h2 id="总结">总结</h2>
+<p>InnoDB的MVCC通过<strong>版本链</strong>、<strong>Read View</strong>和<strong>Undo Log</strong>，在可重复读隔离级别下实现高效并发控制。其核心是通过非阻塞读和细粒度锁优化，平衡性能与数据一致性。</p>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

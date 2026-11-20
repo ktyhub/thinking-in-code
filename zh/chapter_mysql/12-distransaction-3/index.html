@@ -1,0 +1,196 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>分布式系统数据一致性原理与实战 — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_mysql/12-distransaction-3/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_mysql/12-distransaction-3"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_mysql/12-distransaction-3/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_mysql/12-distransaction-3"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="分布式系统数据一致性原理与实战 — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_mysql/12-distransaction-3/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_mysql/12-distransaction-3/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>mysql</h3> <ul> <li> <a href="/zh/chapter_mysql/1-transaction-concept" class="lv0" title="MySQL事务基本概念"> MySQL事务基本概念 </a> </li><li> <a href="/zh/chapter_mysql/2-lock" class="lv0" title="2-lock"> 2-lock </a> </li><li> <a href="/zh/chapter_mysql/3-innodb_mvcc" class="lv0" title="InnoDB的MVCC实现机制"> InnoDB的MVCC实现机制 </a> </li><li> <a href="/zh/chapter_mysql/4-redolog" class="lv0" title="4-redolog"> 4-redolog </a> </li><li> <a href="/zh/chapter_mysql/5-undolog" class="lv0" title="5-undolog"> 5-undolog </a> </li><li> <a href="/zh/chapter_mysql/6-binlog" class="lv0" title="深入理解MySQL BinLog：原理、机制与实战"> 深入理解MySQL BinLog：原理、机制与实战 </a> </li><li> <a href="/zh/chapter_mysql/7-transaction" class="lv0" title="MySQL事务流程深度解析：从执行到恢复的全链路原理与实战"> MySQL事务流程深度解析：从执行到恢复的全链路原理与实战 </a> </li><li> <a href="/zh/chapter_mysql/8-xatransaction" class="lv0" title="MySQL XA事务深度解析与实战"> MySQL XA事务深度解析与实战 </a> </li><li> <a href="/zh/chapter_mysql/9-springtransaction" class="lv0" title="Spring事务管理核心原理与实战"> Spring事务管理核心原理与实战 </a> </li><li> <a href="/zh/chapter_mysql/10-distransaction" class="lv0" title="分布式系统架构核心原理与实战"> 分布式系统架构核心原理与实战 </a> </li><li> <a href="/zh/chapter_mysql/11-distransaction-2" class="lv0" title="分布式事务场景深度解析与实战"> 分布式事务场景深度解析与实战 </a> </li><li> <a href="/zh/chapter_mysql/12-distransaction-3" class="lv0" aria-current="page" title="分布式系统数据一致性原理与实战"> 分布式系统数据一致性原理与实战 </a> </li><li> <a href="/zh/chapter_mysql/13-cap" class="lv0" title="CAP理论与强一致性分布式事务解决方案"> CAP理论与强一致性分布式事务解决方案 </a> </li><li> <a href="/zh/chapter_mysql/14-final-equals" class="lv0" title="最终一致性分布式事务深度解析与实战"> 最终一致性分布式事务深度解析与实战 </a> </li><li> <a href="/zh/chapter_mysql/15-notify" class="lv0" title="最大努力通知型分布式事务解决方案"> 最大努力通知型分布式事务解决方案 </a> </li><li> <a href="/zh/chapter_mysql/16-xa" class="lv0" title="16-xa"> 16-xa </a> </li><li> <a href="/zh/chapter_mysql/problem" class="lv0" title="空回滚问题详解"> 空回滚问题详解 </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_mysql">mysql</a><span class="sep">/</span><span>分布式系统数据一致性原理与实战</span> </nav> <div class="prose">  <h1 id="分布式系统数据一致性原理与实战">分布式系统数据一致性原理与实战</h1>
+<h2 id="一数据一致性核心问题">一、数据一致性核心问题</h2>
+<p>在分布式系统中，数据一致性面临四大核心挑战：</p>
+<h3 id="11-多副本数据冲突">1.1 多副本数据冲突</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 示例：Redis集群主从同步延迟导致读取旧数据</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#24292E"> String </span><span style="color:#6F42C1">getProductPrice</span><span style="color:#24292E">(String productId) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 从Slave节点读取数据（可能存在延迟）</span></span>
+<span class="line"><span style="color:#24292E">    String price </span><span style="color:#D73A49">=</span><span style="color:#24292E"> redisSlave.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(productId); </span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (price </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 回源到Master节点（强一致性读取）</span></span>
+<span class="line"><span style="color:#24292E">        price </span><span style="color:#D73A49">=</span><span style="color:#24292E"> redisMaster.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(productId); </span></span>
+<span class="line"><span style="color:#24292E">        redisSlave.</span><span style="color:#6F42C1">set</span><span style="color:#24292E">(productId, price); </span><span style="color:#6A737D">// 异步更新Slave</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> price;</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="12-调用超时场景">1.2 调用超时场景</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 支付回调超时处理（异步通知场景）</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#24292E"> ApiResponse </span><span style="color:#6F42C1">payCallback</span><span style="color:#24292E">(PayRequest request) {</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">        // 1. 执行本地扣款事务</span></span>
+<span class="line"><span style="color:#24292E">        orderService.</span><span style="color:#6F42C1">deductBalance</span><span style="color:#24292E">(request.</span><span style="color:#6F42C1">getUserId</span><span style="color:#24292E">(), request.</span><span style="color:#6F42C1">getAmount</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 2. 调用第三方支付网关（可能超时）</span></span>
+<span class="line"><span style="color:#D73A49">        boolean</span><span style="color:#24292E"> notifyResult </span><span style="color:#D73A49">=</span><span style="color:#24292E"> paymentGateway.</span><span style="color:#6F42C1">notify</span><span style="color:#24292E">(request.</span><span style="color:#6F42C1">getTradeId</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">notifyResult) {</span></span>
+<span class="line"><span style="color:#6A737D">            // 超时补偿机制</span></span>
+<span class="line"><span style="color:#24292E">            compensateService.</span><span style="color:#6F42C1">retryNotify</span><span style="color:#24292E">(request.</span><span style="color:#6F42C1">getTradeId</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (TimeoutException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 记录补偿任务到消息队列</span></span>
+<span class="line"><span style="color:#24292E">        rabbitMQ.</span><span style="color:#6F42C1">sendCompensateMessage</span><span style="color:#24292E">(request.</span><span style="color:#6F42C1">getTradeId</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> ApiResponse.</span><span style="color:#6F42C1">success</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="13-缓存与数据库不一致">1.3 缓存与数据库不一致</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 缓存击穿解决方案（布隆过滤器+本地缓存）</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#24292E"> Product </span><span style="color:#6F42C1">getProductById</span><span style="color:#24292E">(String productId) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 1. 布隆过滤器快速判断是否存在</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">bloomFilter.</span><span style="color:#6F42C1">mightContain</span><span style="color:#24292E">(productId)) {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 2. 本地缓存（Guava Cache）</span></span>
+<span class="line"><span style="color:#24292E">    Product product </span><span style="color:#D73A49">=</span><span style="color:#24292E"> localCache.</span><span style="color:#6F42C1">getIfPresent</span><span style="color:#24292E">(productId);</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (product </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> product;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 3. 从Redis读取（加锁防止击穿）</span></span>
+<span class="line"><span style="color:#24292E">    Lock lock </span><span style="color:#D73A49">=</span><span style="color:#24292E"> redisLock.</span><span style="color:#6F42C1">lock</span><span style="color:#24292E">(productId);</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        product </span><span style="color:#D73A49">=</span><span style="color:#24292E"> redis.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(productId);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (product </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            product </span><span style="color:#D73A49">=</span><span style="color:#24292E"> db.</span><span style="color:#6F42C1">query</span><span style="color:#24292E">(productId);</span></span>
+<span class="line"><span style="color:#24292E">            redis.</span><span style="color:#6F42C1">set</span><span style="color:#24292E">(productId, product);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        localCache.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(productId, product);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        lock.</span><span style="color:#6F42C1">unlock</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> product;</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="14-多缓存节点脑裂">1.4 多缓存节点脑裂</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// Redis集群脑裂处理（哨兵模式）</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> handleClusterSplitBrain</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#24292E">    Set&#x3C;</span><span style="color:#D73A49">HostAndPort</span><span style="color:#24292E">> currentNodes </span><span style="color:#D73A49">=</span><span style="color:#24292E"> jedisCluster.</span><span style="color:#6F42C1">getClusterNodes</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    Set&#x3C;</span><span style="color:#D73A49">HostAndPort</span><span style="color:#24292E">> metaNodes </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getMetaNodes</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">currentNodes.</span><span style="color:#6F42C1">containsAll</span><span style="color:#24292E">(metaNodes)) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 触发故障转移</span></span>
+<span class="line"><span style="color:#24292E">        sentinel.</span><span style="color:#6F42C1">failover</span><span style="color:#24292E">(config.</span><span style="color:#6F42C1">getClusterName</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 等待集群收敛</span></span>
+<span class="line"><span style="color:#24292E">        Thread.</span><span style="color:#6F42C1">sleep</span><span style="color:#24292E">(</span><span style="color:#005CC5">5000</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 重建本地缓存路由表</span></span>
+<span class="line"><span style="color:#6F42C1">        refreshCacheRouting</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="二理论基石">二、理论基石</h2>
+<h3 id="21-cap理论">2.1 CAP理论</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">pie</span></span>
+<span class="line"><span style="color:#24292E">    title CAP理论三角</span></span>
+<span class="line"><span style="color:#24292E">    "Consistency" : 30</span></span>
+<span class="line"><span style="color:#24292E">    "Availability" : 30</span></span>
+<span class="line"><span style="color:#24292E">    "Partition Tolerance" : 40</span></span></code></pre>
+<h3 id="22-base理论">2.2 BASE理论</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">graph LR</span></span>
+<span class="line"><span style="color:#24292E">    A[Basic Availability] --> B[Soft State]</span></span>
+<span class="line"><span style="color:#24292E">    B --> C[Eventual Consistency]</span></span></code></pre>
+<h3 id="23-一致性级别对比">2.3 一致性级别对比</h3>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>一致性强度</th>
+<th>适用场景</th>
+<th>典型系统</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>强一致性</td>
+<td>线性一致性</td>
+<td>金融交易</td>
+<td>Google Spanner</td>
+</tr>
+<tr>
+<td>弱一致性</td>
+<td>最终一致性</td>
+<td>社交网络</td>
+<td>Twitter</td>
+</tr>
+<tr>
+<td>最终一致性</td>
+<td>因果一致性</td>
+<td>物联网日志</td>
+<td>Kafka</td>
+</tr>
+</tbody>
+</table>
+<h2 id="三解决方案体系">三、解决方案体系</h2>
+<h3 id="31-强一致性方案">3.1 强一致性方案</h3>
+<h4 id="311-2pc两阶段提交">3.1.1 2PC两阶段提交</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// Coordinator节点实现</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> TwoPhaseCoordinator</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> commit</span><span style="color:#24292E">(Transaction </span><span style="color:#E36209">txn</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 阶段一：预提交</span></span>
+<span class="line"><span style="color:#24292E">        txn.</span><span style="color:#6F42C1">prepare</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 阶段二：提交/回滚</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">allParticipantsReady</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">            txn.</span><span style="color:#6F42C1">commit</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            txn.</span><span style="color:#6F42C1">rollback</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h4 id="312-3pc三阶段提交">3.1.2 3PC三阶段提交</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 改进版协调器（增加超时机制）</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> ThreePhaseCoordinator</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> commitWithTimeout</span><span style="color:#24292E">(Transaction </span><span style="color:#E36209">txn</span><span style="color:#24292E">, </span><span style="color:#D73A49">long</span><span style="color:#E36209"> timeout</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 阶段一：预提交（带超时）</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">txn.</span><span style="color:#6F42C1">prepareWithTimeout</span><span style="color:#24292E">(timeout)) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 阶段二：预提交确认</span></span>
+<span class="line"><span style="color:#24292E">        txn.</span><span style="color:#6F42C1">preCommit</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 阶段三：提交</span></span>
+<span class="line"><span style="color:#24292E">        txn.</span><span style="color:#6F42C1">commit</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="32-最终一致性方案">3.2 最终一致性方案</h3>
+<h4 id="321-tcc补偿事务">3.2.1 TCC补偿事务</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 转账服务TCC实现</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> TransferService</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Try</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> tryTransfer</span><span style="color:#24292E">(Account </span><span style="color:#E36209">from</span><span style="color:#24292E">, Account </span><span style="color:#E36209">to</span><span style="color:#24292E">, </span><span style="color:#D73A49">double</span><span style="color:#E36209"> amount</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        from.</span><span style="color:#6F42C1">debit</span><span style="color:#24292E">(amount); </span><span style="color:#6A737D">// 扣减余额</span></span>
+<span class="line"><span style="color:#24292E">        to.</span><span style="color:#6F42C1">credit</span><span style="color:#24292E">(amount);  </span><span style="color:#6A737D">// 增加余额</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Confirm</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> confirmTransfer</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">        // 无需操作（本地事务已提交）</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Cancel</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> cancelTransfer</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">        // 发生异常时回滚</span></span>
+<span class="line"><span style="color:#24292E">        from.</span><span style="color:#6F42C1">credit</span><span style="color:#24292E">(amount);</span></span>
+<span class="line"><span style="color:#24292E">        to.</span><span style="color:#6F42C1">debit</span><span style="color:#24292E">(amount);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h4 id="322-可靠消息队列">3.2.2 可靠消息队列</h4>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

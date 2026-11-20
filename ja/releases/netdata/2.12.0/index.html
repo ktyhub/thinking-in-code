@@ -1,0 +1,642 @@
+<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>netdata v2.12.0 — STAGS NextStack</title><meta name="description" content="The v2.12.0 build of the Netdata Agent for Windows has been discovered to have serious stability issues that cause it to crash randomly on startup due to an upstream bug in some of the tooling we depend on."><meta name="keywords" content="オープンソース release note、リリース トラッカー、changelog アグリゲーター、重大な変更、非推奨トラッカー、Kafka リリース、Spring Boot リリース、Kubernetes リリース"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/ja/releases/netdata/2.12.0/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/ja/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/releases/netdata/2.12.0/"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/releases/netdata/2.12.0/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/releases/netdata/2.12.0/"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="article"><meta property="og:title" content="netdata v2.12.0 — STAGS NextStack"><meta property="og:description" content="The v2.12.0 build of the Netdata Agent for Windows has been discovered to have serious stability issues that cause it to crash randomly on startup due to an upstream bug in some of the tooling we depend on."><meta property="og:url" content="https://www.stags.cn/ja/releases/netdata/2.12.0/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="ja_JP"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="zh_CN"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"ja","description":"STAGS はインフラストラクチャおよび AI プロジェクトのリリースノートを索引化し、破壊的変更・非推奨・移行情報を英語優先の単一フィードで提供します。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"},{"@type":"TechArticle","@id":"https://www.stags.cn/ja/releases/netdata/2.12.0/#article","headline":"netdata v2.12.0 release notes","datePublished":"2026-09-30","inLanguage":"en","isPartOf":{"@id":"https://www.stags.cn/#website"},"about":{"@type":"SoftwareSourceCode","codeRepository":"https://github.com/netdata/netdata"}}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css">
+<style>.ad-slot[data-astro-cid-fgwukgf6]{margin:var(--s10) 0 0;padding-top:var(--s5);border-top:1px solid var(--line)}.ad-slot-label[data-astro-cid-fgwukgf6]{margin-bottom:var(--s3);font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4)}.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{display:block;min-height:100px}@media(min-width:640px){.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{min-height:250px}}
+</style></head> <body> <a class="skip" href="#main">本文へスキップ</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/ja/" class="brand" aria-label="STAGS NextStack — オープンソースのリリース情報"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/ja/releases">リリース</a><a href="/ja/projects">プロジェクト</a><a href="/ja/method">仕組み</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="リリースを検索"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">検索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="言語"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">日</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="言語"> <p class="langmenu-head">言語</p> <a class="langmenu-item" href="/releases/netdata/2.12.0/" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/release_note/netdata/netdata_2.12.0" hreflang="zh-Hans" lang="zh-CN" data-on="false"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases/netdata/2.12.0/" hreflang="ja" lang="ja" aria-current="true" data-on="true"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases/netdata/2.12.0/" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases/netdata/2.12.0/" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases/netdata/2.12.0/" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases/netdata/2.12.0/" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap"> <div class="detail"> <article> <header class="detail-hd"> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/ja/">ホーム</a> <span class="sep">/</span> <a href="/ja/releases">リリース</a> <span class="sep">/</span> <a href="/ja/releases/netdata">netdata</a> </nav> <h1 class="detail-title"> <span class="p">netdata</span> v2.12.0 </h1> <div class="detail-meta"> <span class="chip chip--minor">マイナー</span> <span><span class="k">公開日</span>2026年9月30日</span>  <span class="sep" aria-hidden="true"></span> <a href="https://github.com/netdata/netdata" target="_blank" rel="noopener"> <span class="k">出典</span>netdata/netdata </a>   <span class="sep" aria-hidden="true"></span> <a href="/releases/netdata/2.12.0/"> 英語原文 </a>  <span class="sep" aria-hidden="true"></span> <button class="btn btn--ghost btn--sm" type="button" data-copy="https://www.stags.cn/ja/releases/netdata/2.12.0/">リンクをコピー</button> </div> </header> <div class="prose" style="margin-top:var(--s8)"> <p class="mt-notice" role="note">このページは機械翻訳です。内容は必ず英文原文をご確認ください。</p>  <div><p>#ネットデータv2.12.0</p>
+<h2>通知</h2>
+<p>Netdata Agent for Windows の v2.12.0 ビルドには、依存しているツールの一部に上流のバグがあるため、起動時にランダムにクラッシュするという深刻な安定性の問題があることが判明しました。そのため、リリース ページからインストーラーを削除しました。 v2.12.1 で修正が予定されていますが、そのリリースまでは、<a href="https://github.com/netdata/netdata/releases/download/v2.11.1/netdata-x64.msi">ここ</a> からダウンロードできる最新の既知の動作バージョン (v2.11.1) を使用することをお勧めします。</p>
+<h2>目次</h2>
+<ul>
+<li><a href="#v2120-release-summary">概要</a></li>
+<li><a href="#v2120-release-highlights">ハイライト</a>
+<ul>
+<li><a href="#v2120-highlight-otel-traces">OpenTelemetry トレース、早期アクセス</a></li>
+<li><a href="#v2120-highlight-redfish">Redfish: 帯域外サーバー ハードウェア監視</a></li>
+<li><a href="#v2120-highlight-snmp-diagnostics">SNMP トポロジ: 診断、オフライン トリアージ、および再生</a></li>
+<li><a href="#v2120-highlight-new-collectors">新しいコレクター: S3 オブジェクト ストレージと SMBIOS メモリ</a></li>
+<li><a href="#v2120-highlight-ceph">Ceph、Prometheus の補完として再加工</a></li>
+<li><a href="#v2120-highlight-windows">Windows: Hyper-V、RDP、およびより広い範囲</a></li>
+<li><a href="#v2120-highlight-secrets">go.d のシークレットと権限の強化</a></li>
+<li><a href="#v2120-highlight-queries">クエリ エンジン: 正確性と高速な重み</a></li>
+<li><a href="#v2120-highlight-stability">エージェントの安定性: dbengine、SQLite、ACLK、および ML</a></li>
+<li><a href="#v2120-highlight-cloud">Netdata Cloud: インフラストラクチャの知識、ノードの廃止、AI に関する会話</a></li>
+<li><a href="#v2120-highlight-platforms">プラットフォーム サポートの変更</a></li>
+</ul>
+</li>
+<li><a href="#v2120-%E8%AC%9D%E8%BE%9E">謝辞</a></li>
+<li><a href="#v2120-%E8%B2%A2%E7%8C%AE">貢献</a>
+<ul>
+<li><a href="#v2120-%E8%B2%A2%E7%8C%AE-%E3%82%B3%E3%83%AC%E3%82%AF%E3%82%BF%E3%83%BC">コレクター</a></li>
+<li><a href="#v2120-contributions-packaging">パッケージ化/インストール</a></li>
+<li><a href="#v2120-contributions-documentation">ドキュメント</a></li>
+<li><a href="#v2120-contributions-other">その他の注目すべき変更点</a></li>
+</ul>
+</li>
+<li><a href="#v2120-deprecation-notice">非推奨の通知</a></li>
+<li><a href="#v2120-support-options">サポート オプション</a></li>
+</ul>
+<h2>リリース概要 &lt;a id=&quot;v2120-release-summary&quot;&gt;&lt;/a&gt;</h2>
+<p>v2.11.0 はネットワーク トポロジを導入し、ログをメトリクスに次ぐ最上級の信号にしました。 v2.12.0 は OpenTelemetry を追加します
+トレース、Redfish を介した帯域外ハードウェア監視、SNMP トポロジをデバッグ可能にする診断レイヤー、
+コレクター、クエリ、安定性に関する大規模な修正も行われています。</p>
+<p><strong>3 番目の可観測性シグナルが到着します。</strong> Netdata はすでに OpenTelemetry メトリクスとログを取り込んでいます。このリリースで追加されるのは、
+<strong>トレース</strong>: OTLP トレース レコードは、エージェントによって独自の保持ポリシーに基づいて受信、正規化され、保存されます。
+専用の列指向ストア — トレース対応インデックス、ブルーム フィルターおよびロールアップ — および <code>otel-traces</code> クエリ関数
+トレースを検索し、それらをウィンドウ上で集約し、概要のヒートマップを作成します。新しい <strong>トレース</strong> タブでそれらを探索します。
+ダッシュボードの機能は、<strong>早期アクセス</strong> 機能として現在利用可能です。</p>
+<p><strong>ハードウェア監視が帯域外になります。</strong> 新しい <strong>Redfish</strong> コレクターが BMC (iDRAC、iLO、およびその他の) と通信します。
+DMTF Redfish の実装 — オペレーティング システムではなく、BMC に電源が供給されており、BMC にアクセスできる限り
+ホスト自体が異常な場合、再起動中、または
+電源が落ちた。センサーとハードウェアが付属しています
+インベントリ機能、センサーごとの独立したしきい値ヘルス、およびオンデマンドの BMC ログ ビューア。それに加えて、
+<strong>SMBIOS メモリ</strong> は、ファームウェアのスロットごとのメモリ インベントリを受け入れられたベースラインと比較し、問題が発生した場合にアラートを生成します。
+記録された DIMM が見つからないか、小さくなって戻ってくる - 合計 RAM の数値だけではスロットに固定できないメモリ損失。</p>
+<p><strong>v2.11.0 からのネットワーク動作が可能になります。</strong> SNMP トポロジ エンジンには、診断レイヤー全体が追加されました。
+ウォークはそのタイミング、プロファイルの決定、およびその失敗を記録します。証拠は限定された形式で保持され、公開されます
+トポロジ収集が成功したかどうかとは関係なく、ポータブル アーカイブにパッケージ化され、エージェントのファイルに組み込まれます。
+サポートバンドル。トポロジ グラフは、そのアーカイブから密封的に再生され、オフラインで検査できます。
+「SNMP トポロジではこのスイッチが見当たりません」というメッセージをサイトにアクセスしてファイルに記入し、当社に送信してください。 PAN-OS 用の LLDP-V2、Meraki L2、
+IpAddressTable のサポートと再利用可能なトポロジ ロール プロファイルのセットにより、エンジンが最初に認識できる範囲が広がります。</p>
+<p><strong>Netdata Cloud では、Netdata AI がインフラストラクチャを学習します。</strong> <strong>インフラストラクチャ ナレッジ</strong> を使用して、チームが記録します。
+Netdata AI だけが知っていること - どのサービスが重要か、何が期待されているか、通常の様子 - そして Netdata AI は事実を記憶する
+それを会話の中で伝え、会話、調査、報告の前に両方を読みます。 AI による会話が可能になりました
+閉じたタブが存続し、タブが長くなっても失敗しなくなり、廃止されたノードは<strong>廃止</strong>できるため、
+通知の送信を停止します。</p>
+<p><strong>そして、リリースの大部分は統合です。</strong> Ceph コレクターは、Prometheus を補完するものとして再構築されました。
+コレクタは、アラート カバレッジと Tentacle サポートを備えた v2 コレクタ フレームワークに移行されました。 go.dの秘密処理
+体系的に権限が剥奪されました。ファイルおよびコマンド シークレット プロバイダーは、昇格された権限なしで実行されるようになりました。
+<code>nd-run</code>、および自動検出ジョブ内のシークレット参照は、検出パイプラインが解決されない限り解決されなくなりました。
+明示的にtrusted。動的構成は、受け入れられた go.d の変更をジョブの有無とは別に報告するようになりました。
+検出パイプラインまたはシークレット ストアが開始されたため、clients は結果の構成ステータスを確認する必要があります。 6 つの独立した正確性修正がクエリ エンジンに導入され、dbengine、SQLite、
+辞書、ACLK、および ML の修正により、クラッシュとリークが排除されます。それらの多くは、2.11.1 パッチですでにユーザーに提供されています。
+ここにリリースおよび統合されます。</p>
+<h2>リリース ハイライト &lt;a id=&quot;v2120-release-highlights&quot;&gt;&lt;/a&gt;</h2>
+<h3>OpenTelemetry トレース、早期アクセス &lt;a id=&quot;v2120-highlight-otel-traces&quot;&gt;&lt;/a&gt;</h3>
+<p>エージェントの OTLP レシーバーは、メトリクスとログに加えて <strong>トレース</strong>、および新しい <strong>トレース</strong> タブを受け入れるようになりました。
+ダッシュボードを使用してそれらを探索できます。</p>
+<p>OTLP/gRPC エンドポイントに到着したトレース レコードは正規化され、先行書き込みログに書き込まれ、シールされます。
+ログを提供する同じ列指向ストアに、スパン用に拡張:span-extras 列、トレース対応行インデックス、トレース
+ブルーム フィルター、スパンの組み合わせ、トレース ロールアップ。クエリは新しい <strong><code>otel-traces</code> 関数</strong> によって処理されます。
+機能検出と、スパン フィールドでフィルタリングし、各トレースのスパンをサービスごとに分類するトレース検索。
+検索応答に埋め込まれたウィンドウ集合体と、ページの現在の選択に従う概要ヒートマップです。</p>
+<p><strong>トレースの確認</strong> 時間枠を選択すると、[トレース] タブに時間の経過が表示されます。トレースのヒートマップです。
+期間、各ユーザーが触れたサービスのトレース自体、および途中で発生したエラー、および絞り込むためのフィルター
+サービス、スパン名、または最小期間ごとに内容が異なります。 Cliトレースをチェックして、滝のように配置されたスパンを確認してから、
+cliスパンの属性、リソース、スコープ、イベント、リンクを確認します。部屋の<strong>探索</strong>の下に痕跡が表示されます。
+ノードのページの「ログ」のすぐ隣にあります。</p>
+<blockquote>
+<p>[!NOTE]
+トレースはまだ <strong>早期アクセス</strong>であるため、スイッチをオンにするまで非表示のままです: サイドバーの click <strong>早期アクセス</strong>
+そして、<strong>トレース</strong> トグルを切り替えます (ブラウザーは選択を記憶します)。ログと同様に、サインインする必要があります。
+ノードのスペースにアクセスできる Netdata Cloud を使用して、それらを確認します。</p>
+</blockquote>
+<p>トレースは独自の保持設定で保存されます。<code>otel.yaml</code> の <code>traces</code> セクションは同じローテーションを受け、
+保持オプションは <code>logs</code> です。リモート ストレージが有効になっている場合、ローカル保持によってすでに削除されたトレース ファイルが読み取られます。
+ログ ファイルと同様に、クエリ用のオブジェクト ストレージから、両方の信号が共有されるダウンロード キャッシュを介して返されます。
+<code>{base_dir}/remote-read</code>。ダウンロードできないリモート ファイルは、回答を部分的 (<code>remote_unavailable</code>) としてマークします。
+一方、キャッシュが保持できる以上のリモート データを必要とするクエリは、範囲を狭めるか、範囲を増やすリクエストで失敗します。
+<code>remote_storage.read_cache_max_size</code>。オフロードされたファイルは全体が一度に 1 つずつダウンロードされるため、最初のクエリは
+オフロードされた履歴は時間がかかる可能性があり、時間範囲を指定せずに ID で 1 つのトレースを検索すると、ローカルおよび保存されているすべてのトレースが検索されます。
+オフロードされるため、オフロードされた履歴がキャッシュより大きくなると失敗します。</p>
+<p>関連作業によりプラグインが強化されました。<code>otel-plugin</code> は、宣言する前に gRPC エンドポイントをバインドするようになりました。
+機能。ポートの競合が発生した場合、リッスンできないレシーバーをアドバタイズせずに一度終了し、エージェントは無効化します。
+ループ内でエージェントを再起動するのではなく、次のエージェントが再起動するまで実行されます。 OpenTelemetry のドキュメントは、
+既知のエラーのセクションでは、まさにそのケースについて説明しています。</p>
+<p>(<a href="https://github.com/netdata/netdata/pull/23479">#23479</a>、<a href="https://github.com/netdata/netdata/pull/23738">#23738</a>、
+<a href="https://github.com/netdata/netdata/pull/23739">#23739</a>、<a href="https://github.com/netdata/netdata/pull/23826">#23826</a>、
+<a href="https://github.com/netdata/netdata/pull/23905">#23905</a>、<a href="https://github.com/netdata/netdata/pull/24088">#24088</a>)</p>
+<h3>Redfish: 帯域外サーバー ハードウェア監視 &lt;a id=&quot;v2120-highlight-redfish&quot;&gt;&lt;/a&gt;</h3>
+<p>新しい <strong><code>go.d/redfish</code></strong> コレクターは、ベースボード管理の DMTF Redfish API を通じてサーバー ハードウェアを監視します
+コントローラー。オペレーティング システムではなく BMC にクエリを実行するため、ホストが動作している間レポートを継続します。
+BMC 自体に電源が入っていてアクセス可能な限り、応答しなくなったり、再起動中、または電源がオフになったりすることがありますが、これはまさにそのような場合に発生します。
+ハードウェアに関する質問が寄せられます。</p>
+<p>BMC ごとに 1 つのジョブで、シャーシとシステム インベントリ（熱センサーとファン、電源と消費電力）がカバーされます。
+プロセッサとメモリ、ストレージ コントローラとドライブ、および全体的な健全性ロールアップ。</p>
+<p>チャート以外にも、オペレーター ツールが付属しています。</p>
+<ul>
+<li><strong>センサーとハードウェアの機能</strong> — 充実したセンサー セットとハードウェア インベントリのオンデマンド テーブル
+詳細 (モデル、部品番号とシリアル番号、ファームウェアのリビジョン)。</li>
+<li><strong>独立したセンサーしきい値の健全性</strong> - BMC によって報告される、各センサー独自の上限および下限しきい値が、
+単一のコレクター全体のルールではなく、その健全性状態。</li>
+<li><strong>オンデマンドの BMC ログ ビューア</strong> — コントローラー独自のイベント ログ。同じ機能メカニズムを通じて読み取ります。
+BMC の Web インターフェイスにログインします。</li>
+</ul>
+<p>(<a href="https://github.com/netdata/netdata/pull/23343">#23343</a>、<a href="https://github.com/netdata/netdata/pull/23909">#23909</a>、
+<a href="https://github.com/netdata/netdata/pull/23912">#23912</a>、<a href="https://github.com/netdata/netdata/pull/23915">#23915</a>、
+<a href="https://github.com/netdata/netdata/pull/23922">#23922</a>、<a href="https://github.com/netdata/netdata/pull/23926">#23926</a>、
+<a href="https://github.com/netdata/netdata/pull/23929">#23929</a>、<a href="https://github.com/netdata/netdata/pull/23933">#23933</a>、
+<a href="https://github.com/netdata/netdata/pull/23938">#23938</a>、<a href="https://github.com/netdata/netdata/pull/23943">#23943</a>、
+<a href="https://github.com/netdata/netdata/pull/23949">#23949</a>、<a href="https://github.com/netdata/netdata/pull/23950">#23950</a>、
+<a href="https://github.com/netdata/netdata/pull/23957">#23957</a>、<a href="https://github.com/netdata/netdata/pull/23962">#23962</a>)</p>
+<h3>SNMP トポロジ: 診断、オフライン トリアージ、および再生&lt;a id=&quot;v2120-highlight-snmp-diagnostics&quot;&gt;&lt;/a&gt;</h3>
+<p>SNMP トポロジ エンジンは、テクニカル プレビューとして v2.11.0 に同梱されています。このリリースでは、ネットワーク検出機能が追加されました
+エンジンに最も必要なのは、何が行われたのか、そしてなぜそうなったのかの説明です。</p>
+<p><strong>すべての取得について説明します。</strong> 歩行ごとのタイミングと準備の診断、プロファイル コンテキスト
+選択され、各ミスの背後にある障害の詳細に加えて、トポロジ ソースと処理の決定がすべて記録されます。
+重要なのは、診断が <strong>トポロジ コレクションとは独立して公開される</strong>ことです。ウォークが完全に失敗した場合、
+診断は依然として到着しますが、これは以前に沈黙が生じた場合です。</p>
+<p><strong>証拠は制限され、保持されます。</strong> 診断証拠は固定予算内に保持され、トポロジ履歴は保存されます。
+同時に保持され、デバイスごとの診断は、最初の障害時だけではなく、スケジュールに基づいて繰り返されます。</p>
+<p><strong>それは移動します。</strong> 診断はポータブル アーカイブにパッケージ化され、エージェントのサポート バンドルに統合され、
+サポート バンドルから直接検査されます。専用のアーカイブ診断ツールとオフライン検査モードでアーカイブを読み取る
+ネットワークに触れることなく、<strong>ハーメチック トポロジ グラフの再生</strong> により、記録された入力からグラフが再構築されるため、同じ結果が得られます。
+入力は常に同じグラフを生成するため、トポロジのバグをオフサイトで再現できます。</p>
+<p>対象範囲も拡大しました: PAN-OS 用の LLDP-V2 トポロジ、Meraki 製品の L2 プロファイル、<code>IpAddressTable</code> サポート、UniFi
+トポロジ プロファイル、および上に構築された再利用可能なトポロジ ロール プロファイルのセット (クラシック ブリッジ、qbridge、STP、L3 ネイバー)
+標準 MIB ビルディング ブロック。 SNMP プロファイルは <strong>272 から 286</strong> になりました。 FDB で推論された正確性修正の実行
+デフォルトで信頼できるトポロジ、適切に検証およびデコードされた LLDP 管理アドレス、選択された使用可能な管理 IP、
+曖昧な FDB エイリアスの所有者を拒否し、デバイスのメタデータと検出カウントを修正しました。</p>
+<p>(<a href="https://github.com/netdata/netdata/pull/23665">#23665</a>、<a href="https://github.com/netdata/netdata/pull/23667">#23667</a>、
+<a href="https://github.com/netdata/netdata/pull/23670">#23670</a>、<a href="https://github.com/netdata/netdata/pull/23675">#23675</a>、
+<a href="https://github.com/netdata/netdata/pull/23680">#23680</a>、<a href="https://github.com/netdata/netdata/pull/23682">#23682</a>、
+<a href="https://github.com/netdata/netdata/pull/23709">#23709</a>、<a href="https://github.com/netdata/netdata/pull/23717">#23717</a>、
+<a href="https://github.com/netdata/netdata/pull/23723">#23723</a>、<a href="https://github.com/netdata/netdata/pull/23753">#23753</a>、
+<a href="https://github.com/netdata/netdata/pull/23791">#23791</a>、<a href="https://github.com/netdata/netdata/pull/23794">#23794</a>、
+<a href="https://github.com/netdata/netdata/pull/23797">#23797</a>、<a href="https://github.com/netdata/netdata/pull/23798">#23798</a>、
+<a href="https://github.com/netdata/netdata/pull/23800">#23800</a>、<a href="https://github.com/netdata/netdata/pull/23806">#23806</a>、
+<a href="https://github.com/netdata/netdata/pull/23808">#23808</a>、<a href="https://github.com/netdata/netdata/pull/23821">#23821</a>、
+<a href="https://github.com/netdata/netdata/pull/23827">#23827</a>)</p>
+<h3>新しいコレクター: S3 オブジェクト ストレージと SMBIOS メモリ &lt;a id=&quot;v2120-highlight-new-collectors&quot;&gt;&lt;/a&gt;</h3>
+<p><strong>S3 互換オブジェクト ストレージ (<code>go.d/s3check</code>)</strong> は、ユーザーが体験する方法でオブジェクト ストレージを監視します。
+サーバー側の統計ではなくチェックを行います。各ジョブは 3 つのモードのいずれかを実行します。 <code>lifecycle</code> モードでは、小さなプローブを書き込みます
+オブジェクトを読み戻してその内容を検証し、リストにあることを確認し、削除して消えていることを確認します。
+ステップ - AWS S3、Ceph RGW、または任意の S3 互換エンドポイントに対して、可用性とレイテンシーがエンドツーエンドで測定されます。両方
+レプリケーション モードは、収集サイクル全体でソースで書き込み、宛先での伝播を確認します。
+<code>ceph_multisite</code> は、オブジェクトがいつそこに表示され、その後提供が停止されるかを測定します。<code>aws_replication</code> は、オブジェクトがいつそこに表示され、その後提供されなくなるかを測定します。
+新しいオブジェクトのバージョンが伝播され、その後、バージョン管理されたバケット内でその削除マーカーが伝播され、レプリケーション ラグが発生します。
+仮定ではなく測定された数値です。</p>
+<p><strong>SMBIOS メモリ (<code>go.d/smbios_memory</code>)</strong> は、ファームウェアが SMBIOS を通じて公開する物理メモリ インベントリを読み取ります。
+— すべてのメモリデバイス、そのサイズ、タイプ、速度、製造元、およびロケーター — そしてそれを許容されるベースラインと比較します。あ
+スロットはバンクとデバイス ロケーターによって識別されるため、すべてのバンクで「DIMM 0」のような名前を再利用するボードは
+正しく比較しました。 DIMM が報告されなくなったり、以前よりも小さくなって再び表示されると、コレクターは
+メモリ損失アラートとそのメモリ インベントリ機能により、影響を受けるスロットが特定されます。これがなければ、変更が行われない可能性があります。
+キャパシティプランニングが行われるまで気付かれない。 SMBIOS はブート時のファームウェア データであるため、これはインベントリの変更を報告します。
+ライブ DIMM 障害や使用可能な RAM の測定ではありません。</p>
+<p>(<a href="https://github.com/netdata/netdata/pull/23669">#23669</a>、<a href="https://github.com/netdata/netdata/pull/23731">#23731</a>、
+<a href="https://github.com/netdata/netdata/pull/23965">#23965</a>、<a href="https://github.com/netdata/netdata/pull/24043">#24043</a>)</p>
+<h3>Ceph、Prometheus の補完として再加工 &lt;a id=&quot;v2120-highlight-ceph&quot;&gt;&lt;/a&gt;</h3>
+<p>Ceph モニタリングは、スタンドアロン コレクタから <strong>Prometheus コレクタを補完するもの</strong>に作り直されました。セフはすでに
+マネージャー モジュールを通じて包括的な Prometheus エンドポイントを公開します。そのサーフェスを再実装するのではなく、ストック
+Prometheus プロファイルがこれをカバーするようになりましたが、<code>go.d/ceph</code> はエンドポイントの動作について Ceph ダッシュボード API にクエリを続けます
+ヘルスチェック、OSD およびデーモンインベントリ、プールポリシーのためのオンデマンド機能を含む、提供されていません。</p>
+<p>再作業と並行して、コレクターは go.d <strong>フレームワーク v2</strong> に移行され、第 1 フェーズのモニタリングとストックが取得されました。
+アラート カバレッジ、プロファイル チャートをオペレーターの優先順位順に並べ、<strong>Ceph Tentacle</strong> のサポートを追加しました。
+ハードウェアと PG の再構築メトリクス。ドキュメントの例と Prometheus の有効期限に関するガイダンスが一致するように修正されました。</p>
+<p>より広範に、Prometheus コレクターの在庫プロファイルの範囲が、生成されたドキュメントとして公開されるようになりました。
+プロファイル メトリックはグループ化されたテーブルとしてレンダリングされ、アプリケーション プロファイル ファミリはフラット化されます。</p>
+<p>(<a href="https://github.com/netdata/netdata/pull/23357">#23357</a>、<a href="https://github.com/netdata/netdata/pull/23462">#23462</a>、
+<a href="https://github.com/netdata/netdata/pull/23524">#23524</a>、<a href="https://github.com/netdata/netdata/pull/23551">#23551</a>、
+<a href="https://github.com/netdata/netdata/pull/23599">#23599</a>、<a href="https://github.com/netdata/netdata/pull/23601">#23601</a>、
+<a href="https://github.com/netdata/netdata/pull/23606">#23606</a>、<a href="https://github.com/netdata/netdata/pull/23607">#23607</a>、
+<a href="https://github.com/netdata/netdata/pull/23616">#23616</a>)</p>
+<h3>Windows: Hyper-V、RDP、および広範な対応範囲&lt;a id=&quot;v2120-highlight-windows&quot;&gt;&lt;/a&gt;</h3>
+<p>Windows 監視は引き続き拡大しました。</p>
+<ul>
+<li><code>windows.plugin</code> での <strong>Hyper-V</strong> モニタリング: 集約された VM 健全性カウント、VM ごとのメモリとパフォーマンス、
+ルートパーティションの仮想化メトリクス。</li>
+<li><strong>リモート デスクトップ サービス セッション</strong>: Windows が提供するリモート アクセス パスの、アクティブなセッションと非アクティブなセッションを集約します。
+実際に艦隊が運行しています。</li>
+<li><strong>CPU チャート</strong> が Windows プラグインに追加され、<code>exclude space metrics on paths</code> 設定が選択されたままになります
+ボリュームがディスク容量グラフから外れています。</li>
+<li><strong>クラスター共有ボリュームとフォルダー マウント ボリューム</strong> は、マウント パスでディスク容量グラフを取得できるようになりました。
+ファイルシステム、シリアル番号、読み取り専用、ドライブタイプ、マウントパスラベル。これらのボリュームの一部が欠落していました
+パフォーマンスカウンターの結果。マウント ポイントの検出とスペース クエリはタイムアウト付きでワーカー スレッド上で実行され、
+メインの収集パスからボリューム クエリがブロックされました。</li>
+<li><strong>ネットワーク接続トポロジ</strong> (<code>topology:network-connections</code>) が Windows 上で動作するようになり、ネットワーク ビューアが
+Windows ホスト。</li>
+<li><strong>Windows でのより明確な OS ラベル</strong>: OS 名が「Microsoft Windows」として報告され、新しいホスト ラベルが表示されるようになりました。
+(<code>_os_marketing_version</code>、<code>_os_release</code>、<code>_os_edition</code>、<code>_os_build</code>) Windows ノードをバージョン、リリースでフィルタリングします
+またはエディション。 <code>_os_version</code> は、互換性のために既存の表示値を保持します。</li>
+<li>Windows アラート、Microsoft プラットフォームでの要求、および MSI インストーラーの詳細ログを修正しました。
+クレームトークンが含まれています。</li>
+</ul>
+<p>(<a href="https://github.com/netdata/netdata/pull/22119">#22119</a>、<a href="https://github.com/netdata/netdata/pull/23453">#23453</a>、
+<a href="https://github.com/netdata/netdata/pull/23547">#23547</a>、<a href="https://github.com/netdata/netdata/pull/23549">#23549</a>、
+<a href="https://github.com/netdata/netdata/pull/23559">#23559</a>、<a href="https://github.com/netdata/netdata/pull/23562">#23562</a>、
+<a href="https://github.com/netdata/netdata/pull/23660">#23660</a>、<a href="https://github.com/netdata/netdata/pull/23719">#23719</a>、
+<a href="https://github.com/netdata/netdata/pull/23720">#23720</a>、<a href="https://github.com/netdata/netdata/pull/23735">#23735</a>)</p>
+<h3>go.d &lt;a id=&quot;v2120-highlight-secrets&quot;&gt;&lt;/a&gt; でのシークレットと権限の強化</h3>
+<p>go.d コレクターは、ファイルおよび外部コマンドから資格情報を解決できます。このリリースでは体系的に削除されます。
+これらのパスからの昇格された権限:</p>
+<ul>
+<li><strong>ファイル シークレットは昇格された特権なしで読み取られます</strong>。設定された資格情報ファイルの読み取りにより、事前に権限が削除されます。
+ファイルに触れています。</li>
+<li><strong>コマンド シークレット プロバイダーは、エージェントの仲介実行ヘルパーである <code>nd-run</code></strong> を通じて実行され、ワンショットで実現されます。
+まさにこれをサポートするための、特権のないファイル操作とオプトイン環境の保存。</li>
+<li>**検出されたジョブ内のシークレット参照は、参照が
+オペレータが作成した検出ルールのため、検出されたターゲットは、エージェントに代わってシークレットを逆参照させることはできません。
+trust が <code>trust_discovered_targets: yes</code> でオプトインできるサービス検出パイプライン。</li>
+</ul>
+<p>秘密解決の実行権限と SNMP スキャンの露出面は、文書化されるのではなく文書化されるようになりました。
+暗示的に。</p>
+<p>(<a href="https://github.com/netdata/netdata/pull/23865">#23865</a>、<a href="https://github.com/netdata/netdata/pull/23868">#23868</a>、
+<a href="https://github.com/netdata/netdata/pull/23879">#23879</a>、<a href="https://github.com/netdata/netdata/pull/23884">#23884</a>、
+<a href="https://github.com/netdata/netdata/pull/23887">#23887</a>、<a href="https://github.com/netdata/netdata/pull/23916">#23916</a>、
+<a href="https://github.com/netdata/netdata/pull/23918">#23918</a>、<a href="https://github.com/netdata/netdata/pull/23923">#23923</a>)</p>
+<h3>クエリ エンジン: 重みの正確さと高速化&lt;a id=&quot;v2120-highlight-queries&quot;&gt;&lt;/a&gt;</h3>
+<p>クエリ エンジン上の専用の正確性パスにより、クエリ値、フラグ、タイムスタンプに対して 6 つの独立した修正が行われました。
+クエリが一見もっともらしいが間違った答えを返した場合:</p>
+<ul>
+<li>格納されたポイントが 2 つの結果行またはストレージ層の境界にまたがる場合、<code>sum</code> の結果は正確なままです。</li>
+<li>結果バケットが最初のサンプルのみを保持する場合、増分合計クエリはベースラインを維持します。</li>
+<li>クエリがデータを 2 つのパスにグループ化する場合、異常率の寄与者数は正しいままです。</li>
+<li><code>absolute</code> オプションはストレージ層スイッチに適用されるため、負の値がすり抜けることはできなくなります。</li>
+<li>カウンタのリセットと異常フラグは、隣接するものではなく、保存されたサンプルを保持する結果行に起因します。
+その値を再利用または補間する行。</li>
+<li>明示的および相対的なシングルポイント <code>latest</code> ウィンドウは、代わりに要求されたウィンドウから結果のタイムスタンプを取得します。
+保持端からの。 <code>before=0</code> は引き続きデータベースの終了を要求します。</li>
+</ul>
+<p>これらは、新しい <strong>階層化されたブラックボックス クエリ コントラクト コーパス</strong>によって発見され、固定されました。クエリがどのようなものであるかを示すテストです。
+エンジンの計算方法とは関係なく、返さなければなりません。</p>
+<p>重み (メトリック相関) クエリも 2 つの正確性修正を受けました。 v1 重みまたは <code>metric_correlations</code> リクエスト
+特定のホストがそのホストのメトリクスをスコアリングするようになりました。 URL で選択されたホストを削除するために使用される逆の条件。
+平均異常率スコアリングでは、欠落したサンプルを除外するのではなくゼロとしてカウントするようになりました。
+ほとんど空のウィンドウ内の異常なサンプルは、全体的に異常なメトリクスの次に 100% のスコアを獲得しなくなりました。</p>
+<p>パフォーマンスの面では、重みエンドポイントはクエリ アリーナと KS2 比較オーバーヘッドを再利用します。
+モノトニックカーソルで削減されました。ランク付けされた重み応答は、すべての API 形式と API にわたる制限をサポートするようになりました。
+最大 1 MiB の HTTP リクエストを受け入れます。</p>
+<p>(<a href="https://github.com/netdata/netdata/pull/23130">#23130</a>、<a href="https://github.com/netdata/netdata/pull/23503">#23503</a>、
+<a href="https://github.com/netdata/netdata/pull/23504">#23504</a>、<a href="https://github.com/netdata/netdata/pull/23505">#23505</a>、
+<a href="https://github.com/netdata/netdata/pull/23507">#23507</a>、<a href="https://github.com/netdata/netdata/pull/23508">#23508</a>、
+<a href="https://github.com/netdata/netdata/pull/23512">#23512</a>、<a href="https://github.com/netdata/netdata/pull/23744">#23744</a>、
+<a href="https://github.com/netdata/netdata/pull/23759">#23759</a>、<a href="https://github.com/netdata/netdata/pull/23777">#23777</a>、
+<a href="https://github.com/netdata/netdata/pull/23779">#23779</a>、<a href="https://github.com/netdata/netdata/pull/24080">#24080</a>、
+<a href="https://github.com/netdata/netdata/pull/24081">#24081</a>)</p>
+<h3>エージェントの安定性: dbengine、SQLite、ACLK、ML &lt;a id=&quot;v2120-highlight-stability&quot;&gt;&lt;/a&gt;</h3>
+<p>長期にわたる安定化作業により、クラッシュ、ハング、リーク、シャットダウン レースが阻止されました。そのほとんどは、最初にユーザーに届きました。
+<strong>2.11.1</strong> パッチ リリースはここに統合されています。</p>
+<p><strong>dbengine</strong> — エクステントの書き込みを待機するフラッシュ ワーカーとシャットダウン ワーカーが制限されるようになったので、次のことはできなくなります。
+それ自体が libuv ワーカー プールを使い果たし、エージェントをハングさせます (最も顕著なのはシャットダウン時です)。マージされたエクステント クエリのティアダウンは次のとおりです
+同期およびマージされたページ参照は公開前に取得されます (どちらも解放後の使用ウィンドウでした)。
+フラッシュ バッチ カウンターのリークが修正され、ネガティブ層保持レポートが修正され、有効なロング ページ ケイデンスが修正されました。
+受け入れられ、ジャーナル ファイル内の古い MRG メトリックの二重解放が修正され、PGC キャッシュの致命的なメッセージには完全なメッセージが含まれるようになりました。
+ページのアイデンティティ。</p>
+<p><strong>SQLite と健全性</strong> - ステートメント準備エラーとともに、エージェントのシャットダウン中の SQLite ライフタイム レースが修正されました。
+<code>sqlite_health</code> をチェックインし、未使用の <code>health_log_detail</code> インデックスが削除され、アラートは再初期化されなくなりました。
+グラフは変更されず、発生したアラートの概要は通知用に遅延して入力され、アラートは名前によってインデックス付けされます。
+変数の検索が高速化されます。</p>
+<p><strong>ACLK</strong> - TLS ホスト名と IP 検証が HTTPS リクエストに追加され、ホストのティアダウンはキューに入れられたコマンドに対して安全です。
+接続セットアップ中にシャットダウンが無制限に待機することがなくなり、MQTT PUBACK タイムアウトが個別に報告され、保存されます。
+オフライン中は、放棄された自己署名証明書は検証の失敗として報告されなくなり、アラートの移行が行われます。
+前のアラートの実行中にキューに入れられたアラートは、クラウド アラート キューからドロップされなくなりました。</p>
+<p><strong>ストリーミング</strong> — 親は、子がホストするホスト以外のホストに対して子によってストリーミングされる ML モデルを拒否するようになりました。
+子の完全なマシン GUID として認証され、それを保存する前に検証して、1 バイトのバッファ オーバーランを防ぎます。
+再接続時の誤った重複拒否。子に対するホスト ラベルの変更は、すべての親に影響を与えることなく反映されるようになりました。
+再接続 (<a href="https://github.com/netdata/netdata/pull/23988">#23988</a>、
+<a href="https://github.com/netdata/netdata/pull/23991">#23991</a>、<a href="https://github.com/netdata/netdata/pull/24015">#24015</a>)。</p>
+<p><strong>プラグイン</strong> — <code>apps.plugin</code> および <code>freeipmi.plugin</code> は、関数の応答をチャートの更新とは別に保持するようになりました。
+オーバーラップによってメトリクスが誤って割り当てられたり、プラグインが無効になったりすることがなくなりました (<a href="https://github.com/netdata/netdata/pull/24050">#24050</a>、
+<a href="https://github.com/netdata/netdata/pull/24052">#24052</a>)。によって共有される Function イベント ループ内の use-after-free
+いくつかの C プラグインは、rapid 関数呼び出しでプラグインをクラッシュさせる可能性がありました。キューイング スレッドはそれぞれのへの参照を保持するようになりました。
+ジョブは、それを使用する限り継続されます (<a href="https://github.com/netdata/netdata/pull/24071">#24071</a>)。</p>
+<p><strong>メモリとライフサイクル</strong> — ML ワーカー キューの破棄はコレクタが停止するまで延期され、ML メモリの使用量が削減されました。
+遅延モデル割り当て、glibc <code>mallinfo2</code> パルス オーバーヘッドが削減され、重複排除が行われる前に KSM サポートがプローブされます。
+有効化、UUID マップの作成/解放チャーンがメトリック ルックアップから削除され、廃止されたチャート リーパーは解放されなくなりました
+参照チャートと、再入可能な削除コールバックでの辞書 GC 使用後の解放が修正されました。デフォルトのビルド (なし)
+mimalloc)、ML メモリ ラインは、エージェントのグローバル <code>new</code> を通じて、ML によって支配されるすべての C++ 割り当てを追跡するようになりました。
+<code>delete</code> 演算子 (アライメント割り当てやクロススレッド解放など) (プラットフォームが適切なアロケーター ブロック サイズで)
+それらを報告します。合計がゼロ未満になる空きは、<code>netdata.ml_memory_ops</code> の <code>unmatched_free</code> としてカウントされます。
+(<a href="https://github.com/netdata/netdata/pull/22477">#22477</a>)。</p>
+<h3>Netdata Cloud: インフラストラクチャの知識、ノードの廃止、AI に関する会話&lt;a id=&quot;v2120-highlight-cloud&quot;&gt;&lt;/a&gt;</h3>
+<blockquote>
+<p>[!NOTE]
+Netdata Cloud は、エージェントのリリース周期ではなく継続的に出荷されます。このセクションでは、クラウドの変更点について説明します。
+v2.11.0 以降出荷されています。 Netdata Cloud を使用している場合、それらはすでに存在します。エージェントのアップグレードが必要なものはありません。</p>
+</blockquote>
+<p><strong>インフラストラクチャの知識。</strong> Netdata AI は、インフラストラクチャの「動作*」、つまりあらゆるメトリクス、異常、アラートを確認します。それ
+インフラストラクチャが * 何か * がわかりません: どのサービスが重要か、どのホストがホットで実行されるべきか、チームは何であるか
+普通だと考えます。 <a href="https://learn.netdata.cloud/docs/netdata-ai/infrastructure-knowledge">インフラストラクチャの知識</a>
+そのコンテキストは、<strong>「スペースの管理」→「インフラストラクチャー・ナレッジ」</strong> の 2 つのタブにある場所にあります。</p>
+<ul>
+<li><strong>あなたのコンテキスト</strong> — スペースごとに 1 つの共有マークダウン ドキュメント。インフラストラクチャ概要のセクション テンプレートが含まれます。
+サービス層、既知の動作、SLO とビジネス コンテキスト、チームの好み、今後のイベント、アーキテクチャに関するメモ。
+保存するたびに、比較および復元できるバージョンが保持され、Netdata AI は要求に応じてドキュメントを更新できます。
+会話。</li>
+<li><strong>AI メモリ</strong> — Netdata AI は、作業中に学習する単一の事実、たとえば <em>「02:00 のディスク スパイクが発生したことを覚えておいてください」
+バックアップ-01 が期待されています」</em>。記録がいつ行われるかを通知し、タブを使用して記録を読み取り、削除、またはクリアできます。</li>
+</ul>
+<p>どちらも、あらゆる会話、調査、報告の前に読まれます。 Netdata AI はテレメトリを解釈するためにそれらを使用しますが、決してそれを解釈することはありません
+オーバーライド: コンテキストが結論を変えるとその旨が表示され、コンテキストとデータが一致しない場合はその旨が表示されます。
+どちらかの側を選ぶのではなく。 <a href="https://www.netdata.cloud/blog/infrastructure-knowledge/">インフラストラクチャ ナレッジ ブログ投稿</a> を参照してください。
+ウォークスルーのために。</p>
+<blockquote>
+<p>[!重要]
+インフラストラクチャ ナレッジは、有料の Netdata Cloud プランで利用できます。スペース管理者、マネージャー、トラブルシューティング担当者は、次のことができます。
+編集してください。観察者はそれを見ることができます。</p>
+</blockquote>
+<p><strong>ノードの廃止。</strong> 廃止されるノードに廃止のマークを付けることができるようになり、ノードの生成が停止されます。
+通知を削除したり、エージェント接続を変更したりせずに、終了中に通知を受け取ることができます。 <strong>スペース設定で
+→ ノード</strong>、単一ノードまたは一括選択を切り替えます。変更はいつでも元に戻すことができます。廃止されたノードは、
+[ノード] ページと単一ノード ページでフラグが付けられます。これらは切り替えることもでき、[ノード] ページではグループ化できます。
+委託状態。廃止するには、ノードの削除と同じ権限が必要です。参照
+<a href="https://learn.netdata.cloud/docs/netdata-cloud/remove-agent#node-decommissioning">ノードの廃止</a>。</p>
+<p><strong>AI 会話のアップグレード。</strong> Netdata AI 会話はより耐久性があり、より透明になりました。</p>
+<ul>
+<li><strong>会話はタブを閉じても保持されます。</strong> 各ターンはブラウザとは関係なく、サーバー上で保存および処理されます。
+接続が確立されるため、タブを閉じたり接続を失ったりしても、回答が失われることはなくなりました。 <strong>停止</strong> で生成がキャンセルされるようになりました
+サーバーに送信され、成功した回答のみに料金が請求されます。</li>
+<li><strong>長い会話が続きます。</strong> 会話がモデルのコンテキスト制限に近づくと、最も古いターンが
+それ以降すべてのターンが失敗するのではなく、要約され、最新の内容がそのまま保たれます。</li>
+<li><strong>目に見える推論。</strong> モデルの思考は動作中に会話に流れ込みますが、デフォルトでは折りたたまれており、
+かかった時間のラベルが付いています。</li>
+<li><strong>より明確なコンテキスト。</strong> 各メッセージには、一緒に送信されたコンテキストが表示されます。会話はグラフから始まります。
+ハイライトはその時間範囲を維持し、独自のメッセージはマークダウンとしてレンダリングされ、ツール呼び出しの長い実行は後ろで折りたたまれます。
+拡張可能な「N 個以上のツール」コントロール。</li>
+</ul>
+<p><strong>トレース、早期アクセス版。</strong> OpenTelemetry トレース v2.12.0 エージェントを探索するための新しい <strong>トレース</strong> タブがあります。
+集める。サイドバーの <strong>早期アクセス</strong> からスイッチをオンにして、試してみてください — 詳細については、
+<a href="#v2120-highlight-otel-traces">OpenTelemetry トレース、早期アクセス</a>。</p>
+<h3>プラットフォーム サポートの変更&lt;a id=&quot;v2120-highlight-platforms&quot;&gt;&lt;/a&gt;</h3>
+<p>v2.11.0 release note で発表されたように、<strong>v2.12.0 は RHEL 7.x、CentOS 7.x、Amazon 用のネイティブ パッケージを出荷しなくなりました。
+Linux 2 および互換プラットフォーム。</strong> RHEL 7.x は 2024 年 6 月 30 日に標準メンテナンスの終了に達し、弊社のサポートも終了しました。
+サポートを継続中の顧客のために意図的に遅らせた。 Amazon Linux 2 は 2026 年 6 月 30 日にサポート終了となりました。静的
+ビルドが推奨される置き換えであり、新規インストールでは自動的にビルドに切り替わります。</p>
+<p>さらに 2 つのプラットフォームも同じ原則に基づいて廃止されました。<strong>Debian 11</strong> (アップストリーム LTS は 2026 年 8 月 31 日に終了しました)
+<strong>Ubuntu 25.10</strong> は、2026 年 7 月 9 日にサポートが終了しました。</p>
+<p>ビルド側では、<code>zstd</code> が有効な場合、ソースベースのインストールと更新で zstd 圧縮されたソース アーカイブが取得されるようになりました。
+利用可能です (gzip よりも約 30% 小さいです)。また、<code>kickstart.sh</code> は、次の場合にソース アーカイブの検証をスキップしなくなりました。
+特定のバージョンを求められました。夜間および安定リリースのアーティファクトは、Cloudflare R2 バケットにも公開されるようになりました。
+ビルド システムはリリース候補バージョンを処理するため、サポートされていないインストールを更新しようとすると致命的になります。
+黙って何もしないよりも<code>kickstart.sh</code>。</p>
+<p>(<a href="https://github.com/netdata/netdata/pull/22440">#22440</a>、<a href="https://github.com/netdata/netdata/pull/22930">#22930</a>、<a href="https://github.com/netdata/netdata/pull/22931">#22931</a>、
+<a href="https://github.com/netdata/netdata/pull/23211">#23211</a>、<a href="https://github.com/netdata/netdata/pull/23253">#23253</a>、
+<a href="https://github.com/netdata/netdata/pull/23712">#23712</a>、<a href="https://github.com/netdata/netdata/pull/23813">#23813</a>、
+<a href="https://github.com/netdata/netdata/pull/24013">#24013</a>)</p>
+<h2>謝辞 &lt;a id=&quot;v2120-acknowledgments&quot;&gt;&lt;/a&gt;</h2>
+<p>この素晴らしいコミュニティを構成する献身的で才能ある貢献者に感謝したいと思います。時間と専門知識
+皆様のボランティア活動が私たちの成功に不可欠です。</p>
+<ul>
+<li><a href="https://github.com/macmandr197">@macmandr197</a> PAN-OS コレクターがアドバンスト サーバー上の BGP ピアを収集できるようにするため
+ルーティング エンジン。</li>
+<li><a href="https://github.com/esafak">@esafak</a> <code>clickhouse.replicas_max_absolute_delay</code> アラートのタイプミスを修正してください。</li>
+<li><a href="https://github.com/methanoya">@methanoya</a> が共有する Function イベント ループ内の use-after-free を見つけて修正してくださいました。
+外部プラグイン。</li>
+</ul>
+&lt;!-- コミュニティの貢献者は、v2.10.0 および v2.11.0 と同じ方法で決定されました。つまり、
+     範囲は PR を通じて GitHub ログインに解決され、各ログインは `orgs/netdata/members/&lt;login&gt;` に対してテストされました。
+     したがって、Netdata 組織のメンバーは除外されます (ilyam8、ktsaou、stelfrag、thiagoftsm、vkalintiris、Ferroin、
+シャムヴァルサン、ジュアッカー、パパザック、ノヴィク、ウィタリソフト、コスタサポストロプロス、ネットデータボット）。 @Copilot は 3 つの PR を作成しましたが、
+     は AI コーディング エージェントであるため、v2.10.0 および v2.11.0 の処理方法と一致して、貢献のみにインラインでクレジットされます。
+     それ。 --&gt;
+<h2>貢献 &lt;a id=&quot;v2120-contributions&quot;&gt;&lt;/a&gt;</h2>
+<h3>コレクター &lt;a id=&quot;v2120-contributions-collectors&quot;&gt;&lt;/a&gt;</h3>
+<p>&lt;詳細を開く&gt;</p>
+&lt;summary&gt;&lt;b&gt;新しいコレクターとプラグイン&lt;/b&gt;&lt;/summary&gt;
+<ul>
+<li>ベースボード管理コントローラーの DMTF Redfish API を介したサーバー ハードウェアの Redfish モニタリングを追加しました。センサーおよびハードウェア インベントリ機能、センサーごとの独立したしきい値の健全性、オンデマンドの BMC ログ ビューア、強化されたハードウェアの詳細、およびオペレーター向けの統合ページを備えています。その後、コレクターは <code>gofish</code> ライブラリ上で単純化され、エンドポイントの取得、測定値の変換、チャート テンプレートが分離されました (go.d/redfish)。 (<a href="https://github.com/netdata/netdata/pull/23343">#23343</a>、<a href="https://github.com/netdata/netdata/pull/23909">#23909</a>、<a href="https://github.com/netdata/netdata/pull/23912">#23912</a>、<a href="https://github.com/netdata/netdata/pull/23915">#23915</a>、<a href="https://github.com/netdata/netdata/pull/23922">#23922</a>、<a href="https://github.com/netdata/netdata/pull/23926">#23926</a>、 <a href="https://github.com/netdata/netdata/pull/23929">#23929</a>、<a href="https://github.com/netdata/netdata/pull/23933">#23933</a>、<a href="https://github.com/netdata/netdata/pull/23938">#23938</a>、<a href="https://github.com/netdata/netdata/pull/23943">#23943</a>、<a href="https://github.com/netdata/netdata/pull/23949">#23949</a>、<a href="https://github.com/netdata/netdata/pull/23950">#23950</a>、 <a href="https://github.com/netdata/netdata/pull/23957">#23957</a>、<a href="https://github.com/netdata/netdata/pull/23962">#23962</a>、<a href="https://github.com/ktsaou">@ktsaou</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>アクティブな書き込み/読み取り/リスト/削除プローブ チェックとクロスサイト レプリケーション タイミングを備えた S3 互換のオブジェクト ストレージ監視を追加し、より安全かつ明確な操作のために再設計されました (go.d/s3check)。 (<a href="https://github.com/netdata/netdata/pull/23669">#23669</a>、<a href="https://github.com/netdata/netdata/pull/23731">#23731</a>、<a href="https://github.com/ktsaou">@ktsaou</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>受け入れられたベースラインに対する永続的なメモリ損失検出による SMBIOS メモリ インベントリの監視を追加し、バンクとデバイス ロケータ (go.d/smbios_memory) によって各スロットを識別します。 (<a href="https://github.com/netdata/netdata/pull/23965">#23965</a>、<a href="https://github.com/netdata/netdata/pull/24043">#24043</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>OpenTelemetry トレース インジェスト、トレース対応の列型ストレージ (スパン エクストラ、トレース行インデックス、ブルーム フィルター、スパンの組み合わせとロールアップ)、および <code>otel-traces</code> クエリ関数が追加されました。各トレースのスパンをサービスごとに分類する関数検索ビュー、埋め込みウィンドウ集計、およびページの選択によってフィルターされた概要ヒートマップが含まれます。リモート ストレージを有効にすると、トレース クエリはログと共有されるキャッシュを通じてローカルに削除されたファイルを読み取り、明示的な種類やステータスのないスパンには OpenTelemetry のデフォルトの <code>UNSPECIFIED</code> および <code>UNSET</code> が格納されるため、<code>status != ERROR</code> などのフィルターがそれらに到達します (otel-plugin、otel-ledger、sfst)。 (<a href="https://github.com/netdata/netdata/pull/23479">#23479</a>、<a href="https://github.com/netdata/netdata/pull/23738">#23738</a>、<a href="https://github.com/netdata/netdata/pull/23739">#23739</a>、<a href="https://github.com/netdata/netdata/pull/23905">#23905</a>、<a href="https://github.com/netdata/netdata/pull/24088">#24088</a>、<a href="https://github.com/vkalintiris">@vkalintiris</a>、 <a href="https://github.com/novykh">@novykh</a>)</li>
+<li>Hyper-V 監視 (VM の健全性の集約、VM ごとのメモリとパフォーマンス、ルート パーティションの仮想化メトリック) とリモート デスクトップ サービス セッションの監視を Windows プラグイン (windows.plugin) に追加しました。 (<a href="https://github.com/netdata/netdata/pull/22119">#22119</a>、<a href="https://github.com/netdata/netdata/pull/23719">#23719</a>、<a href="https://github.com/thiagoftsm">@thiagoftsm</a>)</li>
+</ul>
+<p>&lt;/詳細&gt;</p>
+<p>&lt;詳細を開く&gt;</p>
+&lt;summary&gt;&lt;b&gt;SNMP とネットワーク トポロジ&lt;/b&gt;&lt;/summary&gt;
+- 完全な SNMP トポロジ診断レイヤーを追加しました。ウォークごとのタイミングと準備の診断、プロファイル コンテキストと障害の詳細、トポロジ ソースと処理の診断、デバイスごとの繰り返し診断、限定された保持された証拠、保持されたトポロジ取得履歴、およびトポロジ収集が成功したかどうかに関係なく公開されました (go.d/snmp、go.d/snmp_topology)。 ([#23665](https://github.com/netdata/netdata/pull/23665)、[#23667](https://github.com/netdata/netdata/pull/23667)、[#23753](https://github.com/netdata/netdata/pull/23753)、[#23791](https://github.com/netdata/netdata/pull/23791)、[#23794](https://github.com/netdata/netdata/pull/23794)、[#23797](https://github.com/netdata/netdata/pull/23797)、 [#23798](https://github.com/netdata/netdata/pull/23798)、[#23800](https://github.com/netdata/netdata/pull/23800)、[#23806](https://github.com/netdata/netdata/pull/23806)、[@ilyam8](https://github.com/ilyam8))
+- ポータブル トポロジ診断アーカイブ、アーカイブ診断ツール、オフライン診断検査、気密トポロジ グラフ再生、再生インデックスによるリンク検査、サポート バンドル統合、サポート バンドルからの直接診断の検査 (go.d/snmp、go.d/snmp_topology) を追加しました。 ([#23670](https://github.com/netdata/netdata/pull/23670)、[#23675](https://github.com/netdata/netdata/pull/23675)、[#23680](https://github.com/netdata/netdata/pull/23680)、[#23682](https://github.com/netdata/netdata/pull/23682)、[#23709](https://github.com/netdata/netdata/pull/23709)、[#23716](https://github.com/netdata/netdata/pull/23716)、 [#23808](https://github.com/netdata/netdata/pull/23808)、[#23827](https://github.com/netdata/netdata/pull/23827)、[@ilyam8](https://github.com/ilyam8))
+- SNMP カバレッジを 272 から 286 プロファイルに拡張: PAN-OS 用 LLDP-V2 トポロジ、Meraki 製品 L2 トポロジ プロファイル、`IpAddressTable` サポート、MikroTik SwOS およびハードウェア プロファイル、Ubiquiti net-snmp プロファイル、標準 MIB ビルディング ブロック上の再利用可能なトポロジ ロール プロファイル (クラシック ブリッジ、qブリッジ、STP、L3 ネイバー)。システム スカラーは GET リクエストでクエリされるようになり、プロファイル定義がクリーンアップされました (go.d/snmp、go.d/snmp_topology)。 ([#23717](https://github.com/netdata/netdata/pull/23717)、[#23723](https://github.com/netdata/netdata/pull/23723)、[#23724](https://github.com/netdata/netdata/pull/23724)、[#23807](https://github.com/netdata/netdata/pull/23807)、[#23821](https://github.com/netdata/netdata/pull/23821)、[@ilyam8](https://github.com/ilyam8))
+- FDB 推論トポロジをデフォルトで信頼できるようにし、不変トポロジ世代を公開し、あいまいな FDB エイリアス所有者を拒否し、LLDP 管理アドレスをデコードおよび検証し、使用可能な管理 IP を選択し、UniFi トポロジ プロファイルを有効にし、デバイス メタデータを修正し、検出されたすべての管理対象トポロジ デバイスをカウントしました (go.d/snmp、go.d/snmp_topology、go.d/l2topology)。 ([#23536](https://github.com/netdata/netdata/pull/23536)、[#23546](https://github.com/netdata/netdata/pull/23546)、[#23557](https://github.com/netdata/netdata/pull/23557)、[#23561](https://github.com/netdata/netdata/pull/23561)、[#23587](https://github.com/netdata/netdata/pull/23587)、[#23588](https://github.com/netdata/netdata/pull/23588)、 [#23659](https://github.com/netdata/netdata/pull/23659)、[#23678](https://github.com/netdata/netdata/pull/23678)、[#23713](https://github.com/netdata/netdata/pull/23713)、[#23715](https://github.com/netdata/netdata/pull/23715)、[@ilyam8](https://github.com/ilyam8))
+- SNMP デバイスの識別とメトリクスの修正: `sysDescr` から解決され、Ubiquiti として識別された UniFi デバイス、Synology プロファイルの検出とメトリクス、MikroTik ゲージ変換、Aruba ファン ステータス OID、スカラー フォールバック順序、欠落しているプロファイル ID 診断。デバイス ID の取得は再利用可能なコンポーネントに抽出され、このコンポーネントは `OctetString` として提供される有効な数値 `sysObjectID` を受け入れ (一部のプリンターと同様)、使用できない値は存在しないものとして扱われるため、手動プロファイルが適用されます (go.d/snmp)。 ([#23478](https://github.com/netdata/netdata/pull/23478)、[#23525](https://github.com/netdata/netdata/pull/23525)、[#23565](https://github.com/netdata/netdata/pull/23565)、[#23577](https://github.com/netdata/netdata/pull/23577)、[#23594](https://github.com/netdata/netdata/pull/23594)、[#23635](https://github.com/netdata/netdata/pull/23635)、 [#23718](https://github.com/netdata/netdata/pull/23718)、[#23817](https://github.com/netdata/netdata/pull/23817)、[#24031](https://github.com/netdata/netdata/pull/24031)、[@ilyam8](https://github.com/ilyam8))
+- 永続的な SNMP トラブルシューティング データ ワークフロー、一般的なトポロジ応答通知、およびトポロジ検索ラベル、集約メンバーシップ、およびスカラー列 (SNMP、トポロジ) の型付きセット セルの検証を追加しました。 ([#23681](https://github.com/netdata/netdata/pull/23681)、[#23776](https://github.com/netdata/netdata/pull/23776)、[#23788](https://github.com/netdata/netdata/pull/23788)、[#23803](https://github.com/netdata/netdata/pull/23803)、[@ktsaou](https://github.com/ktsaou))
+- Windows でのネットワーク接続トポロジのサポートを追加しました (ネットワーク ビューアー)。 ([#23562](https://github.com/netdata/netdata/pull/23562)、[@ktsaou](https://github.com/ktsaou))
+- PAN-OS Advanced Routing Engine (go.d/panos) 上の BGP ピアを収集しました。 ([#23636](https://github.com/netdata/netdata/pull/23636)、[@macmandr197](https://github.com/macmandr197))
+<p>&lt;/詳細&gt;</p>
+<p>&lt;詳細を開く&gt;</p>
+&lt;summary&gt;&lt;b&gt;改善点&lt;/b&gt;&lt;/summary&gt;
+<ul>
+<li>独立して構成された静的仮想ノードと SNMP バックアップ仮想ノードを追加し、それらを参照するジョブに対して権限のある構成済み vnode メタデータを追加しました。まだ定義されていない vnode を参照する、最初に構成または検出された有効なジョブ、またはまだ ID を取得している SNMP vnode は、<code>autodetection_retry: 0</code> であっても待機して使用可能になると開始されますが、実行中のジョブへの対話型更新は、vnode の準備ができる (go.d) まで拒否されます。 (<a href="https://github.com/netdata/netdata/pull/23820">#23820</a>、<a href="https://github.com/netdata/netdata/pull/23823">#23823</a>、<a href="https://github.com/netdata/netdata/pull/24011">#24011</a>、<a href="https://github.com/netdata/netdata/pull/24024">#24024</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>Prometheus コレクターを補完するものとして Ceph コレクターを再加工し、コレクター フレームワーク v2 に移行し、第 1 フェーズのモニタリングと在庫アラート カバレッジを追加し、オペレーターの優先順位によってプロファイル チャートを並べ替え、Ceph Tentacle ハードウェアと PG 再構築メトリック (go.d/ceph、go.d/prometheus) のサポートを追加しました。 (<a href="https://github.com/netdata/netdata/pull/23357">#23357</a>、<a href="https://github.com/netdata/netdata/pull/23462">#23462</a>、<a href="https://github.com/netdata/netdata/pull/23524">#23524</a>、<a href="https://github.com/netdata/netdata/pull/23551">#23551</a>、<a href="https://github.com/netdata/netdata/pull/23599">#23599</a>、<a href="https://github.com/ktsaou">@ktsaou</a>、 <a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>生成されたドキュメントとして公開されたストック Prometheus プロファイル カバレッジ、グループ化されたテーブルとしてレンダリングされたプロファイル メトリック、およびフラット化されたアプリケーション プロファイル ファミリ (go.d/prometheus)。 (<a href="https://github.com/netdata/netdata/pull/23606">#23606</a>、<a href="https://github.com/netdata/netdata/pull/23607">#23607</a>、<a href="https://github.com/netdata/netdata/pull/23616">#23616</a>、<a href="https://github.com/ktsaou">@ktsaou</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>強化された go.d シークレット解決: ファイル シークレットは昇格された特権なしで読み取られ、設定された資格情報ファイルの読み取りは特権をドロップし、コマンド プロバイダーは <code>nd-run</code> を通じて実行され、検出されたジョブ内のシークレット参照はパイプラインが <code>trust_discovered_targets</code> を設定しない限り未解決のままとなり、アクティブ化の結果は復元されたシークレットの再試行と統合されました (go.d、go.d/secrets)。 (<a href="https://github.com/netdata/netdata/pull/23847">#23847</a>、<a href="https://github.com/netdata/netdata/pull/23865">#23865</a>、<a href="https://github.com/netdata/netdata/pull/23879">#23879</a>、<a href="https://github.com/netdata/netdata/pull/23884">#23884</a>、<a href="https://github.com/netdata/netdata/pull/23916">#23916</a>、<a href="https://github.com/netdata/netdata/pull/23918">#23918</a>、 <a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>レディネス対応コレクタ ランタイム ライフサイクル、V2 チャート用のコレクタ全体の <code>store_first</code>、名前付きアクティブ チャート テンプレート セット、ペイロード対応関数の管理メタデータ、および使用できないスナップショット MeasureSet フィールドのサポートを追加しました。チャート テンプレートの自動生成ルートはキャッシュされ、有効期限が最適化されます。V2 パブリケーション パスは、サイクルあたりの割り当てが大幅に少なくなります。テンプレート セットのチャート ID の衝突はコンパイル順序で解決され、サイレントではなくログに記録されます。コレクターは、<code>Init</code>/<code>Check</code> の失敗を永続的 (再試行されない) または一時的 (go.d、go.d/chartengine、go.d/metrix、go.d/collectorapi) として分類できます。 (<a href="https://github.com/netdata/netdata/pull/23814">#23814</a>、<a href="https://github.com/netdata/netdata/pull/23940">#23940</a>、<a href="https://github.com/netdata/netdata/pull/23971">#23971</a>、<a href="https://github.com/netdata/netdata/pull/23975">#23975</a>、<a href="https://github.com/netdata/netdata/pull/23980">#23980</a>、<a href="https://github.com/netdata/netdata/pull/23982">#23982</a>、 <a href="https://github.com/netdata/netdata/pull/23996">#23996</a>、<a href="https://github.com/netdata/netdata/pull/24002">#24002</a>、<a href="https://github.com/netdata/netdata/pull/24004">#24004</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>実験的な Go StatsD コレクター (既存のシリーズの割り当てなしの取り込みを備えた測定コア、受信機ランタイム、およびプロファイル) を構築し、それを独自の <code>statsd.plugin</code> に移動しました。動的構成フォームを持つ <code>listen</code> モジュールとリスナーなしを有効にするストック <code>statsd/listen.conf</code> を備えています。リスナーは UDP、TCP、またはその両方を使用できます。 <code>protocol</code> を省略すると、両方 (statsd.plugin) が選択されます。 (<a href="https://github.com/netdata/netdata/pull/23987">#23987</a>、<a href="https://github.com/netdata/netdata/pull/23992">#23992</a>、<a href="https://github.com/netdata/netdata/pull/23995">#23995</a>、<a href="https://github.com/netdata/netdata/pull/24016">#24016</a>、<a href="https://github.com/netdata/netdata/pull/24028">#24028</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li><strong>Go StatsD プラグインは v2.12.0 パッケージには同梱されていません</strong>: ソース ビルドには、<code>ENABLE_PLUGIN_STATSD</code> CMake オプションまたは <code>netdata-installer.sh --enable-plugin-statsd</code> (両方ともデフォルトでオフ) が付いている場合にのみ Go StatsD プラグインが含まれており、組み込みの C StatsD サーバーは StatsD パスのままです。プラグインでは、<code>metric_idle_timeout</code> は期間を受け入れ、デフォルトは 30 分ですが、シークレット参照は解決されません。構成内の <code>${...}</code> はリテラルのままです (statsd.plugin)。 (<a href="https://github.com/netdata/netdata/pull/24016">#24016</a>、<a href="https://github.com/netdata/netdata/pull/24028">#24028</a>、<a href="https://github.com/netdata/netdata/pull/24030">#24030</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>ファミリのないチャート テンプレートのルート グループを許可し、チャートの優先順位のデフォルトを継承可能にしました (go/charttpl)。 (<a href="https://github.com/netdata/netdata/pull/23600">#23600</a>、<a href="https://github.com/netdata/netdata/pull/23602">#23602</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>eBPF ディレクトリ キャッシュ アルゴリズムとファイル記述子モニターを Go (ebpf.plugin) に変換しました。 (<a href="https://github.com/netdata/netdata/pull/23451">#23451</a>、<a href="https://github.com/netdata/netdata/pull/23642">#23642</a>、<a href="https://github.com/thiagoftsm">@thiagoftsm</a>)</li>
+<li>Windows プラグインに CPU チャートとディスク フィルタリングを追加し、Windows OS ホスト ラベル (名前、バージョン、リリース、エディション、ビルド) を正規化し、macOS と FreeBSD に <code>system.processes_state</code> チャートを追加しました (windows.plugin、apps.plugin、daemon)。 (<a href="https://github.com/netdata/netdata/pull/23453">#23453</a>、<a href="https://github.com/netdata/netdata/pull/23534">#23534</a>、<a href="https://github.com/netdata/netdata/pull/23549">#23549</a>、<a href="https://github.com/netdata/netdata/pull/23660">#23660</a>、<a href="https://github.com/thiagoftsm">@thiagoftsm</a>、<a href="https://github.com/ktsaou">@ktsaou</a>)</li>
+<li>マウント パスでのクラスター共有ボリュームとフォルダー マウント ボリュームのディスク領域監視を追加しました。ボリューム ラベル、60 秒ごとの rediscovery、一時的に使用できなくなったボリュームがチャートを失うまでの猶予期間、およびキャンセル可能なワーカー スレッド (windows.plugin) での領域クエリを使用します。 (<a href="https://github.com/netdata/netdata/pull/23720">#23720</a>、<a href="https://github.com/thiagoftsm">@thiagoftsm</a>)</li>
+<li>新しい <code>ndexec</code> API 上で、任意の言語のワンショットおよび永続スクリプト、ラベル付きメトリック、ヘルス チェック、パッケージ固有の動的構成フォームおよび関数をサポートする <code>scripts.d</code> 用のネイティブ スクリプト コレクターを開発しました。これは、スクリプトが終了、タイムアウト、またはキャンセルされたときに、そのプロセス グループ内の子孫 (Windows 上のジョブ オブジェクト) とともにスクリプトを終了します。 <strong>コレクターは v2.12.0 には同梱されていません</strong>。コレクターは <code>scripts_native_dev</code> Go ビルド タグでのみ登録され、そのコントラクトはまだ開発中です (scripts.d、ndexec)。 (<a href="https://github.com/netdata/netdata/pull/24075">#24075</a>、<a href="https://github.com/netdata/netdata/pull/24076">#24076</a>、<a href="https://github.com/netdata/netdata/pull/24077">#24077</a>、<a href="https://github.com/netdata/netdata/pull/24078">#24078</a>、<a href="https://github.com/netdata/netdata/pull/24079">#24079</a>、<a href="https://github.com/netdata/netdata/pull/24084">#24084</a>、 <a href="https://github.com/netdata/netdata/pull/24086">#24086</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>MSSQL 監視の改善: 関数のフォールバック、SQL Server と Azure にわたる関数のクエリの強化、デッドロック ターゲットが解決された個別の関数のタイムアウト、デフォルトで除外される無効な SQL エージェント ジョブ、MSSQL 2014 の問題の解決、依存関係インターフェイス (go.d/mssql) の背後で分離された関数。 (<a href="https://github.com/netdata/netdata/pull/23460">#23460</a>、<a href="https://github.com/netdata/netdata/pull/23564">#23564</a>、<a href="https://github.com/netdata/netdata/pull/23645">#23645</a>、<a href="https://github.com/netdata/netdata/pull/23748">#23748</a>、<a href="https://github.com/netdata/netdata/pull/23976">#23976</a>、<a href="https://github.com/netdata/netdata/pull/23978">#23978</a>、 <a href="https://github.com/thiagoftsm">@thiagoftsm</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>集中化されたワンショット タスクのハンドシェイクと抽出された共有再ラベル処理 (go.d)。 (<a href="https://github.com/netdata/netdata/pull/23859">#23859</a>、<a href="https://github.com/netdata/netdata/pull/23985">#23985</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>サポート バンドルの改善: ストリーミング API キー処理、エンコード忠実度、Windows ETW ログと権限。削除された go.d 状態ファイルの収集を停止しました。実際にジャーナルへのアクセスを許可する内容をキャプチャし、オプトイン プラグイン デバッグを追加しました。 Unix スクリプトの保守性と信頼性が向上しました。バンドル スクリプト (support-bundle) を更新しました。 (<a href="https://github.com/netdata/netdata/pull/23452">#23452</a>、<a href="https://github.com/netdata/netdata/pull/23818">#23818</a>、<a href="https://github.com/netdata/netdata/pull/23825">#23825</a>、<a href="https://github.com/netdata/netdata/pull/23894">#23894</a>、<a href="https://github.com/netdata/netdata/pull/23947">#23947</a>、<a href="https://github.com/shyamvalsan">@shyamvalsan</a>、 <a href="https://github.com/ilyam8">@ilyam8</a>、<a href="https://github.com/thiagoftsm">@thiagoftsm</a>)</li>
+</ul>
+<p>&lt;/詳細&gt;</p>
+<p>&lt;詳細を開く&gt;</p>
+&lt;summary&gt;&lt;b&gt;バグ修正&lt;/b&gt;&lt;/summary&gt;
+<ul>
+<li>go.d コレクション ステータス レポートの修正: V2 コレクション ステータスと期間チャートが復元され、関数の失敗がレポートされ、ファイナライザー コンテキストが尊重され、ジョブ スコープの関数メタデータが返され、受け入れられたジョブのアクティベーションが非同期で収束し、シャットダウン エラーがリダクションによって保存され、整列されていないチャート エンジン アトミックが削除され、変更されたチャート定義が期限切れの復活後に再作成されます (go.d、go.d/chartengine、go.d/jobmgr)。 (<a href="https://github.com/netdata/netdata/pull/23540">#23540</a>、<a href="https://github.com/netdata/netdata/pull/23653">#23653</a>、<a href="https://github.com/netdata/netdata/pull/23708">#23708</a>、<a href="https://github.com/netdata/netdata/pull/23858">#23858</a>、<a href="https://github.com/netdata/netdata/pull/23944">#23944</a>、<a href="https://github.com/netdata/netdata/pull/23946">#23946</a>、 <a href="https://github.com/netdata/netdata/pull/23984">#23984</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>go.d ジョブ、サービス検出パイプライン、およびシークレット ストアの動的構成における構成の採用とランタイムのアクティブ化が分離されるため、既に実行されているかどうかではなく、何が採用されたのかが応答に示されます。アクティブ化が必要な変更は通常、<code>202</code> に応答し、構成ステータスを通じて起動の成功または失敗を報告します。拒否された更新は実行中のジョブとその以前の構成をそのまま残し、適用中にキャンセルまたは期限が到来しても適用された変更は削除されなくなり、ジョブのプロセスがリタイアしても検出は消耗し続けます (go.d、 go.d/jobmgr、go.d/secrets)。 (<a href="https://github.com/netdata/netdata/pull/24010">#24010</a>、<a href="https://github.com/netdata/netdata/pull/24011">#24011</a>、<a href="https://github.com/netdata/netdata/pull/24014">#24014</a>、<a href="https://github.com/netdata/netdata/pull/24020">#24020</a>、<a href="https://github.com/netdata/netdata/pull/24023">#24023</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>vnode 名を入力されたとおりに正確に保持し、サイレントに書き換えるのではなく検証し、関数コマンドの引数をバックスラッシュと Unicode 空白のままで構成名の検証に渡し、変更されていない SNMP ライフサイクル状態 (go.d、go.d/snmp) の再公開を停止しました。 (<a href="https://github.com/netdata/netdata/pull/24019">#24019</a>、<a href="https://github.com/netdata/netdata/pull/24024">#24024</a>、<a href="https://github.com/netdata/netdata/pull/24026">#24026</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>UDP リッスン ポートがすでに使用されている場合に、NetFlow プラグインの再起動が永久にループする問題を修正しました。 <code>flows:netflow</code> または任意のチャートをパブリッシュする前に、保存された生のフローからのフロー データの起動再構築と、すべての UDP リスナーのバインドを待機するようになりました。バインドが失敗した場合、または 30 秒に達した再構築スキャンは公開せずに終了します。 Netdata の起動後の最初の起動時に、エージェントは Netdata が再起動されるまでプラグインを無効にします。以前に正常に実行されていた場合、エージェントは再試行し、開始が繰り返し失敗した後に無効にします (netflow-plugin)。 (<a href="https://github.com/netdata/netdata/pull/24029">#24029</a>、<a href="https://github.com/vkalintiris">@vkalintiris</a>)</li>
+<li>関数の応答がチャートの更新と重なったときの <code>apps.plugin</code> と <code>freeipmi.plugin</code> の出力破損を修正しました。重複によりメトリクスが間違ったチャートに配置され、再起動するまでプラグインが無効になる可能性がありました。これは、<code>processes</code> と <code>processes</code> の情報呼び出しが重なったときに Windows ですぐに発生しました。レスポンスでは、チャートと同じ出力ロック (apps.plugin、freeipmi.plugin) が使用されるようになりました。 (<a href="https://github.com/netdata/netdata/pull/24050">#24050</a>、<a href="https://github.com/netdata/netdata/pull/24052">#24052</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>time64 libc を使用した 32 ビット Linux ビルド上の、<code>apps.plugin</code> および <code>cgroups.plugin</code> を含む NetIPC 共有メモリ ルックアップ サーバーでの高いアイドル状態の CPU 使用率を修正しました。その 100 ミリ秒の待機は、即時 (netipc) ではなく、意図したとおりに期限切れになります。 (<a href="https://github.com/netdata/netdata/pull/24049">#24049</a>、<a href="https://github.com/ktsaou">@ktsaou</a>)</li>
+<li><code>go.d/upsd</code> コマンド エラーにおける資格情報の漏洩を修正しました。 (<a href="https://github.com/netdata/netdata/pull/23782">#23782</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li>正規化された <code>smartctl</code> デバイス チャート ID (go.d/smartctl)。 (<a href="https://github.com/netdata/netdata/pull/23529">#23529</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>DCGM GPU チャートのグループ化、単位、ソース選択 (dcgm) を修正しました。 (<a href="https://github.com/netdata/netdata/pull/23785">#23785</a>、<a href="https://github.com/ktsaou">@ktsaou</a>)</li>
+<li>AS/400 コレクター (ibm.d/as400) で int64 を int に変換する前に行数を固定しました。 (<a href="https://github.com/netdata/netdata/pull/23783">#23783</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li>ネットワーク名前空間で繰り返されるソケット収集試行を修正し、ラベル (proc) に隣接する <code>/proc/interrupts</code> カウンターを解析しました。 (<a href="https://github.com/netdata/netdata/pull/23651">#23651</a>、<a href="https://github.com/netdata/netdata/pull/23778">#23778</a>、<a href="https://github.com/stelfrag">@stelfrag</a>、<a href="https://github.com/ktsaou">@ktsaou</a>)</li>
+<li><code>charts.d</code> 無効メッセージ設定ファイル名を修正しました。 (<a href="https://github.com/netdata/netdata/pull/23662">#23662</a>、<a href="https://github.com/Copilot">@Copilot</a>)</li>
+<li>Windows でのアラートと要求の問題を修正し、詳細な MSI ログ (Windows) に要求トークンが含まれないようにしました。 (<a href="https://github.com/netdata/netdata/pull/23547">#23547</a>、<a href="https://github.com/netdata/netdata/pull/23559">#23559</a>、<a href="https://github.com/netdata/netdata/pull/23735">#23735</a>、<a href="https://github.com/thiagoftsm">@thiagoftsm</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li><code>clickhouse.replicas_max_absolute_delay</code> アラートのタイプミスを修正しました。 (<a href="https://github.com/netdata/netdata/pull/23548">#23548</a>、<a href="https://github.com/esafak">@esafak</a>)</li>
+</ul>
+<p>&lt;/詳細&gt;</p>
+<h3>パッケージ化/インストール &lt;a id=&quot;v2120-contributions-packaging&quot;&gt;&lt;/a&gt;</h3>
+<p>&lt;詳細を開く&gt;</p>
+&lt;summary&gt;&lt;b&gt;すべての変更&lt;/b&gt;&lt;/summary&gt;
+<ul>
+<li>v2.11.0 release note で発表されているように、CI およびパッケージ ビルドから RHEL 7.x、CentOS 7.x、および Amazon Linux 2 を削除し、ビルド マトリックスの生成をより堅牢にしました (パッケージ化、CI)。 (<a href="https://github.com/netdata/netdata/pull/22930">#22930</a>、<a href="https://github.com/Ferroin">@Ferroin</a>)</li>
+<li>アップストリームのサポート終了と LTS (パッケージ化、CI) の終了に伴い、Ubuntu 25.10 と Debian 11 を CI およびパッケージ ビルドから削除しました。 (<a href="https://github.com/netdata/netdata/pull/22931">#22931</a>、<a href="https://github.com/netdata/netdata/pull/23813">#23813</a>、<a href="https://github.com/Ferroin">@Ferroin</a>)</li>
+<li>AlmaLinux デプロイターゲットを統合カタログ (統合) に追加しました。 (<a href="https://github.com/netdata/netdata/pull/23725">#23725</a>、<a href="https://github.com/kostasapostolopoulos">@kostasapostolopoulos</a>)</li>
+<li>夜間および安定リリースのアーティファクトを Cloudflare R2 バケットに公開し、R2 夜間アーティファクトのプレフィックスを <code>nightlies/</code> から <code>nightly/</code> に変更し、夜間アーティファクトのアップロードのロギングとエラー処理を修正し、アーティファクトのダウンロードでの再試行を削除し、R2 がサポートしていないアップロード オプション (CI) を削除しました。 (<a href="https://github.com/netdata/netdata/pull/23649">#23649</a>、<a href="https://github.com/netdata/netdata/pull/23712">#23712</a>、<a href="https://github.com/netdata/netdata/pull/23990">#23990</a>、<a href="https://github.com/netdata/netdata/pull/24000">#24000</a>、<a href="https://github.com/netdata/netdata/pull/24013">#24013</a>、<a href="https://github.com/Ferroin">@Ferroin</a>)</li>
+<li>ビルド システムでのリリース候補バージョンの基本処理を追加し、アップデータ スクリプト (ビルド、パッケージ化) でのバージョン解析を更新しました。 (<a href="https://github.com/netdata/netdata/pull/23211">#23211</a>、<a href="https://github.com/netdata/netdata/pull/23586">#23586</a>、<a href="https://github.com/Ferroin">@Ferroin</a>)</li>
+<li>公開された zstd 圧縮ソース アーカイブ。gzip アーカイブよりも約 30% 小さく、解凍が高速です。<code>zstd</code> が利用可能な場合 (gzip にフォールバック)、<code>kickstart.sh</code> とアップデーターはソース ベースのインストールを優先します。これにより、ユーザー指定のバージョン (パッケージ化) をインストールするときにソース アーカイブの検証をスキップする <code>kickstart.sh</code> も修正されます。 (<a href="https://github.com/netdata/netdata/pull/22440">#22440</a>、<a href="https://github.com/Ferroin">@Ferroin</a>)</li>
+<li><code>kickstart.sh</code> でサポートされていないインストールの更新試行を致命的にし、安全なパスのためのインストール プレフィックスのサニタイズを修正し、アップデータ スクリプト (パッケージ化) でのパッケージ公開検出の処理を修正しました。 (<a href="https://github.com/netdata/netdata/pull/22027">#22027</a>、<a href="https://github.com/netdata/netdata/pull/23253">#23253</a>、<a href="https://github.com/netdata/netdata/pull/23830">#23830</a>、<a href="https://github.com/Ferroin">@Ferroin</a>、<a href="https://github.com/Copilot">@Copilot</a>)</li>
+<li><code>install-required-packages.sh</code> の検出とツリー検証の正確性 (インストーラー) を修正しました。 (<a href="https://github.com/netdata/netdata/pull/23408">#23408</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li>Go ツールチェーンのベースラインを 1.27 に引き上げ、Kubernetes client ライブラリを 0.37.0 に引き上げ、SQLite を 3.53.4 (ビルド) に更新しました。 (<a href="https://github.com/netdata/netdata/pull/23511">#23511</a>、<a href="https://github.com/netdata/netdata/pull/23679">#23679</a>、<a href="https://github.com/netdata/netdata/pull/23696">#23696</a>、<a href="https://github.com/ilyam8">@ilyam8</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li>eBPF プラグインを 64 ビット ユーザーランドに制限し、eBPF Go 依存関係の検出を制限し、AddressSanitizer がプールされたアロケーターの解放後の使用 (ビルド) を検出できるようにしました。 (<a href="https://github.com/netdata/netdata/pull/23446">#23446</a>、<a href="https://github.com/netdata/netdata/pull/23566">#23566</a>、<a href="https://github.com/netdata/netdata/pull/23608">#23608</a>、<a href="https://github.com/stelfrag">@stelfrag</a>、<a href="https://github.com/ktsaou">@ktsaou</a>)</li>
+<li>古い SDK (macOS) との macOS の互換性が向上しました。 (<a href="https://github.com/netdata/netdata/pull/23421">#23421</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li>Go のみの変更に対するパッケージ ビルドの回避、大規模なプル リクエストに対する CI 変更検出の強化、GHA ワークフローのジョブ同時実行制限の引き上げ、PR JSON 出力 (CI) へのベース コミット SHA の組み込み。 (<a href="https://github.com/netdata/netdata/pull/23477">#23477</a>、<a href="https://github.com/netdata/netdata/pull/23530">#23530</a>、<a href="https://github.com/netdata/netdata/pull/23637">#23637</a>、<a href="https://github.com/netdata/netdata/pull/23741">#23741</a>、<a href="https://github.com/ktsaou">@ktsaou</a>、<a href="https://github.com/ilyam8">@ilyam8</a>、<a href="https://github.com/stelfrag">@stelfrag</a>、 <a href="https://github.com/Ferroin">@フェロイン</a>)</li>
+<li>78 個の dependabot アップデート。主に gRPC、AWS SDK パッケージ、Kubernetes client ライブラリを含む Go モジュール、さらに MCP 自動化ツールの Python 依存関係と GitHub Actions 依存関係 (<a href="https://github.com/dependabot">@dependabot</a>)。</li>
+</ul>
+<p>&lt;/詳細&gt;</p>
+<h3>ドキュメント &lt;a id=&quot;v2120-contributions-documentation&quot;&gt;&lt;/a&gt;</h3>
+<p>&lt;詳細を開く&gt;</p>
+&lt;summary&gt;&lt;b&gt;すべての変更&lt;/b&gt;&lt;/summary&gt;
+<ul>
+<li>ログ セクションをログ管理オペレーター マニュアルとして書き直し、OpenTelemetry ランディング ページに個別のレンダリング タイトル (docs/logs、docs/opentelemetry) を付けました。 (<a href="https://github.com/netdata/netdata/pull/23687">#23687</a>、<a href="https://github.com/netdata/netdata/pull/23755">#23755</a>、<a href="https://github.com/ktsaou">@ktsaou</a>)</li>
+<li>OpenTelemetry ドキュメントにトレース ストレージと保持のページを追加し、ログとトレースによって共有されるリモート読み取りキャッシュについて説明し、ダッシュボード クエリではデフォルト テナントのみが使用されるため、テナント選択ガイダンスを削除しました (docs/opentelemetry)。 (<a href="https://github.com/netdata/netdata/pull/24088">#24088</a>、<a href="https://github.com/vkalintiris">@vkalintiris</a>)</li>
+<li>オペレーター向けに Redfish 統合ページを作成し、コレクターのメタデータ コンテンツ ルールと既知のエラーのトラブルシューティング セクションを統合パイプライン (ドキュメント、統合) に追加しました。 (<a href="https://github.com/netdata/netdata/pull/23763">#23763</a>、<a href="https://github.com/netdata/netdata/pull/23962">#23962</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>シークレット解決の実行権限と SNMP スキャンの公開を文書化しました (ドキュメント/シークレット)。 (<a href="https://github.com/netdata/netdata/pull/23923">#23923</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>在庫 Prometheus プロファイル カバレッジ、発行された MDX セーフ プロファイルの詳細を公開し、生成されたプロファイル カタログと vLLM 配布の質問を明確にし、内部プロファイルの質問を内部に保持しました (docs/prometheus)。 (<a href="https://github.com/netdata/netdata/pull/23607">#23607</a>、<a href="https://github.com/netdata/netdata/pull/23610">#23610</a>、<a href="https://github.com/netdata/netdata/pull/23611">#23611</a>、<a href="https://github.com/netdata/netdata/pull/23613">#23613</a>、<a href="https://github.com/netdata/netdata/pull/23614">#23614</a>、<a href="https://github.com/ktsaou">@ktsaou</a>)</li>
+<li>文書化されたチャートの注釈、MCP カスタム MCP サーバーの要件と FAQ、PagerDuty MCP 接続ガイド、Netdata AI インフラストラクチャのナレッジ ページ、ノードの廃止手順、および Netdata Cloud アウトバウンド IP アドレス エンドポイント。古い <code>netdata-build-mcp</code> セットアップと認証ドキュメントを修正しました。 (<a href="https://github.com/netdata/netdata/pull/23537">#23537</a>、<a href="https://github.com/netdata/netdata/pull/23633">#23633</a>、<a href="https://github.com/netdata/netdata/pull/23656">#23656</a>、<a href="https://github.com/netdata/netdata/pull/23752">#23752</a>、<a href="https://github.com/netdata/netdata/pull/23786">#23786</a>、<a href="https://github.com/netdata/netdata/pull/23810">#23810</a>、 <a href="https://github.com/netdata/netdata/pull/23812">#23812</a>、<a href="https://github.com/shyamvalsan">@shyamvalsan</a>、<a href="https://github.com/juacker">@juacker</a>、<a href="https://github.com/vkalintiris">@vkalintiris</a>、<a href="https://github.com/witalisoft">@witalisoft</a>、<a href="https://github.com/papazach">@papazach</a>)</li>
+<li>コレクターのドキュメントの説明を完了し、zRAM および eBPF VFS の説明を修正し、Ceph の統合例と Prometheus の有効期限に関するガイダンスを修正し、通知 README が現在の Netdata AI トラブルシューティング ページにあることを示し、Kavenegar 通知ドキュメントのリンクを修正しました。 (<a href="https://github.com/netdata/netdata/pull/23476">#23476</a>、<a href="https://github.com/netdata/netdata/pull/23487">#23487</a>、<a href="https://github.com/netdata/netdata/pull/23582">#23582</a>、<a href="https://github.com/netdata/netdata/pull/23601">#23601</a>、<a href="https://github.com/netdata/netdata/pull/23644">#23644</a>、<a href="https://github.com/ktsaou">@ktsaou</a>)</li>
+<li>Learn ランタイムとのドキュメント チェックの調整、生成された Learn リンク ソースの修復、エージェント ドキュメント ソース内の古いリンクの修正、Learn チェックサムの所有権と回復の検証 (ドキュメント) の文書化。 (<a href="https://github.com/netdata/netdata/pull/23591">#23591</a>、<a href="https://github.com/netdata/netdata/pull/23593">#23593</a>、<a href="https://github.com/netdata/netdata/pull/23595">#23595</a>、<a href="https://github.com/netdata/netdata/pull/23652">#23652</a>、<a href="https://github.com/ktsaou">@ktsaou</a>)</li>
+<li>リポジトリの AI アシスタント スキルを再加工しました: エリア接頭辞付きの名前、リポジトリ スキル オーサリング ガイド、Go コレクター設計スキル、オフライン診断トリアージ スキル、サポート バンドル トリアージ スキル、V2 コレクター スキルでのチャート テンプレート オーサリング所有権、追加された設計の複雑さの証拠要件、リスクに応じたレビューと委任ポリシー、安全でないガイダンスと失敗したスクリプト パスの修正。 (<a href="https://github.com/netdata/netdata/pull/23742">#23742</a>、<a href="https://github.com/netdata/netdata/pull/23743">#23743</a>、<a href="https://github.com/netdata/netdata/pull/23745">#23745</a>、<a href="https://github.com/netdata/netdata/pull/23754">#23754</a>、<a href="https://github.com/netdata/netdata/pull/23769">#23769</a>、<a href="https://github.com/netdata/netdata/pull/23775">#23775</a>、 <a href="https://github.com/netdata/netdata/pull/23784">#23784</a>、<a href="https://github.com/netdata/netdata/pull/23790">#23790</a>、<a href="https://github.com/netdata/netdata/pull/23792">#23792</a>、<a href="https://github.com/netdata/netdata/pull/23793">#23793</a>、<a href="https://github.com/netdata/netdata/pull/23799">#23799</a>、<a href="https://github.com/netdata/netdata/pull/23805">#23805</a>、 <a href="https://github.com/netdata/netdata/pull/23828">#23828</a>、<a href="https://github.com/netdata/netdata/pull/23831">#23831</a>、<a href="https://github.com/netdata/netdata/pull/23845">#23845</a>、<a href="https://github.com/netdata/netdata/pull/23860">#23860</a>、<a href="https://github.com/netdata/netdata/pull/23866">#23866</a>、<a href="https://github.com/netdata/netdata/pull/23895">#23895</a>、 <a href="https://github.com/netdata/netdata/pull/23910">#23910</a>、<a href="https://github.com/netdata/netdata/pull/23917">#23917</a>、<a href="https://github.com/netdata/netdata/pull/23959">#23959</a>、<a href="https://github.com/netdata/netdata/pull/23967">#23967</a>、<a href="https://github.com/ilyam8">@ilyam8</a>、<a href="https://github.com/shyamvalsan">@shyamvalsan</a>)</li>
+<li>コレクターのメタデータ (<a href="https://github.com/netdatabot">@netdatabot</a>) に合わせてカタログを維持する統合ドキュメントの 34 回の再生成。</li>
+</ul>
+<p>&lt;/詳細&gt;</p>
+<h3>その他の注目すべき変更点 &lt;a id=&quot;v2120-contributions-other&quot;&gt;&lt;/a&gt;</h3>
+<p>&lt;詳細を開く&gt;</p>
+&lt;summary&gt;&lt;b&gt;改善点&lt;/b&gt;&lt;/summary&gt;
+<ul>
+<li>クエリ エンジンが計算方法 (クエリ) とは関係なく何を返さなければならないかを示す、階層化されたブラック ボックス クエリ コントラクト コーパスを追加しました。 (<a href="https://github.com/netdata/netdata/pull/23130">#23130</a>、<a href="https://github.com/ktsaou">@ktsaou</a>)</li>
+<li>すべての API 形式でランク付けされた重みの応答制限をサポートし、最大 1 MiB (api) の HTTP リクエストを受け入れました。 (<a href="https://github.com/netdata/netdata/pull/23744">#23744</a>、<a href="https://github.com/netdata/netdata/pull/23777">#23777</a>、<a href="https://github.com/ktsaou">@ktsaou</a>)</li>
+<li>最適化された重みクエリ アリーナの再利用と、単調カーソル (クエリ) による KS2 比較のオーバーヘッドの削減。 (<a href="https://github.com/netdata/netdata/pull/23759">#23759</a>、<a href="https://github.com/netdata/netdata/pull/23779">#23779</a>、<a href="https://github.com/ktsaou">@ktsaou</a>)</li>
+<li>関数呼び出しメカニズムをファーストクラスのコンポーネント (デーモン) にリファクタリングしました。 (<a href="https://github.com/netdata/netdata/pull/23532">#23532</a>、<a href="https://github.com/vkalintiris">@vkalintiris</a>)</li>
+<li>ACLK HTTPS リクエストの TLS ホスト名と IP 検証を追加し、HTTPS および MQTT clients (aclk) のタイムアウト処理を改善しました。 (<a href="https://github.com/netdata/netdata/pull/23105">#23105</a>、<a href="https://github.com/netdata/netdata/pull/23463">#23463</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li>遅延モデル割り当てによる ML メモリ使用量の削減、子ごとのストリーミング チャート参照のキャッシュ、冗長なチャート メタデータの再インターンの回避、変数検索の高速化のための名前によるアラートのインデックス作成、未使用の <code>health_log_detail</code> インデックス (ml、pulse、rrd、health) の削除。 (<a href="https://github.com/netdata/netdata/pull/23554">#23554</a>、<a href="https://github.com/netdata/netdata/pull/23603">#23603</a>、<a href="https://github.com/netdata/netdata/pull/23710">#23710</a>、<a href="https://github.com/netdata/netdata/pull/23722">#23722</a>、<a href="https://github.com/netdata/netdata/pull/23760">#23760</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li>dbengine エクステント解凍スループットをグラフ化し、完了した測定 (パルス) を <code>mallinfo</code> 間隔で区切ります。 (<a href="https://github.com/netdata/netdata/pull/23671">#23671</a>、<a href="https://github.com/netdata/netdata/pull/23736">#23736</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li>ワンショットの非特権ファイル操作とオプトイン環境保存を <code>nd-run</code> (nd-run) に追加しました。 (<a href="https://github.com/netdata/netdata/pull/23868">#23868</a>、<a href="https://github.com/netdata/netdata/pull/23887">#23887</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+<li>必須の配列パラメータで <code>minItems</code> をアドバタイズし、<code>mcp_function_get_info</code> のデッド NULL チェックを削除し、MCP API キーがエージェントの REST API (MCP) のロックを解除せずに MCP HTTP、SSE、および WebSocket エンドポイントを保護することを証明する CI カバレッジを追加しました。 (<a href="https://github.com/netdata/netdata/pull/23655">#23655</a>、<a href="https://github.com/netdata/netdata/pull/23809">#23809</a>、<a href="https://github.com/netdata/netdata/pull/24001">#24001</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li><code>system.cpu:idle</code> などの非表示ディメンションが明示的に要求された場合に、MCP <code>query_metrics</code> が空の結果を返す問題を修正しました (MCP)。 (<a href="https://github.com/netdata/netdata/pull/24018">#24018</a>、<a href="https://github.com/Copilot">@Copilot</a>)</li>
+<li>ネイティブ Go 通知エージェントの継続開発 (36 のプル リクエスト: ルーティング、既存の <code>health_alarm_notify.conf</code> のリーダー、<code>alarm-notify.sh</code> が現在サポートしている通知メソッドの型付きプロバイダー)。 <strong>これは v2.12.0 では出荷されません</strong>: <code>ENABLE_ALARM_NOTIFY_GO</code> CMake オプションの背後でのみビルドされます。このオプションはすべてのリリース アーティファクトでオフになっており、<code>alarm-notify.sh</code> は通知パス (ヘルス/アラーム通知) のままです。 (<a href="https://github.com/netdata/netdata/pull/23870">#23870</a>、<a href="https://github.com/netdata/netdata/pull/23871">#23871</a>、<a href="https://github.com/netdata/netdata/pull/23872">#23872</a>、<a href="https://github.com/netdata/netdata/pull/23874">#23874</a>、<a href="https://github.com/netdata/netdata/pull/23875">#23875</a>、<a href="https://github.com/netdata/netdata/pull/23876">#23876</a>、 <a href="https://github.com/netdata/netdata/pull/23877">#23877</a>、<a href="https://github.com/netdata/netdata/pull/23878">#23878</a>、<a href="https://github.com/netdata/netdata/pull/23880">#23880</a>、<a href="https://github.com/netdata/netdata/pull/23881">#23881</a>、<a href="https://github.com/netdata/netdata/pull/23882">#23882</a>、<a href="https://github.com/netdata/netdata/pull/23883">#23883</a>、 <a href="https://github.com/netdata/netdata/pull/23886">#23886</a>、<a href="https://github.com/netdata/netdata/pull/23888">#23888</a>、<a href="https://github.com/netdata/netdata/pull/23893">#23893</a>、<a href="https://github.com/netdata/netdata/pull/23897">#23897</a>、<a href="https://github.com/netdata/netdata/pull/23898">#23898</a>、<a href="https://github.com/netdata/netdata/pull/23900">#23900</a>、 <a href="https://github.com/netdata/netdata/pull/23901">#23901</a>、<a href="https://github.com/netdata/netdata/pull/23902">#23902</a>、<a href="https://github.com/netdata/netdata/pull/23906">#23906</a>、<a href="https://github.com/netdata/netdata/pull/23907">#23907</a>、<a href="https://github.com/netdata/netdata/pull/23908">#23908</a>、<a href="https://github.com/netdata/netdata/pull/23911">#23911</a>、 <a href="https://github.com/netdata/netdata/pull/23913">#23913</a>、<a href="https://github.com/netdata/netdata/pull/23914">#23914</a>、<a href="https://github.com/netdata/netdata/pull/23919">#23919</a>、<a href="https://github.com/netdata/netdata/pull/23921">#23921</a>、<a href="https://github.com/netdata/netdata/pull/23925">#23925</a>、<a href="https://github.com/netdata/netdata/pull/23928">#23928</a>、 <a href="https://github.com/netdata/netdata/pull/23930">#23930</a>、<a href="https://github.com/netdata/netdata/pull/23931">#23931</a>、<a href="https://github.com/netdata/netdata/pull/23934">#23934</a>、<a href="https://github.com/netdata/netdata/pull/23937">#23937</a>、<a href="https://github.com/netdata/netdata/pull/23939">#23939</a>、<a href="https://github.com/netdata/netdata/pull/23941">#23941</a>、<a href="https://github.com/ilyam8">@ilyam8</a>)</li>
+</ul>
+<p>&lt;/詳細&gt;</p>
+<p>&lt;詳細を開く&gt;</p>
+&lt;summary&gt;&lt;b&gt;バグ修正&lt;/b&gt;&lt;/summary&gt;
+<ul>
+<li>6 つのクエリ エンジンの正確性の問題を修正しました: 結果行とストレージ層の境界にわたる正確な <code>sum</code> 結果、保存された増分合計ベースライン、2 パス グループ化での正しい異常率寄与者数、ストレージ層スイッチで適用される <code>absolute</code>、ソース サンプルを保持する行に起因するカウンタ リセットと異常フラグ、保持からではなく明示的または相対的な要求ウィンドウから派生したシングルポイント <code>latest</code> タイムスタンプ（質問）。 (<a href="https://github.com/netdata/netdata/pull/23503">#23503</a>、<a href="https://github.com/netdata/netdata/pull/23504">#23504</a>、<a href="https://github.com/netdata/netdata/pull/23505">#23505</a>、<a href="https://github.com/netdata/netdata/pull/23507">#23507</a>、<a href="https://github.com/netdata/netdata/pull/23508">#23508</a>、<a href="https://github.com/netdata/netdata/pull/23512">#23512</a>、 <a href="https://github.com/ktsaou">@ktsaou</a>)</li>
+<li>修正された dbengine の欠陥: エクステントの書き込みを待機するフラッシュおよびシャットダウン ワーカーは制限されており、プール スレッドはインラインでフラッシュしなくなり、単独で libuv プールを使い果たしてエージェントをハングさせることができなくなりました (たとえば、シャットダウン時、「dbengine コレクターの終了を待つ」)。マージされたエクステント クエリのティアダウンが同期され、マージされたページ参照が公開前に取得され、空のフラッシュ バッチ カウンターのリークが解決され、ネガティブ層保持レポートが修正され、有効なロング ページ ケイデンスが受け入れられ、ジャーナル ファイルの古い MRG メトリクスの二重解放が修正され、<code>-W createdataset</code> が修復され、PGC キャッシュの致命的なメッセージが完全なページ ID (dbengine) を伝えます。 (<a href="https://github.com/netdata/netdata/pull/23475">#23475</a>、<a href="https://github.com/netdata/netdata/pull/23514">#23514</a>、<a href="https://github.com/netdata/netdata/pull/23521">#23521</a>、<a href="https://github.com/netdata/netdata/pull/23522">#23522</a>、<a href="https://github.com/netdata/netdata/pull/23560">#23560</a>、<a href="https://github.com/netdata/netdata/pull/23648">#23648</a>、 <a href="https://github.com/netdata/netdata/pull/23699">#23699</a>、<a href="https://github.com/netdata/netdata/pull/23758">#23758</a>、<a href="https://github.com/netdata/netdata/pull/24027">#24027</a>、<a href="https://github.com/stelfrag">@stelfrag</a>、<a href="https://github.com/ktsaou">@ktsaou</a>)</li>
+<li>エージェントのシャットダウン中の SQLite ライフタイム レースと <code>sqlite_health</code> でのステートメント準備エラー チェックを修正し、データベースが利用できない場合の SQLite キャッシュ ステータスの読み取りを保護しました。これにより、メタデータ データベースが開けないときの <code>PULSE-SQLITE3</code> クラッシュが防止され、カウンター リセット (sqlite) としてグラフ化する代わりに無効なキャッシュ サンプルがスキップされます。 (<a href="https://github.com/netdata/netdata/pull/23545">#23545</a>、<a href="https://github.com/netdata/netdata/pull/23844">#23844</a>、<a href="https://github.com/netdata/netdata/pull/24012">#24012</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li>ヘルス動作の修正: 変更されていないチャートに対してアラートが再初期化されなくなり、発生したアラートの概要が通知に対して遅延して入力され、子の切断時のヘルス初期化フラグの動作が明確になりました (health、rrdcalc)。 (<a href="https://github.com/netdata/netdata/pull/23515">#23515</a>、<a href="https://github.com/netdata/netdata/pull/23541">#23541</a>、<a href="https://github.com/netdata/netdata/pull/23544">#23544</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li>ACLK 動作の修正: ホストのティアダウンはキューに入れられたコマンドに対して安全で、シャットダウンは接続セットアップ中に制限され、MQTT PUBACK タイムアウトは個別にレポートされ、オフライン中に保持され、放棄された自己署名証明書は検証失敗としてレポートされなくなり、実行中の送信中にキューに入れられたアラート遷移は失われなくなり、protobuf ペイロードをシリアル化できないメッセージは不完全に送信される代わりに破棄され、マニフェスト パブリケーション レコードがクリーンアップされました (aclk)。 (<a href="https://github.com/netdata/netdata/pull/23486">#23486</a>、<a href="https://github.com/netdata/netdata/pull/23580">#23580</a>、<a href="https://github.com/netdata/netdata/pull/23732">#23732</a>、<a href="https://github.com/netdata/netdata/pull/23733">#23733</a>、<a href="https://github.com/netdata/netdata/pull/23734">#23734</a>、<a href="https://github.com/netdata/netdata/pull/23864">#23864</a>、 <a href="https://github.com/netdata/netdata/pull/23983">#23983</a>、<a href="https://github.com/netdata/netdata/pull/24012">#24012</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li>メモリの安全性とライフサイクルの欠陥を修正しました: 再入可能削除コールバックでのディクショナリ GC の解放後の使用、ディクショナリ API がアクティブである間ディクショナリの破棄は延期、参照されたチャートを解放する古いチャート リーパー、プールされた応答バッファと断片化された WebSocket ペイロード マスキング、テキスト バッファのクリーンアップと動的構成ツリーのサイジング競合、デッド ストアと ML キュー アイテムのコピー、コレクタまで延期された ML ワーカー キューのティアダウンstop、および UUID マップの作成/解放チャーンがメトリック ルックアップ (libnetdata、ml、mrg、rrd) から削除されました。 (<a href="https://github.com/netdata/netdata/pull/23485">#23485</a>、<a href="https://github.com/netdata/netdata/pull/23538">#23538</a>、<a href="https://github.com/netdata/netdata/pull/23634">#23634</a>、<a href="https://github.com/netdata/netdata/pull/23657">#23657</a>、<a href="https://github.com/netdata/netdata/pull/23666">#23666</a>、<a href="https://github.com/netdata/netdata/pull/23757">#23757</a>、 <a href="https://github.com/netdata/netdata/pull/23761">#23761</a>、<a href="https://github.com/netdata/netdata/pull/23819">#23819</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li><code>apps.plugin</code>、<code>freeipmi.plugin</code>、<code>systemd-journal.plugin</code>、<code>network-viewer.plugin</code>、およびその他の C プラグインによって使用される Function イベント ループの use-after-free を修正しました。キューイング スレッドがまだ読み書きしている間に、ワーカー スレッドがキューに登録された Function ジョブに応答して解放する可能性がありました。これにより、rapid Function 呼び出しで <code>malloc()</code> 内の SIGSEGV または SIGABRT でプラグインがクラッシュしました。キューイング スレッドはジョブへの参照を使用する限り保持するようになり、拒否されたキュー挿入は NULL (libnetdata、functions_evloop) を逆参照する代わりにエラーで応答します。 (<a href="https://github.com/netdata/netdata/pull/24071">#24071</a>、<a href="https://github.com/methanoya">@methanoya</a>)</li>
+<li>子が、認証されたホスト以外のホストの ML モデルをストリーミングできる問題、短い入力でマシン GUID コピーを制限する問題、UUID 全体ではないストリーミングされるマシン GUID を拒否する問題を修正し、ホストの GUID バッファ (ml、ストリーミング、データベース) の 1 バイト オーバーランを閉じました。 (<a href="https://github.com/netdata/netdata/pull/23988">#23988</a>、<a href="https://github.com/netdata/netdata/pull/23991">#23991</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li>ストリーミング圧縮の優先順位とケイデンスを意識した受信機の活性を修正し、実際のラベルの変更時にのみラベル バージョンをインクリメントし、再接続することなくすべての親を介して子のホスト ラベルの変更を転送し、クラウド ノードの情報とアラートの一致を最新の状態に保ちます。中継された子は、親の <code>_net_default_iface</code> ラベル (ストリーミング、rrd) を継承しなくなりました。 (<a href="https://github.com/netdata/netdata/pull/23513">#23513</a>、<a href="https://github.com/netdata/netdata/pull/23615">#23615</a>、<a href="https://github.com/netdata/netdata/pull/24015">#24015</a>、<a href="https://github.com/ktsaou">@ktsaou</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li>静的分析によって見つかった安全性と正確性の問題を修正しました: <code>inicfg</code> で <code>sprintf</code> が <code>snprintfz</code> に置き換えられ、動的な <code>proc</code> netdev フォーマット文字列が置き換えられ、<code>jsonwrap</code> 状態で論理演算子が修正され、重複排除を有効にする前に KSM サポートがプローブされ、決定論的回帰テストで生成された子の SIGPIPE がリセットされ、エクスポート時に保存される OpenTSDB Telnet ホストとプレフィックス文字、glibc <code>mallinfo2</code> パルス オーバーヘッドが削減され、冗長パルス チャート メタデータのバージョン バンプが防止され、各種 Coverity 結果 (libnetdata、エクスポート、パルス、スポーン) が追加されました。 (<a href="https://github.com/netdata/netdata/pull/23450">#23450</a>、<a href="https://github.com/netdata/netdata/pull/23553">#23553</a>、<a href="https://github.com/netdata/netdata/pull/23579">#23579</a>、<a href="https://github.com/netdata/netdata/pull/23638">#23638</a>、<a href="https://github.com/netdata/netdata/pull/23639">#23639</a>、<a href="https://github.com/netdata/netdata/pull/23650">#23650</a>、 <a href="https://github.com/netdata/netdata/pull/23749">#23749</a>、<a href="https://github.com/netdata/netdata/pull/23751">#23751</a>、<a href="https://github.com/netdata/netdata/pull/23815">#23815</a>、<a href="https://github.com/netdata/netdata/pull/23822">#23822</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li>2 つの重み (メトリクス相関) の欠陥を修正しました。v1 重みと <code>metric_correlations</code> リクエストは、URL で選択されたホストをドロップするのではなくスコアリングするようになり、平均異常率スコアは欠落サンプルをゼロとしてカウントするため、1 つの異常サンプルを含むスパース メトリクスのスコアは 100% ではなくなりました (api、クエリ)。 (<a href="https://github.com/netdata/netdata/pull/24080">#24080</a>、<a href="https://github.com/netdata/netdata/pull/24081">#24081</a>、<a href="https://github.com/ktsaou">@ktsaou</a>)</li>
+<li>mimalloc (デフォルト) を使用しないビルドでの ML メモリ アカウンティングを修正しました。グローバル C++ <code>new</code> および <code>delete</code> 演算子は、プラットフォームが報告するアロケーター ブロック サイズ (Windows MSYS2 ランタイムを含む) で、アライメント、<code>nothrow</code>、クロススレッドの空きを含むすべての割り当てパスを考慮するようになり、追跡された合計をアンダーフローする空きは <code>unmatched_free</code> ディメンションとしてカウントされます。 <code>netdata.ml_memory_ops</code> (ml、パルス)。 (<a href="https://github.com/netdata/netdata/pull/22477">#22477</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li>ログ、クエリ、レプリケーション、API 出力にわたる 32 ビット ターゲットの 64 ビット タイムスタンプ形式を修正し、C コード全体にわたるコンパイラ警告をクリアしました。マルチノードの重み JSON は、選択されていないコンテキストとインスタンスのインデックスを <code>4294967295</code> ではなく <code>-1</code> として報告するようになりました (libnetdata、デーモン、api)。 (<a href="https://github.com/netdata/netdata/pull/23997">#23997</a>、<a href="https://github.com/netdata/netdata/pull/23998">#23998</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+<li>未使用の <code>registry_generate_curl_urls</code> 関数を削除し、古いコメントとテスト診断 (デーモン) を修正しました。 (<a href="https://github.com/netdata/netdata/pull/23464">#23464</a>、<a href="https://github.com/netdata/netdata/pull/23737">#23737</a>、<a href="https://github.com/stelfrag">@stelfrag</a>)</li>
+</ul>
+<p>&lt;/詳細&gt;</p>
+&lt;!-- v2.11.1 release note に文書化されたすべてのプル リクエストは、v2.11.0..v2.12.0 コミット範囲内に収まります。
+     v2.11.1 は、v2.11.0 タグから枝を切り取ったものです。これら 67 のプル リクエストはセクションに折りたたまれています。
+     上記は新規として再発表されるのではなく、主題ごとに記載されています。安定性のハイライトはそのことを明確に示しています。 --&gt;
+<h2>非推奨の通知 &lt;a id=&quot;v2120-deprecation-notice&quot;&gt;&lt;/a&gt;</h2>
+<h3>このリリースでの変更点</h3>
+<ul>
+<li>**OpenTelemetry 構成 (v2.10.x 以前からアップグレードする場合): カスタマイズされた <code>otel.yaml</code> を確認してください。
+** OpenTelemetry プラグインは v2.11.0 で書き直され、その構成は厳密です: 不明なキー、不明
+<code>NETDATA_OTEL_CFG_*</code> 以前の実験的スキーマ (<code>size_of_journal_file</code>、<code>size_of_journal_file</code>、
+<code>number_of_journal_files</code> およびその他のジャーナル ファイル オプション) は、<code>otel-plugin</code> の起動を停止します。以前のログストレージ
+ストレージ エンジンとそのデフォルトが変更されたため、値は移行されません。プラグインが前者を認識する場合
+スキーマの起動エラーでは、古いキーとその置換がリストされます (たとえば、<code>size_of_journal_file</code> は
+<code>logs.rotation.default.max_file_size</code>; <code>store_otlp_json</code> には代替品がないため、コピーするのではなく新しい値を選択してください
+古いもの。 v2.12.0 は、<code>logs</code> と同じ回転および保持オプションを備えたオプションの <code>traces</code> セクションを追加します。
+(<a href="https://github.com/netdata/netdata/pull/22720">#22720</a>、<a href="https://github.com/netdata/netdata/pull/23479">#23479</a>)</li>
+<li><strong>OpenTelemetry リモート ストレージ: ダウンロード キャッシュが移動されました。</strong> <code>remote_storage.enabled</code> では、ログとトレースが共有されるようになりました。
+<code>{base_dir}/remote-read</code> に 1 つのダウンロード キャッシュがあり、起動時に既存の <code>{base_dir}/logs/remote-read</code> がそこに移動されます。
+新しいパスがすでに存在する場合、または移動が失敗した場合 (古いディレクトリが別のマウントであるなどの理由で)、
+代わりに古いキャッシュ ファイルがクリアされるため、キャッシュ マウントを <code>{base_dir}/remote-read</code> に指定します。
+(<a href="https://github.com/netdata/netdata/pull/24088">#24088</a>)</li>
+<li><strong>Ceph: 1 つのチャート コンテキストが置き換えられました。</strong> <code>ceph.cluster_objects_by_status_distribution</code> はなくなりました。オブジェクトの健全性は現在です
+個別のオブジェクト コピーの健全性グラフと見つからないオブジェクト グラフによってレポートされます。カスタム ダッシュボード、アラート、または API クエリを更新します。
+古いコンテキストを参照します。 (<a href="https://github.com/netdata/netdata/pull/23357">#23357</a>)</li>
+<li><strong>Ceph: より厳格なジョブ設定とリダイレクト。</strong> <code>method</code> または <code>body</code> を設定する <code>go.d/ceph</code> ジョブ、またはカスタム
+<code>Authorization</code>、<code>Cookie</code>、または <code>Host</code> ヘッダーは検証に失敗します。それらを削除し、<code>username</code> で認証し、
+<code>password</code> または <code>bearer_token_file</code> と併用。コレクターは、次のような別のオリジンへのリダイレクトにも従わなくなりました。
+その起点が <code>allowed_redirect_origins</code> にリストされていない限り、アクティブ マネージャを指すスタンバイ マネージャとして。リスト
+すべてのマネージャーのダッシュボードの起点がそこにあります。 (<a href="https://github.com/netdata/netdata/pull/23357">#23357</a>)</li>
+<li><strong>Ceph: OSD ごとおよびプールごとのチャートには上限があります。</strong> 専用の <code>go.d/ceph</code> コレクターでは、最大 100 個のチャートを選択できるようになりました。
+デフォルトでは、OSD と 100 個の選択されたプール。いずれかの制限を超えると、そのグループのみのエンティティごとのメトリックが抑制されます。
+そしてコレクターはその理由を記録します。 <code>max_osds</code> または <code>max_pools</code> を上げるか、<code>osd_selector</code> または <code>pool_selector</code> を狭くします。 (<a href="https://github.com/netdata/netdata/pull/23357">#23357</a>)</li>
+<li><strong>サービス検出: 検出されたジョブのシークレット参照はデフォルトでは解決されなくなりました。</strong> <code>${env:...}</code>、
+サービス検出によって生成されたジョブ内の <code>${file:...}</code>、<code>${cmd:...}</code>、および <code>${store:...}</code> はリテラル テキストとして保持されるようになりました。
+これには、独自の検出ルールに記述された参照も含まれます。検出パイプラインがそれらに依存している場合は、次のように設定します。
+そのパイプラインに <code>trust_discovered_targets: yes</code> を追加するか、動的構成を通じてジョブを採用します。
+(<a href="https://github.com/netdata/netdata/pull/23916">#23916</a>、<a href="https://github.com/netdata/netdata/pull/23918">#23918</a>)</li>
+<li><strong>UNIX 上の go.d ファイルとコマンド シークレットは、プラグインの昇格された権限なしで実行されます。</strong> <code>${file:...}</code> および <code>${cmd:...}</code>
+参照は、特権のないアカウント (通常は <code>netdata</code>) として <code>nd-run</code> を通じて解決され、フォールバックはなくなりました。
+特権アクセス。プラグインの権限によってのみ読み取り可能だった認証情報ファイルは解決されなくなりました。
+コマンドは、そのアカウントの <code>USER</code>、<code>LOGNAME</code>、<code>HOME</code> と <code>SHELL=/bin/sh</code> を取得するようになりました。アカウントができることを確認してください
+これらのファイルを読み取ってコマンドを実行し、古いバージョンに依存するツールに明示的な構成パスを渡します。
+環境。
+(<a href="https://github.com/netdata/netdata/pull/23865">#23865</a>、<a href="https://github.com/netdata/netdata/pull/23879">#23879</a>、<a href="https://github.com/netdata/netdata/pull/23884">#23884</a>)</li>
+<li><strong>go.d に対する動的構成の応答では、実行時の健全性ではなく導入について説明します。</strong> 受け入れられたジョブ、検出
+まだ開始する必要があるパイプラインまたはシークレット ストアの変更は、<code>202</code> を返す可能性があります。の構成ステータスを読み取ります。
+結果。拒否された更新では、以前の構成と実行中のジョブが保持されます。 Cli<code>2xx</code> 応答を処理したエント
+「実行中」の場合は、代わりにステータスを確認する必要があります。
+(<a href="https://github.com/netdata/netdata/pull/24011">#24011</a>、<a href="https://github.com/netdata/netdata/pull/24014">#24014</a>、<a href="https://github.com/netdata/netdata/pull/24020">#24020</a>)</li>
+<li><strong>動的構成によって作成された go.d vnode 名は書き換えられなくなりました。</strong> 空白を含む名前、
+コロン、<code>=</code>、引用符、バックスラッシュ、または制御文字はエラーで拒否されるようになりました。以前はスペースとコロン
+暗黙のうちにアンダースコアに置き換えられました。ジョブは、vnode を正確な名前で参照する必要があります。 ASCII 文字、数字、
+ドット、アンダースコア、ハイフンは常に安全です。 (<a href="https://github.com/netdata/netdata/pull/24024">#24024</a>)</li>
+<li><strong>中継された子は、親の <code>_net_default_iface</code> ラベルを継承しなくなりました。</strong> 以前は、子は、
+親は親のアップリンク インターフェイスを運ぶことができます。ラベルを提供する子は、独自の値を保持します。仮想用
+ノードとそれを持たない古い子には、ラベルが表示されなくなりました。親のラベル フィルターと一致するラベル フィルターを確認します。
+子ノードのインターフェイス。子ホストのラベルの変更は、再接続することなくすべての上流の親にも届くようになりました。
+(<a href="https://github.com/netdata/netdata/pull/24015">#24015</a>)</li>
+<li><strong>重み付け (メトリック相関) の結果は変更される可能性があります。</strong> 現在は <code>/api/v1/weights</code> および <code>/api/v1/metric_correlations</code>
+URL で選択されたホストにスコアを付けます。すべての API バージョンでの平均異常率の重みは、欠落しているコレクションをカウントします
+ウィンドウ内のスロットがゼロ異常として認識されるため、スパース メトリクスのスコアが低下し、ランキングが変更される可能性があります。レビュー
+これらのスコアやランキングを比較する自動化。 (<a href="https://github.com/netdata/netdata/pull/24080">#24080</a>、
+<a href="https://github.com/netdata/netdata/pull/24081">#24081</a>)</li>
+<li><strong>NetFlow: 起動時のポート競合により、再起動ループではなくプラグインが無効になるようになりました。</strong> NetFlow UDP がリッスンする場合
+プラグインの初回起動時にポートが取得されると、エージェントは Netdata が再起動するまでそのポートを無効にします。ポートを解放するか変更します
+リスナーを削除し、Netdata を再起動します。 <code>flows:netflow</code> および <code>netflow.*</code> チャートは起動後にのみ表示されるようになりました。
+完了します。 (<a href="https://github.com/netdata/netdata/pull/24029">#24029</a>)</li>
+<li><strong>SQL Server: 無効になった SQL エージェント ジョブはデフォルトでは収集されなくなりました。</strong> 保持するように <code>collect_disabled_jobs: true</code> を設定します。
+それらを集めています。これは最初に v2.11.1 で出荷されました。 (<a href="https://github.com/netdata/netdata/pull/23645">#23645</a>)</li>
+<li><strong>Windows OS のホスト ラベルが変更されました。</strong> OS 名は「Microsoft Windows」になり、<code>_os_marketing_version</code>、<code>_os_release</code>、
+<code>_os_edition</code> と <code>_os_build</code> が追加されました。 <code>_os_version</code> は従来の表示値を保持します。ラベルフィルターを確認してください。
+古い Windows 文字列と一致しました。 (<a href="https://github.com/netdata/netdata/pull/23453">#23453</a>)</li>
+<li><strong>HAProxy コレクターは、<code>go.d</code> と <code>python.d</code> の両方で廃止されました</strong>。 HAProxy はネイティブ Prometheus エンドポイントを公開し、
+Netdata は在庫 <code>haproxy</code> Prometheus プロファイルを出荷するため、HAProxy モニタリングは現在、
+【Prometheusコレクター】(https://learn.netdata.cloud/docs/collecting-metrics/prometheus)。 HAProxy Prometheus を有効にする
+エンドポイント (Prometheus エクスポーターを備えた <code>stats</code> ソケット、または HAProxy 2.0+ の組み込み <code>/metrics</code>) と Prometheus のポイント
+それのコレクター。 (<a href="https://github.com/netdata/netdata/pull/23631">#23631</a>、
+<a href="https://github.com/netdata/netdata/pull/23632">#23632</a>)</li>
+<li><strong>RHEL 7.x、CentOS 7.x、Amazon Linux 2 および互換プラットフォームのネイティブ パッケージはビルドされなくなりました。</strong> これは、
+v2.11.0 release note で発表。 2.11.x シリーズが最後に提供されました。静的ビルドは、
+推奨される代替品であり、新規インストールでは自動的にそれらに切り替わります。
+(<a href="https://github.com/netdata/netdata/pull/22930">#22930</a>)</li>
+<li>**Debian 11 および Ubuntu 25.10 は、LTS のアップストリーム終了 (2026 年 8 月 31 日) および
+それぞれ人生（2026-07-09）。 (<a href="https://github.com/netdata/netdata/pull/22931">#22931</a>、
+<a href="https://github.com/netdata/netdata/pull/23813">#23813</a>)</li>
+<li>従来の RPM パッケージ コード (<code>netdata.spec.in</code>) は残りますが、未使用で非推奨です。公式 RPM パッケージは
+v2.11.0 以降と同様に、CPack を通じて構築されています。今後のリリースでは削除される予定です。</li>
+</ul>
+<h3>次のメジャー リリースでの重要な変更点</h3>
+<p><strong>非推奨のコンポーネント</strong></p>
+<p>|コンポーネントの種類 |廃止予定のバージョン |
+|-||-----------------------|
+| API | v1、v2 |</p>
+<p><strong>これが意味するもの</strong></p>
+<p>次のメジャー リリースからは、v3 API と v3 ダッシュボードのみがサポートされます。これらの新しいバージョンが提供するのは、
+パフォーマンスの向上、機能の強化、セキュリティの向上。</p>
+<h2>サポート オプション &lt;a id=&quot;v2120-support-options&quot;&gt;&lt;/a&gt;</h2>
+<p>当社は成長するにつれて、オープンソース ソリューションを通じてこれまでにない最高のサポートを提供することに尽力し続けます。このリリースで行われた変更または Netdata Agent の機能で問題が発生した場合は、次のいずれかのチャネルを通じてお気軽にお問い合わせください。</p>
+<ul>
+<li><a href="https://www.netdata.cloud/support/">プレミアム サポート</a>: Netdata との直接チャネルと、定義された SLA による優先サポートをご希望のお客様は、お問い合わせください。</li>
+<li><a href="https://learn.netdata.cloud">Netdata Learn</a>: Netdata を使用してシステムを監視およびトラブルシューティングするためのドキュメント、ガイド、参考資料を検索します。</li>
+<li><a href="https://github.com/netdata/netdata/issues">GitHub の問題</a>: Netdata リポジトリを使用して、バグを報告するか、新しい機能リクエストをオープンします。</li>
+<li><a href="https://github.com/netdata/netdata/discussions">GitHub ディスカッション</a>: Netdata 開発プロセスに関する会話に参加し、参加してください。</li>
+<li><a href="https://community.netdata.cloud/">コミュニティ フォーラム</a>: コミュニティ フォーラムにアクセスし、共同の知識ベースに貢献してください。</li>
+<li><a href="https://discord.gg/2eduZdSeC7">Discord サーバー</a>: Netdata Discord に参加して、志を同じくするシステム管理者、DevOps、SRE、その他のトラブルシューティング担当者と交流しましょう。すでに 2,000 人以上のエンジニアが使用しています。</li>
+</ul>
+<hr />
+<blockquote>
+<p><strong>ソース</strong> <a href="https://github.com/netdata/netdata">netdata/netdata</a> · <code>v2.12.0</code> · 2026-09-30 · <a href="https://github.com/netdata/netdata/releases/tag/v2.12.0">アップストリーム リリース</a></p>
+</blockquote>
+<p><em>インデックス作成のためにそのままミラーリングされます。すべての権利は上流プロジェクトに帰属します。</em></p></div>   </div> <p class="muted" style="margin-top:var(--s8);font-size:12.5px;border-top:1px solid var(--line);padding-top:var(--s4)"> Release note は上流のプロジェクトによって公開され、インデックス作成のためにここにミラーリングされます。すべての権利はその作者に帰属します。 </p> <nav class="pager" aria-label="Release navigation"> <a href="/releases/netdata/2.12.1"> <span class="k">← 次へ</span> <span class="t">v2.12.1</span> </a> <a href="/releases/netdata/2.11.1"> <span class="k">前へ →</span> <span class="t">v2.11.1</span> </a> </nav> <aside class="ad-slot" aria-label="Advertisement" data-astro-cid-fgwukgf6><div class="ad-slot-label" data-astro-cid-fgwukgf6>Advertisement</div><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4184355057086168" data-ad-slot="9133765584" data-ad-format="auto" data-full-width-responsive="true" data-astro-cid-fgwukgf6></ins><script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script></aside> </article> <aside class="rail"> <div class="rail-card"> <div class="rail-title">Source</div> <ul class="rail-list"> <li> <a href="https://github.com/netdata/netdata/releases/tag/v2.12.0" target="_blank" rel="noopener"> <span>GitHub で見る</span> <span class="d">↗</span> </a> </li> <li> <a href="https://github.com/netdata/netdata" target="_blank" rel="noopener"> <span>netdata/netdata</span> <span class="d">↗</span> </a> </li> </ul> </div> <div class="rail-card rail-toc"> <div class="rail-title">このページの目次</div> <nav> <a href="#" class>通知</a><a href="#" class>目次</a><a href="#" class>リリース概要 &lt;a id=&quot;v2120-release-summary&quot;&gt;&lt;/a&gt;</a><a href="#" class>リリース ハイライト &lt;a id=&quot;v2120-release-highlights&quot;&gt;&lt;/a&gt;</a><a href="#" class="lv3">OpenTelemetry トレース、早期アクセス &lt;a id=&quot;v2120-highlight-otel-traces&quot;&gt;&lt;/a&gt;</a><a href="#" class="lv3">Redfish: 帯域外サーバー ハードウェア監視 &lt;a id=&quot;v2120-highlight-redfish&quot;&gt;&lt;/a&gt;</a><a href="#" class="lv3">SNMP トポロジ: 診断、オフライン トリアージ、および再生&lt;a id=&quot;v2120-highlight-snmp-diagnostics&quot;&gt;&lt;/a&gt;</a><a href="#" class="lv3">新しいコレクター: S3 オブジェクト ストレージと SMBIOS メモリ &lt;a id=&quot;v2120-highlight-new-collectors&quot;&gt;&lt;/a&gt;</a><a href="#" class="lv3">Ceph、Prometheus の補完として再加工 &lt;a id=&quot;v2120-highlight-ceph&quot;&gt;&lt;/a&gt;</a><a href="#" class="lv3">Windows: Hyper-V、RDP、および広範な対応範囲&lt;a id=&quot;v2120-highlight-windows&quot;&gt;&lt;/a&gt;</a><a href="#" class="lv3">go.d &lt;a id=&quot;v2120-highlight-secrets&quot;&gt;&lt;/a&gt; でのシークレットと権限の強化</a><a href="#" class="lv3">クエリ エンジン: 重みの正確さと高速化&lt;a id=&quot;v2120-highlight-queries&quot;&gt;&lt;/a&gt;</a><a href="#" class="lv3">エージェントの安定性: dbengine、SQLite、ACLK、ML &lt;a id=&quot;v2120-highlight-stability&quot;&gt;&lt;/a&gt;</a><a href="#" class="lv3">Netdata Cloud: インフラストラクチャの知識、ノードの廃止、AI に関する会話&lt;a id=&quot;v2120-highlight-cloud&quot;&gt;&lt;/a&gt;</a><a href="#" class="lv3">プラットフォーム サポートの変更&lt;a id=&quot;v2120-highlight-platforms&quot;&gt;&lt;/a&gt;</a><a href="#" class>謝辞 &lt;a id=&quot;v2120-acknowledgments&quot;&gt;&lt;/a&gt;</a><a href="#" class>貢献 &lt;a id=&quot;v2120-contributions&quot;&gt;&lt;/a&gt;</a><a href="#" class="lv3">コレクター &lt;a id=&quot;v2120-contributions-collectors&quot;&gt;&lt;/a&gt;</a><a href="#" class="lv3">パッケージ化/インストール &lt;a id=&quot;v2120-contributions-packaging&quot;&gt;&lt;/a&gt;</a><a href="#" class="lv3">ドキュメント &lt;a id=&quot;v2120-contributions-documentation&quot;&gt;&lt;/a&gt;</a><a href="#" class="lv3">その他の注目すべき変更点 &lt;a id=&quot;v2120-contributions-other&quot;&gt;&lt;/a&gt;</a><a href="#" class>非推奨の通知 &lt;a id=&quot;v2120-deprecation-notice&quot;&gt;&lt;/a&gt;</a><a href="#" class="lv3">このリリースでの変更点</a><a href="#" class="lv3">次のメジャー リリースでの重要な変更点</a> </nav> </div> <div class="rail-card"> <div class="rail-title">バージョン履歴</div> <ul class="rail-list"> <li> <a href="/releases/netdata/2.12.3"> <span class="v">v2.12.3</span> <span class="d">26-11-04</span> </a> </li><li> <a href="/releases/netdata/2.12.2"> <span class="v">v2.12.2</span> <span class="d">26-10-23</span> </a> </li><li> <a href="/releases/netdata/2.12.1"> <span class="v">v2.12.1</span> <span class="d">26-10-08</span> </a> </li><li> <a href="/releases/netdata/2.12.0" aria-current="true"> <span class="v">v2.12.0</span> <span class="d">26-09-30</span> </a> </li><li> <a href="/releases/netdata/2.11.1"> <span class="v">v2.11.1</span> <span class="d">26-09-16</span> </a> </li><li> <a href="/releases/netdata/2.11.0"> <span class="v">v2.11.0</span> <span class="d">26-08-12</span> </a> </li><li> <a href="/releases/netdata/2.10.4"> <span class="v">v2.10.4</span> <span class="d">26-07-15</span> </a> </li><li> <a href="/releases/netdata/2.10.3"> <span class="v">v2.10.3</span> <span class="d">26-04-27</span> </a> </li> </ul> <a href="/ja/releases/netdata" class="mono" style="display:inline-block;margin-top:var(--s3);font-size:11.5px;color:var(--ink-3)"> すべての 23 件を見る →
+</a> </div> </aside> </div> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/ja/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>オープンソースのリリース インテリジェンスが毎日公開されます。</p> </div> <div class="footer-col"> <h3>追跡</h3> <ul> <li><a href="/ja/releases">リリース</a></li> <li><a href="/ja/projects">プロジェクト</a></li> <li><a href="/ja/releases.xml">RSS フィード</a></li> </ul> </div> <div class="footer-col"> <h3>アーカイブ</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文アーカイブ</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技術ノート</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>情報</h3> <ul> <li><a href="/ja/method">仕組み</a></li> <li><a href="/privacy">Privacy policy</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release note は上流プロジェクトに属します。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="リリースを検索"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="リリース、プロジェクト、バージョンを検索…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ navigate</span> <span>↵ open</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

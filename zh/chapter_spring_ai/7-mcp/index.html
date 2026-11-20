@@ -1,0 +1,509 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Spring AI MCP深度解析及MCP Server本地协同方案 — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_spring_ai/7-mcp/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_spring_ai/7-mcp"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_spring_ai/7-mcp/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_spring_ai/7-mcp"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="Spring AI MCP深度解析及MCP Server本地协同方案 — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_spring_ai/7-mcp/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_spring_ai/7-mcp/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>spring_ai</h3> <ul> <li> <a href="/zh/chapter_spring_ai/1-official-website" class="lv0" title="概述"> 概述 </a> </li><li> <a href="/zh/chapter_spring_ai/2-sample" class="lv0" title="深入Spring AI：Java开发者构建智能应用的全栈指南"> 深入Spring AI：Java开发者构建智能应用的全栈指南 </a> </li><li> <a href="/zh/chapter_spring_ai/3-sample2" class="lv0" title="3-sample2"> 3-sample2 </a> </li><li> <a href="/zh/chapter_spring_ai/4-sample" class="lv0" title="Spring AI全面指南：从入门到精通"> Spring AI全面指南：从入门到精通 </a> </li><li> <a href="/zh/chapter_spring_ai/5-advisor" class="lv0" title="Spring AI Advisor：智能决策辅助引擎全面指南"> Spring AI Advisor：智能决策辅助引擎全面指南 </a> </li><li> <a href="/zh/chapter_spring_ai/6-tool" class="lv0" title="Tool Calling函数注册与动态执行原理详解"> Tool Calling函数注册与动态执行原理详解 </a> </li><li> <a href="/zh/chapter_spring_ai/7-mcp" class="lv0" aria-current="page" title="Spring AI MCP深度解析及MCP Server本地协同方案"> Spring AI MCP深度解析及MCP Server本地协同方案 </a> </li><li> <a href="/zh/chapter_spring_ai/8-mcp-local" class="lv0" title="8-mcp-local"> 8-mcp-local </a> </li><li> <a href="/zh/chapter_spring_ai/9-rag" class="lv0" title="9-rag"> 9-rag </a> </li><li> <a href="/zh/chapter_spring_ai/10-rag-advisor" class="lv0" title="10-rag-advisor"> 10-rag-advisor </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_spring_ai">spring_ai</a><span class="sep">/</span><span>Spring AI MCP深度解析及MCP Server本地协同方案</span> </nav> <div class="prose">  <h1 id="spring-ai-mcp深度解析及mcp-server本地协同方案">Spring AI MCP深度解析及MCP Server本地协同方案</h1>
+<h2 id="1-引言理解spring-ai与mcp">1. 引言：理解Spring AI与MCP</h2>
+<p>Spring AI是Spring生态系统中的新成员，旨在简化企业级AI应用开发。在这个框架中，Model Conductor Protocol (MCP)扮演着连接Spring应用与AI模型的关键角色。本文将深入剖析MCP协议的工作原理及如何通过MCP Server实现本地模型协同。</p>
+<h2 id="2-mcp协议核心概念图解">2. MCP协议核心概念图解</h2>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">graph LR</span></span>
+<span class="line"><span style="color:#24292E">    A[Spring应用] --> B[MCP客户端]</span></span>
+<span class="line"><span style="color:#24292E">    B --> C[MCP协议]</span></span>
+<span class="line"><span style="color:#24292E">    C --> D[MCP服务器]</span></span>
+<span class="line"><span style="color:#24292E">    D --> E[AI模型]</span></span>
+<span class="line"><span style="color:#24292E">    style A fill:#e1f5fe</span></span>
+<span class="line"><span style="color:#24292E">    style B fill:#b3e5fc</span></span>
+<span class="line"><span style="color:#24292E">    style C fill:#81d4fa</span></span>
+<span class="line"><span style="color:#24292E">    style D fill:#4fc3f7</span></span>
+<span class="line"><span style="color:#24292E">    style E fill:#29b6f6</span></span></code></pre>
+<h2 id="3-mcp架构与工作原理">3. MCP架构与工作原理</h2>
+<h3 id="31-mcp核心架构">3.1 MCP核心架构</h3>
+<p>MCP协议设计基于现代API通信标准，采用REST风格，以JSON作为数据交换格式，实现了客户端与AI模型服务器之间的标准化通信。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">flowchart TD</span></span>
+<span class="line"><span style="color:#24292E">    subgraph "Spring应用"</span></span>
+<span class="line"><span style="color:#24292E">        A[业务逻辑] --> B[Spring AI API]</span></span>
+<span class="line"><span style="color:#24292E">        B --> C[MCP客户端适配器]</span></span>
+<span class="line"><span style="color:#24292E">    end</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    subgraph "通信层"</span></span>
+<span class="line"><span style="color:#24292E">        C --> D[HTTP/REST请求]</span></span>
+<span class="line"><span style="color:#24292E">        D --> E[JSON数据交换]</span></span>
+<span class="line"><span style="color:#24292E">    end</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    subgraph "模型服务"</span></span>
+<span class="line"><span style="color:#24292E">        E --> F[MCP服务器]</span></span>
+<span class="line"><span style="color:#24292E">        F --> G[模型加载与管理]</span></span>
+<span class="line"><span style="color:#24292E">        G --> H[模型执行引擎]</span></span>
+<span class="line"><span style="color:#24292E">    end</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    style A fill:#bbdefb</span></span>
+<span class="line"><span style="color:#24292E">    style B fill:#bbdefb</span></span>
+<span class="line"><span style="color:#24292E">    style C fill:#bbdefb</span></span>
+<span class="line"><span style="color:#24292E">    style D fill:#ffe0b2</span></span>
+<span class="line"><span style="color:#24292E">    style E fill:#ffe0b2</span></span>
+<span class="line"><span style="color:#24292E">    style F fill:#c8e6c9</span></span>
+<span class="line"><span style="color:#24292E">    style G fill:#c8e6c9</span></span>
+<span class="line"><span style="color:#24292E">    style H fill:#c8e6c9</span></span></code></pre>
+<h3 id="32-mcp协议特点">3.2 MCP协议特点</h3>
+<ul>
+<li><strong>统一接口</strong>: 标准化的API接口定义</li>
+<li><strong>模型无关性</strong>: 支持各类AI模型的统一接入</li>
+<li><strong>请求响应标准化</strong>: 规范化的请求和响应格式</li>
+<li><strong>可扩展性</strong>: 支持自定义参数和头信息</li>
+</ul>
+<h2 id="4-spring-ai中的mcp实现详解">4. Spring AI中的MCP实现详解</h2>
+<p>Spring AI提供了完整的MCP客户端实现，通过抽象层将模型调用复杂性隐藏，使开发者可以专注于业务逻辑。</p>
+<h3 id="41-核心组件关系图">4.1 核心组件关系图</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">classDiagram</span></span>
+<span class="line"><span style="color:#24292E">    class ChatClient {</span></span>
+<span class="line"><span style="color:#24292E">        +chat(prompt, options)</span></span>
+<span class="line"><span style="color:#24292E">        +streamingChat(prompt, options)</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    class AIClient {</span></span>
+<span class="line"><span style="color:#24292E">        +completion(prompt, options)</span></span>
+<span class="line"><span style="color:#24292E">        +streamingCompletion(prompt, options)</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    class MCPAdapter {</span></span>
+<span class="line"><span style="color:#24292E">        -baseUrl</span></span>
+<span class="line"><span style="color:#24292E">        -apiKey</span></span>
+<span class="line"><span style="color:#24292E">        +sendRequest(endpoint, payload)</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    class ModelOptions {</span></span>
+<span class="line"><span style="color:#24292E">        -temperature</span></span>
+<span class="line"><span style="color:#24292E">        -topK</span></span>
+<span class="line"><span style="color:#24292E">        -topP</span></span>
+<span class="line"><span style="color:#24292E">        -maxTokens</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    ChatClient --> MCPAdapter: uses</span></span>
+<span class="line"><span style="color:#24292E">    AIClient --> MCPAdapter: uses</span></span>
+<span class="line"><span style="color:#24292E">    ChatClient --> ModelOptions: configures</span></span>
+<span class="line"><span style="color:#24292E">    AIClient --> ModelOptions: configures</span></span></code></pre>
+<h3 id="42-mcp通信流程">4.2 MCP通信流程</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">sequenceDiagram</span></span>
+<span class="line"><span style="color:#24292E">    participant App as 应用程序</span></span>
+<span class="line"><span style="color:#24292E">    participant SpringAI as Spring AI客户端</span></span>
+<span class="line"><span style="color:#24292E">    participant MCP as MCP客户端适配器</span></span>
+<span class="line"><span style="color:#24292E">    participant Server as MCP服务器</span></span>
+<span class="line"><span style="color:#24292E">    participant Model as AI模型</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    App->>SpringAI: 调用AI API</span></span>
+<span class="line"><span style="color:#24292E">    SpringAI->>MCP: 转换为MCP请求</span></span>
+<span class="line"><span style="color:#24292E">    MCP->>Server: 发送HTTP/REST请求</span></span>
+<span class="line"><span style="color:#24292E">    Server->>Model: 模型推理请求</span></span>
+<span class="line"><span style="color:#24292E">    Model->>Server: 返回推理结果</span></span>
+<span class="line"><span style="color:#24292E">    Server->>MCP: 响应JSON数据</span></span>
+<span class="line"><span style="color:#24292E">    MCP->>SpringAI: 解析响应数据</span></span>
+<span class="line"><span style="color:#24292E">    SpringAI->>App: 返回结构化结果</span></span></code></pre>
+<h2 id="5-mcp-server本地协同实现">5. MCP Server本地协同实现</h2>
+<h3 id="51-为什么选择本地mcp服务器">5.1 为什么选择本地MCP服务器?</h3>
+<ul>
+<li><strong>数据隐私</strong>: 敏感数据无需离开本地环境</li>
+<li><strong>成本控制</strong>: 减少对云服务的依赖</li>
+<li><strong>定制化</strong>: 可根据特定需求调整模型行为</li>
+<li><strong>低延迟</strong>: 消除网络延迟，提升响应速度</li>
+</ul>
+<h3 id="52-本地mcp服务器搭建">5.2 本地MCP服务器搭建</h3>
+<h4 id="521-基于docker的mcp服务器实现">5.2.1 基于Docker的MCP服务器实现</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 创建Docker客户端对象</span></span>
+<span class="line"><span style="color:#24292E">DockerClient dockerClient </span><span style="color:#D73A49">=</span><span style="color:#24292E"> DockerClientBuilder.</span><span style="color:#6F42C1">getInstance</span><span style="color:#24292E">().</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 定义容器端口映射</span></span>
+<span class="line"><span style="color:#24292E">PortBinding portBinding </span><span style="color:#D73A49">=</span><span style="color:#24292E"> PortBinding.</span><span style="color:#6F42C1">builder</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">hostIp</span><span style="color:#24292E">(</span><span style="color:#032F62">"0.0.0.0"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">hostPort</span><span style="color:#24292E">(</span><span style="color:#032F62">"8080"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 配置容器端口</span></span>
+<span class="line"><span style="color:#24292E">HashMap&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, List&#x3C;</span><span style="color:#D73A49">PortBinding</span><span style="color:#24292E">>> portBindings </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> HashMap&#x3C;>();</span></span>
+<span class="line"><span style="color:#24292E">portBindings.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(</span><span style="color:#032F62">"8080/tcp"</span><span style="color:#24292E">, Arrays.</span><span style="color:#6F42C1">asList</span><span style="color:#24292E">(portBinding));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 创建容器网络设置</span></span>
+<span class="line"><span style="color:#24292E">NetworkSettings networkSettings </span><span style="color:#D73A49">=</span><span style="color:#24292E"> NetworkSettings.</span><span style="color:#6F42C1">builder</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">ports</span><span style="color:#24292E">(portBindings)</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 定义容器主机配置</span></span>
+<span class="line"><span style="color:#24292E">HostConfig hostConfig </span><span style="color:#D73A49">=</span><span style="color:#24292E"> HostConfig.</span><span style="color:#6F42C1">builder</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">portBindings</span><span style="color:#24292E">(portBindings)</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 构建容器创建请求</span></span>
+<span class="line"><span style="color:#24292E">CreateContainerRequest containerRequest </span><span style="color:#D73A49">=</span><span style="color:#24292E"> CreateContainerRequest.</span><span style="color:#6F42C1">builder</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">image</span><span style="color:#24292E">(</span><span style="color:#032F62">"spring-ai/mcp-server:latest"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">hostConfig</span><span style="color:#24292E">(hostConfig)</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">networkSettings</span><span style="color:#24292E">(networkSettings)</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">env</span><span style="color:#24292E">(Arrays.</span><span style="color:#6F42C1">asList</span><span style="color:#24292E">(</span><span style="color:#032F62">"MODEL_PATH=/models/llama-2-7b"</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 创建并启动MCP服务器容器</span></span>
+<span class="line"><span style="color:#24292E">CreateContainerResponse container </span><span style="color:#D73A49">=</span><span style="color:#24292E"> dockerClient.</span><span style="color:#6F42C1">createContainerCmd</span><span style="color:#24292E">(containerRequest).</span><span style="color:#6F42C1">exec</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">dockerClient.</span><span style="color:#6F42C1">startContainerCmd</span><span style="color:#24292E">(container.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">()).</span><span style="color:#6F42C1">exec</span><span style="color:#24292E">();</span></span></code></pre>
+<h4 id="522-mcp-server配置">5.2.2 MCP Server配置</h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 创建MCP服务器配置类</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Configuration</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> MCPServerConfig</span><span style="color:#24292E"> {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 定义MCP服务器连接属性</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Bean</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> MCPProperties </span><span style="color:#6F42C1">mcpProperties</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">        // 创建MCP属性对象</span></span>
+<span class="line"><span style="color:#24292E">        MCPProperties properties </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> MCPProperties</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 设置MCP服务器基础URL</span></span>
+<span class="line"><span style="color:#24292E">        properties.</span><span style="color:#6F42C1">setBaseUrl</span><span style="color:#24292E">(</span><span style="color:#032F62">"http://localhost:8080"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 设置API密钥(如果需要)</span></span>
+<span class="line"><span style="color:#24292E">        properties.</span><span style="color:#6F42C1">setApiKey</span><span style="color:#24292E">(</span><span style="color:#032F62">"local-dev-key"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 设置模型ID</span></span>
+<span class="line"><span style="color:#24292E">        properties.</span><span style="color:#6F42C1">setModel</span><span style="color:#24292E">(</span><span style="color:#032F62">"llama-2-7b"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 设置连接超时时间(毫秒)</span></span>
+<span class="line"><span style="color:#24292E">        properties.</span><span style="color:#6F42C1">setConnectTimeout</span><span style="color:#24292E">(</span><span style="color:#005CC5">5000</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 设置读取超时时间(毫秒)</span></span>
+<span class="line"><span style="color:#24292E">        properties.</span><span style="color:#6F42C1">setReadTimeout</span><span style="color:#24292E">(</span><span style="color:#005CC5">30000</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 返回配置好的属性对象</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> properties;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 创建MCP客户端Bean</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Bean</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> MCPClient </span><span style="color:#6F42C1">mcpClient</span><span style="color:#24292E">(MCPProperties </span><span style="color:#E36209">properties</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 使用properties创建并返回MCP客户端实例</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> MCPClientImpl</span><span style="color:#24292E">(properties);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 创建聊天客户端Bean</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Bean</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> ChatClient </span><span style="color:#6F42C1">chatClient</span><span style="color:#24292E">(MCPClient </span><span style="color:#E36209">mcpClient</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 基于MCP客户端创建聊天客户端</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> MCPChatClient</span><span style="color:#24292E">(mcpClient);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="6-spring-ai与mcp集成实践">6. Spring AI与MCP集成实践</h2>
+<h3 id="61-完整集成示例">6.1 完整集成示例</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 导入必要的Spring AI和MCP相关包</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.ChatClient;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.ChatResponse;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.messages.UserMessage;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.prompt.Prompt;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.mcp.MCPChatClient;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.beans.factory.annotation.Autowired;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.web.bind.annotation.RestController;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.web.bind.annotation.PostMapping;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.web.bind.annotation.RequestBody;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 创建REST控制器</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">RestController</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> AIController</span><span style="color:#24292E"> {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 注入配置好的聊天客户端</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> ChatClient chatClient;</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 通过构造函数注入依赖</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Autowired</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#6F42C1"> AIController</span><span style="color:#24292E">(ChatClient </span><span style="color:#E36209">chatClient</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.chatClient </span><span style="color:#D73A49">=</span><span style="color:#24292E"> chatClient;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 定义处理聊天请求的端点</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">PostMapping</span><span style="color:#24292E">(</span><span style="color:#032F62">"/api/chat"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> ChatResponseDto </span><span style="color:#6F42C1">chat</span><span style="color:#24292E">(@</span><span style="color:#D73A49">RequestBody</span><span style="color:#24292E"> ChatRequestDto </span><span style="color:#E36209">request</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 创建用户消息对象</span></span>
+<span class="line"><span style="color:#24292E">        UserMessage userMessage </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> UserMessage</span><span style="color:#24292E">(request.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 构建提示对象</span></span>
+<span class="line"><span style="color:#24292E">        Prompt prompt </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Prompt</span><span style="color:#24292E">(userMessage);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 设置模型参数选项</span></span>
+<span class="line"><span style="color:#24292E">        ChatOptions options </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ChatOptions.</span><span style="color:#6F42C1">builder</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withTemperature</span><span style="color:#24292E">(</span><span style="color:#005CC5">0.7f</span><span style="color:#24292E">)  </span><span style="color:#6A737D">// 设置温度参数</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withMaxTokens</span><span style="color:#24292E">(</span><span style="color:#005CC5">1000</span><span style="color:#24292E">)    </span><span style="color:#6A737D">// 设置最大令牌数</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withTopK</span><span style="color:#24292E">(</span><span style="color:#005CC5">40</span><span style="color:#24292E">)          </span><span style="color:#6A737D">// 设置top-k参数</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withTopP</span><span style="color:#24292E">(</span><span style="color:#005CC5">0.95f</span><span style="color:#24292E">)       </span><span style="color:#6A737D">// 设置top-p参数</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 调用AI模型并获取响应</span></span>
+<span class="line"><span style="color:#24292E">        ChatResponse response </span><span style="color:#D73A49">=</span><span style="color:#24292E"> chatClient.</span><span style="color:#6F42C1">chat</span><span style="color:#24292E">(prompt, options);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 将AI响应转换为DTO并返回</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ChatResponseDto</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">            response.</span><span style="color:#6F42C1">getResult</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getOutput</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getContent</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">            response.</span><span style="color:#6F42C1">getMetadata</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">        );</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 请求数据传输对象</span></span>
+<span class="line"><span style="color:#D73A49">class</span><span style="color:#6F42C1"> ChatRequestDto</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#24292E"> String message;</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // getter和setter略</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 响应数据传输对象</span></span>
+<span class="line"><span style="color:#D73A49">class</span><span style="color:#6F42C1"> ChatResponseDto</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#24292E"> String response;</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#24292E"> Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> metadata;</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 构造函数、getter和setter略</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="62-流式响应实现">6.2 流式响应实现</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 导入流式处理相关包</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.StreamingChatClient;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.web.servlet.mvc.method.annotation.SseEmitter;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> org.springframework.ai.chat.messages.Message;</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> reactor.core.publisher.Flux;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 在控制器中添加流式聊天端点</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">RestController</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> AIStreamingController</span><span style="color:#24292E"> {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 注入流式聊天客户端</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> StreamingChatClient streamingChatClient;</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 构造函数注入依赖</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Autowired</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#6F42C1"> AIStreamingController</span><span style="color:#24292E">(StreamingChatClient </span><span style="color:#E36209">streamingChatClient</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.streamingChatClient </span><span style="color:#D73A49">=</span><span style="color:#24292E"> streamingChatClient;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 定义流式聊天端点</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">GetMapping</span><span style="color:#24292E">(</span><span style="color:#005CC5">value</span><span style="color:#D73A49"> =</span><span style="color:#032F62"> "/api/chat/stream"</span><span style="color:#24292E">, </span><span style="color:#005CC5">produces</span><span style="color:#D73A49"> =</span><span style="color:#24292E"> MediaType.TEXT_EVENT_STREAM_VALUE)</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> SseEmitter </span><span style="color:#6F42C1">streamChat</span><span style="color:#24292E">(@</span><span style="color:#D73A49">RequestParam</span><span style="color:#24292E"> String </span><span style="color:#E36209">message</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 创建SSE发射器</span></span>
+<span class="line"><span style="color:#24292E">        SseEmitter emitter </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> SseEmitter</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 创建用户消息</span></span>
+<span class="line"><span style="color:#24292E">        UserMessage userMessage </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> UserMessage</span><span style="color:#24292E">(message);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 构建提示对象</span></span>
+<span class="line"><span style="color:#24292E">        Prompt prompt </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Prompt</span><span style="color:#24292E">(userMessage);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 设置模型参数</span></span>
+<span class="line"><span style="color:#24292E">        ChatOptions options </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ChatOptions.</span><span style="color:#6F42C1">builder</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withTemperature</span><span style="color:#24292E">(</span><span style="color:#005CC5">0.8f</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">withMaxTokens</span><span style="color:#24292E">(</span><span style="color:#005CC5">2000</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 获取流式响应</span></span>
+<span class="line"><span style="color:#24292E">        Flux&#x3C;</span><span style="color:#D73A49">ChatResponse</span><span style="color:#24292E">> responseStream </span><span style="color:#D73A49">=</span><span style="color:#24292E"> streamingChatClient.</span><span style="color:#6F42C1">streamingChat</span><span style="color:#24292E">(prompt, options);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 处理流式响应</span></span>
+<span class="line"><span style="color:#24292E">        responseStream.</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#6A737D">            // 成功处理每一个片段</span></span>
+<span class="line"><span style="color:#24292E">            partialResponse </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                    // 发送部分响应</span></span>
+<span class="line"><span style="color:#24292E">                    String content </span><span style="color:#D73A49">=</span><span style="color:#24292E"> partialResponse.</span><span style="color:#6F42C1">getResult</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getOutput</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getContent</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                    emitter.</span><span style="color:#6F42C1">send</span><span style="color:#24292E">(content, MediaType.TEXT_PLAIN);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (IOException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">                    // 处理IO异常</span></span>
+<span class="line"><span style="color:#24292E">                    emitter.</span><span style="color:#6F42C1">completeWithError</span><span style="color:#24292E">(e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            },</span></span>
+<span class="line"><span style="color:#6A737D">            // 处理错误</span></span>
+<span class="line"><span style="color:#24292E">            error </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                emitter.</span><span style="color:#6F42C1">completeWithError</span><span style="color:#24292E">(error);</span></span>
+<span class="line"><span style="color:#24292E">            },</span></span>
+<span class="line"><span style="color:#6A737D">            // 处理完成</span></span>
+<span class="line"><span style="color:#24292E">            () </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                emitter.</span><span style="color:#6F42C1">complete</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        );</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 返回SSE发射器</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> emitter;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="7-高级mcp功能与优化">7. 高级MCP功能与优化</h2>
+<h3 id="71-多模型协同架构">7.1 多模型协同架构</h3>
+<p>通过MCP协议可以实现多模型协同工作，不同的模型负责不同的任务，形成模型链。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">graph TD</span></span>
+<span class="line"><span style="color:#24292E">    A[用户请求] --> B{任务路由器}</span></span>
+<span class="line"><span style="color:#24292E">    B -->|文本生成| C[LLM模型]</span></span>
+<span class="line"><span style="color:#24292E">    B -->|图像识别| D[视觉模型]</span></span>
+<span class="line"><span style="color:#24292E">    B -->|语音转文字| E[语音模型]</span></span>
+<span class="line"><span style="color:#24292E">    C --> F{结果聚合器}</span></span>
+<span class="line"><span style="color:#24292E">    D --> F</span></span>
+<span class="line"><span style="color:#24292E">    E --> F</span></span>
+<span class="line"><span style="color:#24292E">    F --> G[响应处理]</span></span>
+<span class="line"><span style="color:#24292E">    G --> H[返回用户]</span></span></code></pre>
+<h3 id="72-mcp服务器高可用设计">7.2 MCP服务器高可用设计</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 创建MCP服务器集群配置类</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Configuration</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> MCPHighAvailabilityConfig</span><span style="color:#24292E"> {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 定义负载均衡器</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Bean</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> LoadBalancer </span><span style="color:#6F42C1">mcpLoadBalancer</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">        // 创建轮询策略的负载均衡器</span></span>
+<span class="line"><span style="color:#24292E">        RoundRobinLoadBalancer balancer </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> RoundRobinLoadBalancer</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 添加多个MCP服务器实例</span></span>
+<span class="line"><span style="color:#24292E">        balancer.</span><span style="color:#6F42C1">addServer</span><span style="color:#24292E">(</span><span style="color:#032F62">"http://mcp-server-1:8080"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        balancer.</span><span style="color:#6F42C1">addServer</span><span style="color:#24292E">(</span><span style="color:#032F62">"http://mcp-server-2:8080"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        balancer.</span><span style="color:#6F42C1">addServer</span><span style="color:#24292E">(</span><span style="color:#032F62">"http://mcp-server-3:8080"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 设置健康检查间隔(秒)</span></span>
+<span class="line"><span style="color:#24292E">        balancer.</span><span style="color:#6F42C1">setHealthCheckInterval</span><span style="color:#24292E">(</span><span style="color:#005CC5">30</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 返回配置好的负载均衡器</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> balancer;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 创建具有故障转移功能的MCP客户端</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Bean</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> MCPClient </span><span style="color:#6F42C1">resilientMcpClient</span><span style="color:#24292E">(LoadBalancer </span><span style="color:#E36209">loadBalancer</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 创建基础MCP客户端配置</span></span>
+<span class="line"><span style="color:#24292E">        MCPClientConfig config </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> MCPClientConfig</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 设置连接超时</span></span>
+<span class="line"><span style="color:#24292E">        config.</span><span style="color:#6F42C1">setConnectTimeout</span><span style="color:#24292E">(</span><span style="color:#005CC5">3000</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 设置读取超时</span></span>
+<span class="line"><span style="color:#24292E">        config.</span><span style="color:#6F42C1">setReadTimeout</span><span style="color:#24292E">(</span><span style="color:#005CC5">10000</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 设置最大重试次数</span></span>
+<span class="line"><span style="color:#24292E">        config.</span><span style="color:#6F42C1">setMaxRetries</span><span style="color:#24292E">(</span><span style="color:#005CC5">3</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 创建并返回高可用MCP客户端</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ResilientMCPClient</span><span style="color:#24292E">(loadBalancer, config);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="73-模型性能监控与优化">7.3 模型性能监控与优化</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 创建MCP性能监控切面</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Aspect</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Component</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> MCPPerformanceMonitor</span><span style="color:#24292E"> {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 注入指标注册表</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> MeterRegistry meterRegistry;</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 构造函数注入依赖</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Autowired</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#6F42C1"> MCPPerformanceMonitor</span><span style="color:#24292E">(MeterRegistry </span><span style="color:#E36209">meterRegistry</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.meterRegistry </span><span style="color:#D73A49">=</span><span style="color:#24292E"> meterRegistry;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 定义切点，拦截所有MCP客户端方法</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Around</span><span style="color:#24292E">(</span><span style="color:#032F62">"execution(* org.springframework.ai.mcp.MCPClient.*(..))"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> Object </span><span style="color:#6F42C1">monitorPerformance</span><span style="color:#24292E">(ProceedingJoinPoint </span><span style="color:#E36209">joinPoint</span><span style="color:#24292E">) </span><span style="color:#D73A49">throws</span><span style="color:#24292E"> Throwable {</span></span>
+<span class="line"><span style="color:#6A737D">        // 记录方法名称</span></span>
+<span class="line"><span style="color:#24292E">        String methodName </span><span style="color:#D73A49">=</span><span style="color:#24292E"> joinPoint.</span><span style="color:#6F42C1">getSignature</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">        // 创建计时器</span></span>
+<span class="line"><span style="color:#24292E">        Timer.Sample sample </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Timer.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">(meterRegistry);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">            // 执行原始方法</span></span>
+<span class="line"><span style="color:#24292E">            Object result </span><span style="color:#D73A49">=</span><span style="color:#24292E"> joinPoint.</span><span style="color:#6F42C1">proceed</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            </span></span>
+<span class="line"><span style="color:#6A737D">            // 记录成功调用</span></span>
+<span class="line"><span style="color:#24292E">            sample.</span><span style="color:#6F42C1">stop</span><span style="color:#24292E">(Timer.</span><span style="color:#6F42C1">builder</span><span style="color:#24292E">(</span><span style="color:#032F62">"mcp.calls"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">tag</span><span style="color:#24292E">(</span><span style="color:#032F62">"method"</span><span style="color:#24292E">, methodName)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">tag</span><span style="color:#24292E">(</span><span style="color:#032F62">"status"</span><span style="color:#24292E">, </span><span style="color:#032F62">"success"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">register</span><span style="color:#24292E">(meterRegistry));</span></span>
+<span class="line"><span style="color:#24292E">                </span></span>
+<span class="line"><span style="color:#6A737D">            // 记录token使用量(如果结果包含该信息)</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (result </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> ChatResponse) {</span></span>
+<span class="line"><span style="color:#24292E">                ChatResponse response </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (ChatResponse) result;</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (response.</span><span style="color:#6F42C1">getMetadata</span><span style="color:#24292E">().</span><span style="color:#6F42C1">containsKey</span><span style="color:#24292E">(</span><span style="color:#032F62">"usage"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">                    Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> usage </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (Map</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">String, Object</span><span style="color:#D73A49">></span><span style="color:#24292E">) response.</span><span style="color:#6F42C1">getMetadata</span><span style="color:#24292E">().</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#032F62">"usage"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                    </span></span>
+<span class="line"><span style="color:#6A737D">                    // 记录输入tokens</span></span>
+<span class="line"><span style="color:#24292E">                    meterRegistry.</span><span style="color:#6F42C1">gauge</span><span style="color:#24292E">(</span><span style="color:#032F62">"mcp.tokens.input"</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#24292E">                        Tags.</span><span style="color:#6F42C1">of</span><span style="color:#24292E">(</span><span style="color:#032F62">"model"</span><span style="color:#24292E">, response.</span><span style="color:#6F42C1">getMetadata</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getOrDefault</span><span style="color:#24292E">(</span><span style="color:#032F62">"model"</span><span style="color:#24292E">, </span><span style="color:#032F62">"unknown"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">()),</span></span>
+<span class="line"><span style="color:#24292E">                        Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(usage.</span><span style="color:#6F42C1">getOrDefault</span><span style="color:#24292E">(</span><span style="color:#032F62">"promptTokens"</span><span style="color:#24292E">, </span><span style="color:#005CC5">0</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#24292E">                        </span></span>
+<span class="line"><span style="color:#6A737D">                    // 记录输出tokens</span></span>
+<span class="line"><span style="color:#24292E">                    meterRegistry.</span><span style="color:#6F42C1">gauge</span><span style="color:#24292E">(</span><span style="color:#032F62">"mcp.tokens.output"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">                        Tags.</span><span style="color:#6F42C1">of</span><span style="color:#24292E">(</span><span style="color:#032F62">"model"</span><span style="color:#24292E">, response.</span><span style="color:#6F42C1">getMetadata</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getOrDefault</span><span style="color:#24292E">(</span><span style="color:#032F62">"model"</span><span style="color:#24292E">, </span><span style="color:#032F62">"unknown"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">()),</span></span>
+<span class="line"><span style="color:#24292E">                        Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(usage.</span><span style="color:#6F42C1">getOrDefault</span><span style="color:#24292E">(</span><span style="color:#032F62">"completionTokens"</span><span style="color:#24292E">, </span><span style="color:#005CC5">0</span><span style="color:#24292E">).</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">            </span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> result;</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">t</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">            // 记录失败调用</span></span>
+<span class="line"><span style="color:#24292E">            sample.</span><span style="color:#6F42C1">stop</span><span style="color:#24292E">(Timer.</span><span style="color:#6F42C1">builder</span><span style="color:#24292E">(</span><span style="color:#032F62">"mcp.calls"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">tag</span><span style="color:#24292E">(</span><span style="color:#032F62">"method"</span><span style="color:#24292E">, methodName)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">tag</span><span style="color:#24292E">(</span><span style="color:#032F62">"status"</span><span style="color:#24292E">, </span><span style="color:#032F62">"failure"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">tag</span><span style="color:#24292E">(</span><span style="color:#032F62">"exception"</span><span style="color:#24292E">, t.</span><span style="color:#6F42C1">getClass</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getSimpleName</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">register</span><span style="color:#24292E">(meterRegistry));</span></span>
+<span class="line"><span style="color:#24292E">                </span></span>
+<span class="line"><span style="color:#6A737D">            // 抛出原始异常</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#24292E"> t;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="8-最佳实践与注意事项">8. 最佳实践与注意事项</h2>
+<h3 id="81-mcp本地部署脑图">8.1 MCP本地部署脑图</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>graph TD</span></span>
+<span class="line"><span>    A[MCP本地部署策略] --> B[硬件准备]</span></span>
+<span class="line"><span>    A --> C[模型选择]</span></span>
+<span class="line"><span>    A --> D[部署方式]</span></span>
+<span class="line"><span>    A --> E[安全措施]</span></span>
+<span class="line"><span>    A --> F[监控与维护]</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    B --> B1[CPU/GPU需求评估]</span></span>
+<span class="line"><span>    B --> B2[存储空间规划]</span></span>
+<span class="line"><span>    B --> B3[网络带宽要求]</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    C --> C1[开源模型选择]</span></span>
+<span class="line"><span>    C --> C2[模型量化考量]</span></span>
+<span class="line"><span>    C --> C3[多模型协同]</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    D --> D1[Docker容器化]</span></span>
+<span class="line"><span>    D --> D2[Kubernetes编排]</span></span>
+<span class="line"><span>    D --> D3[裸机部署]</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    E --> E1[访问控制]</span></span>
+<span class="line"><span>    E --> E2[数据加密]</span></span>
+<span class="line"><span>    E --> E3[审计日志]</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    F --> F1[性能指标收集]</span></span>
+<span class="line"><span>    F --> F2[异常报警]</span></span>
+<span class="line"><span>    F --> F3[自动扩缩容]</span></span></code></pre>
+<h3 id="82-mcp使用建议">8.2 MCP使用建议</h3>
+<ol>
+<li><strong>隔离环境</strong>: 将MCP服务与业务应用隔离部署</li>
+<li><strong>资源规划</strong>: 根据模型大小和并发需求合理分配资源</li>
+<li><strong>缓存策略</strong>: 对常见请求结果进行缓存</li>
+<li><strong>降级机制</strong>: 设计AI服务不可用时的降级方案</li>
+<li><strong>版本管理</strong>: 建立模型版本管理和回滚机制</li>
+</ol>
+<h2 id="9-总结与展望">9. 总结与展望</h2>
+<p>Spring AI的MCP实现为企业级AI应用提供了标准化、可扩展的解决方案。通过本地MCP服务器部署，既保证了数据安全性，又提供了灵活的模型定制能力。随着Spring AI的持续发展，MCP协议也将进一步完善，支持更多AI模型类型，提供更丰富的功能特性。</p>
+<p>未来，Spring AI与MCP将朝着以下方向发展:</p>
+<ul>
+<li>更全面的模型支持</li>
+<li>更强大的模型训练能力</li>
+<li>与Spring生态更深度集成</li>
+<li>更完善的企业级特性</li>
+</ul>
+<p>技术发展日新月异，但标准化协议的价值永恒。MCP的出现，为AI应用开发提供了一条可持续发展的道路。</p>
+<hr>
+<blockquote>
+<p>本文详细介绍了Spring AI中的MCP协议及本地协同实现方案，希望能帮助开发者更好地理解和应用这一技术，构建强大的企业级AI应用。</p>
+</blockquote>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

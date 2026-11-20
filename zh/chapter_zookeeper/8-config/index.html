@@ -1,0 +1,653 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**配置信息是如何加载到内存空间的** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_zookeeper/8-config/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_zookeeper/8-config"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_zookeeper/8-config/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_zookeeper/8-config"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**配置信息是如何加载到内存空间的** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_zookeeper/8-config/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_zookeeper/8-config/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>zookeeper</h3> <ul> <li> <a href="/zh/chapter_zookeeper/1-introduce" class="lv0" title="**Zookeeper的设计**"> **Zookeeper的设计** </a> </li><li> <a href="/zh/chapter_zookeeper/2-implement" class="lv0" title="**Zookeeper的实现**"> **Zookeeper的实现** </a> </li><li> <a href="/zh/chapter_zookeeper/3-install" class="lv0" title="**Zookeeper安装配置**"> **Zookeeper安装配置** </a> </li><li> <a href="/zh/chapter_zookeeper/4-client" class="lv0" title="客户端的入门使用"> 客户端的入门使用 </a> </li><li> <a href="/zh/chapter_zookeeper/5-produce-and-consumer" class="lv0" title="**教你如何用Zookeeper开发锁与生产者消费者?**"> **教你如何用Zookeeper开发锁与生产者消费者?** </a> </li><li> <a href="/zh/chapter_zookeeper/6-watch" class="lv0" title="**Watch监听通知机制简介**"> **Watch监听通知机制简介** </a> </li><li> <a href="/zh/chapter_zookeeper/7-start-source" class="lv0" title="**服务器启动流程入个门**"> **服务器启动流程入个门** </a> </li><li> <a href="/zh/chapter_zookeeper/8-config" class="lv0" aria-current="page" title="**配置信息是如何加载到内存空间的**"> **配置信息是如何加载到内存空间的** </a> </li><li> <a href="/zh/chapter_zookeeper/9-clear-log-start" class="lv0" title="**日志清理定时任务的启动**"> **日志清理定时任务的启动** </a> </li><li> <a href="/zh/chapter_zookeeper/10-init-main" class="lv0" title="**使用配置信息启动运行入口**"> **使用配置信息启动运行入口** </a> </li><li> <a href="/zh/chapter_zookeeper/11-reactor" class="lv0" title="**ServerCnxnFactory 服务器连接工厂对象的创建与属性初始化**"> **ServerCnxnFactory 服务器连接工厂对象的创建与属性初始化** </a> </li><li> <a href="/zh/chapter_zookeeper/12-quorumpeer-init" class="lv0" title="**管理协议的法定人对象QuorumPeer创建与初始化**"> **管理协议的法定人对象QuorumPeer创建与初始化** </a> </li><li> <a href="/zh/chapter_zookeeper/13-loaddatabase" class="lv0" title="**法定人对象QuorumPeer启动之加载磁盘快照与事务日志**"> **法定人对象QuorumPeer启动之加载磁盘快照与事务日志** </a> </li><li> <a href="/zh/chapter_zookeeper/14-reactor-io" class="lv0" title="**启服务端网络监听连接NIOServerCnxnFactory**"> **启服务端网络监听连接NIOServerCnxnFactory** </a> </li><li> <a href="/zh/chapter_zookeeper/15-election" class="lv0" title="**选举算法的准备等待选举**"> **选举算法的准备等待选举** </a> </li><li> <a href="/zh/chapter_zookeeper/16-lookforleader" class="lv0" title="**QuorumPeer主循环**"> **QuorumPeer主循环** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_zookeeper">zookeeper</a><span class="sep">/</span><span>**配置信息是如何加载到内存空间的**</span> </nav> <div class="prose">  <h1 id="配置信息是如何加载到内存空间的"><strong>配置信息是如何加载到内存空间的</strong></h1>
+<h2 id="配置信息的加载过程"><strong>配置信息的加载过程</strong></h2>
+<p>在执行zkServer命令启动Zookeeper的时候，
+Zookeeper启动脚本在启动java进程时会主动为Java进程加上java参数conf文件位置
+，默认为Zookeeper文件夹的conf目录下的 <strong>zoo.cfg</strong> 文件，
+在Zookeeper入口函数QuorumPeerMain类中的main方法执行时可以
+通过args[0]获取conf文件路径在初始化的时候执行如下代码进行解析配置：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">  QuorumPeerConfig config </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> QuorumPeerConfig</span><span style="color:#24292E">();</span></span></code></pre>
+<p>指定了conf配置文件则开始解析配置文件</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">   if</span><span style="color:#24292E"> (args.length </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 1</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        config.</span><span style="color:#6F42C1">parse</span><span style="color:#24292E">(args[</span><span style="color:#005CC5">0</span><span style="color:#24292E">]);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>如果存在Zookeeper配置文件参数则先调用QuorumPeerConfig的parse方法
+来解析当前配置类中存在的配置属性解析过程如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D"> * Parse a ZooKeeper configuration file</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> path</span><span style="color:#6A737D"> the patch of the configuration file</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@throws</span><span style="color:#6F42C1"> ConfigException</span><span style="color:#6A737D"> error processing configuration</span></span>
+<span class="line"><span style="color:#6A737D"> */</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> parse</span><span style="color:#24292E">(String path) throws ConfigException {</span></span>
+<span class="line"><span style="color:#24292E">    File configFile </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> File</span><span style="color:#24292E">(path);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Reading configuration from: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> configFile);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">configFile.</span><span style="color:#6F42C1">exists</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(configFile.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#D73A49">                    +</span><span style="color:#032F62"> " file is missing"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        Properties cfg </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Properties</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        FileInputStream in </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> FileInputStream</span><span style="color:#24292E">(configFile);</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            cfg.</span><span style="color:#6F42C1">load</span><span style="color:#24292E">(in);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            in.</span><span style="color:#6F42C1">close</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">        parseProperties</span><span style="color:#24292E">(cfg);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (IOException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ConfigException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Error processing "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> path, e);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (IllegalArgumentException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ConfigException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Error processing "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> path, e);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="parseproperties"><strong>parseProperties</strong></h3>
+<p>解析过程就是使用File读取配置文件然后赋值给当前对象的成员变量。具体代码如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D"> * Parse config from a Properties.</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> zkProp</span><span style="color:#6A737D"> Properties to parse from.</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@throws</span><span style="color:#6F42C1"> IOException</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@throws</span><span style="color:#6F42C1"> ConfigException</span></span>
+<span class="line"><span style="color:#6A737D"> */</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> parseProperties</span><span style="color:#24292E">(Properties zkProp) throws IOException, ConfigException {</span></span>
+<span class="line"><span style="color:#D73A49">    int</span><span style="color:#24292E"> clientPort </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">    int</span><span style="color:#24292E"> secureClientPort </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">    int</span><span style="color:#24292E"> observerMasterPort </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    String clientPortAddress </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    String secureClientPortAddress </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    VerifyingFileFactory vff </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> VerifyingFileFactory.</span><span style="color:#6F42C1">Builder</span><span style="color:#24292E">(LOG).</span><span style="color:#6F42C1">warnForRelativePath</span><span style="color:#24292E">().</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (Entry&#x3C;</span><span style="color:#D73A49">Object</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> entry </span><span style="color:#D73A49">:</span><span style="color:#24292E"> zkProp.</span><span style="color:#6F42C1">entrySet</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">        String key </span><span style="color:#D73A49">=</span><span style="color:#24292E"> entry.</span><span style="color:#6F42C1">getKey</span><span style="color:#24292E">().</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">().</span><span style="color:#6F42C1">trim</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        String value </span><span style="color:#D73A49">=</span><span style="color:#24292E"> entry.</span><span style="color:#6F42C1">getValue</span><span style="color:#24292E">().</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">().</span><span style="color:#6F42C1">trim</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"dataDir"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            dataDir </span><span style="color:#D73A49">=</span><span style="color:#24292E"> vff.</span><span style="color:#6F42C1">create</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"dataLogDir"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            dataLogDir </span><span style="color:#D73A49">=</span><span style="color:#24292E"> vff.</span><span style="color:#6F42C1">create</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"clientPort"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            clientPort </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"localSessionsEnabled"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            localSessionsEnabled </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Boolean.</span><span style="color:#6F42C1">parseBoolean</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"localSessionsUpgradingEnabled"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            localSessionsUpgradingEnabled </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Boolean.</span><span style="color:#6F42C1">parseBoolean</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"clientPortAddress"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            clientPortAddress </span><span style="color:#D73A49">=</span><span style="color:#24292E"> value.</span><span style="color:#6F42C1">trim</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"secureClientPort"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            secureClientPort </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"secureClientPortAddress"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            secureClientPortAddress </span><span style="color:#D73A49">=</span><span style="color:#24292E"> value.</span><span style="color:#6F42C1">trim</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"observerMasterPort"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            observerMasterPort </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"clientPortListenBacklog"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            clientPortListenBacklog </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"tickTime"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            tickTime </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"maxClientCnxns"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            maxClientCnxns </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"minSessionTimeout"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            minSessionTimeout </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"maxSessionTimeout"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            maxSessionTimeout </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"initLimit"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            initLimit </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"syncLimit"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            syncLimit </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"connectToLearnerMasterLimit"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            connectToLearnerMasterLimit </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"electionAlg"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            electionAlg </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (electionAlg </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> 3</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ConfigException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Invalid electionAlg value. Only 3 is supported."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"quorumListenOnAllIPs"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            quorumListenOnAllIPs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Boolean.</span><span style="color:#6F42C1">parseBoolean</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"peerType"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value.</span><span style="color:#6F42C1">toLowerCase</span><span style="color:#24292E">().</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"observer"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">                peerType </span><span style="color:#D73A49">=</span><span style="color:#24292E"> LearnerType.OBSERVER;</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (value.</span><span style="color:#6F42C1">toLowerCase</span><span style="color:#24292E">().</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"participant"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">                peerType </span><span style="color:#D73A49">=</span><span style="color:#24292E"> LearnerType.PARTICIPANT;</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ConfigException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Unrecognised peertype: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> value);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"syncEnabled"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            syncEnabled </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Boolean.</span><span style="color:#6F42C1">parseBoolean</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"dynamicConfigFile"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            dynamicConfigFileStr </span><span style="color:#D73A49">=</span><span style="color:#24292E"> value;</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"autopurge.snapRetainCount"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            snapRetainCount </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"autopurge.purgeInterval"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            purgeInterval </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"standaloneEnabled"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value.</span><span style="color:#6F42C1">toLowerCase</span><span style="color:#24292E">().</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"true"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#6F42C1">                setStandaloneEnabled</span><span style="color:#24292E">(</span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (value.</span><span style="color:#6F42C1">toLowerCase</span><span style="color:#24292E">().</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"false"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#6F42C1">                setStandaloneEnabled</span><span style="color:#24292E">(</span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ConfigException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Invalid option "</span></span>
+<span class="line"><span style="color:#D73A49">                                          +</span><span style="color:#24292E"> value</span></span>
+<span class="line"><span style="color:#D73A49">                                          +</span><span style="color:#032F62"> " for standalone mode. Choose 'true' or 'false.'"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"reconfigEnabled"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (value.</span><span style="color:#6F42C1">toLowerCase</span><span style="color:#24292E">().</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"true"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#6F42C1">                setReconfigEnabled</span><span style="color:#24292E">(</span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (value.</span><span style="color:#6F42C1">toLowerCase</span><span style="color:#24292E">().</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"false"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#6F42C1">                setReconfigEnabled</span><span style="color:#24292E">(</span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ConfigException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Invalid option "</span></span>
+<span class="line"><span style="color:#D73A49">                                          +</span><span style="color:#24292E"> value</span></span>
+<span class="line"><span style="color:#D73A49">                                          +</span><span style="color:#032F62"> " for reconfigEnabled flag. Choose 'true' or 'false.'"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"sslQuorum"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            sslQuorum </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Boolean.</span><span style="color:#6F42C1">parseBoolean</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"portUnification"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            shouldUsePortUnification </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Boolean.</span><span style="color:#6F42C1">parseBoolean</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"sslQuorumReloadCertFiles"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            sslQuorumReloadCertFiles </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Boolean.</span><span style="color:#6F42C1">parseBoolean</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> ((key.</span><span style="color:#6F42C1">startsWith</span><span style="color:#24292E">(</span><span style="color:#032F62">"server."</span><span style="color:#24292E">) </span><span style="color:#D73A49">||</span><span style="color:#24292E"> key.</span><span style="color:#6F42C1">startsWith</span><span style="color:#24292E">(</span><span style="color:#032F62">"group"</span><span style="color:#24292E">) </span><span style="color:#D73A49">||</span><span style="color:#24292E"> key.</span><span style="color:#6F42C1">startsWith</span><span style="color:#24292E">(</span><span style="color:#032F62">"weight"</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#D73A49">                   &#x26;&#x26;</span><span style="color:#24292E"> zkProp.</span><span style="color:#6F42C1">containsKey</span><span style="color:#24292E">(</span><span style="color:#032F62">"dynamicConfigFile"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ConfigException</span><span style="color:#24292E">(</span><span style="color:#032F62">"parameter: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> key </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " must be in a separate dynamic config file"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(QuorumAuth.QUORUM_SASL_AUTH_ENABLED)) {</span></span>
+<span class="line"><span style="color:#24292E">            quorumEnableSasl </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Boolean.</span><span style="color:#6F42C1">parseBoolean</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(QuorumAuth.QUORUM_SERVER_SASL_AUTH_REQUIRED)) {</span></span>
+<span class="line"><span style="color:#24292E">            quorumServerRequireSasl </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Boolean.</span><span style="color:#6F42C1">parseBoolean</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(QuorumAuth.QUORUM_LEARNER_SASL_AUTH_REQUIRED)) {</span></span>
+<span class="line"><span style="color:#24292E">            quorumLearnerRequireSasl </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Boolean.</span><span style="color:#6F42C1">parseBoolean</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(QuorumAuth.QUORUM_LEARNER_SASL_LOGIN_CONTEXT)) {</span></span>
+<span class="line"><span style="color:#24292E">            quorumLearnerLoginContext </span><span style="color:#D73A49">=</span><span style="color:#24292E"> value;</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(QuorumAuth.QUORUM_SERVER_SASL_LOGIN_CONTEXT)) {</span></span>
+<span class="line"><span style="color:#24292E">            quorumServerLoginContext </span><span style="color:#D73A49">=</span><span style="color:#24292E"> value;</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(QuorumAuth.QUORUM_KERBEROS_SERVICE_PRINCIPAL)) {</span></span>
+<span class="line"><span style="color:#24292E">            quorumServicePrincipal </span><span style="color:#D73A49">=</span><span style="color:#24292E"> value;</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"quorum.cnxn.threads.size"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            quorumCnxnThreadsSize </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(JvmPauseMonitor.INFO_THRESHOLD_KEY)) {</span></span>
+<span class="line"><span style="color:#24292E">            jvmPauseInfoThresholdMs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Long.</span><span style="color:#6F42C1">parseLong</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(JvmPauseMonitor.WARN_THRESHOLD_KEY)) {</span></span>
+<span class="line"><span style="color:#24292E">            jvmPauseWarnThresholdMs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Long.</span><span style="color:#6F42C1">parseLong</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(JvmPauseMonitor.SLEEP_TIME_MS_KEY)) {</span></span>
+<span class="line"><span style="color:#24292E">            jvmPauseSleepTimeMs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Long.</span><span style="color:#6F42C1">parseLong</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(JvmPauseMonitor.JVM_PAUSE_MONITOR_FEATURE_SWITCH_KEY)) {</span></span>
+<span class="line"><span style="color:#24292E">            jvmPauseMonitorToRun </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Boolean.</span><span style="color:#6F42C1">parseBoolean</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"metricsProvider.className"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            metricsProviderClassName </span><span style="color:#D73A49">=</span><span style="color:#24292E"> value;</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">startsWith</span><span style="color:#24292E">(</span><span style="color:#032F62">"metricsProvider."</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            String keyForMetricsProvider </span><span style="color:#D73A49">=</span><span style="color:#24292E"> key.</span><span style="color:#6F42C1">substring</span><span style="color:#24292E">(</span><span style="color:#005CC5">16</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            metricsProviderConfiguration.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(keyForMetricsProvider, value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"multiAddress.enabled"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            multiAddressEnabled </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Boolean.</span><span style="color:#6F42C1">parseBoolean</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"multiAddress.reachabilityCheckTimeoutMs"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            multiAddressReachabilityCheckTimeoutMs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (key.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"multiAddress.reachabilityCheckEnabled"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            multiAddressReachabilityCheckEnabled </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Boolean.</span><span style="color:#6F42C1">parseBoolean</span><span style="color:#24292E">(value);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            System.</span><span style="color:#6F42C1">setProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"zookeeper."</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> key, value);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">quorumEnableSasl </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> quorumServerRequireSasl) {</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(QuorumAuth.QUORUM_SASL_AUTH_ENABLED</span></span>
+<span class="line"><span style="color:#D73A49">                                           +</span><span style="color:#032F62"> " is disabled, so cannot enable "</span></span>
+<span class="line"><span style="color:#D73A49">                                           +</span><span style="color:#24292E"> QuorumAuth.QUORUM_SERVER_SASL_AUTH_REQUIRED);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">quorumEnableSasl </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> quorumLearnerRequireSasl) {</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(QuorumAuth.QUORUM_SASL_AUTH_ENABLED</span></span>
+<span class="line"><span style="color:#D73A49">                                           +</span><span style="color:#032F62"> " is disabled, so cannot enable "</span></span>
+<span class="line"><span style="color:#D73A49">                                           +</span><span style="color:#24292E"> QuorumAuth.QUORUM_LEARNER_SASL_AUTH_REQUIRED);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D">    // If quorumpeer learner is not auth enabled then self won't be able to</span></span>
+<span class="line"><span style="color:#6A737D">    // join quorum. So this condition is ensuring that the quorumpeer learner</span></span>
+<span class="line"><span style="color:#6A737D">    // is also auth enabled while enabling quorum server require sasl.</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">quorumLearnerRequireSasl </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> quorumServerRequireSasl) {</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(QuorumAuth.QUORUM_LEARNER_SASL_AUTH_REQUIRED</span></span>
+<span class="line"><span style="color:#D73A49">                                           +</span><span style="color:#032F62"> " is disabled, so cannot enable "</span></span>
+<span class="line"><span style="color:#D73A49">                                           +</span><span style="color:#24292E"> QuorumAuth.QUORUM_SERVER_SASL_AUTH_REQUIRED);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Reset to MIN_SNAP_RETAIN_COUNT if invalid (less than 3)</span></span>
+<span class="line"><span style="color:#6A737D">    // PurgeTxnLog.purge(File, File, int) will not allow to purge less</span></span>
+<span class="line"><span style="color:#6A737D">    // than 3.</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (snapRetainCount </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> MIN_SNAP_RETAIN_COUNT) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Invalid autopurge.snapRetainCount: "</span></span>
+<span class="line"><span style="color:#D73A49">                 +</span><span style="color:#24292E"> snapRetainCount</span></span>
+<span class="line"><span style="color:#D73A49">                 +</span><span style="color:#032F62"> ". Defaulting to "</span></span>
+<span class="line"><span style="color:#D73A49">                 +</span><span style="color:#24292E"> MIN_SNAP_RETAIN_COUNT);</span></span>
+<span class="line"><span style="color:#24292E">        snapRetainCount </span><span style="color:#D73A49">=</span><span style="color:#24292E"> MIN_SNAP_RETAIN_COUNT;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (dataDir </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"dataDir is not set"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (dataLogDir </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        dataLogDir </span><span style="color:#D73A49">=</span><span style="color:#24292E"> dataDir;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (clientPort </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"clientPort is not set"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (clientPortAddress </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"clientPortAddress is set but clientPort is not set"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (clientPortAddress </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.clientPortAddress </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> InetSocketAddress</span><span style="color:#24292E">(InetAddress.</span><span style="color:#6F42C1">getByName</span><span style="color:#24292E">(clientPortAddress), clientPort);</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"clientPortAddress is {}"</span><span style="color:#24292E">, </span><span style="color:#6F42C1">formatInetAddr</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">.clientPortAddress));</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.clientPortAddress </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> InetSocketAddress</span><span style="color:#24292E">(clientPort);</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"clientPortAddress is {}"</span><span style="color:#24292E">, </span><span style="color:#6F42C1">formatInetAddr</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">.clientPortAddress));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (secureClientPort </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"secureClientPort is not set"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (secureClientPortAddress </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"secureClientPortAddress is set but secureClientPort is not set"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (secureClientPortAddress </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.secureClientPortAddress </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> InetSocketAddress</span><span style="color:#24292E">(InetAddress.</span><span style="color:#6F42C1">getByName</span><span style="color:#24292E">(secureClientPortAddress), secureClientPort);</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"secureClientPortAddress is {}"</span><span style="color:#24292E">, </span><span style="color:#6F42C1">formatInetAddr</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">.secureClientPortAddress));</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.secureClientPortAddress </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> InetSocketAddress</span><span style="color:#24292E">(secureClientPort);</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"secureClientPortAddress is {}"</span><span style="color:#24292E">, </span><span style="color:#6F42C1">formatInetAddr</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">.secureClientPortAddress));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.secureClientPortAddress </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6F42C1">        configureSSLAuth</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (observerMasterPort </span><span style="color:#D73A49">&#x3C;=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"observerMasterPort is not set"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.observerMasterPort </span><span style="color:#D73A49">=</span><span style="color:#24292E"> observerMasterPort;</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"observerMasterPort is {}"</span><span style="color:#24292E">, observerMasterPort);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (tickTime </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"tickTime is not set"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    minSessionTimeout </span><span style="color:#D73A49">=</span><span style="color:#24292E"> minSessionTimeout </span><span style="color:#D73A49">==</span><span style="color:#D73A49"> -</span><span style="color:#005CC5">1</span><span style="color:#D73A49"> ?</span><span style="color:#24292E"> tickTime </span><span style="color:#D73A49">*</span><span style="color:#005CC5"> 2</span><span style="color:#D73A49"> :</span><span style="color:#24292E"> minSessionTimeout;</span></span>
+<span class="line"><span style="color:#24292E">    maxSessionTimeout </span><span style="color:#D73A49">=</span><span style="color:#24292E"> maxSessionTimeout </span><span style="color:#D73A49">==</span><span style="color:#D73A49"> -</span><span style="color:#005CC5">1</span><span style="color:#D73A49"> ?</span><span style="color:#24292E"> tickTime </span><span style="color:#D73A49">*</span><span style="color:#005CC5"> 20</span><span style="color:#D73A49"> :</span><span style="color:#24292E"> maxSessionTimeout;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (minSessionTimeout </span><span style="color:#D73A49">></span><span style="color:#24292E"> maxSessionTimeout) {</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"minSessionTimeout must not be larger than maxSessionTimeout"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"metricsProvider.className is {}"</span><span style="color:#24292E">, metricsProviderClassName);</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        Class.</span><span style="color:#6F42C1">forName</span><span style="color:#24292E">(metricsProviderClassName, </span><span style="color:#005CC5">false</span><span style="color:#24292E">, Thread.</span><span style="color:#6F42C1">currentThread</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getContextClassLoader</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (ClassNotFoundException </span><span style="color:#E36209">error</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"metrics provider class was not found"</span><span style="color:#24292E">, error);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // backward compatibility - dynamic configuration in the same file as</span></span>
+<span class="line"><span style="color:#6A737D">    // static configuration params see writeDynamicConfig()</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (dynamicConfigFileStr </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6F42C1">        setupQuorumPeerConfig</span><span style="color:#24292E">(zkProp, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">isDistributed</span><span style="color:#24292E">() </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#6F42C1"> isReconfigEnabled</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">            // we don't backup static config for standalone mode.</span></span>
+<span class="line"><span style="color:#6A737D">            // we also don't backup if reconfig feature is disabled.</span></span>
+<span class="line"><span style="color:#6F42C1">            backupOldConfig</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>配置解析主要包含了两部分内容：</p>
+<ul>
+<li>配置加载解析</li>
+<li>配置合法性验证</li>
+</ul>
+<h2 id="配置大全"><strong>配置大全</strong></h2>
+<p>这里将常用配置列举了出来希望能对大家有所帮助</p>
+<p>配置加载解析的过程主要是将zoo.cfg配置文件中的配置赋值给QuorumPeerConfig类型的成员变量中，方便在程序中使用用户的配置，那具体配置有哪些，配置的类型是什么，默认值又有哪些呢，我们可以详细来看下如下表格：</p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>类型</th>
+<th>默认值</th>
+<th>必配项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dataDir</td>
+<td>String</td>
+<td>无</td>
+<td>是</td>
+<td>Zookeeper保存数据的目录，主要内存存储快照数据文件路径不存在，或者未配置则抛出异常</td>
+</tr>
+<tr>
+<td>dataLogDir</td>
+<td>String</td>
+<td>dataDir</td>
+<td>否</td>
+<td>事务日志存储在该路径下，比较重要，这个日志存储的设备效率会影响ZK的写吞吐量文件路径不存在则抛出异常，</td>
+</tr>
+<tr>
+<td>clientPort</td>
+<td>Integer</td>
+<td>无</td>
+<td>是</td>
+<td>监听客户端连接的端口与clientPortAddress配置一起构成本地监听地址clientPortAddress为空时候默认为本地地址0.0.0.0clientPort为空时候clientPortAddress不可以配置</td>
+</tr>
+<tr>
+<td>localSessionsEnabled</td>
+<td>Boolean</td>
+<td>false</td>
+<td>否</td>
+<td>在ZooKeeper中创建和关闭会话非常昂贵，因为它们需要仲裁确认，当需要处理数千个客户端连接时，它们成为ZooKeeper集成的瓶颈。因此，在3.5.0之后，我们引入了一种新的会话类型：本地会话，它不具有普通（全局）会话的全部功能，因此可以通过打开localSessionsEnabled来使用此功能。</td>
+</tr>
+<tr>
+<td>localSessionsUpgradingEnabled</td>
+<td>Boolean</td>
+<td>false</td>
+<td>否</td>
+<td>ZooKeeper的全局会话需要法定确认，开销会很大，所以引入本地会话，当localSessionsUpgradingEnabled开启时，LeaderZookeeper的本地会话可以自动升级为全局会话，本地会话不能创建临时节点，全局会话可以创建，但FollowerZooKeeperServer（追随者）和ObserverZooKeeperServer（观察者）为了避免创建临时节点和大量的会话，所以我们尽量将localSessionsUpgradingEnabled关闭</td>
+</tr>
+<tr>
+<td>clientPortAddress</td>
+<td>String</td>
+<td>无</td>
+<td>否</td>
+<td>监听客户端连接的地址与clientPortAddress配置一起构成本地监听地址</td>
+</tr>
+<tr>
+<td>secureClientPort</td>
+<td>Integer</td>
+<td>无</td>
+<td>否</td>
+<td>监听客户端ssl连接的端口</td>
+</tr>
+<tr>
+<td>secureClientPortAddress</td>
+<td>String</td>
+<td>无</td>
+<td>否</td>
+<td>监听客户端ssl连接的地址</td>
+</tr>
+<tr>
+<td>observerMasterPort</td>
+<td>Integer</td>
+<td>无</td>
+<td>否</td>
+<td>:监听观察者连接的端口;也就是说，观察者试图连接的端口。如果该属性被设置，那么服务器将在follower模式和leader模式下托管观察者连接，并相应地尝试在观察者模式下连接到任何投票的对等体。</td>
+</tr>
+<tr>
+<td>clientPortListenBacklog</td>
+<td>Integer</td>
+<td>-1</td>
+<td>否</td>
+<td>ZooKeeper服务器套接字的套接字积压长度。这控制了将被ZooKeeper服务器处理的服务器端排队请求的数量。超过这个长度的连接将会收到一个网络超时(30s)，这可能会导致ZooKeeper会话超时问题。默认情况下，这个值是未设置的(-1)。这个值必须是正数。</td>
+</tr>
+<tr>
+<td>tickTime</td>
+<td>Integer</td>
+<td>3000毫秒</td>
+<td>否</td>
+<td>基本事件单元，以毫秒为单位，这个时间作为 Zookeeper 服务器之间或客户端之间维持心跳的时间间隔，不能为0一个滴答的长度，这是ZooKeeper使用的基本时间单位，以毫秒为单位。它用于调节心跳和超时。例如，会话超时的最小值minSessionTimeout是2个tickTime时间单位。默认会话超时时间最大值maxSessionTimeout是20个tickTime时间单位</td>
+</tr>
+<tr>
+<td>maxClientCnxns</td>
+<td>Integer</td>
+<td>60</td>
+<td>否</td>
+<td>maxClientCnxns:限制单个客户端(通过IP地址标识)对ZooKeeper集合中的单个成员的并发连接数(在套接字级别)。这用于防止某些类型的DoS攻击，包括文件描述符耗尽。缺省值是60。将其设置为0将完全消除对并发连接的限制。</td>
+</tr>
+<tr>
+<td>minSessionTimeout</td>
+<td>Integer</td>
+<td>2* tickTime</td>
+<td></td>
+<td>服务器允许客户端协商的最小会话超时(以毫秒为单位)。默认为tickTime的2倍</td>
+</tr>
+<tr>
+<td>maxSessionTimeout</td>
+<td>Integer</td>
+<td>20* tickTime</td>
+<td></td>
+<td>服务器允许客户端协商的最大会话超时时间(以毫秒为单位)。默认值为tickTime的20倍。</td>
+</tr>
+<tr>
+<td>initLimit</td>
+<td>Integer</td>
+<td></td>
+<td>分布式环境下必须配置</td>
+<td>集群中的follower服务器(F)与leader服务器(L)之间 初始连接 时能容忍的最多心跳数（tickTime的数量）。</td>
+</tr>
+<tr>
+<td>syncLimit</td>
+<td>Integer</td>
+<td></td>
+<td>分布式环境下必须配置</td>
+<td>集群中的follower服务器(F)与leader服务器(L)之间 请求和应答 之间能容忍的最多心跳数（tickTime的数量）。</td>
+</tr>
+<tr>
+<td>connectToLearnerMasterLimit</td>
+<td>Integer</td>
+<td></td>
+<td></td>
+<td>允许追随者连接到leader后，leader选举。默认为initLimit的值。当initLimit很高时使用，可以配置这个值来覆盖链接到master的超时时间，这样连接到leader不会导致更高的超时。可以参考类型LeaderConnector</td>
+</tr>
+<tr>
+<td>electionAlg</td>
+<td>Integer</td>
+<td>3</td>
+<td>否</td>
+<td>默认值是3并且只能配置3，低版本可以配置其他值用于选举的实现的参数，0为以原始的基于UDP的方式协作，1为不进行用户验证的基于UDP的快速选举，2为进行用户验证的基于UDP的快速选举，3为基于TCP的快速选举，默认值为3</td>
+</tr>
+<tr>
+<td>quorumListenOnAllIPs</td>
+<td>Boolean</td>
+<td>false</td>
+<td>否</td>
+<td>当设置为true时，ZooKeeper服务器将会在所有可用的网卡IP地址上监听来自其对等点的连接请求，而不仅是配置文件的服务器列表中配置的地址。它会影响处理ZAB协议和Fast Leader Election协议的连接。默认值是false</td>
+</tr>
+<tr>
+<td>peerType</td>
+<td>String</td>
+<td>LearnerType.<strong>PARTICIPANT</strong></td>
+<td>否</td>
+<td>可以配置的值为”observer”和”participant”。就是说如果配置文件中配了peerType=observer就是观察者模式，不会参与投票 如果配置文件中配了参与者peerType=participant就是参与者模式，可以参与投票  。</td>
+</tr>
+<tr>
+<td>syncEnabled</td>
+<td>Boolean</td>
+<td>true</td>
+<td>否</td>
+<td>和参与者一样，观察者现在默认将事务日志以及数据快照写到磁盘上，这将减少观察者在服务器重启时的恢复时间。将其值设置为“false”可以禁用该特性。默认值是 “true”。</td>
+</tr>
+<tr>
+<td>dynamicConfigFile</td>
+<td>String</td>
+<td></td>
+<td>否</td>
+<td>从3.5.0开始，我们区分了动态配置参数和静态配置参数，前者可以在运行时更改，后者在服务器启动时从配置文件中读取，在执行过程中不会更改。目前，以下配置关键字被认为是动态配置的一部分:服务器、组和权重。  动态配置参数存储在服务器上的一个单独文件中(我们称之为动态配置文件)。使用新的dynamicConfigFile关键字将该文件链接到静态配置文件。</td>
+</tr>
+<tr>
+<td>autopurge.snapRetainCount</td>
+<td>Integer</td>
+<td>3</td>
+<td>否</td>
+<td>指定了需要保留的文件数目。默认是保留3个。启用后，ZooKeeper 自动清除功能会分别在 ****dataDir*<em><strong>和</strong></em>*dataLogDir 中*<em><strong>保留</strong></em>*autopurge.snapRetainCount****最近的快照和相应的事务日志， 并删除其余部分。默认为 3。最小值为 3。可参考DatadirCleanupManager类型</td>
+</tr>
+<tr>
+<td>autopurge.purgeInterval</td>
+<td>Integer</td>
+<td>0</td>
+<td>否</td>
+<td>必须触发清除任务的时间间隔（以小时为单位）。设置为正整数（1 及以上）以启用自动清除。默认为 0不启用。可参考DatadirCleanupManager类型</td>
+</tr>
+<tr>
+<td>standaloneEnabled</td>
+<td>String</td>
+<td>true</td>
+<td>否</td>
+<td>****3.5.0 新增功能：****设置为 false 时，可以在复制模式下启动单个服务器，单独的参与者可以与观察者一起运行，集群可以重新配置为一个节点，从一个节点。对于向后兼容性，默认值为 true。可以使用 QuorumPeerConfig 的 setStandaloneEnabled 方法或通过将“standaloneEnabled=false”或“standaloneEnabled=true”添加到服务器的配置文件来设置它。</td>
+</tr>
+<tr>
+<td>reconfigEnabled</td>
+<td>String</td>
+<td>false</td>
+<td>否</td>
+<td><em><strong>*3.5.3 中的新增功能：*<em><strong>这控制启用或禁用<a href="https://zookeeper.apache.org/doc/r3.6.3/zookeeperReconfig.html">动态重新配置</a>功能。启用该功能后，用户可以通过 ZooKeeper 客户端 API 或通过 ZooKeeper 命令行工具执行重新配置操作，前提是用户有权执行此类操作。当该功能被禁用时，包括超级用户在内的任何用户都不能执行重新配置。任何重新配置的尝试都将返回错误。</strong></em>*“reconfigEnabled”*<em><strong>选项可以设置为</strong></em>*“reconfigEnabled=false”*<em><strong>或</strong></em>*“reconfigEnabled=true”*<em><strong>到服务器的配置文件，或使用 QuorumPeerConfig 的 setReconfigEnabled 方法。默认值为假。如果存在，该值应该在整个整体中的每个服务器上保持一致。在某些服务器上将该值设置为 true 而在其他服务器上设置为 false 会导致不一致的行为，具体取决于哪个服务器被选为领导者。如果领导者的设置为</strong></em>*“reconfigEnabled=true”*</strong></em> ，那么集成将启用重新配置功能。如果领导者的设置为****“reconfigEnabled=false”**** ，则集成将禁用重新配置功能。因此，建议在整体中跨服务器的****“reconfigEnabled”****具有一致的值。</td>
+</tr>
+<tr>
+<td>sslQuorum</td>
+<td>Boolean</td>
+<td>false</td>
+<td>否</td>
+<td>****3.5.5 中的新增功能：****启用加密的仲裁通信。默认为false。</td>
+</tr>
+<tr>
+<td>portUnification</td>
+<td>Boolean</td>
+<td>false</td>
+<td>否</td>
+<td>端口统一使用同一端口提供不同协议的服务</td>
+</tr>
+<tr>
+<td>sslQuorumReloadCertFiles</td>
+<td>Boolean</td>
+<td>false</td>
+<td>否</td>
+<td>当证书发生变更时是否自动重新加载证书</td>
+</tr>
+<tr>
+<td>quorum.auth.enableSasl</td>
+<td>Boolean</td>
+<td>false</td>
+<td>否</td>
+<td><strong>开启sasl开关</strong></td>
+</tr>
+<tr>
+<td>quorum.auth.serverRequireSasl</td>
+<td>Boolean</td>
+<td>false</td>
+<td></td>
+<td><strong>zk作为server，learner链接的时候，需要发送认证消息</strong></td>
+</tr>
+<tr>
+<td>quorum.auth.learnerRequireSasl</td>
+<td>Boolean</td>
+<td>false</td>
+<td>否</td>
+<td><strong>zk作为learner的时候，会发送认证消息</strong></td>
+</tr>
+<tr>
+<td>quorum.auth.learner.saslLoginContext</td>
+<td>String</td>
+<td>QuorumLearner</td>
+<td>否</td>
+<td>Quorum learner登录上下文名称在jaas-conf文件中默认“QuorumLearner”。</td>
+</tr>
+<tr>
+<td>quorum.auth.server.saslLoginContext</td>
+<td>String</td>
+<td>QuorumServer</td>
+<td>否</td>
+<td>Quorum learner登录上下文名称在jaas-conf文件中默认“QuorumServer”。</td>
+</tr>
+<tr>
+<td>quorum.auth.kerberos.servicePrincipal</td>
+<td>String</td>
+<td>zkquorum/localhost</td>
+<td>否</td>
+<td>Kerberos仲裁服务主体。默认为zkquorum/localhost</td>
+</tr>
+<tr>
+<td>quorum.cnxn.threads.size</td>
+<td>Integer</td>
+<td>20</td>
+<td>否</td>
+<td>zookeeper Quorum 之间异步连接的线程池大小最小值是20 当配置的值超过这个值的时候则会以配置值为准</td>
+</tr>
+<tr>
+<td>jvm.pause.info-threshold.ms</td>
+<td>Long</td>
+<td>1000毫秒</td>
+<td>否</td>
+<td>gc停顿时间超过这个值将会打印info日志日志，具体细节可以参考JvmPauseMonitor，默认值为1000毫秒</td>
+</tr>
+<tr>
+<td>jvm.pause.warn-threshold.ms</td>
+<td>Long</td>
+<td>10000毫秒</td>
+<td>否</td>
+<td>gc停顿时间超过这个值将会打印warn日志，具体细节可以参考JvmPauseMonitor，默认值为1000毫秒</td>
+</tr>
+<tr>
+<td>jvm.pause.sleep.time.ms</td>
+<td>Long</td>
+<td>500毫秒</td>
+<td>否</td>
+<td>GC信息统计间隔，多久统计一次GC信息</td>
+</tr>
+<tr>
+<td>jvm.pause.monitor</td>
+<td>Boolean</td>
+<td>false</td>
+<td>否</td>
+<td>JVM GC停顿监控，如果设置为true则开启GC停顿监控GC参数才生效具体业务可以参考JvmPauseMonitor类型</td>
+</tr>
+<tr>
+<td>metricsProvider.className</td>
+<td>String</td>
+<td>DefaultMetricsProvider</td>
+<td>否</td>
+<td>****3.6.0****设置为 “org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider” 来开启Prometheus.io exporter.</td>
+</tr>
+<tr>
+<td><strong>metricsProvider.httpPort</strong></td>
+<td>String</td>
+<td>7000</td>
+<td>否</td>
+<td>Prometheus.io exporter 将会开启 Jetty server 来绑定这个端口 默认是 7000. Prometheus 访问地址为 <a href="http://hostname:httPort/metrics">http://hostname:httPort/metrics</a>.</td>
+</tr>
+<tr>
+<td><strong>metricsProvider.exportJvmInfo</strong></td>
+<td></td>
+<td>true</td>
+<td>否</td>
+<td>如果设置true将返回有用的GC信息</td>
+</tr>
+<tr>
+<td>multiAddress.enabled</td>
+<td>Boolean</td>
+<td>false</td>
+<td>否</td>
+<td>3.6.0新增你也可以为每个ZooKeeper服务器实例指定多个地址(当多个物理网络接口可以在集群中并行使用时，这可以增加可用性)。将此参数设置为true将启用此功能。请注意，如果旧的ZooKeeper集群版本在3.6.0之前，在滚动升级过程中不能启用该特性。缺省值为false。</td>
+</tr>
+<tr>
+<td>multiAddress.reachabilityCheckTimeoutMs</td>
+<td></td>
+<td>1000ms</td>
+<td>否</td>
+<td>3.6.0新增:你也可以为每个ZooKeeper服务器实例指定多个地址(当多个物理网络接口可以在集群中并行使用时，这可以增加可用性)。ZooKeeper会执行ICMP ECHO请求或尝试在目的主机的7 (ECHO)端口上建立TCP连接，以找到可到达的地址。只有在配置中提供多个地址时才会发生这种情况。在此属性中，可以设置以毫秒为单位的可达性检查超时时间。对不同地址的检查是并行进行的，因此您在这里设置的超时是检查所有地址可达性所花费的最大时间。缺省值是1000。</td>
+</tr>
+<tr>
+<td>multiAddress.reachabilityCheckEnabled</td>
+<td>Boolean</td>
+<td>true</td>
+<td>否</td>
+<td>3.6.0新增你也可以为每个ZooKeeper服务器实例指定多个地址(当多个物理网络接口可以在集群中并行使用时，这可以增加可用性)。ZooKeeper会执行ICMP ECHO请求或尝试在目的主机的7 (ECHO)端口上建立TCP连接，以找到可到达的地址。只有在配置中提供多个地址时才会发生这种情况。在此属性中，可以设置以毫秒为单位的可达性检查超时时间。对不同地址的检查是并行进行的，因此您在这里设置的超时是检查所有地址可达性所花费的最大时间。缺省值是1000。</td>
+</tr>
+</tbody>
+</table>
+<p><strong>配置的加载就是将zoo.cfg中的配置信息设置到内存中</strong> ，
+这里有个checkValidity()方法如果是在分布式模式下部署则必须设置
+initLimit，syncLimit，serverId（serverId在myid文件中必须提前创建好）</p>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

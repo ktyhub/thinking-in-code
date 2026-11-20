@@ -1,0 +1,247 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**日志清理定时任务的启动** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_zookeeper/9-clear-log-start/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_zookeeper/9-clear-log-start"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_zookeeper/9-clear-log-start/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_zookeeper/9-clear-log-start"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**日志清理定时任务的启动** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_zookeeper/9-clear-log-start/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_zookeeper/9-clear-log-start/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>zookeeper</h3> <ul> <li> <a href="/zh/chapter_zookeeper/1-introduce" class="lv0" title="**Zookeeper的设计**"> **Zookeeper的设计** </a> </li><li> <a href="/zh/chapter_zookeeper/2-implement" class="lv0" title="**Zookeeper的实现**"> **Zookeeper的实现** </a> </li><li> <a href="/zh/chapter_zookeeper/3-install" class="lv0" title="**Zookeeper安装配置**"> **Zookeeper安装配置** </a> </li><li> <a href="/zh/chapter_zookeeper/4-client" class="lv0" title="客户端的入门使用"> 客户端的入门使用 </a> </li><li> <a href="/zh/chapter_zookeeper/5-produce-and-consumer" class="lv0" title="**教你如何用Zookeeper开发锁与生产者消费者?**"> **教你如何用Zookeeper开发锁与生产者消费者?** </a> </li><li> <a href="/zh/chapter_zookeeper/6-watch" class="lv0" title="**Watch监听通知机制简介**"> **Watch监听通知机制简介** </a> </li><li> <a href="/zh/chapter_zookeeper/7-start-source" class="lv0" title="**服务器启动流程入个门**"> **服务器启动流程入个门** </a> </li><li> <a href="/zh/chapter_zookeeper/8-config" class="lv0" title="**配置信息是如何加载到内存空间的**"> **配置信息是如何加载到内存空间的** </a> </li><li> <a href="/zh/chapter_zookeeper/9-clear-log-start" class="lv0" aria-current="page" title="**日志清理定时任务的启动**"> **日志清理定时任务的启动** </a> </li><li> <a href="/zh/chapter_zookeeper/10-init-main" class="lv0" title="**使用配置信息启动运行入口**"> **使用配置信息启动运行入口** </a> </li><li> <a href="/zh/chapter_zookeeper/11-reactor" class="lv0" title="**ServerCnxnFactory 服务器连接工厂对象的创建与属性初始化**"> **ServerCnxnFactory 服务器连接工厂对象的创建与属性初始化** </a> </li><li> <a href="/zh/chapter_zookeeper/12-quorumpeer-init" class="lv0" title="**管理协议的法定人对象QuorumPeer创建与初始化**"> **管理协议的法定人对象QuorumPeer创建与初始化** </a> </li><li> <a href="/zh/chapter_zookeeper/13-loaddatabase" class="lv0" title="**法定人对象QuorumPeer启动之加载磁盘快照与事务日志**"> **法定人对象QuorumPeer启动之加载磁盘快照与事务日志** </a> </li><li> <a href="/zh/chapter_zookeeper/14-reactor-io" class="lv0" title="**启服务端网络监听连接NIOServerCnxnFactory**"> **启服务端网络监听连接NIOServerCnxnFactory** </a> </li><li> <a href="/zh/chapter_zookeeper/15-election" class="lv0" title="**选举算法的准备等待选举**"> **选举算法的准备等待选举** </a> </li><li> <a href="/zh/chapter_zookeeper/16-lookforleader" class="lv0" title="**QuorumPeer主循环**"> **QuorumPeer主循环** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_zookeeper">zookeeper</a><span class="sep">/</span><span>**日志清理定时任务的启动**</span> </nav> <div class="prose">  <h1 id="日志清理定时任务的启动"><strong>日志清理定时任务的启动</strong></h1>
+<h2 id="简介"><strong>简介</strong></h2>
+<p>前面我们说了程序刚刚启动时候会去加载配置信息,
+配置信息加载完毕之后将会启动一个 <strong>清理日志的工具(这个工具非常有用)</strong> 接下来详细看下:</p>
+<h2 id="initializeandrun"><strong>initializeAndRun</strong></h2>
+<p>QuorumPeerMain的初始化和启动方法initializeAndRun如下</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">protected</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initializeAndRun</span><span style="color:#24292E">(</span><span style="color:#D73A49">String</span><span style="color:#24292E">[] args) throws ConfigException, IOException, AdminServerException {</span></span>
+<span class="line"><span style="color:#24292E">        QuorumPeerConfig config </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> QuorumPeerConfig</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (args.length </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 1</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            config.</span><span style="color:#6F42C1">parse</span><span style="color:#24292E">(args[</span><span style="color:#005CC5">0</span><span style="color:#24292E">]);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // Start and schedule the the purge task</span></span>
+<span class="line"><span style="color:#24292E">        DatadirCleanupManager purgeMgr </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> DatadirCleanupManager</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">            config.</span><span style="color:#6F42C1">getDataDir</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">            config.</span><span style="color:#6F42C1">getDataLogDir</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">            config.</span><span style="color:#6F42C1">getSnapRetainCount</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">            config.</span><span style="color:#6F42C1">getPurgeInterval</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        purgeMgr.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (args.length </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 1</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">isDistributed</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6F42C1">            runFromConfig</span><span style="color:#24292E">(config);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Either no config or no quorum defined in config, running in standalone mode"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">            // there is only server in the quorum -- run as standalone</span></span>
+<span class="line"><span style="color:#24292E">            ZooKeeperServerMain.</span><span style="color:#6F42C1">main</span><span style="color:#24292E">(args);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>DatadirCleanupManager日志清理工具,相关配置如下：</p>
+<ul>
+<li><strong>autopurge.purgeInterval</strong> 参数，单位是小时，当填写一个1或更大的整数，则开启，默认是0，或者配置了负数则表示不开启自动清理功能。</li>
+<li><strong>autopurge.snapRetainCount</strong> 这个参数和上面的参数搭配使用，这个参数指定了需要保留的文件数目。默认是保留3个。</li>
+</ul>
+<p>这里start方法中使用了Java的Timer来启动的定时任务来清理
+在使用Zookeeper过程中，，会有 <strong>dataDir</strong> 和 <strong>dataLogDir</strong> 两个目录，分别用于 <strong>snapshot</strong> 和 <strong>事务日志</strong> 的输出
+（默认情况下只有dataDir目录，snapshot和事务日志都保存在这个目录中，正常运行过程中，ZK会不断地把快照数据和事务日志输出到这两个目录，并且如果没有人为操作的话，ZK自己是不会清理这些文件的，需要管理员来清理，具体清理方法主要调用PurgeTxnLog类的purge方法</p>
+<h3 id="datadircleanupmanager"><strong>DatadirCleanupManager</strong></h3>
+<p>清理工具启动代码如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// Start and schedule the the purge task</span></span>
+<span class="line"><span style="color:#24292E">DatadirCleanupManager purgeMgr </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> DatadirCleanupManager</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">    config.</span><span style="color:#6F42C1">getDataDir</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">    config.</span><span style="color:#6F42C1">getDataLogDir</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">    config.</span><span style="color:#6F42C1">getSnapRetainCount</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">    config.</span><span style="color:#6F42C1">getPurgeInterval</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">purgeMgr.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span></code></pre>
+<p>接下来我们来看下start方法：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> start</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">//已经运行则结束</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (PurgeTaskStatus.STARTED </span><span style="color:#D73A49">==</span><span style="color:#24292E"> purgeTaskStatus) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Purge task is already running."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D">    // Don't schedule the purge task with zero or negative purge interval.</span></span>
+<span class="line"><span style="color:#6A737D">//自动清理时间间隔小于等于0则直接返回</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (purgeInterval </span><span style="color:#D73A49">&#x3C;=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Purge task is not scheduled."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D">//以守护线程的方式创建定时器对象</span></span>
+<span class="line"><span style="color:#24292E">    timer </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Timer</span><span style="color:#24292E">(</span><span style="color:#032F62">"PurgeTask"</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">//创建清理任务对象PurgeTask</span></span>
+<span class="line"><span style="color:#24292E">    TimerTask task </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> PurgeTask</span><span style="color:#24292E">(dataLogDir, snapDir, snapRetainCount);</span></span>
+<span class="line"><span style="color:#6A737D">//以配置参数为间隔时间启动定时器，单位为小时</span></span>
+<span class="line"><span style="color:#24292E">    timer.</span><span style="color:#6F42C1">scheduleAtFixedRate</span><span style="color:#24292E">(task, </span><span style="color:#005CC5">0</span><span style="color:#24292E">, TimeUnit.HOURS.</span><span style="color:#6F42C1">toMillis</span><span style="color:#24292E">(purgeInterval));</span></span>
+<span class="line"><span style="color:#24292E">    purgeTaskStatus </span><span style="color:#D73A49">=</span><span style="color:#24292E"> PurgeTaskStatus.STARTED;</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>接下来我们来看下start方法：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> start</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">//已经运行则结束</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (PurgeTaskStatus.STARTED </span><span style="color:#D73A49">==</span><span style="color:#24292E"> purgeTaskStatus) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Purge task is already running."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D">    // Don't schedule the purge task with zero or negative purge interval.</span></span>
+<span class="line"><span style="color:#6A737D">//自动清理时间间隔小于等于0则直接返回</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (purgeInterval </span><span style="color:#D73A49">&#x3C;=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Purge task is not scheduled."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D">//以守护线程的方式创建定时器对象</span></span>
+<span class="line"><span style="color:#24292E">    timer </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Timer</span><span style="color:#24292E">(</span><span style="color:#032F62">"PurgeTask"</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">//创建清理任务对象PurgeTask</span></span>
+<span class="line"><span style="color:#24292E">    TimerTask task </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> PurgeTask</span><span style="color:#24292E">(dataLogDir, snapDir, snapRetainCount);</span></span>
+<span class="line"><span style="color:#6A737D">//以配置参数为间隔时间启动定时器，单位为小时</span></span>
+<span class="line"><span style="color:#24292E">    timer.</span><span style="color:#6F42C1">scheduleAtFixedRate</span><span style="color:#24292E">(task, </span><span style="color:#005CC5">0</span><span style="color:#24292E">, TimeUnit.HOURS.</span><span style="color:#6F42C1">toMillis</span><span style="color:#24292E">(purgeInterval));</span></span>
+<span class="line"><span style="color:#24292E">    purgeTaskStatus </span><span style="color:#D73A49">=</span><span style="color:#24292E"> PurgeTaskStatus.STARTED;</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>这个方法主要进行参数校验，然后创建清理任务PurgeTask开启定时器以一定间隔时间来执行PurgeTask中的定时任务，定时任务在执行的时候会触发定时任务的run方法接下来我们来看下PurgeTask任务清理数据的具体业务。</p>
+<h3 id="purgetxnlogpurge"><strong>PurgeTxnLog.purge</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> run</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#24292E">    LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Purge task started."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        PurgeTxnLog.</span><span style="color:#6F42C1">purge</span><span style="color:#24292E">(logsDir, snapsDir, snapRetainCount);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Error occurred while purging."</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Purge task completed."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>再继续看PurgeTxnLog的purge方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> purge</span><span style="color:#24292E">(File dataDir, File snapDir, </span><span style="color:#D73A49">int</span><span style="color:#24292E"> num) throws IOException {</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (num </span><span style="color:#D73A49">&#x3C;</span><span style="color:#005CC5"> 3</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(COUNT_ERR_MSG);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    FileTxnSnapLog txnLog </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> FileTxnSnapLog</span><span style="color:#24292E">(dataDir, snapDir);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    List&#x3C;</span><span style="color:#D73A49">File</span><span style="color:#24292E">> snaps </span><span style="color:#D73A49">=</span><span style="color:#24292E"> txnLog.</span><span style="color:#6F42C1">findNValidSnapshots</span><span style="color:#24292E">(num);</span></span>
+<span class="line"><span style="color:#D73A49">    int</span><span style="color:#24292E"> numSnaps </span><span style="color:#D73A49">=</span><span style="color:#24292E"> snaps.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (numSnaps </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6F42C1">        purgeOlderSnapshots</span><span style="color:#24292E">(txnLog, snaps.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(numSnaps </span><span style="color:#D73A49">-</span><span style="color:#005CC5"> 1</span><span style="color:#24292E">));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>创建事物快照日志文件对象FileTxnSnapLog，然后根据参数获取获取到需要保留的文件数量，
+然后根据保留的文件数量计算出保留文件中最小的那个zxid，
+然后根据最小的zxid找到需要保留的事物日志文件列表
+(事物日志当前最小的那个id之前的1个不能清理在zookeeper事物日志中可能发生滚动日志之前的文件也是会记录到最新的数据)，
+然后过滤所有事物日志文件过滤出来需要删除的事物日志文件，
+在过滤所有的快照文件找到所有需要删除的快照文件，最后循环删除需要删除的事物日志和快照文件，接下来我们继续看源码：</p>
+<h3 id="findnvalidsnapshots"><strong>findNValidSnapshots</strong></h3>
+<p>findNValidSnapshots 返回n个合法的snapshot文件</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">protected</span><span style="color:#24292E"> List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">File</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> findNValidSnapshots</span><span style="color:#24292E">(</span><span style="color:#D73A49">int</span><span style="color:#24292E"> n) throws IOException {</span></span>
+<span class="line"><span style="color:#6A737D">//从snapDir文件目录里面获取所有文件，然后获取snapshot文件前缀并根据文件zxid进行降序排序,降序排列就意味着最后一个的zxid是最小的，如果文件的zxid比最后一个最小的还要小则就需要清除掉。</span></span>
+<span class="line"><span style="color:#24292E">    List&#x3C;</span><span style="color:#D73A49">File</span><span style="color:#24292E">> files </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Util.</span><span style="color:#6F42C1">sortDataDir</span><span style="color:#24292E">(snapDir.</span><span style="color:#6F42C1">listFiles</span><span style="color:#24292E">(), SNAPSHOT_FILE_PREFIX, </span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">    int</span><span style="color:#24292E"> count </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    List&#x3C;</span><span style="color:#D73A49">File</span><span style="color:#24292E">> list </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;</span><span style="color:#D73A49">File</span><span style="color:#24292E">>();</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (File f </span><span style="color:#D73A49">:</span><span style="color:#24292E"> files) {</span></span>
+<span class="line"><span style="color:#6A737D">        // we should catch the exceptions</span></span>
+<span class="line"><span style="color:#6A737D">        // from the valid snapshot and continue</span></span>
+<span class="line"><span style="color:#6A737D">        // until we find a valid one</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">//升序遍历所有snapshot文件，如果合法的就添加到list里面直到添加n个为止</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (SnapStream.</span><span style="color:#6F42C1">isValidSnapshot</span><span style="color:#24292E">(f)) {</span></span>
+<span class="line"><span style="color:#24292E">                list.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(f);</span></span>
+<span class="line"><span style="color:#24292E">                count</span><span style="color:#D73A49">++</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (count </span><span style="color:#D73A49">==</span><span style="color:#24292E"> n) {</span></span>
+<span class="line"><span style="color:#D73A49">                    break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (IOException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"invalid snapshot {}"</span><span style="color:#24292E">, f, e);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> list;</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>找到了n个文件之后我们来看下是如何进行清理的：
+在PurgeTxnLog中调用purgeOlderSnapshots(txnLog, snaps.get(numSnaps - 1));来清理第二个参数取值为最小需要保留的那个zxid</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">static</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> purgeOlderSnapshots</span><span style="color:#24292E">(FileTxnSnapLog txnLog, File snapShot) {</span></span>
+<span class="line"><span style="color:#D73A49">    final</span><span style="color:#D73A49"> long</span><span style="color:#24292E"> leastZxidToBeRetain </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Util.</span><span style="color:#6F42C1">getZxidFromName</span><span style="color:#24292E">(snapShot.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">(), PREFIX_SNAPSHOT);</span></span></code></pre>
+<p>下面的英文保留一下，在处理事物日志和快照的时候，事物日志不能直接删除掉所有比需要保留最小zxid更小的日志文件
+，因为比需要保留最小zxid快照文件的事物日志可能存在于当前最小需要保留zxid的前一个文件中，
+也就是说事物日志要比快快照日志多保留一个，这个于日志写入时的滚动机制有关</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D">     * We delete all files with a zxid in their name that is less than leastZxidToBeRetain.</span></span>
+<span class="line"><span style="color:#6A737D">     * This rule applies to both snapshot files as well as log files, with the following</span></span>
+<span class="line"><span style="color:#6A737D">     * exception for log files.</span></span>
+<span class="line"><span style="color:#6A737D">     *</span></span>
+<span class="line"><span style="color:#6A737D">     * A log file with zxid less than X may contain transactions with zxid larger than X.  More</span></span>
+<span class="line"><span style="color:#6A737D">     * precisely, a log file named log.(X-a) may contain transactions newer than snapshot.X if</span></span>
+<span class="line"><span style="color:#6A737D">     * there are no other log files with starting zxid in the interval (X-a, X].  Assuming the</span></span>
+<span class="line"><span style="color:#6A737D">     * latter condition is true, log.(X-a) must be retained to ensure that snapshot.X is</span></span>
+<span class="line"><span style="color:#6A737D">     * recoverable.  In fact, this log file may very well extend beyond snapshot.X to newer</span></span>
+<span class="line"><span style="color:#6A737D">     * snapshot files if these newer snapshots were not accompanied by log rollover (possible in</span></span>
+<span class="line"><span style="color:#6A737D">     * the learner state machine at the time of this writing).  We can make more precise</span></span>
+<span class="line"><span style="color:#6A737D">     * determination of whether log.(leastZxidToBeRetain-a) for the smallest 'a' is actually</span></span>
+<span class="line"><span style="color:#6A737D">     * needed or not (e.g. not needed if there's a log file named log.(leastZxidToBeRetain+1)),</span></span>
+<span class="line"><span style="color:#6A737D">     * but the complexity quickly adds up with gains only in uncommon scenarios.  It's safe and</span></span>
+<span class="line"><span style="color:#6A737D">     * simple to just preserve log.(leastZxidToBeRetain-a) for the smallest 'a' to ensure</span></span>
+<span class="line"><span style="color:#6A737D">     * recoverability of all snapshots being retained.  We determine that log file here by</span></span>
+<span class="line"><span style="color:#6A737D">     * calling txnLog.getSnapshotLogs().</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#D73A49">    final</span><span style="color:#24292E"> Set&#x3C;</span><span style="color:#D73A49">File</span><span style="color:#24292E">> retainedTxnLogs </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> HashSet&#x3C;</span><span style="color:#D73A49">File</span><span style="color:#24292E">>();</span></span>
+<span class="line"><span style="color:#6A737D">//遍历需要事物日志目录找到所有需要保留的事物日志集合</span></span>
+<span class="line"><span style="color:#24292E">    retainedTxnLogs.</span><span style="color:#6F42C1">addAll</span><span style="color:#24292E">(Arrays.</span><span style="color:#6F42C1">asList</span><span style="color:#24292E">(txnLog.</span><span style="color:#6F42C1">getSnapshotLogs</span><span style="color:#24292E">(leastZxidToBeRetain)));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    /**</span></span>
+<span class="line"><span style="color:#6A737D">     * Finds all candidates for deletion, which are files with a zxid in their name that is less</span></span>
+<span class="line"><span style="color:#6A737D">     * than leastZxidToBeRetain.  There's an exception to this rule, as noted above.</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#D73A49">    class</span><span style="color:#6F42C1"> MyFileFilter</span><span style="color:#D73A49"> implements</span><span style="color:#6F42C1"> FileFilter</span><span style="color:#24292E"> {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> String prefix;</span></span>
+<span class="line"><span style="color:#6F42C1">        MyFileFilter</span><span style="color:#24292E">(String </span><span style="color:#E36209">prefix</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.prefix </span><span style="color:#D73A49">=</span><span style="color:#24292E"> prefix;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        public</span><span style="color:#D73A49"> boolean</span><span style="color:#6F42C1"> accept</span><span style="color:#24292E">(File </span><span style="color:#E36209">f</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">//文件前缀不一致不清理</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">f.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">().</span><span style="color:#6F42C1">startsWith</span><span style="color:#24292E">(prefix </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "."</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#D73A49">                return</span><span style="color:#005CC5"> false</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">//需要保留的文件列表里面存在当前文件不清理</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (retainedTxnLogs.</span><span style="color:#6F42C1">contains</span><span style="color:#24292E">(f)) {</span></span>
+<span class="line"><span style="color:#D73A49">                return</span><span style="color:#005CC5"> false</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">//zxid小于当前需要保留的最小zxid的才能清理</span></span>
+<span class="line"><span style="color:#D73A49">            long</span><span style="color:#24292E"> fZxid </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Util.</span><span style="color:#6F42C1">getZxidFromName</span><span style="color:#24292E">(f.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">(), prefix);</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> fZxid </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> leastZxidToBeRetain;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D">    // add all non-excluded log files 遍历所有事物日志列表根据过滤器过滤出来需要删除的事物日志文件列表</span></span>
+<span class="line"><span style="color:#D73A49">    File</span><span style="color:#24292E">[] logs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> txnLog.</span><span style="color:#6F42C1">getDataDir</span><span style="color:#24292E">().</span><span style="color:#6F42C1">listFiles</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> MyFileFilter</span><span style="color:#24292E">(PREFIX_LOG));</span></span>
+<span class="line"><span style="color:#24292E">    List&#x3C;</span><span style="color:#D73A49">File</span><span style="color:#24292E">> files </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>();</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (logs </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        files.</span><span style="color:#6F42C1">addAll</span><span style="color:#24292E">(Arrays.</span><span style="color:#6F42C1">asList</span><span style="color:#24292E">(logs));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // add all non-excluded snapshot files to the deletion list 遍历所有事物日志文件，然后过滤出来需要删除的快照文件列表</span></span>
+<span class="line"><span style="color:#D73A49">    File</span><span style="color:#24292E">[] snapshots </span><span style="color:#D73A49">=</span><span style="color:#24292E"> txnLog.</span><span style="color:#6F42C1">getSnapDir</span><span style="color:#24292E">().</span><span style="color:#6F42C1">listFiles</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> MyFileFilter</span><span style="color:#24292E">(PREFIX_SNAPSHOT));</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (snapshots </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        files.</span><span style="color:#6F42C1">addAll</span><span style="color:#24292E">(Arrays.</span><span style="color:#6F42C1">asList</span><span style="color:#24292E">(snapshots));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // remove the old files 删除所有需要清理的事物日志和快照文件</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (File f </span><span style="color:#D73A49">:</span><span style="color:#24292E"> files) {</span></span>
+<span class="line"><span style="color:#D73A49">        final</span><span style="color:#24292E"> String msg </span><span style="color:#D73A49">=</span><span style="color:#24292E"> String.</span><span style="color:#6F42C1">format</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">            "Removing file: %s</span><span style="color:#005CC5">\t</span><span style="color:#032F62">%s"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">            DateFormat.</span><span style="color:#6F42C1">getDateTimeInstance</span><span style="color:#24292E">().</span><span style="color:#6F42C1">format</span><span style="color:#24292E">(f.</span><span style="color:#6F42C1">lastModified</span><span style="color:#24292E">()),</span></span>
+<span class="line"><span style="color:#24292E">            f.</span><span style="color:#6F42C1">getPath</span><span style="color:#24292E">());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(msg);</span></span>
+<span class="line"><span style="color:#24292E">        System.out.</span><span style="color:#6F42C1">println</span><span style="color:#24292E">(msg);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">f.</span><span style="color:#6F42C1">delete</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">            System.err.</span><span style="color:#6F42C1">println</span><span style="color:#24292E">(</span><span style="color:#032F62">"Failed to remove "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> f.</span><span style="color:#6F42C1">getPath</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

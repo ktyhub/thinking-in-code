@@ -1,0 +1,609 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Spring WebFlux中的Flux全面解析 — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_springboot/spring-flux/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_springboot/spring-flux"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_springboot/spring-flux/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_springboot/spring-flux"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="Spring WebFlux中的Flux全面解析 — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_springboot/spring-flux/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_springboot/spring-flux/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>springboot</h3> <ul> <li> <a href="/zh/chapter_springboot/1-sample" class="lv0" title="**从一个Demo入手**"> **从一个Demo入手** </a> </li><li> <a href="/zh/chapter_springboot/2-spi" class="lv0" title="**SpringApplication的run方法启动应用程序源码初探**"> **SpringApplication的run方法启动应用程序源码初探** </a> </li><li> <a href="/zh/chapter_springboot/3-run" class="lv0" title="**SpringApplication的run启动方法的全生命周期函数源码**"> **SpringApplication的run启动方法的全生命周期函数源码** </a> </li><li> <a href="/zh/chapter_springboot/4-environment" class="lv0" title="**配置信息加载全解析-(开发自己的配置中心必备功能)**"> **配置信息加载全解析-(开发自己的配置中心必备功能)** </a> </li><li> <a href="/zh/chapter_springboot/5-application-context-init" class="lv0" title="**SpringBoot容器的创建**"> **SpringBoot容器的创建** </a> </li><li> <a href="/zh/chapter_springboot/6-reader-scanner" class="lv0" title="6-reader-scanner"> 6-reader-scanner </a> </li><li> <a href="/zh/chapter_springboot/spring-flux" class="lv0" aria-current="page" title="Spring WebFlux中的Flux全面解析"> Spring WebFlux中的Flux全面解析 </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_springboot">springboot</a><span class="sep">/</span><span>Spring WebFlux中的Flux全面解析</span> </nav> <div class="prose">  <h1 id="spring-webflux中的flux全面解析">Spring WebFlux中的Flux全面解析</h1>
+<p>Flux是Spring响应式编程的核心组件，本文将从使用、原理及源码三个层面全面解析Flux。</p>
+<h2 id="一响应式编程基础">一、响应式编程基础</h2>
+<h3 id="11-什么是flux">1.1 什么是Flux</h3>
+<p>Flux是Reactor库中表示0到N个异步数据序列的发布者(Publisher)：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">graph LR</span></span>
+<span class="line"><span style="color:#24292E">    A["Flux&#x3C;T>"] --> B["onNext(T)"]</span></span>
+<span class="line"><span style="color:#24292E">    B --> B</span></span>
+<span class="line"><span style="color:#24292E">    B --> C["onComplete()"]</span></span>
+<span class="line"><span style="color:#24292E">    B --> D["onError(throwable)"]</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    style A fill:#d0e0ff,stroke:#333</span></span>
+<span class="line"><span style="color:#24292E">    style B fill:#fff,stroke:#333</span></span>
+<span class="line"><span style="color:#24292E">    style C fill:#d0ffd0,stroke:#333</span></span>
+<span class="line"><span style="color:#24292E">    style D fill:#ffd0d0,stroke:#333</span></span></code></pre>
+<h3 id="12-响应式流规范">1.2 响应式流规范</h3>
+<p>Flux遵循响应式流规范(Reactive Streams Specification)，主要接口包括：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>职责</th>
+<th>核心方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Publisher</td>
+<td>数据发布者</td>
+<td>subscribe()</td>
+</tr>
+<tr>
+<td>Subscriber</td>
+<td>数据订阅者</td>
+<td>onSubscribe(), onNext(), onError(), onComplete()</td>
+</tr>
+<tr>
+<td>Subscription</td>
+<td>订阅关系</td>
+<td>request(), cancel()</td>
+</tr>
+<tr>
+<td>Processor</td>
+<td>处理器(同时是发布者和订阅者)</td>
+<td>继承Publisher和Subscriber</td>
+</tr>
+</tbody>
+</table>
+<h2 id="二flux使用方式详解">二、Flux使用方式详解</h2>
+<h3 id="21-创建flux流">2.1 创建Flux流</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 从固定值创建</span></span>
+<span class="line"><span style="color:#24292E">Flux&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">> flux1 </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">just</span><span style="color:#24292E">(</span><span style="color:#032F62">"A"</span><span style="color:#24292E">, </span><span style="color:#032F62">"B"</span><span style="color:#24292E">, </span><span style="color:#032F62">"C"</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 从集合创建</span></span>
+<span class="line"><span style="color:#24292E">List&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">> list </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Arrays.</span><span style="color:#6F42C1">asList</span><span style="color:#24292E">(</span><span style="color:#032F62">"X"</span><span style="color:#24292E">, </span><span style="color:#032F62">"Y"</span><span style="color:#24292E">, </span><span style="color:#032F62">"Z"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">Flux&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">> flux2 </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">fromIterable</span><span style="color:#24292E">(list);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用区间</span></span>
+<span class="line"><span style="color:#24292E">Flux&#x3C;</span><span style="color:#D73A49">Integer</span><span style="color:#24292E">> flux3 </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">range</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">, </span><span style="color:#005CC5">5</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 空Flux</span></span>
+<span class="line"><span style="color:#24292E">Flux&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">> empty </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">empty</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 错误Flux</span></span>
+<span class="line"><span style="color:#24292E">Flux&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">> error </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> RuntimeException</span><span style="color:#24292E">(</span><span style="color:#032F62">"发生错误"</span><span style="color:#24292E">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用generate逐个生成</span></span>
+<span class="line"><span style="color:#24292E">Flux&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">> generated </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">generate</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">        () </span><span style="color:#D73A49">-></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">, </span><span style="color:#6A737D">// 初始状态</span></span>
+<span class="line"><span style="color:#24292E">        (state, sink) </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            sink.</span><span style="color:#6F42C1">next</span><span style="color:#24292E">(</span><span style="color:#032F62">"值"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> state);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (state </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 10</span><span style="color:#24292E">) sink.</span><span style="color:#6F42C1">complete</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> state </span><span style="color:#D73A49">+</span><span style="color:#005CC5"> 1</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用create以编程方式发出</span></span>
+<span class="line"><span style="color:#24292E">Flux&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">> created </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">create</span><span style="color:#24292E">(sink </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">    sink.</span><span style="color:#6F42C1">next</span><span style="color:#24292E">(</span><span style="color:#032F62">"消息1"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    sink.</span><span style="color:#6F42C1">next</span><span style="color:#24292E">(</span><span style="color:#032F62">"消息2"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    sink.</span><span style="color:#6F42C1">complete</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">});</span></span></code></pre>
+<h3 id="22-flux操作符分类">2.2 Flux操作符分类</h3>
+<h4 id="转换操作符">转换操作符</h4>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>功能</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>map</td>
+<td>一对一转换</td>
+<td>对每个元素应用函数</td>
+</tr>
+<tr>
+<td>flatMap</td>
+<td>一对多异步转换</td>
+<td>一个元素映射到多个元素</td>
+</tr>
+<tr>
+<td>handle</td>
+<td>灵活处理元素</td>
+<td>需要根据条件过滤和转换时</td>
+</tr>
+</tbody>
+</table>
+<h4 id="过滤操作符">过滤操作符</h4>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>功能</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>filter</td>
+<td>条件过滤</td>
+<td>按条件选择元素</td>
+</tr>
+<tr>
+<td>take/skip</td>
+<td>获取/跳过特定数量</td>
+<td>分页或限制数量</td>
+</tr>
+<tr>
+<td>distinct</td>
+<td>去重</td>
+<td>排除重复元素</td>
+</tr>
+</tbody>
+</table>
+<h4 id="组合操作符">组合操作符</h4>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>功能</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mergeWith</td>
+<td>合并多个流(无序)</td>
+<td>并行处理多个流</td>
+</tr>
+<tr>
+<td>concatWith</td>
+<td>按顺序连接流</td>
+<td>保证流处理顺序</td>
+</tr>
+<tr>
+<td>zip</td>
+<td>组合多个流的元素</td>
+<td>需要配对处理元素</td>
+</tr>
+</tbody>
+</table>
+<h4 id="上下文操作符">上下文操作符</h4>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>功能</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>contextWrite</td>
+<td>添加上下文信息</td>
+<td>传递元数据如用户信息</td>
+</tr>
+<tr>
+<td>deferContextual</td>
+<td>基于上下文创建流</td>
+<td>根据上下文动态决定内容</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-defercontextual详解">2.3 deferContextual详解</h3>
+<p><code>deferContextual</code>是Flux的强大特性，允许基于上下文动态创建流：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> test</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#24292E">    Flux&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">> messages </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">deferContextual</span><span style="color:#24292E">(ctx </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        String user </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ctx.</span><span style="color:#6F42C1">getOrDefault</span><span style="color:#24292E">(</span><span style="color:#032F62">"user"</span><span style="color:#24292E">, </span><span style="color:#032F62">"游客"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        String role </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ctx.</span><span style="color:#6F42C1">getOrDefault</span><span style="color:#24292E">(</span><span style="color:#032F62">"role"</span><span style="color:#24292E">, </span><span style="color:#032F62">"anonymous"</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#032F62">"admin"</span><span style="color:#24292E">.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(role)) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">just</span><span style="color:#24292E">(</span><span style="color:#032F62">"管理员"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> user </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "，您好"</span><span style="color:#24292E">, </span><span style="color:#032F62">"您有全部权限"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">just</span><span style="color:#24292E">(</span><span style="color:#032F62">"用户"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> user </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "，您好"</span><span style="color:#24292E">, </span><span style="color:#032F62">"您有有限权限"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    });</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用不同上下文订阅</span></span>
+<span class="line"><span style="color:#24292E">    messages.</span><span style="color:#6F42C1">contextWrite</span><span style="color:#24292E">(Context.</span><span style="color:#6F42C1">of</span><span style="color:#24292E">(</span><span style="color:#032F62">"user"</span><span style="color:#24292E">, </span><span style="color:#032F62">"张三"</span><span style="color:#24292E">, </span><span style="color:#032F62">"role"</span><span style="color:#24292E">, </span><span style="color:#032F62">"admin"</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">(msg </span><span style="color:#D73A49">-></span><span style="color:#24292E"> System.out.</span><span style="color:#6F42C1">println</span><span style="color:#24292E">(</span><span style="color:#032F62">"收到: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> msg));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    messages.</span><span style="color:#6F42C1">contextWrite</span><span style="color:#24292E">(Context.</span><span style="color:#6F42C1">of</span><span style="color:#24292E">(</span><span style="color:#032F62">"user"</span><span style="color:#24292E">, </span><span style="color:#032F62">"李四"</span><span style="color:#24292E">, </span><span style="color:#032F62">"role"</span><span style="color:#24292E">, </span><span style="color:#032F62">"user"</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">(msg </span><span style="color:#D73A49">-></span><span style="color:#24292E"> System.out.</span></span>
+<span class="line"><span style="color:#6F42C1">                    println</span><span style="color:#24292E">(</span><span style="color:#032F62">"收到: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> msg));</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="三flux原理设计">三、Flux原理设计</h2>
+<h3 id="31-背压机制">3.1 背压机制</h3>
+<p>背压是响应式流的核心机制，使下游能控制上游生产速率：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">sequenceDiagram</span></span>
+<span class="line"><span style="color:#24292E">    participant 订阅者</span></span>
+<span class="line"><span style="color:#24292E">    participant Flux</span></span>
+<span class="line"><span style="color:#24292E">    participant 上游源</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    订阅者->>Flux: subscribe()</span></span>
+<span class="line"><span style="color:#24292E">    Flux->>订阅者: onSubscribe(subscription)</span></span>
+<span class="line"><span style="color:#24292E">    订阅者->>Flux: subscription.request(10)</span></span>
+<span class="line"><span style="color:#24292E">    Flux->>上游源: request(10)</span></span>
+<span class="line"><span style="color:#24292E">    上游源->>Flux: onNext(data1)</span></span>
+<span class="line"><span style="color:#24292E">    Flux->>订阅者: onNext(data1)</span></span>
+<span class="line"><span style="color:#24292E">    上游源->>Flux: onNext(data2)</span></span>
+<span class="line"><span style="color:#24292E">    Flux->>订阅者: onNext(data2)</span></span>
+<span class="line"><span style="color:#24292E">    订阅者->>Flux: subscription.request(5)</span></span>
+<span class="line"><span style="color:#24292E">    Flux->>上游源: request(5)</span></span></code></pre>
+<p>背压策略：</p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>描述</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BUFFER</td>
+<td>缓存多余元素</td>
+<td>上游数据突发但总体可控</td>
+</tr>
+<tr>
+<td>DROP</td>
+<td>丢弃多余元素</td>
+<td>只关心最新数据</td>
+</tr>
+<tr>
+<td>ERROR</td>
+<td>发出错误信号</td>
+<td>拒绝超过容量的处理</td>
+</tr>
+<tr>
+<td>LATEST</td>
+<td>保留最新元素</td>
+<td>只需最新状态</td>
+</tr>
+<tr>
+<td>IGNORE</td>
+<td>忽略背压(危险)</td>
+<td>小数据量，内存充足</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-操作符组合原理">3.2 操作符组合原理</h3>
+<p>操作符组合采用装饰者模式，每个操作符返回一个新的Flux实例：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">graph LR</span></span>
+<span class="line"><span style="color:#24292E">    A[FluxJust] --> B[FluxMap]</span></span>
+<span class="line"><span style="color:#24292E">    B --> C[FluxFilter]</span></span>
+<span class="line"><span style="color:#24292E">    C --> D[FluxSubscriber]</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    style A fill:#ffd700</span></span>
+<span class="line"><span style="color:#24292E">    style B fill:#87cefa</span></span>
+<span class="line"><span style="color:#24292E">    style C fill:#90ee90</span></span>
+<span class="line"><span style="color:#24292E">    style D fill:#ff6347</span></span></code></pre>
+<h3 id="33-订阅处理流程">3.3 订阅处理流程</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">graph TD</span></span>
+<span class="line"><span style="color:#24292E">    A[订阅] --> B[subscribe方法]</span></span>
+<span class="line"><span style="color:#24292E">    B --> C{是否有Subscriber?}</span></span>
+<span class="line"><span style="color:#24292E">    C -->|是| D[调用实际Subscriber]</span></span>
+<span class="line"><span style="color:#24292E">    C -->|否| E[创建LambdaSubscriber]</span></span>
+<span class="line"><span style="color:#24292E">    D --> F[onSubscribe]</span></span>
+<span class="line"><span style="color:#24292E">    E --> F</span></span>
+<span class="line"><span style="color:#24292E">    F --> G[request信号]</span></span>
+<span class="line"><span style="color:#24292E">    G --> H[Publisher发送数据]</span></span>
+<span class="line"><span style="color:#24292E">    H --> I[onNext处理]</span></span>
+<span class="line"><span style="color:#24292E">    I --> J{是否继续?}</span></span>
+<span class="line"><span style="color:#24292E">    J -->|是| G</span></span>
+<span class="line"><span style="color:#24292E">    J -->|否| K[onComplete/onError]</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    style A fill:#d0e0ff</span></span>
+<span class="line"><span style="color:#24292E">    style K fill:#ffe0d0</span></span></code></pre>
+<h2 id="四flux源码分析">四、Flux源码分析</h2>
+<h3 id="41-flux核心结构">4.1 Flux核心结构</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">classDiagram</span></span>
+<span class="line"><span style="color:#24292E">    class Publisher {</span></span>
+<span class="line"><span style="color:#24292E">        +subscribe(Subscriber)</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    class CorePublisher {</span></span>
+<span class="line"><span style="color:#24292E">        +subscribe(CoreSubscriber)</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    class Flux {</span></span>
+<span class="line"><span style="color:#24292E">        +just()</span></span>
+<span class="line"><span style="color:#24292E">        +map()</span></span>
+<span class="line"><span style="color:#24292E">        +filter()</span></span>
+<span class="line"><span style="color:#24292E">        +flatMap()</span></span>
+<span class="line"><span style="color:#24292E">        +subscribe()</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    class FluxOperator {</span></span>
+<span class="line"><span style="color:#24292E">        -source</span></span>
+<span class="line"><span style="color:#24292E">        +subscribe(CoreSubscriber)</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    Publisher &#x3C;|-- CorePublisher</span></span>
+<span class="line"><span style="color:#24292E">    CorePublisher &#x3C;|-- Flux</span></span>
+<span class="line"><span style="color:#24292E">    Flux &#x3C;|-- FluxOperator</span></span></code></pre>
+<h3 id="42-操作符实现原理">4.2 操作符实现原理</h3>
+<p>以<code>map</code>操作符为例分析：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">V</span><span style="color:#D73A49">></span><span style="color:#24292E"> Flux</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">V</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> map</span><span style="color:#24292E">(Function</span><span style="color:#D73A49">&#x3C;?</span><span style="color:#005CC5"> super</span><span style="color:#24292E"> T, </span><span style="color:#D73A49">?</span><span style="color:#24292E"> extends V</span><span style="color:#D73A49">></span><span style="color:#24292E"> mapper) {</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#D73A49"> instanceof</span><span style="color:#24292E"> Fuseable) {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#6F42C1"> onAssembly</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#24292E"> FluxMapFuseable&#x3C;>(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, mapper));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#6F42C1"> onAssembly</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#24292E"> FluxMap&#x3C;>(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, mapper));</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p><code>FluxMap</code>是个包装器，持有源Flux并实现处理逻辑：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">final</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> FluxMap</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">, </span><span style="color:#D73A49">R</span><span style="color:#24292E">> </span><span style="color:#D73A49">extends</span><span style="color:#6F42C1"> FluxOperator</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">, </span><span style="color:#D73A49">R</span><span style="color:#24292E">> {</span></span>
+<span class="line"><span style="color:#D73A49">    final</span><span style="color:#24292E"> Function&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#D73A49"> super</span><span style="color:#D73A49"> T</span><span style="color:#24292E">, </span><span style="color:#D73A49">?</span><span style="color:#D73A49"> extends</span><span style="color:#D73A49"> R</span><span style="color:#24292E">> mapper;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 当有订阅发生时</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> subscribe</span><span style="color:#24292E">(CoreSubscriber&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#D73A49"> super</span><span style="color:#D73A49"> R</span><span style="color:#24292E">> </span><span style="color:#E36209">actual</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        source.</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#24292E"> MapSubscriber&#x3C;>(actual, mapper));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 内部订阅者实现</span></span>
+<span class="line"><span style="color:#D73A49">    static</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> MapSubscriber</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">, </span><span style="color:#D73A49">R</span><span style="color:#24292E">> </span><span style="color:#D73A49">implements</span><span style="color:#6F42C1"> InnerOperator</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">, </span><span style="color:#D73A49">R</span><span style="color:#24292E">> {</span></span>
+<span class="line"><span style="color:#6A737D">        // 实现onNext等方法，对每个元素应用mapper函数</span></span>
+<span class="line"><span style="color:#24292E">        @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">        public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> onNext</span><span style="color:#24292E">(T </span><span style="color:#E36209">t</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            R mapped;</span></span>
+<span class="line"><span style="color:#D73A49">            try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                mapped </span><span style="color:#D73A49">=</span><span style="color:#24292E"> mapper.</span><span style="color:#6F42C1">apply</span><span style="color:#24292E">(t);</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6F42C1">                onError</span><span style="color:#24292E">(e);</span></span>
+<span class="line"><span style="color:#D73A49">                return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">            actual.</span><span style="color:#6F42C1">onNext</span><span style="color:#24292E">(mapped);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="43-装配阶段与订阅阶段">4.3 装配阶段与订阅阶段</h3>
+<p>Flux操作遵循两阶段处理：</p>
+<ol>
+<li>
+<p><strong>装配阶段</strong>：构建操作符链</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">Flux&#x3C;</span><span style="color:#D73A49">Integer</span><span style="color:#24292E">> flux </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">range</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">, </span><span style="color:#005CC5">10</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">map</span><span style="color:#24292E">(i </span><span style="color:#D73A49">-></span><span style="color:#24292E"> i </span><span style="color:#D73A49">*</span><span style="color:#005CC5"> 2</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">filter</span><span style="color:#24292E">(i </span><span style="color:#D73A49">-></span><span style="color:#24292E"> i </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 5</span><span style="color:#24292E">);</span></span></code></pre>
+</li>
+<li>
+<p><strong>订阅阶段</strong>：触发实际数据流</p>
+</li>
+</ol>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> teset</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#24292E">    flux.</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">            value </span><span style="color:#D73A49">-></span><span style="color:#24292E"> System.out.</span><span style="color:#6F42C1">println</span><span style="color:#24292E">(value),</span></span>
+<span class="line"><span style="color:#24292E">            error </span><span style="color:#D73A49">-></span><span style="color:#24292E"> error.</span><span style="color:#6F42C1">printStackTrace</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">            () </span><span style="color:#D73A49">-></span><span style="color:#24292E"> System.out.</span><span style="color:#6F42C1">println</span><span style="color:#24292E">(</span><span style="color:#032F62">"完成"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">    );</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="44-调度器与线程模型">4.4 调度器与线程模型</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">graph TD</span></span>
+<span class="line"><span style="color:#24292E">    A[源Publisher] --> B{是否需要调度?}</span></span>
+<span class="line"><span style="color:#24292E">    B -->|是| C[publishOn/subscribeOn]</span></span>
+<span class="line"><span style="color:#24292E">    B -->|否| D[同一线程处理]</span></span>
+<span class="line"><span style="color:#24292E">    C --> E[选择调度器]</span></span>
+<span class="line"><span style="color:#24292E">    E --> F[Schedulers.immediate]</span></span>
+<span class="line"><span style="color:#24292E">    E --> G[Schedulers.single]</span></span>
+<span class="line"><span style="color:#24292E">    E --> H[Schedulers.parallel]</span></span>
+<span class="line"><span style="color:#24292E">    E --> I[Schedulers.boundedElastic]</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    style A fill:#d0e0ff</span></span>
+<span class="line"><span style="color:#24292E">    style E fill:#ffe0d0</span></span></code></pre>
+<ul>
+<li><strong>publishOn</strong>: 影响后续操作符的执行线程</li>
+<li><strong>subscribeOn</strong>: 影响订阅信号的传递线程，通常影响源Publisher</li>
+</ul>
+<h2 id="五高级flux应用">五、高级Flux应用</h2>
+<h3 id="51-错误处理">5.1 错误处理</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">Flux&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">> flux </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">just</span><span style="color:#24292E">(</span><span style="color:#032F62">"A"</span><span style="color:#24292E">, </span><span style="color:#032F62">"B"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">        .</span><span style="color:#6F42C1">concatWith</span><span style="color:#24292E">(Flux.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> RuntimeException</span><span style="color:#24292E">(</span><span style="color:#032F62">"发生错误"</span><span style="color:#24292E">)))</span></span>
+<span class="line"><span style="color:#24292E">        .</span><span style="color:#6F42C1">concatWith</span><span style="color:#24292E">(Flux.</span><span style="color:#6F42C1">just</span><span style="color:#24292E">(</span><span style="color:#032F62">"C"</span><span style="color:#24292E">, </span><span style="color:#032F62">"D"</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#24292E">        .</span><span style="color:#6F42C1">onErrorResume</span><span style="color:#24292E">(e </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            System.err.</span><span style="color:#6F42C1">println</span><span style="color:#24292E">(</span><span style="color:#032F62">"处理错误: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> e.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">just</span><span style="color:#24292E">(</span><span style="color:#032F62">"替代值"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        })</span></span>
+<span class="line"><span style="color:#24292E">        .</span><span style="color:#6F42C1">doOnError</span><span style="color:#24292E">(e </span><span style="color:#D73A49">-></span><span style="color:#24292E"> System.err.</span><span style="color:#6F42C1">println</span><span style="color:#24292E">(</span><span style="color:#032F62">"记录错误: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> e.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">()))</span></span>
+<span class="line"><span style="color:#24292E">        .</span><span style="color:#6F42C1">retry</span><span style="color:#24292E">(</span><span style="color:#005CC5">3</span><span style="color:#24292E">);</span></span></code></pre>
+<p>错误处理策略对比：</p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>行为</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>onErrorReturn</td>
+<td>提供默认值</td>
+<td>简单错误恢复</td>
+</tr>
+<tr>
+<td>onErrorResume</td>
+<td>提供备选Publisher</td>
+<td>复杂错误恢复</td>
+</tr>
+<tr>
+<td>onErrorContinue</td>
+<td>跳过错误元素继续</td>
+<td>部分数据异常但不影响整体</td>
+</tr>
+<tr>
+<td>retry</td>
+<td>重新订阅源</td>
+<td>临时错误可能自动恢复</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-热流与冷流">5.2 热流与冷流</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>特点</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>冷流</td>
+<td>每个订阅者获取完整历史数据</td>
+<td>Flux.range()</td>
+</tr>
+<tr>
+<td>热流</td>
+<td>订阅者只获取订阅后的数据</td>
+<td>Flux.push()、ConnectableFlux</td>
+</tr>
+</tbody>
+</table>
+<p>转换冷流为热流：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> test</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">// 创建共享的热流</span></span>
+<span class="line"><span style="color:#24292E">    ConnectableFlux&#x3C;</span><span style="color:#D73A49">Integer</span><span style="color:#24292E">> hotFlux </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">range</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">, </span><span style="color:#005CC5">10</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">delayElements</span><span style="color:#24292E">(Duration.</span><span style="color:#6F42C1">ofMillis</span><span style="color:#24292E">(</span><span style="color:#005CC5">100</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">publish</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 启动热流数据生成</span></span>
+<span class="line"><span style="color:#24292E">    hotFlux.</span><span style="color:#6F42C1">connect</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 延迟订阅，只能收到订阅后的数据</span></span>
+<span class="line"><span style="color:#24292E">    Thread.</span><span style="color:#6F42C1">sleep</span><span style="color:#24292E">(</span><span style="color:#005CC5">500</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    hotFlux.</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">(i </span><span style="color:#D73A49">-></span><span style="color:#24292E"> System.out.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">            println</span><span style="color:#24292E">(</span><span style="color:#032F62">"订阅者1: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> i));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    Thread.</span><span style="color:#6F42C1">sleep</span><span style="color:#24292E">(</span><span style="color:#005CC5">200</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    hotFlux.</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">(i </span><span style="color:#D73A49">-></span><span style="color:#24292E"> System.out.</span><span style="color:#6F42C1">println</span><span style="color:#24292E">(</span><span style="color:#032F62">"订阅者2: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> i));</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="53-性能优化与调试">5.3 性能优化与调试</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">Flux&#x3C;</span><span style="color:#D73A49">Integer</span><span style="color:#24292E">> flux </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">range</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">, </span><span style="color:#005CC5">1000</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">        .</span><span style="color:#6F42C1">checkpoint</span><span style="color:#24292E">(</span><span style="color:#032F62">"来源处"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">        .</span><span style="color:#6F42C1">map</span><span style="color:#24292E">(i </span><span style="color:#D73A49">-></span><span style="color:#24292E"> i </span><span style="color:#D73A49">*</span><span style="color:#005CC5"> 2</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">        .</span><span style="color:#6F42C1">checkpoint</span><span style="color:#24292E">(</span><span style="color:#032F62">"映射后"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">        .</span><span style="color:#6F42C1">filter</span><span style="color:#24292E">(i </span><span style="color:#D73A49">-></span><span style="color:#24292E"> i </span><span style="color:#D73A49">%</span><span style="color:#005CC5"> 3</span><span style="color:#D73A49"> ==</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">        .</span><span style="color:#6F42C1">checkpoint</span><span style="color:#24292E">(</span><span style="color:#032F62">"过滤后"</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">) </span><span style="color:#6A737D">// 启用堆栈跟踪</span></span>
+<span class="line"><span style="color:#24292E">        .</span><span style="color:#6F42C1">doOnNext</span><span style="color:#24292E">(i </span><span style="color:#D73A49">-></span><span style="color:#24292E"> System.out.</span><span style="color:#6F42C1">println</span><span style="color:#24292E">(</span><span style="color:#032F62">"处理: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> i))</span></span>
+<span class="line"><span style="color:#24292E">        .</span><span style="color:#6F42C1">metrics</span><span style="color:#24292E">() </span><span style="color:#6A737D">// 添加指标监控</span></span>
+<span class="line"><span style="color:#24292E">        .</span><span style="color:#6F42C1">log</span><span style="color:#24292E">();    </span><span style="color:#6A737D">// 启用日志</span></span></code></pre>
+<h3 id="54-hooks全局钩子">5.4 Hooks全局钩子</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 全局操作符错误处理</span></span>
+<span class="line"><span style="color:#24292E">Hooks.</span><span style="color:#6F42C1">onOperatorError</span><span style="color:#24292E">((error, obj) </span><span style="color:#D73A49">-></span><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#24292E">        log.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"操作符错误: {}, 值: {}"</span><span style="color:#24292E">,error.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">(),obj);</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#D73A49"> new</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">CustomException</span><span style="color:#24292E">(</span><span style="color:#032F62">"自定义错误"</span><span style="color:#24292E">,error);</span></span>
+<span class="line"><span style="color:#24292E">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 每个操作符添加跟踪</span></span>
+<span class="line"><span style="color:#24292E">        Hooks.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">onOperatorDebug</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 清理钩子</span></span>
+<span class="line"><span style="color:#24292E">Hooks.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">resetOnOperatorError</span><span style="color:#24292E">();</span></span></code></pre>
+<h2 id="六实战应用案例">六、实战应用案例</h2>
+<h3 id="61-webflux响应式rest-api">6.1 WebFlux响应式REST API</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">RestController</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">RequestMapping</span><span style="color:#24292E">(</span><span style="color:#032F62">"/api/products"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> ProductController</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> ProductRepository repository;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">GetMapping</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> Flux&#x3C;</span><span style="color:#D73A49">Product</span><span style="color:#24292E">> </span><span style="color:#6F42C1">getAllProducts</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> repository.</span><span style="color:#6F42C1">findAll</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">delayElements</span><span style="color:#24292E">(Duration.</span><span style="color:#6F42C1">ofMillis</span><span style="color:#24292E">(</span><span style="color:#005CC5">50</span><span style="color:#24292E">)) </span><span style="color:#6A737D">// 模拟延迟</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">doOnNext</span><span style="color:#24292E">(p </span><span style="color:#D73A49">-></span><span style="color:#24292E"> log.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"获取产品: {}"</span><span style="color:#24292E">, p.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">GetMapping</span><span style="color:#24292E">(</span><span style="color:#032F62">"/search"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> Flux&#x3C;</span><span style="color:#D73A49">Product</span><span style="color:#24292E">> </span><span style="color:#6F42C1">search</span><span style="color:#24292E">(@</span><span style="color:#D73A49">RequestParam</span><span style="color:#24292E"> String </span><span style="color:#E36209">keyword</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> repository.</span><span style="color:#6F42C1">findAll</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">filter</span><span style="color:#24292E">(p </span><span style="color:#D73A49">-></span><span style="color:#24292E"> p.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">().</span><span style="color:#6F42C1">contains</span><span style="color:#24292E">(keyword))</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">sort</span><span style="color:#24292E">(Comparator.</span><span style="color:#6F42C1">comparing</span><span style="color:#24292E">(Product</span><span style="color:#D73A49">::</span><span style="color:#24292E">getPrice));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">PostMapping</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> Mono&#x3C;</span><span style="color:#D73A49">Product</span><span style="color:#24292E">> </span><span style="color:#6F42C1">createProduct</span><span style="color:#24292E">(@</span><span style="color:#D73A49">RequestBody</span><span style="color:#24292E"> Product </span><span style="color:#E36209">product</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> repository.</span><span style="color:#6F42C1">save</span><span style="color:#24292E">(product)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">doOnSuccess</span><span style="color:#24292E">(p </span><span style="color:#D73A49">-></span><span style="color:#24292E"> log.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"创建产品成功: {}"</span><span style="color:#24292E">, p.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="62-数据库异步访问">6.2 数据库异步访问</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> ReactiveProductService</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> ReactiveMongoRepository&#x3C;</span><span style="color:#D73A49">Product</span><span style="color:#24292E">, </span><span style="color:#D73A49">String</span><span style="color:#24292E">> repository;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> Flux&#x3C;</span><span style="color:#D73A49">ProductDto</span><span style="color:#24292E">> </span><span style="color:#6F42C1">getTopProducts</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> repository.</span><span style="color:#6F42C1">findAll</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">filter</span><span style="color:#24292E">(p </span><span style="color:#D73A49">-></span><span style="color:#24292E"> p.</span><span style="color:#6F42C1">isActive</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">sort</span><span style="color:#24292E">(Comparator.</span><span style="color:#6F42C1">comparing</span><span style="color:#24292E">(Product</span><span style="color:#D73A49">::</span><span style="color:#24292E">getSales).</span><span style="color:#6F42C1">reversed</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">take</span><span style="color:#24292E">(</span><span style="color:#005CC5">10</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">flatMap</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#D73A49">::</span><span style="color:#24292E">enrichProduct)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">timeout</span><span style="color:#24292E">(Duration.</span><span style="color:#6F42C1">ofSeconds</span><span style="color:#24292E">(</span><span style="color:#005CC5">3</span><span style="color:#24292E">));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#24292E"> Mono&#x3C;</span><span style="color:#D73A49">ProductDto</span><span style="color:#24292E">> </span><span style="color:#6F42C1">enrichProduct</span><span style="color:#24292E">(Product </span><span style="color:#E36209">product</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> Mono.</span><span style="color:#6F42C1">zip</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">                categoryService.</span><span style="color:#6F42C1">getCategory</span><span style="color:#24292E">(product.</span><span style="color:#6F42C1">getCategoryId</span><span style="color:#24292E">()),</span></span>
+<span class="line"><span style="color:#24292E">                reviewService.</span><span style="color:#6F42C1">getAverageRating</span><span style="color:#24292E">(product.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">        ).</span><span style="color:#6F42C1">map</span><span style="color:#24292E">(tuple </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            ProductDto dto </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ProductDto</span><span style="color:#24292E">(product);</span></span>
+<span class="line"><span style="color:#24292E">            dto.</span><span style="color:#6F42C1">setCategoryName</span><span style="color:#24292E">(tuple.</span><span style="color:#6F42C1">getT1</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">            dto.</span><span style="color:#6F42C1">setRating</span><span style="color:#24292E">(tuple.</span><span style="color:#6F42C1">getT2</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> dto;</span></span>
+<span class="line"><span style="color:#24292E">        });</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="七总结与最佳实践">七、总结与最佳实践</h2>
+<h3 id="优势与限制">优势与限制</h3>
+<table>
+<thead>
+<tr>
+<th>优势</th>
+<th>限制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>高吞吐量</td>
+<td>学习曲线陡峭</td>
+</tr>
+<tr>
+<td>非阻塞式</td>
+<td>调试复杂性</td>
+</tr>
+<tr>
+<td>背压支持</td>
+<td>异常栈跟踪难度大</td>
+</tr>
+<tr>
+<td>功能丰富的操作符</td>
+<td>不适合CPU密集型计算</td>
+</tr>
+</tbody>
+</table>
+<h3 id="最佳实践">最佳实践</h3>
+<ol>
+<li><strong>合理使用调度器</strong>：针对I/O操作使用<code>boundedElastic</code>，计算操作使用<code>parallel</code></li>
+<li><strong>避免阻塞操作</strong>：永远不在响应式流中使用阻塞API，用响应式替代</li>
+<li><strong>错误处理</strong>：总是为流添加错误处理，避免未处理异常导致序列终止</li>
+<li><strong>避免过度使用操作符</strong>：链式调用虽然优雅，但过长的链条难以维护</li>
+<li><strong>命名装配点</strong>：使用<code>checkpoint</code>标记关键流处理节点，方便调试</li>
+<li><strong>热流注意事项</strong>：处理热流时要注意订阅时机和资源释放</li>
+</ol>
+<p>以上就是对Spring WebFlux中Flux的全面解析，从使用到原理再到源码，希望能帮助你更好地理解和应用响应式编程。</p>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

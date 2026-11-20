@@ -1,0 +1,275 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>chapter_kafka/9-消费者KafkaConsumer对象的初始化 — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_kafka/9-%E6%B6%88%E8%B4%B9%E8%80%85KafkaConsumer%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_kafka/9-%E6%B6%88%E8%B4%B9%E8%80%85KafkaConsumer%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_kafka/9-%E6%B6%88%E8%B4%B9%E8%80%85KafkaConsumer%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_kafka/9-%E6%B6%88%E8%B4%B9%E8%80%85KafkaConsumer%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="chapter_kafka/9-消费者KafkaConsumer对象的初始化 — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_kafka/9-%E6%B6%88%E8%B4%B9%E8%80%85KafkaConsumer%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_kafka/9-%E6%B6%88%E8%B4%B9%E8%80%85KafkaConsumer%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>kafka</h3> <ul> <li> <a href="/zh/chapter_kafka/0-1-Kaka知识点全解析" class="lv0" title="Kaka入门级教程"> Kaka入门级教程 </a> </li><li> <a href="/zh/chapter_kafka/1-1-生产者例子发送数据生命周期" class="lv0" title="从一个生产者的Demo出发"> 从一个生产者的Demo出发 </a> </li><li> <a href="/zh/chapter_kafka/1-2-生产者KafkaProducer对象的初始化" class="lv0" title="2 生产者KafkaProducer对象的初始化"> 2 生产者KafkaProducer对象的初始化 </a> </li><li> <a href="/zh/chapter_kafka/1-introduce" class="lv0" title="**Kaka知识全解析**"> **Kaka知识全解析** </a> </li><li> <a href="/zh/chapter_kafka/2-high-performence" class="lv0" title="**Kaka高性能设计原理**"> **Kaka高性能设计原理** </a> </li><li> <a href="/zh/chapter_kafka/3-client-sample" class="lv0" title="**从一个Kafka的Demo说起**"> **从一个Kafka的Demo说起** </a> </li><li> <a href="/zh/chapter_kafka/3-KafkaProducer处理数据到发送批处理队列" class="lv0" title="3-KafkaProducer处理数据到发送批处理队列"> 3-KafkaProducer处理数据到发送批处理队列 </a> </li><li> <a href="/zh/chapter_kafka/4-kafka-producer" class="lv0" title="**KafkaProducer生产者对象的长篇源码解析简介**"> **KafkaProducer生产者对象的长篇源码解析简介** </a> </li><li> <a href="/zh/chapter_kafka/4-Send发送者线程的主限循环逻辑" class="lv0" title="4-Send发送者线程的主限循环逻辑"> 4-Send发送者线程的主限循环逻辑 </a> </li><li> <a href="/zh/chapter_kafka/5-生产者消息请求放入Kafka通道" class="lv0" title="5-生产者消息请求放入Kafka通道"> 5-生产者消息请求放入Kafka通道 </a> </li><li> <a href="/zh/chapter_kafka/5-sender" class="lv0" title="**Kafka的发送器对象的初始化**"> **Kafka的发送器对象的初始化** </a> </li><li> <a href="/zh/chapter_kafka/6-生产者执行IO事件" class="lv0" title="执行IO事件"> 执行IO事件 </a> </li><li> <a href="/zh/chapter_kafka/6-kafka-thread" class="lv0" title="**Kafka客户端的IO线程KafkaThread**"> **Kafka客户端的IO线程KafkaThread** </a> </li><li> <a href="/zh/chapter_kafka/7-消费者和生产者处理IO结果" class="lv0" title="7-消费者和生产者处理IO结果"> 7-消费者和生产者处理IO结果 </a> </li><li> <a href="/zh/chapter_kafka/7-kafka-producer-init" class="lv0" title="**生产者KafkaProducer对象的初始化**"> **生产者KafkaProducer对象的初始化** </a> </li><li> <a href="/zh/chapter_kafka/8-消费者例子拉取数据生命周期" class="lv0" title="8-消费者例子拉取数据生命周期"> 8-消费者例子拉取数据生命周期 </a> </li><li> <a href="/zh/chapter_kafka/8-send-producer-data" class="lv0" title="8-send-producer-data"> 8-send-producer-data </a> </li><li> <a href="/zh/chapter_kafka/9-消费者KafkaConsumer对象的初始化" class="lv0" title="9-消费者KafkaConsumer对象的初始化"> 9-消费者KafkaConsumer对象的初始化 </a> </li><li> <a href="/zh/chapter_kafka/9-execute-io" class="lv0" title="**执行IO事件**"> **执行IO事件** </a> </li><li> <a href="/zh/chapter_kafka/10-消费者订阅TOPIC" class="lv0" title="10-消费者订阅TOPIC"> 10-消费者订阅TOPIC </a> </li><li> <a href="/zh/chapter_kafka/10-handle-io" class="lv0" title="**处理Poll的IO返回结果**"> **处理Poll的IO返回结果** </a> </li><li> <a href="/zh/chapter_kafka/11-消费者执行轮询消息poll方法" class="lv0" title="11-消费者执行轮询消息poll方法"> 11-消费者执行轮询消息poll方法 </a> </li><li> <a href="/zh/chapter_kafka/12-消费者尝试更新分配元数据updateAssignmentMetadataIfNeeded" class="lv0" title="12-消费者尝试更新分配元数据updateAssignmentMetadataIfNeeded"> 12-消费者尝试更新分配元数据updateAssignmentMetadataIfNeeded </a> </li><li> <a href="/zh/chapter_kafka/13-消费者Poll从服务端拉取数据" class="lv0" title="13-消费者Poll从服务端拉取数据"> 13-消费者Poll从服务端拉取数据 </a> </li><li> <a href="/zh/chapter_kafka/Kafka入门" class="lv0" title="简介"> 简介 </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_kafka">kafka</a><span class="sep">/</span><span>消费者KafkaConsumer对象的初始化</span> </nav> <div class="prose">  <p>这个主要是介绍下常见的类型有了这些类型做铺垫后面看消费者消费消息的代码会相对容易一些，这里并没有特别复杂的逻辑前面例子代码主要通过如下代码进行调用：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">KafkaConsumer consumer </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> KafkaConsumer&#x3C;>(props);</span></span></code></pre>
+<p>构造器的大致逻辑如下：</p>
+<ul>
+<li>
+<p>开始</p>
+</li>
+<li>
+<p><strong>基础配置</strong>初始化</p>
+<ul>
+<li>
+<p>配置转ConsumerConfig</p>
+</li>
+<li>
+<p>初始化重负载均衡配置GroupRebalanceConfig对象</p>
+</li>
+<li>
+<p>enable.auto.commit自动提交配置初始化</p>
+</li>
+<li>
+<p>ConsumerInterceptor消费拦截器对象初始化</p>
+</li>
+<li>
+<p>Metrics相关监控指标对象创建</p>
+</li>
+<li>
+<p>keySerializer对象创建序列化KEY使用</p>
+</li>
+<li>
+<p>valueSerializer对象创建序列化VALUE使用</p>
+</li>
+<li>
+<p>偏移量重置策略OffsetResetStrategy类型对象创建</p>
+</li>
+<li>
+<p>订阅状态跟踪器SubscriptionState类型对象创建</p>
+</li>
+<li>
+<p>ClusterResourceListeners集群资源监听器</p>
+</li>
+<li>
+<p>ConsumerMetadata消费者元数据对象初始化（后续IO发起的时候会拉取全量元数据）</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>网络相关配置</strong>初始化</p>
+<ul>
+<li>根据配置初始化通道构建器ChannelBuilder</li>
+<li>NetworkClient对象创建</li>
+<li>再封装ConsumerNetworkClient网络客户端</li>
+</ul>
+</li>
+<li>
+<p><strong>消费者协调配置</strong>初始化</p>
+<ul>
+<li>初始化消费者分区管理器ConsumerPartitionAssignor</li>
+<li>初始化消费者协调器ConsumerCoordinator</li>
+<li>初始化消费者数据获取器Fetcher</li>
+</ul>
+</li>
+<li>
+<p>结束</p>
+</li>
+</ul>
+<p>KafkaConsumer的构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#6F42C1"> KafkaConsumer</span><span style="color:#24292E">(Properties properties) {</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">(properties, </span><span style="color:#005CC5">null</span><span style="color:#24292E">, </span><span style="color:#005CC5">null</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#6F42C1"> KafkaConsumer</span><span style="color:#24292E">(Properties properties,</span></span>
+<span class="line"><span style="color:#24292E">                     Deserializer</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">K</span><span style="color:#D73A49">></span><span style="color:#24292E"> keyDeserializer,</span></span>
+<span class="line"><span style="color:#24292E">                     Deserializer</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">V</span><span style="color:#D73A49">></span><span style="color:#24292E"> valueDeserializer) {</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> ConsumerConfig</span><span style="color:#24292E">(ConsumerConfig.</span><span style="color:#6F42C1">addDeserializerToConfig</span><span style="color:#24292E">(properties, keyDeserializer, valueDeserializer)),</span></span>
+<span class="line"><span style="color:#24292E">         keyDeserializer, valueDeserializer);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>下面这个构造器看着很长其实大部分都是在创建对象可以了解一些细节：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#6F42C1"> KafkaConsumer</span><span style="color:#24292E">(ConsumerConfig config, Deserializer</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">K</span><span style="color:#D73A49">></span><span style="color:#24292E"> keyDeserializer, Deserializer</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">V</span><span style="color:#D73A49">></span><span style="color:#24292E"> valueDeserializer) {</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">      //基础配置初始化</span></span>
+<span class="line"><span style="color:#24292E">        String clientId </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getString</span><span style="color:#24292E">(ConsumerConfig.CLIENT_ID_CONFIG);</span></span>
+<span class="line"><span style="color:#6A737D">       //如果没有配置消费者id 自动生成一个</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (clientId.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">            clientId </span><span style="color:#D73A49">=</span><span style="color:#032F62"> "consumer-"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> CONSUMER_CLIENT_ID_SEQUENCE.</span><span style="color:#6F42C1">getAndIncrement</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.clientId </span><span style="color:#D73A49">=</span><span style="color:#24292E"> clientId;</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.groupId </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getString</span><span style="color:#24292E">(ConsumerConfig.GROUP_ID_CONFIG);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        LogContext logContext;</span></span>
+<span class="line"><span style="color:#6A737D">        // If group.instance.id is set, we will append it to the log context.</span></span>
+<span class="line"><span style="color:#24292E">        String groupInstanceId </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getString</span><span style="color:#24292E">(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (groupInstanceId </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            JoinGroupRequest.</span><span style="color:#6F42C1">validateGroupInstanceId</span><span style="color:#24292E">(groupInstanceId);</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.groupInstanceId </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Optional.</span><span style="color:#6F42C1">of</span><span style="color:#24292E">(groupInstanceId);</span></span>
+<span class="line"><span style="color:#24292E">            logContext </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> LogContext</span><span style="color:#24292E">(</span><span style="color:#032F62">"[Consumer instanceId="</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> groupInstanceId </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ", clientId="</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> clientId </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ", groupId="</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> groupId </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "] "</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.groupInstanceId </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Optional.</span><span style="color:#6F42C1">empty</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            logContext </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> LogContext</span><span style="color:#24292E">(</span><span style="color:#032F62">"[Consumer clientId="</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> clientId </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ", groupId="</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> groupId </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "] "</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.log </span><span style="color:#D73A49">=</span><span style="color:#24292E"> logContext.</span><span style="color:#6F42C1">logger</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getClass</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">      //enable.auto.commit自动提交配置初始化</span></span>
+<span class="line"><span style="color:#D73A49">        boolean</span><span style="color:#24292E"> enableAutoCommit </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getBoolean</span><span style="color:#24292E">(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (groupId </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) { </span><span style="color:#6A737D">// overwrite in case of default group id where the config is not explicitly provided</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">config.</span><span style="color:#6F42C1">originals</span><span style="color:#24292E">().</span><span style="color:#6F42C1">containsKey</span><span style="color:#24292E">(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG))</span></span>
+<span class="line"><span style="color:#24292E">                enableAutoCommit </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> false</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">            else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (enableAutoCommit)</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> InvalidConfigurationException</span><span style="color:#24292E">(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " cannot be set to true when default group id (null) is used."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (groupId.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">            log.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Support for using the empty group id by consumers is deprecated and will be removed in the next major release."</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        log.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Initializing the Kafka consumer"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.requestTimeoutMs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.defaultApiTimeoutMs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ConsumerConfig.DEFAULT_API_TIMEOUT_MS_CONFIG);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.time </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Time.SYSTEM;</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.metrics </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> buildMetrics</span><span style="color:#24292E">(config, time, clientId);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.retryBackoffMs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getLong</span><span style="color:#24292E">(ConsumerConfig.RETRY_BACKOFF_MS_CONFIG);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // load interceptors and make sure they get clientId</span></span>
+<span class="line"><span style="color:#24292E">        Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> userProvidedConfigs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">originals</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        userProvidedConfigs.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(ConsumerConfig.CLIENT_ID_CONFIG, clientId);</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;ConsumerInterceptor&#x3C;</span><span style="color:#D73A49">K</span><span style="color:#24292E">, </span><span style="color:#D73A49">V</span><span style="color:#24292E">>> interceptorList </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (List) (</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> ConsumerConfig</span><span style="color:#24292E">(userProvidedConfigs, </span><span style="color:#005CC5">false</span><span style="color:#24292E">)).</span><span style="color:#6F42C1">getConfiguredInstances</span><span style="color:#24292E">(ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG,</span></span>
+<span class="line"><span style="color:#24292E">                ConsumerInterceptor.class);</span></span>
+<span class="line"><span style="color:#24292E">      </span></span>
+<span class="line"><span style="color:#6A737D">      //ConsumerInterceptor消费拦截器对象初始化</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.interceptors </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ConsumerInterceptors&#x3C;>(interceptorList);</span></span>
+<span class="line"><span style="color:#24292E">      </span></span>
+<span class="line"><span style="color:#6A737D">       //key值序列化工具</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (keyDeserializer </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.keyDeserializer </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getConfiguredInstance</span><span style="color:#24292E">(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, Deserializer.class);</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.keyDeserializer.</span><span style="color:#6F42C1">configure</span><span style="color:#24292E">(config.</span><span style="color:#6F42C1">originals</span><span style="color:#24292E">(), </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            config.</span><span style="color:#6F42C1">ignore</span><span style="color:#24292E">(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG);</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.keyDeserializer </span><span style="color:#D73A49">=</span><span style="color:#24292E"> keyDeserializer;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">      //value值序列化工具</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (valueDeserializer </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.valueDeserializer </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getConfiguredInstance</span><span style="color:#24292E">(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, Deserializer.class);</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.valueDeserializer.</span><span style="color:#6F42C1">configure</span><span style="color:#24292E">(config.</span><span style="color:#6F42C1">originals</span><span style="color:#24292E">(), </span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            config.</span><span style="color:#6F42C1">ignore</span><span style="color:#24292E">(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG);</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.valueDeserializer </span><span style="color:#D73A49">=</span><span style="color:#24292E"> valueDeserializer;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">      </span></span>
+<span class="line"><span style="color:#6A737D">      //偏移量重置策略  没有初始化偏移量的时候自动重置到开头还是末尾或者是抛出异常等策略</span></span>
+<span class="line"><span style="color:#24292E">        OffsetResetStrategy offsetResetStrategy </span><span style="color:#D73A49">=</span><span style="color:#24292E"> OffsetResetStrategy.</span><span style="color:#6F42C1">valueOf</span><span style="color:#24292E">(config.</span><span style="color:#6F42C1">getString</span><span style="color:#24292E">(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG).</span><span style="color:#6F42C1">toUpperCase</span><span style="color:#24292E">(Locale.ROOT));</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.subscriptions </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> SubscriptionState</span><span style="color:#24292E">(logContext, offsetResetStrategy);</span></span>
+<span class="line"><span style="color:#24292E">        ClusterResourceListeners clusterResourceListeners </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> configureClusterResourceListeners</span><span style="color:#24292E">(keyDeserializer,</span></span>
+<span class="line"><span style="color:#24292E">                valueDeserializer, metrics.</span><span style="color:#6F42C1">reporters</span><span style="color:#24292E">(), interceptorList);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#6A737D">      //元数据缓存相关的用来存储broker集群信息</span></span>
+<span class="line"><span style="color:#005CC5">      this</span><span style="color:#24292E">.metadata </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ConsumerMetadata</span><span style="color:#24292E">(retryBackoffMs,</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getLong</span><span style="color:#24292E">(ConsumerConfig.METADATA_MAX_AGE_CONFIG),</span></span>
+<span class="line"><span style="color:#D73A49">                !</span><span style="color:#24292E">config.</span><span style="color:#6F42C1">getBoolean</span><span style="color:#24292E">(ConsumerConfig.EXCLUDE_INTERNAL_TOPICS_CONFIG),</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getBoolean</span><span style="color:#24292E">(ConsumerConfig.ALLOW_AUTO_CREATE_TOPICS_CONFIG),</span></span>
+<span class="line"><span style="color:#24292E">                subscriptions, logContext, clusterResourceListeners);</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">InetSocketAddress</span><span style="color:#24292E">> addresses </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ClientUtils.</span><span style="color:#6F42C1">parseAndValidateAddresses</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getList</span><span style="color:#24292E">(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG), config.</span><span style="color:#6F42C1">getString</span><span style="color:#24292E">(ConsumerConfig.CLIENT_DNS_LOOKUP_CONFIG));</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.metadata.</span><span style="color:#6F42C1">bootstrap</span><span style="color:#24292E">(addresses, time.</span><span style="color:#6F42C1">milliseconds</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        String metricGrpPrefix </span><span style="color:#D73A49">=</span><span style="color:#032F62"> "consumer"</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        FetcherMetricsRegistry metricsRegistry </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> FetcherMetricsRegistry</span><span style="color:#24292E">(Collections.</span><span style="color:#6F42C1">singleton</span><span style="color:#24292E">(CLIENT_ID_METRIC_TAG), metricGrpPrefix);</span></span>
+<span class="line"><span style="color:#6A737D">        //下面都是跟网络交互相关的  </span></span>
+<span class="line"><span style="color:#24292E">      ChannelBuilder channelBuilder </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ClientUtils.</span><span style="color:#6F42C1">createChannelBuilder</span><span style="color:#24292E">(config, time);</span></span>
+<span class="line"><span style="color:#24292E">        IsolationLevel isolationLevel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> IsolationLevel.</span><span style="color:#6F42C1">valueOf</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getString</span><span style="color:#24292E">(ConsumerConfig.ISOLATION_LEVEL_CONFIG).</span><span style="color:#6F42C1">toUpperCase</span><span style="color:#24292E">(Locale.ROOT));</span></span>
+<span class="line"><span style="color:#24292E">        Sensor throttleTimeSensor </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Fetcher.</span><span style="color:#6F42C1">throttleTimeSensor</span><span style="color:#24292E">(metrics, metricsRegistry);</span></span>
+<span class="line"><span style="color:#D73A49">        int</span><span style="color:#24292E"> heartbeatIntervalMs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        ApiVersions apiVersions </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ApiVersions</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        NetworkClient netClient </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> NetworkClient</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#D73A49">                new</span><span style="color:#6F42C1"> Selector</span><span style="color:#24292E">(config.</span><span style="color:#6F42C1">getLong</span><span style="color:#24292E">(ConsumerConfig.CONNECTIONS_MAX_IDLE_MS_CONFIG), metrics, time, metricGrpPrefix, channelBuilder, logContext),</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.metadata,</span></span>
+<span class="line"><span style="color:#24292E">                clientId,</span></span>
+<span class="line"><span style="color:#005CC5">                100</span><span style="color:#24292E">, </span><span style="color:#6A737D">// a fixed large enough value will suffice for max in-flight requests</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getLong</span><span style="color:#24292E">(ConsumerConfig.RECONNECT_BACKOFF_MS_CONFIG),</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getLong</span><span style="color:#24292E">(ConsumerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG),</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ConsumerConfig.SEND_BUFFER_CONFIG),</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ConsumerConfig.RECEIVE_BUFFER_CONFIG),</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG),</span></span>
+<span class="line"><span style="color:#24292E">                ClientDnsLookup.</span><span style="color:#6F42C1">forConfig</span><span style="color:#24292E">(config.</span><span style="color:#6F42C1">getString</span><span style="color:#24292E">(ConsumerConfig.CLIENT_DNS_LOOKUP_CONFIG)),</span></span>
+<span class="line"><span style="color:#24292E">                time,</span></span>
+<span class="line"><span style="color:#005CC5">                true</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">                apiVersions,</span></span>
+<span class="line"><span style="color:#24292E">                throttleTimeSensor,</span></span>
+<span class="line"><span style="color:#24292E">                logContext);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.client </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ConsumerNetworkClient</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">                logContext,</span></span>
+<span class="line"><span style="color:#24292E">                netClient,</span></span>
+<span class="line"><span style="color:#24292E">                metadata,</span></span>
+<span class="line"><span style="color:#24292E">                time,</span></span>
+<span class="line"><span style="color:#24292E">                retryBackoffMs,</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG),</span></span>
+<span class="line"><span style="color:#24292E">                heartbeatIntervalMs); </span><span style="color:#6A737D">//Will avoid blocking an extended period of time to prevent heartbeat thread starvation</span></span>
+<span class="line"><span style="color:#24292E">      </span></span>
+<span class="line"><span style="color:#24292E">      </span></span>
+<span class="line"><span style="color:#6A737D">       //分区策略神器</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.assignors </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getConfiguredInstances</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">                ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG,</span></span>
+<span class="line"><span style="color:#24292E">                PartitionAssignor.class);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        int</span><span style="color:#24292E"> maxPollIntervalMs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG);</span></span>
+<span class="line"><span style="color:#D73A49">        int</span><span style="color:#24292E"> sessionTimeoutMs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG);</span></span>
+<span class="line"><span style="color:#6A737D">        // no coordinator will be constructed for the default (null) group id</span></span>
+<span class="line"><span style="color:#6A737D">       //客户端协调器  </span></span>
+<span class="line"><span style="color:#005CC5">      this</span><span style="color:#24292E">.coordinator </span><span style="color:#D73A49">=</span><span style="color:#24292E"> groupId </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> ?</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> :</span></span>
+<span class="line"><span style="color:#D73A49">            new</span><span style="color:#6F42C1"> ConsumerCoordinator</span><span style="color:#24292E">(logContext,</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.client,</span></span>
+<span class="line"><span style="color:#24292E">                    groupId,</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.groupInstanceId,</span></span>
+<span class="line"><span style="color:#24292E">                    maxPollIntervalMs,</span></span>
+<span class="line"><span style="color:#24292E">                    sessionTimeoutMs,</span></span>
+<span class="line"><span style="color:#D73A49">                    new</span><span style="color:#6F42C1"> Heartbeat</span><span style="color:#24292E">(time, sessionTimeoutMs, heartbeatIntervalMs, maxPollIntervalMs, retryBackoffMs),</span></span>
+<span class="line"><span style="color:#24292E">                    assignors,</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.metadata,</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.subscriptions,</span></span>
+<span class="line"><span style="color:#24292E">                    metrics,</span></span>
+<span class="line"><span style="color:#24292E">                    metricGrpPrefix,</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.time,</span></span>
+<span class="line"><span style="color:#24292E">                    retryBackoffMs,</span></span>
+<span class="line"><span style="color:#24292E">                    enableAutoCommit,</span></span>
+<span class="line"><span style="color:#24292E">                    config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG),</span></span>
+<span class="line"><span style="color:#005CC5">                    this</span><span style="color:#24292E">.interceptors,</span></span>
+<span class="line"><span style="color:#24292E">                    config.</span><span style="color:#6F42C1">getBoolean</span><span style="color:#24292E">(ConsumerConfig.LEAVE_GROUP_ON_CLOSE_CONFIG));</span></span>
+<span class="line"><span style="color:#6A737D">       //获取器用来拉取数据 </span></span>
+<span class="line"><span style="color:#005CC5">      this</span><span style="color:#24292E">.fetcher </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> Fetcher&#x3C;>(</span></span>
+<span class="line"><span style="color:#24292E">                logContext,</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.client,</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ConsumerConfig.FETCH_MIN_BYTES_CONFIG),</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ConsumerConfig.FETCH_MAX_BYTES_CONFIG),</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG),</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG),</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(ConsumerConfig.MAX_POLL_RECORDS_CONFIG),</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getBoolean</span><span style="color:#24292E">(ConsumerConfig.CHECK_CRCS_CONFIG),</span></span>
+<span class="line"><span style="color:#24292E">                config.</span><span style="color:#6F42C1">getString</span><span style="color:#24292E">(ConsumerConfig.CLIENT_RACK_CONFIG),</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.keyDeserializer,</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.valueDeserializer,</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.metadata,</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.subscriptions,</span></span>
+<span class="line"><span style="color:#24292E">                metrics,</span></span>
+<span class="line"><span style="color:#24292E">                metricsRegistry,</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.time,</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.retryBackoffMs,</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.requestTimeoutMs,</span></span>
+<span class="line"><span style="color:#24292E">                isolationLevel,</span></span>
+<span class="line"><span style="color:#24292E">                apiVersions);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        //日志和监控 日志会打印出来未使用的配置提醒用户</span></span>
+<span class="line"><span style="color:#24292E">        config.</span><span style="color:#6F42C1">logUnused</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        AppInfoParser.</span><span style="color:#6F42C1">registerAppInfo</span><span style="color:#24292E">(JMX_PREFIX, clientId, metrics, time.</span><span style="color:#6F42C1">milliseconds</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        log.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Kafka consumer initialized"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">t</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // call close methods if internal objects are already constructed; this is to prevent resource leak. see KAFKA-2121</span></span>
+<span class="line"><span style="color:#6F42C1">        close</span><span style="color:#24292E">(</span><span style="color:#005CC5">0</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        // now propagate the exception</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> KafkaException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Failed to construct kafka consumer"</span><span style="color:#24292E">, t);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>//todo 这里出现的配置都要解释下</p>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**配置信息加载全解析-(开发自己的配置中心必备功能)** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_springboot/4-environment/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_springboot/4-environment"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_springboot/4-environment/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_springboot/4-environment"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**配置信息加载全解析-(开发自己的配置中心必备功能)** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_springboot/4-environment/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_springboot/4-environment/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>springboot</h3> <ul> <li> <a href="/zh/chapter_springboot/1-sample" class="lv0" title="**从一个Demo入手**"> **从一个Demo入手** </a> </li><li> <a href="/zh/chapter_springboot/2-spi" class="lv0" title="**SpringApplication的run方法启动应用程序源码初探**"> **SpringApplication的run方法启动应用程序源码初探** </a> </li><li> <a href="/zh/chapter_springboot/3-run" class="lv0" title="**SpringApplication的run启动方法的全生命周期函数源码**"> **SpringApplication的run启动方法的全生命周期函数源码** </a> </li><li> <a href="/zh/chapter_springboot/4-environment" class="lv0" aria-current="page" title="**配置信息加载全解析-(开发自己的配置中心必备功能)**"> **配置信息加载全解析-(开发自己的配置中心必备功能)** </a> </li><li> <a href="/zh/chapter_springboot/5-application-context-init" class="lv0" title="**SpringBoot容器的创建**"> **SpringBoot容器的创建** </a> </li><li> <a href="/zh/chapter_springboot/6-reader-scanner" class="lv0" title="6-reader-scanner"> 6-reader-scanner </a> </li><li> <a href="/zh/chapter_springboot/spring-flux" class="lv0" title="Spring WebFlux中的Flux全面解析"> Spring WebFlux中的Flux全面解析 </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_springboot">springboot</a><span class="sep">/</span><span>**配置信息加载全解析-(开发自己的配置中心必备功能)**</span> </nav> <div class="prose">  <h1 id="配置信息加载全解析-开发自己的配置中心必备功能"><strong>配置信息加载全解析-(开发自己的配置中心必备功能)</strong></h1>
+<h2 id="简介"><strong>简介</strong></h2>
+<p>上一个博客中说了配置环境信息ConfigurableEnvironment的准备 但是并没有说细节这里来详细说下Spring的环境配置信息,方便为后续配置信息熟悉做准备</p>
+<p>我们先回顾一下:</p>
+<p>配置信息的准备过程,在上下文启动时候可能会需要一些基础的配置信息,这一步就是用来加载这些配置信息的</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">ConfigurableEnvironment environment </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> prepareEnvironment</span><span style="color:#24292E">(listeners, bootstrapContext, applicationArguments);</span></span></code></pre>
+<p>来看下逻辑代码:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#24292E"> ConfigurableEnvironment </span><span style="color:#6F42C1">prepareEnvironment</span><span style="color:#24292E">(SpringApplicationRunListeners listeners,</span></span>
+<span class="line"><span style="color:#24292E">      DefaultBootstrapContext bootstrapContext, ApplicationArguments applicationArguments) {</span></span>
+<span class="line"><span style="color:#6A737D">   // Create and configure the environment</span></span>
+<span class="line"><span style="color:#6A737D">   //1:创建配置环境对象,</span></span>
+<span class="line"><span style="color:#6A737D">  //这个是根据前面我们推断出来的应用程序类型 来创建对应的可配置的环境对象webApplicationType有:SERVLET,REACTIVE和其他,他们分别对应的ConfigurableEnvironment实现类型为:ApplicationServletEnvironment,ApplicationReactiveWebEnvironment和ApplicationEnvironment</span></span>
+<span class="line"><span style="color:#24292E">   ConfigurableEnvironment environment </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getOrCreateEnvironment</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">   //2: 配置环境对象</span></span>
+<span class="line"><span style="color:#6A737D">  //1)将命令行上的应用程序参数 添加到属性集合中PropertySources</span></span>
+<span class="line"><span style="color:#6F42C1">   configureEnvironment</span><span style="color:#24292E">(environment, applicationArguments.</span><span style="color:#6F42C1">getSourceArgs</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">  //3 所有配置转Spring配置,将命令行参数,JVM参数,环境变量参数添加到name为configurationProperties的SpringConfigurationPropertySources对象中,然后将其添加到属性集合中PropertySources</span></span>
+<span class="line"><span style="color:#24292E">   ConfigurationPropertySources.</span><span style="color:#6F42C1">attach</span><span style="color:#24292E">(environment);</span></span>
+<span class="line"><span style="color:#6A737D">  //4 广播environmentPrepared事件   如果我们想要实现这个时间则可以让Bean实现接口EnvironmentPostProcessor (开发配置中心时候可以用这个将自己配置中心的配置添加进来)</span></span>
+<span class="line"><span style="color:#6A737D">  //这里实现的广播事件有</span></span>
+<span class="line"><span style="color:#6A737D">  //RandomValuePropertySource自动装配，使得在加载配置文件时，可以解析${random.value}。</span></span>
+<span class="line"><span style="color:#6A737D">  //SystemEnvironmentPropertySourceEnvironmentPostProcessor 用来格式化系统资源</span></span>
+<span class="line"><span style="color:#6A737D">  //SpringApplicationJsonEnvironmentPostProcessor 指定的json配置转换解析配置的key为spring.application.json,SPRING_APPLICATION_JSON (可在命令行 JVM,环境变量中配置)</span></span>
+<span class="line"><span style="color:#6A737D">  //等等</span></span>
+<span class="line"><span style="color:#24292E">   listeners.</span><span style="color:#6F42C1">environmentPrepared</span><span style="color:#24292E">(bootstrapContext, environment);</span></span>
+<span class="line"><span style="color:#6A737D">   //5 移动“defaultProperties”属性源，使其成为给定属性中的最后一个源 默认配置优先级最低</span></span>
+<span class="line"><span style="color:#24292E">   DefaultPropertiesPropertySource.</span><span style="color:#6F42C1">moveToEnd</span><span style="color:#24292E">(environment);</span></span>
+<span class="line"><span style="color:#24292E">   Assert.</span><span style="color:#6F42C1">state</span><span style="color:#24292E">(</span><span style="color:#D73A49">!</span><span style="color:#24292E">environment.</span><span style="color:#6F42C1">containsProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"spring.main.environment-prefix"</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#032F62">         "Environment prefix cannot be set via properties."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">  //6 将环境绑定到Spring应用程序。</span></span>
+<span class="line"><span style="color:#6F42C1">   bindToSpringApplication</span><span style="color:#24292E">(environment);</span></span>
+<span class="line"><span style="color:#6A737D">  	//非定制环境吗</span></span>
+<span class="line"><span style="color:#D73A49">   if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#005CC5">this</span><span style="color:#24292E">.isCustomEnvironment) {</span></span>
+<span class="line"><span style="color:#6A737D">     //将给定环境转换为不尝试直接解析配置文件属性的应用程序环境。</span></span>
+<span class="line"><span style="color:#24292E">      environment </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> convertEnvironment</span><span style="color:#24292E">(environment);</span></span>
+<span class="line"><span style="color:#24292E">   }</span></span>
+<span class="line"><span style="color:#6A737D">  //与第3步逻辑一样 </span></span>
+<span class="line"><span style="color:#24292E">   ConfigurationPropertySources.</span><span style="color:#6F42C1">attach</span><span style="color:#24292E">(environment);</span></span>
+<span class="line"><span style="color:#D73A49">   return</span><span style="color:#24292E"> environment;</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>在详细说代码之前我们可以来看下Environment相关联的一些对象,这里只列举出来我们将要用到的,这里一共包含3个分类,环境,属性源,属性解析器, 在环境中使用属性解析器将配置文件转换为属性源,接下来可以看下对应的UML关系:</p>
+<p><img src="/img/chapter_springboot/4-env.png" alt="4-env.png"></p>
+<h2 id="创建一个configurableenvironment对象"><strong>创建一个ConfigurableEnvironment对象</strong></h2>
+<h3 id="configurableenvironment对象简介"><strong>ConfigurableEnvironment对象简介</strong></h3>
+<p>大多数（如果不是所有）环境类型都要实现的配置接口。提供用于设置活动和默认配置文件以及操纵基础属性源的工具。允许客户端通过ConfigurablePropertyResolver superinterface设置和验证所需的属性、自定义转换服务等。</p>
+<p>操纵属性来源</p>
+<p>属性来源可能被移除、重新排序或替换；可以使用从getPropertySources()返回的MutablePropertySources实例添加其他属性源。以下示例与ConfigurableEnvironment的StandardEnvironment实现相反，但通常适用于任何实现，尽管特定的默认属性源可能有所不同。</p>
+<p>示例：添加具有最高搜索优先级的新属性源</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">   ConfigurableEnvironment environment </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> StandardEnvironment</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">   MutablePropertySources propertySources </span><span style="color:#D73A49">=</span><span style="color:#24292E"> environment.</span><span style="color:#6F42C1">getPropertySources</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">   Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">String</span><span style="color:#24292E">> myMap </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> HashMap&#x3C;>();</span></span>
+<span class="line"><span style="color:#24292E">   myMap.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(</span><span style="color:#032F62">"xyz"</span><span style="color:#24292E">, </span><span style="color:#032F62">"myValue"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">   propertySources.</span><span style="color:#6F42C1">addFirst</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> MapPropertySource</span><span style="color:#24292E">(</span><span style="color:#032F62">"MY_MAP"</span><span style="color:#24292E">, myMap));</span></span>
+<span class="line"><span style="color:#24292E">   </span></span>
+<span class="line"><span style="color:#6A737D">	//示例：删除默认系统属性属性源</span></span>
+<span class="line"><span style="color:#24292E">   MutablePropertySources propertySources </span><span style="color:#D73A49">=</span><span style="color:#24292E"> environment.</span><span style="color:#6F42C1">getPropertySources</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">   propertySources.</span><span style="color:#6F42C1">remove</span><span style="color:#24292E">(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME)</span></span>
+<span class="line"><span style="color:#24292E">   </span></span></code></pre>
+<p>示例：出于测试目的模拟系统环境</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">   MutablePropertySources propertySources </span><span style="color:#D73A49">=</span><span style="color:#24292E"> environment.</span><span style="color:#6F42C1">getPropertySources</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">   MockPropertySource mockEnvVars </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> MockPropertySource</span><span style="color:#24292E">().</span><span style="color:#6F42C1">withProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"xyz"</span><span style="color:#24292E">, </span><span style="color:#032F62">"myValue"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">   propertySources.</span><span style="color:#6F42C1">replace</span><span style="color:#24292E">(StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, mockEnvVars);</span></span></code></pre>
+<p>当ApplicationContext正在使用环境时，在调用上下文的refresh（）方法之前执行任何此类PropertySource操作都很重要。这确保了所有属性源在容器引导过程中可用，包括属性占位符配置程序使用</p>
+<h3 id="configurableenvironment对象的创建"><strong>ConfigurableEnvironment对象的创建</strong></h3>
+<p>如前面调用代码所示通过调用getOrCreateEnvironment()方法来创建ConfigurableEnvironment对象,如下代码所示环境信息是根据不同的应用程序来创建不同的环境信息对象</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#24292E"> ConfigurableEnvironment </span><span style="color:#6F42C1">getOrCreateEnvironment</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">   if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.environment </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">      return</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.environment;</span></span>
+<span class="line"><span style="color:#24292E">   }</span></span>
+<span class="line"><span style="color:#D73A49">   switch</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.webApplicationType) {</span></span>
+<span class="line"><span style="color:#D73A49">   case</span><span style="color:#24292E"> SERVLET</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#D73A49">      return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ApplicationServletEnvironment</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">   case</span><span style="color:#24292E"> REACTIVE</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#D73A49">      return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ApplicationReactiveWebEnvironment</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">   default:</span></span>
+<span class="line"><span style="color:#D73A49">      return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ApplicationEnvironment</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">   }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<ul>
+<li>
+<p>ApplicationServletEnvironment
+基于Servlet的web应用程序要使用的环境实现。默认情况下，所有与web相关（基于servlet）的ApplicationContext类都会初始化实例。
+提供ServletConfig、ServletContext和基于JNDI的PropertySource实例。有关详细信息，请参阅customizePropertySources方法文档。</p>
+</li>
+<li>
+<p>ApplicationReactiveWebEnvironment
+由基于反应的web应用程序使用的环境实现。默认情况下，所有与web相关（基于反应的）ApplicationContext类都会初始化实例。</p>
+</li>
+</ul>
+<p>这里我们以ApplicationEnvironment来进行说明:</p>
+<h3 id="applicationenvironment的构造器执行过程"><strong>ApplicationEnvironment的构造器执行过程</strong></h3>
+<p>ApplicationEnvironment并没有明确声明构造器 只有一个默认的无参构造器,但是它的父类型AbstractEnvironment做了一些通用的逻辑处理我们来看下AbstractEnvironment的构造器如下代码:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#6F42C1"> AbstractEnvironment</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#005CC5">   this</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> MutablePropertySources</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>这个构造器做了两个逻辑创建MutablePropertySources()类型对象和调用重载的构造器</p>
+<p>创建一个新的环境实例，在构造期间调用customizePropertySources（可变属性源），以允许子类根据需要贡献或操作PropertySources实例。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">protected</span><span style="color:#6F42C1"> AbstractEnvironment</span><span style="color:#24292E">(MutablePropertySources propertySources) {</span></span>
+<span class="line"><span style="color:#6A737D">  //创建的对象赋值给成员变量方便后续使用</span></span>
+<span class="line"><span style="color:#005CC5">   this</span><span style="color:#24292E">.propertySources </span><span style="color:#D73A49">=</span><span style="color:#24292E"> propertySources;</span></span>
+<span class="line"><span style="color:#6A737D">  //创建一个属性解析器 实现类型为PropertySourcesPropertyResolver</span></span>
+<span class="line"><span style="color:#005CC5">   this</span><span style="color:#24292E">.propertyResolver </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createPropertyResolver</span><span style="color:#24292E">(propertySources);</span></span>
+<span class="line"><span style="color:#6A737D">  //用户自定义属性(如果我们要开发一个配置中心或者与配置相关的逻辑就可以重写这个逻辑来实现自己的配置添加)</span></span>
+<span class="line"><span style="color:#6F42C1">   customizePropertySources</span><span style="color:#24292E">(propertySources);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>这个自定义属性customizePropertySources走的逻辑是StandardEnvironment中重写的方法:</p>
+<p>其实通过前面的UML继承关系我们可以看到这个StandardEnvironment类型是每个不同环境的父类型,这个标准的类型也是通用的逻辑,我们看下代码它做了什么?</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">protected</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> customizePropertySources</span><span style="color:#24292E">(MutablePropertySources propertySources) {</span></span>
+<span class="line"><span style="color:#6A737D">  //将JVM属性封装在PropertiesPropertySource类型中然后添加到MutablePropertySources的CopyOnWriteArrayList类型中</span></span>
+<span class="line"><span style="color:#24292E">   propertySources.</span><span style="color:#6F42C1">addLast</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#D73A49">         new</span><span style="color:#6F42C1"> PropertiesPropertySource</span><span style="color:#24292E">(SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, </span><span style="color:#6F42C1">getSystemProperties</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#6A737D">  //环境变量信息添加到集合中</span></span>
+<span class="line"><span style="color:#24292E">   propertySources.</span><span style="color:#6F42C1">addLast</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#D73A49">         new</span><span style="color:#6F42C1"> SystemEnvironmentPropertySource</span><span style="color:#24292E">(SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, </span><span style="color:#6F42C1">getSystemEnvironment</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>使用适用于任何标准Java环境的属性源自定义属性源集：</p>
+<ul>
+<li>系统属性 使用JVM参数指定</li>
+<li>系统环境 计算机中配置的变量(也可能是K8S环境指定的POD变量)</li>
+</ul>
+<p>这里重点说一下这个addLast方法这个属性最终存储在了MutablePropertySources的CopyOnWriteArrayList类型的变量中,这个列表顺序决定了属性的配置优先级,如果我们的属性集合在这个CopyOnWriteArrayList列表的前面则优先级会更高,根据以上配置所示我们可以知道,JVM参数的属性集合在环境变量之前,则JVM参数的优先级高于环境变量配置</p>
+<p>JVM参数获取:getSystemProperties()</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#24292E"> Map</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">String, Object</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> getSystemProperties</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">   try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">     //Java自带的语法 从System对象中获取系统属性</span></span>
+<span class="line"><span style="color:#D73A49">      return</span><span style="color:#24292E"> (Map) System.</span><span style="color:#6F42C1">getProperties</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">   }</span></span>
+<span class="line"><span style="color:#D73A49">   catch</span><span style="color:#24292E"> (AccessControlException </span><span style="color:#E36209">ex</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">      ...</span></span>
+<span class="line"><span style="color:#24292E">   }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>系统环境配置获取getSystemEnvironment()方法:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#24292E"> Map</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">String, Object</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> getSystemEnvironment</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">   if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">suppressGetenvAccess</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">      return</span><span style="color:#24292E"> Collections.</span><span style="color:#6F42C1">emptyMap</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">   }</span></span>
+<span class="line"><span style="color:#D73A49">   try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">   //System自带的方法获取操作系统环境变量信息</span></span>
+<span class="line"><span style="color:#D73A49">      return</span><span style="color:#24292E"> (Map) System.</span><span style="color:#6F42C1">getenv</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">   }</span></span>
+<span class="line"><span style="color:#D73A49">   catch</span><span style="color:#24292E"> (AccessControlException </span><span style="color:#E36209">ex</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">      ...</span></span>
+<span class="line"><span style="color:#24292E">   }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="广播environmentprepared事件"><strong>广播environmentPrepared事件</strong></h2>
+<p>关于事件监听器的实现前面已经说过了比较简单这里主要看看实现了哪些环境加载的事件</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">listeners.</span><span style="color:#6F42C1">environmentPrepared</span><span style="color:#24292E">(bootstrapContext, environment);</span></span></code></pre>
+<p>广播environmentPrepared事件   如果我们想要实现这个时间则可以让Bean实现接口EnvironmentPostProcessor (开发配置中心时候可以用这个将自己配置中心的配置添加进来)
+这里实现的广播事件有</p>
+<ul>
+<li>
+<p>RandomValuePropertySource自动装配，使得在加载配置文件时，可以解析${random.value}—</p>
+</li>
+<li>
+<p>SystemEnvironmentPropertySourceEnvironmentPostProcessor 用来格式化系统资源</p>
+</li>
+<li>
+<p>SpringApplicationJsonEnvironmentPostProcessor 指定的json配置转换解析配置的key spring.application.json,SPRING_APPLICATION_JSON (可在命令行 JVM,环境变量中配置)</p>
+</li>
+<li>
+<p>CloudFoundryVcapEnvironmentPostProcessor 云平台的配置是否开启 spring.main.cloud-platform 如果开启则会用来解析vcap相关配置</p>
+</li>
+<li>
+<p>ConfigDataEnvironmentPostProcessor 这个类型重点关注下 profiles 与默认配置文件application.properties文件的加载</p>
+</li>
+<li>
+<p>DebugAgentEnvironmentPostProcessor  配置开关spring.reactor.debug-agent.enabled开的情况下,初始化启用Reactor调试代理（如果可用）。</p>
+</li>
+<li>
+<p>IntegrationPropertiesEnvironmentPostProcessor spring.integration.开头的配置扫描</p>
+</li>
+</ul>
+<p>这里我们重点详细说下ConfigDataEnvironmentPostProcessor配置类型</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> postProcessEnvironment</span><span style="color:#24292E">(ConfigurableEnvironment environment, SpringApplication application) {</span></span>
+<span class="line"><span style="color:#6F42C1">   postProcessEnvironment</span><span style="color:#24292E">(environment, application.</span><span style="color:#6F42C1">getResourceLoader</span><span style="color:#24292E">(), application.</span><span style="color:#6F42C1">getAdditionalProfiles</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>调用重载的postProcessEnvironment方法如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">void</span><span style="color:#6F42C1"> postProcessEnvironment</span><span style="color:#24292E">(ConfigurableEnvironment environment, ResourceLoader resourceLoader,</span></span>
+<span class="line"><span style="color:#24292E">      Collection</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">String</span><span style="color:#D73A49">></span><span style="color:#24292E"> additionalProfiles) {</span></span>
+<span class="line"><span style="color:#D73A49">   try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#005CC5">      this</span><span style="color:#24292E">.logger.</span><span style="color:#6F42C1">trace</span><span style="color:#24292E">(</span><span style="color:#032F62">"Post-processing environment to add config data"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">     //资源加载器 为明确传则创建一个默认的资源加载器DefaultResourceLoader</span></span>
+<span class="line"><span style="color:#24292E">      resourceLoader </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (resourceLoader </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) </span><span style="color:#D73A49">?</span><span style="color:#24292E"> resourceLoader </span><span style="color:#D73A49">:</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> DefaultResourceLoader</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">     //创建一个ConfigDataEnvironment对象</span></span>
+<span class="line"><span style="color:#6F42C1">      getConfigDataEnvironment</span><span style="color:#24292E">(environment, resourceLoader, additionalProfiles).</span><span style="color:#6F42C1">processAndApply</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">   }</span></span>
+<span class="line"><span style="color:#D73A49">   catch</span><span style="color:#24292E"> (UseLegacyConfigProcessingException </span><span style="color:#E36209">ex</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">      this</span><span style="color:#24292E">.logger.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(LogMessage.</span><span style="color:#6F42C1">format</span><span style="color:#24292E">(</span><span style="color:#032F62">"Switching to legacy config file processing [%s]"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">            ex.</span><span style="color:#6F42C1">getConfigurationProperty</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#6F42C1">      configureAdditionalProfiles</span><span style="color:#24292E">(environment, additionalProfiles);</span></span>
+<span class="line"><span style="color:#6F42C1">      postProcessUsingLegacyApplicationListener</span><span style="color:#24292E">(environment, resourceLoader);</span></span>
+<span class="line"><span style="color:#24292E">   }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>创建一个配置环境ConfigDataEnvironment然后获取配置</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">ConfigDataEnvironment </span><span style="color:#6F42C1">getConfigDataEnvironment</span><span style="color:#24292E">(ConfigurableEnvironment environment, ResourceLoader resourceLoader,</span></span>
+<span class="line"><span style="color:#24292E">      Collection</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">String</span><span style="color:#D73A49">></span><span style="color:#24292E"> additionalProfiles) {</span></span>
+<span class="line"><span style="color:#D73A49">   return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ConfigDataEnvironment</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">.logFactory, </span><span style="color:#005CC5">this</span><span style="color:#24292E">.bootstrapContext, environment, resourceLoader,</span></span>
+<span class="line"><span style="color:#24292E">         additionalProfiles, </span><span style="color:#005CC5">this</span><span style="color:#24292E">.environmentUpdateListener);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>这里我们重点说一下processAndApply()处理所有贡献，并将任何新导入的属性源应用于环境。</p>
+<p>这个方法的使用我们是非常熟悉的就是</p>
+<ul>
+<li>作用：将不同的配置参数绑定在不同的环境spring.profiles.active配置</li>
+<li>默认使用application.properties、application-default.properties</li>
+</ul>
+<p>源码如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">void</span><span style="color:#6F42C1"> processAndApply</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">  //配置导入器 ConfigDataImporter</span></span>
+<span class="line"><span style="color:#24292E">   ConfigDataImporter importer </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ConfigDataImporter</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">.logFactory, </span><span style="color:#005CC5">this</span><span style="color:#24292E">.notFoundAction, </span><span style="color:#005CC5">this</span><span style="color:#24292E">.resolvers,</span></span>
+<span class="line"><span style="color:#005CC5">         this</span><span style="color:#24292E">.loaders);</span></span>
+<span class="line"><span style="color:#6A737D">  //在注册表中注册特定类型。如果指定的类型已注册，但尚未作为单例获取，则将替换它。</span></span>
+<span class="line"><span style="color:#6F42C1">   registerBootstrapBinder</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">.contributors, </span><span style="color:#005CC5">null</span><span style="color:#24292E">, DENY_INACTIVE_BINDING);</span></span>
+<span class="line"><span style="color:#6A737D">  //ConfigDataEnvironmentContractors的不可变树结构，用于处理导入。</span></span>
+<span class="line"><span style="color:#24292E">   ConfigDataEnvironmentContributors contributors </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> processInitial</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">.contributors, importer);</span></span>
+<span class="line"><span style="color:#6A737D">  //在激活任何配置文件之前，创建新的ConfigDataActivationContext实例。</span></span>
+<span class="line"><span style="color:#24292E">   ConfigDataActivationContext activationContext </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createActivationContext</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">         contributors.</span><span style="color:#6F42C1">getBinder</span><span style="color:#24292E">(</span><span style="color:#005CC5">null</span><span style="color:#24292E">, BinderOption.FAIL_ON_BIND_TO_INACTIVE_SOURCE));</span></span>
+<span class="line"><span style="color:#24292E">   contributors </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> processWithoutProfiles</span><span style="color:#24292E">(contributors, importer, activationContext);</span></span>
+<span class="line"><span style="color:#24292E">   activationContext </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> withProfiles</span><span style="color:#24292E">(contributors, activationContext);</span></span>
+<span class="line"><span style="color:#24292E">   contributors </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> processWithProfiles</span><span style="color:#24292E">(contributors, importer, activationContext);</span></span>
+<span class="line"><span style="color:#6F42C1">   applyToEnvironment</span><span style="color:#24292E">(contributors, activationContext, importer.</span><span style="color:#6F42C1">getLoadedLocations</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">         importer.</span><span style="color:#6F42C1">getOptionalLocations</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

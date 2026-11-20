@@ -1,0 +1,776 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>LocalAI v4.8.0 — STAGS NextStack</title><meta name="description" content="Twenty-two days, 386 pull requests, and three new modalities. This release introduces vllm.cpp, a C++20 engine maintained by the LocalAI team, which began as a vLLM port and now carries its own featureset, shipping as…"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/release_note/LocalAI/LocalAI_v4.8.0/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/releases/localai/4.8.0"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/release_note/LocalAI/LocalAI_v4.8.0/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/releases/localai/4.8.0"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="article"><meta property="og:title" content="LocalAI v4.8.0 — STAGS NextStack"><meta property="og:description" content="Twenty-two days, 386 pull requests, and three new modalities. This release introduces vllm.cpp, a C++20 engine maintained by the LocalAI team, which began as a vLLM port and now carries its own featureset, shipping as…"><meta property="og:url" content="https://www.stags.cn/zh/release_note/LocalAI/LocalAI_v4.8.0/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"},{"@type":"TechArticle","@id":"https://www.stags.cn/zh/release_note/LocalAI/LocalAI_v4.8.0/#article","headline":"LocalAI v4.8.0 release notes","datePublished":"2026-08-05","inLanguage":"zh-CN","isPartOf":{"@id":"https://www.stags.cn/#website"},"about":{"@type":"SoftwareSourceCode","codeRepository":"https://github.com/mudler/LocalAI"}}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css">
+<style>.ad-slot[data-astro-cid-fgwukgf6]{margin:var(--s10) 0 0;padding-top:var(--s5);border-top:1px solid var(--line)}.ad-slot-label[data-astro-cid-fgwukgf6]{margin-bottom:var(--s3);font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4)}.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{display:block;min-height:100px}@media(min-width:640px){.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{min-height:250px}}
+</style></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases/localai/4.8.0/" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/release_note/LocalAI/LocalAI_v4.8.0/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases/localai/4.8.0/" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases/localai/4.8.0/" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases/localai/4.8.0/" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases/localai/4.8.0/" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases/localai/4.8.0/" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap"> <div class="detail"> <article> <header class="detail-hd"> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/zh/">首页</a> <span class="sep">/</span> <a href="/zh/releases">版本发布</a> <span class="sep">/</span> <a href="/zh/releases/localai">LocalAI</a> </nav> <h1 class="detail-title"> <span class="p">LocalAI</span> v4.8.0 </h1> <div class="detail-meta"> <span class="chip chip--minor">小版本</span> <span><span class="k">发布时间</span>2026年8月5日</span>  <span class="sep" aria-hidden="true"></span> <a href="https://github.com/mudler/LocalAI" target="_blank" rel="noopener"> <span class="k">来源</span>mudler/LocalAI </a>   <span class="sep" aria-hidden="true"></span> <a href="/releases/localai/4.8.0"> 英文原文 </a>  <span class="sep" aria-hidden="true"></span> <button class="btn btn--ghost btn--sm" type="button" data-copy="https://www.stags.cn/zh/release_note/LocalAI/LocalAI_v4.8.0/">复制链接</button> </div> </header> <div class="prose" style="margin-top:var(--s8)">   <h1 id="localai-v480">LocalAI v4.8.0</h1>
+<h1 id="-localai-480-发布">🎉 LocalAI 4.8.0 发布！ 🚀</h1>
+<p>&#x3C;h1对齐=“中心”>
+<br>
+&#x3C;img高度=“300”src=“<a href="https://raw.githubusercontent.com/mudler/LocalAI/refs/heads/master/core/http/static/logo.png%E2%80%9D%3E">https://raw.githubusercontent.com/mudler/LocalAI/refs/heads/master/core/http/static/logo.png”></a>
+<br>
+<br></p>
+
+<p>LocalAI 4.8.0 出来了！</p>
+<p>22 天、386 个拉取请求和三种新模式。此版本引入了 <strong>vllm.cpp</strong>，这是一个由 LocalAI 团队维护的 C++20 引擎，它最初是作为 vLLM 端口，现在具有自己的功能集，作为 <strong>alpha 开发版本</strong> 中的 <code>vllm-cpp</code> 后端发布。围绕它：<strong>3D生成</strong>作为一种新的模式，多系列<strong>audio.cpp</strong>引擎，安装硬件可以实际运行的构建的图库条目，以及由生产事件驱动的分布式模式的深度可靠性传递。</p>
+<p><strong>亮点：</strong></p>
+<ul>
+<li>🚀 <strong>vllm.cpp (alpha)</strong> - 由 LocalAI 团队维护的 C++20 引擎，最初是 vLLM 端口，并保留 vLLM 作为其参考实现：V1 服务架构（分页 KV 缓存、连续批处理、前缀缓存、调度程序、采样器），推理时没有 Python、PyTorch 或 ggml。在 Qwen3.6-27B NVFP4 上以 1.045x vLLM 在并发性 1 下测量，每个令牌的输出都相同。加载安全张量和 GGUF，在引擎内强制执行结构化输出，并在 CPU、CUDA、Metal 和 Vulkan 上运行。 Apple Silicon 构建附带了 MLX GEMM 提供程序，在 M4 上测量为 1.5 倍到 2.2 倍。作为 alpha 开发版本发布：尝试一下，不要依赖它。</li>
+<li>🧊 <strong>3D 生成</strong> - 端到端的新模式：<code>Generate3D</code> RPC、<code>FLAG_3D</code> 功能、<code>POST /v1/3d/generations</code>、<code>trellis2cpp</code> 图像到 3D 后端以及带有本机 GLB 查看器和打印重新网格化的 UI 页面。</li>
+<li>🔊 <strong>audio.cpp</strong> - 一个后端进程为多个模型系列的六个音频端点提供服务，这些端点选自 GGUF 自己的元数据：语音、转录、VAD、二值化、源分离和声音生成。</li>
+<li>🎛️ <strong>一个模型，多个构建</strong> - 画廊条目可以声明 <code>variants:</code>，LocalAI 会安装您的主机实际可以运行的最大构建。不再需要在画廊中寻找正确的量化。</li>
+<li>⚡ <strong>更轻量级的 Web UI</strong> - 线上 gzip、哈希资产的不可变缓存以及分页跟踪端点：React 包缩小了 3.48 倍，跟踪轮询从 21 MB 下降到 7 KB。</li>
+<li>📊 <strong>活动页面</strong> - 堆叠的操作栏折叠成一行，新的管理活动页面保留安装、失败或取消的记录，而不是在完成后立即将其丢弃。</li>
+<li>📦 <strong>拥抱面部工件物化</strong> - 不可变的快照分辨率、具有真实进度的经过身份验证的下载以及远程工作人员可以绑定的分阶段工件。</li>
+<li>🎚️ <strong>VRAM 预算</strong> - 每个节点 LocalAI 可以使用的卡容量上限，以百分比 (<code>80%</code>) 或绝对金额 (<code>12GB</code>) 形式表示。</li>
+<li>🗣️ <strong>两个新的 TTS 引擎</strong> - <code>magpie-tts-cpp</code>（NVIDIA Magpie 多语言，5 种语音，9 种以上语言）和 <code>moss-tts-cpp</code>（48 kHz 立体声，带参考音频语音克隆）。</li>
+<li>🌳 <strong>亚 2 位模型</strong> - 新的 <code>bonsai</code> 后端服务于 Qwen3 和 Qwen3.6-27B 的 1 位和三元 Bonsai 量化。</li>
+<li>🖧 <strong>分布式模式强化</strong> - 收割机不再删除活动且繁忙的后端的行，幻影副本被清理，并且 <code>in_flight</code> 计数器停止泄漏。</li>
+</ul>
+<p>加上 Valkey 矢量存储、systemd 套接字激活、持久跟踪历史记录、两个安全修复、专门针对入门的文档检修以及新的 localai.io。</p>
+<p>&#x3C;p对齐=“中心”>
+<img src="https://raw.githubusercontent.com/mudler/LocalAI/master/website/static/media/v4-8-0-ui-home.png" alt="LocalAI 主页" width="900"></p>
+<p></p>
+<hr>
+<h2 id="-此版本的数量">📊 此版本的数量</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>合并请求请求</td>
+<td><strong>386</strong></td>
+</tr>
+<tr>
+<td>承诺</td>
+<td>392</td>
+</tr>
+<tr>
+<td>文件已更改</td>
+<td>1,204 (<strong>+152,918</strong> / -42,012)</td>
+</tr>
+<tr>
+<td>发展窗口</td>
+<td>22 天 (2026-07-14 至 2026-08-05)</td>
+</tr>
+<tr>
+<td>贡献者</td>
+<td>25 人，其中 <strong>11 人是第一次</strong></td>
+</tr>
+<tr>
+<td>新后端</td>
+<td><strong>7</strong> （<code>vllm-cpp</code>、<code>audio-cpp</code>、<code>trellis2cpp</code>、<code>valkey-store</code>、<code>bonsai</code>、<code>magpie-tts-cpp</code>、<code>moss-tts-cpp</code>）</td>
+</tr>
+<tr>
+<td>画廊条目</td>
+<td>1,221 至 <strong>1,515</strong> (+294)</td>
+</tr>
+</tbody>
+</table>
+<p>工作落地的地方：</p>
+<table>
+<thead>
+<tr>
+<th>面积</th>
+<th>改变</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>core/</code></td>
+<td>+54,974 / -8,291 跨 546 个文件</td>
+</tr>
+<tr>
+<td><code>gallery/</code></td>
+<td>+39,193 / -29,119（变体梯子重写了大部分索引）</td>
+</tr>
+<tr>
+<td><code>backend/</code></td>
+<td>256 个文件中的 +25,668 / -1,305</td>
+</tr>
+<tr>
+<td><code>pkg/</code></td>
+<td>+9,678 / -385</td>
+</tr>
+<tr>
+<td><code>.github/</code></td>
+<td>+7,526 / -61</td>
+</tr>
+<tr>
+<td><code>docs/</code></td>
+<td>+4,285 / -2,461（设计上接近持平：重复数据删除过程删除的内容与添加的内容一样多）</td>
+</tr>
+<tr>
+<td><code>website/</code></td>
+<td>+4,479（新项目网站）</td>
+</tr>
+<tr>
+<td><code>scripts/</code></td>
+<td>+3,373 / -175</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-太长博士">📌 太长；博士</h2>
+<table>
+<thead>
+<tr>
+<th>面积</th>
+<th>总结</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🚀 <strong>vllm.cpp</strong> (alpha)</td>
+<td>由 LocalAI 团队维护并在自己的存储库中开发的 Apache-2.0 C++20 引擎，最初是作为 vLLM 端口，在其稳定的 C ABI v5 上作为 <code>vllm-cpp</code> 后端的 <strong>alpha 开发版本</strong> 发布。它使用 vLLM 作为参考实现和基准，并实现 vLLM 的 V1 架构（分页 KV 缓存、连续批处理、前缀缓存、调度程序、采样器），推理时无需 Python、PyTorch 或 ggml。 Safetensors + GGUF，引擎内结构化输出（JSON 模式/正则表达式/选择/GBNF）。聊天和工具调用使用 llama.cpp 自动解析器路径：完整的 Minja 模板、<code>tool_choice: auto</code> 作为惰性结构标签约束、30 种工具方言和 7 个推理解析器、流式传输 <code>ChatDelta</code>/<code>ToolCallDelta</code>。 CPU amd64/arm64、CUDA 12/13 (Blackwell)、L4T、Vulkan 和 Darwin Metal，最后一个由 MLX GEMM 提供程序提供（M4 上为 1.5 倍到 2.2 倍）。</td>
+</tr>
+<tr>
+<td>🧊 <strong>3D 生成</strong></td>
+<td>一种新的端到端有线模式：<code>Generate3D</code> RPC、<code>FLAG_3D</code> 功能、<code>POST /v1/3d/generations</code>、TRELLIS.2 上的 <code>trellis2cpp</code> 图像到 3D 后端，以及带有本机 GLB 查看器、IndexedDB 历史记录和可预览打印重新网格化的 UI 页面。</td>
+</tr>
+<tr>
+<td>🔊 <strong>音频.cpp</strong></td>
+<td>基于 <a href="https://github.com/0xShug0/audio.cpp">audio.cpp</a> 的新原生 C++ 后端，一种多系列 ggml 音频引擎：一个进程提供 <code>/v1/audio/speech</code>（supertonic、chatterbox、irodori-voicedesign）、<code>/v1/audio/transcriptions</code>（citrinet、nemotron、forced-aligner）、<code>/v1/audio/vad</code>、<code>/v1/audio/diarize</code>（sortformer）、<code>/audio/transform</code> （htdemucs 4 词干分离、语音转换、语音到语音）和 <code>/v1/sound-generation</code>。系列来自 GGUF 自己的 <code>audiocpp.model_spec.family</code> 密钥，因此没有每个型号的后端选项。 13 个画廊条目。 CPU、CUDA 12/13、Vulkan、金属。</td>
+</tr>
+<tr>
+<td>📊 <strong>活动页面</strong></td>
+<td>堆叠的操作栏变成永久的单行条带（<code>✕</code> 现在隐藏而不是取消），并带有新的管理 <code>/app/activity</code> 页面：带有每个节点故障的正在进行的详细信息、带有取消和重试的“需要注意”通道，以及已完成的有界 50 条目记录。</td>
+</tr>
+<tr>
+<td>🗄️ <strong>Valkey 矢量商店</strong></td>
+<td>新的 <code>valkey-store</code> 后端添加了 Valkey 搜索作为矢量存储选项。</td>
+</tr>
+<tr>
+<td>🌐 <strong>新 localai.io</strong></td>
+<td>该站点分为根目录下的项目站点和 <code>/docs/</code> 下的文档，并带有 214 个生成的重定向存根，因此每个已发布的 URL 都可以继续工作。添加由 YAML、博客、生态系统乐队和 <code>ADOPTERS.md</code> 驱动的引擎页面。</td>
+</tr>
+<tr>
+<td>🎛️ <strong>图库变体</strong></td>
+<td>一个条目可以声明引用其他条目的 <code>variants:</code>。安装时选择会删除主机无法运行 (<code>IsBackendCompatible</code>) 或无法容纳的版本（VRAM 或 CPU 主机上的 cgroup 感知 RAM），然后选择适合的最大版本。使用 <code>POST /models/apply</code>、<code>local-ai models install --variant</code>、<code>install_model</code> MCP 工具或 UI 拆分按钮上的 <code>variant</code> 覆盖。 <code>GET /api/models?has_variants=true</code> 缩小了列表范围。较旧的 clients 会忽略该密钥并像以前一样安装该条目。</td>
+</tr>
+<tr>
+<td>📦 <strong>高频伪影</strong></td>
+<td>不可变的快照分辨率、经过身份验证的进度下载、图库安装和预加载实现、运行时绑定到分阶段工件以及 UI 进度报告。 Python 后端重用 Go 下载路径。</td>
+</tr>
+<tr>
+<td>⚡ <strong>HTTP 性能</strong></td>
+<td>gzip 中间件（<code>--disable-http-compression</code>、<code>--http-compression-min-length</code>），显式跳过流路径。 <code>/assets/*</code>服务于<code>immutable</code>、<code>index.html</code>、<code>no-cache</code>。 <code>/api/traces</code> 和 <code>/api/backend-traces</code> 默认接受 <code>limit</code>/<code>offset</code>/<code>full</code> 并汇总，<code>GET /api/traces/{id}</code> 为完整记录。 React 包 2,815,513 B 至 807,918 B；后端跟踪民意调查 21,131,097 B 至 7,201 B。</td>
+</tr>
+<tr>
+<td>🎚️ <strong>显存预算</strong></td>
+<td><code>LOCALAI_VRAM_BUDGET=80%</code> 或 <code>=12GB</code>（也称为 <code>--vram-budget</code>），适用于 <code>local-ai</code> 和 <code>local-ai worker</code>。独立时，它是一个硬性的每进程上限，由上下文适合、GGUF 警告和看门狗继承；分布式它是调度程序遵守的放置上限。通过 <code>PUT</code>/<code>DELETE /api/nodes/:id/vram-budget</code> 和 <code>set_node_vram_budget</code> MCP 工具进行管理员覆盖。未设置表示所有检测到的 VRAM。</td>
+</tr>
+<tr>
+<td>🗣️ <strong>喜鹊-tts-cpp</strong></td>
+<td>基于 <a href="https://github.com/mudler/magpie-tts.cpp">magpie-tts.cpp</a> 的新 Go/purego 后端，这是嵌入 NanoCodec 的 NVIDIA Magpie TTS 多语言 357M 的 ggml 端口。 5 种声音，9 种以上语言，22.05 kHz 单声道，一种独立的 GGUF。</td>
+</tr>
+<tr>
+<td>🗣️ <strong>moss-tts-cpp</strong></td>
+<td>MOSS-TTS-Local v1.5 的新 Go/purego 后端 <a href="https://github.com/mudler/moss-tts.cpp">moss-tts.cpp</a>。 48 kHz 立体声，可选参考音频语音克隆，推理时无 Python。</td>
+</tr>
+<tr>
+<td>🌳 <strong>盆景</strong></td>
+<td><a href="https://github.com/PrismML-Eng/llama.cpp">PrismML llama.cpp fork</a> 上的新后端，这是 Q1_0 和 Q2_0 量化格式的唯一解码器。盆景 8B/27B 和三元盆景 8B/27B 的八个画廊条目，来自 ~1.15 GB。</td>
+</tr>
+<tr>
+<td>🖧 <strong>分布式可靠性</strong></td>
+<td>不再收获繁忙的后端：直接向工作人员询问新的 <code>models.running</code> 主题，并且端口探测回退区分 <code>DeadlineExceeded</code>（繁忙）和 <code>Unavailable</code>（消失），需要连续三次未命中。当没有健康副本剩余时，前端模型存根将被删除，<code>in_flight</code> 泄漏将被关闭，并且模型加载截止日期会随着检查点大小而缩放。</td>
+</tr>
+<tr>
+<td>🛡️ <strong>安全</strong></td>
+<td><code>POST /api/fine-tuning/jobs</code>中的内联GRPO奖励代码将被拒绝，除非操作员设置<code>LOCALAI_TRL_ALLOW_INLINE_REWARD=true</code>；以前的内置白名单可以在默认情况下未经身份验证的端点上执行任意代码。还获得了 CVE-2026-54290 的 hono 4.12.25。</td>
+</tr>
+<tr>
+<td>🧠 <strong>模型</strong></td>
+<td>MiniMax-M3、Gemma 4 llama.cpp MTP 变体、Qwen3.5-4B DFlash、MOSS-TTS-Local v1.5、作为变体梯子的 APEX 系列以及 Bonsai 系列。删除重复的条目并检查是否重复出现。</td>
+</tr>
+<tr>
+<td>📖 <strong>文档</strong></td>
+<td>入门大修：一个模型从安装到第一个 API 调用、新的“构建您的第一个代理”演练、基于文字错误字符串的运行时错误参考、代理操作目录和新的操作部分。</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-新功能和主要增强功能">🚀 新功能和主要增强功能</h2>
+<h3 id="-介绍-vllmcppalpha">🚀 介绍 vllm.cpp（alpha）</h3>
+<p>&#x3C;p对齐=“中心”>
+<img src="https://raw.githubusercontent.com/mudler/vllm.cpp/master/benchmarks/media/concurrency_race.gif" alt="vllm.cpp 和 vLLM 在 Qwen3.6-27B" width="900"> 上并行生成
+<br><em>vllm.cpp 与 Qwen3.6-27B 上的 vLLM 对比，每个并发的输出相同。</em></p>
+<p></p>
+<p><strong><a href="https://github.com/mudler/vllm.cpp">vllm.cpp</a> 是 Apache-2.0，由 LocalAI 团队维护，最初是 vLLM 的 C++20 端口。</strong> 我们希望它是社区优先的引擎，而不是仅 LocalAI 的引擎，因此它位于自己的存储库中，拥有自己的文档、基准测试记录和问题跟踪器，并且在没有 LocalAI 的任何地方都可以使用。它在便携式张量运行时上实现了 vLLM 的 V1 服务架构（分页 KV 缓存、连续批处理、前缀缓存、调度程序、采样器），<strong>在推理时没有 Python、PyTorch 和 ggml</strong>，并使用 vLLM 本身作为其参考实现：通过将输出与它进行比较来检查正确性，并保持基准记分板与之相对。</p>
+<p>此后，它发展了 vLLM 所不具备的功能集，而这正是移植的目的。它加载 GGUF 以及 Hugging Face safetensor，在 CPU、Apple Metal 和 Vulkan 以及 NVIDIA CUDA 上运行，提供推测解码和 KV 卸载，并在引擎内强制执行结构化输出（JSON 模式、正则表达式、选择、GBNF）。它的基准页面现在针对 llama.cpp、MLX-LM 和 DwarfStar 以及 vLLM 进行衡量，因为这些是它在该硬件上实际竞争的引擎。</p>
+<p><strong>该项目预计将更名</strong>，新名称尚未确定。它与 vLLM 相差太远，称其为移植就低估了它，称其为 vllm.cpp 最终会产生误导。</p>
+<h3 id="数字来自项目自己的记分牌">数字，来自项目自己的记分牌</h3>
+<p>&#x3C;p对齐=“中心”>
+<img src="https://raw.githubusercontent.com/mudler/LocalAI/master/website/static/media/v4-8-0-vllm-cpp-scoreboard.png" alt="vllm.cpp 相对于每个参考引擎的吞吐量" width="900"></p>
+<p></p>
+<p>这些来自 <a href="https://github.com/mudler/vllm.cpp/blob/master/docs/BENCHMARKS.md">vllm.cpp 的 BENCHMARKS.md</a>，它将平局报告为平局，将损失报告为损失。吞吐量是 vllm.cpp 超过参考值，因此上面的 1.0 领先。</p>
+<table>
+<thead>
+<tr>
+<th>参考</th>
+<th>工作量</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>法学硕士</td>
+<td>Qwen3.6-27B NVFP4、GB10</td>
+<td>并发度 1 时为 1.045x，c2 到 c32 时为 1.007x 到 1.017x，输出令牌对令牌相同</td>
+</tr>
+<tr>
+<td>法学硕士</td>
+<td>Qwen3.6-35B-A3B NVFP4、GB10</td>
+<td>c16 时为 1.010x，c32 时为 1.013x；在 c1 到 c8 处落后（c1 处 0.817 倍）</td>
+</tr>
+<tr>
+<td>法学硕士</td>
+<td>DeepSeek-V2-Lite MLA，GB10</td>
+<td>0.86 倍至 0.95 倍吞吐量，TTFT 在 c4 和 c8 上领先</td>
+</tr>
+<tr>
+<td>骆驼.cpp</td>
+<td>Qwen3.5-2B GGUF，CPU aarch64</td>
+<td>预填充 1.18x、解码平局、内存奇偶校验、字节相同输出</td>
+</tr>
+<tr>
+<td>MLX-LM</td>
+<td>Qwen3-0.6B，苹果M4</td>
+<td>97.6 占温暖总数的%，提前预填充</td>
+</tr>
+<tr>
+<td>矮星 (ds4)</td>
+<td>DeepSeek-V4-Flash IQ2_XXS，一台 DGX Spark</td>
+<td>18.69 与 16.33 tok/s 解码，<strong>1.144x</strong>，相同的输出</td>
+</tr>
+<tr>
+<td>法学硕士</td>
+<td>拉古纳-XS-2.1 NVFP4，GB10</td>
+<td>44.46 与 43.10 tok/s，<strong>1.03x</strong>，相同输出</td>
+</tr>
+</tbody>
+</table>
+<p>上游页面对自己的噪声带很谨慎：在 27B 网格上，它称 c2 到 c32 为平局，而不是获胜，因为运行间差值为 0.5%，而这些边际落在 0.7% 和 1.7% 之间。 c1 结果就是它所代表的结果。</p>
+<p>DeepSeek-V4-Flash 行显示了该项目距离 vLLM 移植有多远。它在<strong>单个 DGX Spark</strong> 上以大约 2 位（IQ2_XXS 混合，大约 80 GB）运行 DeepSeek-V4-Flash，以 18.69 tok/s 与 DwarfStar 的 16.33 进行解码。在总参数超过 300B+ 时，即使 4 位检查点也需要 156 GB 或更多，因此 2 位 GGUF 适合 Spark 的 119 GiB 统一池，而读取 GGUF 则使之成为可能。
+这个数字在一周内移动了两次，第二次移动来自一个杠杆。密集的 Q8_0 投影塔是通过统一内存从 GGUF mmap 读取的，GB10 的每个 GEMV 读取速度比设备内存慢约 20%。在加载时暂存约 6 GiB 塔设备驻留，相同的字节和相同的内核，从 16.23 解码到 18.69，生成相同的令牌并且不再使用峰值内存。同样的变化使 Laguna-XS-2.1 从 vLLM 的 87% 提高到领先它的 1.03 倍。</p>
+<p>推测性解码的形状类似：Qwen3.6-27B NVFP4 上的 MTP 生成与 vLLM 的 MTP 相同的令牌，并且在并发数 1 下运行速度快约 4%。</p>
+<p>它作为 <strong><code>vllm-cpp</code></strong> 后端提供，通过 purego 释放引擎的稳定 C ABI (v5)。并发请求在引擎的共享调度程序内连续批处理而不是序列化，因此后端在 <code>base.Base</code> 而不是 <code>SingleThread</code> 上运行。</p>
+<p><strong>工具调用通过构造在 llama.cpp 奇偶校验</strong>，因为聊天重用相同的自动解析器路径。使用 <code>use_tokenizer_template</code>，引擎渲染模型自己的聊天模板（GGUF <code>tokenizer.chat_template</code> 或 <code>tokenizer_config.json</code>，完整的 minja）并自行处理其余部分：</p>
+<ul>
+<li><code>tool_choice: auto</code> 降低为惰性结构标签解码约束； <code>required</code> 和命名选择强制使用家族的本机语法来表达。</li>
+<li>按方言流式解析器涵盖 <strong>30 个工具方言和 7 个推理解析器</strong>，在工具解析之前进行 <code>&#x3C;think></code> 推理拆分。</li>
+<li><code>ChatDelta</code>、<code>ToolCallDelta</code> 和推理流与 llama-cpp 后端完全相同。</li>
+</ul>
+<p><code>tool_parser:</code> 和 <code>reasoning_parser:</code> 是型号选项，未设置时会自动检测。</p>
+<p>开始是正常的后端安装：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#22863A">name</span><span style="color:#24292E">: </span><span style="color:#032F62">qwen3-vllm</span></span>
+<span class="line"><span style="color:#22863A">backend</span><span style="color:#24292E">: </span><span style="color:#032F62">vllm-cpp</span></span>
+<span class="line"><span style="color:#22863A">context_size</span><span style="color:#24292E">: </span><span style="color:#005CC5">8192</span></span>
+<span class="line"><span style="color:#22863A">parameters</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#22863A">  model</span><span style="color:#24292E">: </span><span style="color:#032F62">Qwen3-4B</span><span style="color:#6A737D">      # a safetensors directory or a .gguf file</span></span>
+<span class="line"><span style="color:#22863A">options</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">- </span><span style="color:#032F62">max_num_seqs:16</span><span style="color:#6A737D">      # also: block_size:&#x3C;n>, num_blocks:&#x3C;n></span></span></code></pre>
+<p>构建矩阵涵盖 CPU amd64/arm64、CUDA 12/13（包括 Blackwell <code>120a;121a</code>）、GB10 的 L4T arm64、Vulkan 和 Darwin Metal，以及图库元数据和 12 个图像条目。 llama-cpp GGUF 和 vllm safetensors 导入程序获得了优先交换，因此可以在导入时选择后端。</p>
+<p><strong>Apple Silicon 获得了 MLX GEMM 提供商。</strong> darwin 构建供应商 vllm.cpp 的可选 MLX 后端，上游默认情况下将其关闭，因为它必须获得约 124 MB 的位置。在 M4 上测量（Qwen3-1.7B-bf16，p=512 g=128，臂在一个二进制文件上切换，因此不存在构建差异混淆）：</p>
+<table>
+<thead>
+<tr>
+<th align="right">批量</th>
+<th align="right">MLX 托克/秒</th>
+<th align="right">本地tok/s</th>
+<th align="right">加速</th>
+<th align="right">MLX TTFT</th>
+<th align="right">原生 TTFT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right">1</td>
+<td align="right">5.79</td>
+<td align="right">3.08</td>
+<td align="right"><strong>1.88x</strong></td>
+<td align="right">3.32</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td align="right">4</td>
+<td align="right">15.75</td>
+<td align="right">10.24</td>
+<td align="right"><strong>1.54x</strong></td>
+<td align="right">9.63</td>
+<td align="right">18.77</td>
+</tr>
+<tr>
+<td align="right">16</td>
+<td align="right">16 38.65</td>
+<td align="right">17.69</td>
+<td align="right"><strong>2.19x</strong></td>
+<td align="right">18.33</td>
+<td align="right">54.48</td>
+</tr>
+</tbody>
+</table>
+<p>将这些视为指示性而非约束性的：两次代表的差价达到 9.4%，因此乘数约为 +/-10%。该差距远大于噪声，并且首次标记的时间在该范围内大约减半。</p>
+<p><strong>这些是 alpha 开发版本，而不是已发布的后端。</strong> vllm.cpp 是早期的。它以 4.8 形式提供，因此想要尝试它的人可以，而不是因为它已经为您所依赖的任何内容做好了准备，而 <code>llama-cpp</code> 保留了实际使用的默认值。预计会有粗糙的边缘。
+CPU 路径通过完整的 Ginkgo 套件针对 <code>Qwen3.5-2B-UD-Q8_K_XL.gguf</code> 进行端到端验证：阻塞和流式字节奇偶校验、贪婪确定性、停用词、GBNF 约束生成、并发流、真实模板渲染、推理分割、返回模式有效参数的 <code>required</code> 工具调用以及引擎使用工具本身并流解析的增量的 ZZPH100​​ZZ 运行。 GPU 图像构建并发布，但它们的运行时行为尚未通过该大门。没有声称与上游 vLLM 进行吞吐量比较。请报告发生了什么问题。</p>
+<blockquote>
+<p>🔗 PR：#11100、#11137</p>
+</blockquote>
+<h3 id="-3d-生成端到端">🧊 3D 生成，端到端</h3>
+<p>&#x3C;p对齐=“中心”>
+<img src="https://raw.githubusercontent.com/mudler/LocalAI/master/website/static/media/3d-generation.gif" alt="生成的 3D 美洲驼在 GLB 查看器中转动" width="760">
+<br><em>trellis2-4b，2,502,928 个顶点，在浏览器中打开。</em></p>
+<p></p>
+<p>LocalAI 获得了新的模式。 Image-to-3D 连接整个堆栈，而不是固定到现有端点：<code>backend.proto</code> 中的 <code>Generate3D</code> RPC、<code>FLAG_3D</code> 功能（以便加载程序知道哪些后端可以为其提供服务）以及 <code>POST /v1/3d/generations</code>。</p>
+<p>其背后的第一个引擎是 <strong><code>trellis2cpp</code></strong>，一个基于 TRELLIS.2 的本机图像到 3D 后端。 React UI 获得一个带有本机 GLB 查看器的 3D 生成页面、IndexedDB 支持的历史记录（以便您的生成能够在重新加载后幸存）以及可预览的打印重新网格化，以便您想要实际打印的输出。</p>
+<blockquote>
+<p>🔗 PR：#10979</p>
+</blockquote>
+<h3 id="audiocpp一个后端六个音频端点">🔊audio.cpp：一个后端，六个音频端点</h3>
+<p><strong><code>audio-cpp</code></strong> 包装了 <a href="https://github.com/0xShug0/audio.cpp">audio.cpp</a>，一个多系列 ggml 音频引擎。单个后端进程不是每个模型系列一个后端，而是通过一个运行时词汇表为多个不相关的系列提供服务，并从 GGUF 自己的 <code>audiocpp.model_spec.family</code> 元数据密钥中选择系列，因此模型不需要加载特定于后端的选项。</p>
+<table>
+<thead>
+<tr>
+<th>端点</th>
+<th>家庭</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/v1/audio/speech</code>（批量+流式传输）</td>
+<td>supertonic、chatterbox（语音克隆）、irodori-voicedesign（通过 <code>instructions</code> 进行语音设计）</td>
+</tr>
+<tr>
+<td><code>/v1/audio/transcriptions</code>（批量、流式传输、实时）</td>
+<td>citrinet、nemotron、强制对准器</td>
+</tr>
+<tr>
+<td><code>/v1/audio/vad</code></td>
+<td>silero-vad、marblenet-vad</td>
+</tr>
+<tr>
+<td><code>/v1/audio/diarize</code></td>
+<td>分类器</td>
+</tr>
+<tr>
+<td><code>/audio/transform</code></td>
+<td>htdemucs（4 词干分离）、chatterbox（语音转换）、seedvc-singing、vevo2（语音到语音）</td>
+</tr>
+<tr>
+<td><code>/v1/sound-generation</code></td>
+<td>稳定音频 sfx</td>
+</tr>
+</tbody>
+</table>
+<p>附带了 13 个图库条目，引擎实际可以服务的每种任务类型都有一个代表性模型。如果它不能诚实地支持 RPC，它会返回 <code>UNIMPLEMENTED</code> 并给出原因，而不是空洞的成功，并且失败的加载是 gRPC 错误而不是 <code>success: false</code>，因此加载程序的贪婪后端探针永远不会默默地为它无法服务的模型选择它。</p>
+<p>有两个变化超出了后端范围。 <code>backend.proto</code> 增益 <code>AudioTransformStem</code> 和 <code>AudioTransformResult.stems</code>，因此源分离可以返回整个主干集，而不是单个混音。 <code>/audio/transform</code> 不再硬编码 16 kHz 单折叠：该折叠使得 4 干分离无法通过构造实现，因此它成为每个后端的功能，现有后端明确保留它，并且未注册后端的默认设置是单独保留上传。</p>
+<p>平台：Linux 上的 CPU（amd64 和 arm64）、CUDA 12、CUDA 13 和 Vulkan，以及 darwin-arm64 上的 Metal。无 ROCm，上游不支持。</p>
+<blockquote>
+<p>🔗 PR：#11141</p>
+</blockquote>
+<h3 id="-一条单行条和一个活动页面">📊 一条单行条和一个活动页面</h3>
+<p>&#x3C;p对齐=“中心”>
+<img src="https://raw.githubusercontent.com/mudler/LocalAI/master/website/static/media/v4-8-0-ui-activity.png" alt="正在运行四个安装的活动页面" width="900">
+<br><em>四个后端安装正在进行中，并记录了已完成的内容。</em></p>
+<p></p>
+<p>操作栏在每个页面上方针对每个进行中的操作呈现一行。将四个模型安装和一个后端排队，每条路线都占用了大部分视口，直到最后一个完成。两件事被混为一谈：全局“某事正在发生”信号（需要一行）和正在发生的事情的详细信息（需要一页）。</p>
+<p>该条现在永久折叠成一条线，显示使用 <code>+N more</code> 药丸的一次操作（首先失败，否则是最不先进的运行操作）。它的 <code>✕</code> <strong>隐藏条带并且从不取消</strong>，这是一个故意的更改：相同的字形之前在一行中取消了 17 GB 下载，并在下一行中忽略了一条消息。取消移动到页面，位于带标签的按钮后面。</p>
+<p><code>/app/activity</code> 上的新的仅限管理的“活动”页面包含条带必须删除的详细信息（阶段、字节、剩余时间以及集群安装的每个节点细分）、用于取消和重试的未确认故障的“需要注意”通道，以及完成情况的记录。该记录是一个有界的 50 个条目环，它弥补了一个真正的差距：<code>/api/operations</code> 在成功时就放弃了操作，因此离开的用户无法了解安装是否已完成、失败或从未开始。</p>
+<p>在此过程中修复了几个潜在的 UI 错误：重试失败的删除会重新下载模型，使用微调器将操作渲染为“正在安装”排队，一条长错误消息将每一页推过视口约 270 像素，并且每当验证时，每个操作的 ETA 都会显示为空白。</p>
+<blockquote>
+<p>🔗 PR：#11163</p>
+</blockquote>
+<h3 id="️-一个画廊条目多个构建">🎛️ 一个画廊条目，多个构建</h3>
+<p>&#x3C;p对齐=“中心”>
+<img src="https://raw.githubusercontent.com/mudler/LocalAI/master/website/static/media/v4-8-0-ui-model-variants.png" alt="列出每个变体的模型详细信息窗格" width="900">
+<br><em>一个条目，四个构建。 LocalAI 选择最大的适合并将其标记为自动选择。</em></p>
+<p></p>
+<p>画廊条目现在可以声明 <code>variants:</code>，这是对其他画廊条目的引用列表，这些条目是相同权重的替代版本：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#24292E">- </span><span style="color:#22863A">name</span><span style="color:#24292E">: </span><span style="color:#032F62">nanbeige4.1-3b-q4</span><span style="color:#6A737D">      # still a normal, complete, installable entry</span></span>
+<span class="line"><span style="color:#22863A">  url</span><span style="color:#24292E">: </span><span style="color:#032F62">github:mudler/LocalAI/gallery/nanbeige4.1.yaml@master</span></span>
+<span class="line"><span style="color:#22863A">  overrides</span><span style="color:#24292E">: {</span><span style="color:#22863A">parameters</span><span style="color:#24292E">: {</span><span style="color:#22863A">model</span><span style="color:#24292E">: </span><span style="color:#032F62">nanbeige4.1-3b-q4_k_m.gguf</span><span style="color:#24292E">}}</span></span>
+<span class="line"><span style="color:#22863A">  files</span><span style="color:#24292E">: [</span><span style="color:#005CC5">...</span><span style="color:#24292E">]</span></span>
+<span class="line"><span style="color:#22863A">  variants</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">    - </span><span style="color:#22863A">model</span><span style="color:#24292E">: </span><span style="color:#032F62">nanbeige4.1-3b-q8</span></span></code></pre>
+<p>安装时选择，顺序为：</p>
+<ol>
+<li>删除后端无法运行的变种。 MLX 在 Linux 上消失，CUDA 在 Mac 上消失。源自后端名称，因此作者从不写硬件条件。</li>
+<li>删除不适合的内容：GPU 主机上的 VRAM、CPU 主机上的 cgroup 感知系统 RAM，以便容器看到自己的限制。</li>
+<li>取剩下的最大的一个，因为相同重量的情况下，占地面积越大越好。</li>
+</ol>
+<p>该条目自己的构建在该排名中竞争并且永远不会被过滤掉，因此选择总是以可安装的东西结束。</p>
+<p>大小来自现有的 <code>pkg/vram</code> 估计器（远程 GGUF 标头、HTTP <code>HEAD</code>、声明的 <code>size:</code>，然后是 HF 存储库列表）。无需下载任何内容来决定，并且探测失败永远不会导致安装失败。</p>
+<p>自动选择是默认设置，每个曲面都可以覆盖它：<code>POST /models/apply</code> 上的 <code>variant</code> 和 <code>POST /api/models/install/:id</code>、<code>local-ai models install &#x3C;name> --variant &#x3C;variant></code>、<code>install_model</code> MCP 工具上的 <code>variant</code> 参数以及模型表中的拆分按钮菜单。即使显式选择不适合，也会受到警告，因为这是故意的操作员覆盖。
+现有安装不受影响：每个发布的 LocalAI 都会实时读取 <code>gallery/index.yaml</code> 并忽略它不理解的密钥，因此较旧的 client 会删除 <code>variants:</code> 并像以前一样安装该条目。规范通过遗留结构重新解析真实索引以保持真实。</p>
+<p>值得一提的已知差距：在分布式模式下，<code>InstallModel</code> 针对前端而不是为模型提供服务的工作人员进行解析，因此具有小型前端和大型工作人员的集群会保守选择。单个条目内的探测仍然是串行且无上限的。</p>
+<blockquote>
+<p>🔗 PR：#10943、#10983、#10992、#11027、#11139</p>
+</blockquote>
+<h3 id="-抱脸模型神器">📦 抱脸模型神器</h3>
+<p>Hugging Face 的模型工件现在具体化为托管快照流：不可变的快照分辨率、带有进度报告的经过身份验证的下载、库安装和预加载的具体化、运行时绑定到分阶段工件以及 UI 中显示的进度。 Python 后端重用 Go 下载路径，而不是自行获取。</p>
+<p>随之而来的是大量后续措施：每个文件恢复中断的物化而不是重新开始，每个编写器分阶段进入自己的部分树，伴随工件持续存在，以便远程工作人员接收 <code>base_model</code> 选项，从文件而不是目录加载单文件 HF 快照，由后端门控推断物化，CIFS <code>EACCES</code> 被视为锁争用而不是失败，以及多文件安装进度在验证期间保持成比例。</p>
+<blockquote>
+<p>🔗 PR：#10825、#10908、#10909、#10910、#10949、#10986、#10995、#11071、#11075、#11117</p>
+</blockquote>
+<h3 id="-更轻量级的-web-ui-和跟踪-api">⚡ 更轻量级的 Web UI 和跟踪 API</h3>
+<p>三个 HTTP 层问题，全部在实时部署中测量，并一起修复，因为它们都会影响网络上的情况。</p>
+<p>无论 <code>Accept-Encoding</code> 是什么，服务器根本没有发送 <code>Content-Encoding</code>。现在有 gzip 中间件，默认打开并可通过 <code>--disable-http-compression</code> / <code>LOCALAI_DISABLE_HTTP_COMPRESSION</code> 和 <code>--http-compression-min-length</code> / <code>LOCALAI_HTTP_COMPRESSION_MIN_LENGTH</code> （默认 1024）进行控制。流响应被显式跳过，因为在 gzip 编写器后面缓冲它们会破坏增量刷新并读取为挂起流：SSE <code>Accept</code> 标头、WebSocket 升级以及完成、实时、语音、转录、代理作业和日志尾路径前缀。已经压缩的格式也会被跳过，因为 gzip 使这些格式稍微变大。</p>
+<p>Vite 对捆绑文件名进行内容哈希处理，因此 <code>/assets/</code> URL 永远无法更改内容，但它们并未附带 <code>Cache-Control</code>、<code>ETag</code> 或 <code>Last-Modified</code>。它们现在携带 <code>public, max-age=31536000, immutable</code>，<code>index.html</code> 明确是 <code>no-cache</code>，因此部署会被拾取，并且未散列的区域设置 JSON 会获得 5 分钟策略。</p>
+<p><code>/api/traces</code> 返回一个 21 MB 未分页的 blob，UI 每 5 秒轮询一次。两个列表端点现在都接受 <code>limit</code>（默认 50，最大 1000，全部为 <code>0</code>）、<code>offset</code> 和 <code>full</code>，并默认汇总：主体和标头被删除，字节计数器被保留，以便 UI 仍然可以报告丢失的内容。每个跟踪都带有进程生命周期 <code>id</code>，<code>GET /api/traces/{id}</code> 提供扩展或导出的完整记录。分页元数据位于 <code>X-Total-Count</code>、<code>X-Trace-Offset</code> 和 <code>X-Trace-Limit</code> 中，因此列表主体对于现有消费者来说仍然是普通的 JSON 数组。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>之前</th>
+<th>之后</th>
+<th>改变</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>在线 React JS + CSS</td>
+<td>2,815,513 乙</td>
+<td>807,918 乙</td>
+<td><strong>小 3.48 倍</strong></td>
+</tr>
+<tr>
+<td>所有嵌入资源（包括字体）</td>
+<td>3,953,917 乙</td>
+<td>1,559,787 乙</td>
+<td>缩小 2.53 倍</td>
+</tr>
+<tr>
+<td>重复导航资产转移</td>
+<td>完全重新下载</td>
+<td>0 字节</td>
+<td>淘汰</td>
+</tr>
+<tr>
+<td><code>/api/backend-traces</code> 轮询负载</td>
+<td>21,131,097 乙</td>
+<td>7,201 乙</td>
+<td><strong>~小 2900 倍</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>🔗 PR：#11056</p>
+</blockquote>
+<h3 id="️-每节点-vram-分配预算">🎚️ 每节点 VRAM 分配预算</h3>
+<p>操作员现在可以限制 LocalAI 在节点上用于模型分配的 VRAM 量，以百分比 (<code>80%</code>) 或绝对量 (<code>12GB</code>) 的形式。 LocalAI 在任何地方都会读取 VRAM 来做出分配决定，现在它使用 <code>min(detected, budget)</code>，这是一个永远不会将可用 VRAM 提高到物理之上的硬上限。超过100%的比例被拒绝；高于物理值的绝对值被限制。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>LOCALAI_VRAM_BUDGET=80%</span></span>
+<span class="line"><span>LOCALAI_VRAM_BUDGET=12GB</span></span></code></pre>
+<p>它适用于 <code>local-ai</code> 和 <code>local-ai worker</code>（也包括 <code>--vram-budget</code>），并且可以从独立设置页面和分布式节点 UI 中的每个节点进行实时编辑。</p>
+<p>这两条路径故意不对称：</p>
+<ul>
+<li><strong>独立</strong>，每个进程的硬上限。 <code>xsysinfo</code> 将其保留为进程全局默认值，因此硬件默认值、上下文自动适应、GGUF 警告和看门狗都继承了它。</li>
+<li><strong>分布式</strong>，有放置上限。工作人员报告原始 VRAM 及其预算字符串；注册表会解析它并在注册和检测信号时限制存储的 <code>available_vram</code>，因此 SQL 调度程序不需要更改查询。工作人员仍然可以看到其完整的卡片以适合自己的上下文。</li>
+</ul>
+<p>通过 <code>PUT</code>/<code>DELETE /api/nodes/:id/vram-budget</code> 进行的管理员覆盖在工作程序重新启动后仍然有效，并作为 <code>set_node_vram_budget</code> MCP 工具公开。</p>
+<p>默认取消设置意味着所有检测到的 VRAM，因此现有部署保持不变。</p>
+<blockquote>
+<p>🔗 PR：#10833</p>
+</blockquote>
+<h3 id="️-两个新的文本转语音引擎">🗣️ 两个新的文本转语音引擎</h3>
+<p><strong>magpie-tts-cpp</strong> 包装 <a href="https://github.com/mudler/magpie-tts.cpp">magpie-tts.cpp</a>，这是 NVIDIA Magpie TTS 多语言 357M 的 C++17/ggml 端口，嵌入了 NanoCodec 声码器：5 种声音（Aria、Jason、John、Leo、Sofia）、9 种以上语言、22.05 kHz 单声道，来自一个独立的推理时没有 Python 或 PyTorch 的 GGUF。 GGUF 发布于 <a href="https://huggingface.co/mudler/magpie-tts.cpp-gguf">mudler/magpie-tts.cpp-gguf</a>。实时 gRPC 检查返回有效的非静默 WAV，该 WAV 完全通过 ASR 往返，并且上游引擎针对每个组件的 NeMo 进行奇偶校验（教师强制重放最大绝对差异 3.6e-5）。</p>
+<p><strong>moss-tts-cpp</strong> 包装 <a href="https://github.com/mudler/moss-tts.cpp">moss-tts.cpp</a>，OpenMOSS MOSS-TTS 系列的 ggml 端口，为 MOSS-TTS-Local v1.5（通过 MOSS-Audio-Tokenizer-v2 解码的 GPT-J 本地转换器）提供服务。它可产生 48 kHz 立体声，并带有可选的参考音频语音克隆。 GGUF 位于 <a href="https://huggingface.co/mudler/MOSS-TTS-Local-Transformer-v1.5-GGUF">mudler/MOSS-TTS-Local-Transformer-v1.5-GGUF</a>。图像涵盖 CPU、CUDA 12/13、Intel SYCL f16/f32、Vulkan、ROCm、NVIDIA L4T 和 Darwin Metal。</p>
+<blockquote>
+<p>🔗 PR：#11115、#10860、#10877</p>
+</blockquote>
+<h3 id="-具有盆景后端的亚-2-位模型">🌳 具有盆景后端的亚 2 位模型</h3>
+<p><a href="https://huggingface.co/prism-ml">盆景模型</a> 是 Qwen3 8B 密集和 Qwen3.6-27B 混合注意力的 1 位 (Q1_0) 和三元/1.58-bit (Q2_0) 量化。它们的定量格式只能由 <a href="https://github.com/PrismML-Eng/llama.cpp">PrismML fork of llama.cpp</a> 解码，因为 Stock llama.cpp 没有 Q1_0/Q2_0 内核，因此它们需要一个与 <code>ik-llama-cpp</code> 和 <code>turboquant</code> 形状相同的专用 fork 后端。</p>
+<p>后端通过一个仅交换 <code>LLAMA_REPO</code> 和 <code>LLAMA_VERSION</code> 的薄包装器 Makefile 重复使用 <code>backend/cpp/llama-cpp/grpc-server.cpp</code> 来对抗前叉的 <code>libllama</code>，因此这些模型通过与库存 <code>llama-cpp</code> 相同的 OpenAI 兼容 API 提供服务。重用的服务器使用零偏差补丁针对分叉进行编译。</p>
+<p>附带八个画廊条目：</p>
+<table>
+<thead>
+<tr>
+<th>家庭</th>
+<th>变体</th>
+<th>笔记</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bonsai-8b-1bit</code></td>
+<td>Q1_0</td>
+<td>Qwen3-8B，〜1.15国标</td>
+</tr>
+<tr>
+<td><code>ternary-bonsai-8b</code></td>
+<td>Q2_0、<code>-q2-g64</code>、<code>-pq2</code></td>
+<td>Qwen3-8B，〜2.18国标</td>
+</tr>
+<tr>
+<td><code>bonsai-27b-1bit</code></td>
+<td>Q1_0</td>
+<td>Qwen3.6-27B 混合注意力、视觉、~3.9 GB</td>
+</tr>
+<tr>
+<td><code>ternary-bonsai-27b</code></td>
+<td>Q2_0、<code>-pq2</code>、<code>-q2-g64</code></td>
+<td>Qwen3.6-27B 混合注意力、视觉、~7.2 GB</td>
+</tr>
+</tbody>
+</table>
+<p>如果 Q1_0 和 Q2_0 登陆主线 llama.cpp，则该后端可以退出，以支持库存 <code>llama-cpp</code> 上的例行 <code>LLAMA_VERSION</code> 碰撞。</p>
+<blockquote>
+<p>🔗 PR：#10834、#10866</p>
+</blockquote>
+<h3 id="-分布式模式可靠性">🖧 分布式模式可靠性</h3>
+<p>调查显示在主页上已加载但在集群中没有节点上出现的模型时发现了四个单独的错误，均已在此处修复。</p>
+<p>收割者正在删除活动且正在工作的后端的行。 <code>probeLoadedModels</code> 在一次失败的 1 秒运行状况检查后收获了 <code>node_models</code> 行，并且繁忙的后端无法应答：单线程 Python 后端在请求内阻塞几分钟。</p>
+<ul>
+<li>新的 <code>models.running</code> 主题直接询问工作人员，因为它持有进程句柄并且不会被后端阻止。协调器在进行任何端口探测之前将其进程密钥与注册表进行比较。</li>
+<li>不应答的工作进程将被跳过，而不是假定为空，因此 NATS blip 无法删除节点的行。</li>
+<li>端口探测器现在将 <code>DeadlineExceeded</code>（忙）与 <code>Unavailable</code>（消失）分开，并且在连续三次未命中后，只有后者才计数。</li>
+</ul>
+<p>每个路由模型还在前端的 <code>ModelLoader</code> 中留下了一个进程内存根，并且删除路径仅删除数据库行，因此存根比副本的寿命更长，并且模型被报告为永久加载。副本删除的钩子变成了一个列表，一旦集群范围内没有健康的副本，新的本地存根失效器就会删除存根。</p>
+<p>除此之外：<code>in_flight</code> 计数器可能会泄漏高电平并固定副本的 VRAM 以防止驱逐；模型加载截止日期现在根据检查点大小和进度而不是挂钟来缩放；分阶段验证算作进展而不是停滞；后端发现不再将工作人员安装的后端或仅 GPU 的后端隐藏在控制器的文件系统和功能后面；调度程序不会将模型放置在无法存储模型的节点上；开放响应在副本之间可见且可取消。</p>
+<p>工作端，一个后端进程，其目录被重新安装替换，永远不会被重用，gRPC 端口分配器受到限制，并停止泄漏死后端的端口，删除的后端被收获，并且工作线程拥有一个真正的健康端点，具有模式感知的 <code>HEALTHCHECK</code>。</p>
+<blockquote>
+<p>🔗 PR：#11142、#11121、#11030、#11029、#11026、#11019、#11000、#10999、#10990、#10970、#10968、#10967、#10966、#10956、#10948、 #10947, #10838, #11054, #10551</p>
+</blockquote>
+<h3 id="-值得了解的小功能">🧰 值得了解的小功能</h3>
+<ul>
+<li><strong>Valkey 搜索向量存储</strong> (#11196)：新的 <code>valkey-store</code> 后端将 Valkey 添加为向量存储选项以及现有选项。</li>
+<li><strong>systemd 套接字激活</strong> (#11169)：<code>local-ai</code> 使用通过 Linux 上的 systemd 套接字激活协议继承的 TCP 侦听器，因此它可以按需启动。当不存在激活侦听器、拒绝不明确的多个侦听器以及针对实际继承地址运行公共绑定身份验证安全检查时，普通 <code>--address</code> / <code>LOCALAI_ADDRESS</code> 绑定不会更改。与 Podman 描述符传递要求一起记录。</li>
+<li><strong>持久跟踪历史记录</strong> (#11203)：API 和后端跟踪历史记录现在保留在配置的数据路径下，并在重新启动后继续存在，作为 <code>traces/api</code> 和 <code>traces/backend</code> 下有界的每条记录 JSON 文件。无数据库依赖性，保留现有的 <code>tracing_max_items</code> 边界，提前恢复 ID 以避免冲突，跳过损坏的记录而不是阻止启动。</li>
+<li><strong>编辑已保存的聊天消息</strong> (#11189)：对已保存的用户提示和助理响应进行内联编辑/保存/取消，通过本地聊天历史记录进行持久化，无需推理请求，保留结构化内容块和附件元数据。</li>
+<li><strong>独立的 Intel SYCL 后端</strong> (#10991)：Intel llama.cpp 后端现在可以在任何主机上运行，​​而不需要匹配的 oneAPI 运行时。</li>
+<li><code>stablediffusion-ggml</code> 的 <strong>可配置 VAE 平铺</strong> (#11216)，以及通过分类器/VAD 路径对低功耗设备进行语音控制** (#10804)。</li>
+<li><strong>人为提示缓存断点</strong> (#11158)：云代理转换模式下的可选缓存断点。</li>
+<li><strong><code>/v1/detokenize</code></strong> (#9620) 和 <strong>确定性、类型过滤的后端自动检测</strong> (#10286)，因此后端选择根据探测顺序而停止。</li>
+<li><strong>MLX TTS 路由</strong> (#11267)：MLX TTS 模型现在导入到 <code>mlx-audio</code> 而不是通用文本后端。</li>
+</ul>
+<h3 id="️-内联微调奖励代码现已可选择加入">🛡️ 内联微调奖励代码现已可选择加入</h3>
+<p><code>POST /api/fine-tuning/jobs</code> 接受 <code>reward_functions[].code</code>，这是针对手动内置允许列表执行的内联 Python 主体。该允许列表不是安全边界：标准 CPython 内省到达真正的 <code>os</code> 模块并在主机上产生任意代码执行。执行在作业启动时的冒烟测试期间同步发生，默认情况下微调端点未经身份验证。</p>
+<p>现在，除非操作员在后端明确选择使用 <code>LOCALAI_TRL_ALLOW_INLINE_REWARD=true</code>，否则内联奖励代码将被拒绝，而不是尝试强化允许列表。内置奖励功能不受影响，无需配置即可继续工作。该文档不再将允许列表描述为沙箱，并明确指出内联代码是任意执行的。</p>
+<p>在同一周期中还有两个进一步的强化修复：</p>
+<ul>
+<li><strong>逃逸提取根目录的 Tar 硬链接被拒绝</strong> (#11266)。 <code>ExtractArchive</code> 预先扫描成员并拒绝符号链接，但 tar 硬链接条目携带常规文件模式并通过了该检查，而 <code>Header.Linkname</code> 从未经过验证，因此存档可以创建指向目标目录外部路径的链接。 Linkname 现在获得与成员名称相同的路径检查；根目录内的硬链接解析仍然提取，因此普通档案不受影响。</li>
+<li><strong>JSON 模式语法中的 Cyclic <code>$ref</code> 被拒绝</strong> (#11041)，而不是递归到堆栈溢出崩溃。</li>
+</ul>
+<p>此版本还获得了 CVE-2026-54290 的荣誉 4.12.25。</p>
+<blockquote>
+<p>🔗 PR：#11068、#11266、#11041、#11023</p>
+</blockquote>
+<h3 id="-跟踪获得请求身份">🔍 跟踪获得请求身份</h3>
+<p>API Traces 面板记录了每个请求的发出者，但从未显示出来，也从未捕获调用者的网络身份。该表现在有一个可排序的用户列，展开的行包含来自 echo 的 <code>RealIP()</code> 的用户、Client IP 和用户代理（纪念 trusted 代理后面的 <code>X-Forwarded-For</code> / <code>X-Real-IP</code>）。字段仅在存在时呈现，因此较旧的缓冲跟踪和未经身份验证的本地请求会完全降级。时间列现在也显示日期。</p>
+<blockquote>
+<p>🔗 PR：#10907、#10905</p>
+</blockquote>
+<hr>
+<h2 id="-错误修复回顾">🐛 错误修复（回顾）</h2>
+<ul>
+<li><code>fix(distributed)</code>：收割者收割实时后端、幽灵模型存根、<code>in_flight</code> 泄漏、sidecar 分段失控 - #11142</li>
+<li><code>fix(distributed)</code>：使用检查点大小缩放远程模型加载期限 - #11030</li>
+<li><code>fix(distributed)</code>：使冷负载保持秤有进度，而不是挂钟 - #11019</li>
+<li><code>fix(distributed)</code>：将暂存验证视为进度，而不是停滞 - #11026</li>
+<li><code>fix(distributed)</code>：拒绝后端和其余模式的错误模型请求 - #10970、#10990</li>
+<li><code>fix(distributed)</code>：后端发现隐藏了工作人员安装的后端和仅 GPU 的后端 - #10967、#10947</li>
+<li><code>fix(distributed)</code>：可配置的远程模型加载超时，并在超时时获取负载 - #10948</li>
+<li><code>fix(distributed)</code>：使每个节点后端升级实际上升级 - #10838</li>
+<li><code>fix(nodes)</code>：永远不要将模型调度到无法存储它的节点上 - #11054</li>
+<li><code>fix(openresponses)</code>：使响应在副本之间可见且可取消 - #11000</li>
+<li><code>fix(worker)</code>：永远不要重用其目录被重新安装替换的后端进程 - #11029</li>
+<li><code>fix(worker)</code>：绑定 gRPC 端口分配器并停止泄漏死后端端口 - #10968</li>
+<li><code>fix(worker)</code>：收获已删除的后端并停止工作人员上的模型 - #10956</li>
+<li><code>fix(worker)</code>：为工作人员提供真正的健康端点和模式感知的健康检查 - #10999</li>
+<li><code>fix(downloader)</code>：在发出恢复请求之前对部分文件进行哈希处理 - #11099</li>
+<li><code>fix(downloader)</code>：绑定等待响应标头，以便楔入源无法挂起安装 - #11053</li>
+<li><code>fix(downloader)</code>：区分读取和写入失败并重试瞬时失败 - #10985</li>
+<li><code>fix(modelartifacts)</code>：恢复每个文件中断的物化，而不是从头开始 - #11071</li>
+<li><code>fix(modelartifacts)</code>：将每个作家的工件放在自己的部分树中 - #10995</li>
+<li><code>fix(modelartifacts)</code>：将 CIFS EACCES 视为锁争用，而不是失败 - #10986</li>
+<li><code>fix(model-artifacts)</code>：保留伴随工件，以便远程工作人员获得 <code>base_model</code> 选项 - #11075</li>
+<li><code>fix(model-artifacts)</code>：从文件而不是目录加载单文件 HF 快照 - #10909</li>
+<li><code>fix(model-artifacts)</code>：后端通过门推断工件物化 - #10910</li>
+<li><code>fix(model-artifacts)</code>：在控制器上具体化 longcat-video，并支持配套存储库 - #10949</li>
+<li><code>fix(gallery)</code>：合并拥抱面部神器进度 - #11117</li>
+<li><code>fix(gallery)</code>：在验证期间保持多文件 HF 安装进度成比例 - #10908</li>
+<li><code>fix(galleryop)</code>：使承认的操作可查询并在失败的操作中幸存 - #11044</li>
+<li><code>fix(gpu-libs)</code>：仅在使用时捆绑 cuDNN，并在使用时完成 - #10946</li>
+<li><code>fix(gpu)</code>：当不存在 pci.ids 数据库时通过 sysfs 检测 GPU - #10966</li>
+<li><code>fix(watchdog)</code>：强制杀死卡住的繁忙后端而不是死锁加载程序 - #10578</li>
+<li><code>fix(watchdog)</code>：用 <code>watchdogMutex</code> 保护 <code>StopWatchdog</code> 以防止双重关闭 - #10859</li>
+<li><code>fix(config)</code>：仅在 llama.cpp 路径上注入 llama.cpp 服务选项 - #10822</li>
+<li><code>fix(runtime-settings)</code>：在启动时应用持久线程/context_size/f16 - #10853</li>
+<li><code>fix(model)</code>：使后端关闭模型范围 - #10865</li>
+<li><code>fix(model)</code>：仅在实际发生负载时才在 INFO 处宣布负载 - #11017</li>
+<li><code>fix(completions)</code>：拒绝流中的空 <code>PromptStrings</code> 以避免索引超出范围恐慌 - #11028</li>
+<li><code>fix(tts)</code>：将 OpenAI <code>speed</code> 字段转发到后端 - #11120</li>
+<li><code>fix(realtime)</code>：接受 <code>output_modalities</code> 的旧 <code>modalities</code> 别名 - #11104</li>
+<li><code>fix(vision)</code>：探测固定 llama.cpp 后端变体的媒体标记 - #10955</li>
+<li><code>fix(audio-transform)</code>：序列化 WebSocket 写入以避免并发写入恐慌 - #10857</li>
+<li><code>fix(qwen-asr)</code>：将 ISO 语言代码映射到 Qwen3-ASR 期望的名称 - #10959</li>
+<li><code>fix(ollama)</code>：限制 <code>num_ctx</code>，因此在转换为 int32 时不能换行负数 - #11032</li>
+<li><code>fix(ollama)</code>：通过嵌入式 <code>LLMConfig</code> 设置 <code>ContextSize</code>，以便构建包 - #11049</li>
+<li><code>fix(webui)</code>：使用相对资源库，以便字体和惰性块尊重 <code>X-Forwarded-Prefix</code> - #10904</li>
+<li><code>fix(agent-ui)</code>：在代理聊天中重置生成边界处的流文本 - #10664</li>
+<li><code>fix(mcp)</code>：绑定 MCP 会话连接，因此无法访问的服务器无法挂起小部件 - #10884</li>
+<li><code>fix(http)</code>：使 <code>/readyz</code> 反映启动准备情况 - #10989</li>
+<li><code>fix(upgrade-check)</code>：不要按控制器功能过滤升级候选者 - #11024</li>
+<li><code>fix(cloud-proxy)</code>：发布后端图库条目 - #10858</li>
+<li><code>fix(backend)</code>：不要在无效的 <code>cutstrings</code>/<code>extract_regex</code> 上使整个过程崩溃 - #10855</li>
+<li><code>fix(backends)</code>：从 protobuf 运行时派生协议生成器 - #11057</li>
+<li><code>fix(backend/python)</code>：不要等待 <code>AsyncModelIdentityInterceptor</code> 中的同步服务程序行为 - #10980</li>
+<li><code>fix(sglang)</code>：实现状态 RPC 以解锁后端监视器轮询 - #10867</li>
+<li><code>fix(vllm)</code>：生成 protobuf 6 兼容存根 - #10944</li>
+<li><code>fix(vibevoice)</code>：从 PyPI 安装扩散器而不是 git main - #10972</li>
+<li><code>fix(kokoro)</code>：固定兼容的 Intel XPU 运行时 - #10823</li>
+<li><code>fix(ace-step)</code>：在 <code>SoundGeneration</code> 中删除不存在的 <code>Get*</code> 原型访问器 - #11072</li>
+<li><code>fix(trl)</code>：默认禁用内联 GRPO 奖励代码 (RCE) - #11068</li>
+<li><code>fix(turboquant)</code>：取代陈旧的依赖项 - #11064</li>
+<li><code>fix(turboquant,bonsai)</code>：不要将供应商的 llama.cpp 补丁应用于分叉树 - #10866</li>
+<li><code>fix(llama-cpp)</code>：在 GPU 构建中保留 CPU 变体 - #11255，对于turboquant 也是如此 - #11276</li>
+<li><code>fix(llama-cpp)</code>：在选项直通期间保留 GPU 层 - #11193</li>
+<li><code>fix(utils)</code>：拒绝逃逸提取根的 tar 硬链接 - #11266</li>
+<li><code>fix(grammars)</code>：拒绝 JSON 架构语法中的 cyclic <code>$ref</code> 以防止堆栈溢出崩溃 - #11041</li>
+<li><code>fix(grammars)</code>：在 llama31 语法装置中恢复反斜杠 escaping - #11242</li>
+<li><code>fix(model)</code>：确定性、类型过滤后端自动检测 - #10286</li>
+<li><code>fix(oci)</code>：在没有符号链接的文件系统上安装后端 - #11166</li>
+<li><code>fix(oci)</code>：识别签名验证请求 - #11244</li>
+<li><code>fix(realtime)</code>：在 <code>response.created</code> 和 <code>response.done</code> 上回显 <code>response.metadata</code> - #11198</li>
+<li><code>fix(worker)</code>：报告 RAM 和 GPU 内存 - #11167</li>
+<li><code>fix(vllm)</code>：在引擎初始化之前应用 <code>Options[]</code> 引擎标志 - #11147</li>
+<li><code>fix(mlx-vlm)</code>：在 Metal 上安装 torch 依赖项 - #11164</li>
+<li><code>fix(kokoro)</code>：添加 CPU 后端后备 - #11161</li>
+<li><code>fix(chatterbox)</code>：固定 cublas12 火炬/变压器和设置工具，以便后端加载 - #11074</li>
+<li><code>fix(gallery)</code>：正确的 Nanbeige 4.2 文物 - #11269</li>
+<li>视频：WAN 2.1 GGML 条目从未设置 <code>known_usecases</code>，因此它们解析为图像而不是视频，而 <code>/video</code> 拒绝了它们 - #11214</li>
+</ul>
+<h3 id="p2p专区">🖧P2P专区</h3>
+<ul>
+<li><code>fix(p2p)</code>：序列化对 <code>p2pCtx</code>/<code>p2pCancel</code> 的访问 - #10861</li>
+</ul>
+<hr>
+<h2 id="-依赖关系">👒 依赖关系</h2>
+<p>本周期有 121 个依赖项更新，大部分是夜间引擎碰撞：</p>
+<table>
+<thead>
+<tr>
+<th>发动机</th>
+<th>颠簸</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CrispStrobe/CrispASR</td>
+<td>17</td>
+</tr>
+<tr>
+<td>ikawrakow/ik_llama.cpp</td>
+<td>12</td>
+</tr>
+<tr>
+<td>leejet/stable-diffusion.cpp</td>
+<td>10</td>
+</tr>
+<tr>
+<td>ServeurpersoCom/qwentts.cpp</td>
+<td>8</td>
+</tr>
+<tr>
+<td>ggml-org/llama.cpp</td>
+<td>7</td>
+</tr>
+<tr>
+<td></td>
+<td>ServeurpersoCom/omnivoice.cpp</td>
+</tr>
+<tr>
+<td>PrismML-Eng/llama.cpp</td>
+<td>5</td>
+</tr>
+<tr>
+<td>mudler/parakeet.cpp</td>
+<td>4</td>
+</tr>
+<tr>
+<td>ggml-org/whisper.cpp</td>
+<td>4</td>
+</tr>
+<tr>
+<td>防雷兹/ds4</td>
+<td>3</td>
+</tr>
+<tr>
+<td>0xShug0/音频.cpp</td>
+<td>2</td>
+</tr>
+<tr>
+<td>magpie-tts.cpp、locate-anything.cpp、深度-anything.cpp、trellis2cpp、rf-detr.cpp、ced.cpp、llama-cpp-turboquant</td>
+<td>各 1 个</td>
+</tr>
+</tbody>
+</table>
+<p>加上 Python、JavaScript 和 GitHub 操作的 20 个依赖机器人更新，以及用于并发 <code>Run</code> 修复的 <code>go-processmanager</code> 提升。</p>
+<p>注意：一个 <code>ggml-org/llama.cpp</code> 碰撞 (<code>d2a8182</code>) 在周期内被恢复，并且不包括在这些注释中。</p>
+<hr>
+<h2 id="-文档">📖 文档</h2>
+<p>该文档接受了以入职为中心的大修（#10895），由映射的每页审核而不是页面日期驱动，每个事实声明都根据代码、后端、图库和 CLI 进行验证：</p>
+<ul>
+<li><strong>准确性</strong>：CPU 映像标签更正为 <code>localai/localai:latest</code>（没有 <code>latest-cpu</code>）、统一注册表、从示例中删除失效的 <code>llama-stable</code> 后端、更正 <code>mitm-proxy</code> 标志文档、删除不存在的 <code>/sound</code> 端点、语音活动检测示例变得可运行，以及刷新 CLI 参考<code>agent</code>、<code>mcp-server</code>、<code>agent-worker</code> 和 <code>p2p-worker</code>。</li>
+<li><strong>重复数据删除</strong>：重复和陈旧的页面折叠到规范的主页中，所有入站链接都重新指向，并通过别名保留旧的 URL。</li>
+<li><strong>入门</strong>：一个具体模型 (<code>qwen3-4b</code>) 现在可完成安装、Web UI 聊天和 API 卷曲，以及新的 <strong>构建您的第一个代理</strong> 演练，明确指出嵌入了 LocalAGI。</li>
+<li><strong>错误</strong>：新的<strong>运行时错误和故障排除</strong>参考键入用户看到的文字错误字符串，加上从附带的操作注册表中获取的新<strong>代理操作目录</strong>。</li>
+<li><strong>结构</strong>：安装合并在一个线性安装到首次运行主干的入门下，一个面向操作员的页面的新<strong>操作</strong>部分以及按旅程排序的导航。</li>
+<li><strong>流程</strong>：PR 模板中的文档复选框和代理指令中的文档与代码规则，因此面向用户的代码更改会在同一更改中更新文档。</li>
+</ul>
+<p>另外：<code>grpc.attempts</code> 计时和调优指南 (#10868)、Opus 后端实时安装说明的修复 (#11018)、反向代理和长推理超时指南 (#11195、#11065)、持久容器存储澄清 (#11190) 以及 ROCm 7.x / RDNA 3.5 (Strix Halo、 gfx1151) 添加到 GPU 加速指南 (#9229)。</p>
+<h3 id="-一个新的-localaiio">🌐 一个新的 localai.io</h3>
+<p>该站点一分为二：项目站点位于根目录，文档移至 <code>/docs/</code> 下。 Hugo 文档网站一直是 localai.io，没有任何地方可以解释 LocalAI 是什么或展示团队构建的内容。</p>
+<p>每个之前发布的 URL 都可以继续使用。 GitHub 页面没有服务器端重写，因此生成器会遍历构建的文档输出，并在每个旧根路径处留下元刷新、规范链接和 <code>noindex</code>：<strong>214 重定向存根</strong>，覆盖裸 <code>.html</code> 文件以及目录索引，并且永远不会覆盖根站点拥有的路径。
+新站点添加了一个完全由 YAML 数据文件驱动的 <code>/engines/</code> 页面（因此添加引擎是一次编辑，而不是在两个地方手写 HTML）、一个 <code>/blog/</code>、一个真正的 POSIX <code>install.sh</code> 和一个连接到实际 <code>/readyz</code> 和 <code>/healthz</code> 端点的 Kubernetes 清单。生态系统范围列出了工程师做出贡献的公司、集成 LocalAI 的项目以及 LocalAI 的相关文章，每个都由不同的、规定的证据标准支持，<code>ADOPTERS.md</code> 作为任何想要列出的人的自助服务机制。</p>
+<blockquote>
+<p>🔗 PR：#11243、#11248</p>
+</blockquote>
+<h3 id="-ci-成本和正确性">🧹 CI 成本和正确性</h3>
+<p>构建管道上的持续传递，其中大部分对用户不可见，但负责改变土地的速度：完整的后端矩阵现在仅在破坏 <code>backend.proto</code> 编辑时重建 (#11192)，图像和 Go PR 工作流程会跳过他们看不到的内容 (#11218、#11223、#11224)、本机引擎构建在注册表缓存可以实际恢复的层中 (#11221)，以及堆叠运行的三个工作流程每次 PR 推送都会进行重复数据删除 (#11058)。 Go 后端现在根据链接的 <code>pkg/</code> 更改和矩阵条目编辑进行重建（#10988、#10975）。</p>
+<hr>
+<h2 id="-新贡献者">🙌 新贡献者</h2>
+<p>本周期有 11 人完成了他们的第一个 LocalAI 贡献：</p>
+<ul>
+<li>@ankit-aglawe 在 #10930</li>
+<li>@anupamme #11023</li>
+<li>@futurehua #10879</li>
+<li>@ghshhf #10323</li>
+<li>@jimmykarily 在 #10991</li>
+<li>@nandanadileep 在 #10578</li>
+<li>@owezzy #11195</li>
+<li>@ResearchForumOnline #11138</li>
+<li>#11068 中的 @wuisabel-gif</li>
+<li>@Zelys-DFKH #11266</li>
+<li>@zjuzhongwen #10960</li>
+</ul>
+<p>谢谢大家，也感谢本周期提出问题、测试构建和报告回归的所有人。</p>
+<hr>
+<p><strong>完整 Changelog</strong>：<a href="https://github.com/mudler/LocalAI/compare/v4.7.1...v4.8.0">https://github.com/mudler/LocalAI/compare/v4.7.1…v4.8.0</a></p>
+<hr>
+<blockquote>
+<p>📦 仓库：<a href="https://github.com/mudler/LocalAI">mudler/LocalAI</a> · 🏷️ 版本：<code>v4.8.0</code> · 📅 发布：2026-08-05 · <a href="https://github.com/mudler/LocalAI/releases/tag/v4.8.0">查看英文原版 Release</a></p>
+</blockquote>
+<p><em>本文由 NextStack 自动翻译，内容以官方英文原文为准。</em></p>   </div> <p class="muted" style="margin-top:var(--s8);font-size:12.5px;border-top:1px solid var(--line);padding-top:var(--s4)"> Release Note 由上游项目发布，本站仅索引镜像，版权归原作者所有。 </p> <nav class="pager" aria-label="Release navigation"> <a href="/zh/release_note/LocalAI/LocalAI_v4.8.1"> <span class="k">← 下一个</span> <span class="t">v4.8.1</span> </a> <a href="/zh/release_note/LocalAI/LocalAI_v4.7.1"> <span class="k">上一个 →</span> <span class="t">v4.7.1</span> </a> </nav> <aside class="ad-slot" aria-label="广告" data-astro-cid-fgwukgf6><div class="ad-slot-label" data-astro-cid-fgwukgf6>广告</div><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4184355057086168" data-ad-slot="9133765584" data-ad-format="auto" data-full-width-responsive="true" data-astro-cid-fgwukgf6></ins><script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script></aside> </article> <aside class="rail"> <div class="rail-card"> <div class="rail-title">Source</div> <ul class="rail-list"> <li> <a href="https://github.com/mudler/LocalAI/releases/tag/v4.8.0" target="_blank" rel="noopener"> <span>GitHub 原文</span> <span class="d">↗</span> </a> </li> <li> <a href="https://github.com/mudler/LocalAI" target="_blank" rel="noopener"> <span>mudler/LocalAI</span> <span class="d">↗</span> </a> </li> </ul> </div> <div class="rail-card rail-toc"> <div class="rail-title">本页目录</div> <nav> <a href="#-此版本的数量" class>📊 此版本的数量</a><a href="#-太长博士" class>📌 太长；博士</a><a href="#-新功能和主要增强功能" class>🚀 新功能和主要增强功能</a><a href="#-介绍-vllmcppalpha" class="lv3">🚀 介绍 vllm.cpp（alpha）</a><a href="#数字来自项目自己的记分牌" class="lv3">数字，来自项目自己的记分牌</a><a href="#-3d-生成端到端" class="lv3">🧊 3D 生成，端到端</a><a href="#audiocpp一个后端六个音频端点" class="lv3">🔊audio.cpp：一个后端，六个音频端点</a><a href="#-一条单行条和一个活动页面" class="lv3">📊 一条单行条和一个活动页面</a><a href="#️-一个画廊条目多个构建" class="lv3">🎛️ 一个画廊条目，多个构建</a><a href="#-抱脸模型神器" class="lv3">📦 抱脸模型神器</a><a href="#-更轻量级的-web-ui-和跟踪-api" class="lv3">⚡ 更轻量级的 Web UI 和跟踪 API</a><a href="#️-每节点-vram-分配预算" class="lv3">🎚️ 每节点 VRAM 分配预算</a><a href="#️-两个新的文本转语音引擎" class="lv3">🗣️ 两个新的文本转语音引擎</a><a href="#-具有盆景后端的亚-2-位模型" class="lv3">🌳 具有盆景后端的亚 2 位模型</a><a href="#-分布式模式可靠性" class="lv3">🖧 分布式模式可靠性</a><a href="#-值得了解的小功能" class="lv3">🧰 值得了解的小功能</a><a href="#️-内联微调奖励代码现已可选择加入" class="lv3">🛡️ 内联微调奖励代码现已可选择加入</a><a href="#-跟踪获得请求身份" class="lv3">🔍 跟踪获得请求身份</a><a href="#-错误修复回顾" class>🐛 错误修复（回顾）</a><a href="#p2p专区" class="lv3">🖧P2P专区</a><a href="#-依赖关系" class>👒 依赖关系</a><a href="#-文档" class>📖 文档</a><a href="#-一个新的-localaiio" class="lv3">🌐 一个新的 localai.io</a><a href="#-ci-成本和正确性" class="lv3">🧹 CI 成本和正确性</a> </nav> </div> <div class="rail-card"> <div class="rail-title">版本历史</div> <ul class="rail-list"> <li> <a href="/zh/release_note/LocalAI/localai_4.12.1"> <span class="v">v4.12.1</span> <span class="d">26-10-23</span> </a> </li><li> <a href="/zh/release_note/LocalAI/localai_4.12.0"> <span class="v">v4.12.0</span> <span class="d">26-10-22</span> </a> </li><li> <a href="/zh/release_note/LocalAI/localai_4.11.0"> <span class="v">v4.11.0</span> <span class="d">26-10-02</span> </a> </li><li> <a href="/zh/release_note/LocalAI/LocalAI_v4.10.0"> <span class="v">v4.10.0</span> <span class="d">26-09-17</span> </a> </li><li> <a href="/zh/release_note/LocalAI/LocalAI_v4.9.0"> <span class="v">v4.9.0</span> <span class="d">26-08-20</span> </a> </li><li> <a href="/zh/release_note/LocalAI/LocalAI_v4.8.2"> <span class="v">v4.8.2</span> <span class="d">26-08-07</span> </a> </li><li> <a href="/zh/release_note/LocalAI/LocalAI_v4.8.1"> <span class="v">v4.8.1</span> <span class="d">26-08-06</span> </a> </li><li> <a href="/zh/release_note/LocalAI/LocalAI_v4.8.0" aria-current="true"> <span class="v">v4.8.0</span> <span class="d">26-08-05</span> </a> </li> </ul> <a href="/zh/releases/localai" class="mono" style="display:inline-block;margin-top:var(--s3);font-size:11.5px;color:var(--ink-3)"> 查看全部 19 条 →
+</a> </div> </aside> </div> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

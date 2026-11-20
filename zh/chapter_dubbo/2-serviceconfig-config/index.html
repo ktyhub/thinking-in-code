@@ -1,0 +1,535 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**启动服务前服务配置ServiceConfig类型是如何初始化的?** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_dubbo/2-serviceconfig-config/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_dubbo/2-serviceconfig-config"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_dubbo/2-serviceconfig-config/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_dubbo/2-serviceconfig-config"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**启动服务前服务配置ServiceConfig类型是如何初始化的?** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_dubbo/2-serviceconfig-config/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_dubbo/2-serviceconfig-config/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>dubbo</h3> <ul> <li> <a href="/zh/chapter_dubbo/1-learn-from-a-demo" class="lv0" title="**从一个服务提供者的Demo说起**"> **从一个服务提供者的Demo说起** </a> </li><li> <a href="/zh/chapter_dubbo/2-serviceconfig-config" class="lv0" aria-current="page" title="**启动服务前服务配置ServiceConfig类型是如何初始化的?**"> **启动服务前服务配置ServiceConfig类型是如何初始化的?** </a> </li><li> <a href="/zh/chapter_dubbo/3-model-init" class="lv0" title="**框架,应用程序,模块领域模型Model对象的初始化**"> **框架,应用程序,模块领域模型Model对象的初始化** </a> </li><li> <a href="/zh/chapter_dubbo/4-extension-init" class="lv0" title="**Dubbo的扩展机制**"> **Dubbo的扩展机制** </a> </li><li> <a href="/zh/chapter_dubbo/5-getadaptiveextension" class="lv0" title="5-getadaptiveextension"> 5-getadaptiveextension </a> </li><li> <a href="/zh/chapter_dubbo/6-extension-wrapper" class="lv0" title="**Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析**"> **Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/7-extension-activate" class="lv0" title="**Dubbo的SPI扩展机制之自动激活扩展Activate源码解析**"> **Dubbo的SPI扩展机制之自动激活扩展Activate源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/8-dubbobootstrap" class="lv0" title="**Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化**"> **Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化** </a> </li><li> <a href="/zh/chapter_dubbo/9-application-config" class="lv0" title="**Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig**"> **Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig** </a> </li><li> <a href="/zh/chapter_dubbo/10-registryconfig" class="lv0" title="**Dubbo启动器DubboBootstrap添加注册中心配置信息RegistryConfig**"> **Dubbo启动器DubboBootstrap添加注册中心配置信息RegistryConfig** </a> </li><li> <a href="/zh/chapter_dubbo/11-protocolconfig" class="lv0" title="**Dubbo启动器DubboBootstrap添加协议配置信息ProtocolConfig**"> **Dubbo启动器DubboBootstrap添加协议配置信息ProtocolConfig** </a> </li><li> <a href="/zh/chapter_dubbo/12-start-life-cycle" class="lv0" title="**全局视野来看Dubbo3的服务启动生命周期**"> **全局视野来看Dubbo3的服务启动生命周期** </a> </li><li> <a href="/zh/chapter_dubbo/13-configcenter" class="lv0" title="**Dubbo的三大中心之配置中心**"> **Dubbo的三大中心之配置中心** </a> </li><li> <a href="/zh/chapter_dubbo/14-config-load" class="lv0" title="**Dubbo配置加载全解析**"> **Dubbo配置加载全解析** </a> </li><li> <a href="/zh/chapter_dubbo/15-metadata" class="lv0" title="**Dubbo的三大中心之元数据中心源码解析**"> **Dubbo的三大中心之元数据中心源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/16-moduledeployer" class="lv0" title="**模块发布器发布服务全过程**"> **模块发布器发布服务全过程** </a> </li><li> <a href="/zh/chapter_dubbo/17-provider-register" class="lv0" title="**Dubbo服务提供者的双注册原理**"> **Dubbo服务提供者的双注册原理** </a> </li><li> <a href="/zh/chapter_dubbo/18-metadataService-export" class="lv0" title="**Dubbo3元数据服务MetadataService的导出**"> **Dubbo3元数据服务MetadataService的导出** </a> </li><li> <a href="/zh/chapter_dubbo/19-consuemr-demo" class="lv0" title="**重新来过从一个服务消费者的Demo说起**"> **重新来过从一个服务消费者的Demo说起** </a> </li><li> <a href="/zh/chapter_dubbo/20-reference-config" class="lv0" title="**Dubbo3服务引用配置ReferenceConfig**"> **Dubbo3服务引用配置ReferenceConfig** </a> </li><li> <a href="/zh/chapter_dubbo/21-refer-services" class="lv0" title="**Dubbo3消费者引用服务入口**"> **Dubbo3消费者引用服务入口** </a> </li><li> <a href="/zh/chapter_dubbo/22-migration-invoker" class="lv0" title="**Dubbo3消费者自动感应决策应用级服务发现原理**"> **Dubbo3消费者自动感应决策应用级服务发现原理** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_dubbo">dubbo</a><span class="sep">/</span><span>**启动服务前服务配置ServiceConfig类型是如何初始化的?**</span> </nav> <div class="prose">  <h1 id="启动服务前服务配置serviceconfig类型是如何初始化的"><strong>启动服务前服务配置ServiceConfig类型是如何初始化的?</strong></h1>
+<h2 id="示例源码回顾"><strong>示例源码回顾:</strong></h2>
+<p>为了方便我们理解记忆,这里先来回顾下上一章我们说的示例代码,如下所示:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> Application</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> main</span><span style="color:#24292E">(</span><span style="color:#D73A49">String</span><span style="color:#24292E">[] </span><span style="color:#E36209">args</span><span style="color:#24292E">) </span><span style="color:#D73A49">throws</span><span style="color:#24292E"> Exception {</span></span>
+<span class="line"><span style="color:#6F42C1">            startWithBootstrap</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> startWithBootstrap</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#24292E">        ServiceConfig&#x3C;</span><span style="color:#D73A49">DemoServiceImpl</span><span style="color:#24292E">> service </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ServiceConfig&#x3C;>();</span></span>
+<span class="line"><span style="color:#24292E">        service.</span><span style="color:#6F42C1">setInterface</span><span style="color:#24292E">(DemoService.class);</span></span>
+<span class="line"><span style="color:#24292E">        service.</span><span style="color:#6F42C1">setRef</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> DemoServiceImpl</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        DubboBootstrap bootstrap </span><span style="color:#D73A49">=</span><span style="color:#24292E"> DubboBootstrap.</span><span style="color:#6F42C1">getInstance</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        bootstrap.</span><span style="color:#6F42C1">application</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> ApplicationConfig</span><span style="color:#24292E">(</span><span style="color:#032F62">"dubbo-demo-api-provider"</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">registry</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> RegistryConfig</span><span style="color:#24292E">(</span><span style="color:#032F62">"zookeeper://127.0.0.1:2181"</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">protocol</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> ProtocolConfig</span><span style="color:#24292E">(CommonConstants.DUBBO, </span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">service</span><span style="color:#24292E">(service)</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">start</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">await</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"></span></code></pre>
+<p>上面这几行代码虽然看似简单,仅仅几行的启动,但是完全掌握也得下一翻大功夫,接下来我们重点看启动代码中的第一行,创建一个服务配置对象:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">ServiceConfig&#x3C;</span><span style="color:#D73A49">DemoServiceImpl</span><span style="color:#24292E">> service </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ServiceConfig&#x3C;>();</span></span></code></pre>
+<h2 id="了解一下服务配置的建模"><strong>了解一下服务配置的建模</strong></h2>
+<p>下面是一个简单的UML继承关系图,当然这个图很是简单的,这里仅仅列出了当前服务提供者的相关服务配置继承关系, 服务提供者独有的配置标注颜色为蓝色,一些可能与服务引用配置所共有的父类型我们用红色背景,当然这里为了简便起见不会提起服务引用相关的配置类型,这里列举了如下服务提供者类型,他们各司其职:
+<img src="/img/chapter_dubbo/2-config-uml.png" alt="2-config-uml.png"></p>
+<center>图2.1 服务引用类继承关系UML</center>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AbstractConfig</td>
+<td><strong>抽象的配置类型</strong> ,也是最顶层的服务配置类型,封装着解析配置的实用方法和公共方法,比如服务id的设置,服务标签名字的处理,服务参数的添加,属性的提取等等</td>
+</tr>
+<tr>
+<td>AbstractMethodConfig</td>
+<td><strong>抽象的方法配置</strong> ,同样这个类型也是见名知意,服务方法的相关配置处理,这个类型主要用于对服务方法的一些配置信息建模比如服务方法的调用超时时间,重试次数,最大并发调用数,负载均衡策略,是否异步调用,是否确认异步发送等等配置信息.</td>
+</tr>
+<tr>
+<td>AbstractInterfaceConfig</td>
+<td><strong>抽象的接口配置</strong> ,与前面介绍的方法配置类似,这个类型是对服务接口的建模,主要的配置信息有暴漏服务的接口名字,服务接口的版本号,客户/提供方将引用的远程服务分组,<strong>服务元数据</strong> ,服务接口的本地impl类名,服务监控配置,对于生成动态代理的策略，可以选择两种策略：jdk和javassist,容错类型等等配置</td>
+</tr>
+<tr>
+<td>AbstractServiceConfig</td>
+<td><strong>抽象的服务配置</strong> ,这个就与我们的服务提供者有了具体的关系了,主要记录了一些服务提供者的公共配置,如服务版本,服务分组,服务延迟注册毫秒数,是否暴漏服务,服务权重,是否为动态服务,服务协议类型,是否注册等等.</td>
+</tr>
+<tr>
+<td>ServiceConfigBase</td>
+<td><strong>服务的基础配置类</strong> ,这个类型仍旧是个抽象的类型提取了一些基础的配置:导出服务的接口类,服务名称,接口实现的引用类型,提供者配置,是否是通用服务GenericService</td>
+</tr>
+<tr>
+<td>ServiceConfig</td>
+<td><strong>服务配置实现类</strong> , 上面的类型都是抽象类型不能做为具体存在的事物,这个类型是我们出现的第一个服务配置实现类型,服务配置实现类已经从父类型中继承了这么多的属性,这里主要为实现服务提供了一些配置如服务的协议配置,服务的代理工厂JavassistProxyFactory是将生成导出服务代理的ProxyFactory实现，是其默认实现,服务提供者模型,是否导出服务,导出的服务列表,服务监听器等等.</td>
+</tr>
+<tr>
+<td>ServiceBean</td>
+<td><strong>服务工厂Bean</strong>	,这个主要是Spring模块来简化配置的一个服务工厂Bean这里就先不详细介绍Spring相关的配置.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="serviceconfig构造器的初始化调用链"><strong>ServiceConfig构造器的初始化调用链</strong></h2>
+<p>有了上面的类型继承关系我们就比较好分析了,接下来我们开始创建服务配置对象如下代码所示:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">ServiceConfig&#x3C;</span><span style="color:#D73A49">DemoServiceImpl</span><span style="color:#24292E">> service </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ServiceConfig&#x3C;>();</span></span></code></pre>
+<p>根据Java基础的构造器知识,在每个构造器的第一行都会有个super方法来调用父类的构造器,当前这个super方法我们可以不写但是Java编译器底层还是会为我们默认加上这么一行super()代码来调用父类构造器的.</p>
+<p>对于上面我提到的这几个构造器 <strong>根据代码被调用的先后顺序</strong> ,这里重点说几个重要的,这里我仍旧按代码执行的先后顺序来说:</p>
+<h3 id="父类型abstractmethodconfig构造器的初始化"><strong>父类型AbstractMethodConfig构造器的初始化</strong></h3>
+<p>根据super调用链这里先来看AbstractMethodConfig抽象方法配置</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">   public</span><span style="color:#6F42C1"> AbstractMethodConfig</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">(ApplicationModel.</span><span style="color:#6F42C1">defaultModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getDefaultModule</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>在这个构造器中只有个super方法用来调用父类型的构造器,但是在调用之前会先使用代码 <strong>ApplicationModel.defaultModel().getDefaultModule()</strong> 创建一个模块模型对象<strong>ModuleModel</strong>
+关于模型对象的细节我们会在下个章节来说,这里我们继续来看调用链</p>
+<h3 id="232-最顶层类型abstractconfig构造器的初始化">2.3.2 最顶层类型AbstractConfig构造器的初始化</h3>
+<p><strong>AbstractConfig</strong> 的构造器初始化一共有两个,第一个步骤就是创建一个应用程序模型对象 <strong>ApplicationModel</strong> ,刚刚我们在 <strong>AbstractMethodConfig</strong> 的构造器中了解到使用这个代码
+<strong>ApplicationModel.defaultModel().getDefaultModule()</strong> 创建了个模块模型对象 <strong>ModuleModel</strong> ,具体他们细节我们下一章细说,
+了解了子类型 <strong>AbstractMethodConfig</strong> 的构造器是带参数的那我们就直接看第二个构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#6F42C1"> AbstractConfig</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">(ApplicationModel.</span><span style="color:#6F42C1">defaultModel</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>将会调用第二个构造器初始化域模型</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> public</span><span style="color:#6F42C1"> AbstractConfig</span><span style="color:#24292E">(ScopeModel scopeModel) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">setScopeModel</span><span style="color:#24292E">(scopeModel);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>当前类型设置ScopeModel类型对象</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">   public</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> setScopeModel</span><span style="color:#24292E">(ScopeModel scopeModel) {</span></span>
+<span class="line"><span style="color:#6A737D">   		//第一次初始化的当前成员变量是空的可以设置变量</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.scopeModel </span><span style="color:#D73A49">!=</span><span style="color:#24292E"> scopeModel) {</span></span>
+<span class="line"><span style="color:#6A737D">        	//检查参数是否合法</span></span>
+<span class="line"><span style="color:#6F42C1">            checkScopeModel</span><span style="color:#24292E">(scopeModel);</span></span>
+<span class="line"><span style="color:#6A737D">            //初始化对象</span></span>
+<span class="line"><span style="color:#24292E">            ScopeModel oldScopeModel </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.scopeModel;</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.scopeModel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> scopeModel;</span></span>
+<span class="line"><span style="color:#6A737D">            // reinitialize spi extension and change referenced config's scope model	</span></span>
+<span class="line"><span style="color:#6A737D">            //被子类重写的方法,根据多态会调用具体子类型的这个方法我们下面来看</span></span>
+<span class="line"><span style="color:#6A737D">            //子类应该重写此方法以初始化其SPI扩展并更改引用的配置的范围模型。</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">postProcessAfterScopeModelChanged</span><span style="color:#24292E">(oldScopeModel, </span><span style="color:#005CC5">this</span><span style="color:#24292E">.scopeModel);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>检查ScopeModel参数是否合法,合法的参数是不能为空并且必须是ApplicationModel类型或者子类型</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">   protected</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> checkScopeModel</span><span style="color:#24292E">(ScopeModel scopeModel) {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (scopeModel </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"scopeModel cannot be null"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">(scopeModel </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> ApplicationModel)) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Invalid scope model, expect to be a ApplicationModel but got: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> scopeModel);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h4 id="重写的postprocessafterscopemodelchanged调用逻辑"><strong>重写的postProcessAfterScopeModelChanged调用逻辑</strong></h4>
+<p>当ScopeModel模型对象发生了改变,上面调用了postProcessAfterScopeModelChanged方法来通知模型对象改变的时候要执行的操作,
+根据多态重写的逻辑我们从实现类的postProcessAfterScopeModelChanged来看,在下面的调用链路中部分父类型并未实现postProcessAfterScopeModelChanged方法我们就直接忽略了</p>
+<p>第一个被调用到的是 <strong>ServiceConfig</strong> 类型的postProcessAfterScopeModelChanged方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">  @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    protected</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> postProcessAfterScopeModelChanged</span><span style="color:#24292E">(ScopeModel oldScopeModel, ScopeModel newScopeModel) {</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">.</span><span style="color:#6F42C1">postProcessAfterScopeModelChanged</span><span style="color:#24292E">(oldScopeModel, newScopeModel);</span></span>
+<span class="line"><span style="color:#6A737D">        //初始化当前协议对象,通过扩展机制获取协议Protocol类型的对象</span></span>
+<span class="line"><span style="color:#24292E">        protocolSPI </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(Protocol.class).</span><span style="color:#6F42C1">getAdaptiveExtension</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //初始化当前代理工厂对象,通过扩展机制获取ProxyFactory类型的对象</span></span>
+<span class="line"><span style="color:#24292E">        proxyFactory </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ProxyFactory.class).</span><span style="color:#6F42C1">getAdaptiveExtension</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>第二个被调用到的方法为 <strong>ServiceConfigBase</strong> 的postProcessAfterScopeModelChanged方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    protected</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> postProcessAfterScopeModelChanged</span><span style="color:#24292E">(ScopeModel oldScopeModel, ScopeModel newScopeModel) {</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">.</span><span style="color:#6F42C1">postProcessAfterScopeModelChanged</span><span style="color:#24292E">(oldScopeModel, newScopeModel);</span></span>
+<span class="line"><span style="color:#6A737D">        //当服务提供者配置对象不为空时候为服务提供者对象设置域模型,这里服务提供者对象仍旧为空,这个一般用在兼容Dubbo低版本</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.provider </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.provider.</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">() </span><span style="color:#D73A49">!=</span><span style="color:#24292E"> scopeModel) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.provider.</span><span style="color:#6F42C1">setScopeModel</span><span style="color:#24292E">(scopeModel);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>第三个被调用到的是 <strong>AbstractInterfaceConfig</strong> 类型的postProcessAfterScopeModelChanged方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    protected</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> postProcessAfterScopeModelChanged</span><span style="color:#24292E">(ScopeModel oldScopeModel, ScopeModel newScopeModel) {</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">.</span><span style="color:#6F42C1">postProcessAfterScopeModelChanged</span><span style="color:#24292E">(oldScopeModel, newScopeModel);</span></span>
+<span class="line"><span style="color:#6A737D">        // remove this config from old ConfigManager</span></span>
+<span class="line"><span style="color:#6A737D">//        if (oldScopeModel != null &#x26;&#x26; oldScopeModel instanceof ModuleModel) {</span></span>
+<span class="line"><span style="color:#6A737D">//            ((ModuleModel)oldScopeModel).getConfigManager().removeConfig(this);</span></span>
+<span class="line"><span style="color:#6A737D">//        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // change referenced config's scope model</span></span>
+<span class="line"><span style="color:#6A737D">        //获取应用程序模型对象</span></span>
+<span class="line"><span style="color:#24292E">        ApplicationModel applicationModel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ScopeModelUtil.</span><span style="color:#6F42C1">getApplicationModel</span><span style="color:#24292E">(scopeModel);</span></span>
+<span class="line"><span style="color:#6A737D">        //为配置中心对象设置ApplicationModel类型对象(当前阶段配置中心配置对象为空)</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.configCenter </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.configCenter.</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">() </span><span style="color:#D73A49">!=</span><span style="color:#24292E"> applicationModel) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.configCenter.</span><span style="color:#6F42C1">setScopeModel</span><span style="color:#24292E">(applicationModel);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">       //为元数据配置对象设置ApplicationModel类型对象(当前阶段数据配置配置对象为空)</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.metadataReportConfig </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.metadataReportConfig.</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">() </span><span style="color:#D73A49">!=</span><span style="color:#24292E"> applicationModel) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.metadataReportConfig.</span><span style="color:#6F42C1">setScopeModel</span><span style="color:#24292E">(applicationModel);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //为MonitorConfig服务监控配置对象设置ApplicationModel类型对象(当前阶段数据配置配置对象为空)</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.monitor </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.monitor.</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">() </span><span style="color:#D73A49">!=</span><span style="color:#24292E"> applicationModel) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.monitor.</span><span style="color:#6F42C1">setScopeModel</span><span style="color:#24292E">(applicationModel);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //这个if判断和上面的上面是重复的估计是写代码人加班加的太久了,没注意看</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.metadataReportConfig </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.metadataReportConfig.</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">() </span><span style="color:#D73A49">!=</span><span style="color:#24292E"> applicationModel) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.metadataReportConfig.</span><span style="color:#6F42C1">setScopeModel</span><span style="color:#24292E">(applicationModel);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //如果注册中心配置列表不为空则为每个注册中心配置设置一个ApplicationModel类型对象(当前注册中心对象都为空)</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (CollectionUtils.</span><span style="color:#6F42C1">isNotEmpty</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">.registries)) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.registries.</span><span style="color:#6F42C1">forEach</span><span style="color:#24292E">(registryConfig </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (registryConfig.</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">() </span><span style="color:#D73A49">!=</span><span style="color:#24292E"> applicationModel) {</span></span>
+<span class="line"><span style="color:#24292E">                    registryConfig.</span><span style="color:#6F42C1">setScopeModel</span><span style="color:#24292E">(applicationModel);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            });</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>最后被调用到的是最顶层父类型 <strong>AbstractConfig</strong> 的postProcessAfterScopeModelChanged方法
+这个方法什么也没干只是在父类型创建的模版方法让子类型来重写用的</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">protected</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> postProcessAfterScopeModelChanged</span><span style="color:#24292E">(ScopeModel oldScopeModel, ScopeModel newScopeModel) {</span></span>
+<span class="line"><span style="color:#6A737D">        // remove this config from old ConfigManager</span></span>
+<span class="line"><span style="color:#6A737D">//        if (oldScopeModel != null &#x26;&#x26; oldScopeModel instanceof ApplicationModel) {</span></span>
+<span class="line"><span style="color:#6A737D">//           ((ApplicationModel)oldScopeModel).getApplicationConfigManager().removeConfig(this);</span></span>
+<span class="line"><span style="color:#6A737D">//        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="serviceconfigbase构造器的初始化"><strong>ServiceConfigBase构造器的初始化</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#6F42C1"> ServiceConfigBase</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">		//服务元数据对象创建</span></span>
+<span class="line"><span style="color:#24292E">        serviceMetadata </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ServiceMetadata</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //为服务元数据对象</span></span>
+<span class="line"><span style="color:#24292E">        serviceMetadata.</span><span style="color:#6F42C1">addAttribute</span><span style="color:#24292E">(</span><span style="color:#032F62">"ORIGIN_CONFIG"</span><span style="color:#24292E">, </span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p><strong>注意，</strong> <strong>ServiceMetadata</strong> 这个类目前在Dubbo中没有用法。与服务级别相关的数据，例如名称、版本、业务服务的类加载器、安全信息等，还带有用于扩展的AttributeMap。</p>
+<p><strong>服务配置对象的创建过程就这样结束了</strong> ,当然有一些细节会 <strong>放到后面来写</strong>
+上面主要顺序是按照代码执行的顺序来写的部分地方可能稍微做了调整,如果有条件的同学一定要 <strong>自己进行DEBUG</strong> 了解下细节.</p>
+<p>关于服务配置官网提供了xml的配置信息这里我拷贝过来,可以做为参考:
+当然这个配置不是最新的比如服务配置的 <strong>标签配置tag</strong> ,
+<strong>warmup 预热时间</strong> 单位毫秒,暂时还没有说明</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>对应URL参数</th>
+<th>类型</th>
+<th>是否必填</th>
+<th>缺省值</th>
+<th>作用</th>
+<th>描述</th>
+<th>兼容性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>interface</td>
+<td></td>
+<td>class</td>
+<td>必填</td>
+<td></td>
+<td>服务发现</td>
+<td>服务接口名</td>
+<td>1.0.0以上版本</td>
+</tr>
+<tr>
+<td>ref</td>
+<td></td>
+<td>object</td>
+<td>必填</td>
+<td></td>
+<td>服务发现</td>
+<td>服务对象实现引用</td>
+<td>1.0.0以上版本</td>
+</tr>
+<tr>
+<td>version</td>
+<td>version</td>
+<td>string</td>
+<td>可选</td>
+<td>0.0.0</td>
+<td>服务发现</td>
+<td>服务版本，建议使用两位数字版本，如：1.0，通常在接口不兼容时版本号才需要升级</td>
+<td>1.0.0以上版本</td>
+</tr>
+<tr>
+<td>group</td>
+<td>group</td>
+<td>string</td>
+<td>可选</td>
+<td></td>
+<td>服务发现</td>
+<td>服务分组，当一个接口有多个实现，可以用分组区分</td>
+<td>1.0.7以上版本</td>
+</tr>
+<tr>
+<td>path</td>
+<td><code>&#x3C;path></code></td>
+<td>string</td>
+<td>可选</td>
+<td>缺省为接口名</td>
+<td>服务发现</td>
+<td>服务路径 (注意：1.0不支持自定义路径，总是使用接口名，如果有1.0调2.0，配置服务路径可能不兼容)</td>
+<td>1.0.12以上版本</td>
+</tr>
+<tr>
+<td>delay</td>
+<td>delay</td>
+<td>int</td>
+<td>可选</td>
+<td>0</td>
+<td>性能调优</td>
+<td>延迟注册服务时间(毫秒) ，设为-1时，表示延迟到Spring容器初始化完成时暴露服务</td>
+<td>1.0.14以上版本</td>
+</tr>
+<tr>
+<td>timeout</td>
+<td>timeout</td>
+<td>int</td>
+<td>可选</td>
+<td>1000</td>
+<td>性能调优</td>
+<td>远程服务调用超时时间(毫秒)</td>
+<td>2.0.0以上版本</td>
+</tr>
+<tr>
+<td>retries</td>
+<td>retries</td>
+<td>int</td>
+<td>可选</td>
+<td>2</td>
+<td>性能调优</td>
+<td>远程服务调用重试次数，不包括第一次调用，不需要重试请设为0</td>
+<td>2.0.0以上版本</td>
+</tr>
+<tr>
+<td>connections</td>
+<td>connections</td>
+<td>int</td>
+<td>可选</td>
+<td>100</td>
+<td>性能调优</td>
+<td>对每个提供者的最大连接数，rmi、http、hessian等短连接协议表示限制连接数，dubbo等长连接协表示建立的长连接个数</td>
+<td>2.0.0以上版本</td>
+</tr>
+<tr>
+<td>loadbalance</td>
+<td>loadbalance</td>
+<td>string</td>
+<td>可选</td>
+<td>random</td>
+<td>性能调优</td>
+<td>负载均衡策略，可选值：random,roundrobin,leastactive，分别表示：随机，轮询，最少活跃调用</td>
+<td>2.0.0以上版本</td>
+</tr>
+<tr>
+<td>async</td>
+<td>async</td>
+<td>boolean</td>
+<td>可选</td>
+<td>false</td>
+<td>性能调优</td>
+<td>是否缺省异步执行，不可靠异步，只是忽略返回值，不阻塞执行线程</td>
+<td>2.0.0以上版本</td>
+</tr>
+<tr>
+<td>local</td>
+<td>local</td>
+<td>class/boolean</td>
+<td>可选</td>
+<td>false</td>
+<td>服务治理</td>
+<td>设为true，表示使用缺省代理类名，即：接口名 + Local后缀，已废弃，请使用stub</td>
+<td>2.0.0以上版本</td>
+</tr>
+<tr>
+<td>stub</td>
+<td>stub</td>
+<td>class/boolean</td>
+<td>可选</td>
+<td>false</td>
+<td>服务治理</td>
+<td>设为true，表示使用缺省代理类名，即：接口名 + Stub后缀，服务接口客户端本地代理类名，用于在客户端执行本地逻辑，如本地缓存等，该本地代理类的构造函数必须允许传入远程代理对象，构造函数如：public XxxServiceStub(XxxService xxxService)</td>
+<td>2.0.0以上版本</td>
+</tr>
+<tr>
+<td>mock</td>
+<td>mock</td>
+<td>class/boolean</td>
+<td>可选</td>
+<td>false</td>
+<td>服务治理</td>
+<td>设为true，表示使用缺省Mock类名，即：接口名 + Mock后缀，服务接口调用失败Mock实现类，该Mock类必须有一个无参构造函数，与Local的区别在于，Local总是被执行，而Mock只在出现非业务异常(比如超时，网络异常等)时执行，Local在远程调用之前执行，Mock在远程调用后执行。</td>
+<td>2.0.0以上版本</td>
+</tr>
+<tr>
+<td>token</td>
+<td>token</td>
+<td>string/boolean</td>
+<td>可选</td>
+<td>false</td>
+<td>服务治理</td>
+<td>令牌验证，为空表示不开启，如果为true，表示随机生成动态令牌，否则使用静态令牌，令牌的作用是防止消费者绕过注册中心直接访问，保证注册中心的授权功能有效，如果使用点对点调用，需关闭令牌功能</td>
+<td>2.0.0以上版本</td>
+</tr>
+<tr>
+<td>registry</td>
+<td></td>
+<td>string</td>
+<td>可选</td>
+<td>缺省向所有registry注册</td>
+<td>配置关联</td>
+<td>向指定注册中心注册，在多个注册中心时使用，值为<a href="dubbo:registry">dubbo:registry</a>的id属性，多个注册中心ID用逗号分隔，如果不想将该服务注册到任何registry，可将值设为N/A</td>
+<td>2.0.0以上版本</td>
+</tr>
+<tr>
+<td>provider</td>
+<td></td>
+<td>string</td>
+<td>可选</td>
+<td>缺省使用第一个provider配置</td>
+<td>配置关联</td>
+<td>指定provider，值为<a href="dubbo:provider">dubbo:provider</a>的id属性</td>
+<td>2.0.0以上版本</td>
+</tr>
+<tr>
+<td>deprecated</td>
+<td>deprecated</td>
+<td>boolean</td>
+<td>可选</td>
+<td>false</td>
+<td>服务治理</td>
+<td>服务是否过时，如果设为true，消费方引用时将打印服务过时警告error日志</td>
+<td>2.0.5以上版本</td>
+</tr>
+<tr>
+<td>dynamic</td>
+<td>dynamic</td>
+<td>boolean</td>
+<td>可选</td>
+<td>true</td>
+<td>服务治理</td>
+<td>服务是否动态注册，如果设为false，注册后将显示后disable状态，需人工启用，并且服务提供者停止时，也不会自动取消册，需人工禁用。	2.0.5以上版本</td>
+<td></td>
+</tr>
+<tr>
+<td>accesslog</td>
+<td>accesslog</td>
+<td>string/boolean</td>
+<td>可选</td>
+<td>false</td>
+<td>服务治理</td>
+<td>设为true，将向logger中输出访问日志，也可填写访问日志文件路径，直接把访问日志输出到指定文件</td>
+<td>2.0.5以上版本</td>
+</tr>
+<tr>
+<td>owner</td>
+<td>owner</td>
+<td>string</td>
+<td>可选</td>
+<td></td>
+<td>服务治理</td>
+<td>服务负责人，用于服务治理，请填写负责人公司邮箱前缀</td>
+<td>2.0.5以上版本</td>
+</tr>
+<tr>
+<td>document</td>
+<td>document</td>
+<td>string</td>
+<td>可选</td>
+<td></td>
+<td>服务治理</td>
+<td>服务文档URL</td>
+<td>2.0.5以上版本</td>
+</tr>
+<tr>
+<td>weight</td>
+<td>weight</td>
+<td>int</td>
+<td>可选</td>
+<td></td>
+<td>性能调优</td>
+<td>服务权重</td>
+<td>2.0.5以上版本</td>
+</tr>
+<tr>
+<td>executes</td>
+<td>executes</td>
+<td>int</td>
+<td>可选</td>
+<td>0</td>
+<td>性能调优</td>
+<td>服务提供者每服务每方法最大可并行执行请求数</td>
+<td>2.0.5以上版本</td>
+</tr>
+<tr>
+<td>proxy</td>
+<td>proxy</td>
+<td>string</td>
+<td>可选</td>
+<td>javassist</td>
+<td>性能调优</td>
+<td>生成动态代理方式，可选：jdk/javassist</td>
+<td>2.0.5以上版本</td>
+</tr>
+<tr>
+<td>cluster</td>
+<td>cluster</td>
+<td>string</td>
+<td>可选</td>
+<td>failover</td>
+<td>性能调优</td>
+<td>集群方式，可选：failover/failfast/failsafe/failback/forking</td>
+<td>2.0.5以上版本</td>
+</tr>
+<tr>
+<td>filter</td>
+<td>service.filter</td>
+<td>string</td>
+<td>可选</td>
+<td>default</td>
+<td>性能调优</td>
+<td>服务提供方远程调用过程拦截器名称，多个名称用逗号分隔</td>
+<td>2.0.5以上版本</td>
+</tr>
+<tr>
+<td>listener</td>
+<td>exporter.listener</td>
+<td>string</td>
+<td>可选</td>
+<td>default</td>
+<td>性能调优</td>
+<td>服务提供方导出服务监听器名称，多个名称用逗号分隔</td>
+<td></td>
+</tr>
+<tr>
+<td>protocol</td>
+<td></td>
+<td>string</td>
+<td>可选</td>
+<td></td>
+<td>配置关联</td>
+<td>使用指定的协议暴露服务，在多协议时使用，值为<a href="dubbo:protocol">dubbo:protocol</a>的id属性，多个协议ID用逗号分隔</td>
+<td>2.0.5以上版本</td>
+</tr>
+<tr>
+<td>layer</td>
+<td>layer</td>
+<td>string</td>
+<td>可选</td>
+<td></td>
+<td>服务治理</td>
+<td>服务提供者所在的分层。如：biz、dao、intl:web、china:acton。</td>
+<td>2.0.7以上版本</td>
+</tr>
+<tr>
+<td>register</td>
+<td>register</td>
+<td>boolean</td>
+<td>可选</td>
+<td>true</td>
+<td>服务治理</td>
+<td>该协议的服务是否注册到注册中心</td>
+<td>2.0.8以上版本</td>
+</tr>
+</tbody>
+</table>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

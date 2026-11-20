@@ -1,0 +1,194 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**使用Quartz为每个作业创建单机执行的调度器对象** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_elasticjob/7-quartz/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_elasticjob/7-quartz"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_elasticjob/7-quartz/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_elasticjob/7-quartz"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**使用Quartz为每个作业创建单机执行的调度器对象** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_elasticjob/7-quartz/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_elasticjob/7-quartz/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>elasticjob</h3> <ul> <li> <a href="/zh/chapter_elasticjob/1-introduce" class="lv0" title="**分布式弹性调度系统的简介**"> **分布式弹性调度系统的简介** </a> </li><li> <a href="/zh/chapter_elasticjob/2-reg" class="lv0" title="**注册中心的设计原理**"> **注册中心的设计原理** </a> </li><li> <a href="/zh/chapter_elasticjob/3-job-config" class="lv0" title="**Builder建造者设计模式构造复杂的作业配置**"> **Builder建造者设计模式构造复杂的作业配置** </a> </li><li> <a href="/zh/chapter_elasticjob/4-job-template" class="lv0" title="**调度作业模版类型设计**"> **调度作业模版类型设计** </a> </li><li> <a href="/zh/chapter_elasticjob/5-job-config-storage" class="lv0" title="**调度作业的配置是如何在分布式场景下存储的？**"> **调度作业的配置是如何在分布式场景下存储的？** </a> </li><li> <a href="/zh/chapter_elasticjob/6-job-registry" class="lv0" title="**线程安全的单例模式设计全局作业注册表JobRegistry**"> **线程安全的单例模式设计全局作业注册表JobRegistry** </a> </li><li> <a href="/zh/chapter_elasticjob/7-quartz" class="lv0" aria-current="page" title="**使用Quartz为每个作业创建单机执行的调度器对象**"> **使用Quartz为每个作业创建单机执行的调度器对象** </a> </li><li> <a href="/zh/chapter_elasticjob/8-job-life" class="lv0" title="调度作业启动时的生命周期"> 调度作业启动时的生命周期 </a> </li><li> <a href="/zh/chapter_elasticjob/9-listener" class="lv0" title="**调度作业的监听器大全**"> **调度作业的监听器大全** </a> </li><li> <a href="/zh/chapter_elasticjob/10-leader-latch" class="lv0" title="**基于Zookeeper的分布式锁实现 选举 作业主节点**"> **基于Zookeeper的分布式锁实现 选举 作业主节点** </a> </li><li> <a href="/zh/chapter_elasticjob/11-server-instance" class="lv0" title="**调度作业的服务器IP和进程信息的持久化是如何设计的?**"> **调度作业的服务器IP和进程信息的持久化是如何设计的?** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_elasticjob">elasticjob</a><span class="sep">/</span><span>**使用Quartz为每个作业创建单机执行的调度器对象**</span> </nav> <div class="prose">  <h1 id="使用quartz为每个作业创建单机执行的调度器对象"><strong>使用Quartz为每个作业创建单机执行的调度器对象</strong></h1>
+<h2 id="jobschedulecontroller简介"><strong>JobScheduleController简介</strong></h2>
+<p>作业调度控制器类型为JobScheduleController，这个类型的主要功能是承接调度系统针对 <strong>Quartz框架Scheduler对象的管理</strong> 。</p>
+<p>Quartz的Scheduler对象主要作用是来控制一个作业的 <strong>绑定，触发，暂停，关闭</strong> 等操作，JobScheduleController主要实现的操作如下UML图所示：</p>
+<p><img src="/img/chapter_elasticjob/7-1-jobschedulecontroller.png" alt="图片"></p>
+<p>图6.1 作业调度控制器UML</p>
+<p>通过UML图我们可以看到这个类里面主要的方法都是与作业有关系的比如 <strong>调度作业，暂停作业，启动作业，触发作业，关闭作业</strong> 等等。</p>
+<p>这个类包含了三个成员变量，scheduler，jobDetail和triggerIdentity。这三个成员变量都是与触发作业紧密相关的，</p>
+<ul>
+<li><strong>scheduler对象：</strong> 是与Quartz调度程序进行交互的主要API，可用来绑定定时任务作业对象与触发器对象</li>
+<li><strong>JobDetail：</strong> 用于定义Job的实例信息</li>
+<li><strong>triggerIdentity：</strong> 用来标示作业触发器，后续可以使用此标示来获取触发器对象来进行作业的触发，暂停，重新调度，Trigger触发器-定义将在其上执行给定作业的时间表的组件，触发器类型有多种，在本系统中使用CRON类型的触发器，方便对CRON表达式的支持来进行作业执行时间的灵活配置。</li>
+</ul>
+<p>通过下表来了解下三个属性的具体作用：</p>
+<table>
+<thead>
+<tr>
+<th>属性名</th>
+<th>属性类型</th>
+<th>属性描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>scheduler</td>
+<td>Scheduler</td>
+<td>调度器，这个是来源org.quartz包下面的类型， Quartz Scheduler的主接口为调度器负责整个定时系统的调度内部提供了调度，启动，暂停，关闭恢复作业等方法，是我们使用Quartz操作作业的主接口。</td>
+</tr>
+<tr>
+<td>jobDetail</td>
+<td>JobDetail</td>
+<td>作业详情接口，也就是作业的元数据接口，主要存储作业的标示，作业描述，作业执行类，作业自定义参数等方法。后期调度器可以通过作业元数据获取到作业信息进行执行作业。</td>
+</tr>
+<tr>
+<td>triggerIdentity</td>
+<td>String</td>
+<td>作业触发器的唯一标示，后期可以使用这个标示来获取触发器对象进行判断作业执行状态，重新调度作业，本系统中使用作业名字来做为触发器的唯一标示。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="jobschedulecontroller对象的创建"><strong>JobScheduleController对象的创建</strong></h2>
+<p>了解了JobScheduleController作业调度控制器的作用后我们来看下作业调度控制器的创建过程：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>//创建作业调度控制器</span></span>
+<span class="line"><span>JobScheduleController jobScheduleController = new JobScheduleController(</span></span>
+<span class="line"><span>        //对应scheduler对象</span></span>
+<span class="line"><span>        createScheduler(),</span></span>
+<span class="line"><span>        //对应jobDetail对象 </span></span>
+<span class="line"><span>        createJobDetail(liteJobConfigFromRegCenter.getTypeConfig().getJobClass()),</span></span>
+<span class="line"><span>        //对应作业触发器标示对象</span></span>
+<span class="line"><span>        liteJobConfigFromRegCenter.getJobName());</span></span></code></pre>
+<p>作业调度控制器的创建比较简单，主要是初始化前面我们介绍过的三个成员变量，</p>
+<ul>
+<li><strong>Scheduler对象：</strong> 创建是通过 createScheduler()方法</li>
+<li><strong>JobDetail对象：</strong>  创建则是通过createJobDetail方法</li>
+<li><strong>对应作业触发器的标示：</strong> 则使用作业名字来进行标示</li>
+</ul>
+<p>那我们比较重要的Scheduler对象和JobDetail对象如何创建呢，可以详细来看下。</p>
+<h2 id="scheduler-调度对象的创建"><strong>Scheduler 调度对象的创建</strong></h2>
+<p>看具体信息之前可以先来看下源码：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>private Scheduler createScheduler() {</span></span>
+<span class="line"><span>    Scheduler result;</span></span>
+<span class="line"><span>    try {</span></span>
+<span class="line"><span>        StdSchedulerFactory factory = new StdSchedulerFactory();</span></span>
+<span class="line"><span>        factory.initialize(getBaseQuartzProperties());</span></span>
+<span class="line"><span>        //工厂创建调度器 这里调度器对象类型为StdScheduler</span></span>
+<span class="line"><span>        result = factory.getScheduler();</span></span>
+<span class="line"><span>        //添加触发监听器</span></span>
+<span class="line"><span>        result.getListenerManager().addTriggerListener(schedulerFacade.newJobTriggerListener());</span></span>
+<span class="line"><span>    } catch (final SchedulerException ex) {</span></span>
+<span class="line"><span>        throw new JobSystemException(ex);</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>    return result;</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span>//调度器工厂的基本属性初始化</span></span>
+<span class="line"><span>private Properties getBaseQuartzProperties() {</span></span>
+<span class="line"><span>    Properties result = new Properties();</span></span>
+<span class="line"><span>    result.put("org.quartz.threadPool.class", org.quartz.simpl.SimpleThreadPool.class.getName());</span></span>
+<span class="line"><span>    result.put("org.quartz.threadPool.threadCount", "1");</span></span>
+<span class="line"><span>    result.put("org.quartz.scheduler.instanceName", liteJobConfig.getJobName());</span></span>
+<span class="line"><span>    result.put("org.quartz.jobStore.misfireThreshold", "1");</span></span>
+<span class="line"><span>    result.put("org.quartz.plugin.shutdownhook.class", JobShutdownHookPlugin.class.getName());</span></span>
+<span class="line"><span>    result.put("org.quartz.plugin.shutdownhook.cleanShutdown", Boolean.TRUE.toString());</span></span>
+<span class="line"><span>    return result;</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>Scheduler调度器的创建比较简单，这里主要经过了如下过程：</p>
+<ol>
+<li>先创建标准调度器工厂</li>
+<li>然后初始化调度程序的基本属性</li>
+<li>最后调用工厂方法获取调度器对象</li>
+<li>创建完Scheduler调度器对象后进行触发监听器的注册</li>
+</ol>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">graph TB</span></span>
+<span class="line"><span style="color:#24292E">    A["创建调度器工厂"] --> B["初始化基本属性"]</span></span>
+<span class="line"><span style="color:#24292E">    B --> C["获取调度器对象"]</span></span>
+<span class="line"><span style="color:#24292E">    C --> D["添加触发监听器"]</span></span></code></pre>
+<p>调度器工厂在加载基本属性配置的时候使用Properties类型来进行基本配置的参数传递，这里初始化的参数我们可以来了解下：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>org.quartz.threadPool.class</td>
+<td>要使用的 <strong>ThreadPool实现类型的名称</strong> 。Quartz附带的线程池是“ org.quartz.simpl.SimpleThreadPool”，并且应该满足几乎每个用户的需求。它的行为非常简单，并且经过了很好的测试。它提供了一个固定大小的线程池，这些线程池在“调度程序”的生存期内“有效”.</td>
+</tr>
+<tr>
+<td>org.quartz.threadPool.threadCount</td>
+<td>可以是任何正整数，1到100之间的数字是非常实用的。这是可用于 <strong>并发执行作业的线程数</strong> 。如果每天只能执行少量工作，那么一个线程就足够了！如果有成千上万的工作，每分钟触发许多工作，那么可能希望线程数更像50或100（这在很大程度上取决于您工作执行的工作性质以及系统资源！）。本系统设置线程数量为1则在执行调度的时候如果上次的作业未结束下次调度是无法执行的。</td>
+</tr>
+<tr>
+<td>org.quartz.scheduler.instanceName</td>
+<td>可以是任何字符串，并且该值对调度程序本身没有意义,而是当同一程序中使用多个实例时，它用作客户端代码 <strong>区分调度程序的机制</strong> 。如果使用的是集群功能，则必须为集群中的每个实例使用“在逻辑上”相同的Scheduler的相同名称。</td>
+</tr>
+<tr>
+<td>org.quartz.jobStore.misfireThreshold</td>
+<td>调度程序在被认为是“误触发”之前，将 <strong>“容忍”触发器经过下一次触发时间的毫秒数</strong> 。默认值（如果未在配置中输入此属性）为60000（60秒）。misfire产生需要有2个前置条件，一个是job到达触发时间时没有被执行，二是被执行的延迟时间超过了Quartz配置的misfireThreshold阀值。如果延迟执行的时间小于阀值，则Quartz不认为发生了misfire，立即执行job；如果延迟执行的时间大于或者等于阀值，则被判断为misfire，然后会按照指定的策略来执行。本程序设置的为1毫秒如果当前作业因为上次错过了执行时间触发,则会触发错过执行监听器，然后在Zookeeper写入错过执行的标示来执行作业，具体的实现可以在后面章节详细来看。</td>
+</tr>
+<tr>
+<td>org.quartz.plugin.shutdownhook.class</td>
+<td>此插件 <strong>捕获JVM终止的事件</strong> （例如在CRTL-C上）并告诉调度程序关闭</td>
+</tr>
+<tr>
+<td>org.quartz.plugin.shutdownhook.cleanShutdown</td>
+<td>如果设置为true，则<strong>等待当前正在运行的作业完成</strong> 。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="jobdetail-作业信息对象的创建">JobDetail 作业信息对象的创建</h2>
+<p>JobDetail作业详情接口，也就是作业的元数据接口，记录着作业的基本信息我们看下他是如何创建的初始化了哪些属性。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>private JobDetail createJobDetail(final String jobClass) {</span></span>
+<span class="line"><span>    JobDetail result = JobBuilder.newJob(LiteJob.class).withIdentity(liteJobConfig.getJobName()).build();</span></span>
+<span class="line"><span>    result.getJobDataMap().put(JOB_FACADE_DATA_MAP_KEY, jobFacade);</span></span>
+<span class="line"><span>    Optional&#x3C;ElasticJob> elasticJobInstance = createElasticJobInstance();</span></span>
+<span class="line"><span>    if (elasticJobInstance.isPresent()) {</span></span>
+<span class="line"><span>        result.getJobDataMap().put(ELASTIC_JOB_DATA_MAP_KEY, elasticJobInstance.get());</span></span>
+<span class="line"><span>    } else if (!jobClass.equals(ScriptJob.class.getCanonicalName())) {</span></span>
+<span class="line"><span>        try {</span></span>
+<span class="line"><span>            result.getJobDataMap().put(ELASTIC_JOB_DATA_MAP_KEY, Class.forName(jobClass).newInstance());</span></span>
+<span class="line"><span>        } catch (final ReflectiveOperationException ex) {</span></span>
+<span class="line"><span>            throw new JobConfigurationException("Elastic-Job: Job class '%s' can not initialize.", jobClass);</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>    return result;</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>本方法为创建Quartz调度需要的作业元数据对象JobDetail，主要经历如下过程：</p>
+<ul>
+<li>使用作业建造器JobBuilder来构建作业元数据对象JobDetail，其中作业类型为LiteJob类型 ，作业标识为作业名字</li>
+<li>通过元数据对象的JobDataMap类型来传递参数给作业</li>
+<li>向LiteJob作业对象传递jobFacade 对象</li>
+<li>向LiteJob作业传递定制化ElasticJob弹性作业对象</li>
+</ul>
+<p>下面我们先介绍下新遇到的几个类型</p>
+<ul>
+<li>
+<p><strong>LiteJob类型：</strong> 实现了Quartz的Job接口，在Quartz触发调度的时候将调用LiteJob类型重写的execute方法，LiteJob再来调用我们定制化的ElasticJob类型的弹性作业执行方法。</p>
+</li>
+<li>
+<p><strong>JobFacade门面：</strong> 见名知意为作业门面类型，主要对外提供一些作业相关的操作比如,在触发作业的时候可以使用作业门面来执行一些常规作业操作。JobFacade类型实现方法如下：</p>
+<p><img src="/img/chapter_elasticjob/7-2-jobfacade.png" alt="图片"></p>
+</li>
+</ul>
+<p><strong>ElasticJob类型</strong> 在前面我们已经了解过,这是调度作业的顶层类型, 系统中主要提供了 <strong>三种作业类型</strong> ：</p>
+<ul>
+<li>简单作业</li>
+<li>流式作业</li>
+<li>脚本作业</li>
+</ul>
+<p>在这里可以看到代码有判断是不是脚本类型, 如果不是脚本类型则会在运行时创建作业对象,那脚本类型没有脚本对象实例如何执行作业呢，到后面我们会将会说到作业执行器，
+由于脚本执行方法比较通用，脚本作业会在执行器中直接执行脚本，无需我们来实现执行脚本作业的方法，而其他作业类型的话执行器一般会调用我们 <strong>定制化ElasticJob类型作业的execute执行方法</strong> 。</p>
+<p><strong>Elastic-Job使用Quartz来实现单机环境下单个作业的执行</strong> ，每个作业在同一个进程下均有有一个独立的Scheduler调度器对象来进行作业的触发，在后面初始化作业完毕的时候调度器Scheduler对象会将作业详情和带有CRON表达式的Quartz触发器绑定起来让调度作业生效。</p>
+<p>在这里我们仔细观察可以得知的是在系统初始化每个作业的时候都会为当前作业创建独立的Quartz调度器对象来执行各自的作业，互不影响，进行作业线程隔离，并且 <strong>执行当前作业的线程只有一个</strong> 。</p>
+<p>面对 <strong>耗时较长的作业</strong> 也只能 <strong>单线程</strong> 来执行作业，容易出现 <strong>错过作业执行</strong> 的场景。</p>
+<p>在这里 <strong>与Quartz交互的调度控制器就创建完成了</strong> ，想要了解Quartz怎么去执行作业的可以深入研究一下源码。</p>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

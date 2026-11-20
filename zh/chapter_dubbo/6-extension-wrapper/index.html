@@ -1,0 +1,310 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_dubbo/6-extension-wrapper/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_dubbo/6-extension-wrapper"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_dubbo/6-extension-wrapper/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_dubbo/6-extension-wrapper"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_dubbo/6-extension-wrapper/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_dubbo/6-extension-wrapper/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>dubbo</h3> <ul> <li> <a href="/zh/chapter_dubbo/1-learn-from-a-demo" class="lv0" title="**从一个服务提供者的Demo说起**"> **从一个服务提供者的Demo说起** </a> </li><li> <a href="/zh/chapter_dubbo/2-serviceconfig-config" class="lv0" title="**启动服务前服务配置ServiceConfig类型是如何初始化的?**"> **启动服务前服务配置ServiceConfig类型是如何初始化的?** </a> </li><li> <a href="/zh/chapter_dubbo/3-model-init" class="lv0" title="**框架,应用程序,模块领域模型Model对象的初始化**"> **框架,应用程序,模块领域模型Model对象的初始化** </a> </li><li> <a href="/zh/chapter_dubbo/4-extension-init" class="lv0" title="**Dubbo的扩展机制**"> **Dubbo的扩展机制** </a> </li><li> <a href="/zh/chapter_dubbo/5-getadaptiveextension" class="lv0" title="5-getadaptiveextension"> 5-getadaptiveextension </a> </li><li> <a href="/zh/chapter_dubbo/6-extension-wrapper" class="lv0" aria-current="page" title="**Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析**"> **Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/7-extension-activate" class="lv0" title="**Dubbo的SPI扩展机制之自动激活扩展Activate源码解析**"> **Dubbo的SPI扩展机制之自动激活扩展Activate源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/8-dubbobootstrap" class="lv0" title="**Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化**"> **Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化** </a> </li><li> <a href="/zh/chapter_dubbo/9-application-config" class="lv0" title="**Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig**"> **Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig** </a> </li><li> <a href="/zh/chapter_dubbo/10-registryconfig" class="lv0" title="**Dubbo启动器DubboBootstrap添加注册中心配置信息RegistryConfig**"> **Dubbo启动器DubboBootstrap添加注册中心配置信息RegistryConfig** </a> </li><li> <a href="/zh/chapter_dubbo/11-protocolconfig" class="lv0" title="**Dubbo启动器DubboBootstrap添加协议配置信息ProtocolConfig**"> **Dubbo启动器DubboBootstrap添加协议配置信息ProtocolConfig** </a> </li><li> <a href="/zh/chapter_dubbo/12-start-life-cycle" class="lv0" title="**全局视野来看Dubbo3的服务启动生命周期**"> **全局视野来看Dubbo3的服务启动生命周期** </a> </li><li> <a href="/zh/chapter_dubbo/13-configcenter" class="lv0" title="**Dubbo的三大中心之配置中心**"> **Dubbo的三大中心之配置中心** </a> </li><li> <a href="/zh/chapter_dubbo/14-config-load" class="lv0" title="**Dubbo配置加载全解析**"> **Dubbo配置加载全解析** </a> </li><li> <a href="/zh/chapter_dubbo/15-metadata" class="lv0" title="**Dubbo的三大中心之元数据中心源码解析**"> **Dubbo的三大中心之元数据中心源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/16-moduledeployer" class="lv0" title="**模块发布器发布服务全过程**"> **模块发布器发布服务全过程** </a> </li><li> <a href="/zh/chapter_dubbo/17-provider-register" class="lv0" title="**Dubbo服务提供者的双注册原理**"> **Dubbo服务提供者的双注册原理** </a> </li><li> <a href="/zh/chapter_dubbo/18-metadataService-export" class="lv0" title="**Dubbo3元数据服务MetadataService的导出**"> **Dubbo3元数据服务MetadataService的导出** </a> </li><li> <a href="/zh/chapter_dubbo/19-consuemr-demo" class="lv0" title="**重新来过从一个服务消费者的Demo说起**"> **重新来过从一个服务消费者的Demo说起** </a> </li><li> <a href="/zh/chapter_dubbo/20-reference-config" class="lv0" title="**Dubbo3服务引用配置ReferenceConfig**"> **Dubbo3服务引用配置ReferenceConfig** </a> </li><li> <a href="/zh/chapter_dubbo/21-refer-services" class="lv0" title="**Dubbo3消费者引用服务入口**"> **Dubbo3消费者引用服务入口** </a> </li><li> <a href="/zh/chapter_dubbo/22-migration-invoker" class="lv0" title="**Dubbo3消费者自动感应决策应用级服务发现原理**"> **Dubbo3消费者自动感应决策应用级服务发现原理** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_dubbo">dubbo</a><span class="sep">/</span><span>**Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析**</span> </nav> <div class="prose">  <h1 id="dubbo的spi扩展机制之普通扩展对象的创建与wrapper机制的源码解析"><strong>Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析</strong></h1>
+<h2 id="普通扩展对象的加载与创建"><strong>普通扩展对象的加载与创建</strong></h2>
+<p>这里我们要分析的是ExtensionLoader类型的getExtension(String name)方法, 有了前面自适应扩展的铺垫,这里就更容易来看了getExtension是根据扩展名字获取具体扩展的通用方法,我们来根据某个类型来获取扩展的时候就是走的这里,比如在这个博客开头的介绍:</p>
+<ul>
+<li>ApplicationModel中获取配置管理器对象</li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> configManager </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (ConfigManager) </span><span style="color:#005CC5">this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(ApplicationExt.class)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">getExtension</span><span style="color:#24292E">(ConfigManager.NAME);</span></span>
+<span class="line"><span style="color:#24292E">       </span></span></code></pre>
+<h3 id="getextension方法源码"><strong>getExtension方法源码</strong></h3>
+<p>先来看下getExtension方法的源码,根据扩展名字查询扩展对象</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#24292E"> T </span><span style="color:#6F42C1">getExtension</span><span style="color:#24292E">(String name) {</span></span>
+<span class="line"><span style="color:#6A737D">		//这里并不能看到什么,只多传了个参数wrap为true调用另外一个重载的方法</span></span>
+<span class="line"><span style="color:#24292E">        T extension </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getExtension</span><span style="color:#24292E">(name, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (extension </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Not find extension: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> name);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> extension;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#24292E"> T </span><span style="color:#6F42C1">getExtension</span><span style="color:#24292E">(String name, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> wrap) {</span></span>
+<span class="line"><span style="color:#6A737D">		//检查扩展加载器是否已被销毁</span></span>
+<span class="line"><span style="color:#6F42C1">        checkDestroyed</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (StringUtils.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">(name)) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Extension name == null"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //扩展名字为true则加载默认扩展</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#032F62">"true"</span><span style="color:#24292E">.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(name)) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#6F42C1"> getDefaultExtension</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //非wrap类型则将缓存的扩展名字key加上_origin后缀</span></span>
+<span class="line"><span style="color:#6A737D">        //wrap是aop机制 俗称切面,这个origin在aop里面可以称为切点,下面的wrap扩展可以称为增强通知的类型,普通扩展和wrap扩展的扩展名字是一样的</span></span>
+<span class="line"><span style="color:#24292E">        String cacheKey </span><span style="color:#D73A49">=</span><span style="color:#24292E"> name;</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">wrap) {</span></span>
+<span class="line"><span style="color:#24292E">            cacheKey </span><span style="color:#D73A49">+=</span><span style="color:#032F62"> "_origin"</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //从cachedInstances缓存中查询</span></span>
+<span class="line"><span style="color:#D73A49">        final</span><span style="color:#24292E"> Holder&#x3C;</span><span style="color:#D73A49">Object</span><span style="color:#24292E">> holder </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getOrCreateHolder</span><span style="color:#24292E">(cacheKey);</span></span>
+<span class="line"><span style="color:#24292E">        Object instance </span><span style="color:#D73A49">=</span><span style="color:#24292E"> holder.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //缓存中不存在则创建扩展对象 双重校验锁</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (instance </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            synchronized</span><span style="color:#24292E"> (holder) {</span></span>
+<span class="line"><span style="color:#6A737D">            	//双重校验锁的方式</span></span>
+<span class="line"><span style="color:#24292E">                instance </span><span style="color:#D73A49">=</span><span style="color:#24292E"> holder.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (instance </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">                	//创建扩展对象</span></span>
+<span class="line"><span style="color:#24292E">                    instance </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createExtension</span><span style="color:#24292E">(name, wrap);</span></span>
+<span class="line"><span style="color:#24292E">                    holder.</span><span style="color:#6F42C1">set</span><span style="color:#24292E">(instance);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> (T) instance;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>我们先来看一下默认扩展的加载代码:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#24292E"> T </span><span style="color:#6F42C1">getDefaultExtension</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">		//加载扩展类型对应的所有扩展SPI实现类型,在加载所有扩展实现类型的时候会缓存这个扩展的默认实现类型,将对象缓存在cachedDefaultName中</span></span>
+<span class="line"><span style="color:#6F42C1">        getExtensionClasses</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (StringUtils.</span><span style="color:#6F42C1">isBlank</span><span style="color:#24292E">(cachedDefaultName) </span><span style="color:#D73A49">||</span><span style="color:#032F62"> "true"</span><span style="color:#24292E">.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(cachedDefaultName)) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //再回到加载扩展的方法</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#6F42C1"> getExtension</span><span style="color:#24292E">(cachedDefaultName);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>创建扩展对象方法这个和自适应扩展的创建扩展类似
+createExtension:
+具体过程如下:</p>
+<ul>
+<li><strong>加载扩展类型:</strong> getExtensionClasses()</li>
+<li><strong>创建扩展对象:</strong> createExtensionInstance(clazz)</li>
+<li><strong>注入自适应扩展:</strong> injectExtension(instance);</li>
+<li>wrap处理</li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#24292E"> T </span><span style="color:#6F42C1">createExtension</span><span style="color:#24292E">(String name, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> wrap) {</span></span>
+<span class="line"><span style="color:#6A737D">		//扩展的创建的第一步扫描所有jar中的扩展实现,这里扫描完之后获取对应扩展名字的扩展实现类型的Class对象</span></span>
+<span class="line"><span style="color:#24292E">        Class&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">> clazz </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getExtensionClasses</span><span style="color:#24292E">().</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(name);</span></span>
+<span class="line"><span style="color:#6A737D">        //出现异常了 转换下异常信息 再抛出</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (clazz </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> ||</span><span style="color:#24292E"> unacceptableExceptions.</span><span style="color:#6F42C1">contains</span><span style="color:#24292E">(name)) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#6F42C1"> findException</span><span style="color:#24292E">(name);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">        	//当前扩展对象是否已经创建过了则直接从缓存中获取</span></span>
+<span class="line"><span style="color:#24292E">            T instance </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (T) extensionInstances.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(clazz);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (instance </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">            	//第一次获取缓存中肯定没有则创建扩展对象然后缓存起来</span></span>
+<span class="line"><span style="color:#6A737D">            	//createExtensionInstance 这个是与自适应扩展对象创建对象的不同之处</span></span>
+<span class="line"><span style="color:#24292E">                extensionInstances.</span><span style="color:#6F42C1">putIfAbsent</span><span style="color:#24292E">(clazz, </span><span style="color:#6F42C1">createExtensionInstance</span><span style="color:#24292E">(clazz));</span></span>
+<span class="line"><span style="color:#24292E">                instance </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (T) extensionInstances.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(clazz);</span></span>
+<span class="line"><span style="color:#24292E">                instance </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> postProcessBeforeInitialization</span><span style="color:#24292E">(instance, name);</span></span>
+<span class="line"><span style="color:#6A737D">                //注入扩展自适应方法,这个方法前面讲自适应扩展时候说了,注入自适应扩展方法的自适应扩展对象</span></span>
+<span class="line"><span style="color:#6F42C1">                injectExtension</span><span style="color:#24292E">(instance);</span></span>
+<span class="line"><span style="color:#24292E">                instance </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> postProcessAfterInitialization</span><span style="color:#24292E">(instance, name);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">			//是否开启了wrap</span></span>
+<span class="line"><span style="color:#6A737D">			//Dubbo通过Wrapper实现AOP的方法</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (wrap) {</span></span>
+<span class="line"><span style="color:#6A737D">            //这个可以参考下Dubbo扩展的加载</span></span>
+<span class="line"><span style="color:#24292E">                List&#x3C;Class&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">>> wrapperClassesList </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>();</span></span>
+<span class="line"><span style="color:#6A737D">                //wrap类型排序 这个wrap类型是如何来的呢,在前面扫描扩展类型的时候如果当前扩展类型不是Adaptive注解修饰的,并且当前类型type有个构造器参数是type自身的也是前面加载扩展类型时候说的装饰器模式 可以参考DubboProtocol的构造器</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (cachedWrapperClasses </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    wrapperClassesList.</span><span style="color:#6F42C1">addAll</span><span style="color:#24292E">(cachedWrapperClasses);</span></span>
+<span class="line"><span style="color:#6A737D">                    //根据Wrapper注解的order值来进行排序值越小越在列表的前面</span></span>
+<span class="line"><span style="color:#24292E">                    wrapperClassesList.</span><span style="color:#6F42C1">sort</span><span style="color:#24292E">(WrapperComparator.COMPARATOR);</span></span>
+<span class="line"><span style="color:#6A737D">                    //反转之后值越大就会在列表的前面</span></span>
+<span class="line"><span style="color:#24292E">                    Collections.</span><span style="color:#6F42C1">reverse</span><span style="color:#24292E">(wrapperClassesList);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#6A737D">				//从缓存中查到了wrapper扩展则遍历这些wrapp扩展进行筛选</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (CollectionUtils.</span><span style="color:#6F42C1">isNotEmpty</span><span style="color:#24292E">(wrapperClassesList)) {</span></span>
+<span class="line"><span style="color:#D73A49">                    for</span><span style="color:#24292E"> (Class&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">> wrapperClass </span><span style="color:#D73A49">:</span><span style="color:#24292E"> wrapperClassesList) {</span></span>
+<span class="line"><span style="color:#24292E">                        Wrapper wrapper </span><span style="color:#D73A49">=</span><span style="color:#24292E"> wrapperClass.</span><span style="color:#6F42C1">getAnnotation</span><span style="color:#24292E">(Wrapper.class);</span></span>
+<span class="line"><span style="color:#6A737D">                        //需要包装的扩展名。当此数组为空时，默认值为匹配</span></span>
+<span class="line"><span style="color:#6A737D">                        //看下当前扩展是否匹配这个wrap,如何判断呢?</span></span>
+<span class="line"><span style="color:#6A737D">                        //wrapper注解不存在或者matches匹配,或者mismatches不包含当前扩展</span></span>
+<span class="line"><span style="color:#6A737D">                        //如果匹配到了当前扩展对象是需要进行wrapp的就为当前扩展创建当前wrapper扩展对象进行包装</span></span>
+<span class="line"><span style="color:#D73A49">                        boolean</span><span style="color:#24292E"> match </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (wrapper </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) </span><span style="color:#D73A49">||</span></span>
+<span class="line"><span style="color:#24292E">                            ((ArrayUtils.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">(wrapper.</span><span style="color:#6F42C1">matches</span><span style="color:#24292E">()) </span><span style="color:#D73A49">||</span><span style="color:#24292E"> ArrayUtils.</span><span style="color:#6F42C1">contains</span><span style="color:#24292E">(wrapper.</span><span style="color:#6F42C1">matches</span><span style="color:#24292E">(), name)) </span><span style="color:#D73A49">&#x26;&#x26;</span></span>
+<span class="line"><span style="color:#D73A49">                                !</span><span style="color:#24292E">ArrayUtils.</span><span style="color:#6F42C1">contains</span><span style="color:#24292E">(wrapper.</span><span style="color:#6F42C1">mismatches</span><span style="color:#24292E">(), name));</span></span>
+<span class="line"><span style="color:#6A737D">                                //这是扩展类型是匹配wrapp的则开始注入</span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> (match) {</span></span>
+<span class="line"><span style="color:#6A737D">                        //匹配到了就创建所有的wrapper类型的对象同时构造器参数设置为当前类型</span></span>
+<span class="line"><span style="color:#24292E">                            instance </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> injectExtension</span><span style="color:#24292E">((T) wrapperClass.</span><span style="color:#6F42C1">getConstructor</span><span style="color:#24292E">(type).</span><span style="color:#6F42C1">newInstance</span><span style="color:#24292E">(instance));</span></span>
+<span class="line"><span style="color:#24292E">                            instance </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> postProcessAfterInitialization</span><span style="color:#24292E">(instance, name);</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            // Warning: After an instance of Lifecycle is wrapped by cachedWrapperClasses, it may not still be Lifecycle instance, this application may not invoke the lifecycle.initialize hook.</span></span>
+<span class="line"><span style="color:#6A737D">            //初始化扩展,如果当前扩展是Lifecycle类型则调用初始化方法</span></span>
+<span class="line"><span style="color:#6F42C1">            initExtension</span><span style="color:#24292E">(instance);</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> instance;</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">t</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Extension instance (name: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> name </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ", class: "</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#24292E">                type </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ") couldn't be instantiated: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> t.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">(), t);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="创建扩展对象"><strong>创建扩展对象</strong></h3>
+<p>前面加载扩展类型在自适应扩展的时候已经说过了这里就不重复了,这里我们来看下
+扩展对象的创建过程:createExtensionInstance(clazz)</p>
+<p>前面看自适应扩展对象创建的时候自适应扩展对象仅仅是使用反射newInstance了一个扩展对象,而普通的扩展类型创建对象的过程就相对复杂一点,接下来我们来看下:</p>
+<p>ExtensionLoader的createExtensionInstance方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#24292E"> Object </span><span style="color:#6F42C1">createExtensionInstance</span><span style="color:#24292E">(Class</span><span style="color:#D73A49">&#x3C;?></span><span style="color:#24292E"> type) throws ReflectiveOperationException {</span></span>
+<span class="line"><span style="color:#6A737D">		//在ExtensionLoader构造器中,有个initInstantiationStrategy()方法中new了一个初始化策略InstantiationStrategy类型对象 </span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> instantiationStrategy.</span><span style="color:#6F42C1">instantiate</span><span style="color:#24292E">(type);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>InstantiationStrategy的实例化对象方法instantiate</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> T </span><span style="color:#6F42C1">instantiate</span><span style="color:#24292E">(Class</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> type) throws ReflectiveOperationException {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // should not use default constructor directly, maybe also has another constructor matched scope model arguments</span></span>
+<span class="line"><span style="color:#6A737D">        // 1. try to get default constructor</span></span>
+<span class="line"><span style="color:#24292E">        Constructor&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> defaultConstructor </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">        	//反射获取对应类型的无参构造器</span></span>
+<span class="line"><span style="color:#24292E">            defaultConstructor </span><span style="color:#D73A49">=</span><span style="color:#24292E"> type.</span><span style="color:#6F42C1">getConstructor</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NoSuchMethodException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">            // ignore no default constructor</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // 2. use matched constructor if found</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">Constructor</span><span style="color:#24292E">> matchedConstructors </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>();</span></span>
+<span class="line"><span style="color:#6A737D">        //获取所有构造器</span></span>
+<span class="line"><span style="color:#24292E">        Constructor&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">>[] declaredConstructors </span><span style="color:#D73A49">=</span><span style="color:#24292E"> type.</span><span style="color:#6F42C1">getConstructors</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //遍历构造器列表,</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (Constructor&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">> constructor </span><span style="color:#D73A49">:</span><span style="color:#24292E"> declaredConstructors) {</span></span>
+<span class="line"><span style="color:#6A737D">        //如果存在构造器则构造器参数类型是否为ScopeModel类型,如果为ScopeModel则为匹配的构造器 说明我们扩展类型在这个版本如果想要让这个构造器生效必须参数类型为ScopeModel</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">isMatched</span><span style="color:#24292E">(constructor)) {</span></span>
+<span class="line"><span style="color:#24292E">                matchedConstructors.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(constructor);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        // remove default constructor from matchedConstructors</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (defaultConstructor </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            matchedConstructors.</span><span style="color:#6F42C1">remove</span><span style="color:#24292E">(defaultConstructor);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // match order:</span></span>
+<span class="line"><span style="color:#6A737D">        // 1. the only matched constructor with parameters</span></span>
+<span class="line"><span style="color:#6A737D">        // 2. default constructor if absent</span></span>
+<span class="line"><span style="color:#24292E">		</span></span>
+<span class="line"><span style="color:#24292E">        Constructor targetConstructor;</span></span>
+<span class="line"><span style="color:#6A737D">        //匹配的参数ScopeModel的构造器太多了就抛出异常</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (matchedConstructors.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 1</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Expect only one but found "</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#24292E">                matchedConstructors.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " matched constructors for type: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> type.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#032F62">                ", matched constructors: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> matchedConstructors);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (matchedConstructors.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 1</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        //一个参数一般为一个参数类型ScopeModel的构造器</span></span>
+<span class="line"><span style="color:#24292E">            targetConstructor </span><span style="color:#D73A49">=</span><span style="color:#24292E"> matchedConstructors.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(</span><span style="color:#005CC5">0</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (defaultConstructor </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        //如果没有自定义构造器则使用空参数构造器</span></span>
+<span class="line"><span style="color:#24292E">            targetConstructor </span><span style="color:#D73A49">=</span><span style="color:#24292E"> defaultConstructor;</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">        //一个构造器也没匹配上也要报错</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"None matched constructor was found for type: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> type.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // create instance with arguments</span></span>
+<span class="line"><span style="color:#6A737D">        //反射获取构造器参数的参数类型列表</span></span>
+<span class="line"><span style="color:#D73A49">        Class</span><span style="color:#24292E">[] parameterTypes </span><span style="color:#D73A49">=</span><span style="color:#24292E"> targetConstructor.</span><span style="color:#6F42C1">getParameterTypes</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //如果存在参数则为参数设置值</span></span>
+<span class="line"><span style="color:#D73A49">        Object</span><span style="color:#24292E">[] args </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#D73A49"> Object</span><span style="color:#24292E">[parameterTypes.length];</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (</span><span style="color:#D73A49">int</span><span style="color:#24292E"> i </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">; i </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> parameterTypes.length; i</span><span style="color:#D73A49">++</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        //借助scopeModelAccessor工具获取参数类型,这个参数类型为当前的域模型对象</span></span>
+<span class="line"><span style="color:#24292E">            args[i] </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getArgumentValueForType</span><span style="color:#24292E">(parameterTypes[i]);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //创建扩展对象</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> (T) targetConstructor.</span><span style="color:#6F42C1">newInstance</span><span style="color:#24292E">(args);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h2 id="wrap机制"><strong>wrap机制</strong></h2>
+<h3 id="wrapper机制说明"><strong>Wrapper机制说明</strong></h3>
+<p>Dubbo通过Wrapper实现AOP的方法</p>
+<p>Wrapper机制，即扩展点自动包装。Wrapper 类同样实现了扩展点接口，但是 Wrapper 不是扩展点的真正实现。它的用途主要是用于从 ExtensionLoader 返回扩展点时，包装在真正的扩展点实现外。即从 ExtensionLoader 中返回的实际上是 Wrapper 类的实例，Wrapper 持有了实际的扩展点实现类。
+扩展点的 Wrapper 类可以有多个，也可以根据需要新增。
+通过 Wrapper 类可以把所有扩展点公共逻辑移至 Wrapper 中。新加的 Wrapper 在所有的扩展点上添加了逻辑，有些类似 AOP，即 Wrapper 代理了扩展点。</p>
+<p>Wrapper的规范
+Wrapper 机制不是通过注解实现的，而是通过一套 Wrapper 规范实现的。
+Wrapper 类在定义时需要遵循如下规范。</p>
+<ul>
+<li>该类要实现 SPI 接口</li>
+<li>该类中要有 SPI 接口的引用</li>
+<li>该类中必须含有一个含参的构造方法且参数只能有一个类型为SPI接口</li>
+<li>在接口实现方法中要调用 SPI 接口引用对象的相应方法</li>
+<li>该类名称以 Wrapper 结尾</li>
+</ul>
+<p>比如如下几个扩展类型</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> org</span><span style="color:#24292E">.apache.dubbo.rpc.protocol.ProtocolListenerWrapper</span></span>
+<span class="line"><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> org</span><span style="color:#24292E">.apache.dubbo.qos.protocol.QosProtocolWrapper</span></span>
+<span class="line"><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> org</span><span style="color:#24292E">.apache.dubbo.rpc.protocol.ProtocolListenerWrapper</span></span>
+<span class="line"><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> org</span><span style="color:#24292E">.apache.dubbo.qos.protocol.QosProtocolWrapper</span></span></code></pre>
+<p>回顾下Wrapper扩展类型的扫描于对象的创建</p>
+<h3 id="wrapper类型的扫描"><strong>Wrapper类型的扫描</strong></h3>
+<p><strong>Wrapper类型的扫描代码如下:</strong></p>
+<p>来自前面小节ExtensionLoader类型中的loadClass方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D"> //扩展子类型是否存在这个注解@Adaptive</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (clazz.</span><span style="color:#6F42C1">isAnnotationPresent</span><span style="color:#24292E">(Adaptive.class)) {</span></span>
+<span class="line"><span style="color:#6F42C1">            cacheAdaptiveClass</span><span style="color:#24292E">(clazz, overridden);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">isWrapperClass</span><span style="color:#24292E">(clazz)) {</span></span>
+<span class="line"><span style="color:#6A737D">        //扩展子类型构造器中是否有这个类型的接口 (这个可以想象下我们了解的Java IO流中的类型使用到的装饰器模式 构造器传个类型)</span></span>
+<span class="line"><span style="color:#6F42C1">            cacheWrapperClass</span><span style="color:#24292E">(clazz);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span></code></pre>
+<p>isWrapperClass方法通过判断构造器类型是否为当前类型来判断是否为Wrapper类型</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> private</span><span style="color:#D73A49"> boolean</span><span style="color:#6F42C1"> isWrapperClass</span><span style="color:#24292E">(Class</span><span style="color:#D73A49">&#x3C;?></span><span style="color:#24292E"> clazz) {</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            clazz.</span><span style="color:#6F42C1">getConstructor</span><span style="color:#24292E">(type);</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#005CC5"> true</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NoSuchMethodException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#005CC5"> false</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="wrapper类型的创建"><strong>Wrapper类型的创建</strong></h3>
+<p>这个可以看下 getExtension方法源码的获取扩展对象时候查询扩展对象是否有对应的Wrapper类型的扩展为其创建Wrapper扩展对象,如下代码</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">//Dubbo通过Wrapper实现AOP的方法</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (wrap) {</span></span>
+<span class="line"><span style="color:#6A737D">            //这个可以参考下Dubbo扩展的加载</span></span>
+<span class="line"><span style="color:#24292E">                List&#x3C;Class&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">>> wrapperClassesList </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>();</span></span>
+<span class="line"><span style="color:#6A737D">                //wrap类型排序 这个wrap类型是如何来的呢,在前面扫描扩展类型的时候如果当前扩展类型不是Adaptive注解修饰的,并且当前类型type有个构造器参数是type自身的也是前面加载扩展类型时候说的装饰器模式 可以参考DubboProtocol的构造器</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (cachedWrapperClasses </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    wrapperClassesList.</span><span style="color:#6F42C1">addAll</span><span style="color:#24292E">(cachedWrapperClasses);</span></span>
+<span class="line"><span style="color:#6A737D">                    //根据Wrapper注解的order值来进行排序值越小越在列表的前面</span></span>
+<span class="line"><span style="color:#24292E">                    wrapperClassesList.</span><span style="color:#6F42C1">sort</span><span style="color:#24292E">(WrapperComparator.COMPARATOR);</span></span>
+<span class="line"><span style="color:#6A737D">                    //反转之后值越大就会在列表的前面</span></span>
+<span class="line"><span style="color:#24292E">                    Collections.</span><span style="color:#6F42C1">reverse</span><span style="color:#24292E">(wrapperClassesList);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#6A737D">				//从缓存中查到了wrapper扩展则遍历这些wrapp扩展进行筛选</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (CollectionUtils.</span><span style="color:#6F42C1">isNotEmpty</span><span style="color:#24292E">(wrapperClassesList)) {</span></span>
+<span class="line"><span style="color:#D73A49">                    for</span><span style="color:#24292E"> (Class&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">> wrapperClass </span><span style="color:#D73A49">:</span><span style="color:#24292E"> wrapperClassesList) {</span></span>
+<span class="line"><span style="color:#24292E">                        Wrapper wrapper </span><span style="color:#D73A49">=</span><span style="color:#24292E"> wrapperClass.</span><span style="color:#6F42C1">getAnnotation</span><span style="color:#24292E">(Wrapper.class);</span></span>
+<span class="line"><span style="color:#6A737D">                        //需要包装的扩展名。当此数组为空时，默认值为匹配</span></span>
+<span class="line"><span style="color:#6A737D">                        //看下当前扩展是否匹配这个wrap,如何判断呢?</span></span>
+<span class="line"><span style="color:#6A737D">                        //wrapper注解不存在或者matches匹配,或者mismatches不包含当前扩展</span></span>
+<span class="line"><span style="color:#6A737D">                        //如果匹配到了当前扩展对象是需要进行wrapp的就为当前扩展创建当前wrapper扩展对象进行包装</span></span>
+<span class="line"><span style="color:#D73A49">                        boolean</span><span style="color:#24292E"> match </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (wrapper </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) </span><span style="color:#D73A49">||</span></span>
+<span class="line"><span style="color:#24292E">                            ((ArrayUtils.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">(wrapper.</span><span style="color:#6F42C1">matches</span><span style="color:#24292E">()) </span><span style="color:#D73A49">||</span><span style="color:#24292E"> ArrayUtils.</span><span style="color:#6F42C1">contains</span><span style="color:#24292E">(wrapper.</span><span style="color:#6F42C1">matches</span><span style="color:#24292E">(), name)) </span><span style="color:#D73A49">&#x26;&#x26;</span></span>
+<span class="line"><span style="color:#D73A49">                                !</span><span style="color:#24292E">ArrayUtils.</span><span style="color:#6F42C1">contains</span><span style="color:#24292E">(wrapper.</span><span style="color:#6F42C1">mismatches</span><span style="color:#24292E">(), name));</span></span>
+<span class="line"><span style="color:#6A737D">                                //这是扩展类型是匹配wrapp的则开始注入</span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> (match) {</span></span>
+<span class="line"><span style="color:#6A737D">                        //匹配到了就创建所有的wrapper类型的对象同时构造器参数设置为当前类型</span></span>
+<span class="line"><span style="color:#24292E">                            instance </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> injectExtension</span><span style="color:#24292E">((T) wrapperClass.</span><span style="color:#6F42C1">getConstructor</span><span style="color:#24292E">(type).</span><span style="color:#6F42C1">newInstance</span><span style="color:#24292E">(instance));</span></span>
+<span class="line"><span style="color:#24292E">                            instance </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> postProcessAfterInitialization</span><span style="color:#24292E">(instance, name);</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span></code></pre>
+<p>主要来看下什么情况下才为当前扩展类型创建Wrapper包装类型:</p>
+<ul>
+<li>wrapper注解不存在(前面判断过Wrapper类型是构造器满足条件的)</li>
+<li>存在Wrapper注解:
+<ul>
+<li>matches匹配,</li>
+<li>或者mismatches不包含当前扩展</li>
+</ul>
+</li>
+</ul>
+<p>如果匹配到了当前扩展对象是需要进行wrapp的就为当前扩展创建当前wrapper扩展对象进行包装。</p>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

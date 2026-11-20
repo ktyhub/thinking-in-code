@@ -1,0 +1,793 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**Dubbo服务提供者的双注册原理** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_dubbo/17-provider-register/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_dubbo/17-provider-register"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_dubbo/17-provider-register/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_dubbo/17-provider-register"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**Dubbo服务提供者的双注册原理** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_dubbo/17-provider-register/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_dubbo/17-provider-register/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>dubbo</h3> <ul> <li> <a href="/zh/chapter_dubbo/1-learn-from-a-demo" class="lv0" title="**从一个服务提供者的Demo说起**"> **从一个服务提供者的Demo说起** </a> </li><li> <a href="/zh/chapter_dubbo/2-serviceconfig-config" class="lv0" title="**启动服务前服务配置ServiceConfig类型是如何初始化的?**"> **启动服务前服务配置ServiceConfig类型是如何初始化的?** </a> </li><li> <a href="/zh/chapter_dubbo/3-model-init" class="lv0" title="**框架,应用程序,模块领域模型Model对象的初始化**"> **框架,应用程序,模块领域模型Model对象的初始化** </a> </li><li> <a href="/zh/chapter_dubbo/4-extension-init" class="lv0" title="**Dubbo的扩展机制**"> **Dubbo的扩展机制** </a> </li><li> <a href="/zh/chapter_dubbo/5-getadaptiveextension" class="lv0" title="5-getadaptiveextension"> 5-getadaptiveextension </a> </li><li> <a href="/zh/chapter_dubbo/6-extension-wrapper" class="lv0" title="**Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析**"> **Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/7-extension-activate" class="lv0" title="**Dubbo的SPI扩展机制之自动激活扩展Activate源码解析**"> **Dubbo的SPI扩展机制之自动激活扩展Activate源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/8-dubbobootstrap" class="lv0" title="**Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化**"> **Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化** </a> </li><li> <a href="/zh/chapter_dubbo/9-application-config" class="lv0" title="**Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig**"> **Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig** </a> </li><li> <a href="/zh/chapter_dubbo/10-registryconfig" class="lv0" title="**Dubbo启动器DubboBootstrap添加注册中心配置信息RegistryConfig**"> **Dubbo启动器DubboBootstrap添加注册中心配置信息RegistryConfig** </a> </li><li> <a href="/zh/chapter_dubbo/11-protocolconfig" class="lv0" title="**Dubbo启动器DubboBootstrap添加协议配置信息ProtocolConfig**"> **Dubbo启动器DubboBootstrap添加协议配置信息ProtocolConfig** </a> </li><li> <a href="/zh/chapter_dubbo/12-start-life-cycle" class="lv0" title="**全局视野来看Dubbo3的服务启动生命周期**"> **全局视野来看Dubbo3的服务启动生命周期** </a> </li><li> <a href="/zh/chapter_dubbo/13-configcenter" class="lv0" title="**Dubbo的三大中心之配置中心**"> **Dubbo的三大中心之配置中心** </a> </li><li> <a href="/zh/chapter_dubbo/14-config-load" class="lv0" title="**Dubbo配置加载全解析**"> **Dubbo配置加载全解析** </a> </li><li> <a href="/zh/chapter_dubbo/15-metadata" class="lv0" title="**Dubbo的三大中心之元数据中心源码解析**"> **Dubbo的三大中心之元数据中心源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/16-moduledeployer" class="lv0" title="**模块发布器发布服务全过程**"> **模块发布器发布服务全过程** </a> </li><li> <a href="/zh/chapter_dubbo/17-provider-register" class="lv0" aria-current="page" title="**Dubbo服务提供者的双注册原理**"> **Dubbo服务提供者的双注册原理** </a> </li><li> <a href="/zh/chapter_dubbo/18-metadataService-export" class="lv0" title="**Dubbo3元数据服务MetadataService的导出**"> **Dubbo3元数据服务MetadataService的导出** </a> </li><li> <a href="/zh/chapter_dubbo/19-consuemr-demo" class="lv0" title="**重新来过从一个服务消费者的Demo说起**"> **重新来过从一个服务消费者的Demo说起** </a> </li><li> <a href="/zh/chapter_dubbo/20-reference-config" class="lv0" title="**Dubbo3服务引用配置ReferenceConfig**"> **Dubbo3服务引用配置ReferenceConfig** </a> </li><li> <a href="/zh/chapter_dubbo/21-refer-services" class="lv0" title="**Dubbo3消费者引用服务入口**"> **Dubbo3消费者引用服务入口** </a> </li><li> <a href="/zh/chapter_dubbo/22-migration-invoker" class="lv0" title="**Dubbo3消费者自动感应决策应用级服务发现原理**"> **Dubbo3消费者自动感应决策应用级服务发现原理** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_dubbo">dubbo</a><span class="sep">/</span><span>**Dubbo服务提供者的双注册原理**</span> </nav> <div class="prose">  <h1 id="dubbo服务提供者的双注册原理"><strong>Dubbo服务提供者的双注册原理</strong></h1>
+<h2 id="简介"><strong>简介</strong></h2>
+<p>上个博客<a href="/zh/chapter_dubbo/15-metadata">《15-Dubbo的三大中心之元数据中心源码解析》</a>导出服务端的时候多次提到了元数据中心，注册信息的注册。
+Dubbo3出来时间不太长，对于现在的用户来说大部分使用的仍旧是Dubbo2.x，
+Dubbo3 比较有特色也是会直接使用到的功能就是 <strong>应用级服务发现</strong> ：</p>
+<ul>
+<li>应用级服务发现
+<em>从服务/接口粒度到应用粒度的升级，使得 Dubbo 在集群可伸缩性、连接异构微服务体系上更具优势。应用粒度能以更低的资源消耗支持超百万实例规模集群程； 实现与 Spring Cloud、Kubernetes Service 等异构微服务体系的互联互通。</em></li>
+</ul>
+<p>对于直接使用Dubbo3的用户还好，可以仅仅开启应用级注册，但是对于Dubbo2.x的用户升级到Dubbo3的用户来说前期都是要开启双注册来慢慢迁移的，既注册传统的接口信息到注册中心，又注册应用信息到注册中心，同时注册应用与接口关系的元数据信息。
+关于双注册与服务迁移的过程的使用可以参考官网：
+<a href="https://dubbo.apache.org/zh/docs/migration/migration-service-discovery/">应用级地址发现迁移指南</a></p>
+<p>关于官网提供者双注册的图我这里贴一下，方便了解：
+<img src="/img/chapter_dubbo/17-provider-1.png" alt="17-provider-1.png"></p>
+<h2 id="双注册配置的读取"><strong>双注册配置的读取</strong></h2>
+<h3 id="注册中心地址作为元数据中心"><strong>注册中心地址作为元数据中心</strong></h3>
+<p>这个配置的解析过程在前面的博客介绍元数据中心的时候很详细的说了相关链接：<a href="/zh/chapter_dubbo/15-metadata">15-Dubbo的三大中心之元数据中心源码解析</a></p>
+<p>对应代码位于：DefaultApplicationDeployer类型的startMetadataCenter()方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> startMetadataCenter</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">		//如果未配置元数据中心的地址等配置则使用注册中心的地址等配置做为元数据中心的配置</span></span>
+<span class="line"><span style="color:#6F42C1">        useRegistryAsMetadataCenterIfNecessary</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //...省略掉其他代码防止受到干扰</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span></code></pre>
+<p>具体逻辑是这个方法：
+useRegistryAsMetadataCenterIfNecessary</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> useRegistryAsMetadataCenterIfNecessary</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">		//配置缓存中查询元数据配置</span></span>
+<span class="line"><span style="color:#24292E">        Collection&#x3C;</span><span style="color:#D73A49">MetadataReportConfig</span><span style="color:#24292E">> metadataConfigs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> configManager.</span><span style="color:#6F42C1">getMetadataConfigs</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">		</span></span>
+<span class="line"><span style="color:#6A737D">        //...省略掉空判断</span></span>
+<span class="line"><span style="color:#6A737D">		//查询是否有注册中心设置了默认配置isDefault 设置为true的注册中心则为默认注册中心列表,如果没有注册中心设置为默认注册中心,则获取所有未设置默认配置的注册中心列表</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">RegistryConfig</span><span style="color:#24292E">> defaultRegistries </span><span style="color:#D73A49">=</span><span style="color:#24292E"> configManager.</span><span style="color:#6F42C1">getDefaultRegistries</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (defaultRegistries.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        //多注册中心遍历</span></span>
+<span class="line"><span style="color:#24292E">            defaultRegistries</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">stream</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#6A737D">                //筛选符合条件的注册中心 (筛选逻辑就是查看是否有对应协议的扩展支持)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">filter</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#D73A49">::</span><span style="color:#24292E">isUsedRegistryAsMetadataCenter)</span></span>
+<span class="line"><span style="color:#6A737D">                //注册中心配置映射为元数据中心  映射就是获取需要的配置</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">map</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#D73A49">::</span><span style="color:#24292E">registryAsMetadataCenter)</span></span>
+<span class="line"><span style="color:#6A737D">                //将元数据中心配置存储在配置缓存中方便后续使用</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">forEach</span><span style="color:#24292E">(metadataReportConfig </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                  //...省略掉具体的逻辑</span></span>
+<span class="line"><span style="color:#24292E">                });</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>关于元数据中心地址的获取，主要经过如下逻辑：</p>
+<ul>
+<li><strong>查询：</strong> 所有可用的默认注册中心列表</li>
+<li><strong>遍历：</strong> 多注册中心遍历</li>
+<li><strong>筛选：</strong> 选符合条件的注册中心 (筛选逻辑就是查看是否有对应协议的扩展支持)</li>
+<li><strong>转化：</strong> 注册中心配置RegistryConfig映射转换为元数据中心配置类型MetadataReportConfig</li>
+</ul>
+<p>MetadataReportConfig 映射就是获取需要的配置。</p>
+<p>最后会把查询到的元数据中心配置存储在配置缓存中方便后续使用。</p>
+<h3 id="双注册模式配置"><strong>双注册模式配置</strong></h3>
+<p>双注册配置类型是这个</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">dubbo.application.register</span><span style="color:#D73A49">-</span><span style="color:#24292E">mode</span><span style="color:#D73A49">=</span><span style="color:#24292E">all</span></span></code></pre>
+<p>默认值为all代表应用级注册和接口级注册，当前在完全迁移到应用级注册之后可以将服务直接迁移到应用级配置上去。
+配置值解释：</p>
+<ul>
+<li>all 双注册</li>
+<li>instance 应用级注册</li>
+<li>interface 接口级注册</li>
+</ul>
+<p>后面的代码如果想要看更详细的代码可以看博客<a href="/zh/chapter_dubbo/16-module-deployer">《16-模块发布器发布服务全过程》</a>中的双注册配置的解析
+关于这个配置的使用我们详细来看下，在Dubbo服务注册时候会先通过此配置查询需要注册服务地址，具体代码位于ServiceConfig的doExportUrls()方法中：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> doExportUrls</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">      //省略掉前面的代码...</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">URL</span><span style="color:#24292E">> registryURLs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ConfigValidationUtils.</span><span style="color:#6F42C1">loadRegistries</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">      //省略掉后面的代码...</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>然后就是具体注册中心地址的获取过程我们看下：
+ConfigValidationUtils的加载注册中心地址方法loadRegistries</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> public</span><span style="color:#D73A49"> static</span><span style="color:#24292E"> List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">URL</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> loadRegistries</span><span style="color:#24292E">(AbstractInterfaceConfig interfaceConfig, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> provider) {</span></span>
+<span class="line"><span style="color:#6A737D">        // check &#x26;&#x26; override if necessary</span></span>
+<span class="line"><span style="color:#6A737D">           //省略掉前面的代码...</span></span>
+<span class="line"><span style="color:#6A737D">           //这里会获取到一个接口配置注册地址例如：registry://127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=9008&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653703292768</span></span>
+<span class="line"><span style="color:#24292E">       List&#x3C;</span><span style="color:#D73A49">RegistryConfig</span><span style="color:#24292E">> registries </span><span style="color:#D73A49">=</span><span style="color:#24292E"> interfaceConfig.</span><span style="color:#6F42C1">getRegistries</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">           //省略掉中间的的代码...</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#6F42C1"> genCompatibleRegistries</span><span style="color:#24292E">(interfaceConfig.</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">(), registryList, provider);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>ConfigValidationUtils的双注册地址的获取genCompatibleRegistries方法.
+前面代码获取到了一个注册中心地址列表例如：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">registry</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=9008&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653703292768</span></span></code></pre>
+<p>下面可以看下如果根据配置来转换为应用级注册地址+接口级注册地址</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> static</span><span style="color:#24292E"> List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">URL</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> genCompatibleRegistries</span><span style="color:#24292E">(ScopeModel scopeModel, List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">URL</span><span style="color:#D73A49">></span><span style="color:#24292E"> registryList, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> provider) {</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">URL</span><span style="color:#24292E">> result </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>(registryList.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        registryList.</span><span style="color:#6F42C1">forEach</span><span style="color:#24292E">(registryURL </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (provider) {</span></span>
+<span class="line"><span style="color:#6A737D">                // for registries enabled service discovery, automatically register interface compatible addresses.</span></span>
+<span class="line"><span style="color:#24292E">                String registerMode;</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (SERVICE_REGISTRY_PROTOCOL.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(registryURL.</span><span style="color:#6F42C1">getProtocol</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#6A737D">                   //为了更好理解这里简化掉服务发现注册地址配置的逻辑判断过程仅仅看当前例子提供的值走的逻辑</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                   //双注册模式配置查询 对应参数为dubbo.application.register-mode 默认值为all</span></span>
+<span class="line"><span style="color:#24292E">                    registerMode </span><span style="color:#D73A49">=</span><span style="color:#24292E"> registryURL.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REGISTER_MODE_KEY, ConfigurationUtils.</span><span style="color:#6F42C1">getCachedDynamicProperty</span><span style="color:#24292E">(scopeModel, DUBBO_REGISTER_MODE_DEFAULT_KEY, DEFAULT_REGISTER_MODE_ALL));</span></span>
+<span class="line"><span style="color:#6A737D">                    //如果用户配置了一个错误的注册模式配置则只走接口级配置 这里默认值为interface</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#6F42C1">isValidRegisterMode</span><span style="color:#24292E">(registerMode)) {</span></span>
+<span class="line"><span style="color:#24292E">                        registerMode </span><span style="color:#D73A49">=</span><span style="color:#24292E"> DEFAULT_REGISTER_MODE_INTERFACE;</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#6A737D">                    //这个逻辑是满足应用级注册就添加一个应用级注册的地址</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> ((DEFAULT_REGISTER_MODE_INSTANCE.</span><span style="color:#6F42C1">equalsIgnoreCase</span><span style="color:#24292E">(registerMode) </span><span style="color:#D73A49">||</span><span style="color:#24292E"> DEFAULT_REGISTER_MODE_ALL.</span><span style="color:#6F42C1">equalsIgnoreCase</span><span style="color:#24292E">(registerMode))</span></span>
+<span class="line"><span style="color:#D73A49">                        &#x26;&#x26;</span><span style="color:#6F42C1"> registryNotExists</span><span style="color:#24292E">(registryURL, registryList, SERVICE_REGISTRY_PROTOCOL)) {</span></span>
+<span class="line"><span style="color:#24292E">                        URL serviceDiscoveryRegistryURL </span><span style="color:#D73A49">=</span><span style="color:#24292E"> URLBuilder.</span><span style="color:#6F42C1">from</span><span style="color:#24292E">(registryURL)</span></span>
+<span class="line"><span style="color:#24292E">                            .</span><span style="color:#6F42C1">setProtocol</span><span style="color:#24292E">(SERVICE_REGISTRY_PROTOCOL)</span></span>
+<span class="line"><span style="color:#24292E">                            .</span><span style="color:#6F42C1">removeParameter</span><span style="color:#24292E">(REGISTRY_TYPE_KEY)</span></span>
+<span class="line"><span style="color:#24292E">                            .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                        result.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(serviceDiscoveryRegistryURL);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#6A737D">					//这个逻辑是满足接口级注册配置就添加一个接口级注册地址</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (DEFAULT_REGISTER_MODE_INTERFACE.</span><span style="color:#6F42C1">equalsIgnoreCase</span><span style="color:#24292E">(registerMode) </span><span style="color:#D73A49">||</span><span style="color:#24292E"> DEFAULT_REGISTER_MODE_ALL.</span><span style="color:#6F42C1">equalsIgnoreCase</span><span style="color:#24292E">(registerMode)) {</span></span>
+<span class="line"><span style="color:#24292E">                        result.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(registryURL);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#6A737D"> 		//省略掉若干代码和括号</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> result;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>可以看到这里简化的配置比较容易理解了</p>
+<ul>
+<li>双注册模式配置查询 对应参数为dubbo.application.register-mode ，默认值为all</li>
+<li>如果用户配置了一个错误的注册模式配置则只走接口级配置 这里默认值为interface</li>
+<li>满足应用级注册就添加一个应用级注册的地址</li>
+<li>满足接口级注册配置就添加一个接口级注册地址</li>
+</ul>
+<p>这个方法是根据服务注册模式来判断使用接口级注册地址还是应用级注册地址分别如下所示：
+配置信息：
+dubbo.application.register-mode
+配置值：</p>
+<ul>
+<li>interface
+<ul>
+<li>接口级注册</li>
+</ul>
+</li>
+<li>instance
+<ul>
+<li>应用级注册</li>
+</ul>
+</li>
+<li>all
+<ul>
+<li>接口级别和应用级都注册</li>
+</ul>
+</li>
+</ul>
+<p>最终的注册地址配置如下：
+接口级注册地址：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">registry</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=9008&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653703292768</span></span></code></pre>
+<p>应用级注册地址：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">service</span><span style="color:#D73A49">-</span><span style="color:#24292E">discovery</span><span style="color:#D73A49">-</span><span style="color:#24292E">registry</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=10275&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653704425920</span></span></code></pre>
+<h2 id="双注册服务数据的注册"><strong>双注册服务数据的注册</strong></h2>
+<h3 id="双注册代码逻辑调用简介"><strong>双注册代码逻辑调用简介</strong></h3>
+<p>前面说了这个注册服务的配置地址会由Dubbo内部进行判断如果判断是all的话会自动将一个配置的注册地址转变为两个一个是传统的接口级注册，一个是应用级注册使用的配置地址</p>
+<p>然后我们先看注册中心，注册服务数据的源码
+如果想要查看源码细节可以在<code>RegistryProtocol</code>类型的<code>export(final Invoker&#x3C;T> originInvoker)</code> 方法的如下代码位置打断点：</p>
+<p>RegistryProtocol的export方法的注册中心注册数据代码如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D"> 		// url to registry 注册服务对外的接口</span></span>
+<span class="line"><span style="color:#6A737D"> 		//如果url为service-discovery-registry发现则这个实现类型为ServiceDiscoveryRegistry</span></span>
+<span class="line"><span style="color:#D73A49">        final</span><span style="color:#24292E"> Registry registry </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getRegistry</span><span style="color:#24292E">(registryUrl);</span></span>
+<span class="line"><span style="color:#6A737D">		//服务发现的提供者url: dubbo://192.168.1.9:20880/link.elastic.dubbo.entity.DemoService?anyhost=true&#x26;application=dubbo-demo-api-provider&#x26;background=false&#x26;deprecated=false&#x26;dubbo=2.0.2&#x26;dynamic=true&#x26;generic=false&#x26;interface=link.elastic.dubbo.entity.DemoService&#x26;methods=sayHello,sayHelloAsync&#x26;pid=19559&#x26;release=3.0.8&#x26;service-name-mapping=true&#x26;side=provider&#x26;timestamp=1654938441023</span></span>
+<span class="line"><span style="color:#D73A49">        final</span><span style="color:#24292E"> URL registeredProviderUrl </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getUrlToRegistry</span><span style="color:#24292E">(providerUrl, registryUrl);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // decide if we need to delay publish (provider itself and registry should both need to register)</span></span>
+<span class="line"><span style="color:#6A737D">        //register参数是否 注册数据到注册中心</span></span>
+<span class="line"><span style="color:#D73A49">        boolean</span><span style="color:#24292E"> register </span><span style="color:#D73A49">=</span><span style="color:#24292E"> providerUrl.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REGISTER_KEY, </span><span style="color:#005CC5">true</span><span style="color:#24292E">) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> registryUrl.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REGISTER_KEY, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (register) {</span></span>
+<span class="line"><span style="color:#6A737D">       			//这里有两种情况 接口级注册会将接口级服务提供者数据直接注册到Zookeper上面，服务发现（应用级注册）这里仅仅会将注册数据转换为服务元数据等后面来发布元数据</span></span>
+<span class="line"><span style="color:#6F42C1">            register</span><span style="color:#24292E">(registry, registeredProviderUrl);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // register stated url on provider model</span></span>
+<span class="line"><span style="color:#6A737D">        //向提供者模型注册提供者配置ProviderModel</span></span>
+<span class="line"><span style="color:#6F42C1">        registerStatedUrl</span><span style="color:#24292E">(registryUrl, registeredProviderUrl, register);</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        exporter.</span><span style="color:#6F42C1">setRegisterUrl</span><span style="color:#24292E">(registeredProviderUrl);</span></span>
+<span class="line"><span style="color:#24292E">        exporter.</span><span style="color:#6F42C1">setSubscribeUrl</span><span style="color:#24292E">(overrideSubscribeUrl);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">registry.</span><span style="color:#6F42C1">isServiceDiscovery</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">            // Deprecated! Subscribe to override rules in 2.6.x or before.</span></span>
+<span class="line"><span style="color:#24292E">            registry.</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">(overrideSubscribeUrl, overrideSubscribeListener);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span></code></pre>
+<p>在上个博客中我们整体说了下服务注册时候的一个流程，关于数据向注册中心的注册细节这里可以详细看下</p>
+<h3 id="注册中心领域对象的初始化"><strong>注册中心领域对象的初始化</strong></h3>
+<p>前面的代码使用url来获取注册中心操作对象如下调用代码：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// url to registry 注册服务对外的接口</span></span>
+<span class="line"><span style="color:#D73A49">final</span><span style="color:#24292E"> Registry registry </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getRegistry</span><span style="color:#24292E">(registryUrl);</span></span></code></pre>
+<p>对应代码如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> protected</span><span style="color:#24292E"> Registry </span><span style="color:#6F42C1">getRegistry</span><span style="color:#24292E">(</span><span style="color:#D73A49">final</span><span style="color:#24292E"> URL registryUrl) {</span></span>
+<span class="line"><span style="color:#6A737D">        //这里分为两步先获取注册中心工厂对象</span></span>
+<span class="line"><span style="color:#24292E">        RegistryFactory registryFactory </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ScopeModelUtil.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(RegistryFactory.class, registryUrl.</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">()).</span><span style="color:#6F42C1">getAdaptiveExtension</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //使用注册中心工厂对象获取注册中心操作对象</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> registryFactory.</span><span style="color:#6F42C1">getRegistry</span><span style="color:#24292E">(registryUrl);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>关于参数URL有两个在前面已经说过，url信息如下：</p>
+<p>接口级注册地址：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">registry</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=9008&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653703292768</span></span></code></pre>
+<p>应用级注册地址：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">service</span><span style="color:#D73A49">-</span><span style="color:#24292E">discovery</span><span style="color:#D73A49">-</span><span style="color:#24292E">registry</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=10275&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653704425920</span></span></code></pre>
+<p>注册中心工厂对象与注册中心操作对象的获取与执行我们通过Debug来看比较麻烦，这里涉及到很多扩展机制动态生成的代码我们无法看到，这里我直接来贴一下比较关键的一些类型，以Zookeeper注册中心来举例子：</p>
+<p>先来看下注册工厂相关的类型：
+<img src="/img/chapter_dubbo/17-register-factory.png" alt="在这里插入图片描述"></p>
+<ul>
+<li>RegistryFactory 注册中心对象获取</li>
+<li>AbstractRegistryFactory	 模板类型封装注册中心对象获取的基本逻辑，比如缓存和基本的逻辑判断</li>
+<li>ServiceDiscoveryRegistryFactory 用于创建服务发现注册中心工厂对象 用于创建ServiceDiscoveryRegistry对象</li>
+<li>ZookeeperRegistryFactory 用于创建ZookeeperRegistry类型对象</li>
+<li>NacosRegistryFactory Nacos注册中心工厂对象 用于创建NacosRegistry</li>
+</ul>
+<p>接下来看封装了注册中心操作逻辑的注册中心领域对象：</p>
+<p><img src="/img/chapter_dubbo/17-register-factory-2.png" alt="在这里插入图片描述"></p>
+<ul>
+<li>Node 节点信息开放接口 比如节点 url的获取 ，销毁</li>
+<li>RegistryService 注册服务接口，比如注册，订阅，查询等操作</li>
+<li>Registry 注册中心接口，是否服务发现查询，注册，取消注册方法</li>
+<li>AbstractRegistry 注册中心逻辑抽象模板类型，封装了注册，订阅，通知的基本逻辑，和本地缓存注册中心信息的基本逻辑</li>
+<li>FailbackRegistry 封装了失败重试的逻辑</li>
+<li>NacosRegistry  封装了以nacos作为注册中心的基本逻辑</li>
+<li>ServiceDiscoveryRegistry 应用级服务发现注册中心逻辑，现在不需要这种网桥实现，协议可以直接与服务发现交互。ServiceDiscoveryRegistry是一种非常特殊的注册表实现，用于以兼容的方式将旧的接口级服务发现模型与3.0中引入的新服务发现模型连接起来。
+它完全符合注册表SPI的扩展规范，但与zookeeper和Nacos的具体实现不同，因为它不与任何真正的第三方注册表交互，而只与过程中ServiceDiscovery的相关组件交互。简而言之，它架起了旧接口模型和新服务发现模型之间的桥梁：register()方法主要通过与MetadataService交互，将接口级数据聚合到MetadataInfo中subscribe() 触发应用程序级服务发现模型的整个订阅过程。-根据ServiceNameMapping将接口映射到应用程序。-启动新的服务发现侦听器（InstanceListener），并使NotifierListener成为InstanceListener的一部分。</li>
+<li>CacheableFailbackRegistry 提供了一些本地内存缓存的逻辑 对注册中心有用，注册中心的sdk将原始字符串作为提供程序实例返回，例如zookeeper和etcd</li>
+<li>ZookeeperRegistry Zookeeper作为注册中心的基本操作逻辑封装</li>
+</ul>
+<p>了解了这几个领域对象这里我们回到代码逻辑，这里直接看将会执行的一些核心逻辑：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> protected</span><span style="color:#24292E"> Registry </span><span style="color:#6F42C1">getRegistry</span><span style="color:#24292E">(</span><span style="color:#D73A49">final</span><span style="color:#24292E"> URL registryUrl) {</span></span>
+<span class="line"><span style="color:#6A737D">        //这里分为两步先获取注册中心工厂对象</span></span>
+<span class="line"><span style="color:#24292E">        RegistryFactory registryFactory </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ScopeModelUtil.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(RegistryFactory.class, registryUrl.</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">()).</span><span style="color:#6F42C1">getAdaptiveExtension</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //使用注册中心工厂对象获取注册中心操作对象</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> registryFactory.</span><span style="color:#6F42C1">getRegistry</span><span style="color:#24292E">(registryUrl);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>前面注册中心工厂不论那种协议的地址信息获取到的都是一个RegistryFactory$Adaptive类型（由扩展机制的字节码工具自动生成的代码）</p>
+<p>如果getRegistry参数为应用级注册地址。如下所示将获取到的类型为ServiceDiscoveryRegistryFactory逻辑来获取注册中心：
+（这个逻辑是@Adaptive注解产生的了逻辑具体原理可以看扩展机制中@Adaptive的实现）</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">service</span><span style="color:#D73A49">-</span><span style="color:#24292E">discovery</span><span style="color:#D73A49">-</span><span style="color:#24292E">registry</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=10275&#x26;registry=zookeeper&#x26;release=3.0.8&#x26;timestamp=1653704425920</span></span></code></pre>
+<p>getRegistry方法优先走的逻辑是这里：AbstractRegistryFactory模板类型中的getRegistry方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> Registry </span><span style="color:#6F42C1">getRegistry</span><span style="color:#24292E">(URL url) {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (registryManager </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Unable to fetch RegistryManager from ApplicationModel BeanFactory. "</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#032F62">                "Please check if `setApplicationModel` has been override."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">		//销毁状态直接返回</span></span>
+<span class="line"><span style="color:#24292E">        Registry defaultNopRegistry </span><span style="color:#D73A49">=</span><span style="color:#24292E"> registryManager.</span><span style="color:#6F42C1">getDefaultNopRegistryIfDestroyed</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">null</span><span style="color:#D73A49"> !=</span><span style="color:#24292E"> defaultNopRegistry) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> defaultNopRegistry;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        url </span><span style="color:#D73A49">=</span><span style="color:#24292E"> URLBuilder.</span><span style="color:#6F42C1">from</span><span style="color:#24292E">(url)</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">setPath</span><span style="color:#24292E">(RegistryService.class.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">addParameter</span><span style="color:#24292E">(INTERFACE_KEY, RegistryService.class.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">removeParameter</span><span style="color:#24292E">(TIMESTAMP_KEY)</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">removeAttribute</span><span style="color:#24292E">(EXPORT_KEY)</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">removeAttribute</span><span style="color:#24292E">(REFER_KEY)</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">          //这个key为 service-discovery-registry://127.0.0.1:2181/org.apache.dubbo.registry.RegistryService</span></span>
+<span class="line"><span style="color:#24292E">        String key </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createRegistryCacheKey</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#24292E">        Registry registry </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6A737D">        //check配置 是否检查注册中心连通 默认为true</span></span>
+<span class="line"><span style="color:#D73A49">        boolean</span><span style="color:#24292E"> check </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(CHECK_KEY, </span><span style="color:#005CC5">true</span><span style="color:#24292E">) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getPort</span><span style="color:#24292E">() </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6A737D">        // Lock the registry access process to ensure a single instance of the registry</span></span>
+<span class="line"><span style="color:#6A737D">        //给写操作加锁方式并发写问题</span></span>
+<span class="line"><span style="color:#24292E">        registryManager.</span><span style="color:#6F42C1">getRegistryLock</span><span style="color:#24292E">().</span><span style="color:#6F42C1">lock</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">             //锁内检查是否销毁的逻辑</span></span>
+<span class="line"><span style="color:#6A737D">            // double check</span></span>
+<span class="line"><span style="color:#6A737D">            // fix https://github.com/apache/dubbo/issues/7265.</span></span>
+<span class="line"><span style="color:#24292E">            defaultNopRegistry </span><span style="color:#D73A49">=</span><span style="color:#24292E"> registryManager.</span><span style="color:#6F42C1">getDefaultNopRegistryIfDestroyed</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">null</span><span style="color:#D73A49"> !=</span><span style="color:#24292E"> defaultNopRegistry) {</span></span>
+<span class="line"><span style="color:#D73A49">                return</span><span style="color:#24292E"> defaultNopRegistry;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">            //锁内检查是否缓存中存在存在则直接返回</span></span>
+<span class="line"><span style="color:#24292E">            registry </span><span style="color:#D73A49">=</span><span style="color:#24292E"> registryManager.</span><span style="color:#6F42C1">getRegistry</span><span style="color:#24292E">(key);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (registry </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                return</span><span style="color:#24292E"> registry;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">            //create registry by spi/ioc</span></span>
+<span class="line"><span style="color:#6A737D">            //使用url创建注册中心操作的逻辑</span></span>
+<span class="line"><span style="color:#24292E">            registry </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createRegistry</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">           //check配置检查</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (check) {</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> RuntimeException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Can not create registry "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> url, e);</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                LOGGER.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Failed to obtain or create registry "</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">            // Release the lock</span></span>
+<span class="line"><span style="color:#24292E">            registryManager.</span><span style="color:#6F42C1">getRegistryLock</span><span style="color:#24292E">().</span><span style="color:#6F42C1">unlock</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (check </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> registry </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Can not create registry "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> url);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">		//缓存逻辑</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (registry </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            registryManager.</span><span style="color:#6F42C1">putRegistry</span><span style="color:#24292E">(key, registry);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> registry;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>逻辑其实吧比较简单，概括下上面的逻辑：</p>
+<ul>
+<li>销毁逻辑判断</li>
+<li>缓存获取，存在则直接返回</li>
+<li>根据注册中心url配置，创建注册中心操作对象</li>
+<li>注册中心连接失败的check配置逻辑处理</li>
+<li>将注册中心操作对象存入缓存</li>
+</ul>
+<p>上面比较重要的逻辑是createRegistry这个
+整个调用过程我给大家看下Debug的详情，这里很多逻辑由扩展机制产生的这里直接看下逻辑调用栈，有几个需要关注的地方我圈了起来：
+<img src="/img/chapter_dubbo/17-servicediscovery-registry.png" alt="在这里插入图片描述">
+我们继续看服务发现的注册中心工厂对象的获取，代码如下：
+ServiceDiscoveryRegistryFactory类型的createRegistry方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    protected</span><span style="color:#24292E"> Registry </span><span style="color:#6F42C1">createRegistry</span><span style="color:#24292E">(URL url) {</span></span>
+<span class="line"><span style="color:#6A737D">    //判断url是否是这个前缀：service-discovery-registry</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (UrlUtils.</span><span style="color:#6F42C1">hasServiceDiscoveryRegistryProtocol</span><span style="color:#24292E">(url)) {</span></span>
+<span class="line"><span style="color:#6A737D">           //切换下协议：将服务发现协议切换为配置的注册中心协议这里是Zookeeper如下：</span></span>
+<span class="line"><span style="color:#6A737D">           //zookeeper://127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;interface=org.apache.dubbo.registry.RegistryService&#x26;pid=39884&#x26;release=3.0.8</span></span>
+<span class="line"><span style="color:#24292E">            String protocol </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REGISTRY_KEY, DEFAULT_REGISTRY);</span></span>
+<span class="line"><span style="color:#24292E">            url </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">setProtocol</span><span style="color:#24292E">(protocol).</span><span style="color:#6F42C1">removeParameter</span><span style="color:#24292E">(REGISTRY_KEY);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //创建服务发现注册中心对象对象</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ServiceDiscoveryRegistry</span><span style="color:#24292E">(url, applicationModel);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>通过以上代码可以看到其实最终创建的是一个ServiceDiscoveryRegistry注册中心对象，这个url协议被转换为了对应注册中心的协议，也就是说双注册会有两个协议一个是原先的接口级注册注册中心对象（这个还未说到）和这里对应注册中心协议的服务发现注册中心对象ServiceDiscoveryRegistry</p>
+<h3 id="servicediscoveryregistry"><strong>ServiceDiscoveryRegistry</strong></h3>
+<p>ServiceDiscoveryRegistry服务发现注册中心对象的初始化过程：</p>
+<h4 id="servicediscoveryregistry的构造器"><strong><code>ServiceDiscoveryRegistry</code>的构造器：</strong></h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">   public</span><span style="color:#6F42C1"> ServiceDiscoveryRegistry</span><span style="color:#24292E">(URL registryURL, ApplicationModel applicationModel) {</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">(registryURL);</span></span>
+<span class="line"><span style="color:#6A737D">        //根据url创建一个服务发现对象类型为ServiceDiscovery</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.serviceDiscovery </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createServiceDiscovery</span><span style="color:#24292E">(registryURL);</span></span>
+<span class="line"><span style="color:#6A737D">        //这个类型为是serviceNameMapping类型是MetadataServiceNameMapping类型</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.serviceNameMapping </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (AbstractServiceNameMapping) ServiceNameMapping.</span><span style="color:#6F42C1">getDefaultExtension</span><span style="color:#24292E">(registryURL.</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">.applicationModel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> applicationModel;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>ServiceDiscoveryRegistry中创建服务发现对象createServiceDiscovery方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">protected</span><span style="color:#24292E"> ServiceDiscovery </span><span style="color:#6F42C1">createServiceDiscovery</span><span style="color:#24292E">(URL registryURL) {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#6F42C1"> getServiceDiscovery</span><span style="color:#24292E">(registryURL.</span><span style="color:#6F42C1">addParameter</span><span style="color:#24292E">(INTERFACE_KEY, ServiceDiscovery.class.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">removeParameter</span><span style="color:#24292E">(REGISTRY_TYPE_KEY));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>ServiceDiscoveryRegistry中创建服务发现对象getServiceDiscovery方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#24292E"> ServiceDiscovery </span><span style="color:#6F42C1">getServiceDiscovery</span><span style="color:#24292E">(URL registryURL) {</span></span>
+<span class="line"><span style="color:#6A737D">//服务发现工厂对象的获取这里是ServiceDiscoveryFactory类型，</span></span>
+<span class="line"><span style="color:#24292E">        ServiceDiscoveryFactory factory </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getExtension</span><span style="color:#24292E">(registryURL);</span></span>
+<span class="line"><span style="color:#6A737D">        //服务发现工厂对象获取服务发现对象</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> factory.</span><span style="color:#6F42C1">getServiceDiscovery</span><span style="color:#24292E">(registryURL);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>ServiceDiscoveryFactory和ServiceDiscovery类型可以往后看</p>
+<h4 id="父类型failbackregistry的构造器"><strong>父类型FailbackRegistry的构造器</strong></h4>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">   public</span><span style="color:#6F42C1"> FailbackRegistry</span><span style="color:#24292E">(URL url) {</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#6A737D">         //重试间隔配置retry.period ，默认为5秒</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.retryPeriod </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REGISTRY_RETRY_PERIOD_KEY, DEFAULT_REGISTRY_RETRY_PERIOD);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // since the retry task will not be very much. 128 ticks is enough.</span></span>
+<span class="line"><span style="color:#6A737D">        //因为重试任务不会太多。128个刻度就足够了。Dubbo封装的时间轮用于高效率的重试，这个在Kafka也自定义实现了后续可以单独来看看</span></span>
+<span class="line"><span style="color:#24292E">        retryTimer </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> HashedWheelTimer</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> NamedThreadFactory</span><span style="color:#24292E">(</span><span style="color:#032F62">"DubboRegistryRetryTimer"</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">), retryPeriod, TimeUnit.MILLISECONDS, </span><span style="color:#005CC5">128</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h4 id="abstractregistry的构造器"><strong>AbstractRegistry的构造器</strong></h4>
+<p>参数url如下所示：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">zookeeper</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;interface=org.apache.dubbo.registry.RegistryService&#x26;pid=39884&#x26;release=3.0.8</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">   </span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#6F42C1"> AbstractRegistry</span><span style="color:#24292E">(URL url) {</span></span>
+<span class="line"><span style="color:#6F42C1">        setUrl</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#24292E">        registryManager </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getOrDefaultApplicationModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getBeanFactory</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getBean</span><span style="color:#24292E">(RegistryManager.class);</span></span>
+<span class="line"><span style="color:#6A737D">         //是否本地缓存默认为true</span></span>
+<span class="line"><span style="color:#24292E">        localCacheEnabled </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REGISTRY_LOCAL_FILE_CACHE_ENABLED, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        registryCacheExecutor </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getOrDefaultFrameworkModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getBeanFactory</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">getBean</span><span style="color:#24292E">(FrameworkExecutorRepository.class).</span><span style="color:#6F42C1">getSharedExecutor</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (localCacheEnabled) {</span></span>
+<span class="line"><span style="color:#6A737D">            // Start file save timer 是否同步缓存默认为false</span></span>
+<span class="line"><span style="color:#24292E">            syncSaveFile </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REGISTRY_FILESAVE_SYNC_KEY, </span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">             //默认缓存的文件路径与文件名字为：/Users/song/.dubbo/dubbo-registry-dubbo-demo-api-provider-127.0.0.1-2181.cache</span></span>
+<span class="line"><span style="color:#24292E">            String defaultFilename </span><span style="color:#D73A49">=</span><span style="color:#24292E"> System.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(USER_HOME) </span><span style="color:#D73A49">+</span><span style="color:#24292E"> DUBBO_REGISTRY </span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#24292E">                url.</span><span style="color:#6F42C1">getApplication</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "-"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getAddress</span><span style="color:#24292E">().</span><span style="color:#6F42C1">replaceAll</span><span style="color:#24292E">(</span><span style="color:#032F62">":"</span><span style="color:#24292E">, </span><span style="color:#032F62">"-"</span><span style="color:#24292E">) </span><span style="color:#D73A49">+</span><span style="color:#24292E"> CACHE;</span></span>
+<span class="line"><span style="color:#6A737D">               //未指定缓存的文件名字则用默认的文件名字</span></span>
+<span class="line"><span style="color:#24292E">            String filename </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(FILE_KEY, defaultFilename);</span></span>
+<span class="line"><span style="color:#24292E">            File file </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6A737D">            //父目录创建，保证目录存在</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (ConfigUtils.</span><span style="color:#6F42C1">isNotEmpty</span><span style="color:#24292E">(filename)) {</span></span>
+<span class="line"><span style="color:#24292E">                file </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> File</span><span style="color:#24292E">(filename);</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">file.</span><span style="color:#6F42C1">exists</span><span style="color:#24292E">() </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> file.</span><span style="color:#6F42C1">getParentFile</span><span style="color:#24292E">() </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#24292E">file.</span><span style="color:#6F42C1">getParentFile</span><span style="color:#24292E">().</span><span style="color:#6F42C1">exists</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">file.</span><span style="color:#6F42C1">getParentFile</span><span style="color:#24292E">().</span><span style="color:#6F42C1">mkdirs</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Invalid registry cache file "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> file </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ", cause: Failed to create directory "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> file.</span><span style="color:#6F42C1">getParentFile</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "!"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.file </span><span style="color:#D73A49">=</span><span style="color:#24292E"> file;</span></span>
+<span class="line"><span style="color:#6A737D">            // When starting the subscription center,</span></span>
+<span class="line"><span style="color:#6A737D">            // we need to read the local cache file for future Registry fault tolerance processing.</span></span>
+<span class="line"><span style="color:#6A737D">            //加载本地磁盘文件</span></span>
+<span class="line"><span style="color:#6F42C1">            loadProperties</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">            //变更推送</span></span>
+<span class="line"><span style="color:#6F42C1">            notify</span><span style="color:#24292E">(url.</span><span style="color:#6F42C1">getBackupUrls</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="将服务提供者数据转换到本地内存的元数据信息中"><strong>将服务提供者数据转换到本地内存的元数据信息中</strong></h3>
+<p>在前面我们看到了RegistryProtocol中调用register来注册服务提供者的数据到注册的中心，接下来详细看下实现原理：
+下面参数为ServiceDiscoveryRegistry为情况下举例子：ServiceDiscoveryRegistry类型的register方法与ZookeeperRegister注册不一样传统的接口级注册在这个方法里面就将服务数据注册到注册中心了，服务发现的数据注册分为了两步，这里仅仅将数据封装到内存中如下：
+url例子为：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">dubbo</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//192.168.1.9:20880/link.elastic.dubbo.entity.DemoService?anyhost=true&#x26;application=dubbo-demo-api-provider&#x26;background=false&#x26;deprecated=false&#x26;dubbo=2.0.2&#x26;dynamic=true&#x26;generic=false&#x26;interface=link.elastic.dubbo.entity.DemoService&#x26;methods=sayHello,sayHelloAsync&#x26;pid=19559&#x26;release=3.0.8&#x26;service-name-mapping=true&#x26;side=provider&#x26;timestamp=1654938441023</span></span></code></pre>
+<p>RegistryProtocol中的register方法：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> register</span><span style="color:#24292E">(Registry registry, URL registeredProviderUrl) {</span></span>
+<span class="line"><span style="color:#24292E">        registry.</span><span style="color:#6F42C1">register</span><span style="color:#24292E">(registeredProviderUrl);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>上面这个代码会优先走ListenerRegistryWrapper的一些逻辑来执行register方法来触发一些监听器的逻辑，我们直接跳到ServiceDiscoveryRegistry中的register方法来看</p>
+<p>ServiceDiscoveryRegistry的register方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> register</span><span style="color:#24292E">(URL url) {</span></span>
+<span class="line"><span style="color:#6A737D">       //逻辑判断比如只有side为提供者时候才能注册</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#6F42C1">shouldRegister</span><span style="color:#24292E">(url)) { </span><span style="color:#6A737D">// Should Not Register</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6F42C1">        doRegister</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>ServiceDiscoveryRegistry的doRegister方法：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">   @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> doRegister</span><span style="color:#24292E">(URL url) {</span></span>
+<span class="line"><span style="color:#6A737D">        // fixme, add registry-cluster is not necessary anymore</span></span>
+<span class="line"><span style="color:#24292E">        url </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> addRegistryClusterKey</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#24292E">        serviceDiscovery.</span><span style="color:#6F42C1">register</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span></code></pre>
+<p>AbstractServiceDiscovery的register方法：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> register</span><span style="color:#24292E">(URL url) {</span></span>
+<span class="line"><span style="color:#6A737D">      //metadaInfo类型为MetadataInfo类型，用来操作元数据的</span></span>
+<span class="line"><span style="color:#24292E">        metadataInfo.</span><span style="color:#6F42C1">addService</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span></code></pre>
+<p>MetadataInfo 类型的addService方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> synchronized</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> addService</span><span style="color:#24292E">(URL url) {</span></span>
+<span class="line"><span style="color:#6A737D">        // fixme, pass in application mode context during initialization of MetadataInfo.</span></span>
+<span class="line"><span style="color:#6A737D">        //元数据参数过滤器扩展获取:MetadataParamsFilter</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.loader </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.loader </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getOrDefaultApplicationModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(MetadataParamsFilter.class);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //元数据参数过滤器获取</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">MetadataParamsFilter</span><span style="color:#24292E">> filters </span><span style="color:#D73A49">=</span><span style="color:#24292E"> loader.</span><span style="color:#6F42C1">getActivateExtension</span><span style="color:#24292E">(url, </span><span style="color:#032F62">"params-filter"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        // generate service level metadata</span></span>
+<span class="line"><span style="color:#6A737D">        //生成服务级别的元数据</span></span>
+<span class="line"><span style="color:#24292E">        ServiceInfo serviceInfo </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ServiceInfo</span><span style="color:#24292E">(url, filters);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.services.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(serviceInfo.</span><span style="color:#6F42C1">getMatchKey</span><span style="color:#24292E">(), serviceInfo);</span></span>
+<span class="line"><span style="color:#6A737D">        // extract common instance level params</span></span>
+<span class="line"><span style="color:#6F42C1">        extractInstanceParams</span><span style="color:#24292E">(url, filters);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (exportedServiceURLs </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            exportedServiceURLs </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ConcurrentSkipListMap&#x3C;>();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6F42C1">        addURL</span><span style="color:#24292E">(exportedServiceURLs, url);</span></span>
+<span class="line"><span style="color:#24292E">        updated </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> true</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="接口级服务提供者配置的注册"><strong>接口级服务提供者配置的注册</strong></h3>
+<p>前面我们通过服务发现的的url进行了举例子，其实在RegistryProtocol协议的export方法中还会注册接口级信息：
+例如如下关键代码：
+当registryUrl参数不是服务发现协议service-discovery-registry配置而是zookeeper如下时候获取到的扩展类型将是与Zookeeper相关的扩展对象</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">zookeeper</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//8.131.79.126:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;pid=29386&#x26;release=3.0.8&#x26;timestamp=1655023329438</span></span></code></pre>
+<p>RegistryProtocol协议的export方法中接口级数据注册的核心代码如下：
+如下代码的操作类型可以看注释</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// url to registry 这里registry对象的类型为ZookeeperRegistry</span></span>
+<span class="line"><span style="color:#D73A49">        final</span><span style="color:#24292E"> Registry registry </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getRegistry</span><span style="color:#24292E">(registryUrl);</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#D73A49">        final</span><span style="color:#24292E"> URL registeredProviderUrl </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getUrlToRegistry</span><span style="color:#24292E">(providerUrl, registryUrl);</span></span>
+<span class="line"><span style="color:#6A737D">        // decide if we need to delay publish (provider itself and registry should both need to register)</span></span>
+<span class="line"><span style="color:#D73A49">        boolean</span><span style="color:#24292E"> register </span><span style="color:#D73A49">=</span><span style="color:#24292E"> providerUrl.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REGISTER_KEY, </span><span style="color:#005CC5">true</span><span style="color:#24292E">) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> registryUrl.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REGISTER_KEY, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //这一个方法里面会将提供者的url配置写入Zookeeper的provider节点下面</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (register) {</span></span>
+<span class="line"><span style="color:#6F42C1">            register</span><span style="color:#24292E">(registry, registeredProviderUrl);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span></code></pre>
+<p>如上代码是获取Zookeeper操作对象和向Zookeeper中写入服务提供者信息的代码，关于与Zookeeper连接和注册数据本地缓存的代码可以看ZookeeperRegistry类型和它的几个父类型比如：CacheableFailbackRegistry类型，关于接口级数据的注册可以看register方法，这个就不详细说了，下面我贴一下接口级数据注册的Zookeeper信息可以了解下就行：
+<img src="/img/chapter_dubbo/17-register4.png" alt="在这里插入图片描述">
+接口信息如下，上面我们需要注意的是这个 url配置为临时节点，当与Zookeeper断开连接或者Session超时的时候这个信息会被移除：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">/</span><span style="color:#24292E">dubbo</span><span style="color:#D73A49">/</span><span style="color:#24292E">link.elastic.dubbo.entity.DemoService</span><span style="color:#D73A49">/</span><span style="color:#24292E">providers</span><span style="color:#D73A49">/</span><span style="color:#24292E">dubbo</span><span style="color:#D73A49">%</span><span style="color:#24292E">3A</span><span style="color:#D73A49">%</span><span style="color:#005CC5">2F</span><span style="color:#D73A49">%</span><span style="color:#24292E">2F192.</span><span style="color:#B31D28;font-style:italic">168</span><span style="color:#24292E">.</span><span style="color:#B31D28;font-style:italic">1</span><span style="color:#24292E">.</span><span style="color:#B31D28;font-style:italic">9</span><span style="color:#D73A49">%</span><span style="color:#24292E">3A20880</span><span style="color:#D73A49">%</span><span style="color:#24292E">2Flink.elastic.dubbo.entity.DemoService</span><span style="color:#D73A49">%</span><span style="color:#24292E">3Fanyhost</span><span style="color:#D73A49">%</span><span style="color:#24292E">3Dtrue</span><span style="color:#D73A49">%</span><span style="color:#24292E">26application</span><span style="color:#D73A49">%</span><span style="color:#24292E">3Ddubbo</span><span style="color:#D73A49">-</span><span style="color:#24292E">demo</span><span style="color:#D73A49">-</span><span style="color:#24292E">api</span><span style="color:#D73A49">-</span><span style="color:#24292E">provider</span><span style="color:#D73A49">%</span><span style="color:#24292E">26background</span><span style="color:#D73A49">%</span><span style="color:#24292E">3Dfalse</span><span style="color:#D73A49">%</span><span style="color:#24292E">26deprecated</span><span style="color:#D73A49">%</span><span style="color:#24292E">3Dfalse</span><span style="color:#D73A49">%</span><span style="color:#24292E">26dubbo</span><span style="color:#D73A49">%</span><span style="color:#24292E">3D2.</span><span style="color:#B31D28;font-style:italic">0</span><span style="color:#24292E">.</span><span style="color:#B31D28;font-style:italic">2</span><span style="color:#D73A49">%</span><span style="color:#24292E">26dynamic</span><span style="color:#D73A49">%</span><span style="color:#24292E">3Dtrue</span><span style="color:#D73A49">%</span><span style="color:#24292E">26generic</span><span style="color:#D73A49">%</span><span style="color:#24292E">3Dfalse</span><span style="color:#D73A49">%</span><span style="color:#24292E">26interface</span><span style="color:#D73A49">%</span><span style="color:#24292E">3Dlink.elastic.dubbo.entity.DemoService</span><span style="color:#D73A49">%</span><span style="color:#24292E">26methods</span><span style="color:#D73A49">%</span><span style="color:#24292E">3DsayHello</span><span style="color:#D73A49">%</span><span style="color:#24292E">2CsayHelloAsync</span><span style="color:#D73A49">%</span><span style="color:#24292E">26pid</span><span style="color:#D73A49">%</span><span style="color:#24292E">3D29386</span><span style="color:#D73A49">%</span><span style="color:#24292E">26release</span><span style="color:#D73A49">%</span><span style="color:#24292E">3D3.</span><span style="color:#B31D28;font-style:italic">0</span><span style="color:#24292E">.</span><span style="color:#B31D28;font-style:italic">8</span><span style="color:#D73A49">%</span><span style="color:#24292E">26service</span><span style="color:#D73A49">-</span><span style="color:#24292E">name</span><span style="color:#D73A49">-</span><span style="color:#24292E">mapping</span><span style="color:#D73A49">%</span><span style="color:#24292E">3Dtrue</span><span style="color:#D73A49">%</span><span style="color:#24292E">26side</span><span style="color:#D73A49">%</span><span style="color:#24292E">3Dprovider</span><span style="color:#D73A49">%</span><span style="color:#24292E">26timestamp</span><span style="color:#D73A49">%</span><span style="color:#24292E">3D1655023329514</span></span></code></pre>
+<h2 id="应用级服务发现功能的实现servicediscovery">应用级服务发现功能的实现ServiceDiscovery</h2>
+<p>在说这个实现之前我们先看看相关类型，这个服务发现相关的类型与注册中心相关的类型有点类似：</p>
+<p>服务发现工厂类型：
+<img src="/img/chapter_dubbo/17-discovery.png" alt="在这里插入图片描述">
+服务发现类型：
+<img src="/img/chapter_dubbo/17-register5.png" alt="在这里插入图片描述"></p>
+<p>刚刚在 ServiceDiscoveryRegistry中创建服务发现对象getServiceDiscovery方法看到了两个类型一个是服务发现工厂类型ServiceDiscoveryFactory，一个是服务发现类型ServiceDiscovery</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#24292E"> ServiceDiscovery </span><span style="color:#6F42C1">getServiceDiscovery</span><span style="color:#24292E">(URL registryURL) {</span></span>
+<span class="line"><span style="color:#6A737D">//服务发现工厂对象的获取这里是ServiceDiscoveryFactory类型，这里对应ZookeeperServiceDiscoveryFactory</span></span>
+<span class="line"><span style="color:#24292E">        ServiceDiscoveryFactory factory </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getExtension</span><span style="color:#24292E">(registryURL);</span></span>
+<span class="line"><span style="color:#6A737D">        //服务发现工厂对象获取服务发现对象</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> factory.</span><span style="color:#6F42C1">getServiceDiscovery</span><span style="color:#24292E">(registryURL);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>AbstractServiceDiscoveryFactory类型的getServiceDiscovery方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">   @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> ServiceDiscovery </span><span style="color:#6F42C1">getServiceDiscovery</span><span style="color:#24292E">(URL registryURL) {</span></span>
+<span class="line"><span style="color:#6A737D">    //这个key是 zookeeper://127.0.0.1:2181/org.apache.dubbo.registry.client.ServiceDiscovery</span></span>
+<span class="line"><span style="color:#6A737D">     //一个地址需要创建一个服务发现对象</span></span>
+<span class="line"><span style="color:#24292E">        String key </span><span style="color:#D73A49">=</span><span style="color:#24292E"> registryURL.</span><span style="color:#6F42C1">toServiceStringWithoutResolving</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> discoveries.</span><span style="color:#6F42C1">computeIfAbsent</span><span style="color:#24292E">(key, k </span><span style="color:#D73A49">-></span><span style="color:#6F42C1"> createDiscovery</span><span style="color:#24292E">(registryURL));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>createDiscovery方法对应ZookeeperServiceDiscoveryFactory类型中的createDiscovery方法</p>
+<p>如下代码所示：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    protected</span><span style="color:#24292E"> ServiceDiscovery </span><span style="color:#6F42C1">createDiscovery</span><span style="color:#24292E">(URL registryURL) {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ZookeeperServiceDiscovery</span><span style="color:#24292E">(applicationModel, registryURL);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span></code></pre>
+<h3 id="zookeeperservicediscovery"><strong>ZookeeperServiceDiscovery</strong></h3>
+<p>ZookeeperServiceDiscovery的构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">  public</span><span style="color:#6F42C1"> ZookeeperServiceDiscovery</span><span style="color:#24292E">(ApplicationModel applicationModel, URL registryURL) {</span></span>
+<span class="line"><span style="color:#6A737D">        //先调用父类AbstractServiceDiscovery 模板类构造器</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">(applicationModel, registryURL);</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">         	//创建 创建CuratorFramework 类型对象用于操作Zookeeper</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.curatorFramework </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> buildCuratorFramework</span><span style="color:#24292E">(registryURL);</span></span>
+<span class="line"><span style="color:#6A737D">            //获取应用级服务发现的根路径 值为/services 这个可以在Zookeeper上面看到</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.rootPath </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ROOT_PATH.</span><span style="color:#6F42C1">getParameterValue</span><span style="color:#24292E">(registryURL);</span></span>
+<span class="line"><span style="color:#6A737D">             //创建服务发现对象 实现类型为ServiceDiscoveryImpl 这个实现来源于Curator框架中的discovery模块</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.serviceDiscovery </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> buildServiceDiscovery</span><span style="color:#24292E">(curatorFramework, rootPath);</span></span>
+<span class="line"><span style="color:#6A737D">            //启动服务发现</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.serviceDiscovery.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Create zookeeper service discovery failed."</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>这个方法比较重要是应用级服务发现的实现，这里主要关注下serviceDiscovery类型的创建与启动，这个应用级服务发现的实现其实是Dubbo使用了Curator来做的，Dubbo只是在这里封装了一些方法来进行调用Curator的实现：
+关于Curator的官方文档可以看<a href="https://curator.apache.org/">curator官网</a></p>
+<p>关于Zookeeper上面注册服务应用级服务注册信息可以看如下图所示(后面会具体讲到数据注册时的调用）：
+<img src="/img/chapter_dubbo/17-register-6.png" alt="在这里插入图片描述">
+我这个服务提供者注册的应用数据如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#005CC5">  "name"</span><span style="color:#24292E"> : </span><span style="color:#032F62">"dubbo-demo-api-provider"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">  "id"</span><span style="color:#24292E"> : </span><span style="color:#032F62">"192.168.1.9:20880"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">  "address"</span><span style="color:#24292E"> : </span><span style="color:#032F62">"192.168.1.9"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">  "port"</span><span style="color:#24292E"> : </span><span style="color:#005CC5">20880</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">  "sslPort"</span><span style="color:#24292E"> : </span><span style="color:#005CC5">null</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">  "payload"</span><span style="color:#24292E"> : {</span></span>
+<span class="line"><span style="color:#005CC5">    "@class"</span><span style="color:#24292E"> : </span><span style="color:#032F62">"org.apache.dubbo.registry.zookeeper.ZookeeperInstance"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "id"</span><span style="color:#24292E"> : </span><span style="color:#032F62">"192.168.1.9:20880"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "name"</span><span style="color:#24292E"> : </span><span style="color:#032F62">"dubbo-demo-api-provider"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "metadata"</span><span style="color:#24292E"> : {</span></span>
+<span class="line"><span style="color:#005CC5">      "dubbo.endpoints"</span><span style="color:#24292E"> : </span><span style="color:#032F62">"[{</span><span style="color:#005CC5">\"</span><span style="color:#032F62">port</span><span style="color:#005CC5">\"</span><span style="color:#032F62">:20880,</span><span style="color:#005CC5">\"</span><span style="color:#032F62">protocol</span><span style="color:#005CC5">\"</span><span style="color:#032F62">:</span><span style="color:#005CC5">\"</span><span style="color:#032F62">dubbo</span><span style="color:#005CC5">\"</span><span style="color:#032F62">}]"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      "dubbo.metadata-service.url-params"</span><span style="color:#24292E"> : </span><span style="color:#032F62">"{</span><span style="color:#005CC5">\"</span><span style="color:#032F62">connections</span><span style="color:#005CC5">\"</span><span style="color:#032F62">:</span><span style="color:#005CC5">\"</span><span style="color:#032F62">1</span><span style="color:#005CC5">\"</span><span style="color:#032F62">,</span><span style="color:#005CC5">\"</span><span style="color:#032F62">version</span><span style="color:#005CC5">\"</span><span style="color:#032F62">:</span><span style="color:#005CC5">\"</span><span style="color:#032F62">1.0.0</span><span style="color:#005CC5">\"</span><span style="color:#032F62">,</span><span style="color:#005CC5">\"</span><span style="color:#032F62">dubbo</span><span style="color:#005CC5">\"</span><span style="color:#032F62">:</span><span style="color:#005CC5">\"</span><span style="color:#032F62">2.0.2</span><span style="color:#005CC5">\"</span><span style="color:#032F62">,</span><span style="color:#005CC5">\"</span><span style="color:#032F62">release</span><span style="color:#005CC5">\"</span><span style="color:#032F62">:</span><span style="color:#005CC5">\"</span><span style="color:#032F62">3.0.8</span><span style="color:#005CC5">\"</span><span style="color:#032F62">,</span><span style="color:#005CC5">\"</span><span style="color:#032F62">side</span><span style="color:#005CC5">\"</span><span style="color:#032F62">:</span><span style="color:#005CC5">\"</span><span style="color:#032F62">provider</span><span style="color:#005CC5">\"</span><span style="color:#032F62">,</span><span style="color:#005CC5">\"</span><span style="color:#032F62">port</span><span style="color:#005CC5">\"</span><span style="color:#032F62">:</span><span style="color:#005CC5">\"</span><span style="color:#032F62">20880</span><span style="color:#005CC5">\"</span><span style="color:#032F62">,</span><span style="color:#005CC5">\"</span><span style="color:#032F62">protocol</span><span style="color:#005CC5">\"</span><span style="color:#032F62">:</span><span style="color:#005CC5">\"</span><span style="color:#032F62">dubbo</span><span style="color:#005CC5">\"</span><span style="color:#032F62">}"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      "dubbo.metadata.revision"</span><span style="color:#24292E"> : </span><span style="color:#032F62">"a662fd2213a8a49dc6ff43a4c2ae7b9e"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      "dubbo.metadata.storage-type"</span><span style="color:#24292E"> : </span><span style="color:#032F62">"local"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      "timestamp"</span><span style="color:#24292E"> : </span><span style="color:#032F62">"1654916298616"</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">  },</span></span>
+<span class="line"><span style="color:#005CC5">  "registrationTimeUTC"</span><span style="color:#24292E"> : </span><span style="color:#005CC5">1654917265499</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">  "serviceType"</span><span style="color:#24292E"> : </span><span style="color:#032F62">"DYNAMIC"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">  "uriSpec"</span><span style="color:#24292E"> : </span><span style="color:#005CC5">null</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>如果感兴趣的话可以看更详细的curator服务发现文档<a href="https://curator.apache.org/docs/service-discovery/index.html">curator-x-discovery</a></p>
+<h3 id="abstractservicediscovery的构造器"><strong>AbstractServiceDiscovery的构造器</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">  public</span><span style="color:#6F42C1"> AbstractServiceDiscovery</span><span style="color:#24292E">(ApplicationModel applicationModel, URL registryURL) {</span></span>
+<span class="line"><span style="color:#6A737D">        //调用重载的构造器</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">(applicationModel.</span><span style="color:#6F42C1">getApplicationName</span><span style="color:#24292E">(), registryURL);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.applicationModel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> applicationModel;</span></span>
+<span class="line"><span style="color:#24292E">        MetadataReportInstance metadataReportInstance </span><span style="color:#D73A49">=</span><span style="color:#24292E"> applicationModel.</span><span style="color:#6F42C1">getBeanFactory</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getBean</span><span style="color:#24292E">(MetadataReportInstance.class);</span></span>
+<span class="line"><span style="color:#24292E">        metadataType </span><span style="color:#D73A49">=</span><span style="color:#24292E"> metadataReportInstance.</span><span style="color:#6F42C1">getMetadataType</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.metadataReport </span><span style="color:#D73A49">=</span><span style="color:#24292E"> metadataReportInstance.</span><span style="color:#6F42C1">getMetadataReport</span><span style="color:#24292E">(registryURL.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REGISTRY_CLUSTER_KEY));</span></span>
+<span class="line"><span style="color:#6A737D">//        if (REMOTE_METADATA_STORAGE_TYPE.equals(metadataReportInstance.getMetadataType())) {</span></span>
+<span class="line"><span style="color:#6A737D">//            this.metadataReport = metadataReportInstance.getMetadataReport(registryURL.getParameter(REGISTRY_CLUSTER_KEY));</span></span>
+<span class="line"><span style="color:#6A737D">//        } else {</span></span>
+<span class="line"><span style="color:#6A737D">//            this.metadataReport = metadataReportInstance.getNopMetadataReport();</span></span>
+<span class="line"><span style="color:#6A737D">//        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>重载的构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">    public</span><span style="color:#6F42C1"> AbstractServiceDiscovery</span><span style="color:#24292E">(String serviceName, URL registryURL) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.applicationModel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ApplicationModel.</span><span style="color:#6F42C1">defaultModel</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //这个url参考：zookeeper://127.0.0.1:2181/org.apache.dubbo.registry.RegistryService?application=dubbo-demo-api-provider&#x26;dubbo=2.0.2&#x26;interface=org.apache.dubbo.registry.client.ServiceDiscovery&#x26;pid=4570&#x26;release=3.0.8</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.registryURL </span><span style="color:#D73A49">=</span><span style="color:#24292E"> registryURL;</span></span>
+<span class="line"><span style="color:#6A737D">        //这个serviceName参考dubbo-demo-api-provider</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.serviceName </span><span style="color:#D73A49">=</span><span style="color:#24292E"> serviceName;</span></span>
+<span class="line"><span style="color:#6A737D">        //MetadataInfo 用来封装元数据信息</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.metadataInfo </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> MetadataInfo</span><span style="color:#24292E">(serviceName);</span></span>
+<span class="line"><span style="color:#6A737D">        //这个是元数据缓存信息管理的类型 缓存文件使用LRU策略  感兴趣的可以详细看看</span></span>
+<span class="line"><span style="color:#6A737D">        //对应缓存路径为：/Users/song/.dubbo/.metadata.zookeeper127.0.0.1%003a2181.dubbo.cache</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.metaCacheManager </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> MetaCacheManager</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getCacheNameSuffix</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">            applicationModel.</span><span style="color:#6F42C1">getFrameworkModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getBeanFactory</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">getBean</span><span style="color:#24292E">(FrameworkExecutorRepository.class).</span><span style="color:#6F42C1">getCacheRefreshingScheduledExecutor</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h2 id="服务映射类型abstractservicenamemapping"><strong>服务映射类型AbstractServiceNameMapping</strong></h2>
+<p>服务映射主要是通过服务名字来反查应用信息的应用名字如下图所示
+<img src="/img/chapter_dubbo/17-service-mapping.png" alt="在这里插入图片描述">
+这里我们来看下服务映射相关的类型主要通过如下代码来获取扩展对象：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#005CC5">this</span><span style="color:#24292E">.serviceNameMapping </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (AbstractServiceNameMapping) ServiceNameMapping.</span><span style="color:#6F42C1">getDefaultExtension</span><span style="color:#24292E">(registryURL.</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">());</span></span></code></pre>
+<p>对应类型如下：
+<img src="/img/chapter_dubbo/17-register7.png" alt="在这里插入图片描述"></p>
+<p>最终获取的扩展实现类型为：MetadataServiceNameMapping
+构造器如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">   public</span><span style="color:#6F42C1"> MetadataServiceNameMapping</span><span style="color:#24292E">(ApplicationModel applicationModel) {</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">(applicationModel);</span></span>
+<span class="line"><span style="color:#24292E">        metadataReportInstance </span><span style="color:#D73A49">=</span><span style="color:#24292E"> applicationModel.</span><span style="color:#6F42C1">getBeanFactory</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getBean</span><span style="color:#24292E">(MetadataReportInstance.class);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>服务映射元数据父类型AbstractServiceNameMapping如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> public</span><span style="color:#6F42C1"> AbstractServiceNameMapping</span><span style="color:#24292E">(ApplicationModel applicationModel) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.applicationModel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> applicationModel;</span></span>
+<span class="line"><span style="color:#6A737D">        //LRU缓存保存服务映射数据</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.mappingCacheManager </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> MappingCacheManager</span><span style="color:#24292E">(</span><span style="color:#032F62">""</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">            applicationModel.</span><span style="color:#6F42C1">getFrameworkModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getBeanFactory</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">getBean</span><span style="color:#24292E">(FrameworkExecutorRepository.class).</span><span style="color:#6F42C1">getCacheRefreshingScheduledExecutor</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span></code></pre>
+<h2 id="双注册元数据信息发布到注册中心"><strong>双注册元数据信息发布到注册中心</strong></h2>
+<h3 id="回顾简介"><strong>回顾简介</strong></h3>
+<p>前面注册数据的时候并没有把服务配置的元数据直接注册在注册中心而是需要在导出服务之后在ServiceConfig中来发布元数据，这个就需要我们回到ServiceConfig的exportUrl方法来看了如下所示：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> exportUrl</span><span style="color:#24292E">(URL url, List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">URL</span><span style="color:#D73A49">></span><span style="color:#24292E"> registryURLs) {</span></span>
+<span class="line"><span style="color:#24292E">        String scope </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(SCOPE_KEY);</span></span>
+<span class="line"><span style="color:#6A737D">        // don't export when none is configured</span></span>
+<span class="line"><span style="color:#24292E">        ...省略到若干代码</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">SCOPE_LOCAL.</span><span style="color:#6F42C1">equalsIgnoreCase</span><span style="color:#24292E">(scope)) {</span></span>
+<span class="line"><span style="color:#24292E">                url </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> exportRemote</span><span style="color:#24292E">(url, registryURLs);</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#6F42C1">isGeneric</span><span style="color:#24292E">(generic) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">().</span><span style="color:#6F42C1">isInternal</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                    MetadataUtils.</span><span style="color:#6F42C1">publishServiceDefinition</span><span style="color:#24292E">(url, providerModel.</span><span style="color:#6F42C1">getServiceModel</span><span style="color:#24292E">(), </span><span style="color:#6F42C1">getApplicationModel</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.urls.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="元数据服务定义数据的发布"><strong>元数据服务定义数据的发布</strong></h3>
+<p>在exportRemote之后单独调用发布元数据的方法来发布，通过调用元数据工具类来发布元数据信息接下来我们详细看下:
+MetadataUtils类型的publishServiceDefinition方法：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> publishServiceDefinition</span><span style="color:#24292E">(URL url, ServiceDescriptor serviceDescriptor, ApplicationModel applicationModel) {</span></span>
+<span class="line"><span style="color:#6A737D">		//查询是否存在元数据存储对象 对应接口MetadataReport 这里对应实现类 ZookeeperMetadataReport</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">getMetadataReports</span><span style="color:#24292E">(applicationModel).</span><span style="color:#6F42C1">size</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            String msg </span><span style="color:#D73A49">=</span><span style="color:#032F62"> "Remote Metadata Report Server is not provided or unavailable, will stop registering service definition to remote center!"</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            logger.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(msg);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            String side </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getSide</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">             //服务提供者走这个逻辑</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (PROVIDER_SIDE.</span><span style="color:#6F42C1">equalsIgnoreCase</span><span style="color:#24292E">(side)) {</span></span>
+<span class="line"><span style="color:#24292E">                String serviceKey </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getServiceKey</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">                //获取当前服务元数据信息</span></span>
+<span class="line"><span style="color:#24292E">                FullServiceDefinition serviceDefinition </span><span style="color:#D73A49">=</span><span style="color:#24292E"> serviceDescriptor.</span><span style="color:#6F42C1">getFullServiceDefinition</span><span style="color:#24292E">(serviceKey);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (StringUtils.</span><span style="color:#6F42C1">isNotEmpty</span><span style="color:#24292E">(serviceKey) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> serviceDefinition </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    serviceDefinition.</span><span style="color:#6F42C1">setParameters</span><span style="color:#24292E">(url.</span><span style="color:#6F42C1">getParameters</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">                    for</span><span style="color:#24292E"> (Map.Entry&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">MetadataReport</span><span style="color:#24292E">> entry </span><span style="color:#D73A49">:</span><span style="color:#6F42C1"> getMetadataReports</span><span style="color:#24292E">(applicationModel).</span><span style="color:#6F42C1">entrySet</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                        MetadataReport metadataReport </span><span style="color:#D73A49">=</span><span style="color:#24292E"> entry.</span><span style="color:#6F42C1">getValue</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">metadataReport.</span><span style="color:#6F42C1">shouldReportDefinition</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                            logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Report of service definition is disabled for "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> entry.</span><span style="color:#6F42C1">getKey</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">                            continue</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#6A737D">                        //存储服务提供者的元数据  metadataReport类型为ZookeeperMetadataReport 方法来源于父类模板方法： AbstractMetadataReport类型的storeProviderMetadata模板方法</span></span>
+<span class="line"><span style="color:#24292E">                        metadataReport.</span><span style="color:#6F42C1">storeProviderMetadata</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#D73A49">                            new</span><span style="color:#6F42C1"> MetadataIdentifier</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">                                url.</span><span style="color:#6F42C1">getServiceInterface</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                                url.</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> ?</span><span style="color:#032F62"> ""</span><span style="color:#D73A49"> :</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                                url.</span><span style="color:#6F42C1">getGroup</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> ?</span><span style="color:#032F62"> ""</span><span style="color:#D73A49"> :</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getGroup</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                                PROVIDER_SIDE,</span></span>
+<span class="line"><span style="color:#24292E">                                applicationModel.</span><span style="color:#6F42C1">getApplicationName</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">                            , serviceDefinition);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">              //服务消费者走这个逻辑</span></span>
+<span class="line"><span style="color:#D73A49">                for</span><span style="color:#24292E"> (Map.Entry&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, </span><span style="color:#D73A49">MetadataReport</span><span style="color:#24292E">> entry </span><span style="color:#D73A49">:</span><span style="color:#6F42C1"> getMetadataReports</span><span style="color:#24292E">(applicationModel).</span><span style="color:#6F42C1">entrySet</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                    MetadataReport metadataReport </span><span style="color:#D73A49">=</span><span style="color:#24292E"> entry.</span><span style="color:#6F42C1">getValue</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">metadataReport.</span><span style="color:#6F42C1">shouldReportDefinition</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                        logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Report of service definition is disabled for "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> entry.</span><span style="color:#6F42C1">getKey</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">                        continue</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                    metadataReport.</span><span style="color:#6F42C1">storeConsumerMetadata</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#D73A49">                        new</span><span style="color:#6F42C1"> MetadataIdentifier</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">                            url.</span><span style="color:#6F42C1">getServiceInterface</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                            url.</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> ?</span><span style="color:#032F62"> ""</span><span style="color:#D73A49"> :</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                            url.</span><span style="color:#6F42C1">getGroup</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> ?</span><span style="color:#032F62"> ""</span><span style="color:#D73A49"> :</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getGroup</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                            CONSUMER_SIDE,</span></span>
+<span class="line"><span style="color:#24292E">                            applicationModel.</span><span style="color:#6F42C1">getApplicationName</span><span style="color:#24292E">()),</span></span>
+<span class="line"><span style="color:#24292E">                        url.</span><span style="color:#6F42C1">getParameters</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">            //ignore error</span></span>
+<span class="line"><span style="color:#24292E">            logger.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"publish service definition metadata error."</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>AbstractMetadataReport的storeProviderMetadata方法如下所示：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> storeProviderMetadata</span><span style="color:#24292E">(MetadataIdentifier providerMetadataIdentifier, ServiceDefinition serviceDefinition) {</span></span>
+<span class="line"><span style="color:#6A737D">       //是否同步配置对应sync-report 默认为异步</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (syncReport) {</span></span>
+<span class="line"><span style="color:#6F42C1">            storeProviderMetadataTask</span><span style="color:#24292E">(providerMetadataIdentifier, serviceDefinition);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            reportCacheExecutor.</span><span style="color:#6F42C1">execute</span><span style="color:#24292E">(() </span><span style="color:#D73A49">-></span><span style="color:#6F42C1"> storeProviderMetadataTask</span><span style="color:#24292E">(providerMetadataIdentifier, serviceDefinition));</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>AbstractMetadataReport的存储元数据方法storeProviderMetadataTask</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> storeProviderMetadataTask</span><span style="color:#24292E">(MetadataIdentifier providerMetadataIdentifier, ServiceDefinition serviceDefinition) {</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (logger.</span><span style="color:#6F42C1">isInfoEnabled</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"store provider metadata. Identifier : "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> providerMetadataIdentifier </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "; definition: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> serviceDefinition);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">            allMetadataReports.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(providerMetadataIdentifier, serviceDefinition);</span></span>
+<span class="line"><span style="color:#24292E">            failedReports.</span><span style="color:#6F42C1">remove</span><span style="color:#24292E">(providerMetadataIdentifier);</span></span>
+<span class="line"><span style="color:#24292E">            Gson gson </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Gson</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            String data </span><span style="color:#D73A49">=</span><span style="color:#24292E"> gson.</span><span style="color:#6F42C1">toJson</span><span style="color:#24292E">(serviceDefinition);</span></span>
+<span class="line"><span style="color:#6F42C1">            doStoreProviderMetadata</span><span style="color:#24292E">(providerMetadataIdentifier, data);</span></span>
+<span class="line"><span style="color:#6F42C1">            saveProperties</span><span style="color:#24292E">(providerMetadataIdentifier, data, </span><span style="color:#005CC5">true</span><span style="color:#24292E">, </span><span style="color:#D73A49">!</span><span style="color:#24292E">syncReport);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">            // retry again. If failed again, throw exception.</span></span>
+<span class="line"><span style="color:#24292E">            failedReports.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(providerMetadataIdentifier, serviceDefinition);</span></span>
+<span class="line"><span style="color:#24292E">            metadataReportRetry.</span><span style="color:#6F42C1">startRetryTask</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            logger.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Failed to put provider metadata "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> providerMetadataIdentifier </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " in  "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> serviceDefinition </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ", cause: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> e.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">(), e);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p><img src="/img/chapter_dubbo/17-register8.png" alt="17-register8.png"></p>
+<p>元数据信息如下：可以分为两类 应用元数据，服务元数据</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#005CC5">	"parameters"</span><span style="color:#24292E">: {</span></span>
+<span class="line"><span style="color:#005CC5">		"side"</span><span style="color:#24292E">: </span><span style="color:#032F62">"provider"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"interface"</span><span style="color:#24292E">: </span><span style="color:#032F62">"link.elastic.dubbo.entity.DemoService"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"pid"</span><span style="color:#24292E">: </span><span style="color:#032F62">"22099"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"application"</span><span style="color:#24292E">: </span><span style="color:#032F62">"dubbo-demo-api-provider"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"dubbo"</span><span style="color:#24292E">: </span><span style="color:#032F62">"2.0.2"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"release"</span><span style="color:#24292E">: </span><span style="color:#032F62">"3.0.8"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"anyhost"</span><span style="color:#24292E">: </span><span style="color:#032F62">"true"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"bind.ip"</span><span style="color:#24292E">: </span><span style="color:#032F62">"192.168.1.9"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"methods"</span><span style="color:#24292E">: </span><span style="color:#032F62">"sayHello,sayHelloAsync"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"background"</span><span style="color:#24292E">: </span><span style="color:#032F62">"false"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"deprecated"</span><span style="color:#24292E">: </span><span style="color:#032F62">"false"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"dynamic"</span><span style="color:#24292E">: </span><span style="color:#032F62">"true"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"service-name-mapping"</span><span style="color:#24292E">: </span><span style="color:#032F62">"true"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"generic"</span><span style="color:#24292E">: </span><span style="color:#032F62">"false"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"bind.port"</span><span style="color:#24292E">: </span><span style="color:#032F62">"20880"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"timestamp"</span><span style="color:#24292E">: </span><span style="color:#032F62">"1654942353902"</span></span>
+<span class="line"><span style="color:#24292E">	},</span></span>
+<span class="line"><span style="color:#005CC5">	"canonicalName"</span><span style="color:#24292E">: </span><span style="color:#032F62">"link.elastic.dubbo.entity.DemoService"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">	"codeSource"</span><span style="color:#24292E">: </span><span style="color:#032F62">"file:/Users/song/Desktop/dubbo-test/target/classes/"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">	"methods"</span><span style="color:#24292E">: [{</span></span>
+<span class="line"><span style="color:#005CC5">		"name"</span><span style="color:#24292E">: </span><span style="color:#032F62">"sayHelloAsync"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"parameterTypes"</span><span style="color:#24292E">: [</span><span style="color:#032F62">"java.lang.String"</span><span style="color:#24292E">],</span></span>
+<span class="line"><span style="color:#005CC5">		"returnType"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.util.concurrent.CompletableFuture"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"annotations"</span><span style="color:#24292E">: []</span></span>
+<span class="line"><span style="color:#24292E">	}, {</span></span>
+<span class="line"><span style="color:#005CC5">		"name"</span><span style="color:#24292E">: </span><span style="color:#032F62">"sayHello"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"parameterTypes"</span><span style="color:#24292E">: [</span><span style="color:#032F62">"java.lang.String"</span><span style="color:#24292E">],</span></span>
+<span class="line"><span style="color:#005CC5">		"returnType"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.lang.String"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"annotations"</span><span style="color:#24292E">: []</span></span>
+<span class="line"><span style="color:#24292E">	}],</span></span>
+<span class="line"><span style="color:#005CC5">	"types"</span><span style="color:#24292E">: [{</span></span>
+<span class="line"><span style="color:#005CC5">		"type"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.util.concurrent.CompletableFuture"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"properties"</span><span style="color:#24292E">: {</span></span>
+<span class="line"><span style="color:#005CC5">			"result"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.lang.Object"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">			"stack"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.util.concurrent.CompletableFuture.Completion"</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#24292E">	}, {</span></span>
+<span class="line"><span style="color:#005CC5">		"type"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.lang.Object"</span></span>
+<span class="line"><span style="color:#24292E">	}, {</span></span>
+<span class="line"><span style="color:#005CC5">		"type"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.lang.String"</span></span>
+<span class="line"><span style="color:#24292E">	}, {</span></span>
+<span class="line"><span style="color:#005CC5">		"type"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.util.concurrent.CompletableFuture.Completion"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">		"properties"</span><span style="color:#24292E">: {</span></span>
+<span class="line"><span style="color:#005CC5">			"next"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.util.concurrent.CompletableFuture.Completion"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">			"status"</span><span style="color:#24292E">: </span><span style="color:#032F62">"int"</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#24292E">	}, {</span></span>
+<span class="line"><span style="color:#005CC5">		"type"</span><span style="color:#24292E">: </span><span style="color:#032F62">"int"</span></span>
+<span class="line"><span style="color:#24292E">	}],</span></span>
+<span class="line"><span style="color:#005CC5">	"annotations"</span><span style="color:#24292E">: []</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>Zookeeper扩展类型ZookeeperMetadataReport实现的存储方法如下所示doStoreProviderMetadata：</p>
+<p>如果我们自己实现一套元数据就可以重写这个方法来进行元数据的额存储</p>
+<p>ZookeeperMetadataReport的doStoreProviderMetadata</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    protected</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> doStoreProviderMetadata</span><span style="color:#24292E">(MetadataIdentifier providerMetadataIdentifier, String serviceDefinitions) {</span></span>
+<span class="line"><span style="color:#6F42C1">        storeMetadata</span><span style="color:#24292E">(providerMetadataIdentifier, serviceDefinitions);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>ZookeeperMetadataReport的storeMetadata</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> storeMetadata</span><span style="color:#24292E">(MetadataIdentifier metadataIdentifier, String v) {</span></span>
+<span class="line"><span style="color:#6A737D"> 		//参数false为非临时节点，这个元数据为持久节点，这个细节就暂时不看了就是将刚刚的json元数据存储到对应路径上面：路径为：/dubbo/metadata/link.elastic.dubbo.entity.DemoService/provider/dubbo-demo-api-provider</span></span>
+<span class="line"><span style="color:#24292E">        zkClient.</span><span style="color:#6F42C1">create</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getNodePath</span><span style="color:#24292E">(metadataIdentifier), v, </span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span></code></pre>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

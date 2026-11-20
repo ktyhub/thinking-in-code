@@ -1,0 +1,727 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>chapter_kubernetes/5-apiserver-server-run — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_kubernetes/5-apiserver-server-run/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_kubernetes/5-apiserver-server-run"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_kubernetes/5-apiserver-server-run/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_kubernetes/5-apiserver-server-run"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="chapter_kubernetes/5-apiserver-server-run — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_kubernetes/5-apiserver-server-run/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_kubernetes/5-apiserver-server-run/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>kubernetes</h3> <ul> <li> <a href="/zh/chapter_kubernetes/1-index" class="lv0" title="1-index"> 1-index </a> </li><li> <a href="/zh/chapter_kubernetes/2-apiserver" class="lv0" title="apiserver.go的main方法开始"> apiserver.go的main方法开始 </a> </li><li> <a href="/zh/chapter_kubernetes/3-apiserver-server-run-options" class="lv0" title="说明"> 说明 </a> </li><li> <a href="/zh/chapter_kubernetes/4-apiserver-add-flags" class="lv0" title="说明"> 说明 </a> </li><li> <a href="/zh/chapter_kubernetes/5-apiserver-server-run" class="lv0" aria-current="page" title="5-apiserver-server-run"> 5-apiserver-server-run </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_kubernetes">kubernetes</a><span class="sep">/</span><span>5-apiserver-server-run</span> </nav> <div class="prose">  <h2 id="servergo的run方法说明">server.go的Run方法说明</h2>
+<p><strong>位置：</strong> <code>cmd/kube-apiserver/app/server.go</code></p>
+<p><strong>说明：</strong>
+Run 运行指定的 APIServer。</p>
+<p><strong>源码：</strong></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// Run runs the specified APIServer.  This should never exit.</span></span>
+<span class="line"><span style="color:#D73A49">func</span><span style="color:#6F42C1"> Run</span><span style="color:#24292E">(</span><span style="color:#E36209">runOptions</span><span style="color:#D73A49"> *</span><span style="color:#6F42C1">options</span><span style="color:#24292E">.</span><span style="color:#6F42C1">ServerRunOptions</span><span style="color:#24292E">, </span><span style="color:#E36209">stopCh</span><span style="color:#D73A49"> &#x3C;-chan</span><span style="color:#D73A49"> struct</span><span style="color:#24292E">{}) </span><span style="color:#D73A49">error</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">	// To help debugging, immediately log version</span></span>
+<span class="line"><span style="color:#24292E">	glog.</span><span style="color:#6F42C1">Infof</span><span style="color:#24292E">(</span><span style="color:#032F62">"Version: </span><span style="color:#005CC5">%+v</span><span style="color:#032F62">"</span><span style="color:#24292E">, version.</span><span style="color:#6F42C1">Get</span><span style="color:#24292E">())</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	server, err </span><span style="color:#D73A49">:=</span><span style="color:#6F42C1"> CreateServerChain</span><span style="color:#24292E">(runOptions, stopCh)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#24292E"> err</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">	return</span><span style="color:#24292E"> server.</span><span style="color:#6F42C1">PrepareRun</span><span style="color:#24292E">().</span><span style="color:#6F42C1">Run</span><span style="color:#24292E">(stopCh)</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="createserverchain方法说明">CreateServerChain方法说明</h2>
+<p><strong>位置：</strong> <code>cmd/kube-apiserver/app/server.go</code></p>
+<p><strong>说明：</strong>
+这个方法的主要目的是构建一个完整的API服务器链，包括API扩展服务器、KubeAPIServer和聚合器服务器，以处理各种API请求。
+<strong>源码：</strong></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="go"><code><span class="line"></span>
+<span class="line"><span style="color:#6A737D">// CreateServerChain creates the apiservers connected via delegation.</span></span>
+<span class="line"><span style="color:#6A737D">//CreateServerChain方法的主要作用是创建一个API服务器链。这个方法接收两个参数：一个是ServerRunOptions实例，另一个是停止通道（stop channel）。 </span></span>
+<span class="line"><span style="color:#D73A49">func</span><span style="color:#6F42C1"> CreateServerChain</span><span style="color:#24292E">(</span><span style="color:#E36209">runOptions</span><span style="color:#D73A49"> *</span><span style="color:#6F42C1">options</span><span style="color:#24292E">.</span><span style="color:#6F42C1">ServerRunOptions</span><span style="color:#24292E">, </span><span style="color:#E36209">stopCh</span><span style="color:#D73A49"> &#x3C;-chan</span><span style="color:#D73A49"> struct</span><span style="color:#24292E">{}) (</span><span style="color:#D73A49">*</span><span style="color:#6F42C1">genericapiserver</span><span style="color:#24292E">.</span><span style="color:#6F42C1">GenericAPIServer</span><span style="color:#24292E">, </span><span style="color:#D73A49">error</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">	//创建一个节点拨号器（NodeDialer），用于连接到节点。这是通过调用CreateNodeDialer(runOptions)实现的</span></span>
+<span class="line"><span style="color:#6A737D">	// tunneler.Tunneler 类型的变量，它在 Kubernetes 中用于建立到节点的网络连接。这个连接可以用于访问节点上的服务，例如 kubelet API。</span></span>
+<span class="line"><span style="color:#6A737D">	//proxyTransport 是一个 *http.Transport 类型的变量，它定义了 HTTP 代理的设置。在 Kubernetes 中，这个变量通常用于设置 API 服务器如何通过网络访问其他服务，例如 etcd 或者其他 API 服务器</span></span>
+<span class="line"><span style="color:#24292E">	nodeTunneler, proxyTransport, err </span><span style="color:#D73A49">:=</span><span style="color:#6F42C1"> CreateNodeDialer</span><span style="color:#24292E">(runOptions)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#005CC5"> nil</span><span style="color:#24292E">, err</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">	//使用运行选项、节点拨号器和其他参数创建了KubeAPIServerConfig </span></span>
+<span class="line"><span style="color:#6A737D">	//kubeAPIServerConfig：这是一个指向master.Config类型的指针。master.Config类型包含了用于运行Kubernetes API服务器所需的所有配置信息。</span></span>
+<span class="line"><span style="color:#6A737D">	//sharedInformers：这是一个informers.SharedInformerFactory类型的实例。SharedInformerFactory是一个接口，它提供了方法来获取特定资源类型的共享索引通知器</span></span>
+<span class="line"><span style="color:#6A737D">	//versionedInformers：这是一个clientgoinformers.SharedInformerFactory类型的实例。SharedInformerFactory是一个接口，它提供了方法来获取特定资源类型的共享索引通知器</span></span>
+<span class="line"><span style="color:#6A737D">	//insecureServingOptions：这是一个指向serveroptions.ServingOptions类型的指针。ServingOptions类型包含了用于配置服务器的选项，例如绑定地址和端口，以及用于TLS的证书和密钥</span></span>
+<span class="line"><span style="color:#6A737D">	//serviceResolver：这是一个aggregatorapiserver.ServiceResolver类型的实例。ServiceResolver是一个接口，它提供了方法来解析服务名称到服务URL</span></span>
+<span class="line"><span style="color:#6A737D">	//pluginInitializer：这是一个admission.PluginInitializer类型的实例。PluginInitializer是一个接口，它提供了方法来初始化准入控制插件。</span></span>
+<span class="line"><span style="color:#6A737D">	//err：这是一个error类型的实例。error是一个内建接口，它表示一个错误条件，包含了一个返回错误描述的Error方法。</span></span>
+<span class="line"><span style="color:#24292E">	kubeAPIServerConfig, sharedInformers, versionedInformers, insecureServingOptions, serviceResolver, pluginInitializer, err </span><span style="color:#D73A49">:=</span><span style="color:#6F42C1"> CreateKubeAPIServerConfig</span><span style="color:#24292E">(runOptions, nodeTunneler, proxyTransport)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#005CC5"> nil</span><span style="color:#24292E">, err</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	// TPRs are enabled and not yet beta, since this these are the successor, they fall under the same enablement rule</span></span>
+<span class="line"><span style="color:#6A737D">	// If additional API servers are added, they should be gated.</span></span>
+<span class="line"><span style="color:#6A737D">	//创建了API扩展服务器（APIExtensionsServer） </span></span>
+<span class="line"><span style="color:#6A737D">	//apiExtensionsConfig 的类型是 *apiextensionsapiserver.Config。这是一个指向 apiextensionsapiserver.Config 类型的指针，该类型包含了用于运行 API 扩展服务器所需的所有配置信息。</span></span>
+<span class="line"><span style="color:#24292E">	apiExtensionsConfig, err </span><span style="color:#D73A49">:=</span><span style="color:#6F42C1"> createAPIExtensionsConfig</span><span style="color:#24292E">(</span><span style="color:#D73A49">*</span><span style="color:#24292E">kubeAPIServerConfig.GenericConfig, versionedInformers, pluginInitializer, runOptions)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#005CC5"> nil</span><span style="color:#24292E">, err</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">    //并使用KubeAPIServerConfig、APIExtensionsServer</span></span>
+<span class="line"><span style="color:#6A737D">	//kubeAPIServer 的类型是 *master.Master。这是一个指向 master.Master 类型的指针，该类型表示 Kubernetes API 服务器的实例。</span></span>
+<span class="line"><span style="color:#6A737D">	//err 的类型是 error。error 是 Go 语言的内建接口，它表示一个错误条件，包含了一个返回错误描述的 Error 方法</span></span>
+<span class="line"><span style="color:#24292E">	apiExtensionsServer, err </span><span style="color:#D73A49">:=</span><span style="color:#6F42C1"> createAPIExtensionsServer</span><span style="color:#24292E">(apiExtensionsConfig, genericapiserver.EmptyDelegate)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#005CC5"> nil</span><span style="color:#24292E">, err</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">    //创建了KubeAPIServer</span></span>
+<span class="line"><span style="color:#6A737D">	//kubeAPIServer.GenericAPIServer.PrepareRun() 这行代码的作用是准备运行 Kubernetes API 服务器。</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">	kubeAPIServer, err </span><span style="color:#D73A49">:=</span><span style="color:#6F42C1"> CreateKubeAPIServer</span><span style="color:#24292E">(kubeAPIServerConfig, apiExtensionsServer.GenericAPIServer, sharedInformers, versionedInformers)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#005CC5"> nil</span><span style="color:#24292E">, err</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	// if we're starting up a hacked up version of this API server for a weird test case,</span></span>
+<span class="line"><span style="color:#6A737D">	// just start the API server as is because clients don't get built correctly when you do this</span></span>
+<span class="line"><span style="color:#6A737D">	//如果没有设置特殊的API版本，将在API服务器前创建一个聚合器服务器（AggregatorServer），并返回这个聚合器服务器。如果设置了特殊的API版本，将直接返回KubeAPIServer。</span></span>
+<span class="line"><span style="color:#6A737D">	//这是通过检查环境变量KUBE_API_VERSIONS来决定的。</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#6F42C1"> len</span><span style="color:#24292E">(os.</span><span style="color:#6F42C1">Getenv</span><span style="color:#24292E">(</span><span style="color:#032F62">"KUBE_API_VERSIONS"</span><span style="color:#24292E">)) </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		if</span><span style="color:#24292E"> insecureServingOptions </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">			insecureHandlerChain </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> kubeserver.</span><span style="color:#6F42C1">BuildInsecureHandlerChain</span><span style="color:#24292E">(kubeAPIServer.GenericAPIServer.</span><span style="color:#6F42C1">UnprotectedHandler</span><span style="color:#24292E">(), kubeAPIServerConfig.GenericConfig)</span></span>
+<span class="line"><span style="color:#D73A49">			if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> kubeserver.</span><span style="color:#6F42C1">NonBlockingRun</span><span style="color:#24292E">(insecureServingOptions, insecureHandlerChain, kubeAPIServerConfig.GenericConfig.RequestTimeout, stopCh); err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">				return</span><span style="color:#005CC5"> nil</span><span style="color:#24292E">, err</span></span>
+<span class="line"><span style="color:#24292E">			}</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#24292E"> kubeAPIServer.GenericAPIServer, </span><span style="color:#005CC5">nil</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	// otherwise go down the normal path of standing the aggregator up in front of the API server</span></span>
+<span class="line"><span style="color:#6A737D">	// this wires up openapi</span></span>
+<span class="line"><span style="color:#6A737D">	//在这个阶段，它会完成一些必要的初始化工作，包括设置路由，注册处理器，以及其他一些准备工作。</span></span>
+<span class="line"><span style="color:#6A737D">	//这个方法不会启动服务器，只是做好准备工作，以便在调用 Run 方法时能够顺利启动服务器。</span></span>
+<span class="line"><span style="color:#24292E">	kubeAPIServer.GenericAPIServer.</span><span style="color:#6F42C1">PrepareRun</span><span style="color:#24292E">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	// This will wire up openapi for extension api server</span></span>
+<span class="line"><span style="color:#6A737D">	//准备运行 API 扩展服务器。在这个阶段，它会完成一些必要的初始化工作，包括设置路由，注册处理器，以及其他一些准备工作。</span></span>
+<span class="line"><span style="color:#6A737D">	//这个方法不会启动服务器，只是做好准备工作，以便在调用 Run 方法时能够顺利启动服务器。</span></span>
+<span class="line"><span style="color:#24292E">	apiExtensionsServer.GenericAPIServer.</span><span style="color:#6F42C1">PrepareRun</span><span style="color:#24292E">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	// aggregator comes last in the chain</span></span>
+<span class="line"><span style="color:#6A737D">	//这行代码的作用是创建聚合器配置。在 Kubernetes 中，聚合器是用于将多个 API 服务器的功能聚合到一起的组件。</span></span>
+<span class="line"><span style="color:#6A737D">	//这个函数接收一些参数，包括 </span></span>
+<span class="line"><span style="color:#6A737D">	//kubeAPIServerConfig.GenericConfig（Kube API 服务器的通用配置）、</span></span>
+<span class="line"><span style="color:#6A737D">	//runOptions（运行选项）、</span></span>
+<span class="line"><span style="color:#6A737D">	//versionedInformers（版本化的信息器）、</span></span>
+<span class="line"><span style="color:#6A737D">	//serviceResolver（服务解析器）、</span></span>
+<span class="line"><span style="color:#6A737D">	//proxyTransport（代理传输）</span></span>
+<span class="line"><span style="color:#6A737D">	//和 pluginInitializer（插件初始化器）。</span></span>
+<span class="line"><span style="color:#6A737D">	//这些参数用于构建和配置聚合器。函数的返回值是聚合器的配置和一个错误对象。如果在创建配置过程中出现错误，错误对象将包含相关的错误信息</span></span>
+<span class="line"><span style="color:#24292E">	aggregatorConfig, err </span><span style="color:#D73A49">:=</span><span style="color:#6F42C1"> createAggregatorConfig</span><span style="color:#24292E">(</span><span style="color:#D73A49">*</span><span style="color:#24292E">kubeAPIServerConfig.GenericConfig, runOptions, versionedInformers, serviceResolver, proxyTransport, pluginInitializer)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#005CC5"> nil</span><span style="color:#24292E">, err</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#24292E">	aggregatorConfig.ExtraConfig.ProxyTransport </span><span style="color:#D73A49">=</span><span style="color:#24292E"> proxyTransport</span></span>
+<span class="line"><span style="color:#24292E">	aggregatorConfig.ExtraConfig.ServiceResolver </span><span style="color:#D73A49">=</span><span style="color:#24292E"> serviceResolver</span></span>
+<span class="line"><span style="color:#6A737D">	//创建一个聚合服务器。在 Kubernetes 中，聚合服务器是用于将多个 API 服务器的功能聚合到一起的组件。</span></span>
+<span class="line"><span style="color:#6A737D">	//这个函数接收三个参数：</span></span>
+<span class="line"><span style="color:#6A737D">	//aggregatorConfig（聚合器的配置）、</span></span>
+<span class="line"><span style="color:#6A737D">	//kubeAPIServer.GenericAPIServer（Kube API 服务器的通用服务器）、</span></span>
+<span class="line"><span style="color:#6A737D">	//apiExtensionsServer.Informers（API 扩展服务器的信息器）。</span></span>
+<span class="line"><span style="color:#6A737D">	//这些参数用于构建和配置聚合服务器。函数的返回值是聚合服务器和一个错误对象。如果在创建服务器过程中出现错误，错误对象将包含相关的错误信息。</span></span>
+<span class="line"><span style="color:#24292E">	aggregatorServer, err </span><span style="color:#D73A49">:=</span><span style="color:#6F42C1"> createAggregatorServer</span><span style="color:#24292E">(aggregatorConfig, kubeAPIServer.GenericAPIServer, apiExtensionsServer.Informers)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">		// we don't need special handling for innerStopCh because the aggregator server doesn't create any go routines</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#005CC5"> nil</span><span style="color:#24292E">, err</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> insecureServingOptions </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">		//kubeserver.NonBlockingRun 是一个函数，它的主要作用是非阻塞地运行一个服务器。这个函数接收四个参数：  </span></span>
+<span class="line"><span style="color:#6A737D">		//insecureServingOptions：这是一个指向 serveroptions.ServingOptions 类型的指针。ServingOptions 类型包含了用于配置服务器的选项，例如绑定地址和端口，以及用于 TLS 的证书和密钥。</span></span>
+<span class="line"><span style="color:#6A737D">		//insecureHandlerChain：这是一个 HTTP 处理器链。在 Kubernetes 中，处理器链是一种模式，用于将多个 HTTP 处理器链接在一起，以便按顺序处理 HTTP 请求。每个处理器在处理完请求后，可以选择将请求传递给链中的下一个处理器，或者直接结束请求的处理。</span></span>
+<span class="line"><span style="color:#6A737D">		//kubeAPIServerConfig.GenericConfig.RequestTimeout：这是一个 time.Duration 类型的值，表示服务器的请求超时时间。如果一个请求的处理时间超过了这个值，服务器将返回一个超时错误。</span></span>
+<span class="line"><span style="color:#6A737D">		//stopCh：这是一个通道，用于接收停止信号。当接收到停止信号时，服务器将停止接收新的请求，并尽可能地完成正在处理的请求，然后关闭。</span></span>
+<span class="line"><span style="color:#6A737D">		//这个函数的返回值是一个错误对象。如果在运行过程中出现错误，这个值将包含错误的详细信息。如果没有错误，这个值将为 nil。  在 Kubernetes 中，这个函数通常在启动 API 服务器或其他组件时调用，以非阻塞的方式启动服务器。这意味着，调用这个函数后，函数将立即返回，而服务器将在后台运行。这样，你可以在启动服务器后立即执行其他操作，而不需要等待服务器完全启动。</span></span>
+<span class="line"><span style="color:#6A737D">		//insecureHandlerChain := kubeserver.BuildInsecureHandlerChain(aggregatorServer.GenericAPIServer.UnprotectedHandler(), kubeAPIServerConfig.GenericConfig)</span></span>
+<span class="line"><span style="color:#D73A49">		if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> kubeserver.</span><span style="color:#6F42C1">NonBlockingRun</span><span style="color:#24292E">(insecureServingOptions, insecureHandlerChain, kubeAPIServerConfig.GenericConfig.RequestTimeout, stopCh); err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">			return</span><span style="color:#005CC5"> nil</span><span style="color:#24292E">, err</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">	return</span><span style="color:#24292E"> aggregatorServer.GenericAPIServer, </span><span style="color:#005CC5">nil</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="createnodedialer创建拨号器基础结构以连接到节点">CreateNodeDialer创建拨号器基础结构以连接到节点</h2>
+<p><strong>位置：</strong> <code>cmd/kube-apiserver/app/server.go</code></p>
+<p><strong>说明：</strong>
+这个方法的主要目的是构建一个完整的API服务器链，包括API扩展服务器、KubeAPIServer和聚合器服务器，以处理各种API请求。
+CreateNodeDialer 这个函数的主要作用是创建一个用于连接到 Kubernetes 集群中节点的网络连接器（dialer）。这个连接器可以用于访问节点上的服务，例如 kubelet API。</p>
+<p>在函数的实现中，首先根据 ServerRunOptions 中的 SSH 用户名和 SSH 密钥文件路径创建了一个 Tunneler 对象。
+然后，使用 Tunneler 的 Dial 方法作为 http.Transport 的 Dial 函数，创建了一个 http.Transport 对象。
+这样，当 http.Transport 需要建立网络连接时，就会使用 Tunneler 的 Dial 方法来建立连接</p>
+<p><strong>源码：</strong></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// CreateNodeDialer creates the dialer infrastructure to connect to the nodes.</span></span>
+<span class="line"><span style="color:#6A737D">//	tunneler.Tunneler：这是一个网络隧道接口，用于建立到 Kubernetes 集群节点的网络连接。这个连接可以用于访问节点上的服务，例如 kubelet API。</span></span>
+<span class="line"><span style="color:#6A737D">//*http.Transport：这是一个 HTTP 传输对象，定义了 HTTP 代理的设置。在 Kubernetes 中，这个对象通常用于设置 API 服务器如何通过网络访问其他服务，例如 etcd 或者其他 API 服务器</span></span>
+<span class="line"><span style="color:#D73A49">func</span><span style="color:#6F42C1"> CreateNodeDialer</span><span style="color:#24292E">(</span><span style="color:#E36209">s</span><span style="color:#D73A49"> *</span><span style="color:#6F42C1">options</span><span style="color:#24292E">.</span><span style="color:#6F42C1">ServerRunOptions</span><span style="color:#24292E">) (</span><span style="color:#6F42C1">tunneler</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Tunneler</span><span style="color:#24292E">, </span><span style="color:#D73A49">*</span><span style="color:#6F42C1">http</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Transport</span><span style="color:#24292E">, </span><span style="color:#D73A49">error</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">	// Setup nodeTunneler if needed</span></span>
+<span class="line"><span style="color:#6A737D">	//这是一个网络隧道接口，用于建立到 Kubernetes 集群节点的网络连接</span></span>
+<span class="line"><span style="color:#D73A49">	var</span><span style="color:#24292E"> nodeTunneler </span><span style="color:#6F42C1">tunneler</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Tunneler</span></span>
+<span class="line"><span style="color:#6A737D">	//proxyDialerFn 是一个类型为 utilnet.DialFunc 的变量。在 Go 中，DialFunc 是一个函数类型，它接收网络类型（例如 "tcp"、"udp"）和地址（例如 "localhost:8080"）作为参数，并返回一个网络连接和一个错误对象。  </span></span>
+<span class="line"><span style="color:#6A737D">	//在这个上下文中，proxyDialerFn 被用作一个函数，用于建立网络连接。这个函数可能会被用于连接到 Kubernetes 集群中的节点，或者用于设置 HTTP 代理。</span></span>
+<span class="line"><span style="color:#D73A49">	var</span><span style="color:#24292E"> proxyDialerFn </span><span style="color:#6F42C1">utilnet</span><span style="color:#24292E">.</span><span style="color:#6F42C1">DialFunc</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#6F42C1"> len</span><span style="color:#24292E">(s.SSHUser) </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">		// Get ssh key distribution func, if supported</span></span>
+<span class="line"><span style="color:#D73A49">		var</span><span style="color:#24292E"> installSSHKey </span><span style="color:#6F42C1">tunneler</span><span style="color:#24292E">.</span><span style="color:#6F42C1">InstallSSHKey</span></span>
+<span class="line"><span style="color:#6A737D">		//cloudprovider.InitCloudProvider 是一个函数，它的主要作用是初始化云服务提供商。</span></span>
+<span class="line"><span style="color:#6A737D">		//参数：s.CloudProvider.CloudProvider：这是一个字符串，表示要使用的云服务提供商的名称，例如 "aws"、"gcp"、"azure" 等。  </span></span>
+<span class="line"><span style="color:#6A737D">		//参数：s.CloudProvider.CloudConfigFile：这是一个字符串，表示云服务提供商的配置文件的路径。这个配置文件包含了连接到云服务提供商所需的所有信息，例如 API 密钥、区域、网络设置等。</span></span>
+<span class="line"><span style="color:#6A737D">		//返回值cloud:cloud：这是一个 cloudprovider.Interface 类型的对象，表示初始化后的云服务提供商。你可以使用这个对象来调用云服务提供商的 API，例如创建、删除和管理虚拟机、存储卷、网络等资源。</span></span>
+<span class="line"><span style="color:#24292E">		cloud, err </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> cloudprovider.</span><span style="color:#6F42C1">InitCloudProvider</span><span style="color:#24292E">(s.CloudProvider.CloudProvider, s.CloudProvider.CloudConfigFile)</span></span>
+<span class="line"><span style="color:#D73A49">		if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">			return</span><span style="color:#005CC5"> nil</span><span style="color:#24292E">, </span><span style="color:#005CC5">nil</span><span style="color:#24292E">, fmt.</span><span style="color:#6F42C1">Errorf</span><span style="color:#24292E">(</span><span style="color:#032F62">"cloud provider could not be initialized: </span><span style="color:#005CC5">%v</span><span style="color:#032F62">"</span><span style="color:#24292E">, err)</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#D73A49">		if</span><span style="color:#24292E"> cloud </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">			if</span><span style="color:#24292E"> instances, supported </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> cloud.</span><span style="color:#6F42C1">Instances</span><span style="color:#24292E">(); supported {</span></span>
+<span class="line"><span style="color:#6A737D">				//instances.AddSSHKeyToAllInstances  这个方法的作用是将 SSH 密钥添加到所有的实例中。</span></span>
+<span class="line"><span style="color:#6A737D">				//在这个上下文中，"实例"通常指的是云服务提供商（如 AWS、GCP 或 Azure）中的虚拟机。</span></span>
+<span class="line"><span style="color:#6A737D">				//这个方法通常用于设置和配置 SSH 隧道，使得 API 服务器可以通过 SSH 隧道安全地访问集群中的节点。</span></span>
+<span class="line"><span style="color:#6A737D">				//这是 Kubernetes 中的一种网络连接方式，特别是在需要跨越网络边界（例如在云环境中）时</span></span>
+<span class="line"><span style="color:#6A737D">				//这个方法是由云服务提供商的接口定义的，具体的实现会依赖于特定的云服务提供商。</span></span>
+<span class="line"><span style="color:#6A737D">				//例如，AWS 的实现可能会将 SSH 密钥添加到 EC2 实例的元数据中，而 GCP 的实现可能会将 SSH 密钥添加到 Compute Engine 实例的 SSH 密钥元数据中</span></span>
+<span class="line"><span style="color:#24292E">				installSSHKey </span><span style="color:#D73A49">=</span><span style="color:#24292E"> instances.AddSSHKeyToAllInstances</span></span>
+<span class="line"><span style="color:#24292E">			}</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#D73A49">		if</span><span style="color:#24292E"> s.KubeletConfig.Port </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">			return</span><span style="color:#005CC5"> nil</span><span style="color:#24292E">, </span><span style="color:#005CC5">nil</span><span style="color:#24292E">, fmt.</span><span style="color:#6F42C1">Errorf</span><span style="color:#24292E">(</span><span style="color:#032F62">"must enable kubelet port if proxy ssh-tunneling is specified"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#D73A49">		if</span><span style="color:#24292E"> s.KubeletConfig.ReadOnlyPort </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">			return</span><span style="color:#005CC5"> nil</span><span style="color:#24292E">, </span><span style="color:#005CC5">nil</span><span style="color:#24292E">, fmt.</span><span style="color:#6F42C1">Errorf</span><span style="color:#24292E">(</span><span style="color:#032F62">"must enable kubelet readonly port if proxy ssh-tunneling is specified"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#6A737D">		// Set up the nodeTunneler</span></span>
+<span class="line"><span style="color:#6A737D">		// TODO(cjcullen): If we want this to handle per-kubelet ports or other</span></span>
+<span class="line"><span style="color:#6A737D">		// kubelet listen-addresses, we need to plumb through options.</span></span>
+<span class="line"><span style="color:#6A737D">		//healthCheckPath 是一个 *url.URL 类型的变量，它表示一个 URL。</span></span>
+<span class="line"><span style="color:#6A737D">		//在这个上下文中，healthCheckPath 被用作 Kubernetes 集群中节点的健康检查路径。</span></span>
+<span class="line"><span style="color:#6A737D">		//这个 URL 通常指向节点上运行的 kubelet 的健康检查端点，例如 "http://127.0.0.1:10255/healthz"。</span></span>
+<span class="line"><span style="color:#6A737D">		//当 Kubernetes 需要检查节点的健康状态时，它会向这个 URL 发送 HTTP 请求，如果收到的响应状态码为 200，则认为节点是健康的。</span></span>
+<span class="line"><span style="color:#24292E">		healthCheckPath </span><span style="color:#D73A49">:=</span><span style="color:#D73A49"> &#x26;</span><span style="color:#6F42C1">url</span><span style="color:#24292E">.</span><span style="color:#6F42C1">URL</span><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#24292E">			Scheme: </span><span style="color:#032F62">"http"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">			Host:   net.</span><span style="color:#6F42C1">JoinHostPort</span><span style="color:#24292E">(</span><span style="color:#032F62">"127.0.0.1"</span><span style="color:#24292E">, strconv.</span><span style="color:#6F42C1">FormatUint</span><span style="color:#24292E">(</span><span style="color:#D73A49">uint64</span><span style="color:#24292E">(s.KubeletConfig.ReadOnlyPort), </span><span style="color:#005CC5">10</span><span style="color:#24292E">)),</span></span>
+<span class="line"><span style="color:#24292E">			Path:   </span><span style="color:#032F62">"healthz"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#6A737D">		//这行代码的含义是创建一个新的 SSH 隧道。  New 是 tunneler 包中的一个函数，用于创建一个新的 SSH 隧道。这个函数接收四个参数：  </span></span>
+<span class="line"><span style="color:#6A737D">		//s.SSHUser：SSH 用户名，用于 SSH 连接。</span></span>
+<span class="line"><span style="color:#6A737D">		//s.SSHKeyfile：SSH 密钥文件的路径，用于 SSH 连接的身份验证。</span></span>
+<span class="line"><span style="color:#6A737D">		//healthCheckPath：健康检查路径，这是一个 URL，通常指向节点上运行的 kubelet 的健康检查端点。</span></span>
+<span class="line"><span style="color:#6A737D">		//installSSHKey：这是一个函数，用于将 SSH 密钥添加到所有的实例中。</span></span>
+<span class="line"><span style="color:#6A737D">		//函数的返回值是一个 Tunneler 对象，这个对象提供了一种通过 SSH 隧道连接到 Kubernetes 集群节点的方法。</span></span>
+<span class="line"><span style="color:#24292E">		nodeTunneler </span><span style="color:#D73A49">=</span><span style="color:#24292E"> tunneler.</span><span style="color:#6F42C1">New</span><span style="color:#24292E">(s.SSHUser, s.SSHKeyfile, healthCheckPath, installSSHKey)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">		// Use the nodeTunneler's dialer when proxying to pods, services, and nodes</span></span>
+<span class="line"><span style="color:#24292E">		proxyDialerFn </span><span style="color:#D73A49">=</span><span style="color:#24292E"> nodeTunneler.Dial</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">	// Proxying to pods and services is IP-based... don't expect to be able to verify the hostname</span></span>
+<span class="line"><span style="color:#24292E">	proxyTLSClientConfig </span><span style="color:#D73A49">:=</span><span style="color:#D73A49"> &#x26;</span><span style="color:#6F42C1">tls</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Config</span><span style="color:#24292E">{InsecureSkipVerify: </span><span style="color:#005CC5">true</span><span style="color:#24292E">}</span></span>
+<span class="line"><span style="color:#6A737D">	//主要作用是为 HTTP 传输设置默认的参数。这个函数接收一个 *http.Transport 类型的参数，并返回一个同样类型的值。  这个函数会设置以下默认参数：  </span></span>
+<span class="line"><span style="color:#6A737D">	//DialContext：如果 DialContext 为空，它会被设置为 net.Dialer 的 DialContext 函数。</span></span>
+<span class="line"><span style="color:#6A737D">	//MaxIdleConns：如果 MaxIdleConns 为 0，它会被设置为 100。</span></span>
+<span class="line"><span style="color:#6A737D">	//IdleConnTimeout：如果 IdleConnTimeout 为 0，它会被设置为 90 秒。</span></span>
+<span class="line"><span style="color:#6A737D">	//TLSHandshakeTimeout：如果 TLSHandshakeTimeout 为 0，它会被设置为 10 秒。</span></span>
+<span class="line"><span style="color:#6A737D">	//这个函数的主要目的是确保 HTTP 传输有合理的默认设置，以优化网络连接的性能。</span></span>
+<span class="line"><span style="color:#24292E">	proxyTransport </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> utilnet.</span><span style="color:#6F42C1">SetTransportDefaults</span><span style="color:#24292E">(</span><span style="color:#D73A49">&#x26;</span><span style="color:#6F42C1">http</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Transport</span><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#24292E">		Dial:            proxyDialerFn,</span></span>
+<span class="line"><span style="color:#24292E">		TLSClientConfig: proxyTLSClientConfig,</span></span>
+<span class="line"><span style="color:#24292E">	})</span></span>
+<span class="line"><span style="color:#D73A49">	return</span><span style="color:#24292E"> nodeTunneler, proxyTransport, </span><span style="color:#005CC5">nil</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="createkubeapiserverconfig-创建用于运行-api-服务器的所有资源但不运行任何资源">CreateKubeAPIServerConfig 创建用于运行 API 服务器的所有资源，但不运行任何资源</h2>
+<p><strong>位置：</strong> <code>cmd/kube-apiserver/app/server.go</code></p>
+<p><strong>说明：</strong>
+创建运行 API 服务器所需的所有资源，但并不运行它们</p>
+<p><strong>源码：</strong></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// CreateKubeAPIServerConfig creates all the resources for running the API server, but runs none of them</span></span>
+<span class="line"><span style="color:#6A737D">//s：这是一个 *options.ServerRunOptions 类型的指针，表示服务器运行选项。这些选项包括 API 服务器的配置信息，如绑定地址和端口，认证和授权配置，存储配置等。</span></span>
+<span class="line"><span style="color:#6A737D">//nodeTunneler：这是一个 tunneler.Tunneler 类型的对象，用于创建到节点的 SSH 隧道。这个隧道可以用于代理到节点的连接，例如在 API 服务器和 kubelet 之间的通信。</span></span>
+<span class="line"><span style="color:#6A737D">//proxyTransport：这是一个 *http.Transport 类型的对象，用于 HTTP 代理传输。</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">//这个函数的返回值是多个对象和一个错误对象。返回的对象包括：  </span></span>
+<span class="line"><span style="color:#6A737D">//kubeAPIServerConfig：这是一个 *master.Config 类型的对象，表示 API 服务器的配置。这个配置包括 API 服务器的各种设置，如认证和授权配置，存储配置，API 组和版本等。</span></span>
+<span class="line"><span style="color:#6A737D">//sharedInformers：这是一个 informers.SharedInformerFactory 类型的对象，用于创建和管理共享的 informer。informer 是 Kubernetes 中用于监视和缓存 API 对象的工具。</span></span>
+<span class="line"><span style="color:#6A737D">//versionedInformers：这是一个 clientgoinformers.SharedInformerFactory 类型的对象，用于创建和管理版本化的 informer。</span></span>
+<span class="line"><span style="color:#6A737D">//insecureServingOptions：这是一个 *genericoptions.DeprecatedInsecureServingOptionsWithLoopback 类型的对象，表示不安全的服务选项。这些选项包括绑定地址和端口，以及用于身份验证的证书和密钥。</span></span>
+<span class="line"><span style="color:#6A737D">//serviceResolver：这是一个 aggregatorapiserver.ServiceResolver 类型的对象，用于解析服务名称到服务 URL。</span></span>
+<span class="line"><span style="color:#6A737D">//pluginInitializer：这是一个 admission.PluginInitializer 类型的对象，用于初始化准入控制插件。</span></span>
+<span class="line"><span style="color:#D73A49">func</span><span style="color:#6F42C1"> CreateKubeAPIServerConfig</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#E36209">	s</span><span style="color:#D73A49"> *</span><span style="color:#6F42C1">options</span><span style="color:#24292E">.</span><span style="color:#6F42C1">ServerRunOptions</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#E36209">	nodeTunneler</span><span style="color:#6F42C1"> tunneler</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Tunneler</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#E36209">	proxyTransport</span><span style="color:#D73A49"> *</span><span style="color:#6F42C1">http</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Transport</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">) (</span></span>
+<span class="line"><span style="color:#E36209">	config</span><span style="color:#D73A49"> *</span><span style="color:#6F42C1">master</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Config</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#E36209">	sharedInformers</span><span style="color:#6F42C1"> informers</span><span style="color:#24292E">.</span><span style="color:#6F42C1">SharedInformerFactory</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#E36209">	versionedInformers</span><span style="color:#6F42C1"> clientgoinformers</span><span style="color:#24292E">.</span><span style="color:#6F42C1">SharedInformerFactory</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#E36209">	insecureServingInfo</span><span style="color:#D73A49"> *</span><span style="color:#6F42C1">kubeserver</span><span style="color:#24292E">.</span><span style="color:#6F42C1">InsecureServingInfo</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#E36209">	serviceResolver</span><span style="color:#6F42C1"> aggregatorapiserver</span><span style="color:#24292E">.</span><span style="color:#6F42C1">ServiceResolver</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#E36209">	pluginInitializers</span><span style="color:#24292E"> []</span><span style="color:#6F42C1">admission</span><span style="color:#24292E">.</span><span style="color:#6F42C1">PluginInitializer</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#E36209">	lastErr</span><span style="color:#D73A49"> error</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">	// set defaults in the options before trying to create the generic config</span></span>
+<span class="line"><span style="color:#6A737D">	//defaultOptions 是一个函数，它的主要作用是为服务器运行选项设置默认值。</span></span>
+<span class="line"><span style="color:#6A737D">	//这个函数接收一个 *options.ServerRunOptions 类型的参数，表示服务器运行选项。  </span></span>
+<span class="line"><span style="color:#6A737D">	//这个函数首先调用 s.GenericServerRunOptions.DefaultAdvertiseAddress(s.SecureServing) 和 kubeoptions.DefaultAdvertiseAddress(s.GenericServerRunOptions, s.InsecureServing) 来设置 API 服务器的默认公布的地址。  </span></span>
+<span class="line"><span style="color:#6A737D">	//然后，它调用 master.DefaultServiceIPRange(s.ServiceClusterIPRange) 来获取服务 IP 范围和 API 服务器服务 IP，并将这些值设置为 s.ServiceClusterIPRange。 </span></span>
+<span class="line"><span style="color:#6A737D">	//接下来，如果没有指定服务账户令牌签名的私钥，它将使用安全服务的服务器证书的私钥作为默认值。 </span></span>
+<span class="line"><span style="color:#6A737D">	//如果没有设置 Etcd 的反序列化缓存大小，它将设置为默认值。  </span></span>
+<span class="line"><span style="color:#6A737D">	//如果启用了 Etcd 的 watch 缓存，它将设置相关的默认值。  </span></span>
+<span class="line"><span style="color:#6A737D">	//最后，如果在设置默认值的过程中出现错误，它将返回这个错误。 </span></span>
+<span class="line"><span style="color:#6A737D">	//这个函数的主要目的是确保服务器运行选项有合理的默认设置，以便在没有明确指定某些选项的情况下，服务器仍然可以正常运行</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> lastErr </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> defaultOptions</span><span style="color:#24292E">(s); lastErr </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	// validate options</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> errs </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> s.</span><span style="color:#6F42C1">Validate</span><span style="color:#24292E">(); </span><span style="color:#6F42C1">len</span><span style="color:#24292E">(errs) </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">		lastErr </span><span style="color:#D73A49">=</span><span style="color:#24292E"> utilerrors.</span><span style="color:#6F42C1">NewAggregate</span><span style="color:#24292E">(errs)</span></span>
+<span class="line"><span style="color:#D73A49">		return</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">	var</span><span style="color:#24292E"> genericConfig </span><span style="color:#D73A49">*</span><span style="color:#6F42C1">genericapiserver</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Config</span></span>
+<span class="line"><span style="color:#6A737D">	//BuildGenericConfig 是一个函数，它的主要作用是根据提供的服务器运行选项和代理传输来构建一个通用的 API 服务器配置。这个函数接收两个参数：  </span></span>
+<span class="line"><span style="color:#6A737D">	//s：这是一个 *options.ServerRunOptions 类型的指针，表示服务器运行选项。这些选项包括 API 服务器的配置信息，如绑定地址和端口，认证和授权配置，存储配置等。</span></span>
+<span class="line"><span style="color:#6A737D">	//proxyTransport：这是一个 *http.Transport 类型的对象，用于 HTTP 代理传输。</span></span>
+<span class="line"><span style="color:#6A737D">	//这个函数的返回值是多个对象和一个错误对象。返回的对象包括：</span></span>
+<span class="line"><span style="color:#6A737D">	//genericConfig：这是一个 *genericapiserver.Config 类型的对象，表示通用的 API 服务器配置。这个配置包括 API 服务器的各种设置，如认证和授权配置，存储配置，API 组和版本等。</span></span>
+<span class="line"><span style="color:#6A737D">	//sharedInformers：这是一个 informers.SharedInformerFactory 类型的对象，用于创建和管理共享的 informer。informer 是 Kubernetes 中用于监视和缓存 API 对象的工具。</span></span>
+<span class="line"><span style="color:#6A737D">	//versionedInformers：这是一个 clientgoinformers.SharedInformerFactory 类型的对象，用于创建和管理版本化的 informer。</span></span>
+<span class="line"><span style="color:#6A737D">	//insecureServingInfo：这是一个 *kubeserver.InsecureServingInfo 类型的对象，表示不安全的服务信息。这些信息包括绑定地址和端口，以及用于身份验证的证书和密钥。</span></span>
+<span class="line"><span style="color:#6A737D">	//serviceResolver：这是一个 aggregatorapiserver.ServiceResolver 类型的对象，用于解析服务名称到服务 URL。</span></span>
+<span class="line"><span style="color:#6A737D">	//pluginInitializers：这是一个 admission.PluginInitializer 类型的对象的切片，用于初始化准入控制插件。</span></span>
+<span class="line"><span style="color:#6A737D">	//如果在构建过程中出现错误，错误对象将包含错误的详细信息。  这个函数的主要目的是根据提供的选项和代理传输，构建一个可以用于启动 API 服务器的通用配置。</span></span>
+<span class="line"><span style="color:#24292E">	genericConfig, sharedInformers, versionedInformers, insecureServingInfo, serviceResolver, pluginInitializers, lastErr </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> BuildGenericConfig</span><span style="color:#24292E">(s, proxyTransport)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> lastErr </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">	//将一个网络地址分割为主机和端口两部分。</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> _, port, err </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> net.</span><span style="color:#6F42C1">SplitHostPort</span><span style="color:#24292E">(s.Etcd.StorageConfig.ServerList[</span><span style="color:#005CC5">0</span><span style="color:#24292E">]); err </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> nil</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> port </span><span style="color:#D73A49">!=</span><span style="color:#032F62"> "0"</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#6F42C1"> len</span><span style="color:#24292E">(port) </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> utilwait.</span><span style="color:#6F42C1">PollImmediate</span><span style="color:#24292E">(etcdRetryInterval, etcdRetryLimit</span><span style="color:#D73A49">*</span><span style="color:#24292E">etcdRetryInterval, </span><span style="color:#6F42C1">preflight</span><span style="color:#24292E">.</span><span style="color:#6F42C1">EtcdConnection</span><span style="color:#24292E">{ServerList: s.Etcd.StorageConfig.ServerList}.CheckEtcdServers); err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">			lastErr </span><span style="color:#D73A49">=</span><span style="color:#24292E"> fmt.</span><span style="color:#6F42C1">Errorf</span><span style="color:#24292E">(</span><span style="color:#032F62">"error waiting for etcd connection: </span><span style="color:#005CC5">%v</span><span style="color:#032F62">"</span><span style="color:#24292E">, err)</span></span>
+<span class="line"><span style="color:#D73A49">			return</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">    //，capabilities.Capabilities函数通常在启动时调用，用于获取集群的能力，然后根据这些能力来决定如何执行后续的操作。例如，如果集群不支持特权容器，那么在创建Pod时就不能设置privileged选项。</span></span>
+<span class="line"><span style="color:#24292E">	capabilities.</span><span style="color:#6F42C1">Initialize</span><span style="color:#24292E">(</span><span style="color:#6F42C1">capabilities</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Capabilities</span><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#6A737D">		//allowPrivilegedContainers字段表示是否允许创建特权容器，SupportsDynamicVolumes字段表示是否支持动态卷等。</span></span>
+<span class="line"><span style="color:#24292E">		AllowPrivileged: s.AllowPrivileged,</span></span>
+<span class="line"><span style="color:#6A737D">		// TODO(vmarmol): Implement support for HostNetworkSources.</span></span>
+<span class="line"><span style="color:#24292E">		PrivilegedSources: </span><span style="color:#6F42C1">capabilities</span><span style="color:#24292E">.</span><span style="color:#6F42C1">PrivilegedSources</span><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#6A737D">			//表示可以创建使用主机网络的Pod的源。如果数组为空，则表示没有任何源可以创建使用主机网络的Pod。</span></span>
+<span class="line"><span style="color:#24292E">			HostNetworkSources: []</span><span style="color:#D73A49">string</span><span style="color:#24292E">{},</span></span>
+<span class="line"><span style="color:#6A737D">			//表示可以创建使用主机PID命名空间的Pod的源。如果数组为空，则表示没有任何源可以创建使用主机PID命名空间的Pod</span></span>
+<span class="line"><span style="color:#24292E">			HostPIDSources:     []</span><span style="color:#D73A49">string</span><span style="color:#24292E">{},</span></span>
+<span class="line"><span style="color:#6A737D">			//表示可以创建使用主机IPC命名空间的Pod的源。如果数组为空，则表示没有任何源可以创建使用主机IPC命名空间的Pod。</span></span>
+<span class="line"><span style="color:#24292E">			HostIPCSources:     []</span><span style="color:#D73A49">string</span><span style="color:#24292E">{},</span></span>
+<span class="line"><span style="color:#24292E">		},</span></span>
+<span class="line"><span style="color:#6A737D">        //用于限制每个连接的带宽使用量。这个选项的值是每秒允许的字节数。</span></span>
+<span class="line"><span style="color:#6A737D">        //如果这个值设置为0，那么就表示没有限制。  </span></span>
+<span class="line"><span style="color:#6A737D">        //这个选项可以帮助防止单个连接占用过多的带宽，从而影响其他连接的性能。</span></span>
+<span class="line"><span style="color:#6A737D">        //例如，如果一个Pod正在进行大量的数据传输，而这个数据传输占用了大部分的网络带宽，那么其他的Pod可能会因为网络带宽不足而无法正常工作。</span></span>
+<span class="line"><span style="color:#6A737D">        //通过设置PerConnectionBandwidthLimitBytesPerSec，可以限制每个连接的带宽使用量，从而确保所有的Pod都能获得足够的网络带宽。</span></span>
+<span class="line"><span style="color:#24292E">        PerConnectionBandwidthLimitBytesPerSec: s.MaxConnectionBytesPerSec,</span></span>
+<span class="line"><span style="color:#24292E">	})</span></span>
+<span class="line"><span style="color:#6A737D">	//master.DefaultServiceIPRange是Kubernetes中的一个函数，它用于获取或设置Kubernetes服务的默认IP范围。  </span></span>
+<span class="line"><span style="color:#6A737D">	//这个函数接收一个IP网络参数，如果这个参数为空或未设置，函数将返回默认的服务IP范围，即10.0.0.0/24。</span></span>
+<span class="line"><span style="color:#6A737D">	//同时，它还会返回这个IP范围中的第一个IP，通常被用作Kubernetes API服务器的服务IP。  </span></span>
+<span class="line"><span style="color:#6A737D">	//如果提供的参数不为空，函数将尝试将其解析为IP网络，并返回这个网络和网络中的第一个IP。  </span></span>
+<span class="line"><span style="color:#6A737D">	//这个函数主要用于Kubernetes API服务器的启动过程中，用于确定服务IP范围。</span></span>
+<span class="line"><span style="color:#6A737D">	//服务IP范围是Kubernetes中服务对象的ClusterIP字段可以使用的IP地址范围。</span></span>
+<span class="line"><span style="color:#24292E">   	serviceIPRange, apiServerServiceIP, lastErr </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> master.</span><span style="color:#6F42C1">DefaultServiceIPRange</span><span style="color:#24292E">(s.ServiceClusterIPRange)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> lastErr </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">    //BuildStorageFactory是一个函数，它负责构建Kubernetes API服务器的存储工厂。</span></span>
+<span class="line"><span style="color:#6A737D">	//存储工厂是一个对象，它负责创建和配置用于存储Kubernetes资源的存储后端。 </span></span>
+<span class="line"><span style="color:#6A737D">	//这个函数接收一个ServerRunOptions类型的参数，这个参数包含了API服务器的运行选项，包括etcd的配置、存储类型、存储版本等。 </span></span>
+<span class="line"><span style="color:#6A737D">	//函数首先从运行选项中获取存储的序列化版本，然后使用这些信息创建一个新的存储工厂。  </span></span>
+<span class="line"><span style="color:#6A737D">	//然后，函数将一些资源添加到存储工厂中，这些资源可以在多个API组之间共享。</span></span>
+<span class="line"><span style="color:#6A737D">	//例如，networkpolicies资源可以在networking和extensions两个API组之间共享。 </span></span>
+<span class="line"><span style="color:#6A737D">	//如果启用了存储加密，函数还会从运行选项中获取加密配置，并将其应用到存储工厂。 </span></span>
+<span class="line"><span style="color:#6A737D">	//最后，函数返回创建的存储工厂和可能出现的错误。  </span></span>
+<span class="line"><span style="color:#6A737D">	//这是BuildStorageFactory函数的基本工作流程。具体的实现可能会根据Kubernetes的版本和配置有所不同。</span></span>
+<span class="line"><span style="color:#24292E">	storageFactory, lastErr </span><span style="color:#D73A49">:=</span><span style="color:#6F42C1"> BuildStorageFactory</span><span style="color:#24292E">(s)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> lastErr </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">    //接收一个文件路径作为参数，该文件应该是一个证书颁发机构（CA）的证书。这个函数尝试从给定的文件路径读取CA证书。</span></span>
+<span class="line"><span style="color:#24292E">	clientCA, lastErr </span><span style="color:#D73A49">:=</span><span style="color:#6F42C1"> readCAorNil</span><span style="color:#24292E">(s.Authentication.ClientCert.ClientCA)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> lastErr </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">    //接收一个文件路径作为参数，该文件应该是一个证书颁发机构（CA）的证书。这个函数尝试从给定的文件路径读取CA证书。</span></span>
+<span class="line"><span style="color:#24292E">    requestHeaderProxyCA, lastErr </span><span style="color:#D73A49">:=</span><span style="color:#6F42C1"> readCAorNil</span><span style="color:#24292E">(s.Authentication.RequestHeader.ClientCAFile)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> lastErr </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">    //</span></span>
+<span class="line"><span style="color:#24292E">	config </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> &#x26;</span><span style="color:#6F42C1">master</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Config</span><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#6A737D">		//GenericConfig：这是一个genericapiserver.Config类型的对象，包含了API服务器的通用配置，如安全设置、存储配置、审计配置等</span></span>
+<span class="line"><span style="color:#24292E">		GenericConfig: genericConfig,</span></span>
+<span class="line"><span style="color:#6A737D">		//ExtraConfig：这是一个master.ExtraConfig类型的对象，包含了API服务器的特定配置，如服务IP范围、存储工厂、API组信息等</span></span>
+<span class="line"><span style="color:#24292E">		ExtraConfig: </span><span style="color:#6F42C1">master</span><span style="color:#24292E">.</span><span style="color:#6F42C1">ExtraConfig</span><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#24292E">			ClientCARegistrationHook: </span><span style="color:#6F42C1">master</span><span style="color:#24292E">.</span><span style="color:#6F42C1">ClientCARegistrationHook</span><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#6A737D">				//ClientCA: 这是一个[]byte类型的字段，它包含了用于验证客户端证书的CA证书。</span></span>
+<span class="line"><span style="color:#24292E">				ClientCA:                         clientCA,</span></span>
+<span class="line"><span style="color:#6A737D">				//它包含了用于从请求头中提取用户名的头字段名</span></span>
+<span class="line"><span style="color:#24292E">				RequestHeaderUsernameHeaders:     s.Authentication.RequestHeader.UsernameHeaders,</span></span>
+<span class="line"><span style="color:#6A737D">				//它包含了用于从请求头中提取用户组的头字段名。</span></span>
+<span class="line"><span style="color:#24292E">				RequestHeaderGroupHeaders:        s.Authentication.RequestHeader.GroupHeaders,</span></span>
+<span class="line"><span style="color:#6A737D">				//它包含了用于从请求头中提取额外信息的头字段名前缀。</span></span>
+<span class="line"><span style="color:#24292E">				RequestHeaderExtraHeaderPrefixes: s.Authentication.RequestHeader.ExtraHeaderPrefixes,</span></span>
+<span class="line"><span style="color:#6A737D">				//用于验证请求头中的证书的CA证书。</span></span>
+<span class="line"><span style="color:#24292E">				RequestHeaderCA:                  requestHeaderProxyCA,</span></span>
+<span class="line"><span style="color:#6A737D">				//允许的客户端证书的公共名（CN）。</span></span>
+<span class="line"><span style="color:#24292E">				RequestHeaderAllowedNames:        s.Authentication.RequestHeader.AllowedNames,</span></span>
+<span class="line"><span style="color:#24292E">			},</span></span>
+<span class="line"><span style="color:#6A737D">            // </span></span>
+<span class="line"><span style="color:#24292E">			APIResourceConfigSource: storageFactory.APIResourceConfigSource,</span></span>
+<span class="line"><span style="color:#6A737D">			//StorageFactory：这是一个serverstorage.StorageFactory类型的对象，用于创建和配置存储后端</span></span>
+<span class="line"><span style="color:#24292E">			StorageFactory:          storageFactory,</span></span>
+<span class="line"><span style="color:#6A737D">			//当设置为true时，Kubernetes API服务器将启动核心控制器。这些控制器是Kubernetes集群的关键部分，负责处理各种集群管理任务，如节点管理、副本控制、服务发现等</span></span>
+<span class="line"><span style="color:#24292E">			EnableCoreControllers:   </span><span style="color:#005CC5">true</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">			//EventTTL：这是一个time.Duration类型的对象，表示事件的生存时间。</span></span>
+<span class="line"><span style="color:#24292E">			EventTTL:                s.EventTTL,</span></span>
+<span class="line"><span style="color:#6A737D">			//KubeletClientConfig：这是一个kubeletclient.KubeletClientConfig类型的对象，用于配置kubelet客户端。</span></span>
+<span class="line"><span style="color:#24292E">			KubeletClientConfig:     s.KubeletConfig,</span></span>
+<span class="line"><span style="color:#6A737D">			//当设置为true时，Kubernetes API服务器将启用用户界面支持。这通常指的是Kubernetes Dashboard，这是一个基于Web的Kubernetes用户界面。</span></span>
+<span class="line"><span style="color:#6A737D">			//http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/</span></span>
+<span class="line"><span style="color:#24292E">			EnableUISupport:         </span><span style="color:#005CC5">true</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">			//当设置为true时，Kubernetes API服务器将启用日志支持。这意味着API服务器将能够处理和响应日志请求，例如从Pod中获取日志</span></span>
+<span class="line"><span style="color:#24292E">			EnableLogsSupport:       s.EnableLogsHandler,</span></span>
+<span class="line"><span style="color:#6A737D">			//http.Transport类型的对象。这个对象用于配置API服务器与其他服务（如kubelet）之间的网络连接。  </span></span>
+<span class="line"><span style="color:#6A737D">			//在Kubernetes中，API服务器需要与集群中的其他组件（如kubelet）进行通信。</span></span>
+<span class="line"><span style="color:#6A737D">			//这种通信可能需要特殊的配置，例如使用SSH隧道或特殊的证书。</span></span>
+<span class="line"><span style="color:#6A737D">			//ProxyTransport提供了一个接口，API服务器可以通过这个接口创建和配置这些网络连接。</span></span>
+<span class="line"><span style="color:#24292E">			ProxyTransport:          proxyTransport,</span></span>
+<span class="line"><span style="color:#6A737D">            //用于配置API服务器与节点之间的SSH隧道，以便API服务器可以安全地访问节点上的kubelet。  </span></span>
+<span class="line"><span style="color:#6A737D">			//在Kubernetes中，API服务器需要与集群中的其他组件（如kubelet）进行通信。</span></span>
+<span class="line"><span style="color:#6A737D">			//这种通信可能需要特殊的配置，例如使用SSH隧道。</span></span>
+<span class="line"><span style="color:#6A737D">			//Tunneler提供了一个接口，API服务器可以通过这个接口创建和配置这些SSH隧道。</span></span>
+<span class="line"><span style="color:#24292E">			Tunneler: nodeTunneler,</span></span>
+<span class="line"><span style="color:#6A737D">            //在Kubernetes中，每个服务都会被分配一个IP地址，这个IP地址是在ServiceIPRange指定的范围内。这个IP地址用于在集群内部访问该服务。</span></span>
+<span class="line"><span style="color:#24292E">			ServiceIPRange:       serviceIPRange,</span></span>
+<span class="line"><span style="color:#6A737D">			//用于配置Kubernetes API服务器的服务IP地址。  </span></span>
+<span class="line"><span style="color:#6A737D">			//在Kubernetes中，API服务器的服务IP地址是集群内部用于访问API服务器的IP地址。</span></span>
+<span class="line"><span style="color:#6A737D">			//这个地址通常是服务IP范围（ServiceIPRange）的第一个IP地址。</span></span>
+<span class="line"><span style="color:#24292E">			APIServerServiceIP:   apiServerServiceIP,</span></span>
+<span class="line"><span style="color:#24292E">			APIServerServicePort: </span><span style="color:#005CC5">443</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6A737D">            //用于配置Kubernetes API服务器为服务分配NodePort的范围。  在Kubernetes中，当服务的类型为NodePort时，会为该服务分配一个NodePort，这个NodePort是在ServiceNodePortRange指定的范围内。 </span></span>
+<span class="line"><span style="color:#24292E">			ServiceNodePortRange:      s.ServiceNodePortRange,</span></span>
+<span class="line"><span style="color:#6A737D">			//用于配置Kubernetes API服务器的服务NodePort。 </span></span>
+<span class="line"><span style="color:#6A737D">			//在Kubernetes中，API服务器的服务NodePort是集群外部用于访问API服务器的端口。</span></span>
+<span class="line"><span style="color:#6A737D">			//这个端口通常是服务NodePort范围（ServiceNodePortRange）内的一个端口</span></span>
+<span class="line"><span style="color:#24292E">			KubernetesServiceNodePort: s.KubernetesServiceNodePort,</span></span>
+<span class="line"><span style="color:#6A737D">            //用于配置Kubernetes API服务器的端点（Endpoint）的协调器类型。  在Kubernetes中，API服务器的端点协调器用于确保API服务器的端点对象与实际的API服务器实例保持一致。这对于多个API服务器实例的场景尤其重要。</span></span>
+<span class="line"><span style="color:#24292E">			EndpointReconcilerType: reconcilers.</span><span style="color:#6F42C1">Type</span><span style="color:#24292E">(s.EndpointReconcilerType),</span></span>
+<span class="line"><span style="color:#6A737D">			//用于配置Kubernetes API服务器的主节点数量。  </span></span>
+<span class="line"><span style="color:#6A737D">			//在Kubernetes中，主节点数量是用于确定API服务器的端点协调器的行为。</span></span>
+<span class="line"><span style="color:#6A737D">			//例如，如果你使用的端点协调器类型是MasterCount，那么主节点数量将决定API服务器的端点对象的数量。</span></span>
+<span class="line"><span style="color:#24292E">			MasterCount:            s.MasterCount,</span></span>
+<span class="line"><span style="color:#24292E">		},</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> nodeTunneler </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">		// Use the nodeTunneler's dialer to connect to the kubelet</span></span>
+<span class="line"><span style="color:#24292E">		config.ExtraConfig.KubeletClientConfig.Dial </span><span style="color:#D73A49">=</span><span style="color:#24292E"> nodeTunneler.Dial</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">	return</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="defaultoptions-设置合理的默认设置">defaultOptions 设置合理的默认设置</h3>
+<p><strong>位置：</strong> <code>cmd/kube-apiserver/app/server.go</code></p>
+<p><strong>说明：</strong></p>
+<p>这个函数的主要目的是确保服务器运行选项有合理的默认设置，以便在没有明确指定某些选项的情况下，服务器仍然可以正常运行。</p>
+<p><strong>源码：</strong></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">//这个函数接收一个 `*options.ServerRunOptions` 类型的参数，表示服务器运行选项。</span></span>
+<span class="line"><span style="color:#D73A49">func</span><span style="color:#6F42C1"> defaultOptions</span><span style="color:#24292E">(</span><span style="color:#E36209">s</span><span style="color:#D73A49"> *</span><span style="color:#6F42C1">options</span><span style="color:#24292E">.</span><span style="color:#6F42C1">ServerRunOptions</span><span style="color:#24292E">) </span><span style="color:#D73A49">error</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">	// set defaults</span></span>
+<span class="line"><span style="color:#6A737D">	//设置 API 服务器的默认公开地址</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> s.GenericServerRunOptions.</span><span style="color:#6F42C1">DefaultAdvertiseAddress</span><span style="color:#24292E">(s.SecureServing); err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#24292E"> err</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">	//	//设置 API 服务器的默认公开地址</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> kubeoptions.</span><span style="color:#6F42C1">DefaultAdvertiseAddress</span><span style="color:#24292E">(s.GenericServerRunOptions, s.InsecureServing); err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#24292E"> err</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">	//获取服务 IP 范围和 API 服务器服务 IP，并将这些值设置为 `s.ServiceClusterIPRange`</span></span>
+<span class="line"><span style="color:#24292E">	serviceIPRange, apiServerServiceIP, err </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> master.</span><span style="color:#6F42C1">DefaultServiceIPRange</span><span style="color:#24292E">(s.ServiceClusterIPRange)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#24292E"> fmt.</span><span style="color:#6F42C1">Errorf</span><span style="color:#24292E">(</span><span style="color:#032F62">"error determining service IP ranges: </span><span style="color:#005CC5">%v</span><span style="color:#032F62">"</span><span style="color:#24292E">, err)</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#24292E">	s.ServiceClusterIPRange </span><span style="color:#D73A49">=</span><span style="color:#24292E"> serviceIPRange</span></span>
+<span class="line"><span style="color:#6A737D">	//如果没有指定服务账户令牌签名的私钥，它将使用安全服务的服务器证书的私钥作为默认值 /var/run/kubernetes/ 创建apiserver.crt apiserver.key 文件</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> s.SecureServing.</span><span style="color:#6F42C1">MaybeDefaultWithSelfSignedCerts</span><span style="color:#24292E">(s.GenericServerRunOptions.AdvertiseAddress.</span><span style="color:#6F42C1">String</span><span style="color:#24292E">(), []</span><span style="color:#D73A49">string</span><span style="color:#24292E">{</span><span style="color:#032F62">"kubernetes.default.svc"</span><span style="color:#24292E">, </span><span style="color:#032F62">"kubernetes.default"</span><span style="color:#24292E">, </span><span style="color:#032F62">"kubernetes"</span><span style="color:#24292E">}, []</span><span style="color:#6F42C1">net</span><span style="color:#24292E">.</span><span style="color:#6F42C1">IP</span><span style="color:#24292E">{apiServerServiceIP}); err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#24292E"> fmt.</span><span style="color:#6F42C1">Errorf</span><span style="color:#24292E">(</span><span style="color:#032F62">"error creating self-signed certificates: </span><span style="color:#005CC5">%v</span><span style="color:#032F62">"</span><span style="color:#24292E">, err)</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#24292E">	</span></span>
+<span class="line"><span style="color:#6A737D">	//它的主要作用是设置 API 服务器的默认外部主机名。</span></span>
+<span class="line"><span style="color:#6A737D">	// 这个函数首先检查是否已经设置了外部主机名。如果已经设置了，那么它将直接返回，不做任何操作。  </span></span>
+<span class="line"><span style="color:#6A737D">	//如果没有设置外部主机名，那么它将尝试获取主机的 IP 地址，并将这个 IP 地址设置为外部主机名。</span></span>
+<span class="line"><span style="color:#6A737D">	//获取 IP 地址的方式是，首先获取所有的网络接口，然后遍历这些接口，找到第一个非环回且非点对点的接口，然后获取这个接口的 IP 地址。  </span></span>
+<span class="line"><span style="color:#6A737D">	//如果在获取 IP 地址的过程中出现错误，或者没有找到合适的网络接口，那么它将返回一个错误。  </span></span>
+<span class="line"><span style="color:#6A737D">	//这个函数的主要目的是确保 API 服务器有一个可以被其他组件访问的地址。</span></span>
+<span class="line"><span style="color:#6A737D">	//这个地址将被用于构建到 API 服务器的连接，例如在 kubelet 或者 kube-proxy 中。</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> s.CloudProvider.</span><span style="color:#6F42C1">DefaultExternalHost</span><span style="color:#24292E">(s.GenericServerRunOptions); err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#24292E"> fmt.</span><span style="color:#6F42C1">Errorf</span><span style="color:#24292E">(</span><span style="color:#032F62">"error setting the external host value: </span><span style="color:#005CC5">%v</span><span style="color:#032F62">"</span><span style="color:#24292E">, err)</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">	//用于将授权配置应用到API服务器的通用配置中。</span></span>
+<span class="line"><span style="color:#6A737D">	//这个方法主要负责创建一个授权器（Authorizer），该授权器用于决定哪些用户可以访问哪些资源。 </span></span>
+<span class="line"><span style="color:#6A737D">	//这个方法首先会将服务器运行选项中的授权配置转换为一个授权配置对象，然后调用该对象的New()方法来创建一个新的授权器。</span></span>
+<span class="line"><span style="color:#6A737D">	//创建的授权器会被设置到API服务器的通用配置中。  </span></span>
+<span class="line"><span style="color:#6A737D">	//此外，这个方法还会创建一个规则解析器（RuleResolver），该解析器用于确定用户的权限规则。</span></span>
+<span class="line"><span style="color:#6A737D">	//这个规则解析器也会被设置到API服务器的通用配置中。  </span></span>
+<span class="line"><span style="color:#6A737D">	//如果在创建授权器或规则解析器的过程中出现错误，ApplyAuthorization方法会返回这个错误。 </span></span>
+<span class="line"><span style="color:#6A737D">	//这个方法的主要目的是确保API服务器有一个有效的授权机制，以便对用户的访问请求进行权限控制</span></span>
+<span class="line"><span style="color:#24292E">	s.Authentication.</span><span style="color:#6F42C1">ApplyAuthorization</span><span style="color:#24292E">(s.Authorization)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	// Default to the private server key for service account token signing</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#6F42C1"> len</span><span style="color:#24292E">(s.Authentication.ServiceAccounts.KeyFiles) </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> s.SecureServing.ServerCert.CertKey.KeyFile </span><span style="color:#D73A49">!=</span><span style="color:#032F62"> ""</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		if</span><span style="color:#24292E"> kubeauthenticator.</span><span style="color:#6F42C1">IsValidServiceAccountKeyFile</span><span style="color:#24292E">(s.SecureServing.ServerCert.CertKey.KeyFile) {</span></span>
+<span class="line"><span style="color:#6A737D">			//默认为服务帐户令牌签名的专用服务器密钥 如果未配置则使用SecureServing.MaybeDefaultWithSelfSignedCerts方法在</span></span>
+<span class="line"><span style="color:#6A737D">			// `/var/run/kubernetes/`  目录生成的密钥</span></span>
+<span class="line"><span style="color:#24292E">			s.Authentication.ServiceAccounts.KeyFiles </span><span style="color:#D73A49">=</span><span style="color:#24292E"> []</span><span style="color:#D73A49">string</span><span style="color:#24292E">{s.SecureServing.ServerCert.CertKey.KeyFile}</span></span>
+<span class="line"><span style="color:#24292E">		} </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">			glog.</span><span style="color:#6F42C1">Warning</span><span style="color:#24292E">(</span><span style="color:#032F62">"No TLS key provided, service account token authentication disabled"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">    //如果没有设置 Etcd 的反序列化缓存大小，它将设置为默认值。</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> s.Etcd.StorageConfig.DeserializationCacheSize </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">		// When size of cache is not explicitly set, estimate its size based on</span></span>
+<span class="line"><span style="color:#6A737D">		// target memory usage.</span></span>
+<span class="line"><span style="color:#24292E">		glog.</span><span style="color:#6F42C1">V</span><span style="color:#24292E">(</span><span style="color:#005CC5">2</span><span style="color:#24292E">).</span><span style="color:#6F42C1">Infof</span><span style="color:#24292E">(</span><span style="color:#032F62">"Initializing deserialization cache size based on </span><span style="color:#005CC5">%d</span><span style="color:#032F62">MB limit"</span><span style="color:#24292E">, s.GenericServerRunOptions.TargetRAMMB)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">		// This is the heuristics that from memory capacity is trying to infer</span></span>
+<span class="line"><span style="color:#6A737D">		// the maximum number of nodes in the cluster and set cache sizes based</span></span>
+<span class="line"><span style="color:#6A737D">		// on that value.</span></span>
+<span class="line"><span style="color:#6A737D">		// From our documentation, we officially recommend 120GB machines for</span></span>
+<span class="line"><span style="color:#6A737D">		// 2000 nodes, and we scale from that point. Thus we assume ~60MB of</span></span>
+<span class="line"><span style="color:#6A737D">		// capacity per node.</span></span>
+<span class="line"><span style="color:#6A737D">		// TODO: We may consider deciding that some percentage of memory will</span></span>
+<span class="line"><span style="color:#6A737D">		// be used for the deserialization cache and divide it by the max object</span></span>
+<span class="line"><span style="color:#6A737D">		// size to compute its size. We may even go further and measure</span></span>
+<span class="line"><span style="color:#6A737D">		// collective sizes of the objects in the cache.</span></span>
+<span class="line"><span style="color:#6A737D">		//这是启发式方法，它从内存容量中尝试推断集群中的最大节点数，并根据该值设置缓存大小。</span></span>
+<span class="line"><span style="color:#6A737D">		//根据我们的文档，我们正式建议 2000 个节点使用 120GB 计算机，并从此进行扩展。</span></span>
+<span class="line"><span style="color:#6A737D">		//因此，我们假设每个节点的容量为 ~60MB。</span></span>
+<span class="line"><span style="color:#6A737D">		//TODO：我们可以考虑决定将一定比例的内存用于反序列化缓存，并将其除以最大对象大小以计算其大小。</span></span>
+<span class="line"><span style="color:#6A737D">		//我们甚至可以更进一步，测量缓存中对象的集体大小。</span></span>
+<span class="line"><span style="color:#24292E">		clusterSize </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> s.GenericServerRunOptions.TargetRAMMB </span><span style="color:#D73A49">/</span><span style="color:#005CC5"> 60</span></span>
+<span class="line"><span style="color:#24292E">		s.Etcd.StorageConfig.DeserializationCacheSize </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 25</span><span style="color:#D73A49"> *</span><span style="color:#24292E"> clusterSize</span></span>
+<span class="line"><span style="color:#D73A49">		if</span><span style="color:#24292E"> s.Etcd.StorageConfig.DeserializationCacheSize </span><span style="color:#D73A49">&#x3C;</span><span style="color:#005CC5"> 1000</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">			s.Etcd.StorageConfig.DeserializationCacheSize </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 1000</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">	//如果启用了 Etcd 的 watch 缓存，它将设置相关的默认值。</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> s.Etcd.EnableWatchCache {</span></span>
+<span class="line"><span style="color:#24292E">		glog.</span><span style="color:#6F42C1">V</span><span style="color:#24292E">(</span><span style="color:#005CC5">2</span><span style="color:#24292E">).</span><span style="color:#6F42C1">Infof</span><span style="color:#24292E">(</span><span style="color:#032F62">"Initializing cache sizes based on </span><span style="color:#005CC5">%d</span><span style="color:#032F62">MB limit"</span><span style="color:#24292E">, s.GenericServerRunOptions.TargetRAMMB)</span></span>
+<span class="line"><span style="color:#6A737D">		//ParseWatchCacheSizes 将缓存大小值列表转换为组资源映射,将一组缓存大小值转换为一组资源到请求大小的映射。  </span></span>
+<span class="line"><span style="color:#24292E">		sizes </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> cachesize.</span><span style="color:#6F42C1">NewHeuristicWatchCacheSizes</span><span style="color:#24292E">(s.GenericServerRunOptions.TargetRAMMB)</span></span>
+<span class="line"><span style="color:#D73A49">		if</span><span style="color:#24292E"> userSpecified, err </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> serveroptions.</span><span style="color:#6F42C1">ParseWatchCacheSizes</span><span style="color:#24292E">(s.Etcd.WatchCacheSizes); err </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">			for</span><span style="color:#24292E"> resource, size </span><span style="color:#D73A49">:=</span><span style="color:#D73A49"> range</span><span style="color:#24292E"> userSpecified {</span></span>
+<span class="line"><span style="color:#24292E">				sizes[resource] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> size</span></span>
+<span class="line"><span style="color:#24292E">			}</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#24292E">		s.Etcd.WatchCacheSizes, err </span><span style="color:#D73A49">=</span><span style="color:#24292E"> serveroptions.</span><span style="color:#6F42C1">WriteWatchCacheSizes</span><span style="color:#24292E">(sizes)</span></span>
+<span class="line"><span style="color:#D73A49">		if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">			return</span><span style="color:#24292E"> err</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">	return</span><span style="color:#005CC5"> nil</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="preparerun-执行-api-安装设置步骤">PrepareRun 执行 API 安装设置步骤</h2>
+<p><strong>位置：</strong> <code>apiserver/pkg/server/genericapiserver.go</code></p>
+<p><strong>说明：</strong></p>
+<p>这个函数的主要目的是确保服务器运行选项有合理的默认设置，以便在没有明确指定某些选项的情况下，服务器仍然可以正常运行。</p>
+<p>PrepareRun 是 GenericAPIServer 结构体的一个方法，它在 API 安装后执行一些设置步骤。</p>
+<p>这个方法的主要目的是在服务器开始运行之前进行一些必要的设置，例如安装 API 文档和健康检查等。</p>
+<p><strong>源码：</strong></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="go"><code><span class="line"></span>
+<span class="line"><span style="color:#6A737D">//  执行 API 安装设置步骤后.</span></span>
+<span class="line"><span style="color:#D73A49">func</span><span style="color:#24292E"> (</span><span style="color:#E36209">s </span><span style="color:#D73A49">*</span><span style="color:#6F42C1">GenericAPIServer</span><span style="color:#24292E">) </span><span style="color:#6F42C1">PrepareRun</span><span style="color:#24292E">() </span><span style="color:#6F42C1">preparedGenericAPIServer</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">	////这个方法首先检查是否有 swaggerConfig 和 openAPIConfig。如果有，它会在 GoRestfulContainer 中安装相应的路由。</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> s.swaggerConfig </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6F42C1">		routes</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Swagger</span><span style="color:#24292E">{Config: s.swaggerConfig}.</span><span style="color:#6F42C1">Install</span><span style="color:#24292E">(s.Handler.GoRestfulContainer)</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> s.openAPIConfig </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6F42C1">		routes</span><span style="color:#24292E">.</span><span style="color:#6F42C1">OpenAPI</span><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#24292E">			Config: s.openAPIConfig,</span></span>
+<span class="line"><span style="color:#24292E">		}.</span><span style="color:#6F42C1">Install</span><span style="color:#24292E">(s.Handler.GoRestfulContainer, s.Handler.NonGoRestfulMux)</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">	//然后，它调用 installHealthz 方法来安装健康检查。</span></span>
+<span class="line"><span style="color:#24292E">	s.</span><span style="color:#6F42C1">installHealthz</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#6A737D">    // 最后，它返回一个 preparedGenericAPIServer 结构体，该结构体包含一个指向 GenericAPIServer 的指针。</span></span>
+<span class="line"><span style="color:#D73A49">	return</span><span style="color:#6F42C1"> preparedGenericAPIServer</span><span style="color:#24292E">{s}</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="不安全的-http-服务器nonblockingrun">不安全的 http 服务器NonBlockingRun</h3>
+<p><strong>位置：</strong>
+<code>pkg/kubeapiserver/server/insecure_handler.go</code></p>
+<p><strong>说明：</strong>
+生成不安全的 http 服务器,给定的监听器上启动一个 HTTP 服务器，并在接收到关闭信号时优雅地关闭服务器。这个函数不会阻塞，它会在后台运行服务器。</p>
+<p><strong>源码：</strong></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// NonBlockingRun spawns the insecure http server. An error is</span></span>
+<span class="line"><span style="color:#6A737D">// returned if the ports cannot be listened on.</span></span>
+<span class="line"><span style="color:#6A737D">//insecureServingInfo 是一个 *InsecureServingInfo 实例，它定义了服务器的配置，如绑定地址和网络类型等。</span></span>
+<span class="line"><span style="color:#6A737D">//insecureHandler 是一个 http.Handler 实例，它定义了服务器的处理器</span></span>
+<span class="line"><span style="color:#6A737D">//shutDownTimeout 是一个 time.Duration 值，它定义了在接收到关闭信号后，服务器应该等待多长时间以完成现有的请求，然后关闭。</span></span>
+<span class="line"><span style="color:#6A737D">//stopCh 是一个只读的通道，当这个通道关闭时，服务器将开始关闭过程。</span></span>
+<span class="line"><span style="color:#6A737D">//这个函数的返回值是一个错误，如果在绑定端口时出现错误，将返回这个错误。</span></span>
+<span class="line"><span style="color:#D73A49">func</span><span style="color:#6F42C1"> NonBlockingRun</span><span style="color:#24292E">(</span><span style="color:#E36209">insecureServingInfo</span><span style="color:#D73A49"> *</span><span style="color:#6F42C1">InsecureServingInfo</span><span style="color:#24292E">, </span><span style="color:#E36209">insecureHandler</span><span style="color:#6F42C1"> http</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Handler</span><span style="color:#24292E">, </span><span style="color:#E36209">shutDownTimeout</span><span style="color:#6F42C1"> time</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Duration</span><span style="color:#24292E">, </span><span style="color:#E36209">stopCh</span><span style="color:#D73A49"> &#x3C;-chan</span><span style="color:#D73A49"> struct</span><span style="color:#24292E">{}) </span><span style="color:#D73A49">error</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">	// Use an internal stop channel to allow cleanup of the listeners on error.</span></span>
+<span class="line"><span style="color:#6A737D">	//使用内部停止通道以允许在出错时清理侦听器。</span></span>
+<span class="line"><span style="color:#24292E">	internalStopCh </span><span style="color:#D73A49">:=</span><span style="color:#6F42C1"> make</span><span style="color:#24292E">(</span><span style="color:#D73A49">chan</span><span style="color:#D73A49"> struct</span><span style="color:#24292E">{})</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> insecureServingInfo </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> insecureHandler </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">    //它在给定的监听器上启动一个不安全的 HTTP 服务器，并在接收到关闭信号时优雅地关闭服务器。这个函数不会阻塞，它会在后台运行服务器</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">:=</span><span style="color:#6F42C1"> serveInsecurely</span><span style="color:#24292E">(insecureServingInfo, insecureHandler, shutDownTimeout, internalStopCh); err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6F42C1">			close</span><span style="color:#24292E">(internalStopCh)</span></span>
+<span class="line"><span style="color:#D73A49">			return</span><span style="color:#24292E"> err</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	// Now that the listener has bound successfully, it is the</span></span>
+<span class="line"><span style="color:#6A737D">	// responsibility of the caller to close the provided channel to</span></span>
+<span class="line"><span style="color:#6A737D">	// ensure cleanup.</span></span>
+<span class="line"><span style="color:#D73A49">	go</span><span style="color:#D73A49"> func</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">		&#x3C;-</span><span style="color:#24292E">stopCh</span></span>
+<span class="line"><span style="color:#6F42C1">		close</span><span style="color:#24292E">(internalStopCh)</span></span>
+<span class="line"><span style="color:#24292E">	}()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">	return</span><span style="color:#005CC5"> nil</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"></span></code></pre>
+<h3 id="serveinsecurely-运行不安全的-http-服务器">serveInsecurely 运行不安全的 http 服务器</h3>
+<p><strong>位置：</strong>
+<code>pkg/kubeapiserver/server/insecure_handler.go</code></p>
+<p><strong>说明：</strong>
+创建监听器，启动server，默认监听地址为：127.0.0.1:8080</p>
+<p><strong>源码：</strong></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// serveInsecurely run the insecure http server. It fails only if the initial listen</span></span>
+<span class="line"><span style="color:#6A737D">// call fails. The actual server loop (stoppable by closing stopCh) runs in a go</span></span>
+<span class="line"><span style="color:#6A737D">// routine, i.e. serveInsecurely does not block.</span></span>
+<span class="line"><span style="color:#6A737D">//serve不安全地运行不安全的 http 服务器。仅当初始侦听调用失败时，它才会失败。</span></span>
+<span class="line"><span style="color:#6A737D">//实际的服务器循环（可通过关闭 stopCh 来停止）在 go 例程中运行，即 serveInsecurely 不会阻塞。</span></span>
+<span class="line"><span style="color:#6A737D">//insecureServingInfo 是一个 *InsecureServingInfo 实例，它定义了服务器的配置，如绑定地址和网络类型等。</span></span>
+<span class="line"><span style="color:#6A737D">//insecureHandler 是一个 http.Handler 实例，它定义了服务器的处理器。</span></span>
+<span class="line"><span style="color:#6A737D">//shutDownTimeout 是一个 time.Duration 值，它定义了在接收到关闭信号后，服务器应该等待多长时间以完成现有的请求，然后关闭。</span></span>
+<span class="line"><span style="color:#6A737D">//stopCh 是一个只读的通道，当这个通道关闭时，服务器将开始关闭过程</span></span>
+<span class="line"><span style="color:#D73A49">func</span><span style="color:#6F42C1"> serveInsecurely</span><span style="color:#24292E">(</span><span style="color:#E36209">insecureServingInfo</span><span style="color:#D73A49"> *</span><span style="color:#6F42C1">InsecureServingInfo</span><span style="color:#24292E">, </span><span style="color:#E36209">insecureHandler</span><span style="color:#6F42C1"> http</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Handler</span><span style="color:#24292E">, </span><span style="color:#E36209">shutDownTimeout</span><span style="color:#6F42C1"> time</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Duration</span><span style="color:#24292E">, </span><span style="color:#E36209">stopCh</span><span style="color:#D73A49"> &#x3C;-chan</span><span style="color:#D73A49"> struct</span><span style="color:#24292E">{}) </span><span style="color:#D73A49">error</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">	//函数首先创建一个 http.Server 实例，并设置其地址、处理器和最大头部字节数。</span></span>
+<span class="line"><span style="color:#6A737D">	//然后，它使用 insecureServingInfo 中的网络类型和绑定地址创建一个监听器。</span></span>
+<span class="line"><span style="color:#6A737D">	//如果创建监听器时出现错误，函数会返回这个错误。</span></span>
+<span class="line"><span style="color:#24292E">	insecureServer </span><span style="color:#D73A49">:=</span><span style="color:#D73A49"> &#x26;</span><span style="color:#6F42C1">http</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Server</span><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#24292E">		Addr:           insecureServingInfo.BindAddress,</span></span>
+<span class="line"><span style="color:#24292E">		Handler:        insecureHandler,</span></span>
+<span class="line"><span style="color:#24292E">		MaxHeaderBytes: </span><span style="color:#005CC5">1</span><span style="color:#D73A49"> &#x3C;&#x3C;</span><span style="color:#005CC5"> 20</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#24292E">	glog.</span><span style="color:#6F42C1">Infof</span><span style="color:#24292E">(</span><span style="color:#032F62">"Serving insecurely on </span><span style="color:#005CC5">%s</span><span style="color:#032F62">"</span><span style="color:#24292E">, insecureServingInfo.BindAddress)</span></span>
+<span class="line"><span style="color:#6A737D">	//用于在指定的网络地址上创建一个新的监听器。</span></span>
+<span class="line"><span style="color:#24292E">	ln, _, err </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> options.</span><span style="color:#6F42C1">CreateListener</span><span style="color:#24292E">(insecureServingInfo.BindNetwork, insecureServingInfo.BindAddress)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#24292E"> err</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#24292E">	err </span><span style="color:#D73A49">=</span><span style="color:#24292E"> server.</span><span style="color:#6F42C1">RunServer</span><span style="color:#24292E">(insecureServer, ln, shutDownTimeout, stopCh)</span></span>
+<span class="line"><span style="color:#D73A49">	return</span><span style="color:#24292E"> err</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">//network：一个字符串，表示要使用的网络类型。常见的值包括 "tcp"、"tcp4"、"tcp6"。</span></span>
+<span class="line"><span style="color:#6A737D">//addr：一个字符串，表示监听器应该绑定的网络地址。对于 TCP 网络，地址的格式是 "ip:port"</span></span>
+<span class="line"><span style="color:#D73A49">func</span><span style="color:#6F42C1"> CreateListener</span><span style="color:#24292E">(</span><span style="color:#E36209">network</span><span style="color:#24292E">, </span><span style="color:#E36209">addr</span><span style="color:#D73A49"> string</span><span style="color:#24292E">) (</span><span style="color:#6F42C1">net</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Listener</span><span style="color:#24292E">, </span><span style="color:#D73A49">int</span><span style="color:#24292E">, </span><span style="color:#D73A49">error</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#6F42C1"> len</span><span style="color:#24292E">(network) </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">		network </span><span style="color:#D73A49">=</span><span style="color:#032F62"> "tcp"</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">	//net.Listen 是 Go 语言标准库 net 包中的一个函数，它用于在指定的网络地址上创建一个新的监听器。  函数接收两个参数：  </span></span>
+<span class="line"><span style="color:#6A737D">	//network：一个字符串，表示要使用的网络类型。常见的值包括 "tcp"、"tcp4"、"tcp6"、"unix" 或 "unixpacket"。</span></span>
+<span class="line"><span style="color:#6A737D">	//addr：一个字符串，表示监听器应该绑定的网络地址。对于 TCP 网络，地址的格式是 "ip:port"，对于 Unix 网络，地址是文件系统路径。</span></span>
+<span class="line"><span style="color:#6A737D">	//函数返回两个值：</span></span>
+<span class="line"><span style="color:#6A737D">	//Listener：一个 net.Listener 接口，表示新创建的监听器。你可以调用它的 Accept 方法来接收新的连接，或者调用它的 Close 方法来停止监听。</span></span>
+<span class="line"><span style="color:#6A737D">	//error：如果在创建监听器的过程中发生错误，这个值会是一个描述错误的 error 对象。否则，这个值会是 nil。</span></span>
+<span class="line"><span style="color:#24292E">	ln, err </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> net.</span><span style="color:#6F42C1">Listen</span><span style="color:#24292E">(network, addr)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> err </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#005CC5"> nil</span><span style="color:#24292E">, </span><span style="color:#005CC5">0</span><span style="color:#24292E">, fmt.</span><span style="color:#6F42C1">Errorf</span><span style="color:#24292E">(</span><span style="color:#032F62">"failed to listen on </span><span style="color:#005CC5">%v</span><span style="color:#032F62">: </span><span style="color:#005CC5">%v</span><span style="color:#032F62">"</span><span style="color:#24292E">, addr, err)</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	// get port</span></span>
+<span class="line"><span style="color:#24292E">	tcpAddr, ok </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> ln.</span><span style="color:#6F42C1">Addr</span><span style="color:#24292E">().(</span><span style="color:#D73A49">*</span><span style="color:#6F42C1">net</span><span style="color:#24292E">.</span><span style="color:#6F42C1">TCPAddr</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#D73A49"> !</span><span style="color:#24292E">ok {</span></span>
+<span class="line"><span style="color:#24292E">		ln.</span><span style="color:#6F42C1">Close</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#005CC5"> nil</span><span style="color:#24292E">, </span><span style="color:#005CC5">0</span><span style="color:#24292E">, fmt.</span><span style="color:#6F42C1">Errorf</span><span style="color:#24292E">(</span><span style="color:#032F62">"invalid listen address: </span><span style="color:#005CC5">%q</span><span style="color:#032F62">"</span><span style="color:#24292E">, ln.</span><span style="color:#6F42C1">Addr</span><span style="color:#24292E">().</span><span style="color:#6F42C1">String</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#6A737D">    //函数返回监听器和监听器绑定的端口号。</span></span>
+<span class="line"><span style="color:#D73A49">	return</span><span style="color:#24292E"> ln, tcpAddr.Port, </span><span style="color:#005CC5">nil</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#6A737D">// RunServer listens on the given port if listener is not given,</span></span>
+<span class="line"><span style="color:#6A737D">// then spawns a go-routine continuously serving</span></span>
+<span class="line"><span style="color:#6A737D">// until the stopCh is closed. This function does not block.</span></span>
+<span class="line"><span style="color:#6A737D">//如果未提供侦听器，RunServer 会在给定端口上侦听，然后生成一个 go-routine 持续服务，直到 stopCh 关闭。此函数不会阻止。</span></span>
+<span class="line"><span style="color:#6A737D">//RunServer 是一个函数，它在给定的监听器上启动一个 HTTP 服务器，并在接收到关闭信号时优雅地关闭服务器。这个函数不会阻塞，它会在后台运行服务器。</span></span>
+<span class="line"><span style="color:#6A737D">//server：一个 *http.Server 实例，它定义了服务器的配置，如地址、处理器和最大头部字节数等。</span></span>
+<span class="line"><span style="color:#6A737D">//ln：一个 net.Listener 实例，它定义了服务器的监听器。</span></span>
+<span class="line"><span style="color:#6A737D">//shutDownTimeout：一个 time.Duration 值，它定义了在接收到关闭信号后，服务器应该等待多长时间以完成现有的请求，然后关闭。</span></span>
+<span class="line"><span style="color:#6A737D">// stopCh：一个只读的通道，当这个通道关闭时，服务器将开始关闭过程。</span></span>
+<span class="line"><span style="color:#D73A49">func</span><span style="color:#6F42C1"> RunServer</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#E36209">	server</span><span style="color:#D73A49"> *</span><span style="color:#6F42C1">http</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Server</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#E36209">	ln</span><span style="color:#6F42C1"> net</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Listener</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#E36209">	shutDownTimeout</span><span style="color:#6F42C1"> time</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Duration</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#E36209">	stopCh</span><span style="color:#D73A49"> &#x3C;-chan</span><span style="color:#D73A49"> struct</span><span style="color:#24292E">{},</span></span>
+<span class="line"><span style="color:#24292E">) </span><span style="color:#D73A49">error</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">	if</span><span style="color:#24292E"> ln </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#24292E"> fmt.</span><span style="color:#6F42C1">Errorf</span><span style="color:#24292E">(</span><span style="color:#032F62">"listener must not be nil"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">	// Shutdown server gracefully.</span></span>
+<span class="line"><span style="color:#6A737D">	//函数首先在一个新的 goroutine 中启动一个监听关闭信号的循环。</span></span>
+<span class="line"><span style="color:#6A737D">	//当 stopCh 关闭时，这个循环会调用 server.Shutdown 方法来开始关闭服务器。</span></span>
+<span class="line"><span style="color:#6A737D">	//这个方法会等待所有现有的请求完成或者达到 shutDownTimeout 时间限制，然后关闭服务器。</span></span>
+<span class="line"><span style="color:#D73A49">	go</span><span style="color:#D73A49"> func</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">		&#x3C;-</span><span style="color:#24292E">stopCh</span></span>
+<span class="line"><span style="color:#24292E">		ctx, cancel </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> context.</span><span style="color:#6F42C1">WithTimeout</span><span style="color:#24292E">(context.</span><span style="color:#6F42C1">Background</span><span style="color:#24292E">(), shutDownTimeout)</span></span>
+<span class="line"><span style="color:#24292E">		server.</span><span style="color:#6F42C1">Shutdown</span><span style="color:#24292E">(ctx)</span></span>
+<span class="line"><span style="color:#6F42C1">		cancel</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">	}()</span></span>
+<span class="line"><span style="color:#6A737D">    //函数在另一个新的 goroutine 中启动服务器。如果服务器在运行过程中出现错误，</span></span>
+<span class="line"><span style="color:#6A737D">    //这个 goroutine 会打印错误信息并停止。如果服务器因为接收到了关闭信号而停止，</span></span>
+<span class="line"><span style="color:#6A737D">    //这个 goroutine 会打印一个消息并正常结束。  </span></span>
+<span class="line"><span style="color:#6A737D">    //这个函数的主要目的是在服务器需要关闭时，能够优雅地关闭，即等待所有现有的请求完成，然后再关闭服务器。</span></span>
+<span class="line"><span style="color:#6A737D">    //这样可以避免在服务器关闭时突然中断用户的请求</span></span>
+<span class="line"><span style="color:#D73A49">	go</span><span style="color:#D73A49"> func</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">		defer</span><span style="color:#24292E"> utilruntime.</span><span style="color:#6F42C1">HandleCrash</span><span style="color:#24292E">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">		var</span><span style="color:#24292E"> listener </span><span style="color:#6F42C1">net</span><span style="color:#24292E">.</span><span style="color:#6F42C1">Listener</span></span>
+<span class="line"><span style="color:#24292E">		listener </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> tcpKeepAliveListener</span><span style="color:#24292E">{ln.(</span><span style="color:#D73A49">*</span><span style="color:#6F42C1">net</span><span style="color:#24292E">.</span><span style="color:#6F42C1">TCPListener</span><span style="color:#24292E">)}</span></span>
+<span class="line"><span style="color:#D73A49">		if</span><span style="color:#24292E"> server.TLSConfig </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> nil</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">			listener </span><span style="color:#D73A49">=</span><span style="color:#24292E"> tls.</span><span style="color:#6F42C1">NewListener</span><span style="color:#24292E">(listener, server.TLSConfig)</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">		err </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> server.</span><span style="color:#6F42C1">Serve</span><span style="color:#24292E">(listener)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">		msg </span><span style="color:#D73A49">:=</span><span style="color:#24292E"> fmt.</span><span style="color:#6F42C1">Sprintf</span><span style="color:#24292E">(</span><span style="color:#032F62">"Stopped listening on </span><span style="color:#005CC5">%s</span><span style="color:#032F62">"</span><span style="color:#24292E">, ln.</span><span style="color:#6F42C1">Addr</span><span style="color:#24292E">().</span><span style="color:#6F42C1">String</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#D73A49">		select</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">		case</span><span style="color:#D73A49"> &#x3C;-</span><span style="color:#24292E">stopCh:</span></span>
+<span class="line"><span style="color:#24292E">			glog.</span><span style="color:#6F42C1">Info</span><span style="color:#24292E">(msg)</span></span>
+<span class="line"><span style="color:#D73A49">		default</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#6F42C1">			panic</span><span style="color:#24292E">(fmt.</span><span style="color:#6F42C1">Sprintf</span><span style="color:#24292E">(</span><span style="color:#032F62">"</span><span style="color:#005CC5">%s</span><span style="color:#032F62"> due to error: </span><span style="color:#005CC5">%v</span><span style="color:#032F62">"</span><span style="color:#24292E">, msg, err))</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#24292E">	}()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">	return</span><span style="color:#005CC5"> nil</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>在 Go 语言中，go func() 是用来创建并启动一个新的 goroutine 的语法。go 是一个关键字，后面跟着的函数调用会在一个新的 goroutine 中异步执行。</p>
+<p>goroutine 是 Go 语言的并发执行单位，它比线程更轻量级，管理成本更低。Go 语言的运行时会自动在物理线程上调度 goroutines 的执行。</p>
+<p>以下是一个简单的例子：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="go"><code><span class="line"><span style="color:#D73A49">go</span><span style="color:#D73A49"> func</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#24292E">    fmt.</span><span style="color:#6F42C1">Println</span><span style="color:#24292E">(</span><span style="color:#032F62">"Hello, World!"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">}()</span></span></code></pre>
+<p>在这个例子中，我们创建了一个新的 goroutine 来执行一个匿名函数，这个函数会打印 “Hello, World!”。
+因为 goroutine 是异步执行的，所以这个函数调用不会阻塞当前的执行流程。</p>
+<p>需要注意的是，如果主 goroutine（也就是程序的主执行流程）结束了，那么所有的 goroutine 都会被立即停止，不论它们是否已经执行完毕。
+因此，如果你需要等待一个 goroutine 完成，你可能需要使用通道（channel）或者 sync.WaitGroup 等同步机制。</p>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

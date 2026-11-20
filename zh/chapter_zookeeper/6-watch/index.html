@@ -1,0 +1,258 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**Watch监听通知机制简介** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_zookeeper/6-watch/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_zookeeper/6-watch"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_zookeeper/6-watch/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_zookeeper/6-watch"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**Watch监听通知机制简介** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_zookeeper/6-watch/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_zookeeper/6-watch/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>zookeeper</h3> <ul> <li> <a href="/zh/chapter_zookeeper/1-introduce" class="lv0" title="**Zookeeper的设计**"> **Zookeeper的设计** </a> </li><li> <a href="/zh/chapter_zookeeper/2-implement" class="lv0" title="**Zookeeper的实现**"> **Zookeeper的实现** </a> </li><li> <a href="/zh/chapter_zookeeper/3-install" class="lv0" title="**Zookeeper安装配置**"> **Zookeeper安装配置** </a> </li><li> <a href="/zh/chapter_zookeeper/4-client" class="lv0" title="客户端的入门使用"> 客户端的入门使用 </a> </li><li> <a href="/zh/chapter_zookeeper/5-produce-and-consumer" class="lv0" title="**教你如何用Zookeeper开发锁与生产者消费者?**"> **教你如何用Zookeeper开发锁与生产者消费者?** </a> </li><li> <a href="/zh/chapter_zookeeper/6-watch" class="lv0" aria-current="page" title="**Watch监听通知机制简介**"> **Watch监听通知机制简介** </a> </li><li> <a href="/zh/chapter_zookeeper/7-start-source" class="lv0" title="**服务器启动流程入个门**"> **服务器启动流程入个门** </a> </li><li> <a href="/zh/chapter_zookeeper/8-config" class="lv0" title="**配置信息是如何加载到内存空间的**"> **配置信息是如何加载到内存空间的** </a> </li><li> <a href="/zh/chapter_zookeeper/9-clear-log-start" class="lv0" title="**日志清理定时任务的启动**"> **日志清理定时任务的启动** </a> </li><li> <a href="/zh/chapter_zookeeper/10-init-main" class="lv0" title="**使用配置信息启动运行入口**"> **使用配置信息启动运行入口** </a> </li><li> <a href="/zh/chapter_zookeeper/11-reactor" class="lv0" title="**ServerCnxnFactory 服务器连接工厂对象的创建与属性初始化**"> **ServerCnxnFactory 服务器连接工厂对象的创建与属性初始化** </a> </li><li> <a href="/zh/chapter_zookeeper/12-quorumpeer-init" class="lv0" title="**管理协议的法定人对象QuorumPeer创建与初始化**"> **管理协议的法定人对象QuorumPeer创建与初始化** </a> </li><li> <a href="/zh/chapter_zookeeper/13-loaddatabase" class="lv0" title="**法定人对象QuorumPeer启动之加载磁盘快照与事务日志**"> **法定人对象QuorumPeer启动之加载磁盘快照与事务日志** </a> </li><li> <a href="/zh/chapter_zookeeper/14-reactor-io" class="lv0" title="**启服务端网络监听连接NIOServerCnxnFactory**"> **启服务端网络监听连接NIOServerCnxnFactory** </a> </li><li> <a href="/zh/chapter_zookeeper/15-election" class="lv0" title="**选举算法的准备等待选举**"> **选举算法的准备等待选举** </a> </li><li> <a href="/zh/chapter_zookeeper/16-lookforleader" class="lv0" title="**QuorumPeer主循环**"> **QuorumPeer主循环** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_zookeeper">zookeeper</a><span class="sep">/</span><span>**Watch监听通知机制简介**</span> </nav> <div class="prose">  <h1 id="watch监听通知机制简介"><strong>Watch监听通知机制简介</strong></h1>
+<h2 id="watcher接口"><strong>Watcher接口</strong></h2>
+<p>此接口指定事件处理程序类必须具有的公共接口实施。ZooKeeper客户端将从ZooKeeper获取各种事件它所连接的服务器。
+使用这种客户机的应用程序处理这些通过向客户机注册回调对象。回调对象应为实现观察者接口的类的实例。</p>
+<h2 id="iwatchmanager-接口"><strong>IWatchManager 接口</strong></h2>
+<p>在DataTree中有两个IWatchManager类型的对象，一个是dataWatches，一个是childWatches， 其中:</p>
+<ul>
+<li>dataWatches是保存节点层面的watcher对象，</li>
+<li>childWatches是保存子节点层面的watcher对象，</li>
+</ul>
+<p>使用这两个监听器可以分别为节点路径添加监听器在合适的场景下来触发监听，当然也可以移除已添加路径的监听器。
+接下来我们可以看下 <strong>IWatchManager接口</strong> 监听管理器接口对外提供了哪些操作：</p>
+<table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>boolean addWatch(String path, Watcher watcher)</td>
+<td>为匹配的路径添加监听器，true代表首次添加并成功添加</td>
+</tr>
+<tr>
+<td>default boolean addWatch(String path, Watcher watcher, WatcherMode watcherMode)</td>
+<td>为匹配的路径添加监听器并指定监听节点，true代表首次添加并成功添加</td>
+</tr>
+<tr>
+<td>boolean containsWatcher(String path, Watcher watcher)</td>
+<td>检查给定路径下指定的监听器是否存在</td>
+</tr>
+<tr>
+<td>boolean removeWatcher(String path, Watcher watcher)</td>
+<td>移除指定路径下的指定监听器，返回true代表移除成功</td>
+</tr>
+<tr>
+<td>void removeWatcher(Watcher watcher)</td>
+<td>一般用在连接关闭的时候，移除此连接监听器下所有的监听</td>
+</tr>
+<tr>
+<td>WatcherOrBitSet triggerWatch(String path, EventType type)</td>
+<td>触发指定路径下的指定事件类型，返回值为已经触发的监听</td>
+</tr>
+<tr>
+<td>WatcherOrBitSet triggerWatch(String path, EventType type, WatcherOrBitSet suppress);</td>
+<td>触发指定路径下的指定事件类型，其中suppress参数为需要过滤的事件不能被触发，返回值为已经触发的监听</td>
+</tr>
+<tr>
+<td>int size();</td>
+<td>监听器数量</td>
+</tr>
+<tr>
+<td>void shutdown()</td>
+<td>清除监听器</td>
+</tr>
+<tr>
+<td>WatchesSummary getWatchesSummary()</td>
+<td>返回监听器摘要信息，主要是几个监听器的统计数据</td>
+</tr>
+<tr>
+<td>WatchesReport getWatches()</td>
+<td>主要返回监听器的session id与路径映射关系</td>
+</tr>
+<tr>
+<td>WatchesPathReport getWatchesByPath();</td>
+<td>主要返回路径与session id的映射关系</td>
+</tr>
+<tr>
+<td>void dumpWatches(PrintWriter pwriter, boolean byPath);</td>
+<td>将watch信息输出到pwriter流中</td>
+</tr>
+<tr>
+<td>default int getRecursiveWatchQty()</td>
+<td>返回递归观察器当前的数目</td>
+</tr>
+</tbody>
+</table>
+<p>通过以上方法我们可以了解到主要的监听方法是添加，移除，触发监听器，和查询信息等方法，
+那接下来先看下默认情况下的监听器实现类型WatchManager 。</p>
+<h3 id="watchmanager"><strong>WatchManager</strong></h3>
+<p>dataWatches和childWatches分别是如何创建呢我们可以看下在DataTree类型的构造器中初始化监听管理器对象是通过WatchManagerFactory工厂类型提供的工厂方法创建的如下代码：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">dataWatches </span><span style="color:#D73A49">=</span><span style="color:#24292E"> WatchManagerFactory.</span><span style="color:#6F42C1">createWatchManager</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">childWatches </span><span style="color:#D73A49">=</span><span style="color:#24292E"> WatchManagerFactory.</span><span style="color:#6F42C1">createWatchManager</span><span style="color:#24292E">();</span></span></code></pre>
+<p>在WatchManagerFactory工厂类型中createWatchManager工厂方法如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> static</span><span style="color:#24292E"> IWatchManager </span><span style="color:#6F42C1">createWatchManager</span><span style="color:#24292E">() throws IOException {</span></span>
+<span class="line"><span style="color:#24292E">  String watchManagerName </span><span style="color:#D73A49">=</span><span style="color:#24292E"> System.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(ZOOKEEPER_WATCH_MANAGER_NAME);</span></span>
+<span class="line"><span style="color:#D73A49">  if</span><span style="color:#24292E"> (watchManagerName </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">    watchManagerName </span><span style="color:#D73A49">=</span><span style="color:#24292E"> WatchManager.class.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">  }</span></span>
+<span class="line"><span style="color:#D73A49">  try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">    IWatchManager watchManager </span><span style="color:#D73A49">=</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"> (IWatchManager) Class.</span><span style="color:#6F42C1">forName</span><span style="color:#24292E">(watchManagerName).</span><span style="color:#6F42C1">getConstructor</span><span style="color:#24292E">().</span><span style="color:#6F42C1">newInstance</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Using {} as watch manager"</span><span style="color:#24292E">, watchManagerName);</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> watchManager;</span></span>
+<span class="line"><span style="color:#24292E">  } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">    IOException ioe </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IOException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Couldn't instantiate "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> watchManagerName, e);</span></span>
+<span class="line"><span style="color:#D73A49">    throw</span><span style="color:#24292E"> ioe;</span></span>
+<span class="line"><span style="color:#24292E">  }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>主要逻辑为：</p>
+<ul>
+<li>
+<p>获取JVM参数配置中的zookeeper.watchManagerName <strong>监听管理器类型</strong> ，如果已指定则使用此类型创建监听管理器</p>
+</li>
+<li>
+<p>如果JVM参数未指定类型则使用WatchManager监听管理器来 <strong>使用反射创建对象</strong> 。</p>
+</li>
+</ul>
+<p><strong>WatchManager类型</strong> 主要实现了IWatchManager接口针对监听管理器做具体的实现，
+在前面我们已经了解了IWatchManager类型的主要方法的作用，
+接下来我们可以看下WatchManager是如何实现的</p>
+<p>WatchManager类型主要有 <strong>3个成员变量：</strong></p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>watchTable</td>
+<td>Map&#x3C;String, Set<watcher>></watcher></td>
+<td><strong>路径监听器映射</strong> ，KEY为路径，VALUE为监听器集合</td>
+</tr>
+<tr>
+<td>watch2Paths</td>
+<td>Map&#x3C;Watcher, Set<string>></string></td>
+<td><strong>监听器-路径映射</strong> ，KEY为监听器，VALUE为路径集合</td>
+</tr>
+<tr>
+<td>watcherModeManager</td>
+<td>WatcherModeManager</td>
+<td>递归节点管理</td>
+</tr>
+</tbody>
+</table>
+<p>WatchManager重写了IWatchManager接口针对监听管理的通用方法比如添加监听器，移除监听器，触发监听器等等</p>
+<p>其中添加和移除监听器操作分别会将监听器在watchTable，watch2Paths，watcherModeManager 对象中放入或者移除，而触发监听器方法则会执行通知操作</p>
+<p>那什么时候会触发监听操作呢，这个就需要我们先来了解一个类型 <strong>Watcher.EventType</strong></p>
+<h3 id="eventtype"><strong>EventType</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">enum</span><span style="color:#6F42C1"> EventType</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#005CC5">    None</span><span style="color:#24292E">(</span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#005CC5">    NodeCreated</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#005CC5">    NodeDeleted</span><span style="color:#24292E">(</span><span style="color:#005CC5">2</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#005CC5">    NodeDataChanged</span><span style="color:#24292E">(</span><span style="color:#005CC5">3</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#005CC5">    NodeChildrenChanged</span><span style="color:#24292E">(</span><span style="color:#005CC5">4</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#005CC5">    DataWatchRemoved</span><span style="color:#24292E">(</span><span style="color:#005CC5">5</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#005CC5">    ChildWatchRemoved</span><span style="color:#24292E">(</span><span style="color:#005CC5">6</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#005CC5">    PersistentWatchRemoved</span><span style="color:#24292E"> (</span><span style="color:#005CC5">7</span><span style="color:#24292E">);</span></span></code></pre>
+<p><img src="/img/chapter_zookeeper/zookeeper-6-1-watch.png" alt="zookeeper-6-1-watch.png"></p>
+<p>EventType是一个枚举类型用来列举Zookeeper可能发生的事件，
+可以看到监听事件的触发主要发生在节点状态的变更与节点数据的变更时触发</p>
+<h3 id="triggerwatch"><strong>triggerWatch</strong></h3>
+<p>接下来我们可以详细看下Zookeeper <strong>监听通知的触发方法，如何通知所有订阅者</strong></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#24292E"> WatcherOrBitSet </span><span style="color:#6F42C1">triggerWatch</span><span style="color:#24292E">(String path, EventType type, WatcherOrBitSet supress) {</span></span>
+<span class="line"><span style="color:#24292E">    WatchedEvent e </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> WatchedEvent</span><span style="color:#24292E">(type, KeeperState.SyncConnected, path);</span></span>
+<span class="line"><span style="color:#24292E">    Set&#x3C;</span><span style="color:#D73A49">Watcher</span><span style="color:#24292E">> watchers </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> HashSet&#x3C;>();</span></span>
+<span class="line"><span style="color:#6A737D">//拿到当前path的各层父path进行递归</span></span>
+<span class="line"><span style="color:#24292E">    PathParentIterator pathParentIterator </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getPathParentIterator</span><span style="color:#24292E">(path);</span></span>
+<span class="line"><span style="color:#D73A49">    synchronized</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">//遍历所有路径</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (String localPath </span><span style="color:#D73A49">:</span><span style="color:#24292E"> pathParentIterator.</span><span style="color:#6F42C1">asIterable</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">//获取当前路径的所有注册的监听器对象</span></span>
+<span class="line"><span style="color:#24292E">            Set&#x3C;</span><span style="color:#D73A49">Watcher</span><span style="color:#24292E">> thisWatchers </span><span style="color:#D73A49">=</span><span style="color:#24292E"> watchTable.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(localPath);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (thisWatchers </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> ||</span><span style="color:#24292E"> thisWatchers.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                continue</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">            Iterator&#x3C;</span><span style="color:#D73A49">Watcher</span><span style="color:#24292E">> iterator </span><span style="color:#D73A49">=</span><span style="color:#24292E"> thisWatchers.</span><span style="color:#6F42C1">iterator</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">            while</span><span style="color:#24292E"> (iterator.</span><span style="color:#6F42C1">hasNext</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                Watcher watcher </span><span style="color:#D73A49">=</span><span style="color:#24292E"> iterator.</span><span style="color:#6F42C1">next</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">//获取当前监听器和路径对应的当前Zookeeper节点对象</span></span>
+<span class="line"><span style="color:#24292E">                WatcherMode watcherMode </span><span style="color:#D73A49">=</span><span style="color:#24292E"> watcherModeManager.</span><span style="color:#6F42C1">getWatcherMode</span><span style="color:#24292E">(watcher, localPath);</span></span>
+<span class="line"><span style="color:#6A737D">//监听节点是递归的</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (watcherMode.</span><span style="color:#6F42C1">isRecursive</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (type </span><span style="color:#D73A49">!=</span><span style="color:#24292E"> EventType.NodeChildrenChanged) {</span></span>
+<span class="line"><span style="color:#24292E">                        watchers.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(watcher);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">pathParentIterator.</span><span style="color:#6F42C1">atParentPath</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">//当前不是父路径</span></span>
+<span class="line"><span style="color:#24292E">                    watchers.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(watcher);</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">watcherMode.</span><span style="color:#6F42C1">isPersistent</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">//当前节点不是持久的</span></span>
+<span class="line"><span style="color:#24292E">                        iterator.</span><span style="color:#6F42C1">remove</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                        Set&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">> paths </span><span style="color:#D73A49">=</span><span style="color:#24292E"> watch2Paths.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(watcher);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> (paths </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">//从监听路径映射中移除当前路径</span></span>
+<span class="line"><span style="color:#24292E">                            paths.</span><span style="color:#6F42C1">remove</span><span style="color:#24292E">(localPath);</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (thisWatchers.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                watchTable.</span><span style="color:#6F42C1">remove</span><span style="color:#24292E">(localPath);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (watchers.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (LOG.</span><span style="color:#6F42C1">isTraceEnabled</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">            ZooTrace.</span><span style="color:#6F42C1">logTraceMessage</span><span style="color:#24292E">(LOG, ZooTrace.EVENT_DELIVERY_TRACE_MASK, </span><span style="color:#032F62">"No watchers for "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> path);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D">//这里supress是用来去重的</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (Watcher w </span><span style="color:#D73A49">:</span><span style="color:#24292E"> watchers) {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (supress </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> supress.</span><span style="color:#6F42C1">contains</span><span style="color:#24292E">(w)) {</span></span>
+<span class="line"><span style="color:#D73A49">            continue</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        w.</span><span style="color:#6F42C1">process</span><span style="color:#24292E">(e);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    switch</span><span style="color:#24292E"> (type) {</span></span>
+<span class="line"><span style="color:#D73A49">        case</span><span style="color:#24292E"> NodeCreated</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#24292E">            ServerMetrics.</span><span style="color:#6F42C1">getMetrics</span><span style="color:#24292E">().NODE_CREATED_WATCHER.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(watchers.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">            break</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        case</span><span style="color:#24292E"> NodeDeleted</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#24292E">            ServerMetrics.</span><span style="color:#6F42C1">getMetrics</span><span style="color:#24292E">().NODE_DELETED_WATCHER.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(watchers.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">            break</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        case</span><span style="color:#24292E"> NodeDataChanged</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#24292E">            ServerMetrics.</span><span style="color:#6F42C1">getMetrics</span><span style="color:#24292E">().NODE_CHANGED_WATCHER.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(watchers.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">            break</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        case</span><span style="color:#24292E"> NodeChildrenChanged</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#24292E">            ServerMetrics.</span><span style="color:#6F42C1">getMetrics</span><span style="color:#24292E">().NODE_CHILDREN_WATCHER.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(watchers.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">            break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">        default:</span></span>
+<span class="line"><span style="color:#6A737D">            // Other types not logged.</span></span>
+<span class="line"><span style="color:#D73A49">            break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D">//最后将触发过的监听器对象放入去重Set对象中</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> WatcherOrBitSet</span><span style="color:#24292E">(watchers);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"></span></code></pre>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

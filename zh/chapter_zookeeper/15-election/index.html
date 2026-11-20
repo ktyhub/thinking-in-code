@@ -1,0 +1,965 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**选举算法的准备等待选举** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_zookeeper/15-election/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_zookeeper/15-election"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_zookeeper/15-election/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_zookeeper/15-election"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**选举算法的准备等待选举** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_zookeeper/15-election/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_zookeeper/15-election/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>zookeeper</h3> <ul> <li> <a href="/zh/chapter_zookeeper/1-introduce" class="lv0" title="**Zookeeper的设计**"> **Zookeeper的设计** </a> </li><li> <a href="/zh/chapter_zookeeper/2-implement" class="lv0" title="**Zookeeper的实现**"> **Zookeeper的实现** </a> </li><li> <a href="/zh/chapter_zookeeper/3-install" class="lv0" title="**Zookeeper安装配置**"> **Zookeeper安装配置** </a> </li><li> <a href="/zh/chapter_zookeeper/4-client" class="lv0" title="客户端的入门使用"> 客户端的入门使用 </a> </li><li> <a href="/zh/chapter_zookeeper/5-produce-and-consumer" class="lv0" title="**教你如何用Zookeeper开发锁与生产者消费者?**"> **教你如何用Zookeeper开发锁与生产者消费者?** </a> </li><li> <a href="/zh/chapter_zookeeper/6-watch" class="lv0" title="**Watch监听通知机制简介**"> **Watch监听通知机制简介** </a> </li><li> <a href="/zh/chapter_zookeeper/7-start-source" class="lv0" title="**服务器启动流程入个门**"> **服务器启动流程入个门** </a> </li><li> <a href="/zh/chapter_zookeeper/8-config" class="lv0" title="**配置信息是如何加载到内存空间的**"> **配置信息是如何加载到内存空间的** </a> </li><li> <a href="/zh/chapter_zookeeper/9-clear-log-start" class="lv0" title="**日志清理定时任务的启动**"> **日志清理定时任务的启动** </a> </li><li> <a href="/zh/chapter_zookeeper/10-init-main" class="lv0" title="**使用配置信息启动运行入口**"> **使用配置信息启动运行入口** </a> </li><li> <a href="/zh/chapter_zookeeper/11-reactor" class="lv0" title="**ServerCnxnFactory 服务器连接工厂对象的创建与属性初始化**"> **ServerCnxnFactory 服务器连接工厂对象的创建与属性初始化** </a> </li><li> <a href="/zh/chapter_zookeeper/12-quorumpeer-init" class="lv0" title="**管理协议的法定人对象QuorumPeer创建与初始化**"> **管理协议的法定人对象QuorumPeer创建与初始化** </a> </li><li> <a href="/zh/chapter_zookeeper/13-loaddatabase" class="lv0" title="**法定人对象QuorumPeer启动之加载磁盘快照与事务日志**"> **法定人对象QuorumPeer启动之加载磁盘快照与事务日志** </a> </li><li> <a href="/zh/chapter_zookeeper/14-reactor-io" class="lv0" title="**启服务端网络监听连接NIOServerCnxnFactory**"> **启服务端网络监听连接NIOServerCnxnFactory** </a> </li><li> <a href="/zh/chapter_zookeeper/15-election" class="lv0" aria-current="page" title="**选举算法的准备等待选举**"> **选举算法的准备等待选举** </a> </li><li> <a href="/zh/chapter_zookeeper/16-lookforleader" class="lv0" title="**QuorumPeer主循环**"> **QuorumPeer主循环** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_zookeeper">zookeeper</a><span class="sep">/</span><span>**选举算法的准备等待选举**</span> </nav> <div class="prose">  <h1 id="选举算法的准备等待选举"><strong>选举算法的准备等待选举</strong></h1>
+<h2 id="简介"><strong>简介</strong></h2>
+<p>先来回顾下QuorumPeer的启动方法：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> synchronized</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> start</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#6F42C1">getView</span><span style="color:#24292E">().</span><span style="color:#6F42C1">containsKey</span><span style="color:#24292E">(myid)) {</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> RuntimeException</span><span style="color:#24292E">(</span><span style="color:#032F62">"My id "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> myid </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " not in the peer list"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D">//将数据库从磁盘加载到内存中，并将事务添加到内存中的committedlog中。</span></span>
+<span class="line"><span style="color:#6F42C1">    loadDataBase</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">//服务端开启连接线程</span></span>
+<span class="line"><span style="color:#6F42C1">    startServerCnxnFactory</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">//开启管理端</span></span>
+<span class="line"><span style="color:#24292E">        adminServer.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (AdminServerException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Problem starting AdminServer"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">        System.out.</span><span style="color:#6F42C1">println</span><span style="color:#24292E">(e);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D">//开启选举功能</span></span>
+<span class="line"><span style="color:#6F42C1">    startLeaderElection</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">//开启JVM监控</span></span>
+<span class="line"><span style="color:#6F42C1">    startJvmPauseMonitor</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">//线程启动QuorumPeer开始运行</span></span>
+<span class="line"><span style="color:#005CC5">    super</span><span style="color:#24292E">.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="开始选举源码"><strong>开始选举源码</strong></h2>
+<p>启动时候从磁盘加载数据到内存，然后开启服务端的网络处理服务，然后开启一个管理端，接下来就进入比较重要的一个章节，选举功能</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6F42C1">startLeaderElection</span><span style="color:#24292E">();</span></span></code></pre>
+<p>QuorumPeer的startLeaderElection方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> synchronized</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> startLeaderElection</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">//寻找leader状态</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">getPeerState</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#24292E"> ServerState.LOOKING) {</span></span>
+<span class="line"><span style="color:#6A737D">		//创建投票，这里有三个参数第一个参数的值是当前节点的id也就是我们在配置文件中配置的serverId ，Vote类中第一个参数是投票id，第二个参数是值是dataTree.lastProcessedZxid最新处理的事务id zxid，第三个参数是currentEpoch，也就是currentEpoch文件中最新的epoch值</span></span>
+<span class="line"><span style="color:#24292E">            currentVote </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Vote</span><span style="color:#24292E">(myid, </span><span style="color:#6F42C1">getLastLoggedZxid</span><span style="color:#24292E">(), </span><span style="color:#6F42C1">getCurrentEpoch</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (IOException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        RuntimeException re </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> RuntimeException</span><span style="color:#24292E">(e.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        re.</span><span style="color:#6F42C1">setStackTrace</span><span style="color:#24292E">(e.</span><span style="color:#6F42C1">getStackTrace</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#24292E"> re;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.electionAlg </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createElectionAlgorithm</span><span style="color:#24292E">(electionType);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p><strong>ZK节点状态角色</strong>
+ZK集群单节点状态（每个节点有且只有一个状态），ZK的定位一定需要一个leader节点处于lading状态。</p>
+<ul>
+<li>looking：寻找leader状态，当前集群没有leader，进入leader选举流程。</li>
+<li>following：跟随者状态，接受leading节点同步和指挥。</li>
+<li>leading：领导者状态。</li>
+<li>observing：观察者状态，表名当前服务器是observer。</li>
+</ul>
+<h2 id="创建选举算法"><strong>创建选举算法</strong></h2>
+<p>QuorumPeer的createElectionAlgorithm方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">protected</span><span style="color:#24292E"> Election </span><span style="color:#6F42C1">createElectionAlgorithm</span><span style="color:#24292E">(</span><span style="color:#D73A49">int</span><span style="color:#24292E"> electionAlgorithm) {</span></span>
+<span class="line"><span style="color:#24292E">    Election le </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    //TODO: use a factory rather than a switch</span></span>
+<span class="line"><span style="color:#D73A49">    switch</span><span style="color:#24292E"> (electionAlgorithm) {</span></span>
+<span class="line"><span style="color:#D73A49">    case</span><span style="color:#005CC5"> 1</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> UnsupportedOperationException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Election Algorithm 1 is not supported."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">    case</span><span style="color:#005CC5"> 2</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> UnsupportedOperationException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Election Algorithm 2 is not supported."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">    case</span><span style="color:#005CC5"> 3</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#6A737D">	//创建连接QuorumCnxManager对象，用来处理连接</span></span>
+<span class="line"><span style="color:#24292E">        QuorumCnxManager qcm </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createCnxnManager</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">	//将连接对象放入：AtomicReference中跨线程可见</span></span>
+<span class="line"><span style="color:#24292E">        QuorumCnxManager oldQcm </span><span style="color:#D73A49">=</span><span style="color:#24292E"> qcmRef.</span><span style="color:#6F42C1">getAndSet</span><span style="color:#24292E">(qcm);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (oldQcm </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">	//连接存在则关闭之前的连接</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Clobbering already-set QuorumCnxManager (restarting leader election?)"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            oldQcm.</span><span style="color:#6F42C1">halt</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        QuorumCnxManager.Listener listener </span><span style="color:#D73A49">=</span><span style="color:#24292E"> qcm.listener;</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (listener </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">			//开启监听器</span></span>
+<span class="line"><span style="color:#24292E">            listener.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            FastLeaderElection fle </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> FastLeaderElection</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, qcm);</span></span>
+<span class="line"><span style="color:#6A737D">			//开启快速选举</span></span>
+<span class="line"><span style="color:#24292E">            fle.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            le </span><span style="color:#D73A49">=</span><span style="color:#24292E"> fle;</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Null listener when initializing cnx manager"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">    default:</span></span>
+<span class="line"><span style="color:#D73A49">        assert</span><span style="color:#005CC5"> false</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> le;</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>electionType 的值是哪里来的呢 其实是来源配置文件中electionAlg属性默认值为3.使用何种选举方式，目前只支持3在老的版本中也是支持其他选项的（0，1，2，3），</p>
+<ul>
+<li>“0”表示使用 <strong>原生的UDP</strong>（LeaderElection），</li>
+<li>“1”表示使用 <strong>非授权UDP</strong></li>
+<li>“2”表示 <strong>授权UDP</strong></li>
+<li>“3”基于 <strong>TCP的快速选举（FastLeaderElection）</strong></li>
+</ul>
+<p>。目前保留“3”，其他方式将在未来版本不予支持，参QuorumPear.createElectionAlgorithm（int alg）</p>
+<h2 id="选举之前的初始化"><strong>选举之前的初始化</strong></h2>
+<p>先来看选举之前的初始化
+创建QuorumCnxManager对象：
+<strong>QuorumCnxManager(qcm)</strong> 实现领导选举中的网络连接管理功能。它为每一对节点维护唯一的一个连接，在两个节点都启动申请连接时，只有sid大的一方才会申请连接成功。qcm对每个节点维护一个消息发送队列。
+Qcm主要成员变量：</p>
+<ul>
+<li><code>public final ArrayBlockingQueue&#x3C;Message> recvQueue;</code> //本节点的消息接收队列</li>
+<li><code>final ConcurrentHashMap&#x3C;Long, SendWorker> senderWorkerMap;</code>//对每一个远程节点都会定义一个SendWorker</li>
+<li><code>ConcurrentHashMap&#x3C;Long, ArrayBlockingQueue&#x3C;ByteBuffer>> queueSendMap;</code>//每个远程节点都会定义一个消息发型队列</li>
+<li><code>Qcm</code>主要三个内类（线程）：
+<ul>
+<li><code>Listener</code> 网络监听线程</li>
+<li><code>SendWorker</code> 消息发送线程（每个远程节点都会有一个）</li>
+<li><code>RecvWorker</code> 消息接受线程</li>
+</ul>
+</li>
+</ul>
+<p>这个类实现了使用TCP进行 <strong>leader选举的连接管理器</strong> 。</p>
+<p>它为每对服务器维护一个连接。棘手的部分是确保每对正确运行并可以通过网络通信的服务器只有一个连接。</p>
+<p>如果两个服务器试图同时启动一个连接，那么连接管理器将使用一种非常简单的打破连接机制，根据双方的IP地址来决定要删除哪个连接。</p>
+<p>对于每个对等点，管理器维护一个要发送的消息队列。</p>
+<p>如果与任何特定对等点的连接断开，则发送方线程将消息放回到列表中。由于此实现目前使用队列实现来维护要发送给另一个对等体的消息，因此我们将消息添加到队列的尾部，从而更改消息的顺序。虽然这对领导选举来说不是问题，但在点对点通信时可能会出现问题。不过，这还有待证实。
+对象初始化代码如下：</p>
+<h3 id="createcnxnmanager方法">createCnxnManager方法</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#24292E"> QuorumCnxManager </span><span style="color:#6F42C1">createCnxnManager</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">    int</span><span style="color:#24292E"> timeout </span><span style="color:#D73A49">=</span><span style="color:#24292E"> quorumCnxnTimeoutMs </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#D73A49"> ?</span><span style="color:#24292E"> quorumCnxnTimeoutMs </span><span style="color:#D73A49">:</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.tickTime </span><span style="color:#D73A49">*</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.syncLimit;</span></span>
+<span class="line"><span style="color:#24292E">    LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Using {}ms as the quorum cnxn socket timeout"</span><span style="color:#24292E">, timeout);</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> QuorumCnxManager</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getView</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.authServer,</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.authLearner,</span></span>
+<span class="line"><span style="color:#24292E">        timeout,</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">getQuorumListenOnAllIPs</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.quorumCnxnThreadsSize,</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">isQuorumSaslAuthEnabled</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"></span></code></pre>
+<p>构造器如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#6F42C1"> QuorumCnxManager</span><span style="color:#24292E">(QuorumPeer self, </span><span style="color:#D73A49">final</span><span style="color:#D73A49"> long</span><span style="color:#24292E"> mySid, Map</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">Long, QuorumPeer.QuorumServer</span><span style="color:#D73A49">></span><span style="color:#24292E"> view,</span></span>
+<span class="line"><span style="color:#24292E">    QuorumAuthServer authServer, QuorumAuthLearner authLearner, </span><span style="color:#D73A49">int</span><span style="color:#24292E"> socketTimeout, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> listenOnAllIPs,</span></span>
+<span class="line"><span style="color:#D73A49">    int</span><span style="color:#24292E"> quorumCnxnThreadsSize, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> quorumSaslAuthEnabled) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.recvQueue </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> CircularBlockingQueue&#x3C;>(RECV_CAPACITY);</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.queueSendMap </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ConcurrentHashMap&#x3C;>();</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.senderWorkerMap </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ConcurrentHashMap&#x3C;>();</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.lastMessageSent </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ConcurrentHashMap&#x3C;>();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    String cnxToValue </span><span style="color:#D73A49">=</span><span style="color:#24292E"> System.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"zookeeper.cnxTimeout"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (cnxToValue </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.cnxTO </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Integer.</span><span style="color:#6F42C1">parseInt</span><span style="color:#24292E">(cnxToValue);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.self </span><span style="color:#D73A49">=</span><span style="color:#24292E"> self;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.mySid </span><span style="color:#D73A49">=</span><span style="color:#24292E"> mySid;</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.socketTimeout </span><span style="color:#D73A49">=</span><span style="color:#24292E"> socketTimeout;</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.view </span><span style="color:#D73A49">=</span><span style="color:#24292E"> view;</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.listenOnAllIPs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> listenOnAllIPs;</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.authServer </span><span style="color:#D73A49">=</span><span style="color:#24292E"> authServer;</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.authLearner </span><span style="color:#D73A49">=</span><span style="color:#24292E"> authLearner;</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.quorumSaslAuthEnabled </span><span style="color:#D73A49">=</span><span style="color:#24292E"> quorumSaslAuthEnabled;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">    initializeConnectionExecutor</span><span style="color:#24292E">(mySid, quorumCnxnThreadsSize);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // Starts listener thread that waits for connection requests</span></span>
+<span class="line"><span style="color:#24292E">    listener </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Listener</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    listener.</span><span style="color:#6F42C1">setName</span><span style="color:#24292E">(</span><span style="color:#032F62">"QuorumPeerListener"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>先来了解下各个参数的含义：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>QuorumPeer self</td>
+<td>当前server管理仲裁协议的QuorumPeer类型</td>
+</tr>
+<tr>
+<td>long mySid</td>
+<td>为当前server配置的id在myid文件中</td>
+</tr>
+<tr>
+<td>Map&#x3C;Long, QuorumPeer.QuorumServer> view</td>
+<td>需要投票的服务器列表在配置zookeeper配置文件中可以配置服务器列表（可以配置每个服务器对应的投票权重）</td>
+</tr>
+<tr>
+<td>QuorumAuthServer authServer</td>
+<td>初始化QuorumPeer对象时候创建的仲裁服务器的认证服务，用于认证客户端的连接</td>
+</tr>
+<tr>
+<td>QuorumAuthLearner authLearner</td>
+<td>仲裁学习者认证服务</td>
+</tr>
+<tr>
+<td>int socketTimeout</td>
+<td>使用quorumCnxnTimeoutMs的JVM参数配置：（Java系统属性：饲养员quorumCnxnTimeoutMs）设置为领导人选举通知的连接读取超时值。仅适用于使用electionAlg 3 的情况。笔记默认值为 -1，然后将使用 syncLimit * tickTime 作为超时。</td>
+</tr>
+<tr>
+<td>boolean listenOnAllIPs</td>
+<td>配置来源于配置中间中的quorumListenOnAllIPs是否监听两个仲裁端口（广播和选举）的所有ip，这个配置默认为false，监听多个IP会创建多个ServerSocket对象进行绑定，如果为false如果zookeeper配置了istio sidecar ，在选举阶段就会报- connection refused（Connection refused）错误，这主要是因为 zookeeper 在server之间通信默认是监听 pod IP 地址，而istio要求监听0.0.0.0，因此需要设置- quorumListenOnAllIPs=true。具体问题可以参考：<a href="https://istio.io/latest/faq/applications/">https://istio.io/latest/faq/applications/</a></td>
+</tr>
+<tr>
+<td>int quorumCnxnThreadsSize</td>
+<td>connectionexecutor线程池中允许用于初始化仲裁服务器连接的最大线程数。默认配置为20，可以在配置文件中进行配置</td>
+</tr>
+<tr>
+<td>quorumSaslAuthEnabled</td>
+<td>是否开启sasl认证</td>
+</tr>
+</tbody>
+</table>
+<p>构造器的初始化主要看一下initializeConnectionExecutor创建连接线程池
+在连接初始化期间使用Connection Executor(用于处理连接超时)，也可以在接收连接期间选择使用它(因为Quorum SASL身份验证可能需要额外的时间)</p>
+<p>创建对象完毕之后则将QuorumCnxManager对象存入成员变量AtomicReference中用于跨线程可见</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">QuorumCnxManager oldQcm </span><span style="color:#D73A49">=</span><span style="color:#24292E"> qcmRef.</span><span style="color:#6F42C1">getAndSet</span><span style="color:#24292E">(qcm);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">//如果缓存的对象存在则关闭之前的使用最新的</span></span>
+<span class="line"><span style="color:#D73A49">if</span><span style="color:#24292E"> (oldQcm </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">    LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Clobbering already-set QuorumCnxManager (restarting leader election?)"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    oldQcm.</span><span style="color:#6F42C1">halt</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="quorumcnxmanager的网络监听线程listener"><strong>QuorumCnxManager的网络监听线程Listener</strong></h2>
+<p>Listener内部线程的run方法如下用于启动监听端口，监听其他server的连接与数据传输</p>
+<p>启动之前的监听器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> run</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">shutdown) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Listener thread started, myId: {}"</span><span style="color:#24292E">, self.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        Set&#x3C;</span><span style="color:#D73A49">InetSocketAddress</span><span style="color:#24292E">> addresses;</span></span>
+<span class="line"><span style="color:#6A737D">	//quorumListenOnAllIPs配置是否监听所有网卡的IP连接</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (self.</span><span style="color:#6F42C1">getQuorumListenOnAllIPs</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">            addresses </span><span style="color:#D73A49">=</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getElectionAddress</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getWildcardAddresses</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            addresses </span><span style="color:#D73A49">=</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getElectionAddress</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getAllAddresses</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        CountDownLatch latch </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> CountDownLatch</span><span style="color:#24292E">(addresses.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        listenerHandlers </span><span style="color:#D73A49">=</span><span style="color:#24292E"> addresses.</span><span style="color:#6F42C1">stream</span><span style="color:#24292E">().</span><span style="color:#6F42C1">map</span><span style="color:#24292E">(address </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#D73A49">                        new</span><span style="color:#6F42C1"> ListenerHandler</span><span style="color:#24292E">(address, self.</span><span style="color:#6F42C1">shouldUsePortUnification</span><span style="color:#24292E">(), self.</span><span style="color:#6F42C1">isSslQuorum</span><span style="color:#24292E">(), latch))</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">collect</span><span style="color:#24292E">(Collectors.</span><span style="color:#6F42C1">toList</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">//为每个网卡创建socket监听</span></span>
+<span class="line"><span style="color:#24292E">        ExecutorService executor </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Executors.</span><span style="color:#6F42C1">newFixedThreadPool</span><span style="color:#24292E">(addresses.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        listenerHandlers.</span><span style="color:#6F42C1">forEach</span><span style="color:#24292E">(executor</span><span style="color:#D73A49">::</span><span style="color:#24292E">submit);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            latch.</span><span style="color:#6F42C1">await</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (InterruptedException </span><span style="color:#E36209">ie</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Interrupted while sleeping. Ignoring exception"</span><span style="color:#24292E">, ie);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">            // Clean up for shutdown.</span></span>
+<span class="line"><span style="color:#D73A49">            for</span><span style="color:#24292E"> (ListenerHandler handler </span><span style="color:#D73A49">:</span><span style="color:#24292E"> listenerHandlers) {</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                    handler.</span><span style="color:#6F42C1">close</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (IOException </span><span style="color:#E36209">ie</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">                    // Don't log an error for shutdown.</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Error closing server socket"</span><span style="color:#24292E">, ie);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Leaving listener"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">shutdown) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">          "As I'm leaving the listener thread, I won't be able to participate in leader election any longer: {}"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">          self.</span><span style="color:#6F42C1">getElectionAddress</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getAllAddresses</span><span style="color:#24292E">().</span><span style="color:#6F42C1">stream</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">map</span><span style="color:#24292E">(NetUtils</span><span style="color:#D73A49">::</span><span style="color:#24292E">formatInetAddr)</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">collect</span><span style="color:#24292E">(Collectors.</span><span style="color:#6F42C1">joining</span><span style="color:#24292E">(</span><span style="color:#032F62">"|"</span><span style="color:#24292E">)));</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (socketException.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">            // After leaving listener thread, the host cannot join the quorum anymore,</span></span>
+<span class="line"><span style="color:#6A737D">            // this is a severe error that we cannot recover from, so we need to exit</span></span>
+<span class="line"><span style="color:#24292E">            socketBindErrorHandler.</span><span style="color:#6F42C1">run</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>开启服务端口监听等待客户端连接, 大的sid连接小的sid的服务逻辑如下:</p>
+<ul>
+<li>如果建立连接的客户端的sid小于当前实例的sid则断开与当前客户端的连接转而充当客户端- <strong>连接当前更大sid的服务</strong></li>
+<li>如果建立连接的客户端的sid大于当前实例的sid则正常连接开启发送和接收的子线程SendWorker和RecvWorker</li>
+<li>发送线程循环从发送队列中拉取消息进行发送(queueSendMap
+中sid对应的发送队列)</li>
+<li>接收消息线程循环的获取客户端发送过来的消息,然后将消息存入接收消息队列中recvQueue</li>
+<li>在FastLeaderElection选取算法类型中会创建Messenger类型对象</li>
+<li>Messenger类型对象通过内部的WorkerSender和WorkerReceiver线程来处理需要发送和需要接收的消息然后将消息放入发送队列(queueSendMap中sid对应的发送队列)或者从接收队列recvQueue中获取消息进行处理</li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">class</span><span style="color:#6F42C1"> ListenerHandler</span><span style="color:#D73A49"> implements</span><span style="color:#6F42C1"> Runnable</span><span style="color:#24292E">, </span><span style="color:#6F42C1">Closeable</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#24292E"> ServerSocket serverSocket;</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#24292E"> InetSocketAddress address;</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> boolean</span><span style="color:#24292E"> portUnification;</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> boolean</span><span style="color:#24292E"> sslQuorum;</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#24292E"> CountDownLatch latch;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">    ListenerHandler</span><span style="color:#24292E">(InetSocketAddress </span><span style="color:#E36209">address</span><span style="color:#24292E">, </span><span style="color:#D73A49">boolean</span><span style="color:#E36209"> portUnification</span><span style="color:#24292E">, </span><span style="color:#D73A49">boolean</span><span style="color:#E36209"> sslQuorum</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">                    CountDownLatch </span><span style="color:#E36209">latch</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.address </span><span style="color:#D73A49">=</span><span style="color:#24292E"> address;</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.portUnification </span><span style="color:#D73A49">=</span><span style="color:#24292E"> portUnification;</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.sslQuorum </span><span style="color:#D73A49">=</span><span style="color:#24292E"> sslQuorum;</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.latch </span><span style="color:#D73A49">=</span><span style="color:#24292E"> latch;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    /**</span></span>
+<span class="line"><span style="color:#6A737D">     * Sleeps on acceptConnections().</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> run</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            Thread.</span><span style="color:#6F42C1">currentThread</span><span style="color:#24292E">().</span><span style="color:#6F42C1">setName</span><span style="color:#24292E">(</span><span style="color:#032F62">"ListenerHandler-"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> address);</span></span>
+<span class="line"><span style="color:#6A737D">//创建接收连接</span></span>
+<span class="line"><span style="color:#6F42C1">            acceptConnections</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">            try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6F42C1">                close</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (IOException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Exception when shutting down listener: "</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">            // Output of unexpected exception, should never happen</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Unexpected error "</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            latch.</span><span style="color:#6F42C1">countDown</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> synchronized</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> close</span><span style="color:#24292E">() </span><span style="color:#D73A49">throws</span><span style="color:#24292E"> IOException {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (serverSocket </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#24292E">serverSocket.</span><span style="color:#6F42C1">isClosed</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Trying to close listeners: {}"</span><span style="color:#24292E">, serverSocket);</span></span>
+<span class="line"><span style="color:#24292E">            serverSocket.</span><span style="color:#6F42C1">close</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    /**</span></span>
+<span class="line"><span style="color:#6A737D">     * Sleeps on accept().</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> acceptConnections</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">        int</span><span style="color:#24292E"> numRetries </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        Socket client </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6A737D">//创建ServerSocket</span></span>
+<span class="line"><span style="color:#D73A49">        while</span><span style="color:#24292E"> ((</span><span style="color:#D73A49">!</span><span style="color:#24292E">shutdown) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> (portBindMaxRetry </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#D73A49"> ||</span><span style="color:#24292E"> numRetries </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> portBindMaxRetry)) {</span></span>
+<span class="line"><span style="color:#D73A49">            try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                serverSocket </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createNewServerSocket</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"{} is accepting connections now, my election bind port: {}"</span><span style="color:#24292E">, QuorumCnxManager.this.mySid, address.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">                while</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">shutdown) {</span></span>
+<span class="line"><span style="color:#D73A49">                    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                        client </span><span style="color:#D73A49">=</span><span style="color:#24292E"> serverSocket.</span><span style="color:#6F42C1">accept</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">//设置socket通信参数</span></span>
+<span class="line"><span style="color:#6F42C1">                        setSockOpts</span><span style="color:#24292E">(client);</span></span>
+<span class="line"><span style="color:#24292E">                        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Received connection request from {}"</span><span style="color:#24292E">, client.</span><span style="color:#6F42C1">getRemoteSocketAddress</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">                        // Receive and handle the connection request</span></span>
+<span class="line"><span style="color:#6A737D">                        // asynchronously if the quorum sasl authentication is</span></span>
+<span class="line"><span style="color:#6A737D">                        // enabled. This is required because sasl server</span></span>
+<span class="line"><span style="color:#6A737D">                        // authentication process may take few seconds to finish,</span></span>
+<span class="line"><span style="color:#6A737D">                        // this may delay next peer connection requests.</span></span>
+<span class="line"><span style="color:#24292E">如果启用了仲裁sasl身份验证，则异步接收和处理连接请求。这是必需的，因为sasl服务器身份验证过程可能需要几秒钟才能完成，这可能会延迟下一个对等连接请求。</span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> (quorumSaslAuthEnabled) {</span></span>
+<span class="line"><span style="color:#6F42C1">                            receiveConnectionAsync</span><span style="color:#24292E">(client);</span></span>
+<span class="line"><span style="color:#24292E">                        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6F42C1">                            receiveConnection</span><span style="color:#24292E">(client);</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                        numRetries </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (SocketTimeoutException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"The socket is listening for the election accepted "</span></span>
+<span class="line"><span style="color:#D73A49">                                +</span><span style="color:#032F62"> "and it timed out unexpectedly, but will retry."</span></span>
+<span class="line"><span style="color:#D73A49">                                +</span><span style="color:#032F62"> "see ZOOKEEPER-2836"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (IOException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (shutdown) {</span></span>
+<span class="line"><span style="color:#D73A49">                    break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">                LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Exception while listening"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (e </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> SocketException) {</span></span>
+<span class="line"><span style="color:#24292E">                    socketException.</span><span style="color:#6F42C1">set</span><span style="color:#24292E">(</span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">                numRetries</span><span style="color:#D73A49">++</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6F42C1">                    close</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                    Thread.</span><span style="color:#6F42C1">sleep</span><span style="color:#24292E">(</span><span style="color:#005CC5">1000</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (IOException </span><span style="color:#E36209">ie</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Error closing server socket"</span><span style="color:#24292E">, ie);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (InterruptedException </span><span style="color:#E36209">ie</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Interrupted while sleeping. Ignoring exception"</span><span style="color:#24292E">, ie);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#6F42C1">                closeSocket</span><span style="color:#24292E">(client);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">shutdown) {</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">              "Leaving listener thread for address {} after {} errors. Use {} property to increase retry count."</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#6F42C1">              formatInetAddr</span><span style="color:#24292E">(address),</span></span>
+<span class="line"><span style="color:#24292E">              numRetries,</span></span>
+<span class="line"><span style="color:#24292E">              ELECTION_PORT_BIND_RETRY);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#24292E"> ServerSocket </span><span style="color:#6F42C1">createNewServerSocket</span><span style="color:#24292E">() </span><span style="color:#D73A49">throws</span><span style="color:#24292E"> IOException {</span></span>
+<span class="line"><span style="color:#24292E">        ServerSocket socket;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (portUnification) {</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Creating TLS-enabled quorum server socket"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            socket </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> UnifiedServerSocket</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getX509Util</span><span style="color:#24292E">(), </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (sslQuorum) {</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Creating TLS-only quorum server socket"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            socket </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> UnifiedServerSocket</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getX509Util</span><span style="color:#24292E">(), </span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            socket </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ServerSocket</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        socket.</span><span style="color:#6F42C1">setReuseAddress</span><span style="color:#24292E">(</span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        socket.</span><span style="color:#6F42C1">bind</span><span style="color:#24292E">(address);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> socket;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> receiveConnection</span><span style="color:#24292E">(</span><span style="color:#D73A49">final</span><span style="color:#24292E"> Socket sock) {</span></span>
+<span class="line"><span style="color:#24292E">    DataInputStream din </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        din </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> DataInputStream</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> BufferedInputStream</span><span style="color:#24292E">(sock.</span><span style="color:#6F42C1">getInputStream</span><span style="color:#24292E">()));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Sync handling of connection request received from: {}"</span><span style="color:#24292E">, sock.</span><span style="color:#6F42C1">getRemoteSocketAddress</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6F42C1">        handleConnection</span><span style="color:#24292E">(sock, din);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (IOException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Exception handling connection, addr: {}, closing server connection"</span><span style="color:#24292E">, sock.</span><span style="color:#6F42C1">getRemoteSocketAddress</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Exception details: "</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#6F42C1">        closeSocket</span><span style="color:#24292E">(sock);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"><span style="color:#24292E">rivate </span><span style="color:#D73A49">void</span><span style="color:#6F42C1"> handleConnection</span><span style="color:#24292E">(Socket sock, DataInputStream din) throws IOException {</span></span>
+<span class="line"><span style="color:#24292E">    Long sid </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">, protocolVersion </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    MultipleAddresses electionAddr </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        protocolVersion </span><span style="color:#D73A49">=</span><span style="color:#24292E"> din.</span><span style="color:#6F42C1">readLong</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (protocolVersion </span><span style="color:#D73A49">>=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) { </span><span style="color:#6A737D">// this is a server id and not a protocol version</span></span>
+<span class="line"><span style="color:#24292E">            sid </span><span style="color:#D73A49">=</span><span style="color:#24292E"> protocolVersion;</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">            try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                InitialMessage init </span><span style="color:#D73A49">=</span><span style="color:#24292E"> InitialMessage.</span><span style="color:#6F42C1">parse</span><span style="color:#24292E">(protocolVersion, din);</span></span>
+<span class="line"><span style="color:#24292E">                sid </span><span style="color:#D73A49">=</span><span style="color:#24292E"> init.sid;</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">init.electionAddr.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                    electionAddr </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> MultipleAddresses</span><span style="color:#24292E">(init.electionAddr,</span></span>
+<span class="line"><span style="color:#24292E">                            Duration.</span><span style="color:#6F42C1">ofMillis</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getMultiAddressReachabilityCheckTimeoutMs</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">                LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Initial message parsed by {}: {}"</span><span style="color:#24292E">, self.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">(), init.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (InitialMessage.InitialMessageException </span><span style="color:#E36209">ex</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Initial message parsing error!"</span><span style="color:#24292E">, ex);</span></span>
+<span class="line"><span style="color:#6F42C1">                closeSocket</span><span style="color:#24292E">(sock);</span></span>
+<span class="line"><span style="color:#D73A49">                return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (sid </span><span style="color:#D73A49">==</span><span style="color:#24292E"> QuorumPeer.OBSERVER_ID) {</span></span>
+<span class="line"><span style="color:#6A737D">            /*</span></span>
+<span class="line"><span style="color:#6A737D">             * Choose identifier at random. We need a value to identify</span></span>
+<span class="line"><span style="color:#6A737D">             * the connection.</span></span>
+<span class="line"><span style="color:#6A737D">             */</span></span>
+<span class="line"><span style="color:#24292E">            sid </span><span style="color:#D73A49">=</span><span style="color:#24292E"> observerCounter.</span><span style="color:#6F42C1">getAndDecrement</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Setting arbitrary identifier to observer: {}"</span><span style="color:#24292E">, sid);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (IOException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Exception reading or writing challenge"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#6F42C1">        closeSocket</span><span style="color:#24292E">(sock);</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // do authenticating learner</span></span>
+<span class="line"><span style="color:#24292E">    authServer.</span><span style="color:#6F42C1">authenticate</span><span style="color:#24292E">(sock, din);</span></span>
+<span class="line"><span style="color:#6A737D">    //If wins the challenge, then close the new connection.</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (sid </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">        /*</span></span>
+<span class="line"><span style="color:#6A737D">         * This replica might still believe that the connection to sid is</span></span>
+<span class="line"><span style="color:#6A737D">         * up, so we have to shut down the workers before trying to open a</span></span>
+<span class="line"><span style="color:#6A737D">         * new connection.</span></span>
+<span class="line"><span style="color:#6A737D">         */</span></span>
+<span class="line"><span style="color:#24292E">        SendWorker sw </span><span style="color:#D73A49">=</span><span style="color:#24292E"> senderWorkerMap.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(sid);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (sw </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            sw.</span><span style="color:#6F42C1">finish</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        /*</span></span>
+<span class="line"><span style="color:#6A737D">         * Now we start a new connection</span></span>
+<span class="line"><span style="color:#6A737D">         */</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Create new connection to server: {}"</span><span style="color:#24292E">, sid);</span></span>
+<span class="line"><span style="color:#6F42C1">        closeSocket</span><span style="color:#24292E">(sock);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (electionAddr </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6F42C1">            connectOne</span><span style="color:#24292E">(sid, electionAddr);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6F42C1">            connectOne</span><span style="color:#24292E">(sid);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (sid </span><span style="color:#D73A49">==</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">        // we saw this case in ZOOKEEPER-2164</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"We got a connection request from a server with our own ID. "</span></span>
+<span class="line"><span style="color:#D73A49">                 +</span><span style="color:#032F62"> "This should be either a configuration error, or a bug."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> { </span><span style="color:#6A737D">// Otherwise start worker threads to receive data.</span></span>
+<span class="line"><span style="color:#24292E">        SendWorker sw </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> SendWorker</span><span style="color:#24292E">(sock, sid);</span></span>
+<span class="line"><span style="color:#24292E">        RecvWorker rw </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> RecvWorker</span><span style="color:#24292E">(sock, din, sid, sw);</span></span>
+<span class="line"><span style="color:#24292E">        sw.</span><span style="color:#6F42C1">setRecv</span><span style="color:#24292E">(rw);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        SendWorker vsw </span><span style="color:#D73A49">=</span><span style="color:#24292E"> senderWorkerMap.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(sid);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (vsw </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            vsw.</span><span style="color:#6F42C1">finish</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        senderWorkerMap.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(sid, sw);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        queueSendMap.</span><span style="color:#6F42C1">putIfAbsent</span><span style="color:#24292E">(sid, </span><span style="color:#D73A49">new</span><span style="color:#24292E"> CircularBlockingQueue&#x3C;>(SEND_CAPACITY));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        sw.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        rw.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="sendworker网络层发送数据"><strong>SendWorker网络层发送数据:</strong></h2>
+<p>如何发送数据我们主要看下核心的实现就可以了主要逻辑代码如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">//循环处理</span></span>
+<span class="line"><span style="color:#D73A49">while</span><span style="color:#24292E"> (running </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#24292E">shutdown </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> sock </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">    ByteBuffer b </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">//如果有数据需要发送到远程节点(sid远程节点的id),则获取发送队列</span></span>
+<span class="line"><span style="color:#24292E">        BlockingQueue&#x3C;</span><span style="color:#D73A49">ByteBuffer</span><span style="color:#24292E">> bq </span><span style="color:#D73A49">=</span><span style="color:#24292E"> queueSendMap.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(sid);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (bq </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">//发送队列不为空则拉取最新需要发送的消息</span></span>
+<span class="line"><span style="color:#24292E">            b </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> pollSendQueue</span><span style="color:#24292E">(bq, </span><span style="color:#005CC5">1000</span><span style="color:#24292E">, TimeUnit.MILLISECONDS);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"No queue of incoming messages for server {}"</span><span style="color:#24292E">, sid);</span></span>
+<span class="line"><span style="color:#D73A49">            break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (b </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">//缓存一下最新消息</span></span>
+<span class="line"><span style="color:#24292E">            lastMessageSent.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(sid, b);</span></span>
+<span class="line"><span style="color:#6F42C1">            send</span><span style="color:#24292E">(b);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (InterruptedException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Interrupted while waiting for message on queue"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"><span style="color:#6A737D">//发送数据</span></span>
+<span class="line"><span style="color:#D73A49">synchronized</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> send</span><span style="color:#24292E">(ByteBuffer b) throws IOException {</span></span>
+<span class="line"><span style="color:#D73A49">    byte</span><span style="color:#24292E">[] msgBytes </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#D73A49"> byte</span><span style="color:#24292E">[b.</span><span style="color:#6F42C1">capacity</span><span style="color:#24292E">()];</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        b.</span><span style="color:#6F42C1">position</span><span style="color:#24292E">(</span><span style="color:#005CC5">0</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">//检查字节数是否满足</span></span>
+<span class="line"><span style="color:#24292E">        b.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(msgBytes);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (BufferUnderflowException </span><span style="color:#E36209">be</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"BufferUnderflowException "</span><span style="color:#24292E">, be);</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D">//先写入当前需要传输数据大容量大小</span></span>
+<span class="line"><span style="color:#24292E">    dout.</span><span style="color:#6F42C1">writeInt</span><span style="color:#24292E">(b.</span><span style="color:#6F42C1">capacity</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">//写入当前需要发送的数据</span></span>
+<span class="line"><span style="color:#24292E">    dout.</span><span style="color:#6F42C1">write</span><span style="color:#24292E">(b.</span><span style="color:#6F42C1">array</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">//刷新数据,强制缓冲区中数据写入流中</span></span>
+<span class="line"><span style="color:#24292E">    dout.</span><span style="color:#6F42C1">flush</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="bytebuffer的get方法"><strong>ByteBuffer的get方法</strong></h3>
+<p>相对批量获取方法, 此方法将此缓冲区中的字节传输到给定的目标数组中。</p>
+<p>如果缓冲区中剩余的字节数少于满足请求所需的字节数，即如果 <code>length > remaining()</code>，则不会传输任何字节并抛出 BufferUnderflowException。
+否则，此方法将此缓冲区中的 length 个字节复制到给定数组中，从该缓冲区的当前位置和数组中的给定偏移量开始。 然后这个缓冲区的位置按长度递增。
+换句话说，以 <code>src.get(dst, off, len) </code>形式调用此方法与循环具有完全相同的效果</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">  for</span><span style="color:#24292E"> (</span><span style="color:#D73A49">int</span><span style="color:#24292E"> i </span><span style="color:#D73A49">=</span><span style="color:#24292E"> off; i </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> off </span><span style="color:#D73A49">+</span><span style="color:#24292E"> len; i</span><span style="color:#D73A49">++</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">      dst[i] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> src.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">()</span><span style="color:#D73A49">:</span></span></code></pre>
+<p>除了它首先检查此缓冲区中是否有足够的字节并且它可能更有效率。</p>
+<h2 id="recvworker网络层接收数据"><strong>RecvWorker网络层接收数据:</strong></h2>
+<p>接收来自远程服务器节点的数据,接下来我们看下接收到的数据是如何进行处理的</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">while</span><span style="color:#24292E"> (running </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#24292E">shutdown </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> sock </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">    /**</span></span>
+<span class="line"><span style="color:#6A737D">     * Reads the first int to determine the length of the</span></span>
+<span class="line"><span style="color:#6A737D">     * message</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#6A737D">//先读取前面4个字节的数据</span></span>
+<span class="line"><span style="color:#D73A49">    int</span><span style="color:#24292E"> length </span><span style="color:#D73A49">=</span><span style="color:#24292E"> din.</span><span style="color:#6F42C1">readInt</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (length </span><span style="color:#D73A49">&#x3C;=</span><span style="color:#005CC5"> 0</span><span style="color:#D73A49"> ||</span><span style="color:#24292E"> length </span><span style="color:#D73A49">></span><span style="color:#24292E"> PACKETMAXSIZE) {</span></span>
+<span class="line"><span style="color:#D73A49">        throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IOException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Received packet with invalid packet: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> length);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#6A737D">    /**</span></span>
+<span class="line"><span style="color:#6A737D">     * Allocates a new ByteBuffer to receive the message</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#D73A49">    final</span><span style="color:#D73A49"> byte</span><span style="color:#24292E">[] msgArray </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#D73A49"> byte</span><span style="color:#24292E">[length];</span></span>
+<span class="line"><span style="color:#6A737D">//根据数据长度将数据读入临时数组中</span></span>
+<span class="line"><span style="color:#24292E">    din.</span><span style="color:#6F42C1">readFully</span><span style="color:#24292E">(msgArray, </span><span style="color:#005CC5">0</span><span style="color:#24292E">, length);</span></span>
+<span class="line"><span style="color:#6A737D">//封装消息,将收到的消息放入接收队列中</span></span>
+<span class="line"><span style="color:#6F42C1">    addToRecvQueue</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> Message</span><span style="color:#24292E">(ByteBuffer.</span><span style="color:#6F42C1">wrap</span><span style="color:#24292E">(msgArray), sid));</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"><span style="color:#6A737D">//将收到的数据放入接收队列</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> addToRecvQueue</span><span style="color:#24292E">(</span><span style="color:#D73A49">final</span><span style="color:#24292E"> Message msg) {</span></span>
+<span class="line"><span style="color:#D73A49">  final</span><span style="color:#D73A49"> boolean</span><span style="color:#24292E"> success </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> this</span><span style="color:#24292E">.recvQueue.</span><span style="color:#6F42C1">offer</span><span style="color:#24292E">(msg);</span></span>
+<span class="line"><span style="color:#D73A49">  if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">success) {</span></span>
+<span class="line"><span style="color:#D73A49">      throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> RuntimeException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Could not insert into receive queue"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">  }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="选举算法的创建与启动"><strong>选举算法的创建与启动</strong></h2>
+<p>回到QuorumPeer中的createElectionAlgorithm方法来看</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">case</span><span style="color:#005CC5"> 3</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#24292E">    QuorumCnxManager qcm </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createCnxnManager</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    QuorumCnxManager oldQcm </span><span style="color:#D73A49">=</span><span style="color:#24292E"> qcmRef.</span><span style="color:#6F42C1">getAndSet</span><span style="color:#24292E">(qcm);</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (oldQcm </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Clobbering already-set QuorumCnxManager (restarting leader election?)"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        oldQcm.</span><span style="color:#6F42C1">halt</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    QuorumCnxManager.Listener listener </span><span style="color:#D73A49">=</span><span style="color:#24292E"> qcm.listener;</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (listener </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        listener.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        FastLeaderElection fle </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> FastLeaderElection</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, qcm);</span></span>
+<span class="line"><span style="color:#24292E">        fle.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        le </span><span style="color:#D73A49">=</span><span style="color:#24292E"> fle;</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Null listener when initializing cnx manager"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    break</span><span style="color:#24292E">;</span></span></code></pre>
+<p>选举连接管理器启动完毕之后则开始创建QuorumCnxManager 然后启动选举策略</p>
+<h3 id="fastleaderelection构造器"><strong>FastLeaderElection构造器</strong></h3>
+<p>先来看下FastLeaderElection对象的创建涉及到哪些内容:</p>
+<ul>
+<li>创建发送队列sendqueue</li>
+<li>创建接收队列recvqueue</li>
+<li>创建Messenger类型对象</li>
+</ul>
+<p>创建Messenger类型对象做了什么内容呢?</p>
+<ul>
+<li>创建用于发送消息的线程WorkerSender类型对象</li>
+<li>创建用于接收消息的线程WorkerReceiver类型对象</li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#6F42C1"> FastLeaderElection</span><span style="color:#24292E">(QuorumPeer self, QuorumCnxManager manager) {</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.stop </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> false</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.manager </span><span style="color:#D73A49">=</span><span style="color:#24292E"> manager;</span></span>
+<span class="line"><span style="color:#6F42C1">    starter</span><span style="color:#24292E">(self, manager);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> starter</span><span style="color:#24292E">(QuorumPeer self, QuorumCnxManager manager) {</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.self </span><span style="color:#D73A49">=</span><span style="color:#24292E"> self;</span></span>
+<span class="line"><span style="color:#24292E">    proposedLeader </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> -</span><span style="color:#005CC5">1</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    proposedZxid </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> -</span><span style="color:#005CC5">1</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    sendqueue </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> LinkedBlockingQueue&#x3C;</span><span style="color:#D73A49">ToSend</span><span style="color:#24292E">>();</span></span>
+<span class="line"><span style="color:#24292E">    recvqueue </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> LinkedBlockingQueue&#x3C;</span><span style="color:#D73A49">Notification</span><span style="color:#24292E">>();</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.messenger </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Messenger</span><span style="color:#24292E">(manager);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"><span style="color:#6F42C1">Messenger</span><span style="color:#24292E">(QuorumCnxManager manager) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.ws </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> WorkerSender</span><span style="color:#24292E">(manager);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.wsThread </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Thread</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">.ws, </span><span style="color:#032F62">"WorkerSender[myid="</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "]"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.wsThread.</span><span style="color:#6F42C1">setDaemon</span><span style="color:#24292E">(</span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.wr </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> WorkerReceiver</span><span style="color:#24292E">(manager);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.wrThread </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Thread</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">.wr, </span><span style="color:#032F62">"WorkerReceiver[myid="</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "]"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.wrThread.</span><span style="color:#6F42C1">setDaemon</span><span style="color:#24292E">(</span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="启动选举算法"><strong>启动选举算法</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">FastLeaderElection fle </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> FastLeaderElection</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, qcm);</span></span>
+<span class="line"><span style="color:#24292E">        fle.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">在FastLeaderElection 中的start方法</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> start</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.messenger.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"><span style="color:#24292E">在messenger类型中的start方法</span></span>
+<span class="line"><span style="color:#D73A49">void</span><span style="color:#6F42C1"> start</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.wsThread.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">.wrThread.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>这里启动了用于接收和发送数据使用的WorkerSender线程和WorkerReceiver线程,是否需要投票还需要根据当前集群的一个状态来看,在 QuorumPeer 最后一步启动的时候会进行状态判断发起投票. 发送和接收的详细内容待会在看
+WorkerSender数据传输层
+这个发送类型主要做中间层将需要发送的消息转换成ByteBuffer ,然后调用QuorumCnxManager的toSend方法来发送消息</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> run</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">    while</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">stop) {</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            ToSend m </span><span style="color:#D73A49">=</span><span style="color:#24292E"> sendqueue.</span><span style="color:#6F42C1">poll</span><span style="color:#24292E">(</span><span style="color:#005CC5">3000</span><span style="color:#24292E">, TimeUnit.MILLISECONDS);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (m </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                continue</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">            process</span><span style="color:#24292E">(m);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (InterruptedException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"WorkerSender is down"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D"> * Called by run() once there is a new message to send.</span></span>
+<span class="line"><span style="color:#6A737D"> *</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> m</span><span style="color:#6A737D">     message to send</span></span>
+<span class="line"><span style="color:#6A737D"> */</span></span>
+<span class="line"><span style="color:#D73A49">void</span><span style="color:#6F42C1"> process</span><span style="color:#24292E">(ToSend m) {</span></span>
+<span class="line"><span style="color:#24292E">    ByteBuffer requestBuffer </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> buildMsg</span><span style="color:#24292E">(m.state.</span><span style="color:#6F42C1">ordinal</span><span style="color:#24292E">(), m.leader, m.zxid, m.electionEpoch, m.peerEpoch, m.configData);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    manager.</span><span style="color:#6F42C1">toSend</span><span style="color:#24292E">(m.sid, requestBuffer);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="workerreceiver数据接收层"><strong>WorkerReceiver数据接收层</strong></h3>
+<p>WorkerReceiver类型主要作用是解析来自远端的消息,并对消息内容做处理</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> run</span><span style="color:#24292E">() {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        Message response;</span></span>
+<span class="line"><span style="color:#D73A49">        while</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">stop) {</span></span>
+<span class="line"><span style="color:#6A737D">            // Sleeps on receive</span></span>
+<span class="line"><span style="color:#D73A49">            try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                response </span><span style="color:#D73A49">=</span><span style="color:#24292E"> manager.</span><span style="color:#6F42C1">pollRecvQueue</span><span style="color:#24292E">(</span><span style="color:#005CC5">3000</span><span style="color:#24292E">, TimeUnit.MILLISECONDS);</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (response </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                    continue</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                final</span><span style="color:#D73A49"> int</span><span style="color:#24292E"> capacity </span><span style="color:#D73A49">=</span><span style="color:#24292E"> response.buffer.</span><span style="color:#6F42C1">capacity</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                // The current protocol and two previous generations all send at least 28 bytes</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (capacity </span><span style="color:#D73A49">&#x3C;</span><span style="color:#005CC5"> 28</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Got a short response from server {}: {}"</span><span style="color:#24292E">, response.sid, capacity);</span></span>
+<span class="line"><span style="color:#D73A49">                    continue</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                // this is the backwardCompatibility mode in place before ZK-107</span></span>
+<span class="line"><span style="color:#6A737D">                // It is for a version of the protocol in which we didn't send peer epoch</span></span>
+<span class="line"><span style="color:#6A737D">                // With peer epoch and version the message became 40 bytes</span></span>
+<span class="line"><span style="color:#D73A49">                boolean</span><span style="color:#24292E"> backCompatibility28 </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (capacity </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 28</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                // this is the backwardCompatibility mode for no version information</span></span>
+<span class="line"><span style="color:#D73A49">                boolean</span><span style="color:#24292E"> backCompatibility40 </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (capacity </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 40</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">                response.buffer.</span><span style="color:#6F42C1">clear</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                // Instantiate Notification and set its attributes</span></span>
+<span class="line"><span style="color:#24292E">                Notification n </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Notification</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                int</span><span style="color:#24292E"> rstate </span><span style="color:#D73A49">=</span><span style="color:#24292E"> response.buffer.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                long</span><span style="color:#24292E"> rleader </span><span style="color:#D73A49">=</span><span style="color:#24292E"> response.buffer.</span><span style="color:#6F42C1">getLong</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                long</span><span style="color:#24292E"> rzxid </span><span style="color:#D73A49">=</span><span style="color:#24292E"> response.buffer.</span><span style="color:#6F42C1">getLong</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                long</span><span style="color:#24292E"> relectionEpoch </span><span style="color:#D73A49">=</span><span style="color:#24292E"> response.buffer.</span><span style="color:#6F42C1">getLong</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                long</span><span style="color:#24292E"> rpeerepoch;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                int</span><span style="color:#24292E"> version </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0x0</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                QuorumVerifier rqv </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">backCompatibility28) {</span></span>
+<span class="line"><span style="color:#24292E">                        rpeerepoch </span><span style="color:#D73A49">=</span><span style="color:#24292E"> response.buffer.</span><span style="color:#6F42C1">getLong</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">backCompatibility40) {</span></span>
+<span class="line"><span style="color:#6A737D">                            /*</span></span>
+<span class="line"><span style="color:#6A737D">                             * Version added in 3.4.6</span></span>
+<span class="line"><span style="color:#6A737D">                             */</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">                            version </span><span style="color:#D73A49">=</span><span style="color:#24292E"> response.buffer.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                            LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Backward compatibility mode (36 bits), server id: {}"</span><span style="color:#24292E">, response.sid);</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                    } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Backward compatibility mode (28 bits), server id: {}"</span><span style="color:#24292E">, response.sid);</span></span>
+<span class="line"><span style="color:#24292E">                        rpeerepoch </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ZxidUtils.</span><span style="color:#6F42C1">getEpochFromZxid</span><span style="color:#24292E">(rzxid);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                    // check if we have a version that includes config. If so extract config info from message.</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (version </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0x1</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                        int</span><span style="color:#24292E"> configLength </span><span style="color:#D73A49">=</span><span style="color:#24292E"> response.buffer.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                        // we want to avoid errors caused by the allocation of a byte array with negative length</span></span>
+<span class="line"><span style="color:#6A737D">                        // (causing NegativeArraySizeException) or huge length (causing e.g. OutOfMemoryError)</span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> (configLength </span><span style="color:#D73A49">&#x3C;</span><span style="color:#005CC5"> 0</span><span style="color:#D73A49"> ||</span><span style="color:#24292E"> configLength </span><span style="color:#D73A49">></span><span style="color:#24292E"> capacity) {</span></span>
+<span class="line"><span style="color:#D73A49">                            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IOException</span><span style="color:#24292E">(String.</span><span style="color:#6F42C1">format</span><span style="color:#24292E">(</span><span style="color:#032F62">"Invalid configLength in notification message! sid=%d, capacity=%d, version=%d, configLength=%d"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">                                                                response.sid, capacity, version, configLength));</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                        byte</span><span style="color:#24292E">[] b </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#D73A49"> byte</span><span style="color:#24292E">[configLength];</span></span>
+<span class="line"><span style="color:#24292E">                        response.buffer.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(b);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                        synchronized</span><span style="color:#24292E"> (self) {</span></span>
+<span class="line"><span style="color:#D73A49">                            try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                                rqv </span><span style="color:#D73A49">=</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">configFromString</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> String</span><span style="color:#24292E">(b));</span></span>
+<span class="line"><span style="color:#24292E">                                QuorumVerifier curQV </span><span style="color:#D73A49">=</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getQuorumVerifier</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                                if</span><span style="color:#24292E"> (rqv.</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#24292E"> curQV.</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                                    LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"{} Received version: {} my version: {}"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">                                             self.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                                             Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(rqv.</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">()),</span></span>
+<span class="line"><span style="color:#24292E">                                             Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getQuorumVerifier</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#D73A49">                                    if</span><span style="color:#24292E"> (self.</span><span style="color:#6F42C1">getPeerState</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#24292E"> ServerState.LOOKING) {</span></span>
+<span class="line"><span style="color:#24292E">                                        LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Invoking processReconfig(), state: {}"</span><span style="color:#24292E">, self.</span><span style="color:#6F42C1">getServerState</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                                        self.</span><span style="color:#6F42C1">processReconfig</span><span style="color:#24292E">(rqv, </span><span style="color:#005CC5">null</span><span style="color:#24292E">, </span><span style="color:#005CC5">null</span><span style="color:#24292E">, </span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">                                        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">rqv.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(curQV)) {</span></span>
+<span class="line"><span style="color:#24292E">                                            LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"restarting leader election"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                                            self.shuttingDownLE </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> true</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                                            self.</span><span style="color:#6F42C1">getElectionAlg</span><span style="color:#24292E">().</span><span style="color:#6F42C1">shutdown</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                                            break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                                        }</span></span>
+<span class="line"><span style="color:#24292E">                                    } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                                        LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Skip processReconfig(), state: {}"</span><span style="color:#24292E">, self.</span><span style="color:#6F42C1">getServerState</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                                    }</span></span>
+<span class="line"><span style="color:#24292E">                                }</span></span>
+<span class="line"><span style="color:#24292E">                            } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (IOException | ConfigException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                                LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Something went wrong while processing config received from {}"</span><span style="color:#24292E">, response.sid);</span></span>
+<span class="line"><span style="color:#24292E">                            }</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                    } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Backward compatibility mode (before reconfig), server id: {}"</span><span style="color:#24292E">, response.sid);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (BufferUnderflowException | IOException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Skipping the processing of a partial / malformed response message sent by sid={} (message length: {})"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">                             response.sid, capacity, e);</span></span>
+<span class="line"><span style="color:#D73A49">                    continue</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#6A737D">                /*</span></span>
+<span class="line"><span style="color:#6A737D">                 * If it is from a non-voting server (such as an observer or</span></span>
+<span class="line"><span style="color:#6A737D">                 * a non-voting follower), respond right away.</span></span>
+<span class="line"><span style="color:#6A737D">                 */</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#6F42C1">validVoter</span><span style="color:#24292E">(response.sid)) {</span></span>
+<span class="line"><span style="color:#24292E">                    Vote current </span><span style="color:#D73A49">=</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getCurrentVote</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                    QuorumVerifier qv </span><span style="color:#D73A49">=</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getQuorumVerifier</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                    ToSend notmsg </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ToSend</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">                        ToSend.mType.notification,</span></span>
+<span class="line"><span style="color:#24292E">                        current.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                        current.</span><span style="color:#6F42C1">getZxid</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                        logicalclock.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                        self.</span><span style="color:#6F42C1">getPeerState</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                        response.sid,</span></span>
+<span class="line"><span style="color:#24292E">                        current.</span><span style="color:#6F42C1">getPeerEpoch</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                        qv.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getBytes</span><span style="color:#24292E">());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">                    sendqueue.</span><span style="color:#6F42C1">offer</span><span style="color:#24292E">(notmsg);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                    // Receive new message</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Receive new notification message. My id = {}"</span><span style="color:#24292E">, self.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                    // State of peer that sent this message</span></span>
+<span class="line"><span style="color:#24292E">                    QuorumPeer.ServerState ackstate </span><span style="color:#D73A49">=</span><span style="color:#24292E"> QuorumPeer.ServerState.LOOKING;</span></span>
+<span class="line"><span style="color:#D73A49">                    switch</span><span style="color:#24292E"> (rstate) {</span></span>
+<span class="line"><span style="color:#D73A49">                    case</span><span style="color:#005CC5"> 0</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#24292E">                        ackstate </span><span style="color:#D73A49">=</span><span style="color:#24292E"> QuorumPeer.ServerState.LOOKING;</span></span>
+<span class="line"><span style="color:#D73A49">                        break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">                    case</span><span style="color:#005CC5"> 1</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#24292E">                        ackstate </span><span style="color:#D73A49">=</span><span style="color:#24292E"> QuorumPeer.ServerState.FOLLOWING;</span></span>
+<span class="line"><span style="color:#D73A49">                        break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">                    case</span><span style="color:#005CC5"> 2</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#24292E">                        ackstate </span><span style="color:#D73A49">=</span><span style="color:#24292E"> QuorumPeer.ServerState.LEADING;</span></span>
+<span class="line"><span style="color:#D73A49">                        break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">                    case</span><span style="color:#005CC5"> 3</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#24292E">                        ackstate </span><span style="color:#D73A49">=</span><span style="color:#24292E"> QuorumPeer.ServerState.OBSERVING;</span></span>
+<span class="line"><span style="color:#D73A49">                        break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">                    default:</span></span>
+<span class="line"><span style="color:#D73A49">                        continue</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">                    n.leader </span><span style="color:#D73A49">=</span><span style="color:#24292E"> rleader;</span></span>
+<span class="line"><span style="color:#24292E">                    n.zxid </span><span style="color:#D73A49">=</span><span style="color:#24292E"> rzxid;</span></span>
+<span class="line"><span style="color:#24292E">                    n.electionEpoch </span><span style="color:#D73A49">=</span><span style="color:#24292E"> relectionEpoch;</span></span>
+<span class="line"><span style="color:#24292E">                    n.state </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ackstate;</span></span>
+<span class="line"><span style="color:#24292E">                    n.sid </span><span style="color:#D73A49">=</span><span style="color:#24292E"> response.sid;</span></span>
+<span class="line"><span style="color:#24292E">                    n.peerEpoch </span><span style="color:#D73A49">=</span><span style="color:#24292E"> rpeerepoch;</span></span>
+<span class="line"><span style="color:#24292E">                    n.version </span><span style="color:#D73A49">=</span><span style="color:#24292E"> version;</span></span>
+<span class="line"><span style="color:#24292E">                    n.qv </span><span style="color:#D73A49">=</span><span style="color:#24292E"> rqv;</span></span>
+<span class="line"><span style="color:#6A737D">                    /*</span></span>
+<span class="line"><span style="color:#6A737D">                     * Print notification info</span></span>
+<span class="line"><span style="color:#6A737D">                     */</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">                        "Notification: my state:{}; n.sid:{}, n.state:{}, n.leader:{}, n.round:0x{}, "</span></span>
+<span class="line"><span style="color:#D73A49">                            +</span><span style="color:#032F62"> "n.peerEpoch:0x{}, n.zxid:0x{}, message format version:0x{}, n.config version:0x{}"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">                        self.</span><span style="color:#6F42C1">getPeerState</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                        n.sid,</span></span>
+<span class="line"><span style="color:#24292E">                        n.state,</span></span>
+<span class="line"><span style="color:#24292E">                        n.leader,</span></span>
+<span class="line"><span style="color:#24292E">                        Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(n.electionEpoch),</span></span>
+<span class="line"><span style="color:#24292E">                        Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(n.peerEpoch),</span></span>
+<span class="line"><span style="color:#24292E">                        Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(n.zxid),</span></span>
+<span class="line"><span style="color:#24292E">                        Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(n.version),</span></span>
+<span class="line"><span style="color:#24292E">                        (n.qv </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> ?</span><span style="color:#24292E"> (Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(n.qv.</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">())) </span><span style="color:#D73A49">:</span><span style="color:#032F62"> "0"</span><span style="color:#24292E">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                    /*</span></span>
+<span class="line"><span style="color:#6A737D">                     * If this server is looking, then send proposed leader</span></span>
+<span class="line"><span style="color:#6A737D">                     */</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (self.</span><span style="color:#6F42C1">getPeerState</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#24292E"> QuorumPeer.ServerState.LOOKING) {</span></span>
+<span class="line"><span style="color:#24292E">                        recvqueue.</span><span style="color:#6F42C1">offer</span><span style="color:#24292E">(n);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                        /*</span></span>
+<span class="line"><span style="color:#6A737D">                         * Send a notification back if the peer that sent this</span></span>
+<span class="line"><span style="color:#6A737D">                         * message is also looking and its logical clock is</span></span>
+<span class="line"><span style="color:#6A737D">                         * lagging behind.</span></span>
+<span class="line"><span style="color:#6A737D">                         */</span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> ((ackstate </span><span style="color:#D73A49">==</span><span style="color:#24292E"> QuorumPeer.ServerState.LOOKING)</span></span>
+<span class="line"><span style="color:#D73A49">                            &#x26;&#x26;</span><span style="color:#24292E"> (n.electionEpoch </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> logicalclock.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#24292E">                            Vote v </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getVote</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                            QuorumVerifier qv </span><span style="color:#D73A49">=</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getQuorumVerifier</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                            ToSend notmsg </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ToSend</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">                                ToSend.mType.notification,</span></span>
+<span class="line"><span style="color:#24292E">                                v.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                                v.</span><span style="color:#6F42C1">getZxid</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                                logicalclock.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                                self.</span><span style="color:#6F42C1">getPeerState</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                                response.sid,</span></span>
+<span class="line"><span style="color:#24292E">                                v.</span><span style="color:#6F42C1">getPeerEpoch</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                                qv.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getBytes</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                            sendqueue.</span><span style="color:#6F42C1">offer</span><span style="color:#24292E">(notmsg);</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                    } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                        /*</span></span>
+<span class="line"><span style="color:#6A737D">                         * If this server is not looking, but the one that sent the ack</span></span>
+<span class="line"><span style="color:#6A737D">                         * is looking, then send back what it believes to be the leader.</span></span>
+<span class="line"><span style="color:#6A737D">                         */</span></span>
+<span class="line"><span style="color:#24292E">                        Vote current </span><span style="color:#D73A49">=</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getCurrentVote</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> (ackstate </span><span style="color:#D73A49">==</span><span style="color:#24292E"> QuorumPeer.ServerState.LOOKING) {</span></span>
+<span class="line"><span style="color:#D73A49">                            if</span><span style="color:#24292E"> (self.leader </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                                if</span><span style="color:#24292E"> (leadingVoteSet </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                                    self.leader.</span><span style="color:#6F42C1">setLeadingVoteSet</span><span style="color:#24292E">(leadingVoteSet);</span></span>
+<span class="line"><span style="color:#24292E">                                    leadingVoteSet </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                                }</span></span>
+<span class="line"><span style="color:#24292E">                                self.leader.</span><span style="color:#6F42C1">reportLookingSid</span><span style="color:#24292E">(response.sid);</span></span>
+<span class="line"><span style="color:#24292E">                            }</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">                            LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">                                "Sending new notification. My id ={} recipient={} zxid=0x{} leader={} config version = {}"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">                                self.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                                response.sid,</span></span>
+<span class="line"><span style="color:#24292E">                                Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(current.</span><span style="color:#6F42C1">getZxid</span><span style="color:#24292E">()),</span></span>
+<span class="line"><span style="color:#24292E">                                current.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                                Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getQuorumVerifier</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">()));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">                            QuorumVerifier qv </span><span style="color:#D73A49">=</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getQuorumVerifier</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                            ToSend notmsg </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ToSend</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#24292E">                                ToSend.mType.notification,</span></span>
+<span class="line"><span style="color:#24292E">                                current.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                                current.</span><span style="color:#6F42C1">getZxid</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                                current.</span><span style="color:#6F42C1">getElectionEpoch</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                                self.</span><span style="color:#6F42C1">getPeerState</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                                response.sid,</span></span>
+<span class="line"><span style="color:#24292E">                                current.</span><span style="color:#6F42C1">getPeerEpoch</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">                                qv.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getBytes</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                            sendqueue.</span><span style="color:#6F42C1">offer</span><span style="color:#24292E">(notmsg);</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (InterruptedException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Interrupted Exception while waiting for new message"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"WorkerReceiver is down"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

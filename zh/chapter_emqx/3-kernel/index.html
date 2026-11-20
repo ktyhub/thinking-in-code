@@ -1,0 +1,925 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>3-内核层监督进程的启动过程 — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_emqx/3-kernel/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_emqx/3-kernel"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_emqx/3-kernel/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_emqx/3-kernel"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="3-内核层监督进程的启动过程 — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_emqx/3-kernel/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_emqx/3-kernel/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>emqx</h3> <ul> <li> <a href="/zh/chapter_emqx/1-introduce" class="lv0" title="1-EMQX简介"> 1-EMQX简介 </a> </li><li> <a href="/zh/chapter_emqx/2-code-struct" class="lv0" title="2-项目结构与代码入口"> 2-项目结构与代码入口 </a> </li><li> <a href="/zh/chapter_emqx/3-kernel" class="lv0" aria-current="page" title="3-内核层监督进程的启动过程"> 3-内核层监督进程的启动过程 </a> </li><li> <a href="/zh/chapter_emqx/4-router" class="lv0" title="4-路由层监督进程的启动过程"> 4-路由层监督进程的启动过程 </a> </li><li> <a href="/zh/chapter_emqx/5-broker" class="lv0" title="5-代理层监督进程的启动过程"> 5-代理层监督进程的启动过程 </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_emqx">emqx</a><span class="sep">/</span><span>3-内核层监督进程的启动过程</span> </nav> <div class="prose">  <h1 id="3-内核层监督进程的启动过程">3-内核层监督进程的启动过程</h1>
+<h2 id="31-简介">3.1 简介</h2>
+<p>上一个章节我们看了emqx_sup监督进程启动初始化逻辑如下: 根据emqx的分层逻辑 我们今天按启动顺序来看,先来看内核层的逻辑</p>
+<p>emqx_kernel_sup监督进程树启动的逻辑</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">init</span><span style="color:#24292E">([]) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#6A737D">    %% Kernel Sup</span></span>
+<span class="line"><span style="color:#24292E">    KernelSup </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> supervisor_spec</span><span style="color:#24292E">(</span><span style="color:#005CC5">emqx_kernel_sup</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#6A737D">    %% Router Sup</span></span>
+<span class="line"><span style="color:#24292E">    RouterSup </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> supervisor_spec</span><span style="color:#24292E">(</span><span style="color:#005CC5">emqx_router_sup</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#6A737D">    %% Broker Sup</span></span>
+<span class="line"><span style="color:#24292E">    BrokerSup </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> supervisor_spec</span><span style="color:#24292E">(</span><span style="color:#005CC5">emqx_broker_sup</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#6A737D">    %% Session Manager</span></span>
+<span class="line"><span style="color:#24292E">    SMSup </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> supervisor_spec</span><span style="color:#24292E">(</span><span style="color:#005CC5">emqx_sm_sup</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#6A737D">    %% Connection Manager</span></span>
+<span class="line"><span style="color:#24292E">    CMSup </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> supervisor_spec</span><span style="color:#24292E">(</span><span style="color:#005CC5">emqx_cm_sup</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#6A737D">    %% Sys Sup</span></span>
+<span class="line"><span style="color:#24292E">    SysSup </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> supervisor_spec</span><span style="color:#24292E">(</span><span style="color:#005CC5">emqx_sys_sup</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#24292E">    {</span><span style="color:#005CC5">ok</span><span style="color:#24292E">, {{</span><span style="color:#005CC5">one_for_all</span><span style="color:#24292E">, </span><span style="color:#005CC5">0</span><span style="color:#24292E">, </span><span style="color:#005CC5">1</span><span style="color:#24292E">},</span></span>
+<span class="line"><span style="color:#24292E">          [KernelSup,</span></span>
+<span class="line"><span style="color:#24292E">           RouterSup,</span></span>
+<span class="line"><span style="color:#24292E">           BrokerSup,</span></span>
+<span class="line"><span style="color:#24292E">           SMSup,</span></span>
+<span class="line"><span style="color:#24292E">           CMSup,</span></span>
+<span class="line"><span style="color:#24292E">           SysSup]}}.</span></span></code></pre>
+<p>内核层监督进程emqx_kernel_sup的启动:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">init</span><span style="color:#24292E">([]) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#6A737D">    %%one_for_one如果一个子进程停止，则只重启该进程 最大重启次数是10, 时间片是100秒  100秒内可以重启10次</span></span>
+<span class="line"><span style="color:#24292E">    {</span><span style="color:#005CC5">ok</span><span style="color:#24292E">, {{</span><span style="color:#005CC5">one_for_one</span><span style="color:#24292E">, </span><span style="color:#005CC5">10</span><span style="color:#24292E">, </span><span style="color:#005CC5">100</span><span style="color:#24292E">},</span></span>
+<span class="line"><span style="color:#6A737D">          %% Gproc 是 Erlang 的进程池 监督进程</span></span>
+<span class="line"><span style="color:#24292E">          [</span><span style="color:#6F42C1">child_spec</span><span style="color:#24292E">(</span><span style="color:#005CC5">emqx_pool_sup</span><span style="color:#24292E">, </span><span style="color:#005CC5">supervisor</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#6A737D">           %% 插件钩子管理的 工作进程</span></span>
+<span class="line"><span style="color:#6F42C1">           child_spec</span><span style="color:#24292E">(</span><span style="color:#005CC5">emqx_hooks</span><span style="color:#24292E">, </span><span style="color:#005CC5">worker</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#6A737D">           %% 用于统计的工作进程</span></span>
+<span class="line"><span style="color:#6F42C1">           child_spec</span><span style="color:#24292E">(</span><span style="color:#005CC5">emqx_stats</span><span style="color:#24292E">, </span><span style="color:#005CC5">worker</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#6A737D">           %% 用于统计的工作进程</span></span>
+<span class="line"><span style="color:#6F42C1">           child_spec</span><span style="color:#24292E">(</span><span style="color:#005CC5">emqx_metrics</span><span style="color:#24292E">, </span><span style="color:#005CC5">worker</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#6A737D">           %% 命令行管理的工作进程</span></span>
+<span class="line"><span style="color:#6F42C1">           child_spec</span><span style="color:#24292E">(</span><span style="color:#005CC5">emqx_ctl</span><span style="color:#24292E">, </span><span style="color:#005CC5">worker</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#6A737D">           %% EMQ X 使用 Zone 来管理配置组。一个 Zone 定义了一组配置项 (比如最大连接数等)，Listener 可以指定使用某个 Zone，以使用该 Zone 下的所有配置。多个 Listener 可以共享同一个 Zone 配置的匹配规则如下，其优先级 Zone > Global > Default:</span></span>
+<span class="line"><span style="color:#6F42C1">           child_spec</span><span style="color:#24292E">(</span><span style="color:#005CC5">emqx_zone</span><span style="color:#24292E">, </span><span style="color:#005CC5">worker</span><span style="color:#24292E">)]}}.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">child_spec</span><span style="color:#24292E">(M, </span><span style="color:#005CC5">worker</span><span style="color:#24292E">) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#6A737D">     %% 进程id。用于监督者区分子进程的id，必须保证唯一 ,这里直接使用模块名字</span></span>
+<span class="line"><span style="color:#24292E">    #{</span><span style="color:#005CC5">id</span><span style="color:#D73A49">       =></span><span style="color:#24292E"> M,</span></span>
+<span class="line"><span style="color:#6A737D">      %% StartFun = {M, F, A} 用于监督者启动子进程的函数。M代表模块，F代表函数，A代表参数</span></span>
+<span class="line"><span style="color:#005CC5">      start</span><span style="color:#D73A49">    =></span><span style="color:#24292E"> {M, </span><span style="color:#005CC5">start_link</span><span style="color:#24292E">, []},  </span></span>
+<span class="line"><span style="color:#6A737D">      %% 进程重启策略 Restart = permanent | transient | temporary 表示进程遇到错误之后是否重启 permanent	遇到任何错误导致进程终止就重启 ,temporary	进程永远都不重启 transient	只有进程异常终止的时候会被重启</span></span>
+<span class="line"><span style="color:#005CC5">      restart</span><span style="color:#D73A49">  =></span><span style="color:#005CC5"> permanent</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#6A737D">      %% 进程关闭表示采用什么手段来关闭进程 Shutdown = brutal_kill | int() >= 0 | infinity brutal_kill	立刻强制关闭进程int() >= 0	等待多少毫秒后强制关闭进程 infinity	当子进程也是监督者时使用，意思是给足够时间让子进程重启</span></span>
+<span class="line"><span style="color:#005CC5">      shutdown</span><span style="color:#D73A49"> =></span><span style="color:#005CC5"> 5000</span><span style="color:#24292E">,  </span></span>
+<span class="line"><span style="color:#6A737D">      %% 进程类型 Type  = worker | supervisor 告诉监督者子进程是哪种类型的进程，工作进程，还是监督进程？</span></span>
+<span class="line"><span style="color:#005CC5">      type</span><span style="color:#D73A49">     =></span><span style="color:#005CC5"> worker</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#6A737D">      %% 进程模块 Modules  = [Module] | dynamic 表示进程运行依赖哪些模块，仅在代码热更新时使用。使用dynamic的情况是当使用了 Erlang/OTP 发布（Release）等功能，使得Erlang/OTP 可以判断在热更新时需要哪些模块</span></span>
+<span class="line"><span style="color:#005CC5">      modules</span><span style="color:#D73A49">  =></span><span style="color:#24292E"> [M]};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">child_spec</span><span style="color:#24292E">(M, </span><span style="color:#005CC5">supervisor</span><span style="color:#24292E">) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#24292E">    #{</span><span style="color:#005CC5">id</span><span style="color:#D73A49">       =></span><span style="color:#24292E"> M,</span></span>
+<span class="line"><span style="color:#005CC5">      start</span><span style="color:#D73A49">    =></span><span style="color:#24292E"> {M, </span><span style="color:#005CC5">start_link</span><span style="color:#24292E">, []},</span></span>
+<span class="line"><span style="color:#005CC5">      restart</span><span style="color:#D73A49">  =></span><span style="color:#005CC5"> permanent</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      shutdown</span><span style="color:#D73A49"> =></span><span style="color:#005CC5"> infinity</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      type</span><span style="color:#D73A49">     =></span><span style="color:#005CC5"> supervisor</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      modules</span><span style="color:#D73A49">  =></span><span style="color:#24292E"> [M]}.</span></span></code></pre>
+<h2 id="32-进程池监督进程的启动">3.2 进程池监督进程的启动</h2>
+<p>刚刚emqx_pool_sup进程池的启动的MFA,对应如下代码</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6A737D">%% @doc Start the default pool supervisor.</span></span>
+<span class="line"><span style="color:#6F42C1">start_link</span><span style="color:#24292E">() </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#6F42C1">    start_link</span><span style="color:#24292E">(</span><span style="color:#D73A49">?</span><span style="color:#6F42C1">POOL</span><span style="color:#24292E">, </span><span style="color:#005CC5">random</span><span style="color:#24292E">, {</span><span style="color:#D73A49">?</span><span style="color:#6F42C1">POOL</span><span style="color:#24292E">, </span><span style="color:#005CC5">start_link</span><span style="color:#24292E">, []}).</span></span></code></pre>
+<p>然后对应了如下重载函数</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">start_link</span><span style="color:#24292E">(Pool, Type, MFA) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#6F42C1">    start_link</span><span style="color:#24292E">(Pool, Type, </span><span style="color:#6F42C1">emqx_vm</span><span style="color:#24292E">:</span><span style="color:#6F42C1">schedulers</span><span style="color:#24292E">(), MFA).</span></span></code></pre>
+<p>这里调度器使用erlang的 <strong>erlang:system_info(schedulers)</strong> 跟我系统中线程数量是一致的 mac用命令可以查到 <strong>sysctl -n machdep.cpu.thread_count;</strong> 我查到是12  调度器对应逻辑CPU数量</p>
+<p>又调用了如下重载函数</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">start_link</span><span style="color:#24292E">(Pool, Type, Size, MFA) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#6A737D">    %% 新的MFA 获取当前MODULE来启动, 参数为:Pool的值是emqx_pool Type的值是random  Size是emqx_vm:schedulers() MFA对应元组{?POOL, start_link, []}</span></span>
+<span class="line"><span style="color:#6F42C1">    supervisor</span><span style="color:#24292E">:</span><span style="color:#6F42C1">start_link</span><span style="color:#24292E">(</span><span style="color:#D73A49">?</span><span style="color:#6F42C1">MODULE</span><span style="color:#24292E">, [Pool, Type, Size, MFA]).</span></span></code></pre>
+<p>初始化代码:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6A737D">%% 参数为:Pool的值是emqx_pool Type的值是random  Size是emqx_vm:schedulers() Size对应逻辑CPU数量(线程数)  MFA对应元组{?POOL, start_link, []}</span></span>
+<span class="line"><span style="color:#6F42C1">init</span><span style="color:#24292E">([Pool, Type, Size, {M, F, Args}]) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#6A737D">    %% 创建gproc_pool对象  类型为random 大小为逻辑CPU数量(线程数)</span></span>
+<span class="line"><span style="color:#6F42C1">    ensure_pool</span><span style="color:#24292E">(Pool, Type, [{</span><span style="color:#005CC5">size</span><span style="color:#24292E">, Size}]),</span></span>
+<span class="line"><span style="color:#24292E">  </span></span>
+<span class="line"><span style="color:#24292E">    {</span><span style="color:#005CC5">ok</span><span style="color:#24292E">, {{</span><span style="color:#005CC5">one_for_one</span><span style="color:#24292E">, </span><span style="color:#005CC5">10</span><span style="color:#24292E">, </span><span style="color:#005CC5">3600</span><span style="color:#24292E">}, [</span></span>
+<span class="line"><span style="color:#D73A49">        begin</span></span>
+<span class="line"><span style="color:#6F42C1">            ensure_pool_worker</span><span style="color:#24292E">(Pool, {Pool, I}, I),</span></span>
+<span class="line"><span style="color:#24292E">            {{M, I}, {M, F, [Pool, I | Args]}, </span><span style="color:#005CC5">transient</span><span style="color:#24292E">, </span><span style="color:#005CC5">5000</span><span style="color:#24292E">, </span><span style="color:#005CC5">worker</span><span style="color:#24292E">, [M]}</span></span>
+<span class="line"><span style="color:#D73A49">        end</span><span style="color:#24292E"> || I </span><span style="color:#D73A49">&#x3C;-</span><span style="color:#6F42C1"> lists</span><span style="color:#24292E">:</span><span style="color:#6F42C1">seq</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">, Size)]}}.</span></span></code></pre>
+<p>gproc 是 Erlang 的进程字典,这里是创建一个进程池</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">ensure_pool</span><span style="color:#24292E">(Pool, Type, Opts) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#6F42C1"> gproc_pool</span><span style="color:#24292E">:</span><span style="color:#6F42C1">new</span><span style="color:#24292E">(Pool, Type, Opts)</span></span>
+<span class="line"><span style="color:#D73A49">    catch</span></span>
+<span class="line"><span style="color:#005CC5">        error</span><span style="color:#24292E">:</span><span style="color:#005CC5">exists</span><span style="color:#24292E"> -> </span><span style="color:#005CC5">ok</span></span>
+<span class="line"><span style="color:#D73A49">    end</span><span style="color:#24292E">.</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6A737D">%% one_for_one如果一个子进程停止，则只重启该进程 3600秒内可重启10次</span></span>
+<span class="line"><span style="color:#24292E">{</span><span style="color:#005CC5">ok</span><span style="color:#24292E">, {{</span><span style="color:#005CC5">one_for_one</span><span style="color:#24292E">, </span><span style="color:#005CC5">10</span><span style="color:#24292E">, </span><span style="color:#005CC5">3600</span><span style="color:#24292E">}, [</span></span>
+<span class="line"><span style="color:#24292E">     {{M, I},  </span><span style="color:#6A737D">%%id </span></span>
+<span class="line"><span style="color:#24292E">      {M, F, [Pool, I | Args]}, </span><span style="color:#6A737D">%% start MFA</span></span>
+<span class="line"><span style="color:#6A737D">       %% restart 进程重启策略 Restart = permanent | transient | temporary 表示进程遇到错误之后是否重启 permanent	遇到任何错误导致进程终止就重启 ,temporary	进程永远都不重启 transient	只有进程异常终止的时候会被重启</span></span>
+<span class="line"><span style="color:#005CC5">      transient</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#6A737D">      %% 进程关闭表示采用什么手段来关闭进程 Shutdown = brutal_kill | int() >= 0 | infinity brutal_kill	立刻强制关闭进程int() >= 0	等待多少毫秒后强制关闭进程 infinity	当子进程也是监督者时使用，意思是给足够时间让子进程重启</span></span>
+<span class="line"><span style="color:#005CC5">      5000</span><span style="color:#24292E">, </span></span>
+<span class="line"><span style="color:#005CC5">      worker</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">      [M]}</span></span>
+<span class="line"><span style="color:#24292E">     ]}}.</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#24292E">#{</span><span style="color:#005CC5">id</span><span style="color:#D73A49">       =></span><span style="color:#24292E"> M,</span></span>
+<span class="line"><span style="color:#005CC5">  start</span><span style="color:#D73A49">    =></span><span style="color:#24292E"> {M, </span><span style="color:#005CC5">start_link</span><span style="color:#24292E">, []},</span></span>
+<span class="line"><span style="color:#005CC5">  restart</span><span style="color:#D73A49">  =></span><span style="color:#005CC5"> permanent</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">  shutdown</span><span style="color:#D73A49"> =></span><span style="color:#005CC5"> 5000</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">  type</span><span style="color:#D73A49">     =></span><span style="color:#005CC5"> worker</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">  modules</span><span style="color:#D73A49">  =></span><span style="color:#24292E"> [M]};</span></span></code></pre>
+<p>ensure_pool_worker将进程添加到进程池中</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">ensure_pool_worker</span><span style="color:#24292E">(Pool, Name, Slot) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#6F42C1"> gproc_pool</span><span style="color:#24292E">:</span><span style="color:#6F42C1">add_worker</span><span style="color:#24292E">(Pool, Name, Slot)</span></span>
+<span class="line"><span style="color:#D73A49">    catch</span></span>
+<span class="line"><span style="color:#005CC5">        error</span><span style="color:#24292E">:</span><span style="color:#005CC5">exists</span><span style="color:#24292E"> -> </span><span style="color:#005CC5">ok</span></span>
+<span class="line"><span style="color:#D73A49">    end</span><span style="color:#24292E">.</span></span></code></pre>
+<h2 id="33-插件钩子启动">3.3 插件钩子启动</h2>
+<p>这里对应了emqx_hooks工作进程</p>
+<p>启动代码如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">start_link</span><span style="color:#24292E">() </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#6F42C1">    gen_server</span><span style="color:#24292E">:</span><span style="color:#6F42C1">start_link</span><span style="color:#24292E">({</span><span style="color:#005CC5">local</span><span style="color:#24292E">, </span><span style="color:#D73A49">?</span><span style="color:#6F42C1">SERVER</span><span style="color:#24292E">}, </span><span style="color:#D73A49">?</span><span style="color:#6F42C1">MODULE</span><span style="color:#24292E">, [], [{</span><span style="color:#005CC5">hibernate_after</span><span style="color:#24292E">, </span><span style="color:#005CC5">1000</span><span style="color:#24292E">}]).</span></span></code></pre>
+<p>对应代码如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">init</span><span style="color:#24292E">([]) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#005CC5">    ok</span><span style="color:#D73A49"> =</span><span style="color:#6F42C1"> emqx_tables</span><span style="color:#24292E">:</span><span style="color:#6F42C1">new</span><span style="color:#24292E">(</span><span style="color:#D73A49">?</span><span style="color:#6F42C1">TAB</span><span style="color:#24292E">, [{</span><span style="color:#005CC5">keypos</span><span style="color:#24292E">, </span><span style="color:#D73A49">#</span><span style="color:#6F42C1">hook</span><span style="color:#24292E">.name}, {</span><span style="color:#005CC5">read_concurrency</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">}, </span><span style="color:#005CC5">protected</span><span style="color:#24292E">]),</span></span>
+<span class="line"><span style="color:#24292E">    {</span><span style="color:#005CC5">ok</span><span style="color:#24292E">, #{}}.</span></span></code></pre>
+<p>逻辑比较简单调用emqx_tables的new方法创建一个ets表 表名就是模块名字emqx_hooks</p>
+<p>keypos参数: 默认使用tuple中第一个元素作为Key，那么是否可以修改这个规则呢？自然可以，使用{keypos,Pos}即可，其中Pos就是表示使用tuple中第几个元素作为Key</p>
+<p>protected则表示所有的process都可以对表进行读取，但是只有创建表的process能够对表进行写操作</p>
+<p>read_concurrency</p>
+<p>性能调优。默认为false。当设置为 true时，该表针对并发读取操作进行了优化。启用此选项后，读取操作变得更便宜；特别是在具有多个物理处理器的系统上。但是，在读取和写入操作之间切换变得更加昂贵。</p>
+<p>当并发读取操作比写入操作频繁得多时，或者当并发读取和写入出现较大的读写突发（即，许多读取不会被写入中断，并且许多写入不会被读取中断）时，您通常希望启用此选项）。</p>
+<p>当常见的访问模式是一些读操作与一些重复的写操作交错时，您通常 <strong>不希望启用此选项。</strong> 在这种情况下，启用此选项会导致性能下降。</p>
+<p>这里主要关注一下ets表emqx_hooks后续插件信息都会写入到这个里面</p>
+<h2 id="34-统计进程的启动emqx_stats">3.4 统计进程的启动emqx_stats</h2>
+<p>EMQX 将指标分为了 Metrics 与 Stats 两种。Metrics 通常指那些只会单调递增的数据，例如发送字节数量、发送报文数量。EMQX 目前提供的 Metrics 覆盖了字节、报文、消息和事件四个维度。Stats 则通常指那些成对出现的数据，包括当前值和历史最大值，例如当前订阅数量和订阅历史最大数量。</p>
+<p>官网的这些监控指标我拷贝一份过来:</p>
+<h3 id="341-stats">3.4.1 Stats</h3>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>connections.count</td>
+<td>Integer</td>
+<td>当前连接数量</td>
+</tr>
+<tr>
+<td>connections.max</td>
+<td>Integer</td>
+<td>连接数量的历史最大值</td>
+</tr>
+<tr>
+<td>channels.count</td>
+<td>Integer</td>
+<td>即 <code>sessions.count</code></td>
+</tr>
+<tr>
+<td>channels.max</td>
+<td>Integer</td>
+<td>即 <code>session.max</code></td>
+</tr>
+<tr>
+<td>sessions.count</td>
+<td>Integer</td>
+<td>当前会话数量</td>
+</tr>
+<tr>
+<td>sessions.max</td>
+<td>Integer</td>
+<td>会话数量的历史最大值</td>
+</tr>
+<tr>
+<td>topics.count</td>
+<td>Integer</td>
+<td>当前主题数量</td>
+</tr>
+<tr>
+<td>topics.max</td>
+<td>Integer</td>
+<td>主题数量的历史最大值</td>
+</tr>
+<tr>
+<td>suboptions.count</td>
+<td>Integer</td>
+<td>即 <code>subscriptions.count</code></td>
+</tr>
+<tr>
+<td>suboptions.max</td>
+<td>Integer</td>
+<td>即 <code>subscriptions.max</code></td>
+</tr>
+<tr>
+<td>subscribers.count</td>
+<td>Integer</td>
+<td>当前订阅者数量</td>
+</tr>
+<tr>
+<td>subscribers.max</td>
+<td>Integer</td>
+<td>订阅者数量的历史最大值</td>
+</tr>
+<tr>
+<td>subscriptions.count</td>
+<td>Integer</td>
+<td>当前订阅数量，包含共享订阅</td>
+</tr>
+<tr>
+<td>subscriptions.max</td>
+<td>Integer</td>
+<td>订阅数量的历史最大值</td>
+</tr>
+<tr>
+<td>subscriptions.shared.count</td>
+<td>Integer</td>
+<td>当前共享订阅数量</td>
+</tr>
+<tr>
+<td>subscriptions.shared.max</td>
+<td>Integer</td>
+<td>共享订阅数量的历史最大值</td>
+</tr>
+<tr>
+<td>routes.count</td>
+<td>Integer</td>
+<td>当前路由数量</td>
+</tr>
+<tr>
+<td>routes.max</td>
+<td>Integer</td>
+<td>路由数量的历史最大值</td>
+</tr>
+<tr>
+<td>retained.count</td>
+<td>Integer</td>
+<td>当前保留消息数量</td>
+</tr>
+<tr>
+<td>retained.max</td>
+<td>Integer</td>
+<td>保留消息的历史最大值</td>
+</tr>
+</tbody>
+</table>
+<p>emqx_stats中的启动进程代码如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6A737D">%% @doc Start stats server</span></span>
+<span class="line"><span style="color:#24292E">-</span><span style="color:#D73A49">spec</span><span style="color:#24292E">(</span><span style="color:#6F42C1">start_link</span><span style="color:#24292E">() </span><span style="color:#D73A49">-></span><span style="color:#6F42C1"> startlink_ret</span><span style="color:#24292E">()).</span></span>
+<span class="line"><span style="color:#6F42C1">start_link</span><span style="color:#24292E">() </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#6A737D">  	%% 间隔时间是1秒</span></span>
+<span class="line"><span style="color:#6F42C1">    start_link</span><span style="color:#24292E">(#{</span><span style="color:#005CC5">tick_ms</span><span style="color:#D73A49"> =></span><span style="color:#6F42C1"> timer</span><span style="color:#24292E">:</span><span style="color:#6F42C1">seconds</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">)}).</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">-</span><span style="color:#D73A49">spec</span><span style="color:#24292E">(</span><span style="color:#6F42C1">start_link</span><span style="color:#24292E">(</span><span style="color:#6F42C1">opts</span><span style="color:#24292E">()) </span><span style="color:#D73A49">-></span><span style="color:#6F42C1"> startlink_ret</span><span style="color:#24292E">()).</span></span>
+<span class="line"><span style="color:#6F42C1">start_link</span><span style="color:#24292E">(Opts) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#6F42C1">    gen_server</span><span style="color:#24292E">:</span><span style="color:#6F42C1">start_link</span><span style="color:#24292E">({</span><span style="color:#005CC5">local</span><span style="color:#24292E">, </span><span style="color:#D73A49">?</span><span style="color:#6F42C1">SERVER</span><span style="color:#24292E">}, </span><span style="color:#D73A49">?</span><span style="color:#6F42C1">MODULE</span><span style="color:#24292E">, Opts, []).</span></span></code></pre>
+<p>emqx_stats中的初始化回调方法如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">init</span><span style="color:#24292E">(#{</span><span style="color:#005CC5">tick_ms</span><span style="color:#24292E"> :</span><span style="color:#D73A49">=</span><span style="color:#24292E"> TickMs}) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#005CC5">    ok</span><span style="color:#D73A49"> =</span><span style="color:#6F42C1"> emqx_tables</span><span style="color:#24292E">:</span><span style="color:#6F42C1">new</span><span style="color:#24292E">(</span><span style="color:#D73A49">?</span><span style="color:#6F42C1">TAB</span><span style="color:#24292E">, [</span><span style="color:#005CC5">public</span><span style="color:#24292E">, </span><span style="color:#005CC5">set</span><span style="color:#24292E">, {</span><span style="color:#005CC5">write_concurrency</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">}]),</span></span>
+<span class="line"><span style="color:#24292E">    Stats </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> lists</span><span style="color:#24292E">:</span><span style="color:#6F42C1">append</span><span style="color:#24292E">([</span><span style="color:#D73A49">?</span><span style="color:#6F42C1">CONNECTION_STATS</span><span style="color:#24292E">, </span><span style="color:#D73A49">?</span><span style="color:#6F42C1">SESSION_STATS</span><span style="color:#24292E">, </span><span style="color:#D73A49">?</span><span style="color:#6F42C1">PUBSUB_STATS</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#D73A49">                          ?</span><span style="color:#6F42C1">ROUTE_STATS</span><span style="color:#24292E">, </span><span style="color:#D73A49">?</span><span style="color:#6F42C1">RETAINED_STATS</span><span style="color:#24292E">]),</span></span>
+<span class="line"><span style="color:#005CC5">    true</span><span style="color:#D73A49"> =</span><span style="color:#6F42C1"> ets</span><span style="color:#24292E">:</span><span style="color:#6F42C1">insert</span><span style="color:#24292E">(</span><span style="color:#D73A49">?</span><span style="color:#6F42C1">TAB</span><span style="color:#24292E">, [{Name, </span><span style="color:#005CC5">0</span><span style="color:#24292E">} || Name </span><span style="color:#D73A49">&#x3C;-</span><span style="color:#24292E"> Stats]),</span></span>
+<span class="line"><span style="color:#24292E">    {</span><span style="color:#005CC5">ok</span><span style="color:#24292E">, </span><span style="color:#6F42C1">start_timer</span><span style="color:#24292E">(</span><span style="color:#D73A49">#</span><span style="color:#6F42C1">state</span><span style="color:#24292E">{updates </span><span style="color:#D73A49">=</span><span style="color:#24292E"> [], tick_ms </span><span style="color:#D73A49">=</span><span style="color:#24292E"> TickMs}), </span><span style="color:#005CC5">hibernate</span><span style="color:#24292E">}.</span></span></code></pre>
+<p>创建了几个表用于统计数据</p>
+<p>emqx_stats表</p>
+<p>连接信息的统计表如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>%% Connection stats</span></span>
+<span class="line"><span>-define(CONNECTION_STATS, [</span></span>
+<span class="line"><span>    'connections.count', % current connections</span></span>
+<span class="line"><span>    'connections.max'    % maximum connections connected</span></span>
+<span class="line"><span>]).</span></span></code></pre>
+<p>Session相关的统计表如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>%% Session stats</span></span>
+<span class="line"><span>-define(SESSION_STATS, [</span></span>
+<span class="line"><span>    'sessions.count',</span></span>
+<span class="line"><span>    'sessions.max',</span></span>
+<span class="line"><span>    'sessions.persistent.count',</span></span>
+<span class="line"><span>    'sessions.persistent.max'</span></span>
+<span class="line"><span>]).</span></span></code></pre>
+<p>发布订阅的相关统计如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6A737D">%% Subscribers, Subscriptions stats</span></span>
+<span class="line"><span style="color:#24292E">-</span><span style="color:#D73A49">define</span><span style="color:#24292E">(</span><span style="color:#6F42C1">PUBSUB_STATS</span><span style="color:#24292E">, [</span></span>
+<span class="line"><span style="color:#005CC5">    'topics.count'</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    'topics.max'</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    'suboptions.count'</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    'suboptions.max'</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    'subscribers.count'</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    'subscribers.max'</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    'subscriptions.count'</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    'subscriptions.max'</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    'subscriptions.shared.count'</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    'subscriptions.shared.max'</span></span>
+<span class="line"><span style="color:#24292E">]).</span></span></code></pre>
+<p>路由信息相关的统计如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#24292E">-</span><span style="color:#D73A49">define</span><span style="color:#24292E">(</span><span style="color:#6F42C1">ROUTE_STATS</span><span style="color:#24292E">, [</span></span>
+<span class="line"><span style="color:#005CC5">    'routes.count'</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    'routes.max'</span></span>
+<span class="line"><span style="color:#24292E">]).</span></span></code></pre>
+<p>保留消息的相关统计信息如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6A737D">%% Retained stats</span></span>
+<span class="line"><span style="color:#24292E">-</span><span style="color:#D73A49">define</span><span style="color:#24292E">(</span><span style="color:#6F42C1">RETAINED_STATS</span><span style="color:#24292E">, [</span></span>
+<span class="line"><span style="color:#005CC5">    'retained.count'</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    'retained.max'</span></span>
+<span class="line"><span style="color:#24292E">]).</span></span></code></pre>
+<p>emqx_stats中的启动定时器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">start_timer</span><span style="color:#24292E">(</span><span style="color:#D73A49">#</span><span style="color:#6F42C1">state</span><span style="color:#24292E">{tick_ms </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Ms} </span><span style="color:#D73A49">=</span><span style="color:#24292E"> State) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#24292E">    State</span><span style="color:#D73A49">#</span><span style="color:#6F42C1">state</span><span style="color:#24292E">{timer </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> emqx_misc</span><span style="color:#24292E">:</span><span style="color:#6F42C1">start_timer</span><span style="color:#24292E">(Ms, </span><span style="color:#005CC5">tick</span><span style="color:#24292E">)}.</span></span></code></pre>
+<p>emqx_stats中定时器回调如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">handle_info</span><span style="color:#24292E">({</span><span style="color:#005CC5">timeout</span><span style="color:#24292E">, TRef, </span><span style="color:#005CC5">tick</span><span style="color:#24292E">}, State </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> #</span><span style="color:#6F42C1">state</span><span style="color:#24292E">{timer </span><span style="color:#D73A49">=</span><span style="color:#24292E"> TRef, updates </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Updates}) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#24292E">    Updates1 </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> lists</span><span style="color:#24292E">:</span><span style="color:#6F42C1">foldl</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#D73A49">                 fun</span><span style="color:#24292E">(Update </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> #</span><span style="color:#6F42C1">update</span><span style="color:#24292E">{name </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Name, countdown </span><span style="color:#D73A49">=</span><span style="color:#24292E"> C, interval </span><span style="color:#D73A49">=</span><span style="color:#24292E"> I,</span></span>
+<span class="line"><span style="color:#24292E">                                      func </span><span style="color:#D73A49">=</span><span style="color:#24292E"> UpFun}, Acc) </span><span style="color:#D73A49">when</span><span style="color:#24292E"> C </span><span style="color:#D73A49">=&#x3C;</span><span style="color:#005CC5"> 0</span><span style="color:#24292E"> -></span></span>
+<span class="line"><span style="color:#D73A49">                         try</span><span style="color:#24292E"> UpFun()</span></span>
+<span class="line"><span style="color:#D73A49">                         catch</span></span>
+<span class="line"><span style="color:#005CC5">                             _</span><span style="color:#24292E">:Error -></span></span>
+<span class="line"><span style="color:#D73A49">                                 ?</span><span style="color:#6F42C1">LOG</span><span style="color:#24292E">(</span><span style="color:#005CC5">error</span><span style="color:#24292E">, </span><span style="color:#032F62">"update </span><span style="color:#005CC5">~s</span><span style="color:#032F62"> failed: </span><span style="color:#005CC5">~p</span><span style="color:#032F62">"</span><span style="color:#24292E">, [Name, Error])</span></span>
+<span class="line"><span style="color:#D73A49">                         end</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">                         [Update</span><span style="color:#D73A49">#</span><span style="color:#6F42C1">update</span><span style="color:#24292E">{countdown </span><span style="color:#D73A49">=</span><span style="color:#24292E"> I} | Acc];</span></span>
+<span class="line"><span style="color:#24292E">                    (Update </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> #</span><span style="color:#6F42C1">update</span><span style="color:#24292E">{countdown </span><span style="color:#D73A49">=</span><span style="color:#24292E"> C}, Acc) -></span></span>
+<span class="line"><span style="color:#24292E">                         [Update</span><span style="color:#D73A49">#</span><span style="color:#6F42C1">update</span><span style="color:#24292E">{countdown </span><span style="color:#D73A49">=</span><span style="color:#24292E"> C </span><span style="color:#D73A49">-</span><span style="color:#005CC5"> 1</span><span style="color:#24292E">} | Acc]</span></span>
+<span class="line"><span style="color:#D73A49">                 end</span><span style="color:#24292E">, [], Updates),</span></span>
+<span class="line"><span style="color:#24292E">    {</span><span style="color:#005CC5">noreply</span><span style="color:#24292E">, </span><span style="color:#6F42C1">start_timer</span><span style="color:#24292E">(State</span><span style="color:#D73A49">#</span><span style="color:#6F42C1">state</span><span style="color:#24292E">{updates </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Updates1}), </span><span style="color:#005CC5">hibernate</span><span style="color:#24292E">};</span></span></code></pre>
+<p>统计函数的回调方法:</p>
+<p>emqx_cm类型中注册的更新回调 update func</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">emqx_stats</span><span style="color:#24292E">:</span><span style="color:#6F42C1">update_interval</span><span style="color:#24292E">(</span><span style="color:#005CC5">conn_stats</span><span style="color:#24292E">, </span><span style="color:#D73A49">fun</span><span style="color:#D73A49"> ?</span><span style="color:#6F42C1">MODULE</span><span style="color:#24292E">:</span><span style="color:#005CC5">stats_fun</span><span style="color:#24292E">/</span><span style="color:#005CC5">0</span><span style="color:#24292E">),</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">stats_fun</span><span style="color:#24292E">() </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#D73A49">    case</span><span style="color:#6F42C1"> ets</span><span style="color:#24292E">:</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#D73A49">?</span><span style="color:#6F42C1">CONN_TAB</span><span style="color:#24292E">, </span><span style="color:#005CC5">size</span><span style="color:#24292E">) </span><span style="color:#D73A49">of</span></span>
+<span class="line"><span style="color:#005CC5">        undefined</span><span style="color:#24292E"> -> </span><span style="color:#005CC5">ok</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        Size -> </span><span style="color:#6F42C1">emqx_stats</span><span style="color:#24292E">:</span><span style="color:#6F42C1">setstat</span><span style="color:#24292E">(</span><span style="color:#005CC5">'connections.count'</span><span style="color:#24292E">, </span><span style="color:#005CC5">'connections.max'</span><span style="color:#24292E">, Size)</span></span>
+<span class="line"><span style="color:#D73A49">    end</span><span style="color:#24292E">.</span></span></code></pre>
+<p>emqx_stats中注册统计函数</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>%% 如Name 为conn_stats  UpFun为fun ?MODULE:stats_fun/0</span></span>
+<span class="line"><span>update_interval(Name, UpFun) -></span></span>
+<span class="line"><span>    update_interval(Name, 1, UpFun).</span></span></code></pre>
+<p>重载的方法如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>-spec(update_interval(atom(), pos_integer(), fun()) -> ok).</span></span>
+<span class="line"><span>update_interval(Name, Secs, UpFun) when is_integer(Secs), Secs >= 1 -></span></span>
+<span class="line"><span>    cast({update_interval, rec(Name, Secs, UpFun)}).</span></span></code></pre>
+<p>创建属性</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>rec(Name, Secs, UpFun) -></span></span>
+<span class="line"><span>    #update{name = Name, countdown = Secs, interval = Secs, func = UpFun}.</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>setstat(Stat, MaxStat, Val) when is_integer(Val) -></span></span>
+<span class="line"><span>    cast({setstat, Stat, MaxStat, Val}).</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>cast(Msg) -></span></span>
+<span class="line"><span>    gen_server:cast(?SERVER, Msg).</span></span></code></pre>
+<p>调用update_interval</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>cast(Msg) -></span></span>
+<span class="line"><span>    gen_server:cast(?SERVER, Msg).</span></span></code></pre>
+<p>update_interval函数</p>
+<p>这个方法的逻辑主要是把更新回调添加到state的集合updates中 方便后续定时器定期触发回调函数 (其实真正统计的业务都在那个回调函数里面 回调函数通过调用更新ets表的方法来更新统计信息的ets表 )</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>handle_cast({update_interval, Update = #update{name = Name}}, State = #state{updates = Updates}) -></span></span>
+<span class="line"><span>    case lists:keyfind(Name, #update.name, Updates) of</span></span>
+<span class="line"><span>        #update{} -></span></span>
+<span class="line"><span>            ?LOG(warning, "Duplicated update: ~s", [Name]),</span></span>
+<span class="line"><span>            {noreply, State};</span></span>
+<span class="line"><span>        false -></span></span>
+<span class="line"><span>            {noreply, State#state{updates = [Update | Updates]}}</span></span>
+<span class="line"><span>    end;</span></span></code></pre>
+<p>综上所述:</p>
+<p>emqx_stats 主要做的事情就是CRUD统计数据的ETS表 和对统计回调函数的CRUD与定期执行</p>
+<p>业务要做的事情就是 注册(添加)一个回调函数,然后实现一个统计的回调函数来将指标数据写入emqx_stats对应的ets中</p>
+<h2 id="35-emqx_metrics">3.5 emqx_metrics</h2>
+<p>EMQX 将指标分为了 Metrics 与 Stats 两种。Metrics 通常指那些只会单调递增的数据，例如发送字节数量、发送报文数量。EMQX 目前提供的 Metrics 覆盖了字节、报文、消息和事件四个维度。Stats 则通常指那些成对出现的数据，包括当前值和历史最大值，例如当前订阅数量和订阅历史最大数量。</p>
+<p>在了解详细原理之前我们先了解下官网增加了哪些配置:</p>
+<h3 id="351-metrics">3.5.1 Metrics</h3>
+<h4 id="3511-字节">3.5.1.1 字节</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bytes.received</td>
+<td>Integer</td>
+<td>接收字节数量</td>
+</tr>
+<tr>
+<td>bytes.sent</td>
+<td>Integer</td>
+<td>发送字节数量</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3512-报文">3.5.1.2 报文</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>packets.received</td>
+<td>Integer</td>
+<td>接收的报文数量</td>
+</tr>
+<tr>
+<td>packets.sent</td>
+<td>Integer</td>
+<td>发送的报文数量</td>
+</tr>
+<tr>
+<td>packets.connect.received</td>
+<td>Integer</td>
+<td>接收的 CONNECT 报文数量</td>
+</tr>
+<tr>
+<td>packets.connack.auth_error</td>
+<td>Integer</td>
+<td>发送的原因码为 0x86 和 0x87 的 CONNACK 报文数量</td>
+</tr>
+<tr>
+<td>packets.connack.error</td>
+<td>Integer</td>
+<td>发送的原因码不为 0x00 的 CONNACK 报文数量，此指标的值大于等于 <code>packets.connack.auth_error</code> 的值</td>
+</tr>
+<tr>
+<td>packets.connack.sent</td>
+<td>Integer</td>
+<td>发送的 CONNACK 报文数量</td>
+</tr>
+<tr>
+<td>packets.publish.received</td>
+<td>Integer</td>
+<td>接收的 PUBLISH 报文数量</td>
+</tr>
+<tr>
+<td>packets.publish.sent</td>
+<td>Integer</td>
+<td>发送的 PUBLISH 报文数量</td>
+</tr>
+<tr>
+<td>packets.publish.inuse</td>
+<td>Integer</td>
+<td>接收的报文标识符已被占用的 PUBLISH 报文数量</td>
+</tr>
+<tr>
+<td>packets.publish.auth_error</td>
+<td>Integer</td>
+<td>接收的未通过 ACL 检查的 PUBLISH 报文数量</td>
+</tr>
+<tr>
+<td>packets.publish.error</td>
+<td>Integer</td>
+<td>接收的无法被发布的 PUBLISH 报文数量</td>
+</tr>
+<tr>
+<td>packets.publish.dropped</td>
+<td>Integer</td>
+<td>超出接收限制而被丢弃的 PUBLISH 报文数量</td>
+</tr>
+<tr>
+<td>packets.puback.received</td>
+<td>Integer</td>
+<td>接收的 PUBACK 报文数量</td>
+</tr>
+<tr>
+<td>packets.puback.sent</td>
+<td>Integer</td>
+<td>发送的 PUBACK 报文数量</td>
+</tr>
+<tr>
+<td>packets.puback.inuse</td>
+<td>Integer</td>
+<td>接收的报文标识符已被占用的 PUBACK 报文数量</td>
+</tr>
+<tr>
+<td>packets.puback.missed</td>
+<td>Integer</td>
+<td>接收的未知报文标识符 PUBACK 报文数量</td>
+</tr>
+<tr>
+<td>packets.pubrec.received</td>
+<td>Integer</td>
+<td>接收的 PUBREC 报文数量</td>
+</tr>
+<tr>
+<td>packets.pubrec.sent</td>
+<td>Integer</td>
+<td>发送的 PUBREC 报文数量</td>
+</tr>
+<tr>
+<td>packets.pubrec.inuse</td>
+<td>Integer</td>
+<td>接收的报文标识符已被占用的 PUBREC 报文数量</td>
+</tr>
+<tr>
+<td>packets.pubrec.missed</td>
+<td>Integer</td>
+<td>接收的未知报文标识符 PUBREC 报文数量</td>
+</tr>
+<tr>
+<td>packets.pubrel.received</td>
+<td>Integer</td>
+<td>接收的 PUBREL 报文数量</td>
+</tr>
+<tr>
+<td>packets.pubrel.sent</td>
+<td>Integer</td>
+<td>发送的 PUBREL 报文数量</td>
+</tr>
+<tr>
+<td>packets.pubrel.missed</td>
+<td>Integer</td>
+<td>接收的未知报文标识符 PUBREL 报文数量</td>
+</tr>
+<tr>
+<td>packets.pubcomp.received</td>
+<td>Integer</td>
+<td>接收的 PUBCOMP 报文数量</td>
+</tr>
+<tr>
+<td>packets.pubcomp.sent</td>
+<td>Integer</td>
+<td>发送的 PUBCOMP 报文数量</td>
+</tr>
+<tr>
+<td>packets.pubcomp.inuse</td>
+<td>Integer</td>
+<td>接收的报文标识符已被占用的 PUBCOMP 报文数量</td>
+</tr>
+<tr>
+<td>packets.pubcomp.missed</td>
+<td>Integer</td>
+<td>发送的 PUBCOMP 报文数量</td>
+</tr>
+<tr>
+<td>packets.subscribe.received</td>
+<td>Integer</td>
+<td>接收的 SUBSCRIBE 报文数量</td>
+</tr>
+<tr>
+<td>packets.subscribe.error</td>
+<td>Integer</td>
+<td>接收的订阅失败的 SUBSCRIBE 报文数量</td>
+</tr>
+<tr>
+<td>packets.subscribe.auth_error</td>
+<td>Integer</td>
+<td>接收的未通过 ACL 检查的 SUBACK 报文数量</td>
+</tr>
+<tr>
+<td>packets.suback.sent</td>
+<td>Integer</td>
+<td>发送的 SUBACK 报文数量</td>
+</tr>
+<tr>
+<td>packets.unsubscribe.received</td>
+<td>Integer</td>
+<td>接收的 UNSUBSCRIBE 报文数量</td>
+</tr>
+<tr>
+<td>packets.unsubscribe.error</td>
+<td>Integer</td>
+<td>接收的取消订阅失败的 UNSUBSCRIBE 报文数量</td>
+</tr>
+<tr>
+<td>packets.unsuback.sent</td>
+<td>Integer</td>
+<td>发送的 UNSUBACK 报文数量</td>
+</tr>
+<tr>
+<td>packets.pingreq.received</td>
+<td>Integer</td>
+<td>接收的 PINGREQ 报文数量</td>
+</tr>
+<tr>
+<td>packets.pingresp.sent</td>
+<td>Integer</td>
+<td>发送的 PUBRESP 报文数量</td>
+</tr>
+<tr>
+<td>packets.disconnect.received</td>
+<td>Integer</td>
+<td>接收的 DISCONNECT 报文数量</td>
+</tr>
+<tr>
+<td>packets.disconnect.sent</td>
+<td>Integer</td>
+<td>发送的 DISCONNECT 报文数量</td>
+</tr>
+<tr>
+<td>packets.auth.received</td>
+<td>Integer</td>
+<td>接收的 AUTH 报文数量</td>
+</tr>
+<tr>
+<td>packets.auth.sent</td>
+<td>Integer</td>
+<td>发送的 AUTH 报文数量</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3513-消息-publish-报文">3.5.1.3 消息 (PUBLISH 报文)</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>delivery.dropped.too_large</td>
+<td>Integer</td>
+<td>发送时由于长度超过限制而被丢弃的消息数量</td>
+</tr>
+<tr>
+<td>delivery.dropped.queue_full</td>
+<td>Integer</td>
+<td>发送时由于消息队列满而被丢弃的 QoS 不为 0 的消息数量</td>
+</tr>
+<tr>
+<td>delivery.dropped.qos0_msg</td>
+<td>Integer</td>
+<td>发送时由于消息队列满而被丢弃的 QoS 为 0 的消息数量</td>
+</tr>
+<tr>
+<td>delivery.dropped.expired</td>
+<td>Integer</td>
+<td>发送时由于消息过期而被丢弃的消息数量</td>
+</tr>
+<tr>
+<td>delivery.dropped.no_local</td>
+<td>Integer</td>
+<td>发送时由于 <code>No Local</code> 订阅选项而被丢弃的消息数量</td>
+</tr>
+<tr>
+<td>delivery.dropped</td>
+<td>Integer</td>
+<td>发送时丢弃的消息总数</td>
+</tr>
+<tr>
+<td>messages.delayed</td>
+<td>Integer</td>
+<td>EMQX 存储的延迟发布的消息数量</td>
+</tr>
+<tr>
+<td>messages.delivered</td>
+<td>Integer</td>
+<td>EMQX 内部转发到订阅进程的消息数量</td>
+</tr>
+<tr>
+<td>messages.dropped</td>
+<td>Integer</td>
+<td>EMQX 内部转发到订阅进程前丢弃的消息总数</td>
+</tr>
+<tr>
+<td>messages.dropped.expired</td>
+<td>Integer</td>
+<td>接收时由于消息过期而被丢弃的消息数量</td>
+</tr>
+<tr>
+<td>messages.dropped.no_subscribers</td>
+<td>Integer</td>
+<td>由于没有订阅者而被丢弃的消息数量</td>
+</tr>
+<tr>
+<td>messages.forward</td>
+<td>Integer</td>
+<td>向其他节点转发的消息数量</td>
+</tr>
+<tr>
+<td>messages.publish</td>
+<td>Integer</td>
+<td>除系统消息外发布的消息数量</td>
+</tr>
+<tr>
+<td>messages.qos0.received</td>
+<td>Integer</td>
+<td>接收来自客户端的 QoS 0 消息数量</td>
+</tr>
+<tr>
+<td>messages.qos2.received</td>
+<td>Integer</td>
+<td>接收来自客户端的 QoS 1 消息数量</td>
+</tr>
+<tr>
+<td>messages.qos1.received</td>
+<td>Integer</td>
+<td>接收来自客户端的 QoS 2 消息数量</td>
+</tr>
+<tr>
+<td>messages.qos0.sent</td>
+<td>Integer</td>
+<td>发送给客户端的 QoS 0 消息数量</td>
+</tr>
+<tr>
+<td>messages.qos1.sent</td>
+<td>Integer</td>
+<td>发送给客户端的 QoS 1 消息数量</td>
+</tr>
+<tr>
+<td>messages.qos2.sent</td>
+<td>Integer</td>
+<td>发送给客户端的 QoS 2 消息数量</td>
+</tr>
+<tr>
+<td>messages.received</td>
+<td>Integer</td>
+<td>接收来自客户端的消息数量，等于 <code>messages.qos0.received</code>，<code>messages.qos1.received</code> 与 <code>messages.qos2.received</code> 之和</td>
+</tr>
+<tr>
+<td>messages.sent</td>
+<td>Integer</td>
+<td>发送给客户端的消息数量，等于 <code>messages.qos0.sent</code>，<code>messages.qos1.sent</code> 与 <code>messages.qos2.sent</code> 之和</td>
+</tr>
+<tr>
+<td>messages.retained</td>
+<td>Integer</td>
+<td>EMQX 存储的保留消息数量</td>
+</tr>
+<tr>
+<td>messages.acked</td>
+<td>Integer</td>
+<td>已经应答的消息数量</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3514-事件">3.5.1.4 事件</h4>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>actions.success</td>
+<td>Integer</td>
+<td>规则引擎 action 执行成功次数</td>
+</tr>
+<tr>
+<td>actions.error</td>
+<td>Integer</td>
+<td>规则引擎 action 执行失败次数</td>
+</tr>
+<tr>
+<td>actions.exception</td>
+<td>Integer</td>
+<td>规则引擎 action 运行异常次数</td>
+</tr>
+<tr>
+<td>rules.matched</td>
+<td>Integer</td>
+<td>规则的匹配次数</td>
+</tr>
+<tr>
+<td>client.auth.anonymous</td>
+<td>Integer</td>
+<td>客户端最终匿名形式登录的次数</td>
+</tr>
+<tr>
+<td>client.connect</td>
+<td>Integer</td>
+<td><code>client.connect</code> 钩子触发次数</td>
+</tr>
+<tr>
+<td>client.authenticate</td>
+<td>Integer</td>
+<td><code>client.authenticate</code> 钩子触发次数</td>
+</tr>
+<tr>
+<td>client.connack</td>
+<td>Integer</td>
+<td><code>client.connack</code> 钩子触发次数</td>
+</tr>
+<tr>
+<td>client.connected</td>
+<td>Integer</td>
+<td><code>client.connected</code> 钩子触发次数</td>
+</tr>
+<tr>
+<td>client.disconnected</td>
+<td>Integer</td>
+<td><code>client.disconnected</code> 钩子触发次数</td>
+</tr>
+<tr>
+<td>client.check_acl</td>
+<td>Integer</td>
+<td><code>client.check_acl</code> 钩子触发次数</td>
+</tr>
+<tr>
+<td>client.subscribe</td>
+<td>Integer</td>
+<td><code>client.subscribe</code> 钩子触发次数</td>
+</tr>
+<tr>
+<td>client.unsubscribe</td>
+<td>Integer</td>
+<td><code>client.unsubscribe</code> 钩子触发次数</td>
+</tr>
+<tr>
+<td>client.auth.success</td>
+<td>Integer</td>
+<td>客户端认证成功次数，至少启用一个认证插件后可用</td>
+</tr>
+<tr>
+<td>client.auth.failure</td>
+<td>Integer</td>
+<td>客户端认证失败次数，至少启用一个认证插件后可用</td>
+</tr>
+<tr>
+<td>client.auth.ignore</td>
+<td>Integer</td>
+<td>认证忽略次数，至少启用一个认证插件后可用，同时启用多个认证插件时，一次登录事件可能触发多次 ignore 计数，所有认证插件都 ignore 后，客户端可能以匿名方式成功登录</td>
+</tr>
+<tr>
+<td>client.acl.allow</td>
+<td>Integer</td>
+<td>客户端 ACL 校验通过次数，至少启用一个 ACL 插件后可用</td>
+</tr>
+<tr>
+<td>client.acl.deny</td>
+<td>Integer</td>
+<td>客户端 ACL 校验失败次数，至少启用一个 ACL 插件后可用</td>
+</tr>
+<tr>
+<td>client.acl.ignore</td>
+<td>Integer</td>
+<td>ACL 校验忽略次数，至少启用一个 ACL 插件后可用，同时启用多个 ACL 插件时，一次发布/订阅事件可能触发多次 ignore 计数，所有 ACL插件都 ignore 后，发布/订阅操作可能因 acl_nomatch = true 成功</td>
+</tr>
+<tr>
+<td>session.created</td>
+<td>Integer</td>
+<td><code>session.created</code> 钩子触发次数</td>
+</tr>
+<tr>
+<td>session.discarded</td>
+<td>Integer</td>
+<td><code>session.discarded</code> 钩子触发次数</td>
+</tr>
+<tr>
+<td>session.resumed</td>
+<td>Integer</td>
+<td><code>session.resumed</code> 钩子触发次数</td>
+</tr>
+<tr>
+<td>session.takeovered</td>
+<td>Integer</td>
+<td><code>session.takeovered</code> 钩子触发次数</td>
+</tr>
+<tr>
+<td>session.terminated</td>
+<td>Integer</td>
+<td><code>session.terminated</code> 钩子触发次数</td>
+</tr>
+</tbody>
+</table>
+<p>那我们来看这个emqx_metrics</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#24292E">-</span><span style="color:#D73A49">spec</span><span style="color:#24292E">(</span><span style="color:#6F42C1">start_link</span><span style="color:#24292E">() </span><span style="color:#D73A49">-></span><span style="color:#6F42C1"> startlink_ret</span><span style="color:#24292E">()).</span></span>
+<span class="line"><span style="color:#6F42C1">start_link</span><span style="color:#24292E">() </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#6F42C1">    gen_server</span><span style="color:#24292E">:</span><span style="color:#6F42C1">start_link</span><span style="color:#24292E">({</span><span style="color:#005CC5">local</span><span style="color:#24292E">, </span><span style="color:#D73A49">?</span><span style="color:#6F42C1">SERVER</span><span style="color:#24292E">}, </span><span style="color:#D73A49">?</span><span style="color:#6F42C1">MODULE</span><span style="color:#24292E">, [], []).</span></span></code></pre>
+<p>初始化回调方法如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">init</span><span style="color:#24292E">([]) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#6A737D">    %% Create counters array</span></span>
+<span class="line"><span style="color:#6A737D">   %% 创建一个新的Size 1024 计数器数组。数组中的所有计数器最初都设置为零</span></span>
+<span class="line"><span style="color:#24292E">    CRef </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> counters</span><span style="color:#24292E">:</span><span style="color:#6F42C1">new</span><span style="color:#24292E">(</span><span style="color:#D73A49">?</span><span style="color:#6F42C1">MAX_SIZE</span><span style="color:#24292E">, [</span><span style="color:#005CC5">write_concurrency</span><span style="color:#24292E">]),</span></span>
+<span class="line"><span style="color:#6A737D">   %% 将值Value存储为持久项并将其与键Key相关联。</span></span>
+<span class="line"><span style="color:#005CC5">    ok</span><span style="color:#D73A49"> =</span><span style="color:#6F42C1"> persistent_term</span><span style="color:#24292E">:</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(</span><span style="color:#D73A49">?</span><span style="color:#6F42C1">MODULE</span><span style="color:#24292E">, CRef),</span></span>
+<span class="line"><span style="color:#6A737D">    % Create index mapping table ets表emqx_metrics创建</span></span>
+<span class="line"><span style="color:#005CC5">    ok</span><span style="color:#D73A49"> =</span><span style="color:#6F42C1"> emqx_tables</span><span style="color:#24292E">:</span><span style="color:#6F42C1">new</span><span style="color:#24292E">(</span><span style="color:#D73A49">?</span><span style="color:#6F42C1">TAB</span><span style="color:#24292E">, [</span><span style="color:#005CC5">protected</span><span style="color:#24292E">, {</span><span style="color:#005CC5">keypos</span><span style="color:#24292E">, </span><span style="color:#005CC5">2</span><span style="color:#24292E">}, {</span><span style="color:#005CC5">read_concurrency</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">}]),</span></span>
+<span class="line"><span style="color:#6A737D">    % Store reserved indices 存储所有的指标到ets 和counters中</span></span>
+<span class="line"><span style="color:#6F42C1">    lists</span><span style="color:#24292E">:</span><span style="color:#6F42C1">foreach</span><span style="color:#24292E">(</span><span style="color:#D73A49">fun</span><span style="color:#24292E">({Type, Name}) -></span></span>
+<span class="line"><span style="color:#24292E">                          Idx </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> reserved_idx</span><span style="color:#24292E">(Name),</span></span>
+<span class="line"><span style="color:#24292E">                          Metric </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> #</span><span style="color:#6F42C1">metric</span><span style="color:#24292E">{name </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Name, type </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Type, idx </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Idx},</span></span>
+<span class="line"><span style="color:#005CC5">                          true</span><span style="color:#D73A49"> =</span><span style="color:#6F42C1"> ets</span><span style="color:#24292E">:</span><span style="color:#6F42C1">insert</span><span style="color:#24292E">(</span><span style="color:#D73A49">?</span><span style="color:#6F42C1">TAB</span><span style="color:#24292E">, Metric),</span></span>
+<span class="line"><span style="color:#005CC5">                          ok</span><span style="color:#D73A49"> =</span><span style="color:#6F42C1"> counters</span><span style="color:#24292E">:</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(CRef, Idx, </span><span style="color:#005CC5">0</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">                  end</span><span style="color:#24292E">,</span><span style="color:#D73A49">?</span><span style="color:#6F42C1">BYTES_METRICS</span><span style="color:#D73A49"> ++</span><span style="color:#D73A49"> ?</span><span style="color:#6F42C1">PACKET_METRICS</span><span style="color:#D73A49"> ++</span><span style="color:#D73A49"> ?</span><span style="color:#6F42C1">MESSAGE_METRICS</span><span style="color:#D73A49"> ++</span><span style="color:#D73A49"> ?</span><span style="color:#6F42C1">MQTT_METRICS</span><span style="color:#24292E">),</span></span>
+<span class="line"><span style="color:#24292E">    {</span><span style="color:#005CC5">ok</span><span style="color:#24292E">, </span><span style="color:#D73A49">#</span><span style="color:#6F42C1">state</span><span style="color:#24292E">{next_idx </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> ?</span><span style="color:#6F42C1">RESERVED_IDX</span><span style="color:#D73A49"> +</span><span style="color:#005CC5"> 1</span><span style="color:#24292E">}, </span><span style="color:#005CC5">hibernate</span><span style="color:#24292E">}.</span></span></code></pre>
+<p><strong>写并发</strong></p>
+<p>这是一种优化，以实现非常高效的并发 <strong><a href="https://www.erlang.org/doc/man/counters.html#add-3">添加</a></strong> 和 <strong><a href="https://www.erlang.org/doc/man/counters.html#sub-3">子</a></strong> 操作，但代价是潜在的读取不一致和每个计数器的内存消耗。</p>
+<p>读取操作可能会看到关于并发写入操作的顺序不一致的结果。即使写操作 A 在写操作 B 之前按顺序完成，并发读取器可能会看到 A 和 B 的任意组合，仅包括 B。读操作只能保证在读取之前看到所有按顺序完成的写操作。没有写入会丢失，但最终都会被看到。</p>
+<p>write_concurrency的典型用例是对相同计数器的 <strong><a href="https://www.erlang.org/doc/man/counters.html#add-3">add</a></strong> 和 <strong><a href="https://www.erlang.org/doc/man/counters.html#sub-3">sub</a></strong> 并发调用非常频繁，而 <strong><a href="https://www.erlang.org/doc/man/counters.html#get-2">get </a></strong> 和 <strong><a href="https://www.erlang.org/doc/man/counters.html#put-3">put</a></strong> 调用的频率则低得多。缺乏绝对读取一致性也必须是可以接受的。</p>
+<h2 id="36-emqx_ctl">3.6 emqx_ctl</h2>
+<p>命令行关于使用文档可以看这里</p>
+<p><a href="https://www.emqx.io/docs/zh/v3.0/guide.html#%E8%BF%BD%E8%B8%AA">https://www.emqx.io/docs/zh/v3.0/guide.html#%E8%BF%BD%E8%B8%AA</a></p>
+<p>这个命令emqx_ctl命令在测试时候是非常有用的,如果我们发现一个设备有问题我们就可以追踪他的MQTT协议的请求日志来分析问题</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">start_link</span><span style="color:#24292E">() </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#6F42C1">    gen_server</span><span style="color:#24292E">:</span><span style="color:#6F42C1">start_link</span><span style="color:#24292E">({</span><span style="color:#005CC5">local</span><span style="color:#24292E">, </span><span style="color:#D73A49">?</span><span style="color:#6F42C1">SERVER</span><span style="color:#24292E">}, </span><span style="color:#D73A49">?</span><span style="color:#6F42C1">MODULE</span><span style="color:#24292E">, [], []).</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">init</span><span style="color:#24292E">([]) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#005CC5">    ok</span><span style="color:#D73A49"> =</span><span style="color:#6F42C1"> emqx_tables</span><span style="color:#24292E">:</span><span style="color:#6F42C1">new</span><span style="color:#24292E">(</span><span style="color:#D73A49">?</span><span style="color:#6F42C1">TAB</span><span style="color:#24292E">, [</span><span style="color:#005CC5">protected</span><span style="color:#24292E">, </span><span style="color:#005CC5">ordered_set</span><span style="color:#24292E">]),</span></span>
+<span class="line"><span style="color:#24292E">    {</span><span style="color:#005CC5">ok</span><span style="color:#24292E">, </span><span style="color:#D73A49">#</span><span style="color:#6F42C1">state</span><span style="color:#24292E">{seq </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">}}.</span></span></code></pre>
+<h2 id="37-emqx_zone">3.7 emqx_zone</h2>
+<p>Zone
+一个 Zone 定义了一组配置项 (比如最大连接数等)，Listener 可以通过配置项 listener.<protocol>.<listener name="">.zone 指定使用某个 Zone，以使用该 Zone 下的所有配置。多个 Listener 可以共享同一个 Zone。Zone 的命名规则为 zone.<zone name="">.xxx，Zone Name 可以随意命名，但同样建议是全小写的英文单词，xxx 是具体的配置项，你可以在 配置项 中查看 Zone 支持的所有配置项。</zone></listener></protocol></p>
+<p>此时，我们的每个配置项都存在三个可用值，分别是全局的值，Zone 里设置的值以及默认值，它们的优先级顺序为：Zone > Global > Default。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#24292E">-</span><span style="color:#D73A49">spec</span><span style="color:#24292E">(</span><span style="color:#6F42C1">start_link</span><span style="color:#24292E">() </span><span style="color:#D73A49">-></span><span style="color:#6F42C1"> startlink_ret</span><span style="color:#24292E">()).</span></span>
+<span class="line"><span style="color:#6F42C1">start_link</span><span style="color:#24292E">() </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#6F42C1">    gen_server</span><span style="color:#24292E">:</span><span style="color:#6F42C1">start_link</span><span style="color:#24292E">({</span><span style="color:#005CC5">local</span><span style="color:#24292E">, </span><span style="color:#D73A49">?</span><span style="color:#6F42C1">SERVER</span><span style="color:#24292E">}, </span><span style="color:#D73A49">?</span><span style="color:#6F42C1">MODULE</span><span style="color:#24292E">, [], []).</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">init</span><span style="color:#24292E">([]) </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#005CC5">    _</span><span style="color:#D73A49"> =</span><span style="color:#6F42C1"> do_reload</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">    {</span><span style="color:#005CC5">ok</span><span style="color:#24292E">, </span><span style="color:#D73A49">#</span><span style="color:#6F42C1">state</span><span style="color:#24292E">{}}.</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="erlang"><code><span class="line"><span style="color:#6F42C1">do_reload</span><span style="color:#24292E">() </span><span style="color:#D73A49">-></span></span>
+<span class="line"><span style="color:#6A737D">  %%Zone配置加载</span></span>
+<span class="line"><span style="color:#24292E">    [ </span><span style="color:#6F42C1">persistent_term</span><span style="color:#24292E">:</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(</span><span style="color:#D73A49">?</span><span style="color:#6F42C1">KEY</span><span style="color:#24292E">(Zone, Key), Val)</span></span>
+<span class="line"><span style="color:#24292E">      || {Zone, Opts} </span><span style="color:#D73A49">&#x3C;-</span><span style="color:#6F42C1"> emqx_config</span><span style="color:#24292E">:</span><span style="color:#6F42C1">get_env</span><span style="color:#24292E">(</span><span style="color:#005CC5">zones</span><span style="color:#24292E">, []), {Key, Val} </span><span style="color:#D73A49">&#x3C;-</span><span style="color:#24292E"> Opts ].</span></span></code></pre>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

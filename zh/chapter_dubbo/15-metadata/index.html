@@ -1,0 +1,846 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**Dubbo的三大中心之元数据中心源码解析** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_dubbo/15-metadata/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_dubbo/15-metadata"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_dubbo/15-metadata/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_dubbo/15-metadata"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**Dubbo的三大中心之元数据中心源码解析** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_dubbo/15-metadata/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_dubbo/15-metadata/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>dubbo</h3> <ul> <li> <a href="/zh/chapter_dubbo/1-learn-from-a-demo" class="lv0" title="**从一个服务提供者的Demo说起**"> **从一个服务提供者的Demo说起** </a> </li><li> <a href="/zh/chapter_dubbo/2-serviceconfig-config" class="lv0" title="**启动服务前服务配置ServiceConfig类型是如何初始化的?**"> **启动服务前服务配置ServiceConfig类型是如何初始化的?** </a> </li><li> <a href="/zh/chapter_dubbo/3-model-init" class="lv0" title="**框架,应用程序,模块领域模型Model对象的初始化**"> **框架,应用程序,模块领域模型Model对象的初始化** </a> </li><li> <a href="/zh/chapter_dubbo/4-extension-init" class="lv0" title="**Dubbo的扩展机制**"> **Dubbo的扩展机制** </a> </li><li> <a href="/zh/chapter_dubbo/5-getadaptiveextension" class="lv0" title="5-getadaptiveextension"> 5-getadaptiveextension </a> </li><li> <a href="/zh/chapter_dubbo/6-extension-wrapper" class="lv0" title="**Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析**"> **Dubbo的SPI扩展机制之普通扩展对象的创建与Wrapper机制的源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/7-extension-activate" class="lv0" title="**Dubbo的SPI扩展机制之自动激活扩展Activate源码解析**"> **Dubbo的SPI扩展机制之自动激活扩展Activate源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/8-dubbobootstrap" class="lv0" title="**Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化**"> **Dubbo启动器DubboBootstrap借助双重校验锁的单例模式进行对象的初始化** </a> </li><li> <a href="/zh/chapter_dubbo/9-application-config" class="lv0" title="**Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig**"> **Dubbo启动器DubboBootstrap添加应用程序的配置信息ApplicationConfig** </a> </li><li> <a href="/zh/chapter_dubbo/10-registryconfig" class="lv0" title="**Dubbo启动器DubboBootstrap添加注册中心配置信息RegistryConfig**"> **Dubbo启动器DubboBootstrap添加注册中心配置信息RegistryConfig** </a> </li><li> <a href="/zh/chapter_dubbo/11-protocolconfig" class="lv0" title="**Dubbo启动器DubboBootstrap添加协议配置信息ProtocolConfig**"> **Dubbo启动器DubboBootstrap添加协议配置信息ProtocolConfig** </a> </li><li> <a href="/zh/chapter_dubbo/12-start-life-cycle" class="lv0" title="**全局视野来看Dubbo3的服务启动生命周期**"> **全局视野来看Dubbo3的服务启动生命周期** </a> </li><li> <a href="/zh/chapter_dubbo/13-configcenter" class="lv0" title="**Dubbo的三大中心之配置中心**"> **Dubbo的三大中心之配置中心** </a> </li><li> <a href="/zh/chapter_dubbo/14-config-load" class="lv0" title="**Dubbo配置加载全解析**"> **Dubbo配置加载全解析** </a> </li><li> <a href="/zh/chapter_dubbo/15-metadata" class="lv0" aria-current="page" title="**Dubbo的三大中心之元数据中心源码解析**"> **Dubbo的三大中心之元数据中心源码解析** </a> </li><li> <a href="/zh/chapter_dubbo/16-moduledeployer" class="lv0" title="**模块发布器发布服务全过程**"> **模块发布器发布服务全过程** </a> </li><li> <a href="/zh/chapter_dubbo/17-provider-register" class="lv0" title="**Dubbo服务提供者的双注册原理**"> **Dubbo服务提供者的双注册原理** </a> </li><li> <a href="/zh/chapter_dubbo/18-metadataService-export" class="lv0" title="**Dubbo3元数据服务MetadataService的导出**"> **Dubbo3元数据服务MetadataService的导出** </a> </li><li> <a href="/zh/chapter_dubbo/19-consuemr-demo" class="lv0" title="**重新来过从一个服务消费者的Demo说起**"> **重新来过从一个服务消费者的Demo说起** </a> </li><li> <a href="/zh/chapter_dubbo/20-reference-config" class="lv0" title="**Dubbo3服务引用配置ReferenceConfig**"> **Dubbo3服务引用配置ReferenceConfig** </a> </li><li> <a href="/zh/chapter_dubbo/21-refer-services" class="lv0" title="**Dubbo3消费者引用服务入口**"> **Dubbo3消费者引用服务入口** </a> </li><li> <a href="/zh/chapter_dubbo/22-migration-invoker" class="lv0" title="**Dubbo3消费者自动感应决策应用级服务发现原理**"> **Dubbo3消费者自动感应决策应用级服务发现原理** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_dubbo">dubbo</a><span class="sep">/</span><span>**Dubbo的三大中心之元数据中心源码解析**</span> </nav> <div class="prose">  <h1 id="dubbo的三大中心之元数据中心源码解析"><strong>Dubbo的三大中心之元数据中心源码解析</strong></h1>
+<h2 id="简介"><strong>简介</strong></h2>
+<p>关于元数据中心的概念对于大部分用户来说是比较陌生的,配置中心的话我们还好理解,对于元数据中心是什么,我们来看下我从官网拷贝过来的一段文字:</p>
+<p>元数据中心在2.7.x版本开始支持，随着应用级别的服务注册和服务发现在Dubbo中落地，<strong>元数据中心也变的越来越重要</strong> 。在以下几种情况下会需要部署元数据中心：</p>
+<ul>
+<li>对于一个原先采用老版本Dubbo搭建的应用服务，在迁移到Dubbo 3时，Dubbo 3 会需要一个 <strong>元数据中心来维护RPC服务与应用的映射关系（即接口与应用的映射关系）</strong> ，因为如果采用了 <strong>应用级别的服务发现和服务注册</strong> ，在注册中心中将<strong>采用“应用 —— 实例列表”结构 ** 的数据组织形式，</strong> 不再是以往的“接口 —— 实例列表”结构的数据组织形式** ，而以往用接口级别的服务注册和服务发现的应用服务在 <strong>迁移到应用级别</strong> 时，<strong>得不到接口与应用之间的对应关系</strong> ，从而无法从注册中心得到实例列表信息，所以 <strong>Dubbo为了兼容这种场景，在Provider端启动时，会往元数据中心存储接口与应用的映射关系</strong> 。</li>
+<li>为了让 <strong>注册中心更加聚焦与地址的发现和推送能力</strong> ，<strong>减轻注册中心的负担</strong> ，元数据中心承载了所有的服务元数据、大量接口/方法级别配置信息等，无论是接口粒度还是应用粒度的服务发现和注册，元数据中心都起到了重要的作用。</li>
+<li></li>
+</ul>
+<p>如果有以上两种需求，都可以选择部署元数据中心，并通过Dubbo的配置来集成该元数据中心。</p>
+<p><strong>元数据中心并不依赖于注册中心和配置中心</strong> ，用户可以自由选择是否集成和部署元数据中心，如下图所示：</p>
+<p><img src="/img/chapter_dubbo/15-config.png" alt="15-config.png"></p>
+<p>该图中不配备配置中心，意味着可以不需要全局管理配置的能力。该图中不配备注册中心，意味着可能采用了Dubbo mesh的方案，也可能不需要进行服务注册，仅仅接收直连模式的服务调用。
+官网参考文章地址:</p>
+<ul>
+<li><a href="https://dubbo.apache.org/zh/docs/v3.0/concepts/registry-configcenter-metadata/">部署架构（注册中心 配置中心 元数据中心</a></li>
+<li><a href="https://dubbo.apache.org/zh/docs/references/metadata/">元数据参考手册</a></li>
+</ul>
+<p>综上所述可以用几句话概括下:</p>
+<ul>
+<li>元数据中心来维护RPC服务与应用的映射关系（即接口与应用的映射关系）来兼容接口与应用之间的对应关系</li>
+<li>让注册中心更加聚焦与地址的发现和推送能力</li>
+</ul>
+<p>注册中心的启动是在DefaultApplicationDeployer中的初始化方法 initialize() 中:如下所示</p>
+<p>这里只看下 startMetadataCenter();方法即可</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> initialize</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (initialized) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        // Ensure that the initialization is completed when concurrent calls</span></span>
+<span class="line"><span style="color:#D73A49">        synchronized</span><span style="color:#24292E"> (startLock) {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (initialized) {</span></span>
+<span class="line"><span style="color:#D73A49">                return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">            // register shutdown hook</span></span>
+<span class="line"><span style="color:#6F42C1">            registerShutdownHook</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">            startConfigCenter</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">            loadApplicationConfigs</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">            initModuleDeployers</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            // @since 2.7.8</span></span>
+<span class="line"><span style="color:#6F42C1">            startMetadataCenter</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">            initialized </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> true</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (logger.</span><span style="color:#6F42C1">isInfoEnabled</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getIdentifier</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " has been initialized!"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span></code></pre>
+<h2 id="深入探究元数据中心的启动过程"><strong>深入探究元数据中心的启动过程</strong></h2>
+<h3 id="启动元数据中心的代码全貌"><strong>启动元数据中心的代码全貌</strong></h3>
+<p>关于元数据中心我们看下 startMetadataCenter()方法来大致了解下整个流程</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> startMetadataCenter</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">		//如果未配置元数据中心的地址等配置则使用注册中心的地址等配置做为元数据中心的配置</span></span>
+<span class="line"><span style="color:#6F42C1">        useRegistryAsMetadataCenterIfNecessary</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">		//获取应用的配置信息</span></span>
+<span class="line"><span style="color:#24292E">        ApplicationConfig applicationConfig </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getApplication</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">		//元数据配置类型 元数据类型， local 或 remote,，如果选择远程，则需要进一步指定元数据中心</span></span>
+<span class="line"><span style="color:#24292E">        String metadataType </span><span style="color:#D73A49">=</span><span style="color:#24292E"> applicationConfig.</span><span style="color:#6F42C1">getMetadataType</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        // FIXME, multiple metadata config support.</span></span>
+<span class="line"><span style="color:#6A737D">        //查询元数据中心的地址等配置</span></span>
+<span class="line"><span style="color:#24292E">        Collection&#x3C;</span><span style="color:#D73A49">MetadataReportConfig</span><span style="color:#24292E">> metadataReportConfigs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> configManager.</span><span style="color:#6F42C1">getMetadataConfigs</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (CollectionUtils.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">(metadataReportConfigs)) {</span></span>
+<span class="line"><span style="color:#6A737D">        //这个就是判断 如果选择远程，则需要进一步指定元数据中心 否则就抛出来异常</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (REMOTE_METADATA_STORAGE_TYPE.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(metadataType)) {</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(</span><span style="color:#032F62">"No MetadataConfig found, Metadata Center address is required when 'metadata=remote' is enabled."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">		//MetadataReport实例的存储库对象获取</span></span>
+<span class="line"><span style="color:#24292E">        MetadataReportInstance metadataReportInstance </span><span style="color:#D73A49">=</span><span style="color:#24292E"> applicationModel.</span><span style="color:#6F42C1">getBeanFactory</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getBean</span><span style="color:#24292E">(MetadataReportInstance.class);</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">MetadataReportConfig</span><span style="color:#24292E">> validMetadataReportConfigs </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>(metadataReportConfigs.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (MetadataReportConfig metadataReportConfig </span><span style="color:#D73A49">:</span><span style="color:#24292E"> metadataReportConfigs) {</span></span>
+<span class="line"><span style="color:#24292E">            ConfigValidationUtils.</span><span style="color:#6F42C1">validateMetadataConfig</span><span style="color:#24292E">(metadataReportConfig);</span></span>
+<span class="line"><span style="color:#24292E">            validMetadataReportConfigs.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(metadataReportConfig);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //初始化元数据</span></span>
+<span class="line"><span style="color:#24292E">        metadataReportInstance.</span><span style="color:#6F42C1">init</span><span style="color:#24292E">(validMetadataReportConfigs);</span></span>
+<span class="line"><span style="color:#6A737D">        //MetadataReport实例的存储库对象初始化失败则抛出异常</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">metadataReportInstance.</span><span style="color:#6F42C1">inited</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(String.</span><span style="color:#6F42C1">format</span><span style="color:#24292E">(</span><span style="color:#032F62">"%s MetadataConfigs found, but none of them is valid."</span><span style="color:#24292E">, metadataReportConfigs.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<h3 id="元数据中心未配置则使用注册中心配置"><strong>元数据中心未配置则使用注册中心配置</strong></h3>
+<p>前面在说配置中心的时候有说过配置中心如果未配置会使用注册中心的地址等信息作为默认配置,这里元数据做了类似的操作:如代码:
+DefaultApplicationDeployer类型的 useRegistryAsMetadataCenterIfNecessary()方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> useRegistryAsMetadataCenterIfNecessary</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">		//配置缓存中查询元数据配置</span></span>
+<span class="line"><span style="color:#24292E">        Collection&#x3C;</span><span style="color:#D73A49">MetadataReportConfig</span><span style="color:#24292E">> metadataConfigs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> configManager.</span><span style="color:#6F42C1">getMetadataConfigs</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">		//配置存在则直接返回</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (CollectionUtils.</span><span style="color:#6F42C1">isNotEmpty</span><span style="color:#24292E">(metadataConfigs)) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">		////查询是否有注册中心设置了默认配置isDefault 设置为true的注册中心则为默认注册中心列表,如果没有注册中心设置为默认注册中心,则获取所有未设置默认配置的注册中心列表</span></span>
+<span class="line"><span style="color:#24292E">        List&#x3C;</span><span style="color:#D73A49">RegistryConfig</span><span style="color:#24292E">> defaultRegistries </span><span style="color:#D73A49">=</span><span style="color:#24292E"> configManager.</span><span style="color:#6F42C1">getDefaultRegistries</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (defaultRegistries.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        //多注册中心遍历</span></span>
+<span class="line"><span style="color:#24292E">            defaultRegistries</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">stream</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#6A737D">                //筛选符合条件的注册中心 (筛选逻辑就是查看是否有对应协议的扩展支持)</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">filter</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#D73A49">::</span><span style="color:#24292E">isUsedRegistryAsMetadataCenter)</span></span>
+<span class="line"><span style="color:#6A737D">                //注册中心配置映射为元数据中心  映射就是获取需要的配置</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">map</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#D73A49">::</span><span style="color:#24292E">registryAsMetadataCenter)</span></span>
+<span class="line"><span style="color:#6A737D">                //将元数据中心配置存储在配置缓存中方便后续使用</span></span>
+<span class="line"><span style="color:#24292E">                .</span><span style="color:#6F42C1">forEach</span><span style="color:#24292E">(metadataReportConfig </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">              </span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (metadataReportConfig.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                        Collection&#x3C;</span><span style="color:#D73A49">MetadataReportConfig</span><span style="color:#24292E">> metadataReportConfigs </span><span style="color:#D73A49">=</span><span style="color:#24292E"> configManager.</span><span style="color:#6F42C1">getMetadataConfigs</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> (CollectionUtils.</span><span style="color:#6F42C1">isNotEmpty</span><span style="color:#24292E">(metadataReportConfigs)) {</span></span>
+<span class="line"><span style="color:#D73A49">                            for</span><span style="color:#24292E"> (MetadataReportConfig existedConfig </span><span style="color:#D73A49">:</span><span style="color:#24292E"> metadataReportConfigs) {</span></span>
+<span class="line"><span style="color:#D73A49">                                if</span><span style="color:#24292E"> (existedConfig.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> existedConfig.</span><span style="color:#6F42C1">getAddress</span><span style="color:#24292E">().</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(metadataReportConfig.</span><span style="color:#6F42C1">getAddress</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#D73A49">                                    return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                                }</span></span>
+<span class="line"><span style="color:#24292E">                            }</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                        configManager.</span><span style="color:#6F42C1">addMetadataReport</span><span style="color:#24292E">(metadataReportConfig);</span></span>
+<span class="line"><span style="color:#24292E">                    } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                        Optional&#x3C;</span><span style="color:#D73A49">MetadataReportConfig</span><span style="color:#24292E">> configOptional </span><span style="color:#D73A49">=</span><span style="color:#24292E"> configManager.</span><span style="color:#6F42C1">getConfig</span><span style="color:#24292E">(MetadataReportConfig.class, metadataReportConfig.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> (configOptional.</span><span style="color:#6F42C1">isPresent</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                        configManager.</span><span style="color:#6F42C1">addMetadataReport</span><span style="color:#24292E">(metadataReportConfig);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                    logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"use registry as metadata-center: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> metadataReportConfig);</span></span>
+<span class="line"><span style="color:#24292E">                });</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>这个代码有些细节就不细说了 我们概括下顺序梳理下思路:</p>
+<ul>
+<li>配置缓存中查询元数据配置,配置存在则直接返回</li>
+<li>查询所有可用的默认注册中心列表
+<ul>
+<li>多注册中心遍历</li>
+<li>选符合条件的注册中心 (筛选逻辑就是查看是否有对应协议的扩展支持)</li>
+<li>注册中心配置RegistryConfig映射转换为元数据中心配置类型MetadataReportConfig  映射就是获取需要的配置</li>
+<li>将元数据中心配置存储在配置缓存中方便后续使用</li>
+</ul>
+</li>
+</ul>
+<p>元数据的配置可以参考官网:<a href="https://dubbo.apache.org/zh/docs/v3.0/references/metadata/">元数据参考手册</a></p>
+<p>这里主要看下可配置项有哪些 对应类型为MetadataReportConfig 在官网暂时未找到合适的文档,这里整理下属性列表方便后续配置说明查看:</p>
+<table>
+<thead>
+<tr>
+<th>配置变量</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>String</td>
+<td>配置id</td>
+</tr>
+<tr>
+<td>protocol</td>
+<td>String</td>
+<td>元数据协议</td>
+</tr>
+<tr>
+<td>address</td>
+<td>String</td>
+<td>元数据中心地址</td>
+</tr>
+<tr>
+<td>port</td>
+<td>Integer</td>
+<td>元数据中心端口</td>
+</tr>
+<tr>
+<td>username</td>
+<td>String</td>
+<td>元数据中心认证用户名</td>
+</tr>
+<tr>
+<td>password</td>
+<td>String</td>
+<td>元数据中心认证密码</td>
+</tr>
+<tr>
+<td>timeout</td>
+<td>Integer</td>
+<td>元数据中心的请求超时（毫秒）</td>
+</tr>
+<tr>
+<td>group</td>
+<td>String</td>
+<td>该组将元数据保存在中。它与注册表相同</td>
+</tr>
+<tr>
+<td>parameters</td>
+<td>Map&#x3C;String, String></td>
+<td>自定义参数</td>
+</tr>
+<tr>
+<td>retryTimes</td>
+<td>Integer</td>
+<td>重试次数</td>
+</tr>
+<tr>
+<td>retryPeriod</td>
+<td>Integer</td>
+<td>重试间隔</td>
+</tr>
+<tr>
+<td>cycleReport</td>
+<td>Boolean</td>
+<td>默认情况下， 是否每天重复存储完整的元数据</td>
+</tr>
+<tr>
+<td>syncReport</td>
+<td>Boolean</td>
+<td>Sync or Async report.</td>
+</tr>
+<tr>
+<td>cluster</td>
+<td>Boolean</td>
+<td>需要群集支持，默认为false</td>
+</tr>
+<tr>
+<td>registry</td>
+<td>String</td>
+<td>注册表配置id</td>
+</tr>
+<tr>
+<td>file</td>
+<td>String</td>
+<td>元数据报告文件存储位置</td>
+</tr>
+<tr>
+<td>check</td>
+<td>Boolean</td>
+<td>连接到元数据中心时要应用的失败策略</td>
+</tr>
+</tbody>
+</table>
+<h3 id="元数据中心的初始化逻辑"><strong>元数据中心的初始化逻辑</strong></h3>
+<h4 id="元数据中心的初始化调用逻辑"><strong>元数据中心的初始化调用逻辑</strong></h4>
+<p>主要看这一行比较重要的逻辑:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D"> //初始化元数据</span></span>
+<span class="line"><span style="color:#24292E"> metadataReportInstance.</span><span style="color:#6F42C1">init</span><span style="color:#24292E">(validMetadataReportConfigs);</span></span></code></pre>
+<p>在了解这一行逻辑之前我们先来看下元数据相关联的类型:</p>
+<p>MetadataReportInstance中的初始化方法init</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> init</span><span style="color:#24292E">(List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">MetadataReportConfig</span><span style="color:#D73A49">></span><span style="color:#24292E"> metadataReportConfigs) {</span></span>
+<span class="line"><span style="color:#6A737D"> 		//CAS判断是否有初始化过</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">init.</span><span style="color:#6F42C1">compareAndSet</span><span style="color:#24292E">(</span><span style="color:#005CC5">false</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">		//元数据类型配置如果未配置则默认为local </span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.metadataType </span><span style="color:#D73A49">=</span><span style="color:#24292E"> applicationModel.</span><span style="color:#6F42C1">getApplicationConfigManager</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getApplicationOrElseThrow</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getMetadataType</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (metadataType </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.metadataType </span><span style="color:#D73A49">=</span><span style="color:#24292E"> DEFAULT_METADATA_STORAGE_TYPE;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">		//获取MetadataReportFactory 工厂类型</span></span>
+<span class="line"><span style="color:#24292E">        MetadataReportFactory metadataReportFactory </span><span style="color:#D73A49">=</span><span style="color:#24292E"> applicationModel.</span><span style="color:#6F42C1">getExtensionLoader</span><span style="color:#24292E">(MetadataReportFactory.class).</span><span style="color:#6F42C1">getAdaptiveExtension</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        	//多元数据中心初始化</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (MetadataReportConfig metadataReportConfig </span><span style="color:#D73A49">:</span><span style="color:#24292E"> metadataReportConfigs) {</span></span>
+<span class="line"><span style="color:#6F42C1">            init</span><span style="color:#24292E">(metadataReportConfig, metadataReportFactory);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">	</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> init</span><span style="color:#24292E">(MetadataReportConfig config, MetadataReportFactory metadataReportFactory) {</span></span>
+<span class="line"><span style="color:#6A737D">    //配置转url</span></span>
+<span class="line"><span style="color:#24292E">        URL url </span><span style="color:#D73A49">=</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">toUrl</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (METADATA_REPORT_KEY.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(url.</span><span style="color:#6F42C1">getProtocol</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#24292E">            String protocol </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(METADATA_REPORT_KEY, DEFAULT_DIRECTORY);</span></span>
+<span class="line"><span style="color:#24292E">            url </span><span style="color:#D73A49">=</span><span style="color:#24292E"> URLBuilder.</span><span style="color:#6F42C1">from</span><span style="color:#24292E">(url)</span></span>
+<span class="line"><span style="color:#24292E">                    .</span><span style="color:#6F42C1">setProtocol</span><span style="color:#24292E">(protocol)</span></span>
+<span class="line"><span style="color:#24292E">                    .</span><span style="color:#6F42C1">setScopeModel</span><span style="color:#24292E">(config.</span><span style="color:#6F42C1">getScopeModel</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">                    .</span><span style="color:#6F42C1">removeParameter</span><span style="color:#24292E">(METADATA_REPORT_KEY)</span></span>
+<span class="line"><span style="color:#24292E">                    .</span><span style="color:#6F42C1">build</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        url </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">addParameterIfAbsent</span><span style="color:#24292E">(APPLICATION_KEY, applicationModel.</span><span style="color:#6F42C1">getCurrentConfig</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        String relatedRegistryId </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> isEmpty</span><span style="color:#24292E">(config.</span><span style="color:#6F42C1">getRegistry</span><span style="color:#24292E">()) </span><span style="color:#D73A49">?</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">(config.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">()) </span><span style="color:#D73A49">?</span><span style="color:#24292E"> DEFAULT_KEY </span><span style="color:#D73A49">:</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">()) </span><span style="color:#D73A49">:</span><span style="color:#24292E"> config.</span><span style="color:#6F42C1">getRegistry</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D"> 		//从元数据工厂中获取元数据</span></span>
+<span class="line"><span style="color:#24292E">        MetadataReport metadataReport </span><span style="color:#D73A49">=</span><span style="color:#24292E"> metadataReportFactory.</span><span style="color:#6F42C1">getMetadataReport</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#6A737D">        //缓存元数据到内存</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (metadataReport </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            metadataReports.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(relatedRegistryId, metadataReport);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>关于元数据的初始化我们主要看两个位置:</p>
+<ul>
+<li>一个是元数据工厂对象的创建与初始化MetadataReportFactory</li>
+<li>一个是元数据对象的创建与初始化MetadataReport</li>
+</ul>
+<h4 id="元数据工厂对象metadatareportfactory"><strong>元数据工厂对象MetadataReportFactory</strong></h4>
+<p>关于元数据工厂类型MetadataReportFactory,元数据工厂 用于 <strong>创建与管理元数据对象</strong> , 相关类型如下:
+<img src="/img/chapter_dubbo/15-metadata-2.png" alt="15-metadata-2"></p>
+<p>我们这里主要以为Zookeeper扩展的元数据工厂ZookeeperMetadataReportFactory类型为例子:
+实现类型逻辑不复杂,这里就直接贴代码看看:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> ZookeeperMetadataReportFactory</span><span style="color:#D73A49"> extends</span><span style="color:#6F42C1"> AbstractMetadataReportFactory</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">	//与Zookeeper交互的传输器</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#24292E"> ZookeeperTransporter zookeeperTransporter;</span></span>
+<span class="line"><span style="color:#6A737D">	//应用程序模型</span></span>
+<span class="line"><span style="color:#D73A49">    private</span><span style="color:#24292E"> ApplicationModel applicationModel;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#6F42C1"> ZookeeperMetadataReportFactory</span><span style="color:#24292E">(ApplicationModel </span><span style="color:#E36209">applicationModel</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.applicationModel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> applicationModel;</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.zookeeperTransporter </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ZookeeperTransporter.</span><span style="color:#6F42C1">getExtension</span><span style="color:#24292E">(applicationModel);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">DisableInject</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> setZookeeperTransporter</span><span style="color:#24292E">(ZookeeperTransporter </span><span style="color:#E36209">zookeeperTransporter</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.zookeeperTransporter </span><span style="color:#D73A49">=</span><span style="color:#24292E"> zookeeperTransporter;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> MetadataReport </span><span style="color:#6F42C1">createMetadataReport</span><span style="color:#24292E">(URL </span><span style="color:#E36209">url</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ZookeeperMetadataReport</span><span style="color:#24292E">(url, zookeeperTransporter);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>元数据工厂的实现比较简单</p>
+<ul>
+<li>继承抽象的元数据工厂AbstractMetadataReportFactory</li>
+<li>实现工厂方法createMetadataReport来创建一个元数据操作类型</li>
+</ul>
+<p>如果我们想要实现一个元数据工厂扩展可以参考Zookeeper的这个方式</p>
+<h4 id="元数据操作对象metadatareport的创建与初始化"><strong>元数据操作对象MetadataReport的创建与初始化</strong></h4>
+<p>前面的从元数据工厂中获取元数据操作对象的逻辑处理代码如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">//从元数据工厂中获取元数据 ,url对象可以理解为配置</span></span>
+<span class="line"><span style="color:#24292E"> MetadataReport metadataReport </span><span style="color:#D73A49">=</span><span style="color:#24292E"> metadataReportFactory.</span><span style="color:#6F42C1">getMetadataReport</span><span style="color:#24292E">(url);</span></span></code></pre>
+<p>关于元数据对象,用于元数据信息的增删改查等逻辑的操作与元数据信息的缓存</p>
+<p><img src="/img/chapter_dubbo/15-metadata-3.png" alt="15-metadata-3.png"></p>
+<p>我们这里还是以Zookeeper的实现ZookeeperMetadataReportFactory类型做为参考:</p>
+<p>我们先来看这个逻辑</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">//从元数据工厂中获取元数据 ,url对象可以理解为配置</span></span>
+<span class="line"><span style="color:#24292E"> MetadataReport metadataReport </span><span style="color:#D73A49">=</span><span style="color:#24292E"> metadataReportFactory.</span><span style="color:#6F42C1">getMetadataReport</span><span style="color:#24292E">(url);</span></span></code></pre>
+<p>ZookeeperMetadataReportFactory的父类型AbstractMetadataReportFactory中的getMetadataReport方法如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> MetadataReport </span><span style="color:#6F42C1">getMetadataReport</span><span style="color:#24292E">(URL url) {</span></span>
+<span class="line"><span style="color:#6A737D">    //url值参考例子zookeeper://127.0.0.1:2181?application=dubbo-demo-api-provider&#x26;client=&#x26;port=2181&#x26;protocol=zookeeper</span></span>
+<span class="line"><span style="color:#6A737D">    		//如果存在export则移除</span></span>
+<span class="line"><span style="color:#24292E">        url </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">setPath</span><span style="color:#24292E">(MetadataReport.class.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">            .</span><span style="color:#6F42C1">removeParameters</span><span style="color:#24292E">(EXPORT_KEY, REFER_KEY);</span></span>
+<span class="line"><span style="color:#6A737D">           //生成元数据缓存key 元数据维度 地址+名字 </span></span>
+<span class="line"><span style="color:#6A737D">           //如: zookeeper://127.0.0.1:2181/org.apache.dubbo.metadata.report.MetadataReport</span></span>
+<span class="line"><span style="color:#24292E">        String key </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">toServiceString</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">		//缓存中查询 查到则直接返回</span></span>
+<span class="line"><span style="color:#24292E">        MetadataReport metadataReport </span><span style="color:#D73A49">=</span><span style="color:#24292E"> serviceStoreMap.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(key);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (metadataReport </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> metadataReport;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // Lock the metadata access process to ensure a single instance of the metadata instance</span></span>
+<span class="line"><span style="color:#6A737D">        //存在写操作 加个锁</span></span>
+<span class="line"><span style="color:#24292E">        lock.</span><span style="color:#6F42C1">lock</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">        	//双重校验锁在查一下</span></span>
+<span class="line"><span style="color:#24292E">            metadataReport </span><span style="color:#D73A49">=</span><span style="color:#24292E"> serviceStoreMap.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(key);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (metadataReport </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                return</span><span style="color:#24292E"> metadataReport;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">            //check参数 查元数据报错是否抛出异常</span></span>
+<span class="line"><span style="color:#D73A49">            boolean</span><span style="color:#24292E"> check </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(CHECK_KEY, </span><span style="color:#005CC5">true</span><span style="color:#24292E">) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getPort</span><span style="color:#24292E">() </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;		</span></span>
+<span class="line"><span style="color:#D73A49">            try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">            	//关键模版方法 调用扩展实现的具体业务(创建元数据操作对象)</span></span>
+<span class="line"><span style="color:#24292E">                metadataReport </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createMetadataReport</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">check) {</span></span>
+<span class="line"><span style="color:#24292E">                    logger.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"The metadata reporter failed to initialize"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    throw</span><span style="color:#24292E"> e;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">		//check逻辑检查</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (check </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> metadataReport </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Can not create metadata Report "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> url);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">            //缓存对象 </span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (metadataReport </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                serviceStoreMap.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(key, metadataReport);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">            //返回</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E"> metadataReport;</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">            // Release the lock</span></span>
+<span class="line"><span style="color:#24292E">            lock.</span><span style="color:#6F42C1">unlock</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span></code></pre>
+<p>上面这个抽象类AbstractMetadataReportFactory中的获取元数据操作对象的模版方法getMetadataReport(URL url), 用了双重校验锁的逻辑来创建对象缓存对象,又用了模版方法设计模式,来让抽象类做通用的逻辑,让实现类型去做扩展, 虽然代码写的太长了些整体还是用了不少的设计思想.</p>
+<p>我们直接看这个代码:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">metadataReport </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createMetadataReport</span><span style="color:#24292E">(url);</span></span></code></pre>
+<p>这个创建元数据操作对象的代码实际上走的是实现类型的逻辑:</p>
+<p>来自工厂Bean ZookeeperMetadataReportFactory的工厂方法如下所示:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> MetadataReport </span><span style="color:#6F42C1">createMetadataReport</span><span style="color:#24292E">(URL url) {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ZookeeperMetadataReport</span><span style="color:#24292E">(url, zookeeperTransporter);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>创建了元数据操作对象,这里我们继续看下元数据操作对象ZookeeperMetadataReport创建做了哪些逻辑:
+来自ZookeeperMetadataReport的构造器:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#6F42C1"> ZookeeperMetadataReport</span><span style="color:#24292E">(URL url, ZookeeperTransporter zookeeperTransporter) {</span></span>
+<span class="line"><span style="color:#6A737D">		//url即配置 配置传递给抽象类 做一些公共的逻辑</span></span>
+<span class="line"><span style="color:#6A737D">		//url参考:zookeeper://127.0.0.1:2181/org.apache.dubbo.metadata.report.MetadataReport?application=dubbo-demo-api-provider&#x26;client=&#x26;port=2181&#x26;protocol=zookeeper</span></span>
+<span class="line"><span style="color:#005CC5">        super</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (url.</span><span style="color:#6F42C1">isAnyHost</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">            throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(</span><span style="color:#032F62">"registry address == null"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        String group </span><span style="color:#D73A49">=</span><span style="color:#24292E"> url.</span><span style="color:#6F42C1">getGroup</span><span style="color:#24292E">(DEFAULT_ROOT);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">group.</span><span style="color:#6F42C1">startsWith</span><span style="color:#24292E">(PATH_SEPARATOR)) {</span></span>
+<span class="line"><span style="color:#24292E">            group </span><span style="color:#D73A49">=</span><span style="color:#24292E"> PATH_SEPARATOR </span><span style="color:#D73A49">+</span><span style="color:#24292E"> group;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.root </span><span style="color:#D73A49">=</span><span style="color:#24292E"> group;</span></span>
+<span class="line"><span style="color:#6A737D">        //连接Zookeeper</span></span>
+<span class="line"><span style="color:#24292E">        zkClient </span><span style="color:#D73A49">=</span><span style="color:#24292E"> zookeeperTransporter.</span><span style="color:#6F42C1">connect</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>核心的公共的操作逻辑封装在父类AbstractMetadataReport里面
+我们来看前面super调用的构造器逻辑:
+如下所示:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> public</span><span style="color:#6F42C1"> AbstractMetadataReport</span><span style="color:#24292E">(URL reportServerURL) {</span></span>
+<span class="line"><span style="color:#6A737D"> //设置url 如:zookeeper://127.0.0.1:2181/org.apache.dubbo.metadata.report.MetadataReport?application=dubbo-demo-api-provider&#x26;client=&#x26;port=2181&#x26;protocol=zookeeper</span></span>
+<span class="line"><span style="color:#6F42C1">        setUrl</span><span style="color:#24292E">(reportServerURL);</span></span>
+<span class="line"><span style="color:#6A737D">        // Start file save timer</span></span>
+<span class="line"><span style="color:#6A737D">        //缓存的文件名字</span></span>
+<span class="line"><span style="color:#6A737D">        //格式为: 用户目录+/.dubbo/dubbo-metadata- + 应用程序名字application + url地址(IP+端口) + 后缀.cache 如下所示</span></span>
+<span class="line"><span style="color:#6A737D">        ///Users/song/.dubbo/dubbo-metadata-dubbo-demo-api-provider-127.0.0.1-2181.cache</span></span>
+<span class="line"><span style="color:#24292E">        String defaultFilename </span><span style="color:#D73A49">=</span><span style="color:#24292E"> System.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(USER_HOME) </span><span style="color:#D73A49">+</span><span style="color:#24292E"> DUBBO_METADATA </span><span style="color:#D73A49">+</span></span>
+<span class="line"><span style="color:#24292E">            reportServerURL.</span><span style="color:#6F42C1">getApplication</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "-"</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#6F42C1">            replace</span><span style="color:#24292E">(reportServerURL.</span><span style="color:#6F42C1">getAddress</span><span style="color:#24292E">(), </span><span style="color:#032F62">":"</span><span style="color:#24292E">, </span><span style="color:#032F62">"-"</span><span style="color:#24292E">) </span><span style="color:#D73A49">+</span><span style="color:#24292E"> CACHE;</span></span>
+<span class="line"><span style="color:#6A737D">            //如果用户配置了缓存文件名字则以用户配置为准file</span></span>
+<span class="line"><span style="color:#24292E">        String filename </span><span style="color:#D73A49">=</span><span style="color:#24292E"> reportServerURL.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(FILE_KEY, defaultFilename);</span></span>
+<span class="line"><span style="color:#24292E">        File file </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6A737D">        //文件名字不为空</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (ConfigUtils.</span><span style="color:#6F42C1">isNotEmpty</span><span style="color:#24292E">(filename)) {</span></span>
+<span class="line"><span style="color:#24292E">            file </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> File</span><span style="color:#24292E">(filename);</span></span>
+<span class="line"><span style="color:#6A737D">            //文件和父目录不存在则创建文件目录</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">file.</span><span style="color:#6F42C1">exists</span><span style="color:#24292E">() </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> file.</span><span style="color:#6F42C1">getParentFile</span><span style="color:#24292E">() </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#24292E">file.</span><span style="color:#6F42C1">getParentFile</span><span style="color:#24292E">().</span><span style="color:#6F42C1">exists</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">file.</span><span style="color:#6F42C1">getParentFile</span><span style="color:#24292E">().</span><span style="color:#6F42C1">mkdirs</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                    throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalArgumentException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Invalid service store file "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> file </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ", cause: Failed to create directory "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> file.</span><span style="color:#6F42C1">getParentFile</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "!"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">            // if this file exists, firstly delete it.</span></span>
+<span class="line"><span style="color:#6A737D">            //还未初始化则已存在的历史文件删除掉</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">initialized.</span><span style="color:#6F42C1">getAndSet</span><span style="color:#24292E">(</span><span style="color:#005CC5">true</span><span style="color:#24292E">) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> file.</span><span style="color:#6F42C1">exists</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                file.</span><span style="color:#6F42C1">delete</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        //赋值给成员变量后续继续可以用</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.file </span><span style="color:#D73A49">=</span><span style="color:#24292E"> file;</span></span>
+<span class="line"><span style="color:#6A737D">        //文件存在则直接加载文件中的内容</span></span>
+<span class="line"><span style="color:#6F42C1">        loadProperties</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">        //sync-report配置的值为同步配置还异步配置,true是同步配置,默认为false为异步配置</span></span>
+<span class="line"><span style="color:#24292E">        syncReport </span><span style="color:#D73A49">=</span><span style="color:#24292E"> reportServerURL.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(SYNC_REPORT_KEY, </span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">        //重试属性与逻辑也封装了一个类型 创建对象</span></span>
+<span class="line"><span style="color:#6A737D">        //retry-times重试次数配置 默认为100次</span></span>
+<span class="line"><span style="color:#6A737D">        //retry-period 重试间隔配置 默认为3000</span></span>
+<span class="line"><span style="color:#24292E">        metadataReportRetry </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> MetadataReportRetry</span><span style="color:#24292E">(reportServerURL.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(RETRY_TIMES_KEY, DEFAULT_METADATA_REPORT_RETRY_TIMES),</span></span>
+<span class="line"><span style="color:#24292E">            reportServerURL.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(RETRY_PERIOD_KEY, DEFAULT_METADATA_REPORT_RETRY_PERIOD));</span></span>
+<span class="line"><span style="color:#24292E">            </span></span>
+<span class="line"><span style="color:#6A737D">        // cycle report the data switch</span></span>
+<span class="line"><span style="color:#6A737D">        //是否定期从元数据中心同步配置</span></span>
+<span class="line"><span style="color:#6A737D">        //cycle-report配置默认为true</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (reportServerURL.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(CYCLE_REPORT_KEY, DEFAULT_METADATA_REPORT_CYCLE_REPORT)) {</span></span>
+<span class="line"><span style="color:#6A737D">        //开启重试定时器 24个小时间隔从元数据中心同步一次</span></span>
+<span class="line"><span style="color:#24292E">            reportTimerScheduler </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Executors.</span><span style="color:#6F42C1">newSingleThreadScheduledExecutor</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> NamedThreadFactory</span><span style="color:#24292E">(</span><span style="color:#032F62">"DubboMetadataReportTimer"</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">));</span></span>
+<span class="line"><span style="color:#24292E">            reportTimerScheduler.</span><span style="color:#6F42C1">scheduleAtFixedRate</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#D73A49">::</span><span style="color:#24292E">publishAll, </span><span style="color:#6F42C1">calculateStartTime</span><span style="color:#24292E">(), ONE_DAY_IN_MILLISECONDS, TimeUnit.MILLISECONDS);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">		</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.reportMetadata </span><span style="color:#D73A49">=</span><span style="color:#24292E"> reportServerURL.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REPORT_METADATA_KEY, </span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.reportDefinition </span><span style="color:#D73A49">=</span><span style="color:#24292E"> reportServerURL.</span><span style="color:#6F42C1">getParameter</span><span style="color:#24292E">(REPORT_DEFINITION_KEY, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span></code></pre>
+<h4 id="内存中元数据自动同步到zookeeper和本地文件"><strong>内存中元数据自动同步到Zookeeper和本地文件</strong></h4>
+<p>这里来总结下元数据操作的初始化逻辑:</p>
+<ul>
+<li>首次初始化清理历史元数据文件如:
+<code>Users/song/.dubbo/dubbo-metadata-dubbo-demo-api-provider-127.0.0.1-2181.cache</code></li>
+<li>如果非首次进来则直接加载缓存在本地的缓存文件,赋值给properties成员变量</li>
+<li>初始化同步配置是否异步(默认为false), sync-report配置的值为同步配置还异步配置,true是同步配置,默认为false为异步配置</li>
+<li>初始化重试属性</li>
+<li>是否定期从元数据中心同步配置初始化 默认为true 24小时自动同步一次</li>
+</ul>
+<p>关于元数据同步可以看AbstractMetadataReport类型的publishAll方法:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">  reportTimerScheduler </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Executors.</span><span style="color:#6F42C1">newSingleThreadScheduledExecutor</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> NamedThreadFactory</span><span style="color:#24292E">(</span><span style="color:#032F62">"DubboMetadataReportTimer"</span><span style="color:#24292E">, </span><span style="color:#005CC5">true</span><span style="color:#24292E">));</span></span>
+<span class="line"><span style="color:#24292E">            reportTimerScheduler.</span><span style="color:#6F42C1">scheduleAtFixedRate</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#D73A49">::</span><span style="color:#24292E">publishAll, </span><span style="color:#6F42C1">calculateStartTime</span><span style="color:#24292E">(), ONE_DAY_IN_MILLISECONDS, TimeUnit.MILLISECONDS);</span></span></code></pre>
+<p>这里有个方法叫做calculateStartTime 这个代码是随机时间的between 2:00 am to 6:00 am, the time is random.  2点到6点之间启动, 低峰期启动自动同步
+返回值:</p>
+<p>AbstractMetadataReport类型的</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">  void</span><span style="color:#6F42C1"> publishAll</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#24292E">        logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"start to publish all metadata."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">doHandleMetadataCollection</span><span style="color:#24292E">(allMetadataReports);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>AbstractMetadataReport类型的doHandleMetadataCollection</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> boolean</span><span style="color:#6F42C1"> doHandleMetadataCollection</span><span style="color:#24292E">(Map</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">MetadataIdentifier, Object</span><span style="color:#D73A49">></span><span style="color:#24292E"> metadataMap) {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (metadataMap.</span><span style="color:#6F42C1">isEmpty</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#005CC5"> true</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        Iterator&#x3C;</span><span style="color:#D73A49">Map</span><span style="color:#24292E">.</span><span style="color:#D73A49">Entry</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">MetadataIdentifier</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">>> iterable </span><span style="color:#D73A49">=</span><span style="color:#24292E"> metadataMap.</span><span style="color:#6F42C1">entrySet</span><span style="color:#24292E">().</span><span style="color:#6F42C1">iterator</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        while</span><span style="color:#24292E"> (iterable.</span><span style="color:#6F42C1">hasNext</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">            Map.Entry&#x3C;</span><span style="color:#D73A49">MetadataIdentifier</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> item </span><span style="color:#D73A49">=</span><span style="color:#24292E"> iterable.</span><span style="color:#6F42C1">next</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (PROVIDER_SIDE.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(item.</span><span style="color:#6F42C1">getKey</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getSide</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#6A737D">            	//提供端的元数据则存储提供端元数据</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">storeProviderMetadata</span><span style="color:#24292E">(item.</span><span style="color:#6F42C1">getKey</span><span style="color:#24292E">(), (FullServiceDefinition) item.</span><span style="color:#6F42C1">getValue</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (CONSUMER_SIDE.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(item.</span><span style="color:#6F42C1">getKey</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getSide</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#6A737D">            //消费端的元数据则存储提供端元数据</span></span>
+<span class="line"><span style="color:#005CC5">                this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">storeConsumerMetadata</span><span style="color:#24292E">(item.</span><span style="color:#6F42C1">getKey</span><span style="color:#24292E">(), (Map) item.</span><span style="color:#6F42C1">getValue</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#005CC5"> false</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>提供端元数据的存储:
+AbstractMetadataReport类型的storeProviderMetadata</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> storeProviderMetadata</span><span style="color:#24292E">(MetadataIdentifier providerMetadataIdentifier, ServiceDefinition serviceDefinition) {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (syncReport) {</span></span>
+<span class="line"><span style="color:#6F42C1">            storeProviderMetadataTask</span><span style="color:#24292E">(providerMetadataIdentifier, serviceDefinition);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">            reportCacheExecutor.</span><span style="color:#6F42C1">execute</span><span style="color:#24292E">(() </span><span style="color:#D73A49">-></span><span style="color:#6F42C1"> storeProviderMetadataTask</span><span style="color:#24292E">(providerMetadataIdentifier, serviceDefinition));</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>AbstractMetadataReport类型的storeProviderMetadataTask
+具体同步代码:storeProviderMetadataTask</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> storeProviderMetadataTask</span><span style="color:#24292E">(MetadataIdentifier providerMetadataIdentifier, ServiceDefinition serviceDefinition) {</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (logger.</span><span style="color:#6F42C1">isInfoEnabled</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                logger.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"store provider metadata. Identifier : "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> providerMetadataIdentifier </span><span style="color:#D73A49">+</span><span style="color:#032F62"> "; definition: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> serviceDefinition);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">            allMetadataReports.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(providerMetadataIdentifier, serviceDefinition);</span></span>
+<span class="line"><span style="color:#24292E">            failedReports.</span><span style="color:#6F42C1">remove</span><span style="color:#24292E">(providerMetadataIdentifier);</span></span>
+<span class="line"><span style="color:#24292E">            Gson gson </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Gson</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            String data </span><span style="color:#D73A49">=</span><span style="color:#24292E"> gson.</span><span style="color:#6F42C1">toJson</span><span style="color:#24292E">(serviceDefinition);</span></span>
+<span class="line"><span style="color:#6A737D">             //内存中的元数据同步到元数据中心</span></span>
+<span class="line"><span style="color:#6F42C1">            doStoreProviderMetadata</span><span style="color:#24292E">(providerMetadataIdentifier, data);</span></span>
+<span class="line"><span style="color:#6A737D">            //内存中的元数据同步到本地文件</span></span>
+<span class="line"><span style="color:#6F42C1">            saveProperties</span><span style="color:#24292E">(providerMetadataIdentifier, data, </span><span style="color:#005CC5">true</span><span style="color:#24292E">, </span><span style="color:#D73A49">!</span><span style="color:#24292E">syncReport);</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">            // retry again. If failed again, throw exception.</span></span>
+<span class="line"><span style="color:#24292E">            failedReports.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(providerMetadataIdentifier, serviceDefinition);</span></span>
+<span class="line"><span style="color:#24292E">            metadataReportRetry.</span><span style="color:#6F42C1">startRetryTask</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            logger.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Failed to put provider metadata "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> providerMetadataIdentifier </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " in  "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> serviceDefinition </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ", cause: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> e.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">(), e);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span></code></pre>
+<p>上面代码我们主要看本地内存中的元数据同步到元数据中心和存本地的两个点:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">//内存中的元数据同步到元数据中心</span></span>
+<span class="line"><span style="color:#6F42C1">doStoreProviderMetadata</span><span style="color:#24292E">(providerMetadataIdentifier, data);</span></span>
+<span class="line"><span style="color:#6A737D">//内存中的元数据同步到本地文件</span></span>
+<span class="line"><span style="color:#6F42C1">saveProperties</span><span style="color:#24292E">(providerMetadataIdentifier, data, </span><span style="color:#005CC5">true</span><span style="color:#24292E">, </span></span></code></pre>
+<p>//内存中的元数据同步到元数据中心</p>
+<p>这个方法会调用当前子类重写的具体存储逻辑:这里我们以
+ZookeeperMetadataReport的doStoreProviderMetadata举例:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">   private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> storeMetadata</span><span style="color:#24292E">(MetadataIdentifier metadataIdentifier, String v) {</span></span>
+<span class="line"><span style="color:#6A737D">   		//使用zkClient创建一个节点数据为参数V v是前面说的服务定义数据</span></span>
+<span class="line"><span style="color:#24292E">        zkClient.</span><span style="color:#6F42C1">create</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getNodePath</span><span style="color:#24292E">(metadataIdentifier), v, </span><span style="color:#005CC5">false</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>这里参数我们举个例子: 提供者的元数据内容如下:
+节点路径为:</p>
+<ul>
+<li><code>/dubbo/metadata/link.elastic.dubbo.entity.DemoService/provider/dubbo-demo-api-provider</code></li>
+</ul>
+<p>格式:</p>
+<ul>
+<li>/dubbo/metadata前缀</li>
+<li>服务提供者接口</li>
+<li>提供者类型provider</li>
+<li>应用名</li>
+</ul>
+<p>具体的元数据内容如下:
+比较详细的记录了应用信息,服务接口信息和服务接口对应的方法信息</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#005CC5">  "parameters"</span><span style="color:#24292E">: {</span></span>
+<span class="line"><span style="color:#005CC5">    "side"</span><span style="color:#24292E">: </span><span style="color:#032F62">"provider"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "interface"</span><span style="color:#24292E">: </span><span style="color:#032F62">"link.elastic.dubbo.entity.DemoService"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "pid"</span><span style="color:#24292E">: </span><span style="color:#032F62">"38680"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "application"</span><span style="color:#24292E">: </span><span style="color:#032F62">"dubbo-demo-api-provider"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "dubbo"</span><span style="color:#24292E">: </span><span style="color:#032F62">"2.0.2"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "release"</span><span style="color:#24292E">: </span><span style="color:#032F62">"3.0.8"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "anyhost"</span><span style="color:#24292E">: </span><span style="color:#032F62">"true"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "bind.ip"</span><span style="color:#24292E">: </span><span style="color:#032F62">"192.168.1.9"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "methods"</span><span style="color:#24292E">: </span><span style="color:#032F62">"sayHello,sayHelloAsync"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "background"</span><span style="color:#24292E">: </span><span style="color:#032F62">"false"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "deprecated"</span><span style="color:#24292E">: </span><span style="color:#032F62">"false"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "dynamic"</span><span style="color:#24292E">: </span><span style="color:#032F62">"true"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "service-name-mapping"</span><span style="color:#24292E">: </span><span style="color:#032F62">"true"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "generic"</span><span style="color:#24292E">: </span><span style="color:#032F62">"false"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "bind.port"</span><span style="color:#24292E">: </span><span style="color:#032F62">"20880"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "timestamp"</span><span style="color:#24292E">: </span><span style="color:#032F62">"1653097653865"</span></span>
+<span class="line"><span style="color:#24292E">  },</span></span>
+<span class="line"><span style="color:#005CC5">  "canonicalName"</span><span style="color:#24292E">: </span><span style="color:#032F62">"link.elastic.dubbo.entity.DemoService"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">  "codeSource"</span><span style="color:#24292E">: </span><span style="color:#032F62">"file:/Users/song/Desktop/Computer/A/code/gitee/weaving-a-net/weaving-test/dubbo-test/target/classes/"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">  "methods"</span><span style="color:#24292E">: [</span></span>
+<span class="line"><span style="color:#24292E">    {</span></span>
+<span class="line"><span style="color:#005CC5">      "name"</span><span style="color:#24292E">: </span><span style="color:#032F62">"sayHello"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      "parameterTypes"</span><span style="color:#24292E">: [</span></span>
+<span class="line"><span style="color:#032F62">        "java.lang.String"</span></span>
+<span class="line"><span style="color:#24292E">      ],</span></span>
+<span class="line"><span style="color:#005CC5">      "returnType"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.lang.String"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      "annotations"</span><span style="color:#24292E">: [</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#24292E">      ]</span></span>
+<span class="line"><span style="color:#24292E">    },</span></span>
+<span class="line"><span style="color:#24292E">    {</span></span>
+<span class="line"><span style="color:#005CC5">      "name"</span><span style="color:#24292E">: </span><span style="color:#032F62">"sayHelloAsync"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      "parameterTypes"</span><span style="color:#24292E">: [</span></span>
+<span class="line"><span style="color:#032F62">        "java.lang.String"</span></span>
+<span class="line"><span style="color:#24292E">      ],</span></span>
+<span class="line"><span style="color:#005CC5">      "returnType"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.util.concurrent.CompletableFuture"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      "annotations"</span><span style="color:#24292E">: [</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#24292E">      ]</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">  ],</span></span>
+<span class="line"><span style="color:#005CC5">  "types"</span><span style="color:#24292E">: [</span></span>
+<span class="line"><span style="color:#24292E">    {</span></span>
+<span class="line"><span style="color:#005CC5">      "type"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.util.concurrent.CompletableFuture"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      "properties"</span><span style="color:#24292E">: {</span></span>
+<span class="line"><span style="color:#005CC5">        "result"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.lang.Object"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">        "stack"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.util.concurrent.CompletableFuture.Completion"</span></span>
+<span class="line"><span style="color:#24292E">      }</span></span>
+<span class="line"><span style="color:#24292E">    },</span></span>
+<span class="line"><span style="color:#24292E">    {</span></span>
+<span class="line"><span style="color:#005CC5">      "type"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.lang.Object"</span></span>
+<span class="line"><span style="color:#24292E">    },</span></span>
+<span class="line"><span style="color:#24292E">    {</span></span>
+<span class="line"><span style="color:#005CC5">      "type"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.lang.String"</span></span>
+<span class="line"><span style="color:#24292E">    },</span></span>
+<span class="line"><span style="color:#24292E">    {</span></span>
+<span class="line"><span style="color:#005CC5">      "type"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.util.concurrent.CompletableFuture.Completion"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      "properties"</span><span style="color:#24292E">: {</span></span>
+<span class="line"><span style="color:#005CC5">        "next"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.util.concurrent.CompletableFuture.Completion"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">        "status"</span><span style="color:#24292E">: </span><span style="color:#032F62">"int"</span></span>
+<span class="line"><span style="color:#24292E">      }</span></span>
+<span class="line"><span style="color:#24292E">    },</span></span>
+<span class="line"><span style="color:#24292E">    {</span></span>
+<span class="line"><span style="color:#005CC5">      "type"</span><span style="color:#24292E">: </span><span style="color:#032F62">"int"</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">  ],</span></span>
+<span class="line"><span style="color:#005CC5">  "annotations"</span><span style="color:#24292E">: [</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">  ]</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>本地缓存文件的写入 可以看下如下代码
+AbstractMetadataReport类型的saveProperties方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> saveProperties</span><span style="color:#24292E">(MetadataIdentifier metadataIdentifier, String value, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> add, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> sync) {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (file </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (add) {</span></span>
+<span class="line"><span style="color:#24292E">                properties.</span><span style="color:#6F42C1">setProperty</span><span style="color:#24292E">(metadataIdentifier.</span><span style="color:#6F42C1">getUniqueKey</span><span style="color:#24292E">(KeyTypeEnum.UNIQUE_KEY), value);</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                properties.</span><span style="color:#6F42C1">remove</span><span style="color:#24292E">(metadataIdentifier.</span><span style="color:#6F42C1">getUniqueKey</span><span style="color:#24292E">(KeyTypeEnum.UNIQUE_KEY));</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#D73A49">            long</span><span style="color:#24292E"> version </span><span style="color:#D73A49">=</span><span style="color:#24292E"> lastCacheChanged.</span><span style="color:#6F42C1">incrementAndGet</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (sync) {</span></span>
+<span class="line"><span style="color:#6A737D">            	//获取最新修改版本持久化到磁盘</span></span>
+<span class="line"><span style="color:#D73A49">                new</span><span style="color:#6F42C1"> SaveProperties</span><span style="color:#24292E">(version).</span><span style="color:#6F42C1">run</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                reportCacheExecutor.</span><span style="color:#6F42C1">execute</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> SaveProperties</span><span style="color:#24292E">(version));</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">t</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            logger.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(t.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">(), t);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>主要看如下代码:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> SaveProperties</span><span style="color:#24292E">(version).</span><span style="color:#6F42C1">run</span><span style="color:#24292E">();</span></span></code></pre>
+<p>SaveProperties类型代码如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">  private</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> SaveProperties</span><span style="color:#D73A49"> implements</span><span style="color:#6F42C1"> Runnable</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">        private</span><span style="color:#D73A49"> long</span><span style="color:#24292E"> version;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        private</span><span style="color:#6F42C1"> SaveProperties</span><span style="color:#24292E">(</span><span style="color:#D73A49">long</span><span style="color:#E36209"> version</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#005CC5">            this</span><span style="color:#24292E">.version </span><span style="color:#D73A49">=</span><span style="color:#24292E"> version;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">        public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> run</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6F42C1">            doSaveProperties</span><span style="color:#24292E">(version);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>继续看doSaveProperties方法:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> doSaveProperties</span><span style="color:#24292E">(</span><span style="color:#D73A49">long</span><span style="color:#24292E"> version) {</span></span>
+<span class="line"><span style="color:#6A737D">		//不是最新的就不要持久化了</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (version </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> lastCacheChanged.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (file </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        // Save</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">        	//创建本地文件锁:</span></span>
+<span class="line"><span style="color:#6A737D">        	//路径为:</span></span>
+<span class="line"><span style="color:#6A737D">        	///Users/song/.dubbo/dubbo-metadata-dubbo-demo-api-provider-127.0.0.1-2181.cache.lock</span></span>
+<span class="line"><span style="color:#24292E">            File lockfile </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> File</span><span style="color:#24292E">(file.</span><span style="color:#6F42C1">getAbsolutePath</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ".lock"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">            //锁文件不存在则创建锁文件</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">lockfile.</span><span style="color:#6F42C1">exists</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                lockfile.</span><span style="color:#6F42C1">createNewFile</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">            //随机访问文件工具类对象创建 读写权限</span></span>
+<span class="line"><span style="color:#D73A49">            try</span><span style="color:#24292E"> (RandomAccessFile raf </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> RandomAccessFile</span><span style="color:#24292E">(lockfile, </span><span style="color:#032F62">"rw"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">            //文件文件Channel</span></span>
+<span class="line"><span style="color:#6A737D">            //返回与此文件关联的唯一FileChannel对象。</span></span>
+<span class="line"><span style="color:#24292E">                FileChannel channel </span><span style="color:#D73A49">=</span><span style="color:#24292E"> raf.</span><span style="color:#6F42C1">getChannel</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">                //FileChannel中的lock()与tryLock()方法都是尝试去获取在某一文件上的独有锁（以下简称独有锁），可以实现进程间操作的互斥。区别在于lock()会阻塞（blocking）方法的执行，tryLock()则不会。</span></span>
+<span class="line"><span style="color:#24292E">                FileLock lock </span><span style="color:#D73A49">=</span><span style="color:#24292E"> channel.</span><span style="color:#6F42C1">tryLock</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">                //如果多个线程同时进来未获取锁的则抛出异常</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (lock </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                    throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IOException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Can not lock the metadataReport cache file "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> file.</span><span style="color:#6F42C1">getAbsolutePath</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ", ignore and retry later, maybe multi java process use the file, please config: dubbo.metadata.file=xxx.properties"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#6A737D">                // Save</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                	//文件不存在则创建本地元数据缓存文件</span></span>
+<span class="line"><span style="color:#6A737D">                	///Users/song/.dubbo/dubbo-metadata-dubbo-demo-api-provider-127.0.0.1-2181.cache</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">file.</span><span style="color:#6F42C1">exists</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                        file.</span><span style="color:#6F42C1">createNewFile</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">                    Properties tmpProperties;</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">syncReport) {</span></span>
+<span class="line"><span style="color:#6A737D">                        // When syncReport = false, properties.setProperty and properties.store are called from the same</span></span>
+<span class="line"><span style="color:#6A737D">                        // thread(reportCacheExecutor), so deep copy is not required</span></span>
+<span class="line"><span style="color:#24292E">                        tmpProperties </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties;</span></span>
+<span class="line"><span style="color:#24292E">                    } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                        // Using store method and setProperty method of the this.properties will cause lock contention</span></span>
+<span class="line"><span style="color:#6A737D">                        // under multi-threading, so deep copy a new container</span></span>
+<span class="line"><span style="color:#6A737D">                        //异步存储会导致锁争用 使用此的store方法和setProperty方法。属性将导致多线程下的锁争用，因此深度复制新容器</span></span>
+<span class="line"><span style="color:#24292E">                        tmpProperties </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Properties</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                        Set&#x3C;</span><span style="color:#D73A49">Map</span><span style="color:#24292E">.</span><span style="color:#D73A49">Entry</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">Object</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">>> entries </span><span style="color:#D73A49">=</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">entrySet</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                        for</span><span style="color:#24292E"> (Map.Entry&#x3C;</span><span style="color:#D73A49">Object</span><span style="color:#24292E">, </span><span style="color:#D73A49">Object</span><span style="color:#24292E">> entry </span><span style="color:#D73A49">:</span><span style="color:#24292E"> entries) {</span></span>
+<span class="line"><span style="color:#24292E">                            tmpProperties.</span><span style="color:#6F42C1">setProperty</span><span style="color:#24292E">((String) entry.</span><span style="color:#6F42C1">getKey</span><span style="color:#24292E">(), (String) entry.</span><span style="color:#6F42C1">getValue</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                    try</span><span style="color:#24292E"> (FileOutputStream outputFile </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> FileOutputStream</span><span style="color:#24292E">(file)) {</span></span>
+<span class="line"><span style="color:#6A737D">                    //Properties类型自带的方法:</span></span>
+<span class="line"><span style="color:#6A737D">                    //将此属性表中的属性列表（键和元素对）以适合使用load（Reader）方法的格式写入输出字符流。</span></span>
+<span class="line"><span style="color:#24292E">                        tmpProperties.</span><span style="color:#6F42C1">store</span><span style="color:#24292E">(outputFile, </span><span style="color:#032F62">"Dubbo metadataReport Cache"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                    lock.</span><span style="color:#6F42C1">release</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (version </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> lastCacheChanged.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                reportCacheExecutor.</span><span style="color:#6F42C1">execute</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> SaveProperties</span><span style="color:#24292E">(lastCacheChanged.</span><span style="color:#6F42C1">incrementAndGet</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">            //这个代码太诡异了如果是lock失败也会打印异常给人非常疑惑的感觉 后续会修复</span></span>
+<span class="line"><span style="color:#24292E">            logger.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Failed to save service store file, cause: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> e.</span><span style="color:#6F42C1">getMessage</span><span style="color:#24292E">(), e);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>写入文件的内容大致如下</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#24292E">link.elastic.dubbo.entity.DemoService:::provider:dubbo-demo-api-provider -> {</span></span>
+<span class="line"><span style="color:#005CC5">  "parameters"</span><span style="color:#24292E">: {</span></span>
+<span class="line"><span style="color:#005CC5">    "side"</span><span style="color:#24292E">: </span><span style="color:#032F62">"provider"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "interface"</span><span style="color:#24292E">: </span><span style="color:#032F62">"link.elastic.dubbo.entity.DemoService"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "pid"</span><span style="color:#24292E">: </span><span style="color:#032F62">"41457"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "application"</span><span style="color:#24292E">: </span><span style="color:#032F62">"dubbo-demo-api-provider"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "dubbo"</span><span style="color:#24292E">: </span><span style="color:#032F62">"2.0.2"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "release"</span><span style="color:#24292E">: </span><span style="color:#032F62">"3.0.8"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "anyhost"</span><span style="color:#24292E">: </span><span style="color:#032F62">"true"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "bind.ip"</span><span style="color:#24292E">: </span><span style="color:#032F62">"192.168.1.9"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "methods"</span><span style="color:#24292E">: </span><span style="color:#032F62">"sayHello,sayHelloAsync"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "background"</span><span style="color:#24292E">: </span><span style="color:#032F62">"false"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "deprecated"</span><span style="color:#24292E">: </span><span style="color:#032F62">"false"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "dynamic"</span><span style="color:#24292E">: </span><span style="color:#032F62">"true"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "service-name-mapping"</span><span style="color:#24292E">: </span><span style="color:#032F62">"true"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "generic"</span><span style="color:#24292E">: </span><span style="color:#032F62">"false"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "bind.port"</span><span style="color:#24292E">: </span><span style="color:#032F62">"20880"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">    "timestamp"</span><span style="color:#24292E">: </span><span style="color:#032F62">"1653100253548"</span></span>
+<span class="line"><span style="color:#24292E">  },</span></span>
+<span class="line"><span style="color:#005CC5">  "canonicalName"</span><span style="color:#24292E">: </span><span style="color:#032F62">"link.elastic.dubbo.entity.DemoService"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">  "codeSource"</span><span style="color:#24292E">: </span><span style="color:#032F62">"file:/Users/song/Desktop/Computer/A/code/gitee/weaving-a-net/weaving-test/dubbo-test/target/classes/"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">  "methods"</span><span style="color:#24292E">: [</span></span>
+<span class="line"><span style="color:#24292E">    {</span></span>
+<span class="line"><span style="color:#005CC5">      "name"</span><span style="color:#24292E">: </span><span style="color:#032F62">"sayHelloAsync"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      "parameterTypes"</span><span style="color:#24292E">: [</span></span>
+<span class="line"><span style="color:#032F62">        "java.lang.String"</span></span>
+<span class="line"><span style="color:#24292E">      ],</span></span>
+<span class="line"><span style="color:#005CC5">      "returnType"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.util.concurrent.CompletableFuture"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      "annotations"</span><span style="color:#24292E">: [</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#24292E">      ]</span></span>
+<span class="line"><span style="color:#24292E">    },</span></span>
+<span class="line"><span style="color:#24292E">    {</span></span>
+<span class="line"><span style="color:#005CC5">      "name"</span><span style="color:#24292E">: </span><span style="color:#032F62">"sayHello"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      "parameterTypes"</span><span style="color:#24292E">: [</span></span>
+<span class="line"><span style="color:#032F62">        "java.lang.String"</span></span>
+<span class="line"><span style="color:#24292E">      ],</span></span>
+<span class="line"><span style="color:#005CC5">      "returnType"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.lang.String"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      "annotations"</span><span style="color:#24292E">: [</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#24292E">      ]</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">  ],</span></span>
+<span class="line"><span style="color:#005CC5">  "types"</span><span style="color:#24292E">: [</span></span>
+<span class="line"><span style="color:#24292E">    {</span></span>
+<span class="line"><span style="color:#005CC5">      "type"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.util.concurrent.CompletableFuture"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      "properties"</span><span style="color:#24292E">: {</span></span>
+<span class="line"><span style="color:#005CC5">        "result"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.lang.Object"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">        "stack"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.util.concurrent.CompletableFuture.Completion"</span></span>
+<span class="line"><span style="color:#24292E">      }</span></span>
+<span class="line"><span style="color:#24292E">    },</span></span>
+<span class="line"><span style="color:#24292E">    {</span></span>
+<span class="line"><span style="color:#005CC5">      "type"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.lang.Object"</span></span>
+<span class="line"><span style="color:#24292E">    },</span></span>
+<span class="line"><span style="color:#24292E">    {</span></span>
+<span class="line"><span style="color:#005CC5">      "type"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.lang.String"</span></span>
+<span class="line"><span style="color:#24292E">    },</span></span>
+<span class="line"><span style="color:#24292E">    {</span></span>
+<span class="line"><span style="color:#005CC5">      "type"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.util.concurrent.CompletableFuture.Completion"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">      "properties"</span><span style="color:#24292E">: {</span></span>
+<span class="line"><span style="color:#005CC5">        "next"</span><span style="color:#24292E">: </span><span style="color:#032F62">"java.util.concurrent.CompletableFuture.Completion"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#005CC5">        "status"</span><span style="color:#24292E">: </span><span style="color:#032F62">"int"</span></span>
+<span class="line"><span style="color:#24292E">      }</span></span>
+<span class="line"><span style="color:#24292E">    },</span></span>
+<span class="line"><span style="color:#24292E">    {</span></span>
+<span class="line"><span style="color:#005CC5">      "type"</span><span style="color:#24292E">: </span><span style="color:#032F62">"int"</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">  ],</span></span>
+<span class="line"><span style="color:#005CC5">  "annotations"</span><span style="color:#24292E">: [</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">  ]</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

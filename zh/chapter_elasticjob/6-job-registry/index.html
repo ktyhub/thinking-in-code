@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**线程安全的单例模式设计全局作业注册表JobRegistry** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_elasticjob/6-job-registry/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_elasticjob/6-job-registry"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_elasticjob/6-job-registry/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_elasticjob/6-job-registry"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**线程安全的单例模式设计全局作业注册表JobRegistry** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_elasticjob/6-job-registry/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_elasticjob/6-job-registry/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>elasticjob</h3> <ul> <li> <a href="/zh/chapter_elasticjob/1-introduce" class="lv0" title="**分布式弹性调度系统的简介**"> **分布式弹性调度系统的简介** </a> </li><li> <a href="/zh/chapter_elasticjob/2-reg" class="lv0" title="**注册中心的设计原理**"> **注册中心的设计原理** </a> </li><li> <a href="/zh/chapter_elasticjob/3-job-config" class="lv0" title="**Builder建造者设计模式构造复杂的作业配置**"> **Builder建造者设计模式构造复杂的作业配置** </a> </li><li> <a href="/zh/chapter_elasticjob/4-job-template" class="lv0" title="**调度作业模版类型设计**"> **调度作业模版类型设计** </a> </li><li> <a href="/zh/chapter_elasticjob/5-job-config-storage" class="lv0" title="**调度作业的配置是如何在分布式场景下存储的？**"> **调度作业的配置是如何在分布式场景下存储的？** </a> </li><li> <a href="/zh/chapter_elasticjob/6-job-registry" class="lv0" aria-current="page" title="**线程安全的单例模式设计全局作业注册表JobRegistry**"> **线程安全的单例模式设计全局作业注册表JobRegistry** </a> </li><li> <a href="/zh/chapter_elasticjob/7-quartz" class="lv0" title="**使用Quartz为每个作业创建单机执行的调度器对象**"> **使用Quartz为每个作业创建单机执行的调度器对象** </a> </li><li> <a href="/zh/chapter_elasticjob/8-job-life" class="lv0" title="调度作业启动时的生命周期"> 调度作业启动时的生命周期 </a> </li><li> <a href="/zh/chapter_elasticjob/9-listener" class="lv0" title="**调度作业的监听器大全**"> **调度作业的监听器大全** </a> </li><li> <a href="/zh/chapter_elasticjob/10-leader-latch" class="lv0" title="**基于Zookeeper的分布式锁实现 选举 作业主节点**"> **基于Zookeeper的分布式锁实现 选举 作业主节点** </a> </li><li> <a href="/zh/chapter_elasticjob/11-server-instance" class="lv0" title="**调度作业的服务器IP和进程信息的持久化是如何设计的?**"> **调度作业的服务器IP和进程信息的持久化是如何设计的?** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_elasticjob">elasticjob</a><span class="sep">/</span><span>**线程安全的单例模式设计全局作业注册表JobRegistry**</span> </nav> <div class="prose">  <h1 id="线程安全的单例模式设计全局作业注册表jobregistry"><strong>线程安全的单例模式设计全局作业注册表JobRegistry</strong></h1>
+<h2 id="注册作业分片总数"><strong>注册作业分片总数</strong></h2>
+<p>在作业调度器配置信息同步之后，接下来需要将分片总数写入全局注册表中，方便在程序的任何位置获取分片总数。</p>
+<p>比如我们后期程序运行时，在调度后台动态修改Zookeeper上存储的分片总数配置，这个时候是需要重新触发分片的。</p>
+<p>运行中的调度作业程序可以通过判断Zookeeper上发生变更的分片总数与本地注册表中的分片总数进行比较，来判断是否发生了分片总数变更，如果分片总数发生了变更，则需要重新设置分片标记进行重新分片。</p>
+<p>那接下来就来看下是如何将分片总数写入本地注册表，代码如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>//向作业注册表中写入分片总数</span></span>
+<span class="line"><span>JobRegistry.getInstance().setCurrentShardingTotalCount(liteJobConfigFromRegCenter.getJobName(),</span></span>
+<span class="line"><span>        liteJobConfigFromRegCenter.getTypeConfig().getCoreConfig().getShardingTotalCount());</span></span></code></pre>
+<p>写入过程非常简单只需要一行代码，获取全局单例的作业注册表然后将配置中的分片总数写入即可。</p>
+<p>而作业注册表JobRegistry类型中的setCurrentShardingTotalCount方法就是将作业名和分片总数的映射关系存入Map中，具体代码如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span> /**</span></span>
+<span class="line"><span>     * 设置当前分片总数.</span></span>
+<span class="line"><span>     *</span></span>
+<span class="line"><span>     * @param jobName 作业名称</span></span>
+<span class="line"><span>     * @param currentShardingTotalCount 当前分片总数</span></span>
+<span class="line"><span>     */</span></span>
+<span class="line"><span>    public void setCurrentShardingTotalCount(final String jobName, final int currentShardingTotalCount) {</span></span>
+<span class="line"><span>        currentShardingTotalCountMap.put(jobName, currentShardingTotalCount);</span></span>
+<span class="line"><span>    }</span></span></code></pre>
+<p>了解到了分片总数写入全局作业注册表的过程，那在下面我们就来详细看下全局作业注册表的设计。</p>
+<h2 id="作业全局注册表jobregistry"><strong>作业全局注册表JobRegistry</strong></h2>
+<p>我们可以看到在注册作业分片总数的时候有将配置中的分片总数写入到JobRegistry类型的单例子对象中，来进行保存，这个分片总数存储到这个JobRegistry注册表类型对象中，在整个系统中都可以通过获取JobRegistry单例对象来获取属性，作业注册表其实就是用来管理一些公共对象，这些对象可以做为全局变量在任何地方都可以使用， JobRegistry目前系统提供了5种信息的注册，分别为：作业调度控制器对象，协调注册中心对象，作业实例对象，作业运行状态对象，当前分片总数对象。具体类型则使用ConcurrentHashMap来保证线程安全，KEY值均为作业名字，VALUE则为具体对象，如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>schedulerMap</td>
+<td>Map&#x3C;String,JobScheduleController></td>
+<td>作业调度控制器映射KEY为作业名，值为作业调度控制器</td>
+</tr>
+<tr>
+<td>regCenterMap</td>
+<td>Map&#x3C;String, CoordinatorRegistryCenter></td>
+<td>作业协调注册中心映射，KEY为作业名，值为协调注册中心</td>
+</tr>
+<tr>
+<td>jobInstanceMap</td>
+<td>Map &#x3C;String, JobInstance></td>
+<td>作业实例映射，KEY为作业名值为作业实例对象</td>
+</tr>
+<tr>
+<td><code>jobRunningMap</code></td>
+<td>Map&#x3C;String, Boolean></td>
+<td>作业的运行状态，true为正在运行</td>
+</tr>
+<tr>
+<td>currentShardingTotalCountMap</td>
+<td>Map&#x3C;String, Integer></td>
+<td>作业分片总数映射，KEY为作业名，值为分片总数</td>
+</tr>
+</tbody>
+</table>
+<p>实现一个全局的作业注册表JobRegistry，需要用到单例模式， 保证全局对象唯一，这里就直接介绍下JobRegistry类型使用到的单例模式，在这里使用到了单例模式中的 双检锁/双重校验锁（DCL，即 double-checked locking），这种方式采用双锁机制，安全且在多线程情况下能保持高性能。接下来我们来看一下双检锁单例模式的实现，需要如下几个部分：</p>
+<ul>
+<li>私有的单例对象成员变量singleton，使用保证线程间变量可见的volatile 类型来修饰</li>
+<li>私有的构造器，保证外部无法创建对象，对象只能在内部创建保证对象创建可控</li>
+<li>公有的获取单例对象的静态方法getSingleton</li>
+<li>getSingleton中进行对象初始化，加锁之前判断单例对象是否为空，加锁之后也判断下对象是否为空，两次判断对象均为空条件下创建对象，并赋值给singleton对象</li>
+</ul>
+<p>简化后的单例代码如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>public class Singleton {  </span></span>
+<span class="line"><span>    private volatile static Singleton singleton;  </span></span>
+<span class="line"><span>    private Singleton (){}  </span></span>
+<span class="line"><span>    public static Singleton getSingleton() {  </span></span>
+<span class="line"><span>    if (singleton == null) {  </span></span>
+<span class="line"><span>        synchronized (Singleton.class) {  </span></span>
+<span class="line"><span>        if (singleton == null) {  </span></span>
+<span class="line"><span>            singleton = new Singleton();  </span></span>
+<span class="line"><span>        }  </span></span>
+<span class="line"><span>        }  </span></span>
+<span class="line"><span>    }  </span></span>
+<span class="line"><span>    return singleton;  </span></span>
+<span class="line"><span>    }  </span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>getSingleton方法为什么需要两次判断呢，第一个if减少性能开销，第二个if避免多线程环境下多线程同时在第一次判断时候对象为空，导致生成多个对象实例。</p>
+<p>全局作业注册表的单例对象可以在程序任何位置获取到，然后通过作业名字即可获取到本地内存存储的对象然后进行操作。</p>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

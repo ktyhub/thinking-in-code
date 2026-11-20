@@ -1,0 +1,305 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ray 2.60.0 — STAGS NextStack</title><meta name="description" content="Ray Data shuffle and Parquet reads: In this Ray release, shuffle v2 is the default shuffle strategy for joins, aggregations (\\#66260)."><meta name="keywords" content="open source release notes, release tracker, changelog aggregator, breaking changes, deprecation tracker, Kafka releases, Spring Boot releases, Kubernetes releases"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/releases/ray/2.60.0/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/releases/ray/2.60.0/"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/release_note/ray/ray_2.60.0"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/releases/ray/2.60.0/"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="article"><meta property="og:title" content="ray 2.60.0 — STAGS NextStack"><meta property="og:description" content="Ray Data shuffle and Parquet reads: In this Ray release, shuffle v2 is the default shuffle strategy for joins, aggregations (\\#66260)."><meta property="og:url" content="https://www.stags.cn/releases/ray/2.60.0/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="en_US"><meta property="og:locale:alternate" content="zh_CN"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"en","description":"STAGS indexes release notes from infrastructure and AI projects — breaking changes, deprecations and migrations — in one English-first feed.","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"},{"@type":"TechArticle","@id":"https://www.stags.cn/releases/ray/2.60.0/#article","headline":"ray 2.60.0 release notes","datePublished":"2026-11-04","inLanguage":"en","isPartOf":{"@id":"https://www.stags.cn/#website"},"about":{"@type":"SoftwareSourceCode","codeRepository":"https://github.com/ray-project/ray"}}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css">
+<style>.ad-slot[data-astro-cid-fgwukgf6]{margin:var(--s10) 0 0;padding-top:var(--s5);border-top:1px solid var(--line)}.ad-slot-label[data-astro-cid-fgwukgf6]{margin-bottom:var(--s3);font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4)}.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{display:block;min-height:100px}@media(min-width:640px){.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{min-height:250px}}
+</style></head> <body> <a class="skip" href="#main">Skip to content</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/" class="brand" aria-label="STAGS NextStack — Open-source release intelligence"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/releases">Releases</a><a href="/projects">Projects</a><a href="/topics">Topics</a><a href="/compare">Compare</a><a href="/method">Method</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="Search releases"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">Search</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="Language"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">EN</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="Language"> <p class="langmenu-head">Language</p> <a class="langmenu-item" href="/releases/ray/2.60.0/" hreflang="en" lang="en" aria-current="true" data-on="true"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/release_note/ray/ray_2.60.0" hreflang="zh-Hans" lang="zh-CN" data-on="false"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases/ray/2.60.0/" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases/ray/2.60.0/" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases/ray/2.60.0/" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases/ray/2.60.0/" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases/ray/2.60.0/" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap"> <div class="detail"> <article> <header class="detail-hd"> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">Home</a> <span class="sep">/</span> <a href="/releases">Releases</a> <span class="sep">/</span> <a href="/releases/ray">ray</a> </nav> <h1 class="detail-title"> <span class="p">ray</span> 2.60.0 </h1> <div class="detail-meta"> <span class="chip chip--minor">minor</span> <span><span class="k">Published</span>Nov 4, 2026</span>  <span class="sep" aria-hidden="true"></span> <a href="https://github.com/ray-project/ray" target="_blank" rel="noopener"> <span class="k">Source</span>ray-project/ray </a>   <span class="sep" aria-hidden="true"></span> <a href="/zh/release_note/ray/ray_2.60.0"> Chinese translation </a>  <span class="sep" aria-hidden="true"></span> <button class="btn btn--ghost btn--sm" type="button" data-copy="https://www.stags.cn/releases/ray/2.60.0/">Copy link</button> </div> </header> <div class="prose" style="margin-top:var(--s8)">   <h1 id="ray-ray-2600">ray ray-2.60.0</h1>
+<h1 id="highlights">Highlights</h1>
+<ul>
+<li><strong>Ray Data shuffle and Parquet reads:</strong> In this Ray release, shuffle v2 is the default shuffle strategy for joins, aggregations (#66260). Parquet reads now size read tasks from the row-group metadata in each file’s footer instead of estimating from file size, so read tasks are packed to an accurate byte budget (#65596, #65806, #65821).</li>
+<li><strong>Ray Serve rolling updates:</strong> We’ve added <code>max_surge_percent</code>, which starts replacement replicas before stopping old ones so a rolling update doesn’t reduce serving capacity (#66267). A rolling update whose new replicas keep failing now stops at <code>DEPLOY_FAILED</code> and leaves the remaining old replicas routable, instead of replacing every healthy replica (#66252, #66290).</li>
+<li><strong>Security:</strong> Ray Data now rejects pickled-object columns in every reader that deserializes Arrow data from external input, closing a remote code execution path in the LeRobot, Databricks, Iceberg, Hugging Face, ClickHouse, BigQuery, and Delta Sharing readers (#66042, #65769). Ray images and wheel builds pin <code>certifi</code> 2026.10.19 and pip 26.2.2 after the eMudhra CA compromise, and <code>aiohttp</code> moves to 3.14.4 for CVE-2026-111064 and CVE-2026-111066 (#67295, #67298, #67301, #67304, #67305, #67350).</li>
+</ul>
+<h1 id="ray-data">Ray Data</h1>
+<h3 id="-new-features">🎉 New Features</h3>
+<ul>
+<li>Add <code>Dataset.write_orc()</code> for writing ORC files (#65453)</li>
+<li>Add an <code>unnest()</code> expression that expands a struct-valued expression or column into one column per field (#65241)</li>
+<li>Add <code>min_bytes_per_file</code> to <code>write_parquet</code> to combine small blocks toward a target output file size (#65636)</li>
+<li>Support nested schema evolution in <code>write_delta</code> through <code>schema_mode</code> (#65858)</li>
+<li>Support appending a subset of columns to an existing Lance dataset (#64474)</li>
+<li>Add a rate-based cluster autoscaler that scales from measured operator throughput, now the default (#65954)</li>
+<li>Add a backlog-aware actor-pool autoscaler, now the default; <code>RAY_DATA_ACTOR_AUTOSCALER=DEFAULT</code> restores the old one (#66035)</li>
+<li>Make checkpoint restore pluggable through <code>CheckpointConfig.checkpoint_manager_cls</code> and <code>checkpoint_filter_cls</code> (#65676)</li>
+<li>Add the <code>ray.data.list_stats_summaries()</code> developer API for execution stats of completed datasets (#66294)</li>
+<li>Add a logical memory usage chart to the Ray Data dashboard (#66044)</li>
+</ul>
+<h3 id="-enhancements">💫 Enhancements</h3>
+<ul>
+<li>Keep pandas metadata on Arrow blocks parsable by pandas (#67576)<br>
+Make shuffle v2 the default, add task-based shuffle v2 for <code>sort</code>, and rename external shuffle to disk shuffle (#66260, #64875, #66367)</li>
+<li>Read Parquet footers to bin-pack read tasks by row group, and use one reader thread per fragment (#65596, #65806, #65821, #65169)</li>
+<li>Use Polars streaming joins for in-partition joins with one Polars thread per reducer, and Polars in <code>hash_partitions</code> (#66075, #66341, #66269)</li>
+<li>Make actor pools node-aware: skip actors on draining nodes and refresh actor locations after restarts (#66109)</li>
+<li>Count lineage reconstruction tasks in task-pool resource usage so Data doesn’t over-submit under object loss (#66217)</li>
+<li>Default GPU map operators to <code>num_cpus=1</code> when <code>num_cpus</code> is unspecified; set <code>num_cpus=0</code> to opt out (#66202)</li>
+<li>Speed up aggregations, sorts, row access, and tensor-to-pandas conversion by cutting per-row work and copies (#66194, #66120, #66246, #66254, #66116, #66219, #64961, #66122, #65796)</li>
+<li>Break <code>ds.stats()</code> UDF time into input prep, function body, and output build, optionally per fused stage (#65807, #65810)</li>
+<li>Warn when an operator’s configured <code>memory</code> is below 1.25x its observed max USS (#65512)</li>
+<li>Add an opt-in per-operator release interval for <code>OutputBackpressureGuard</code> (#65202)</li>
+<li>Track autoscaling coordinator reservations per node (#66001, #66370)</li>
+<li>Defer loading <code>pyarrow.dataset</code> on <code>import ray.data</code> (#66463)</li>
+<li>Fetch only each read task’s root bundles in <code>read_lerobot</code> (#65284)</li>
+<li>Clearer errors for S3 <code>ACCESS_DENIED</code> writes, partition value casts, and V1 reads that find no files (#66033, #66078, #65256)</li>
+<li>Deprecate <code>RandomAccessDataset</code> (#61287)</li>
+<li>Groundwork for Data fault tolerance: lineage tracking for fan-out and fan-in tasks (#65642, #66136)</li>
+<li>Reorganize DataSourceV2 so non-Parquet and catalog-backed sources such as Iceberg can build on it (#65908, #66244, #66066, #66312, #66357, #66390, #66398, #66450, #66478, #66497)</li>
+</ul>
+<h3 id="-fixes">🔨 Fixes</h3>
+<ul>
+<li>Fix silent data loss when a file read retries partway through a file (#66011)</li>
+<li>Fix <code>ResourceBudget</code> backpressure stalling a pipeline indefinitely (#64601)</li>
+<li>Stop pushing filters past <code>limit()</code>, which changed the rows <code>limit().filter()</code> returned (#66143)</li>
+<li>Fix partition pruning: keep pushed-down limits correct, raise on unevaluable filters, handle fully pruned manifests (#66010, #65990, #65955)</li>
+<li>Return a result for global aggregations over an empty dataset, and fix duplicate aggregation column names (#66218)</li>
+<li>Preserve anti-join rows when the other side is empty and its schema is unknown (#66126)</li>
+<li>Fix hash shuffle after workers scale to zero (#66043)</li>
+<li>Don’t fuse a <code>MapOperator</code> with non-zero concurrency into a following <code>AllToAllOperator</code> (#66350)</li>
+<li>Respect <code>target_max_block_size=None</code> in shuffle reduce (#66451)</li>
+<li>Fix double-counted UDF time in fused map operators (#65776)</li>
+<li>Fix preprocessors that broke on missing values in Arrow-backed pandas batches (#65272)</li>
+<li>Preserve nested <code>TorchInference</code> outputs on device-to-host transfer (#65997)</li>
+<li>Reject unknown LeRobot <code>delta_timestamps</code> keys and a zero height or width in <code>read_images</code> (#65857, #65967)</li>
+</ul>
+<h3 id="-documentation">📖 Documentation</h3>
+<ul>
+<li>Document disk-based shuffle in the Ray Data internals guide (#66488)</li>
+<li>Fix the <code>write_webdataset</code> docs and encoder typing, and a broken PyArrow link in <code>write_parquet</code> (#65278, #66154)</li>
+<li>Add community connectors for Apache Doris and Kinetica (#65844)</li>
+<li>Convert the Ray Data docs to MyST Markdown with a style and grammar pass (#66352, #66375, #66381, #66412, #66413)</li>
+</ul>
+<h1 id="ray-serve">Ray Serve</h1>
+<h3 id="-new-features-1">🎉 New Features</h3>
+<ul>
+<li><strong>Columnar autoscaling metrics.</strong> Routers now send handle metric reports as flat numeric arrays instead of pickled Python objects by default, and the controller merges them in one vectorized pass, cutting controller loop cost by 2.8x–13.5x at 64–4,096 replicas per handle; set <code>RAY_SERVE_COLUMNAR_AUTOSCALING_METRICS=0</code> to revert (<a href="https://github.com/ray-project/ray/pull/64281">#64281</a>, <a href="https://github.com/ray-project/ray/pull/66104">#66104</a>, <a href="https://github.com/ray-project/ray/pull/66105">#66105</a>, <a href="https://github.com/ray-project/ray/pull/66070">#66070</a>, <a href="https://github.com/ray-project/ray/pull/66240">#66240</a>). The controller health schema also reports how much of each control loop goes to ingesting metrics (<a href="https://github.com/ray-project/ray/pull/66106">#66106</a>).</li>
+<li><strong>Surge rolling updates.</strong> The new <code>max_surge_percent</code> deployment option starts new replicas before stopping old ones, keeping capacity at the target during a rolling update; the default of <code>0</code> keeps the existing stop-then-start behavior (<a href="https://github.com/ray-project/ray/pull/66267">#66267</a>).</li>
+<li><strong>Node compaction for pack scheduling.</strong> With <code>RAY_SERVE_USE_PACK_SCHEDULING_STRATEGY=1</code>, once all deployments are stable the controller migrates replicas off a partially used node so the autoscaler can release it, starting replacements before stopping the originals so capacity never dips; tune it with <code>RAY_SERVE_NODE_COMPACTION_DELAY_S</code> and related settings (<a href="https://github.com/ray-project/ray/pull/66108">#66108</a>).</li>
+<li><strong>gRPC server reflection.</strong> Tools such as <code>grpcurl</code>, <code>grpcui</code>, and Postman can now discover and call Serve gRPC services through the gRPC proxy without local proto files; reflection is on by default and can be disabled with <code>gRPCOptions(enable_reflection=False)</code> or <code>--grpc-disable-reflection</code> (<a href="https://github.com/ray-project/ray/pull/65854">#65854</a>).</li>
+<li><strong>Model multiplexing for direct ingress and <code>RoundRobinRouter</code>.</strong> Direct-ingress deployments accept multiplexed model IDs over both HTTP and gRPC (<a href="https://github.com/ray-project/ray/pull/65678">#65678</a>), and <code>RoundRobinRouter</code> prefers replicas that already host the requested model (<a href="https://github.com/ray-project/ray/pull/65679">#65679</a>).</li>
+<li><strong>Custom autoscaling policies reach beta.</strong> The feature graduates from experimental (<a href="https://github.com/ray-project/ray/pull/66058">#66058</a>), and a new alpha <code>PrometheusQueryMixin</code> lets policies scale on Prometheus metrics by keeping PromQL query results fresh in a background thread, so reads never block on network calls (<a href="https://github.com/ray-project/ray/pull/65884">#65884</a>).</li>
+</ul>
+<h3 id="-enhancements-1">💫 Enhancements</h3>
+<ul>
+<li><strong>Sync methods run in a thread pool by default.</strong> Blocking synchronous I/O in sync deployment methods no longer stalls the replica’s event loop; deployments whose shared state isn’t thread-safe can restore the old behavior with <code>RAY_SERVE_RUN_SYNC_IN_THREADPOOL=0</code> (<a href="https://github.com/ray-project/ray/pull/66436">#66436</a>).</li>
+<li><strong>Non-blocking <code>_to_object_ref()</code>.</strong> <code>DeploymentResponse._to_object_ref()</code> now returns as soon as the request is assigned to a replica instead of waiting for the replica’s result (<a href="https://github.com/ray-project/ray/pull/65243">#65243</a>).</li>
+<li><strong>Safer failed rolling updates.</strong> When a rolling update fails, surviving old replicas keep serving traffic (<a href="https://github.com/ray-project/ray/pull/66252">#66252</a>), and the update stops at the startup-failure threshold and stays <code>DEPLOY_FAILED</code> (including across controller restarts) instead of replacing every healthy old replica; opt out with <code>RAY_SERVE_STOP_FAILED_ROLLING_UPDATES=0</code> (<a href="https://github.com/ray-project/ray/pull/66290">#66290</a>).</li>
+<li><strong>Production HAProxy defaults.</strong> Connection attempts are now bounded at 5s and live traffic marks dead replicas down without waiting for a health check, so retries reach a healthy replica sooner (<a href="https://github.com/ray-project/ray/pull/65729">#65729</a>). The ingress buffer grows from 256 KiB to 8 MiB so body-aware LLM routing sees full million-token requests, with <code>maxconn</code> lowered from 20,000 to 4,096 to cap buffer memory (<a href="https://github.com/ray-project/ray/pull/66360">#66360</a>).</li>
+<li><strong>Graceful HAProxy replica draining.</strong> Once the deregistration window ends, a draining direct-ingress replica behind HAProxy closes its HTTP listener, so late requests from stale HAProxy workers are refused and retried on another replica instead of failing mid-flight; this removed ~40 client errors per spot-interruption event in a staging fleet (<a href="https://github.com/ray-project/ray/pull/65698">#65698</a>).</li>
+<li><strong>Graceful draining on node preemption.</strong> The controller now sees nodes that Ray has marked as draining (for example, when <code>ray start --block</code> receives SIGTERM), so Serve’s existing logic migrates replicas and proxies off them instead of failing in-flight requests (<a href="https://github.com/ray-project/ray/pull/65502">#65502</a>).</li>
+<li><strong>Controller-only metrics aggregation.</strong> Autoscaling metrics are now always aggregated at the controller, which is correct across sources and for <code>max</code>/<code>min</code> aggregation; the <code>RAY_SERVE_AGGREGATE_METRICS_AT_CONTROLLER</code> flag is removed, and because it defaulted to off this changes the default behavior (<a href="https://github.com/ray-project/ray/pull/65714">#65714</a>). The controller also no longer re-aggregates requests just to write the scaling log line (<a href="https://github.com/ray-project/ray/pull/64654">#64654</a>).</li>
+</ul>
+<h3 id="-fixes-1">🔨 Fixes</h3>
+<ul>
+<li><strong>ASGI-compliant <code>root_path</code> (breaking).</strong> <code>root_path</code> now follows the ASGI spec in every ingress mode, fixing direct ingress returning 404 for every request (including <code>/-/healthz</code>) and HAProxy stripping the prefix twice; uvicorn is upgraded to 0.53 (minimum 0.26). Requests that still include the <code>root_path</code> prefix now return 404, so strip it at your ingress or unset <code>root_path</code> (<a href="https://github.com/ray-project/ray/pull/66446">#66446</a>).</li>
+<li><strong><code>jinja2</code> import regression.</strong> <code>from ray import serve</code> no longer fails on slim images without <code>jinja2</code> (a 2.57 regression); jinja2 is now imported lazily and declared in the <code>serve</code> extra (<a href="https://github.com/ray-project/ray/pull/65542">#65542</a>).</li>
+<li><strong>Stranded requests in routing.</strong> Routing tasks now stay alive until they assign the request they own; previously an early exit could leave requests waiting forever with exact-match routers such as <code>KVAwareRouter</code> (<a href="https://github.com/ray-project/ray/pull/66325">#66325</a>).</li>
+<li><strong>Multiplexed routing fixes.</strong> Routing through an ingress request router now retries instead of returning HTTP 503 while model-location metadata propagates (<a href="https://github.com/ray-project/ray/pull/66170">#66170</a>), and dead replicas are dropped from the multiplexed model map, preventing a <code>KeyError</code> that silently stranded requests (<a href="https://github.com/ray-project/ray/pull/66358">#66358</a>).</li>
+<li><strong>Gang scheduling fixes.</strong> A gang’s shared placement group is now removed only when its last member stops, instead of killing siblings that were still serving (<a href="https://github.com/ray-project/ray/pull/66221">#66221</a>), and the controller no longer crashes on recovery when the Ray state API is unreachable during placement group leak detection (<a href="https://github.com/ray-project/ray/pull/66149">#66149</a>).</li>
+<li><strong>Proxy node release for scale-to-zero.</strong> Ingress request-router replicas no longer keep their proxy node alive after the application’s replicas stop, so scale-to-zero apps can release the node (<a href="https://github.com/ray-project/ray/pull/65824">#65824</a>).</li>
+<li><strong>Redeploy and deployment-removal fixes.</strong> Redeploying a deployment while its previous version is still being torn down no longer triggers spurious <code>DeploymentUnavailableError</code> rejections (<a href="https://github.com/ray-project/ray/pull/66323">#66323</a>), and removing a deployment from an app with application-level autoscaling no longer raises a <code>KeyError</code> that stalls the application control loop (<a href="https://github.com/ray-project/ray/pull/66438">#66438</a>).</li>
+<li><strong>Config override removal.</strong> Removing an option from a deployment’s config now restores the value defined in code instead of keeping the old override (<a href="https://github.com/ray-project/ray/pull/66266">#66266</a>).</li>
+<li><strong>Clock-skew-safe handle metrics.</strong> Handle metric staleness is now measured from when the controller received the report, so clock skew between nodes no longer drops fresh metrics early or keeps stale handles alive (<a href="https://github.com/ray-project/ray/pull/66307">#66307</a>).</li>
+<li><strong>Proxy shutdown metric.</strong> The proxy shutdown duration metric is now recorded for every stopped proxy and measures the whole shutdown rather than a single control-loop iteration (<a href="https://github.com/ray-project/ray/pull/66151">#66151</a>).</li>
+<li><strong>grpcio registered-method handlers.</strong> The gRPC proxy now routes services registered through grpcio’s newer registered-method handler API, which previously bypassed Serve’s request routing (<a href="https://github.com/ray-project/ray/pull/66502">#66502</a>).</li>
+</ul>
+<h3 id="-documentation-1">📖 Documentation</h3>
+<ul>
+<li><strong>Standalone Serve CLI page.</strong> The <code>serve</code> CLI reference moved to its own page, matching how the other libraries’ API references are organized (<a href="https://github.com/ray-project/ray/pull/65943">#65943</a>).</li>
+<li><strong><code>metrics_interval_s</code> warning.</strong> The autoscaling guide now warns that very low values can overload the controller, and the examples use the defaults (<a href="https://github.com/ray-project/ray/pull/65972">#65972</a>).</li>
+<li><strong>KubeRay examples on <code>ray.io/v1</code>.</strong> The examples, including the Serve fault-tolerance guide, moved from <code>ray.io/v1alpha1</code>, and a RayService example that used the unsupported <code>serveConfig</code> field (and so deployed zero applications) was fixed (<a href="https://github.com/ray-project/ray/pull/65336">#65336</a>).</li>
+</ul>
+<h3 id="-architecture-refactoring">🏗 Architecture refactoring:</h3>
+<ul>
+<li><strong>Removed async inference queue monitor.</strong> This removes the unused <code>QueueMonitorActor</code>, its controller-side metric, and <code>AutoscalingContext.total_pending_async_requests</code> (which was always 0); <code>AsyncInferenceAutoscalingPolicy</code> already polls the broker directly (<a href="https://github.com/ray-project/ray/pull/66405">#66405</a>).</li>
+<li><strong>Full <code>serve/_private</code> type checking.</strong> mypy and pyrefly now scan the whole <code>serve/_private</code> tree instead of a hand-maintained file list, so new modules are covered by default (<a href="https://github.com/ray-project/ray/pull/65653">#65653</a>).</li>
+<li><strong>Test deflaking.</strong> Fixes span routing, metrics, gang scheduling, direct ingress, and deployment tests (<a href="https://github.com/ray-project/ray/pull/65654">#65654</a>, <a href="https://github.com/ray-project/ray/pull/65725">#65725</a>, <a href="https://github.com/ray-project/ray/pull/65995">#65995</a>, <a href="https://github.com/ray-project/ray/pull/65811">#65811</a>, <a href="https://github.com/ray-project/ray/pull/65836">#65836</a>, <a href="https://github.com/ray-project/ray/pull/66000">#66000</a>, <a href="https://github.com/ray-project/ray/pull/66037">#66037</a>, <a href="https://github.com/ray-project/ray/pull/65664">#65664</a>, <a href="https://github.com/ray-project/ray/pull/65822">#65822</a>, <a href="https://github.com/ray-project/ray/pull/66059">#66059</a>, <a href="https://github.com/ray-project/ray/pull/66101">#66101</a>, <a href="https://github.com/ray-project/ray/pull/66150">#66150</a>, <a href="https://github.com/ray-project/ray/pull/66195">#66195</a>, <a href="https://github.com/ray-project/ray/pull/66317">#66317</a>, <a href="https://github.com/ray-project/ray/pull/66296">#66296</a>, <a href="https://github.com/ray-project/ray/pull/66346">#66346</a>, <a href="https://github.com/ray-project/ray/pull/66071">#66071</a>, <a href="https://github.com/ray-project/ray/pull/66395">#66395</a>, <a href="https://github.com/ray-project/ray/pull/66206">#66206</a>, <a href="https://github.com/ray-project/ray/pull/66455">#66455</a>, <a href="https://github.com/ray-project/ray/pull/66482">#66482</a>, <a href="https://github.com/ray-project/ray/pull/66495">#66495</a>, <a href="https://github.com/ray-project/ray/pull/66492">#66492</a>, <a href="https://github.com/ray-project/ray/pull/67165">#67165</a>); the controller benchmark also now reserves per-replica memory so the 8,192-replica checkpoint no longer hits OOM kills (<a href="https://github.com/ray-project/ray/pull/65847">#65847</a>).</li>
+</ul>
+<h1 id="ray-train">Ray Train</h1>
+<h3 id="-new-features-2">🎉 New Features</h3>
+<ul>
+<li>Add an opt-in NCCL RAS health callback that detects hung collectives, with RAS history in hang diagnostics (#64928, #66228)</li>
+<li>Support TorchTPU multi-slice distributed training in <code>TorchTrainer</code> (#66055)</li>
+</ul>
+<h3 id="-enhancements-2">💫 Enhancements</h3>
+<ul>
+<li>Relax Ray Train collectives on preemption so surviving ranks can commit a just-in-time checkpoint (#66225)</li>
+<li>Deprecate the V1 framework checkpoint classes <code>TorchCheckpoint</code>, <code>TensorflowCheckpoint</code>, and <code>XGBoostCheckpoint</code> (#66179)</li>
+</ul>
+<h3 id="-fixes-2">🔨 Fixes</h3>
+<ul>
+<li>Call <code>record_stream</code> on nested tensors in <code>_WrappedDataLoader</code> (#66344)</li>
+<li>Fix single-file uploads in <code>_upload_to_fs_path</code> (#65959)</li>
+<li>Stop using wandb’s removed <code>RunDisabled</code> class so the integration works with upcoming wandb releases (#65736)</li>
+</ul>
+<h3 id="-documentation-2">📖 Documentation</h3>
+<ul>
+<li>Document finding data loading bottlenecks with the Grafana data ingest panels (#66034)</li>
+<li>Save custom Lightning checkpoints on all ranks, and install <code>evaluate</code> and <code>scikit-learn</code> in the examples that use them (#65838, #65849)</li>
+</ul>
+<h1 id="ray-tune">Ray Tune</h1>
+<h3 id="-fixes-3">🔨 Fixes</h3>
+<ul>
+<li>Sample <code>qrandint</code> and <code>qlograndint</code> uniformly, and quantize when <code>q</code> is 1 (#65864, #65535)</li>
+<li>PBT: round instead of truncating perturbed integers, and select no trials when <code>quantile_fraction</code> is 0 (#65747, #65790)</li>
+<li>Fix a <code>Repeater</code> crash when the search finishes (#65960)</li>
+<li>Don’t count a trial without a usable running mean as a <code>MedianStoppingRule</code> sample (#65957)</li>
+<li>Give each grid variant its own <code>resolved_vars</code> (#65991)</li>
+<li>Strip Windows-reserved characters from trial directory names (#65286)</li>
+<li>Fix the <code>set_search_properties</code> fallback for custom schedulers on Python 3.10+ (#65250)</li>
+<li>Fix <code>flatten_dict</code> raising <code>UnboundLocalError</code> for lists with <code>prevent_delimiter=True</code> (#65621)</li>
+</ul>
+<h1 id="ray-llm">Ray LLM</h1>
+<h3 id="-new-features-3">🎉 New Features</h3>
+<ul>
+<li>Enable LoRA for direct-streaming aggregated and prefill/decode disaggregated deployments (#65680)</li>
+</ul>
+<h3 id="-enhancements-3">💫 Enhancements</h3>
+<ul>
+<li>Upgrade to vLLM 0.29.0 (#65756)</li>
+</ul>
+<h3 id="-documentation-3">📖 Documentation</h3>
+<ul>
+<li>Update vLLM documentation links to current URLs (#65726)</li>
+</ul>
+<h1 id="ray-rllib">Ray RLlib</h1>
+<h3 id="-enhancements-4">💫 Enhancements</h3>
+<ul>
+<li>Remove the deprecated <code>mujoco-py</code> engine and move MuJoCo environments to v4 and v5 (#65616)</li>
+</ul>
+<h3 id="-fixes-4">🔨 Fixes</h3>
+<ul>
+<li>Fix a device mismatch in DQN exploration (#66198)</li>
+<li>Pass the right arguments to <code>_update_add_metrics</code> in the replay buffers (#66102)</li>
+</ul>
+<h3 id="-documentation-4">📖 Documentation</h3>
+<ul>
+<li>Convert the RLlib docs to MyST Markdown, drop the <code>rllib-</code> file prefix, apply a style pass, and fix broken links (#66062, #66060, #66214, #66239, #66338, #66234)</li>
+</ul>
+<h1 id="ray-core">Ray Core</h1>
+<h3 id="-new-features-4">🎉 New Features</h3>
+<ul>
+<li>Ray Sandbox (experimental): add an HTTP API service and a token-authenticated gRPC facade for external clients (#65633, #65839, #66675)</li>
+<li>Add <code>local://</code> runtime_env URIs that use code already on the node without uploading it (#65245, #66302)</li>
+<li>Add an experimental per-job option to disable Ray Core lineage reconstruction (#65487)</li>
+<li>Support <code>.tar.xz</code> runtime_env archives, with archive validation unified across upload and download paths (#65742)</li>
+<li>Expand <code>$VAR</code> and <code>${VAR}</code> in uv package inputs and <code>uv_pip_install_options</code> (#65767)</li>
+<li>Export Redis payload byte metrics by command and GCS table (#65554)</li>
+<li>TPU: translate physical chip masks on multi-device chips, preserve explicit bounds, rename <code>dispatch</code> to <code>run_on_slice</code> (#65723, #66400, #65442)</li>
+<li>Autoscaler: add the Spark node provider for V2, and node IDs as SSH proxy targets via <code>auth.ssh_proxy_use_node_id</code> (#65579, #65797)</li>
+<li>KubeRay: support <code>idleTerminationOptions</code>, and add <code>--gcs-address</code> to <code>ray kuberay-autoscaler</code> (#65763, #65894)</li>
+<li>Autoscaler V2 can scale down pending nodes no resource demand needs; disabled by default (#67102)</li>
+<li>Retain previous worker IDs on <code>ActorTableData</code> across restarts so earlier logs stay reachable (#64497)</li>
+<li>GCS active-passive (off by default): leader-election RPC gating and the passive head lifecycle (#65711, #66222)</li>
+</ul>
+<h3 id="-enhancements-5">💫 Enhancements</h3>
+<ul>
+<li>Ray Sandbox: EROFS image cache, bounded LRU image cache, Docker Hub mirror, per-sandbox network namespaces (#65992, #66407, #66468, #65748, #65745, #65820, #66004)</li>
+<li>Ray Sandbox: per-exec user, appending writes, and Docker-parity <code>/etc/hosts</code> and <code>/tmp</code> handling (#65942, #65744)</li>
+<li>RDT: add a sender-side NIXL memory pool that copies only the requested views and collapses transfer descriptors (#65205, #66772)</li>
+<li>Randomize worker port allocation so raylets sharing a network namespace don’t collide (#65448)</li>
+<li>Speed up the autoscaler V2 scheduling loop for large clusters (#65282, #65171)</li>
+<li>Stop writing placement group formatted resources to the GCS cluster resource view (#66061)</li>
+<li>Skip object location publishes for objects that never had a subscriber (#66112)</li>
+<li>Flush OpenTelemetry metrics before process exit (#66180)</li>
+<li>Warn about worker gRPC threads on nodes with more than 16 CPUs, and on invalid numeric environment variables (#65637, #65889)</li>
+</ul>
+<h3 id="-fixes-5">🔨 Fixes</h3>
+<ul>
+<li>Fix a placement group commit race that left a bundle on a dead node (#66769)</li>
+<li>Free objects whose location report arrives after the reference was dropped (#66383)</li>
+<li>Fix lineage reconstruction not triggering for spilled objects after a stale spill notification (#65660)</li>
+<li>Don’t crash GCS initialization when an actor is missing its task spec (#66073)</li>
+<li>Release the runtime env agent’s per-job log file handles, which exhausted file descriptors (#65452)</li>
+<li>Enable token authentication in C++ and Java drivers that start their own local cluster (#66778)</li>
+<li>Ray Client: skip replayed chunks of completed requests after a reconnect (#66476)</li>
+<li>Fix histogram bucket schema collisions that dropped metrics (#65893)</li>
+<li>Use the worker-local GCS client in <code>JobSupervisor</code> (#65686)</li>
+<li>Fix phantom KubeRay worker nodes when the <code>maxReplicas</code> cap is reached (#65705)</li>
+<li>Fix <code>file://</code> runtime_env URIs on Windows (#66365)</li>
+</ul>
+<h3 id="-documentation-5">📖 Documentation</h3>
+<ul>
+<li>Add a scheduling overview with defaults, and document default object store memory sizing (#65264, #66022)</li>
+<li>Document that worker nodes need <code>RAY_AUTH_MODE=token</code> to join a token-auth head (#67096)</li>
+<li>Clarify the generator API choices, and document JVM signal conflicts with PyArrow HDFS (#65127, #65445)</li>
+<li>Document Local provider cluster configuration (#65980)</li>
+<li>Recommend <code>network="none"</code> for untrusted sandbox code, and add an agent-sandbox suspend example (#65876, #65863, #65779)</li>
+</ul>
+<h1 id="dashboard">Dashboard</h1>
+<h3 id="-new-features-5">🎉 New Features</h3>
+<ul>
+<li>Use Kubernetes EventSeries counts and timestamps in platform events (#66076)</li>
+</ul>
+<h3 id="-enhancements-6">💫 Enhancements</h3>
+<ul>
+<li>Keep health checks responsive during OTLP metric export (#65915)</li>
+<li>Fall back to the query API for Prometheus health checks on managed services (#63428)</li>
+<li>Show the job’s own time range in the Job Detail node count panel (#65926)</li>
+<li>Clarify the unaccounted task hint (#65761)</li>
+</ul>
+<h3 id="-fixes-6">🔨 Fixes</h3>
+<ul>
+<li>Fix a white-screen crash when GPU metrics are null (#65591)</li>
+<li>Skip the process GPU utilization API on NVML-compatible libraries that crash on it (#65417)</li>
+</ul>
+<h1 id="ray-wheels-and-images">Ray Wheels and Images</h1>
+<h3 id="-new-features-6">🎉 New Features</h3>
+<ul>
+<li>Build the <code>ray-torch</code> image for Python 3.11 (#65774)</li>
+</ul>
+<h3 id="-enhancements-7">💫 Enhancements</h3>
+<ul>
+<li>Pin <code>certifi</code> 2026.10.19, pip 26.2.2, uv 0.13.4, and virtualenv 21.14.12 for the eMudhra CA compromise (#67295, #67298, #67301, #67305, #67350, #67256)</li>
+<li>Bump <code>aiohttp</code> to 3.14.4 for CVE-2026-111064, CVE-2026-111066, and GHSA-2g87-pp6c-29x5 (#67304)</li>
+<li>Bump the Anyscale CLI in Ray images to 0.26.110 (#67011)</li>
+<li>Source <code>torch-scatter</code> from Astral’s GPU index, and fix the DeepSpeed cu128 index for torch 2.9 (#65899, #66713, #65936)</li>
+<li>Make the Bazel version gate a floor instead of an exact pin, and move off <code>rules_python</code> 0.9.0 (#66160, #66207)</li>
+<li>Pass <code>--skip-existing</code> when uploading wheels to PyPI and TestPyPI (#67254)</li>
+</ul>
+<h1 id="documentation">Documentation</h1>
+<h3 id="-documentation-6">📖 Documentation</h3>
+<ul>
+<li>Add Python 3.13 and 3.14 nightly wheels for Linux, macOS, and Windows to the install page (#66099, #66100)</li>
+<li>Remove the Apple silicon install instructions (#65813)</li>
+<li>KubeRay: add guides for mTLS and GCS fault tolerance with zero-downtime upgrades (#65107, #66057)</li>
+<li>KubeRay: document operator-managed <code>rayStartParams</code>, move examples to <code>ray.io/v1</code>, and sync the CRD reference (#65710, #65336, #65932, #66347, #65708)</li>
+<li>Document History Server live cluster access (#65845)</li>
+<li>Add new committers to the governance page (#66163)</li>
+</ul>
+<h3 id="-enhancements-8">💫 Enhancements</h3>
+<ul>
+<li>Convert the Ray Core user guide and doctest-wired pages to MyST Markdown (#66430, #66461)</li>
+<li>Render the Jobs API spec with <code>sphinxcontrib-openapi</code> instead of ReDoc (#65460, #65456)</li>
+<li>Apply docs.ray.io redirects automatically, and redirect template URLs that 404 (#66024, #66427, #66459)</li>
+<li>Style guide and heading fixes, broken-link alerts, and docs build dependency updates (#65526, #65568, #65468, #65869, #65728, #65758, #65944, #65947)</li>
+</ul>
+<h1 id="build-and-dependencies">Build and Dependencies</h1>
+<ul>
+<li>Ray 2.60.0 is the last release that will publish Python 3.10 (-py310) images.</li>
+</ul>
+<h1 id="thanks">Thanks</h1>
+<p>Many thanks to all those who contributed to this release!</p>
+<p>@1fanwang, @NightWing1998, @abhishekverma-ray, @chipspeak, @klueska, @XuQianJin-Stars, @zhjwpku, @justinyeh1995, @bveeramani, @richabanker, @eicherseiji, @catamartins, @tttboy123, @johntaylor-cell, @jackylee-ch, @lonexreb, @lindicaphxag-tech, @GNITOAHC, @ankushbbbr, @HuyTran28, @vineethsaivs, @viiccwen, @ps2181, @CrossManger, @celinaky, @Sanskarzz, @ShockYoungCHN, @dancingactor, @wufeiye, @dundysm, @XFDG, @machero, @machichima, @yuhuan130, @qadeptrai123, @sampan-s-nayak, @xuxiaoqiang666, @ryanaoleary, @dmitryduev, @Arnavsharma2, @JasonLi1909, @hungle123-dev, @rayhhome, @rueian, @pseudo-rnd-thoughts, @ayushk7102, @wingkitlee0, @nataliekung, @YashwanthRanjanSingaravel, @michaelloewenstein, @xyuzh, @owenowenisme, @nikitagrover19, @ArturNiederfahrenhorst, @win5923, @makop-atos, @400Ping, @goutamvenkat-anyscale, @pcmoritz, @roshaninfordham, @abligail, @elliot-barn, @justinvyu, @mguida22, @marwan116, @martinlhw, @iamjustinhsu, @AarryaSaraf, @Jade07-1, @mottopanikeiku, @mitanshu7, @vicentefb, @onlinerj, @laysfire, @harshit-anyscale, @dstrodtman, @qishengxhe, @manhld0206, @TingXuanChen, @OneSizeFitsQuorum, @Sparks0219, @moiz-naeem, @spencer-p, @MortalHappiness, @richardliaw, @stantheman0128, @Duy-Tuyen, @dragongu, @YoyinZyc, @limarkdcunha, @prasad-anyscale, @Whning0513, @Kunchd, @Hyunoh-Yeo, @zupengwang, @Yicheng-Lu-llll, @kevin85421, @sai-miduthuri, @maithilijoshi20, @abrarsheikh, @ai-yang, @zzchun, @liulehui, @ramannanda9, @jeffreywang88</p>
+<hr>
+<blockquote>
+<p><strong>Source</strong> <a href="https://github.com/ray-project/ray">ray-project/ray</a> · <code>ray-2.60.0</code> · 2026-11-04 · <a href="https://github.com/ray-project/ray/releases/tag/ray-2.60.0">upstream release</a></p>
+</blockquote>
+<p><em>Mirrored verbatim for indexing. All rights belong to the upstream project.</em></p>   </div> <p class="muted" style="margin-top:var(--s8);font-size:12.5px;border-top:1px solid var(--line);padding-top:var(--s4)"> Release notes are published by the upstream project and mirrored here for indexing. All rights belong to their authors. </p> <nav class="pager" aria-label="Release navigation"> <span></span> <a href="/releases/ray/2.59.1"> <span class="k">Previous →</span> <span class="t">2.59.1</span> </a> </nav> <aside class="ad-slot" aria-label="Advertisement" data-astro-cid-fgwukgf6><div class="ad-slot-label" data-astro-cid-fgwukgf6>Advertisement</div><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4184355057086168" data-ad-slot="9133765584" data-ad-format="auto" data-full-width-responsive="true" data-astro-cid-fgwukgf6></ins><script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script></aside> </article> <aside class="rail"> <div class="rail-card"> <div class="rail-title">Source</div> <ul class="rail-list"> <li> <a href="https://github.com/ray-project/ray/releases/tag/2.60.0" target="_blank" rel="noopener"> <span>Original on GitHub</span> <span class="d">↗</span> </a> </li> <li> <a href="https://github.com/ray-project/ray" target="_blank" rel="noopener"> <span>ray-project/ray</span> <span class="d">↗</span> </a> </li> </ul> </div> <div class="rail-card rail-toc"> <div class="rail-title">On this page</div> <nav> <a href="#-new-features" class="lv3">🎉 New Features</a><a href="#-enhancements" class="lv3">💫 Enhancements</a><a href="#-fixes" class="lv3">🔨 Fixes</a><a href="#-documentation" class="lv3">📖 Documentation</a><a href="#-new-features-1" class="lv3">🎉 New Features</a><a href="#-enhancements-1" class="lv3">💫 Enhancements</a><a href="#-fixes-1" class="lv3">🔨 Fixes</a><a href="#-documentation-1" class="lv3">📖 Documentation</a><a href="#-architecture-refactoring" class="lv3">🏗 Architecture refactoring:</a><a href="#-new-features-2" class="lv3">🎉 New Features</a><a href="#-enhancements-2" class="lv3">💫 Enhancements</a><a href="#-fixes-2" class="lv3">🔨 Fixes</a><a href="#-documentation-2" class="lv3">📖 Documentation</a><a href="#-fixes-3" class="lv3">🔨 Fixes</a><a href="#-new-features-3" class="lv3">🎉 New Features</a><a href="#-enhancements-3" class="lv3">💫 Enhancements</a><a href="#-documentation-3" class="lv3">📖 Documentation</a><a href="#-enhancements-4" class="lv3">💫 Enhancements</a><a href="#-fixes-4" class="lv3">🔨 Fixes</a><a href="#-documentation-4" class="lv3">📖 Documentation</a><a href="#-new-features-4" class="lv3">🎉 New Features</a><a href="#-enhancements-5" class="lv3">💫 Enhancements</a><a href="#-fixes-5" class="lv3">🔨 Fixes</a><a href="#-documentation-5" class="lv3">📖 Documentation</a> </nav> </div> <div class="rail-card"> <div class="rail-title">Version history</div> <ul class="rail-list"> <li> <a href="/releases/ray/2.60.0" aria-current="true"> <span class="v">2.60.0</span> <span class="d">26-11-04</span> </a> </li><li> <a href="/releases/ray/2.59.1"> <span class="v">2.59.1</span> <span class="d">26-11-04</span> </a> </li><li> <a href="/releases/ray/2.58.1"> <span class="v">2.58.1</span> <span class="d">26-10-21</span> </a> </li> </ul> <a href="/releases/ray" class="mono" style="display:inline-block;margin-top:var(--s3);font-size:11.5px;color:var(--ink-3)"> View all 3 →
+</a> </div> </aside> </div> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>Open-source release intelligence, published daily.</p> </div> <div class="footer-col"> <h3>Track</h3> <ul> <li><a href="/releases">Releases</a></li> <li><a href="/projects">Projects</a></li> <li><a href="/releases.xml">RSS feed</a></li> </ul> </div> <div class="footer-col"> <h3>Archive</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">Chinese archive</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">Technical notes</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>Meta</h3> <ul> <li><a href="/method">Method</a></li> <li><a href="/privacy">Privacy policy</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release notes belong to their upstream projects.</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="Search releases"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="Search releases, projects, versions…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ navigate</span> <span>↵ open</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

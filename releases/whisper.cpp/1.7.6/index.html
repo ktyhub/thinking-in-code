@@ -1,0 +1,835 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>whisper.cpp v1.7.6 — STAGS NextStack</title><meta name="description" content="Add initial VAD support - feedback welcome and appreciated · Metal FA improvements"><meta name="keywords" content="open source release notes, release tracker, changelog aggregator, breaking changes, deprecation tracker, Kafka releases, Spring Boot releases, Kubernetes releases"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/releases/whisper.cpp/1.7.6/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/releases/whisper.cpp/1.7.6/"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/release_note/whisper.cpp/whisper.cpp_v1.7.6"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/releases/whisper.cpp/1.7.6/"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="article"><meta property="og:title" content="whisper.cpp v1.7.6 — STAGS NextStack"><meta property="og:description" content="Add initial VAD support - feedback welcome and appreciated · Metal FA improvements"><meta property="og:url" content="https://www.stags.cn/releases/whisper.cpp/1.7.6/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="en_US"><meta property="og:locale:alternate" content="zh_CN"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"en","description":"STAGS indexes release notes from infrastructure and AI projects — breaking changes, deprecations and migrations — in one English-first feed.","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"},{"@type":"TechArticle","@id":"https://www.stags.cn/releases/whisper.cpp/1.7.6/#article","headline":"whisper.cpp v1.7.6 release notes","datePublished":"2025-06-25","inLanguage":"en","isPartOf":{"@id":"https://www.stags.cn/#website"},"about":{"@type":"SoftwareSourceCode","codeRepository":"https://github.com/ggml-org/whisper.cpp"}}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css">
+<style>.ad-slot[data-astro-cid-fgwukgf6]{margin:var(--s10) 0 0;padding-top:var(--s5);border-top:1px solid var(--line)}.ad-slot-label[data-astro-cid-fgwukgf6]{margin-bottom:var(--s3);font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4)}.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{display:block;min-height:100px}@media(min-width:640px){.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{min-height:250px}}
+</style></head> <body> <a class="skip" href="#main">Skip to content</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/" class="brand" aria-label="STAGS NextStack — Open-source release intelligence"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/releases">Releases</a><a href="/projects">Projects</a><a href="/topics">Topics</a><a href="/compare">Compare</a><a href="/method">Method</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="Search releases"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">Search</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="Language"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">EN</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="Language"> <p class="langmenu-head">Language</p> <a class="langmenu-item" href="/releases/whisper.cpp/1.7.6/" hreflang="en" lang="en" aria-current="true" data-on="true"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/release_note/whisper.cpp/whisper.cpp_v1.7.6" hreflang="zh-Hans" lang="zh-CN" data-on="false"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases/whisper.cpp/1.7.6/" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases/whisper.cpp/1.7.6/" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases/whisper.cpp/1.7.6/" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases/whisper.cpp/1.7.6/" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases/whisper.cpp/1.7.6/" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap"> <div class="detail"> <article> <header class="detail-hd"> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">Home</a> <span class="sep">/</span> <a href="/releases">Releases</a> <span class="sep">/</span> <a href="/releases/whisper.cpp">whisper.cpp</a> </nav> <h1 class="detail-title"> <span class="p">whisper.cpp</span> v1.7.6 </h1> <div class="detail-meta"> <span class="chip chip--patch">patch</span> <span><span class="k">Published</span>Jun 25, 2025</span>  <span class="sep" aria-hidden="true"></span> <a href="https://github.com/ggml-org/whisper.cpp" target="_blank" rel="noopener"> <span class="k">Source</span>ggml-org/whisper.cpp </a>   <span class="sep" aria-hidden="true"></span> <a href="/zh/release_note/whisper.cpp/whisper.cpp_v1.7.6"> Chinese translation </a>  <span class="sep" aria-hidden="true"></span> <button class="btn btn--ghost btn--sm" type="button" data-copy="https://www.stags.cn/releases/whisper.cpp/1.7.6/">Copy link</button> </div> </header> <div class="prose" style="margin-top:var(--s8)">   <h1 id="whispercpp-v176">whisper.cpp v1.7.6</h1>
+<h2 id="overview">Overview</h2>
+<ul>
+<li>Add initial VAD support - feedback welcome and appreciated</li>
+<li>Metal FA improvements</li>
+</ul>
+<h2 id="m2-ultra">M2 Ultra</h2>
+<p><strong>Flash Attention ON:</strong></p>
+<table>
+<thead>
+<tr>
+<th>CPU</th>
+<th>Config</th>
+<th>Model</th>
+<th>Th</th>
+<th>FA</th>
+<th>Enc.</th>
+<th>Dec.</th>
+<th>Bch5</th>
+<th>PP</th>
+<th>Commit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>tiny</td>
+<td>1</td>
+<td>1</td>
+<td>7.72</td>
+<td>1.05</td>
+<td>0.32</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>tiny-q5_0</td>
+<td>1</td>
+<td>1</td>
+<td>8.20</td>
+<td>0.98</td>
+<td>0.31</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>tiny-q5_1</td>
+<td>1</td>
+<td>1</td>
+<td>8.13</td>
+<td>0.99</td>
+<td>0.31</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>tiny-q8_0</td>
+<td>1</td>
+<td>1</td>
+<td>7.96</td>
+<td>0.93</td>
+<td>0.30</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>base</td>
+<td>1</td>
+<td>1</td>
+<td>13.52</td>
+<td>1.39</td>
+<td>0.35</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>base-q5_0</td>
+<td>1</td>
+<td>1</td>
+<td>14.88</td>
+<td>1.31</td>
+<td>0.34</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>base-q5_1</td>
+<td>1</td>
+<td>1</td>
+<td>14.76</td>
+<td>1.33</td>
+<td>0.34</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>base-q8_0</td>
+<td>1</td>
+<td>1</td>
+<td>14.04</td>
+<td>1.28</td>
+<td>0.34</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>small</td>
+<td>1</td>
+<td>1</td>
+<td>38.78</td>
+<td>2.72</td>
+<td>0.67</td>
+<td>0.04</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>small-q5_0</td>
+<td>1</td>
+<td>1</td>
+<td>44.01</td>
+<td>2.64</td>
+<td>0.69</td>
+<td>0.05</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>small-q5_1</td>
+<td>1</td>
+<td>1</td>
+<td>44.02</td>
+<td>2.66</td>
+<td>0.69</td>
+<td>0.05</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>small-q8_0</td>
+<td>1</td>
+<td>1</td>
+<td>40.79</td>
+<td>2.49</td>
+<td>0.67</td>
+<td>0.05</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>medium</td>
+<td>1</td>
+<td>1</td>
+<td>104.48</td>
+<td>5.57</td>
+<td>1.61</td>
+<td>0.10</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>medium-q5_0</td>
+<td>1</td>
+<td>1</td>
+<td>122.24</td>
+<td>5.00</td>
+<td>1.58</td>
+<td>0.12</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>medium-q5_1</td>
+<td>1</td>
+<td>1</td>
+<td>121.99</td>
+<td>5.02</td>
+<td>1.59</td>
+<td>0.12</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>medium-q8_0</td>
+<td>1</td>
+<td>1</td>
+<td>111.68</td>
+<td>4.99</td>
+<td>1.52</td>
+<td>0.11</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>medium-dis</td>
+<td>1</td>
+<td>1</td>
+<td>93.23</td>
+<td>0.87</td>
+<td>0.21</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>large-v2</td>
+<td>1</td>
+<td>1</td>
+<td>189.82</td>
+<td>8.36</td>
+<td>2.35</td>
+<td>0.19</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>large-v2-q5_0</td>
+<td>1</td>
+<td>1</td>
+<td>225.73</td>
+<td>7.34</td>
+<td>2.40</td>
+<td>0.22</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>large-v2-q5_1</td>
+<td>1</td>
+<td>1</td>
+<td>225.88</td>
+<td>7.60</td>
+<td>2.40</td>
+<td>0.22</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>large-v2-q8_0</td>
+<td>1</td>
+<td>1</td>
+<td>203.55</td>
+<td>7.32</td>
+<td>2.26</td>
+<td>0.20</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>large-v2-dis</td>
+<td>1</td>
+<td>1</td>
+<td>168.20</td>
+<td>0.98</td>
+<td>0.24</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>large-v3-turbo</td>
+<td>1</td>
+<td>1</td>
+<td>170.22</td>
+<td>1.46</td>
+<td>0.37</td>
+<td>0.03</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>large-v3-turbo-q5_0</td>
+<td>1</td>
+<td>1</td>
+<td>201.88</td>
+<td>1.27</td>
+<td>0.38</td>
+<td>0.04</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>large-v3-turbo-q8_0</td>
+<td>1</td>
+<td>1</td>
+<td>182.37</td>
+<td>1.24</td>
+<td>0.36</td>
+<td>0.03</td>
+<td>dc8dda60</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Flash Attention OFF:</strong></p>
+<table>
+<thead>
+<tr>
+<th>CPU</th>
+<th>Config</th>
+<th>Model</th>
+<th>Th</th>
+<th>FA</th>
+<th>Enc.</th>
+<th>Dec.</th>
+<th>Bch5</th>
+<th>PP</th>
+<th>Commit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>tiny</td>
+<td>1</td>
+<td>0</td>
+<td>10.15</td>
+<td>1.20</td>
+<td>0.36</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>tiny-q5_0</td>
+<td>1</td>
+<td>0</td>
+<td>10.21</td>
+<td>1.15</td>
+<td>0.39</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>tiny-q5_1</td>
+<td>1</td>
+<td>0</td>
+<td>9.26</td>
+<td>1.15</td>
+<td>0.38</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>tiny-q8_0</td>
+<td>1</td>
+<td>0</td>
+<td>9.00</td>
+<td>1.12</td>
+<td>0.37</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>base</td>
+<td>1</td>
+<td>0</td>
+<td>15.77</td>
+<td>1.73</td>
+<td>0.45</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>base-q5_0</td>
+<td>1</td>
+<td>0</td>
+<td>16.90</td>
+<td>1.63</td>
+<td>0.44</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>base-q5_1</td>
+<td>1</td>
+<td>0</td>
+<td>16.93</td>
+<td>1.64</td>
+<td>0.44</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>base-q8_0</td>
+<td>1</td>
+<td>0</td>
+<td>16.13</td>
+<td>1.63</td>
+<td>0.43</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>small</td>
+<td>1</td>
+<td>0</td>
+<td>45.15</td>
+<td>3.45</td>
+<td>0.92</td>
+<td>0.05</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>small-q5_0</td>
+<td>1</td>
+<td>0</td>
+<td>50.63</td>
+<td>3.36</td>
+<td>0.94</td>
+<td>0.06</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>small-q5_1</td>
+<td>1</td>
+<td>0</td>
+<td>50.56</td>
+<td>3.36</td>
+<td>0.94</td>
+<td>0.06</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>small-q8_0</td>
+<td>1</td>
+<td>0</td>
+<td>47.52</td>
+<td>3.20</td>
+<td>0.92</td>
+<td>0.05</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>medium</td>
+<td>1</td>
+<td>0</td>
+<td>122.55</td>
+<td>7.38</td>
+<td>1.95</td>
+<td>0.12</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>medium-q5_0</td>
+<td>1</td>
+<td>0</td>
+<td>140.61</td>
+<td>6.73</td>
+<td>2.02</td>
+<td>0.14</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>medium-q5_1</td>
+<td>1</td>
+<td>0</td>
+<td>140.48</td>
+<td>6.76</td>
+<td>2.04</td>
+<td>0.14</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>medium-q8_0</td>
+<td>1</td>
+<td>0</td>
+<td>131.00</td>
+<td>6.57</td>
+<td>1.96</td>
+<td>0.13</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>medium-dis</td>
+<td>1</td>
+<td>0</td>
+<td>110.85</td>
+<td>1.00</td>
+<td>0.24</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>large-v2</td>
+<td>1</td>
+<td>0</td>
+<td>222.28</td>
+<td>10.96</td>
+<td>3.03</td>
+<td>0.21</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>large-v2-q5_0</td>
+<td>1</td>
+<td>0</td>
+<td>258.64</td>
+<td>9.79</td>
+<td>3.04</td>
+<td>0.25</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>large-v2-q5_1</td>
+<td>1</td>
+<td>0</td>
+<td>258.32</td>
+<td>9.87</td>
+<td>3.05</td>
+<td>0.24</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>large-v2-q8_0</td>
+<td>1</td>
+<td>0</td>
+<td>236.55</td>
+<td>9.61</td>
+<td>2.87</td>
+<td>0.23</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>large-v2-dis</td>
+<td>1</td>
+<td>0</td>
+<td>199.84</td>
+<td>1.14</td>
+<td>0.27</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>large-v3-turbo</td>
+<td>1</td>
+<td>0</td>
+<td>201.52</td>
+<td>1.77</td>
+<td>0.45</td>
+<td>0.03</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>large-v3-turbo-q5_0</td>
+<td>1</td>
+<td>0</td>
+<td>233.14</td>
+<td>1.56</td>
+<td>0.47</td>
+<td>0.04</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2 ULTRA</td>
+<td>METAL</td>
+<td>large-v3-turbo-q8_0</td>
+<td>1</td>
+<td>0</td>
+<td>214.23</td>
+<td>1.53</td>
+<td>0.44</td>
+<td>0.04</td>
+<td>dc8dda60</td>
+</tr>
+</tbody>
+</table>
+<h2 id="whats-changed">What’s Changed</h2>
+<ul>
+<li>docs : add xcframework section to README.md [no ci] by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/2997">https://github.com/ggml-org/whisper.cpp/pull/2997</a></li>
+<li>sync : ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/2992">https://github.com/ggml-org/whisper.cpp/pull/2992</a></li>
+<li>whisper.wasm : fix unknown language issue by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3000">https://github.com/ggml-org/whisper.cpp/pull/3000</a></li>
+<li>examples : update server.py to match github pages app [no ci] by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3004">https://github.com/ggml-org/whisper.cpp/pull/3004</a></li>
+<li>rename : ggerganov -> ggml-org by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3005">https://github.com/ggml-org/whisper.cpp/pull/3005</a></li>
+<li>whisper : fix “bench-all outputs an invalid result on larger models” by @fujimotos in <a href="https://github.com/ggml-org/whisper.cpp/pull/3002">https://github.com/ggml-org/whisper.cpp/pull/3002</a></li>
+<li>tests : add script to benchmark whisper.cpp on LibriSpeech corpus by @fujimotos in <a href="https://github.com/ggml-org/whisper.cpp/pull/2999">https://github.com/ggml-org/whisper.cpp/pull/2999</a></li>
+<li>ruby : Change homepage URI in Ruby gemspec by @KitaitiMakoto in <a href="https://github.com/ggml-org/whisper.cpp/pull/3007">https://github.com/ggml-org/whisper.cpp/pull/3007</a></li>
+<li>fix dead link to models in readme by @gregsadetsky in <a href="https://github.com/ggml-org/whisper.cpp/pull/3006">https://github.com/ggml-org/whisper.cpp/pull/3006</a></li>
+<li>Update uri.rb by @Olli in <a href="https://github.com/ggml-org/whisper.cpp/pull/3016">https://github.com/ggml-org/whisper.cpp/pull/3016</a></li>
+<li>Update ruby_whisper_params.c by @Olli in <a href="https://github.com/ggml-org/whisper.cpp/pull/3022">https://github.com/ggml-org/whisper.cpp/pull/3022</a></li>
+<li>xcf : use check for visionos build version by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3021">https://github.com/ggml-org/whisper.cpp/pull/3021</a></li>
+<li>Fix README.md by @ekaitz-zarraga in <a href="https://github.com/ggml-org/whisper.cpp/pull/3024">https://github.com/ggml-org/whisper.cpp/pull/3024</a></li>
+<li>docs : document how to use ‘WHISPER_FFMPEG’ build option by @fujimotos in <a href="https://github.com/ggml-org/whisper.cpp/pull/3029">https://github.com/ggml-org/whisper.cpp/pull/3029</a></li>
+<li>whisper : reduce delta_min from 1000ms to 100ms by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3028">https://github.com/ggml-org/whisper.cpp/pull/3028</a></li>
+<li>support max_context api for addon.node by @buxuku in <a href="https://github.com/ggml-org/whisper.cpp/pull/3025">https://github.com/ggml-org/whisper.cpp/pull/3025</a></li>
+<li>Update README.md to note newer NVIDIA GPUs by @jeffklassen in <a href="https://github.com/ggml-org/whisper.cpp/pull/3031">https://github.com/ggml-org/whisper.cpp/pull/3031</a></li>
+<li>ruby: use CMake in build process by @KitaitiMakoto in <a href="https://github.com/ggml-org/whisper.cpp/pull/3043">https://github.com/ggml-org/whisper.cpp/pull/3043</a></li>
+<li>examples : add FFmpeg v7.0 support to ffmpeg-transcode.cpp by @fujimotos in <a href="https://github.com/ggml-org/whisper.cpp/pull/3038">https://github.com/ggml-org/whisper.cpp/pull/3038</a></li>
+<li>feat: Add no-context option to server by @sachaarbonel in <a href="https://github.com/ggml-org/whisper.cpp/pull/3045">https://github.com/ggml-org/whisper.cpp/pull/3045</a></li>
+<li>ruby : make Ruby bindings installed with build options by @KitaitiMakoto in <a href="https://github.com/ggml-org/whisper.cpp/pull/3056">https://github.com/ggml-org/whisper.cpp/pull/3056</a></li>
+<li>examples : add HEAPU8 to exported runtime methods by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3062">https://github.com/ggml-org/whisper.cpp/pull/3062</a></li>
+<li>ci : disable freeBSD job in build.yml by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3064">https://github.com/ggml-org/whisper.cpp/pull/3064</a></li>
+<li>coreml : set convert_to=“mlprogram” in convert by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3060">https://github.com/ggml-org/whisper.cpp/pull/3060</a></li>
+<li>sync : ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3071">https://github.com/ggml-org/whisper.cpp/pull/3071</a></li>
+<li>ci : enable bindings java job by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3070">https://github.com/ggml-org/whisper.cpp/pull/3070</a></li>
+<li>ruby : add encoder begin callback related methods by @KitaitiMakoto in <a href="https://github.com/ggml-org/whisper.cpp/pull/3076">https://github.com/ggml-org/whisper.cpp/pull/3076</a></li>
+<li>Fix deprecated FFmpeg functions by @Podre-Henrique in <a href="https://github.com/ggml-org/whisper.cpp/pull/3073">https://github.com/ggml-org/whisper.cpp/pull/3073</a></li>
+<li>Add Moore Threads GPU support and update GitHub workflow for MUSA build by @yeahdongcn in <a href="https://github.com/ggml-org/whisper.cpp/pull/3069">https://github.com/ggml-org/whisper.cpp/pull/3069</a></li>
+<li>ci : disable publishing of java binding [no ci] by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3086">https://github.com/ggml-org/whisper.cpp/pull/3086</a></li>
+<li>talk-llama : sync llama.cpp by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3084">https://github.com/ggml-org/whisper.cpp/pull/3084</a></li>
+<li>whisper : remove empty .gitmodules file [no ci] by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3085">https://github.com/ggml-org/whisper.cpp/pull/3085</a></li>
+<li>feat: expose language detection probabilities to server example by @sachaarbonel in <a href="https://github.com/ggml-org/whisper.cpp/pull/3044">https://github.com/ggml-org/whisper.cpp/pull/3044</a></li>
+<li>whisper : fix grammar advance stack warning by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3087">https://github.com/ggml-org/whisper.cpp/pull/3087</a></li>
+<li>ggml : suppress Windows compiler warnings by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3075">https://github.com/ggml-org/whisper.cpp/pull/3075</a></li>
+<li>make : fix samples glob pattern by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3100">https://github.com/ggml-org/whisper.cpp/pull/3100</a></li>
+<li>ruby : ignore “Downloading” output in test_log_suppress by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3106">https://github.com/ggml-org/whisper.cpp/pull/3106</a></li>
+<li>server : add —no-gpu option to print usage output by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3098">https://github.com/ggml-org/whisper.cpp/pull/3098</a></li>
+<li>whisper : add check that target name exists by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3103">https://github.com/ggml-org/whisper.cpp/pull/3103</a></li>
+<li>sync : ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3108">https://github.com/ggml-org/whisper.cpp/pull/3108</a></li>
+<li>ruby : refine HTTP cache feature by @KitaitiMakoto in <a href="https://github.com/ggml-org/whisper.cpp/pull/3109">https://github.com/ggml-org/whisper.cpp/pull/3109</a></li>
+<li>feat(server): bump httplib.h to version 0.20.0 by @sachaarbonel in <a href="https://github.com/ggml-org/whisper.cpp/pull/3101">https://github.com/ggml-org/whisper.cpp/pull/3101</a></li>
+<li>removed stdc++fs by @JaredTweed in <a href="https://github.com/ggml-org/whisper.cpp/pull/3097">https://github.com/ggml-org/whisper.cpp/pull/3097</a></li>
+<li>docs : Update cli documentation by @antimatter96 in <a href="https://github.com/ggml-org/whisper.cpp/pull/3102">https://github.com/ggml-org/whisper.cpp/pull/3102</a></li>
+<li>cli : Support ”-” for stdout like stdin by @danielzgtg in <a href="https://github.com/ggml-org/whisper.cpp/pull/3050">https://github.com/ggml-org/whisper.cpp/pull/3050</a></li>
+<li>feat(server):  Improve HTTP Connection Abort Handling by @sachaarbonel in <a href="https://github.com/ggml-org/whisper.cpp/pull/3112">https://github.com/ggml-org/whisper.cpp/pull/3112</a></li>
+<li>whisper: remove MSVC warnings pragmas by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3090">https://github.com/ggml-org/whisper.cpp/pull/3090</a></li>
+<li>ci : add zip extension to xcframework artifact name by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3120">https://github.com/ggml-org/whisper.cpp/pull/3120</a></li>
+<li>ci : zip windows artifacts for release uploading by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3124">https://github.com/ggml-org/whisper.cpp/pull/3124</a></li>
+<li>sync : ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3125">https://github.com/ggml-org/whisper.cpp/pull/3125</a></li>
+<li>ci : add bindings-java jar artifact to release by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3126">https://github.com/ggml-org/whisper.cpp/pull/3126</a></li>
+<li>sync : ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3127">https://github.com/ggml-org/whisper.cpp/pull/3127</a></li>
+<li>stream.wasm : add HEAPU8 to exported runtime methods by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3130">https://github.com/ggml-org/whisper.cpp/pull/3130</a></li>
+<li>whisper : deprecate WHISPER_CCACHE CMake option by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3131">https://github.com/ggml-org/whisper.cpp/pull/3131</a></li>
+<li>wasm : add note about worker.js file generation [no ci] by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3133">https://github.com/ggml-org/whisper.cpp/pull/3133</a></li>
+<li>examples : add HEAPU8 to all of the exported runtime methods by @enesgrahovac in <a href="https://github.com/ggml-org/whisper.cpp/pull/3134">https://github.com/ggml-org/whisper.cpp/pull/3134</a></li>
+<li>ruby : omit test_build_options locally by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3132">https://github.com/ggml-org/whisper.cpp/pull/3132</a></li>
+<li>ruby : test extra build options only when env var specified by @KitaitiMakoto in <a href="https://github.com/ggml-org/whisper.cpp/pull/3136">https://github.com/ggml-org/whisper.cpp/pull/3136</a></li>
+<li>examples : update link to Paul Tol’s color scheme [no ci] by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3140">https://github.com/ggml-org/whisper.cpp/pull/3140</a></li>
+<li>Update Readme to recommend same Openvino as Python tools by @peardox in <a href="https://github.com/ggml-org/whisper.cpp/pull/3138">https://github.com/ggml-org/whisper.cpp/pull/3138</a></li>
+<li>cli : print color scheme info for —print-colors by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3141">https://github.com/ggml-org/whisper.cpp/pull/3141</a></li>
+<li>docs : fix -owts flag typo karaoke section [no ci] by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3142">https://github.com/ggml-org/whisper.cpp/pull/3142</a></li>
+<li>whisper : remove dummy commit comment [no ci] by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3143">https://github.com/ggml-org/whisper.cpp/pull/3143</a></li>
+<li>vad : add initial Voice Activity Detection (VAD) support by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3065">https://github.com/ggml-org/whisper.cpp/pull/3065</a></li>
+<li>docs: Update README.md for whisper.objc app by @tomer-schles in <a href="https://github.com/ggml-org/whisper.cpp/pull/2569">https://github.com/ggml-org/whisper.cpp/pull/2569</a></li>
+<li>vad : remove shortform for —vad option in cli.cpp by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3145">https://github.com/ggml-org/whisper.cpp/pull/3145</a></li>
+<li>examples : add VAD speech segments example by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3147">https://github.com/ggml-org/whisper.cpp/pull/3147</a></li>
+<li>sync : ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3148">https://github.com/ggml-org/whisper.cpp/pull/3148</a></li>
+<li>server : add —flash-attn usage output by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3152">https://github.com/ggml-org/whisper.cpp/pull/3152</a></li>
+<li>vad : add download-vad-model scripts by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3149">https://github.com/ggml-org/whisper.cpp/pull/3149</a></li>
+<li>examples : add —print-confidence option to cli by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3150">https://github.com/ggml-org/whisper.cpp/pull/3150</a></li>
+<li>whisper : add build_*/ to .gitignore [no ci] by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3157">https://github.com/ggml-org/whisper.cpp/pull/3157</a></li>
+<li>vad : store VAD context in whisper_state by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3156">https://github.com/ggml-org/whisper.cpp/pull/3156</a></li>
+<li>vad : return early if no vad segments are detected by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3158">https://github.com/ggml-org/whisper.cpp/pull/3158</a></li>
+<li>examples : add vad-speech-segments to win warns [no ci] by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3170">https://github.com/ggml-org/whisper.cpp/pull/3170</a></li>
+<li>sync : ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3171">https://github.com/ggml-org/whisper.cpp/pull/3171</a></li>
+<li>ruby : add GGML_SYCL_DNN option to ruby bindings by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3172">https://github.com/ggml-org/whisper.cpp/pull/3172</a></li>
+<li>Fix CMakeLists.txt to handle deprecated gpu Warnings by @jugal-sheth in <a href="https://github.com/ggml-org/whisper.cpp/pull/3163">https://github.com/ggml-org/whisper.cpp/pull/3163</a></li>
+<li>whisper : remove redundant assignments by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3178">https://github.com/ggml-org/whisper.cpp/pull/3178</a></li>
+<li>docs: fix very minor typo in README by @alpaim in <a href="https://github.com/ggml-org/whisper.cpp/pull/3179">https://github.com/ggml-org/whisper.cpp/pull/3179</a></li>
+<li>docs : add VAD model download instructions [no ci] by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3180">https://github.com/ggml-org/whisper.cpp/pull/3180</a></li>
+<li>feat(server): Add k6 Load Testing Script by @sachaarbonel in <a href="https://github.com/ggml-org/whisper.cpp/pull/3175">https://github.com/ggml-org/whisper.cpp/pull/3175</a></li>
+<li>ci : use dynamic libopenblas.dll for window-blas by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3177">https://github.com/ggml-org/whisper.cpp/pull/3177</a></li>
+<li>docs : Fix VAD section heading levels in README by @KitaitiMakoto in <a href="https://github.com/ggml-org/whisper.cpp/pull/3186">https://github.com/ggml-org/whisper.cpp/pull/3186</a></li>
+<li>Quickfix for swedish umlauts + expose model inference settings in talk-llama.cpp by @matteng1 in <a href="https://github.com/ggml-org/whisper.cpp/pull/3187">https://github.com/ggml-org/whisper.cpp/pull/3187</a></li>
+<li>node : enable no_prints to suppress all output by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3189">https://github.com/ggml-org/whisper.cpp/pull/3189</a></li>
+<li>docs : convert README_sycl.md to utf8 format [no ci] by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3191">https://github.com/ggml-org/whisper.cpp/pull/3191</a></li>
+<li>sync : ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3193">https://github.com/ggml-org/whisper.cpp/pull/3193</a></li>
+<li>ci : update windows artifact uploads steps by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3192">https://github.com/ggml-org/whisper.cpp/pull/3192</a></li>
+<li>tests : add a new benchmark test for long-form audio by @fujimotos in <a href="https://github.com/ggml-org/whisper.cpp/pull/3185">https://github.com/ggml-org/whisper.cpp/pull/3185</a></li>
+<li>Install shared libs when using GGML_BACKEND_DL by @peardox in <a href="https://github.com/ggml-org/whisper.cpp/pull/3195">https://github.com/ggml-org/whisper.cpp/pull/3195</a></li>
+<li>ruby : add VAD support, migration to Ruby’s newer API by @KitaitiMakoto in <a href="https://github.com/ggml-org/whisper.cpp/pull/3197">https://github.com/ggml-org/whisper.cpp/pull/3197</a></li>
+<li>whisper : remove whisper_load_backends function by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3196">https://github.com/ggml-org/whisper.cpp/pull/3196</a></li>
+<li>sync : ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3202">https://github.com/ggml-org/whisper.cpp/pull/3202</a></li>
+<li>ggml : Fix backtrace breaking Windows build by @danielzgtg in <a href="https://github.com/ggml-org/whisper.cpp/pull/3203">https://github.com/ggml-org/whisper.cpp/pull/3203</a></li>
+<li>ruby : handle build options on installation by @KitaitiMakoto in <a href="https://github.com/ggml-org/whisper.cpp/pull/3206">https://github.com/ggml-org/whisper.cpp/pull/3206</a></li>
+<li>vad : revisit timestamp alignment/mapping by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3173">https://github.com/ggml-org/whisper.cpp/pull/3173</a></li>
+<li>ruby : add Core ML support by @KitaitiMakoto in <a href="https://github.com/ggml-org/whisper.cpp/pull/3214">https://github.com/ggml-org/whisper.cpp/pull/3214</a></li>
+<li>sync : ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3215">https://github.com/ggml-org/whisper.cpp/pull/3215</a></li>
+<li>node : add language detection support by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3190">https://github.com/ggml-org/whisper.cpp/pull/3190</a></li>
+<li>ci : use mirrors.kernel.org for Ubuntu packages by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3220">https://github.com/ggml-org/whisper.cpp/pull/3220</a></li>
+<li>musa: correct MUSA SDK rc4.0.1 download URL by @yeahdongcn in <a href="https://github.com/ggml-org/whisper.cpp/pull/3217">https://github.com/ggml-org/whisper.cpp/pull/3217</a></li>
+<li>fix: apply whisperParams in fullTranscribeWithTime by @Jo4sDev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3201">https://github.com/ggml-org/whisper.cpp/pull/3201</a></li>
+<li>ci : add mirror for ports.ubuntu.com (ARM packages) by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3221">https://github.com/ggml-org/whisper.cpp/pull/3221</a></li>
+<li>ruby : Add parallel transcription support by @KitaitiMakoto in <a href="https://github.com/ggml-org/whisper.cpp/pull/3222">https://github.com/ggml-org/whisper.cpp/pull/3222</a></li>
+<li>devops: add main-intel dockerfile by @kwaa in <a href="https://github.com/ggml-org/whisper.cpp/pull/3229">https://github.com/ggml-org/whisper.cpp/pull/3229</a></li>
+<li>ci(docker): build and publish main-intel image by @kwaa in <a href="https://github.com/ggml-org/whisper.cpp/pull/3231">https://github.com/ggml-org/whisper.cpp/pull/3231</a></li>
+<li>ruby : output format by @KitaitiMakoto in <a href="https://github.com/ggml-org/whisper.cpp/pull/3237">https://github.com/ggml-org/whisper.cpp/pull/3237</a></li>
+<li>sync : whisper.cpp by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3239">https://github.com/ggml-org/whisper.cpp/pull/3239</a></li>
+<li>ruby : add cleaning of library names in dependencies by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3241">https://github.com/ggml-org/whisper.cpp/pull/3241</a></li>
+<li>ci : update windows runner to windows-2022 by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3242">https://github.com/ggml-org/whisper.cpp/pull/3242</a></li>
+<li>ruby : add .gitignore entries for ext directory by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3245">https://github.com/ggml-org/whisper.cpp/pull/3245</a></li>
+<li>cli : fix short name conflict for vad options [no ci] by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3247">https://github.com/ggml-org/whisper.cpp/pull/3247</a></li>
+<li>server : add Voice Activity Detection (VAD) support by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3246">https://github.com/ggml-org/whisper.cpp/pull/3246</a></li>
+<li>whisper : fix VAD processing for skipped audio segments by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3230">https://github.com/ggml-org/whisper.cpp/pull/3230</a></li>
+<li>feat(server): graceful shutdown, atomic server state, and health endpoint Improvements by @sachaarbonel in <a href="https://github.com/ggml-org/whisper.cpp/pull/3243">https://github.com/ggml-org/whisper.cpp/pull/3243</a></li>
+<li>let people select the model the wanna use with yt-wsp.sh using a second argument by @w1redch4d in <a href="https://github.com/ggml-org/whisper.cpp/pull/3251">https://github.com/ggml-org/whisper.cpp/pull/3251</a></li>
+<li>examples : set the C++ standard to C++17 for server by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3261">https://github.com/ggml-org/whisper.cpp/pull/3261</a></li>
+<li>whisper : clear result_all if vad_samples is empty by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3262">https://github.com/ggml-org/whisper.cpp/pull/3262</a></li>
+<li>sync : ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3264">https://github.com/ggml-org/whisper.cpp/pull/3264</a></li>
+<li>examples : add stereo to mono conversion in read_audio_data by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3266">https://github.com/ggml-org/whisper.cpp/pull/3266</a></li>
+<li>cmake : fix android build by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3265">https://github.com/ggml-org/whisper.cpp/pull/3265</a></li>
+<li>android : update CMakeLists.txt to use FetchContent for ggml by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3268">https://github.com/ggml-org/whisper.cpp/pull/3268</a></li>
+<li>sync : ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3272">https://github.com/ggml-org/whisper.cpp/pull/3272</a></li>
+<li>ruby : specify Apple frameworks explicitly on build by @KitaitiMakoto in <a href="https://github.com/ggml-org/whisper.cpp/pull/3270">https://github.com/ggml-org/whisper.cpp/pull/3270</a></li>
+<li>ci : add apt-get clean to musa Dockerfile by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3275">https://github.com/ggml-org/whisper.cpp/pull/3275</a></li>
+<li><code>whisper-command</code>: write commands to text file by @aaron-ang in <a href="https://github.com/ggml-org/whisper.cpp/pull/3273">https://github.com/ggml-org/whisper.cpp/pull/3273</a></li>
+<li>chore: add .gitignore entries for OpenVINO support by @mochiya98 in <a href="https://github.com/ggml-org/whisper.cpp/pull/3276">https://github.com/ggml-org/whisper.cpp/pull/3276</a></li>
+<li>ci : reduce musa image size by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3277">https://github.com/ggml-org/whisper.cpp/pull/3277</a></li>
+<li>backport CoreML features to macos &#x3C; 14 by @glaszig in <a href="https://github.com/ggml-org/whisper.cpp/pull/3255">https://github.com/ggml-org/whisper.cpp/pull/3255</a></li>
+<li>feat: update java example by @Jo4sDev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3281">https://github.com/ggml-org/whisper.cpp/pull/3281</a></li>
+<li>ci : enable main-cuda build by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3282">https://github.com/ggml-org/whisper.cpp/pull/3282</a></li>
+<li>stream : add nullptr check of whisper_context by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3283">https://github.com/ggml-org/whisper.cpp/pull/3283</a></li>
+</ul>
+<h2 id="new-contributors">New Contributors</h2>
+<ul>
+<li>@fujimotos made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3002">https://github.com/ggml-org/whisper.cpp/pull/3002</a></li>
+<li>@gregsadetsky made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3006">https://github.com/ggml-org/whisper.cpp/pull/3006</a></li>
+<li>@Olli made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3016">https://github.com/ggml-org/whisper.cpp/pull/3016</a></li>
+<li>@ekaitz-zarraga made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3024">https://github.com/ggml-org/whisper.cpp/pull/3024</a></li>
+<li>@jeffklassen made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3031">https://github.com/ggml-org/whisper.cpp/pull/3031</a></li>
+<li>@Podre-Henrique made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3073">https://github.com/ggml-org/whisper.cpp/pull/3073</a></li>
+<li>@yeahdongcn made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3069">https://github.com/ggml-org/whisper.cpp/pull/3069</a></li>
+<li>@JaredTweed made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3097">https://github.com/ggml-org/whisper.cpp/pull/3097</a></li>
+<li>@antimatter96 made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3102">https://github.com/ggml-org/whisper.cpp/pull/3102</a></li>
+<li>@danielzgtg made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3050">https://github.com/ggml-org/whisper.cpp/pull/3050</a></li>
+<li>@enesgrahovac made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3134">https://github.com/ggml-org/whisper.cpp/pull/3134</a></li>
+<li>@peardox made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3138">https://github.com/ggml-org/whisper.cpp/pull/3138</a></li>
+<li>@tomer-schles made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/2569">https://github.com/ggml-org/whisper.cpp/pull/2569</a></li>
+<li>@jugal-sheth made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3163">https://github.com/ggml-org/whisper.cpp/pull/3163</a></li>
+<li>@alpaim made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3179">https://github.com/ggml-org/whisper.cpp/pull/3179</a></li>
+<li>@matteng1 made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3187">https://github.com/ggml-org/whisper.cpp/pull/3187</a></li>
+<li>@Jo4sDev made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3201">https://github.com/ggml-org/whisper.cpp/pull/3201</a></li>
+<li>@kwaa made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3229">https://github.com/ggml-org/whisper.cpp/pull/3229</a></li>
+<li>@w1redch4d made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3251">https://github.com/ggml-org/whisper.cpp/pull/3251</a></li>
+<li>@aaron-ang made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3273">https://github.com/ggml-org/whisper.cpp/pull/3273</a></li>
+<li>@mochiya98 made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3276">https://github.com/ggml-org/whisper.cpp/pull/3276</a></li>
+<li>@glaszig made their first contribution in <a href="https://github.com/ggml-org/whisper.cpp/pull/3255">https://github.com/ggml-org/whisper.cpp/pull/3255</a></li>
+</ul>
+<p><strong>Full Changelog</strong>: <a href="https://github.com/ggml-org/whisper.cpp/compare/v1.7.5...v1.7.6">https://github.com/ggml-org/whisper.cpp/compare/v1.7.5…v1.7.6</a></p>
+<hr>
+<blockquote>
+<p><strong>Source</strong> <a href="https://github.com/ggml-org/whisper.cpp">ggml-org/whisper.cpp</a> · <code>v1.7.6</code> · 2025-06-25 · <a href="https://github.com/ggml-org/whisper.cpp/releases/tag/v1.7.6">upstream release</a></p>
+</blockquote>
+<p><em>Mirrored verbatim for indexing. All rights belong to the upstream project.</em></p>   </div> <p class="muted" style="margin-top:var(--s8);font-size:12.5px;border-top:1px solid var(--line);padding-top:var(--s4)"> Release notes are published by the upstream project and mirrored here for indexing. All rights belong to their authors. </p> <nav class="pager" aria-label="Release navigation"> <a href="/releases/whisper.cpp/1.8.0"> <span class="k">← Next</span> <span class="t">v1.8.0</span> </a> <a href="/releases/whisper.cpp/1.7.5"> <span class="k">Previous →</span> <span class="t">v1.7.5</span> </a> </nav> <aside class="ad-slot" aria-label="Advertisement" data-astro-cid-fgwukgf6><div class="ad-slot-label" data-astro-cid-fgwukgf6>Advertisement</div><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4184355057086168" data-ad-slot="9133765584" data-ad-format="auto" data-full-width-responsive="true" data-astro-cid-fgwukgf6></ins><script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script></aside> </article> <aside class="rail"> <div class="rail-card"> <div class="rail-title">Source</div> <ul class="rail-list"> <li> <a href="https://github.com/ggml-org/whisper.cpp/releases/tag/v1.7.6" target="_blank" rel="noopener"> <span>Original on GitHub</span> <span class="d">↗</span> </a> </li> <li> <a href="https://github.com/ggml-org/whisper.cpp" target="_blank" rel="noopener"> <span>ggml-org/whisper.cpp</span> <span class="d">↗</span> </a> </li> </ul> </div> <div class="rail-card rail-toc"> <div class="rail-title">On this page</div> <nav> <a href="#overview" class>Overview</a><a href="#m2-ultra" class>M2 Ultra</a><a href="#whats-changed" class>What’s Changed</a><a href="#new-contributors" class>New Contributors</a> </nav> </div> <div class="rail-card"> <div class="rail-title">Version history</div> <ul class="rail-list"> <li> <a href="/releases/whisper.cpp/1.9.5"> <span class="v">v1.9.5</span> <span class="d">26-10-06</span> </a> </li><li> <a href="/releases/whisper.cpp/1.9.4"> <span class="v">v1.9.4</span> <span class="d">26-09-11</span> </a> </li><li> <a href="/releases/whisper.cpp/1.9.2"> <span class="v">v1.9.2</span> <span class="d">26-08-04</span> </a> </li><li> <a href="/releases/whisper.cpp/1.9.1"> <span class="v">v1.9.1</span> <span class="d">26-06-19</span> </a> </li><li> <a href="/releases/whisper.cpp/1.9.0"> <span class="v">v1.9.0</span> <span class="d">26-06-17</span> </a> </li><li> <a href="/releases/whisper.cpp/1.8.7"> <span class="v">v1.8.7</span> <span class="d">26-06-16</span> </a> </li><li> <a href="/releases/whisper.cpp/1.8.6"> <span class="v">v1.8.6</span> <span class="d">26-06-02</span> </a> </li><li> <a href="/releases/whisper.cpp/1.8.5"> <span class="v">v1.8.5</span> <span class="d">26-05-29</span> </a> </li> </ul> <a href="/releases/whisper.cpp" class="mono" style="display:inline-block;margin-top:var(--s3);font-size:11.5px;color:var(--ink-3)"> View all 15 →
+</a> </div> </aside> </div> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>Open-source release intelligence, published daily.</p> </div> <div class="footer-col"> <h3>Track</h3> <ul> <li><a href="/releases">Releases</a></li> <li><a href="/projects">Projects</a></li> <li><a href="/releases.xml">RSS feed</a></li> </ul> </div> <div class="footer-col"> <h3>Archive</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">Chinese archive</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">Technical notes</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>Meta</h3> <ul> <li><a href="/method">Method</a></li> <li><a href="/privacy">Privacy policy</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release notes belong to their upstream projects.</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="Search releases"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="Search releases, projects, versions…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ navigate</span> <span>↵ open</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

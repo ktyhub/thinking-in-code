@@ -1,0 +1,586 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**EventLoopGroup对象的初始化** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_netty/3-event-loop-group-init/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_netty/3-event-loop-group-init"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_netty/3-event-loop-group-init/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_netty/3-event-loop-group-init"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**EventLoopGroup对象的初始化** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_netty/3-event-loop-group-init/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_netty/3-event-loop-group-init/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>netty</h3> <ul> <li> <a href="/zh/chapter_netty/1-sample" class="lv0" title="**从一个Hello World示例说起**"> **从一个Hello World示例说起** </a> </li><li> <a href="/zh/chapter_netty/2-bootstrap" class="lv0" title="**启动类大全**"> **启动类大全** </a> </li><li> <a href="/zh/chapter_netty/3-event-loop-group-init" class="lv0" aria-current="page" title="**EventLoopGroup对象的初始化**"> **EventLoopGroup对象的初始化** </a> </li><li> <a href="/zh/chapter_netty/4-server-bootstrap-attr" class="lv0" title="**ServerBootstrap属性 设置**"> **ServerBootstrap属性 设置** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_netty">netty</a><span class="sep">/</span><span>**EventLoopGroup对象的初始化**</span> </nav> <div class="prose">  <h1 id="eventloopgroup对象的初始化"><strong>EventLoopGroup对象的初始化</strong></h1>
+<h2 id="简介"><strong>简介</strong></h2>
+<p>EventLoopGroup是特殊的EventExecutorGroup类型，提供了注册Channel方法和获取下一个可用的EventLoop对象</p>
+<p>了解了启动类型的结构我们来继续看我们Demo的执行流程接下来可以看</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">    EventLoopGroup bossGroup </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> NioEventLoopGroup</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     EventLoopGroup workerGroup </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> NioEventLoopGroup</span><span style="color:#24292E">();</span></span></code></pre>
+<p>bossGroup 中只有一个线程, 在workerGroup线程池中没有指定线程数量，所以默认是 CPU 核心数乘2,</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">b.</span><span style="color:#6F42C1">group</span><span style="color:#24292E">(bossGroup, workerGroup)</span></span></code></pre>
+<p>在ServerBootstrap类型中调用group方法</p>
+<ul>
+<li>将parentGroup赋值给AbstractBootstrap类中的group成员变量</li>
+<li>将childGroup赋值给ServerBootstrap类中的childGroup成员变量</li>
+</ul>
+<p>ServerBootstrap中的group方法代码如下</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#D73A49"> public</span><span style="color:#24292E"> ServerBootstrap </span><span style="color:#6F42C1">group</span><span style="color:#24292E">(EventLoopGroup parentGroup, EventLoopGroup childGroup) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">     super</span><span style="color:#24292E">.</span><span style="color:#6F42C1">group</span><span style="color:#24292E">(parentGroup);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">     if</span><span style="color:#24292E"> (childGroup </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">       throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> NullPointerException</span><span style="color:#24292E">(</span><span style="color:#032F62">"childGroup"</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">     if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.childGroup </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">       throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(</span><span style="color:#032F62">"childGroup set already"</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">     this</span><span style="color:#24292E">.childGroup </span><span style="color:#D73A49">=</span><span style="color:#24292E"> childGroup;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">     return</span><span style="color:#005CC5"> this</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">  }</span></span></code></pre>
+<p>同时会调用super.group(parentGroup)调用父类型AbstractBootstrap中的group方法来设置parentGroup变量.</p>
+<p>AbstractBootstrap类中的group方法如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">    public</span><span style="color:#24292E"> B </span><span style="color:#6F42C1">group</span><span style="color:#24292E">(EventLoopGroup group) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">     if</span><span style="color:#24292E"> (group </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">       throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> NullPointerException</span><span style="color:#24292E">(</span><span style="color:#032F62">"group"</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">     if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.group </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">       throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(</span><span style="color:#032F62">"group set already"</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">     this</span><span style="color:#24292E">.group </span><span style="color:#D73A49">=</span><span style="color:#24292E"> group;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">     return</span><span style="color:#24292E"> (B) </span><span style="color:#005CC5">this</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>通过group方法我们可以看到在这里仅仅是将对象赋值给成员变量，参数不能为空也不能重复设置</p>
+<h2 id="eventloopgroup相关类型"><strong>EventLoopGroup相关类型</strong></h2>
+<p>在了解详细内容之前可以先看下当前类型的类继承关系，这里需要一个完整的类型继承图</p>
+<ul>
+<li>
+<p>ScheduledExecutorService，Iterable<eventexecutor></eventexecutor></p>
+</li>
+<li>
+<p>EventExecutorGroup</p>
+</li>
+<li>
+<p>EventLoopGroup</p>
+</li>
+<li>
+<p>AbstractEventLoopGroup  MultithreadEventLoopGroup EventLoop</p>
+</li>
+</ul>
+<h2 id="eventloopgroup子类型"><strong>EventLoopGroup子类型</strong></h2>
+<p>在这里我们先详细说一下EventLoopGroup的作用和每个类型的作用后面会详细介绍每个方法的作用:</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EventExecutorGroup</td>
+<td>父类型：用于管理EventExecutor对象提供可用EventExecutor对象，和关闭EventExecutor类型对象的功能</td>
+</tr>
+<tr>
+<td>AbstractEventLoopGroup</td>
+<td>实现EventLoopGroup接口的的抽象基类，目前未做具体扩展</td>
+</tr>
+<tr>
+<td>MultithreadEventLoopGroup</td>
+<td>实现EventLoopGroup接口的的抽象基类，支持多线程，在同一时间用多个线程处理它们的任务</td>
+</tr>
+<tr>
+<td>EventLoop</td>
+<td>处理所有的I/O操作通道，一个  EventLoop实例通常会处理多个 Channel实例，这通常取决于实现细节和内部结构。比如NioEventLoop，EpollEventLoop等</td>
+</tr>
+</tbody>
+</table>
+<h2 id="multithreadeventloopgroup-子类型"><strong>MultithreadEventLoopGroup 子类型</strong></h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DefaultEventLoopGroup</td>
+<td>MultithreadEventLoopGroup类型的子类，只重写了newChild方法用来创建DefaultEventLoop对象</td>
+</tr>
+<tr>
+<td>EpollEventLoopGroup</td>
+<td>MultithreadEventLoopGroup类型的子类，基于Linux的epoll IO模型用于创建EpollEventLoop对象，具有更好的性能，只能用于Linux下</td>
+</tr>
+<tr>
+<td>NioEventLoopGroup</td>
+<td>MultithreadEventLoopGroup类型的子类，用于创建NioEventLoop对象</td>
+</tr>
+</tbody>
+</table>
+<h2 id="eventloop子类型"><strong>EventLoop子类型</strong></h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SingleThreadEventLoop</td>
+<td>EventLoop的实现，抽象基类，它在一个线程中执行所有提交的任务。</td>
+</tr>
+<tr>
+<td>EmbeddedEventLoop</td>
+<td>Embeded开头的类型是Netty为单元测试而提供的</td>
+</tr>
+</tbody>
+</table>
+<h2 id="singlethreadeventloop子类型"><strong>SingleThreadEventLoop子类型</strong></h2>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DefaultEventLoop</td>
+<td>默认的EventLoop实现，从任务队列中取任务执行</td>
+</tr>
+<tr>
+<td>EpollEventLoop</td>
+<td>基于Linux下的epoll IO模型实现的事件循环</td>
+</tr>
+<tr>
+<td>NioEventLoop</td>
+<td>NIO事件循环实现，基于多路复用机制</td>
+</tr>
+<tr>
+<td>ThreadPerChannelEventLoop</td>
+<td>OIO网络模型的事件循环实现，所以总的来说一个ThreadPerChannelEventLoop对应一个Channel</td>
+</tr>
+</tbody>
+</table>
+<p>综上所看EventLoopGroup所包含的类型主要有两大类一个是多线程的EventLoopGroup和单线程的EventLoop，多线程的EventLoopGroup用来创建EventLoop，而单线程的EventLoop用来处理IO事件</p>
+<h3 id="eventloopgroup类型提供的方法如下"><strong>EventLoopGroup类型提供的方法如下：</strong></h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EventLoop next()</td>
+<td>返回下一个可以使用的EventLoop对象</td>
+</tr>
+<tr>
+<td>ChannelFuture register(Channel channel)</td>
+<td>用EventLoop注册一个Channel。一旦注册完成，返回的ChannelFuture将得到通知。</td>
+</tr>
+<tr>
+<td>ChannelFuture register(ChannelPromise promise)</td>
+<td>使用ChannelFuture在EventLoop中注册一个Channel。一旦注册完成，传递的ChannelFuture将得到通知，也将被返回。Promise用于异步执行</td>
+</tr>
+<tr>
+<td>ChannelFuture register(Channel channel, ChannelPromise promise)</td>
+<td>用这个EventLoop注册一个 Channel。一旦注册完成，传递的ChannelFuture将得到通知，也将被返回。这个方法已经过时了可以使用上个方法使用#register(ChannelPromise)}代替。</td>
+</tr>
+</tbody>
+</table>
+<p>了解了在这里我们先详细说一下EventLoopGroup的实现，我们来看下与EventLoopGroup相关类型的作用，在后面我们用到时候详细来说明</p>
+<p>了解了每个类型的作用再来回过头来看我们的示例代码</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">EventLoopGroup bossGroup </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> NioEventLoopGroup</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">EventLoopGroup workerGroup </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> NioEventLoopGroup</span><span style="color:#24292E">();</span></span>
+<span class="line"></span></code></pre>
+<h2 id="nioeventloopgroup初始化过程"><strong>NioEventLoopGroup初始化过程</strong></h2>
+<h3 id="nioeventloopgroup构造器"><strong>NioEventLoopGroup构造器</strong></h3>
+<p>我们的示例代码使用到NioEventLoopGroup用来创建NioEventLoop对象，所以我们这里使用的网络模型也是NIO类型的多路复用机制，</p>
+<p>我们来详细看下创建NioEventLoopGroup对象所经历的过程</p>
+<p>//无参构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">  public</span><span style="color:#6F42C1"> NioEventLoopGroup</span><span style="color:#24292E">() {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">     this</span><span style="color:#24292E">(</span><span style="color:#005CC5">0</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">  }</span></span></code></pre>
+<p>//线程数设置构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">  public</span><span style="color:#6F42C1"> NioEventLoopGroup</span><span style="color:#24292E">(</span><span style="color:#D73A49">int</span><span style="color:#24292E"> nThreads) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">     this</span><span style="color:#24292E">(nThreads, (Executor) </span><span style="color:#005CC5">null</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">  }</span></span></code></pre>
+<p>//最终会调用到如下构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">   public</span><span style="color:#6F42C1"> NioEventLoopGroup</span><span style="color:#24292E">(</span><span style="color:#D73A49">int</span><span style="color:#24292E"> nThreads, Executor executor, </span><span style="color:#D73A49">final</span><span style="color:#24292E"> SelectorProvider selectorProvider,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                final</span><span style="color:#24292E"> SelectStrategyFactory selectStrategyFactory) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">     super</span><span style="color:#24292E">(nThreads, executor, selectorProvider, selectStrategyFactory, RejectedExecutionHandlers.</span><span style="color:#6F42C1">reject</span><span style="color:#24292E">());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">  }</span></span></code></pre>
+<p>我们先来了解下每个参数的作用：</p>
+<ul>
+<li>nThreads 线程数</li>
+<li>executor  用来执行任务的执行器这个是java.util.concurrent包下的顶层执行器接口</li>
+<li>selectorProvider SelectorProvider 定义了创建 Selector、ServerSocketChannel、SocketChannel 等方法，采用 JDK 的 Service Provider Interface (SPI) 方式实现。</li>
+<li>selectStrategyFactory  用来创建Select策略SelectStrategy类型对象，当IO循环事件中通过SelectStrategy中的calculateStrategy方法来计算跳过还是进行IO</li>
+</ul>
+<p>NioEventLoopGroup的参数了解了我们可以继续往下执行，接下来调用父类的构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#005CC5">super</span><span style="color:#24292E">(nThreads, executor, selectorProvider, selectStrategyFactory, RejectedExecutionHandlers.</span><span style="color:#6F42C1">reject</span><span style="color:#24292E">());</span></span></code></pre>
+<p>在这里多了一个参数RejectedExecutionHandlers.reject()  任务执行拒绝策略，默认的拒绝策略无法添加任务则会抛出异常</p>
+<h3 id="multithreadeventloopgroup构造器"><strong>MultithreadEventLoopGroup构造器</strong></h3>
+<p>然后我们来看第一个父类MultithreadEventLoopGroup所对应的构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">protected</span><span style="color:#6F42C1"> MultithreadEventLoopGroup</span><span style="color:#24292E">(</span><span style="color:#D73A49">int</span><span style="color:#24292E"> nThreads, Executor executor, Object... args) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">     super</span><span style="color:#24292E">(nThreads </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#D73A49"> ?</span><span style="color:#24292E"> DEFAULT_EVENT_LOOP_THREADS </span><span style="color:#D73A49">:</span><span style="color:#24292E"> nThreads, executor, args);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">  }</span></span></code></pre>
+<p>在这个构造器中会有一些参数的转化，我们来详细看下：</p>
+<ul>
+<li>nThreads ：如果线程数量为0的时候则使用默认的DEFAULT_EVENT_LOOP_THREADS 那默认线程数量如何计算的呢可以看如下代码：</li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> static</span><span style="color:#24292E"> {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     DEFAULT_EVENT_LOOP_THREADS </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Math.</span><span style="color:#6F42C1">max</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">, SystemPropertyUtil.</span><span style="color:#6F42C1">getInt</span><span style="color:#24292E">(</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62">         "io.netty.eventLoopThreads"</span><span style="color:#24292E">, Runtime.</span><span style="color:#6F42C1">getRuntime</span><span style="color:#24292E">().</span><span style="color:#6F42C1">availableProcessors</span><span style="color:#24292E">() </span><span style="color:#D73A49">*</span><span style="color:#005CC5"> 2</span><span style="color:#24292E">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"> </span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">     if</span><span style="color:#24292E"> (logger.</span><span style="color:#6F42C1">isDebugEnabled</span><span style="color:#24292E">()) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">       logger.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"-Dio.netty.eventLoopThreads: {}"</span><span style="color:#24292E">, DEFAULT_EVENT_LOOP_THREADS);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">  }</span></span></code></pre>
+<p>如果JVM参数io.netty.eventLoopThreads中存在参数值则以这个JVM参数为准，否则的话以可用处理器核数*2为准</p>
+<p>如果说系统属性中获取到的JVM参数小于1则以1为准做为默认线程数量</p>
+<p>然后我们可以看args 做为可变参数把selectorProvider，selectStrategyFactory，RejectedExecutionHandler放入了可变数组中来存储，</p>
+<p>这个构造器仍会调用super来执行我们可以继续往下看</p>
+<p>MultithreadEventExecutorGroup</p>
+<p>被调用到的构造器方法如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> protected</span><span style="color:#6F42C1"> MultithreadEventExecutorGroup</span><span style="color:#24292E">(</span><span style="color:#D73A49">int</span><span style="color:#24292E"> nThreads, Executor executor, Object... args) {     </span></span>
+<span class="line"><span style="color:#005CC5">    this</span><span style="color:#24292E">(nThreads, executor, DefaultEventExecutorChooserFactory.INSTANCE, args); </span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>这个构造器新增了一个参数DefaultEventExecutorChooserFactory ,默认实现，用来创建EventExecutorChooser对象 ，EventExecutorChooser来选择下一个 EventExecutor 对象，同样这里可以先了解这个类是做什么用的</p>
+<p>接下来我们看另外一个被调用到的构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">protected</span><span style="color:#6F42C1"> MultithreadEventExecutorGroup</span><span style="color:#24292E">(</span><span style="color:#D73A49">int</span><span style="color:#24292E"> nThreads, Executor executor,</span></span>
+<span class="line"><span style="color:#24292E">                                            EventExecutorChooserFactory chooserFactory, Object... args) {</span></span>
+<span class="line"><span style="color:#6F42C1">        checkPositive</span><span style="color:#24292E">(nThreads, </span><span style="color:#032F62">"nThreads"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">//创建一个单线程的任务执行器   </span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (executor </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        //ThreadPerTaskExecutor命令模式实现的单线程任务执行器，传递任务内部创建一个子县城来执行  </span></span>
+<span class="line"><span style="color:#24292E">            executor </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ThreadPerTaskExecutor</span><span style="color:#24292E">(</span><span style="color:#6F42C1">newDefaultThreadFactory</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">//创建事件执行器数组</span></span>
+<span class="line"><span style="color:#24292E">        children </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#D73A49"> EventExecutor</span><span style="color:#24292E">[nThreads];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (</span><span style="color:#D73A49">int</span><span style="color:#24292E"> i </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">; i </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> nThreads; i </span><span style="color:#D73A49">++</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            boolean</span><span style="color:#24292E"> success </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> false</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">            try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                children[i] </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> newChild</span><span style="color:#24292E">(executor, args);</span></span>
+<span class="line"><span style="color:#24292E">                success </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> true</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">                // TODO: Think about if this is a good exception type</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IllegalStateException</span><span style="color:#24292E">(</span><span style="color:#032F62">"failed to create a child event loop"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">success) {</span></span>
+<span class="line"><span style="color:#D73A49">                    for</span><span style="color:#24292E"> (</span><span style="color:#D73A49">int</span><span style="color:#24292E"> j </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">; j </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> i; j </span><span style="color:#D73A49">++</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                        children[j].</span><span style="color:#6F42C1">shutdownGracefully</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                    for</span><span style="color:#24292E"> (</span><span style="color:#D73A49">int</span><span style="color:#24292E"> j </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">; j </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> i; j </span><span style="color:#D73A49">++</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                        EventExecutor e </span><span style="color:#D73A49">=</span><span style="color:#24292E"> children[j];</span></span>
+<span class="line"><span style="color:#D73A49">                        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                            while</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">e.</span><span style="color:#6F42C1">isTerminated</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                                e.</span><span style="color:#6F42C1">awaitTermination</span><span style="color:#24292E">(Integer.MAX_VALUE, TimeUnit.SECONDS);</span></span>
+<span class="line"><span style="color:#24292E">                            }</span></span>
+<span class="line"><span style="color:#24292E">                        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (InterruptedException </span><span style="color:#E36209">interrupted</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">                            // Let the caller handle the interruption.</span></span>
+<span class="line"><span style="color:#24292E">                            Thread.</span><span style="color:#6F42C1">currentThread</span><span style="color:#24292E">().</span><span style="color:#6F42C1">interrupt</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                            break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        chooser </span><span style="color:#D73A49">=</span><span style="color:#24292E"> chooserFactory.</span><span style="color:#6F42C1">newChooser</span><span style="color:#24292E">(children);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        final</span><span style="color:#24292E"> FutureListener&#x3C;</span><span style="color:#D73A49">Object</span><span style="color:#24292E">> terminationListener </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> FutureListener&#x3C;</span><span style="color:#D73A49">Object</span><span style="color:#24292E">>() {</span></span>
+<span class="line"><span style="color:#24292E">            @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">            public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> operationComplete</span><span style="color:#24292E">(Future&#x3C;</span><span style="color:#D73A49">Object</span><span style="color:#24292E">> </span><span style="color:#E36209">future</span><span style="color:#24292E">) </span><span style="color:#D73A49">throws</span><span style="color:#24292E"> Exception {</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (terminatedChildren.</span><span style="color:#6F42C1">incrementAndGet</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#24292E"> children.length) {</span></span>
+<span class="line"><span style="color:#24292E">                    terminationFuture.</span><span style="color:#6F42C1">setSuccess</span><span style="color:#24292E">(</span><span style="color:#005CC5">null</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (EventExecutor e</span><span style="color:#D73A49">:</span><span style="color:#24292E"> children) {</span></span>
+<span class="line"><span style="color:#24292E">            e.</span><span style="color:#6F42C1">terminationFuture</span><span style="color:#24292E">().</span><span style="color:#6F42C1">addListener</span><span style="color:#24292E">(terminationListener);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        Set&#x3C;</span><span style="color:#D73A49">EventExecutor</span><span style="color:#24292E">> childrenSet </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> LinkedHashSet&#x3C;</span><span style="color:#D73A49">EventExecutor</span><span style="color:#24292E">>(children.length);</span></span>
+<span class="line"><span style="color:#24292E">        Collections.</span><span style="color:#6F42C1">addAll</span><span style="color:#24292E">(childrenSet, children);</span></span>
+<span class="line"><span style="color:#24292E">        readonlyChildren </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Collections.</span><span style="color:#6F42C1">unmodifiableSet</span><span style="color:#24292E">(childrenSet);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>newChild方法，由于多态的存在我们优先执行具体类型的方法这里我们创建的对象是NioEventLoopGroup类型所以需要看下NioEventLoopGroup重写父类型的newChild方法：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">  @</span><span style="color:#D73A49">Override</span><span style="color:#24292E">  </span></span>
+<span class="line"><span style="color:#D73A49">  protected</span><span style="color:#24292E"> EventLoop </span><span style="color:#6F42C1">newChild</span><span style="color:#24292E">(Executor executor, Object... args) throws Exception {     </span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> NioEventLoop</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, executor, (SelectorProvider) args[</span><span style="color:#005CC5">0</span><span style="color:#24292E">],       ((SelectStrategyFactory) args[</span><span style="color:#005CC5">1</span><span style="color:#24292E">]).</span><span style="color:#6F42C1">newSelectStrategy</span><span style="color:#24292E">(), (RejectedExecutionHandler) args[</span><span style="color:#005CC5">2</span><span style="color:#24292E">]); </span></span>
+<span class="line"><span style="color:#24292E">   }</span></span></code></pre>
+<p>通过源码可以看到通过newChild方法主要是用来创建EventLoop类型的对象，在NioEventLoopGroup类型的其中一个作用就是用来创建NioEventLoop类型的对象</p>
+<p>创建NioEventLoop对象一共传递了5个参数</p>
+<ul>
+<li>当前NioEventLoopGroup类型对象</li>
+<li>用来执行任务的执行器</li>
+<li>前面构造器中传入的SelectorProvider类型对象</li>
+<li>通过前面构造器传入的SelectStrategyFactory对象创建SelectStrategy，默认为DefaultSelectStrategy类型</li>
+<li>拒绝策略默认为前面构造器传入的 抛出异常拒绝策略</li>
+</ul>
+<p>了解到了NioEventLoop对象的创建我们继续往下看NioEventLoop构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6F42C1">  NioEventLoop</span><span style="color:#24292E">(NioEventLoopGroup parent, Executor executor, SelectorProvider selectorProvider,          SelectStrategy strategy, RejectedExecutionHandler rejectedExecutionHandler) {    </span></span>
+<span class="line"><span style="color:#005CC5">   		super</span><span style="color:#24292E">(parent, executor, </span><span style="color:#005CC5">false</span><span style="color:#24292E">, DEFAULT_MAX_PENDING_TASKS, rejectedExecutionHandler);     </span></span>
+<span class="line"><span style="color:#D73A49">   		if</span><span style="color:#24292E"> (selectorProvider </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {     </span></span>
+<span class="line"><span style="color:#D73A49">   			  throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> NullPointerException</span><span style="color:#24292E">(</span><span style="color:#032F62">"selectorProvider"</span><span style="color:#24292E">);     </span></span>
+<span class="line"><span style="color:#24292E">   		}     </span></span>
+<span class="line"><span style="color:#D73A49">  		  if</span><span style="color:#24292E"> (strategy </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {      </span></span>
+<span class="line"><span style="color:#D73A49">   			throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> NullPointerException</span><span style="color:#24292E">(</span><span style="color:#032F62">"selectStrategy"</span><span style="color:#24292E">);    </span></span>
+<span class="line"><span style="color:#24292E">	    	}     </span></span>
+<span class="line"><span style="color:#24292E">     		provider </span><span style="color:#D73A49">=</span><span style="color:#24292E"> selectorProvider;     </span></span>
+<span class="line"><span style="color:#24292E">     		selector </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> openSelector</span><span style="color:#24292E">();    </span></span>
+<span class="line"><span style="color:#24292E">     		selectStrategy </span><span style="color:#D73A49">=</span><span style="color:#24292E"> strategy;  </span></span>
+<span class="line"><span style="color:#24292E">     }</span></span></code></pre>
+<p>先调用父类构造器 这里新增了两个参数</p>
+<p>一个是addTaskWakesUp 添加任务时候是否唤醒线程，这里默认值为false，当为false时候执行唤醒方法</p>
+<p>DEFAULT_MAX_PENDING_TASKS，这个参数主要用来设置等待任务队列的大小</p>
+<p>父类构造器执行完毕之后进行参数校验，然后为成员变量provider赋值</p>
+<p>接下来通过调用openSelector方法创建Selector类型对象，openSelector方法执行逻辑我们在后面看</p>
+<p>最后为selectStrategy成员变量赋值</p>
+<p>系统属性io.netty.eventLoop.maxPendingTasks没有设置，就默认Integer.MAX_VALUE，设置的参数如果小于16则默认为16</p>
+<p>接下来我们继续看NioEventLoop的父类型SingleThreadEventLoop的构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">   protected</span><span style="color:#6F42C1"> SingleThreadEventLoop</span><span style="color:#24292E">(EventLoopGroup parent, Executor executor, </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> addTaskWakesUp, </span><span style="color:#D73A49">int</span><span style="color:#24292E"> maxPendingTasks, RejectedExecutionHandler rejectedExecutionHandler) {     </span></span>
+<span class="line"><span style="color:#005CC5">   		super</span><span style="color:#24292E">(parent, executor, addTaskWakesUp, maxPendingTasks, rejectedExecutionHandler);     				</span></span>
+<span class="line"><span style="color:#24292E">   		tailTasks </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> newTaskQueue</span><span style="color:#24292E">(maxPendingTasks);  </span></span>
+<span class="line"><span style="color:#24292E">   }</span></span></code></pre>
+<p>SingleThreadEventLoop类型先调用父类有参数构造器，然后再创建tailTask，tailTask是用来收尾的队列在执行任务队列taskQueue完毕之后会通过afterRunningAllTasks调用，</p>
+<p>而任务队列taskQueue的创建是在调用super中</p>
+<p>我们看下需要执行的父类型SingleThreadEventExecutor的构造器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">   protected</span><span style="color:#6F42C1"> SingleThreadEventExecutor</span><span style="color:#24292E">(EventExecutorGroup parent, Executor executor,                     </span><span style="color:#D73A49">boolean</span><span style="color:#24292E"> addTaskWakesUp, </span><span style="color:#D73A49">int</span><span style="color:#24292E"> maxPendingTasks, RejectedExecutionHandler rejectedHandler) {     	</span></span>
+<span class="line"><span style="color:#005CC5">   		super</span><span style="color:#24292E">(parent); </span></span>
+<span class="line"><span style="color:#005CC5">   		this</span><span style="color:#24292E">.addTaskWakesUp </span><span style="color:#D73A49">=</span><span style="color:#24292E"> addTaskWakesUp;</span></span>
+<span class="line"><span style="color:#005CC5">   		this</span><span style="color:#24292E">.maxPendingTasks </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Math.</span><span style="color:#6F42C1">max</span><span style="color:#24292E">(</span><span style="color:#005CC5">16</span><span style="color:#24292E">, maxPendingTasks);</span></span>
+<span class="line"><span style="color:#005CC5">   		this</span><span style="color:#24292E">.executor </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ObjectUtil.</span><span style="color:#6F42C1">checkNotNull</span><span style="color:#24292E">(executor, </span><span style="color:#032F62">"executor"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">   		taskQueue </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> newTaskQueue</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">.maxPendingTasks);</span></span>
+<span class="line"><span style="color:#24292E">   		rejectedExecutionHandler </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ObjectUtil.</span><span style="color:#6F42C1">checkNotNull</span><span style="color:#24292E">(rejectedHandler, </span><span style="color:#032F62">"rejectedHandler"</span><span style="color:#24292E">); </span></span>
+<span class="line"><span style="color:#24292E">	 }</span></span></code></pre>
+<p>这里的super主要是用来向父类型传递对象，就不详细展开了,主要看下当前类型做了哪些操作</p>
+<p>为成员变量addTaskWakesUp赋值，决定是否唤醒任务</p>
+<p>为成员变量maxPendingTasks赋值，来指定等待任务队列大小</p>
+<p>为成员变量executor赋值，来执行具体任务，当前对象不能为空</p>
+<p>创建taskQueue，默认SingleThreadEventExecutor类型会创建LinkedBlockingQueue队列，但是由于多态的存在，我们创建的是NioEventLoop类型对象则会执行NioEventLoop中的newTaskQueue，</p>
+<p>NioEventLoop中通过newTaskQueue方法来创建无锁队列。</p>
+<p>为成员变量rejectedExecutionHandler赋值，在任务队列满的时候执行拒绝策略</p>
+<p>父类构造器执行完毕之后会执行NioEventLoop的openSelector方法，具体代码如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#24292E"> Selector </span><span style="color:#6F42C1">openSelector</span><span style="color:#24292E">() {     </span></span>
+<span class="line"><span style="color:#D73A49">		try</span><span style="color:#24292E"> {      </span></span>
+<span class="line"><span style="color:#6A737D">		 //通过上面了解到provider对象是通过SPI获取获取不到则使用DefaultSelectorProvider工厂创建了KQueueSelectorProvider类型对象，创建的选择器为KQueueSelectorImpl       	</span></span>
+<span class="line"><span style="color:#24292E">			unwrappedSelector </span><span style="color:#D73A49">=</span><span style="color:#24292E"> provider.</span><span style="color:#6F42C1">openSelector</span><span style="color:#24292E">();     </span></span>
+<span class="line"><span style="color:#24292E">		} </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (IOException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">			throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ChannelException</span><span style="color:#24292E">(</span><span style="color:#032F62">"failed to open a new selector"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span> //JVM参数中的io.netty.noKeySetOptimization参数，禁用优化选项，默认为false,Netty的 JDK SelectionKey优化开关,默认关闭,设置true开启禁用性能优化开关,</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">     if</span><span style="color:#24292E"> (DISABLE_KEYSET_OPTIMIZATION) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">       return</span><span style="color:#24292E"> unwrappedSelector;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     }</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span> //SelectedSelectionKeySet内部很简单，使用数组代替原Selector的中的HashSet，提高性能。数组默认大小为1024，不够用时容量*2。</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">    final</span><span style="color:#24292E"> SelectedSelectionKeySet selectedKeySet </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> SelectedSelectionKeySet</span><span style="color:#24292E">();</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span> //加载JDK的select实现SelectorImpl类</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">    Object maybeSelectorImplClass </span><span style="color:#D73A49">=</span><span style="color:#24292E"> AccessController.</span><span style="color:#6F42C1">doPrivileged</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#24292E"> PrivilegedAction&#x3C;</span><span style="color:#D73A49">Object</span><span style="color:#24292E">>() {        @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">    	 public</span><span style="color:#24292E"> Object </span><span style="color:#6F42C1">run</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">    	 	try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">    	 		return</span><span style="color:#24292E"> Class.</span><span style="color:#6F42C1">forName</span><span style="color:#24292E">(</span><span style="color:#032F62">"sun.nio.ch.SelectorImpl"</span><span style="color:#24292E">,</span><span style="color:#005CC5">false</span><span style="color:#24292E">,               PlatformDependent.</span><span style="color:#6F42C1">getSystemClassLoader</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">    	 	} </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">cause</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">    	 		return</span><span style="color:#24292E"> cause;</span></span>
+<span class="line"><span style="color:#24292E">    	 	}</span></span>
+<span class="line"><span style="color:#24292E">    	 }</span></span>
+<span class="line"><span style="color:#24292E">    });</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span> //加载的SelectorImpl失败则直接返回默认的unwrappedSelector</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">(maybeSelectorImplClass </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> Class) </span><span style="color:#D73A49">||</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6A737D">    // ensure the current selector implementation is what we can instrument.         !((Class&#x3C;?>) maybeSelectorImplClass).isAssignableFrom(unwrappedSelector.getClass())) {       if (maybeSelectorImplClass instanceof Throwable) {         Throwable t = (Throwable) maybeSelectorImplClass;         logger.trace("failed to instrument a special java.util.Set into: {}", unwrappedSelector, t);       }       return unwrappedSelector;     }      final Class&#x3C;?> selectorImplClass = (Class&#x3C;?>) maybeSelectorImplClass;</span></span></code></pre>
+<p>//反射替换SelectorImpl类型的成员变量selectedKeys，publicSelectedKeys的值为优化后的SelectedSelectionKeySet类型 Object maybeException = AccessController.doPrivileged(new PrivilegedAction<object>() { @Override public Object run() { try { //由于JDK的安全检查耗时较多.所以通过setAccessible(true)的方式关闭安全检查就可以达到提升反射速度的目的。 然而，带来的副作用，也不容忽视。如上所述，设置Field对象的Accessible的访问标志位为 true，就可以通过反射获取私有变量的值，在访问时会忽略访问修饰符的检查。<p></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">Field selectedKeysField </span><span style="color:#D73A49">=</span><span style="color:#24292E"> selectorImplClass.</span><span style="color:#6F42C1">getDeclaredField</span><span style="color:#24292E">(</span><span style="color:#032F62">"selectedKeys"</span><span style="color:#24292E">); </span></span>
+<span class="line"><span style="color:#24292E">Field publicSelectedKeysField </span><span style="color:#D73A49">=</span><span style="color:#24292E"> selectorImplClass.</span><span style="color:#6F42C1">getDeclaredField</span><span style="color:#24292E">(</span><span style="color:#032F62">"publicSelectedKeys"</span><span style="color:#24292E">); Throwable cause </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ReflectionUtil.</span><span style="color:#6F42C1">trySetAccessible</span><span style="color:#24292E">(selectedKeysField); </span></span>
+<span class="line"><span style="color:#D73A49">if</span><span style="color:#24292E"> (cause </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) { </span></span>
+<span class="line"><span style="color:#D73A49">return</span><span style="color:#24292E"> cause; </span></span>
+<span class="line"><span style="color:#24292E">} </span></span>
+<span class="line"><span style="color:#24292E">cause </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ReflectionUtil.</span><span style="color:#6F42C1">trySetAccessible</span><span style="color:#24292E">(publicSelectedKeysField); </span></span>
+<span class="line"><span style="color:#D73A49">if</span><span style="color:#24292E"> (cause </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) { </span></span>
+<span class="line"><span style="color:#D73A49">return</span><span style="color:#24292E"> cause; </span></span>
+<span class="line"><span style="color:#24292E">} </span></span>
+<span class="line"><span style="color:#6A737D">//替换掉nio中的SelectorImpl成员变量selectedKeys（类型为HashSet）使用优化后的SelectedSelectionKeySet类型 </span></span>
+<span class="line"><span style="color:#24292E">selectedKeysField.</span><span style="color:#6F42C1">set</span><span style="color:#24292E">(unwrappedSelector, selectedKeySet); </span></span>
+<span class="line"><span style="color:#24292E">publicSelectedKeysField.</span><span style="color:#6F42C1">set</span><span style="color:#24292E">(unwrappedSelector, selectedKeySet); </span></span>
+<span class="line"><span style="color:#D73A49">return</span><span style="color:#005CC5"> null</span><span style="color:#24292E">; </span></span>
+<span class="line"><span style="color:#24292E">} </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (NoSuchFieldException </span><span style="color:#E36209">e</span><span style="color:#24292E">) { </span></span>
+<span class="line"><span style="color:#D73A49">return</span><span style="color:#24292E"> e; </span></span>
+<span class="line"><span style="color:#24292E">} </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (IllegalAccessException </span><span style="color:#E36209">e</span><span style="color:#24292E">) { </span></span>
+<span class="line"><span style="color:#D73A49">return</span><span style="color:#24292E"> e; </span></span>
+<span class="line"><span style="color:#24292E">} } });</span></span></code></pre>
+<p>//替换变量异常直接返回默认selector</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (maybeException </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> Exception) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">       selectedKeys </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">       Exception e </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (Exception) maybeException;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">       logger.</span><span style="color:#6F42C1">trace</span><span style="color:#24292E">(</span><span style="color:#032F62">"failed to instrument a special java.util.Set into: {}"</span><span style="color:#24292E">, unwrappedSelector, e);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">       return</span><span style="color:#24292E"> unwrappedSelector;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     selectedKeys </span><span style="color:#D73A49">=</span><span style="color:#24292E"> selectedKeySet;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     logger.</span><span style="color:#6F42C1">trace</span><span style="color:#24292E">(</span><span style="color:#032F62">"instrumented a special java.util.Set into: {}"</span><span style="color:#24292E">, unwrappedSelector);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">     //nio优化顺利则最终使用netty自定义的Select类型，创建SelectedSelectionKeySetSelector对象，</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">     return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> SelectedSelectionKeySetSelector</span><span style="color:#24292E">(unwrappedSelector, selectedKeySet);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">  }</span></span></code></pre>
+<p>这个选择器创建的代码看起来比较长，总结一下：</p>
+<p>先创建JDK NIO的选择器对象默认为KQueueSelectorImpl类型的unwrappedSelector对象</p>
+<p>然后获取默认的unwrappedSelector对象的父类型SelectorImpl的成员变量selectedKeys和publicSelectedKeys</p>
+<p>然后替换对象unwrappedSelector的父类型SelectorImpl中的成员变量selectedKeys和publicSelectedKeys的值为SelectedSelectionKeySet类型对象</p>
+<p>最后使用装饰(包装)模式通过unwrappedSelector和selectedKeySet创建SelectedSelectionKeySetSelector类型的选择器对象</p>
+<p>DefaultEventExecutorChooserFactory类型的newChooser创建事件执行选择器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">  @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">  public</span><span style="color:#24292E"> EventExecutorChooser </span><span style="color:#6F42C1">newChooser</span><span style="color:#24292E">(</span><span style="color:#D73A49">EventExecutor</span><span style="color:#24292E">[] executors) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">     if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">isPowerOfTwo</span><span style="color:#24292E">(executors.length)) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">       return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> PowerOfTwoEventExecutorChooser</span><span style="color:#24292E">(executors);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">       return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> GenericEventExecutorChooser</span><span style="color:#24292E">(executors);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">  }</span></span>
+<span class="line"></span></code></pre>
+<p>//计算是否为2的幂可参考另外一个算法<a href="https://blog.csdn.net/OnionOmelette/article/details/53718623">https://blog.csdn.net/OnionOmelette/article/details/53718623</a></p>
+<p>//看不太懂太难了</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">  private</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> boolean</span><span style="color:#6F42C1"> isPowerOfTwo</span><span style="color:#24292E">(</span><span style="color:#D73A49">int</span><span style="color:#24292E"> val) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">     return</span><span style="color:#24292E"> (val </span><span style="color:#D73A49">&#x26;</span><span style="color:#D73A49"> -</span><span style="color:#24292E">val) </span><span style="color:#D73A49">==</span><span style="color:#24292E"> val;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">  }</span></span>
+<span class="line"></span></code></pre>
+<p>//可并发的轮训算法，返回的值不会超过素组的长度</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>	//&#x26;运算效率较高</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">    //2的幂次选择器</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> PowerOfTwoEventExecutorChooser</span><span style="color:#D73A49"> implements</span><span style="color:#6F42C1"> EventExecutorChooser</span><span style="color:#24292E"> {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"> 		//原子自增</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">             private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> AtomicInteger idx </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> AtomicInteger</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">     private</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> EventExecutor</span><span style="color:#24292E">[] executors;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"> </span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">     PowerOfTwoEventExecutorChooser</span><span style="color:#24292E">(</span><span style="color:#D73A49">EventExecutor</span><span style="color:#24292E">[] </span><span style="color:#E36209">executors</span><span style="color:#24292E">) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">       this</span><span style="color:#24292E">.executors </span><span style="color:#D73A49">=</span><span style="color:#24292E"> executors;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"> </span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">         		//可并发的轮训算法，返回的值不会超过素组的长度</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">         		//&#x26;运算效率较高</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">             @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">     public</span><span style="color:#24292E"> EventExecutor </span><span style="color:#6F42C1">next</span><span style="color:#24292E">() {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">       // 这个单独写个文档吧 比较好的算法</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">       return</span><span style="color:#24292E"> executors[idx.</span><span style="color:#6F42C1">getAndIncrement</span><span style="color:#24292E">() </span><span style="color:#D73A49">&#x26;</span><span style="color:#24292E"> executors.length </span><span style="color:#D73A49">-</span><span style="color:#005CC5"> 1</span><span style="color:#24292E">];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"> </span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">         	//普通选择器</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> GenericEventExecutorChooser</span><span style="color:#D73A49"> implements</span><span style="color:#6F42C1"> EventExecutorChooser</span><span style="color:#24292E"> {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"> 		//原子自增</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">             private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> AtomicInteger idx </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> AtomicInteger</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">     private</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> EventExecutor</span><span style="color:#24292E">[] executors;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"> </span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">     GenericEventExecutorChooser</span><span style="color:#24292E">(</span><span style="color:#D73A49">EventExecutor</span><span style="color:#24292E">[] </span><span style="color:#E36209">executors</span><span style="color:#24292E">) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">       this</span><span style="color:#24292E">.executors </span><span style="color:#D73A49">=</span><span style="color:#24292E"> executors;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"> </span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">     public</span><span style="color:#24292E"> EventExecutor </span><span style="color:#6F42C1">next</span><span style="color:#24292E">() {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"> 			//可并发的轮训算法，返回的值不会超过素组的长度</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"> 			//计数器不断自增 然后与素组长度取模 最后拿绝对值</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">       return</span><span style="color:#24292E"> executors[Math.</span><span style="color:#6F42C1">abs</span><span style="color:#24292E">(idx.</span><span style="color:#6F42C1">getAndIncrement</span><span style="color:#24292E">() </span><span style="color:#D73A49">%</span><span style="color:#24292E"> executors.length)];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">     }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">} </span></span></code></pre></object></p>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**Zookeeper的实现** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_zookeeper/2-implement/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_zookeeper/2-implement"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_zookeeper/2-implement/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_zookeeper/2-implement"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**Zookeeper的实现** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_zookeeper/2-implement/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_zookeeper/2-implement/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>zookeeper</h3> <ul> <li> <a href="/zh/chapter_zookeeper/1-introduce" class="lv0" title="**Zookeeper的设计**"> **Zookeeper的设计** </a> </li><li> <a href="/zh/chapter_zookeeper/2-implement" class="lv0" aria-current="page" title="**Zookeeper的实现**"> **Zookeeper的实现** </a> </li><li> <a href="/zh/chapter_zookeeper/3-install" class="lv0" title="**Zookeeper安装配置**"> **Zookeeper安装配置** </a> </li><li> <a href="/zh/chapter_zookeeper/4-client" class="lv0" title="客户端的入门使用"> 客户端的入门使用 </a> </li><li> <a href="/zh/chapter_zookeeper/5-produce-and-consumer" class="lv0" title="**教你如何用Zookeeper开发锁与生产者消费者?**"> **教你如何用Zookeeper开发锁与生产者消费者?** </a> </li><li> <a href="/zh/chapter_zookeeper/6-watch" class="lv0" title="**Watch监听通知机制简介**"> **Watch监听通知机制简介** </a> </li><li> <a href="/zh/chapter_zookeeper/7-start-source" class="lv0" title="**服务器启动流程入个门**"> **服务器启动流程入个门** </a> </li><li> <a href="/zh/chapter_zookeeper/8-config" class="lv0" title="**配置信息是如何加载到内存空间的**"> **配置信息是如何加载到内存空间的** </a> </li><li> <a href="/zh/chapter_zookeeper/9-clear-log-start" class="lv0" title="**日志清理定时任务的启动**"> **日志清理定时任务的启动** </a> </li><li> <a href="/zh/chapter_zookeeper/10-init-main" class="lv0" title="**使用配置信息启动运行入口**"> **使用配置信息启动运行入口** </a> </li><li> <a href="/zh/chapter_zookeeper/11-reactor" class="lv0" title="**ServerCnxnFactory 服务器连接工厂对象的创建与属性初始化**"> **ServerCnxnFactory 服务器连接工厂对象的创建与属性初始化** </a> </li><li> <a href="/zh/chapter_zookeeper/12-quorumpeer-init" class="lv0" title="**管理协议的法定人对象QuorumPeer创建与初始化**"> **管理协议的法定人对象QuorumPeer创建与初始化** </a> </li><li> <a href="/zh/chapter_zookeeper/13-loaddatabase" class="lv0" title="**法定人对象QuorumPeer启动之加载磁盘快照与事务日志**"> **法定人对象QuorumPeer启动之加载磁盘快照与事务日志** </a> </li><li> <a href="/zh/chapter_zookeeper/14-reactor-io" class="lv0" title="**启服务端网络监听连接NIOServerCnxnFactory**"> **启服务端网络监听连接NIOServerCnxnFactory** </a> </li><li> <a href="/zh/chapter_zookeeper/15-election" class="lv0" title="**选举算法的准备等待选举**"> **选举算法的准备等待选举** </a> </li><li> <a href="/zh/chapter_zookeeper/16-lookforleader" class="lv0" title="**QuorumPeer主循环**"> **QuorumPeer主循环** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_zookeeper">zookeeper</a><span class="sep">/</span><span>**Zookeeper的实现**</span> </nav> <div class="prose">  <h1 id="zookeeper的实现"><strong>Zookeeper的实现</strong></h1>
+<h2 id="主要组成"><strong>主要组成</strong></h2>
+<p>Zookeeper服务主要由几大部分组成，请求处理器，原子广播，可复制的数据库等组件组成主要的请求处理如下图所示</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>可复制的数据库</td>
+<td>可复制的数据库是一个包含整个数据树的内存数据库，更新被记录到磁盘上以保证可恢复性，写操作在更新内存数据库之前会先将数据序列化到磁盘来做持久化。</td>
+</tr>
+<tr>
+<td>读请求处理</td>
+<td>客户端只连接到一个服务器来提交请求。读取请求由每个服务器数据库本地副本提供服务。</td>
+</tr>
+<tr>
+<td>写请求处理</td>
+<td>作为协议的一部分，所有来自客户端的写请求都被转发到一个名为leader的服务器上,Zookeeper上的其他服务器角色，被称为Follower或者Observer,Follower参与投票并与Leader脸色同步，Observer是不参与投票的。</td>
+</tr>
+<tr>
+<td>自定义的原子消息协议</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="zookeeper性能"><strong>Zookeeper性能</strong></h2>
+<p>Zookeeper被设计成 <strong>高性能</strong> 的，在 <strong>读的数量超过写</strong> 的应用程序中性能会更好，<strong>写操作</strong> 还涉及到其他操作比如 <strong>同步所有服务器的状态</strong> ，而读操作则可以直接读取内存中数据。
+Zoookeeper的吞吐量 <strong>受写操作的影响</strong> ，随着读写比的变化而变化。</p>
+<h2 id="zookeeper-session"><strong>Zookeeper Session</strong></h2>
+<p>Zookeeper服务器启动后可以监听客户端的连接:</p>
+<ul>
+<li><strong>建立会话：</strong> Zookeeper客户端建立通过创建服务句柄来建立与Zookeeper的会话，</li>
+<li><strong>CONNECTING状态：</strong> 句柄创建后状态切换至CONNECTING状态，开始尝试连接到组成Zookeeper服务的其中一个服务器，</li>
+<li><strong>CONNECTED状态：</strong> 然后切换到CONNECTED状态，如果连接成功则切换到CONNECTED状态</li>
+<li><strong>CLOSED状态：</strong> 如果发生了不可恢复的错误，例如会话过期或身份验证失败，或者应用程序显式的关闭了句柄，则将切换到CLOSED状态，</li>
+</ul>
+<p>当客户端(会话)从ZK服务集群中分区时，它将开始搜索在会话创建期间指定的服务器列表。
+最终，当客户端和至少一个服务器之间的连接重新建立时，会话将再次转换到“已连接”状态(如果在会话超时值内重新连接)，或者转换到“过期”状态(如果在会话超时后重新连接)。
+不建议在断开连接时创建一个新的会话对象(一个新的zookeeper .class或c绑定中的zookeeper句柄)。
+ZK客户端库将为您处理重新连接。特别地，我们在客户端库中内置了启发式来处理“群体效应”等事情。仅在收到会话过期通知时才创建新会话(强制)。</p>
+<p><strong>Session过期由ZooKeeper集群本身管理</strong> ，而不是由客户端管理。
+当ZK客户机与集群建立会话时，它会提供上面详细描述的“超时”值。集群使用此值来确定客户端会话何时过期。
+当集群在指定的会话超时时间内没有收到来自客户机的消息(即没有心跳)时，就会发生失效。</p>
+<p>在会话到期时，集群将删除该会话拥有的任何/所有临时节点，并立即通知任何/所有连接的客户端(任何监视这些znode的人)。</p>
+<p>此时，过期会话的客户端仍然与集群断开连接，它将不会收到会话过期的通知，直到/除非它能够重新建立到集群的连接。客户端将保持断开连接状态，直到TCP连接与集群重新建立，此时过期会话的观察者将收到“会话过期”通知。
+<strong>会话通过客户端发送的请求保持活跃</strong> 。如果会话空闲了一段时间，将使会话超时，客户端将发送一个PING请求以使会话保持活跃。这个PING请求不仅可以让ZooKeeper服务器知道客户端仍然处于活动状态，还可以让客户端验证自己与ZooKeeper服务器的连接是否仍然处于活动状态。PING的时间足够保守，以确保有合理的时间检测死连接并重新连接到新的服务器。
+客户端通过逗号分隔的host:port列表字符串来连接zookeeper，每条信息对应一个ZooKeeper服务器。该函数调用一个 <strong>概率负载平衡算法</strong> ，该算法可能导致客户机断开与当前主机的连接，目标是在新列表中实现每个服务器的预期统一连接数。</p>
+<p>如果客户端连接到的当前主机不在新列表中，此调用将始终导致连接被删除。否则，决策取决于服务器的数量是增加了还是减少了，以及减少了多少</p>
+<h2 id="原子广播"><strong>原子广播</strong></h2>
+<ul>
+<li><strong>一致性保证</strong></li>
+<li><strong>原子广播说明</strong></li>
+</ul>
+<h2 id="保证"><strong>保证</strong></h2>
+<p>ZooKeeper使用的消息传递系统提供的特定保证如下：</p>
+<ul>
+<li><strong>可靠的传递</strong>：如果消息m是由一台服务器传递的，则该消息m最终将由所有服务器传递。</li>
+<li><strong>总顺序</strong>：如果一台服务器a先b于一条消息传递一条消息，则所有服务器a将先传递一条消息b。</li>
+<li><strong>因果顺序</strong>：如果在发件人发送b消息之后a发送b消息，则a必须在消息之前对其进行排序b。如果发送方在发送c后发送b，则c必须在之后订购b。</li>
+</ul>
+<p><strong>依赖于TCP的以下属性</strong></p>
+<ul>
+<li><strong>有序传递</strong>：m仅按照发送之前发送的所有消息的传递顺序，发送数据和发送消息的顺序相同m。（这的必然结果是，如果消息m丢失，则此后的所有消息m都将丢失。）</li>
+<li><strong>关闭后无消息</strong>：关闭FIFO通道后，将不会再收到任何消息。</li>
+</ul>
+<h2 id="名词解释"><strong>名词解释：</strong></h2>
+<table>
+<thead>
+<tr>
+<th>名词</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Packet（数据包）</td>
+<td>通过FIFO通道发送的字节序列。</td>
+</tr>
+<tr>
+<td>Proposal（提案）</td>
+<td>协议单位。通过与法定的ZooKeeper服务器交换数据包来达成协议。大多数投标都包含消息，但是NEW_LEADER投标是不包含在消息中的投标的示例。</td>
+</tr>
+<tr>
+<td>Message（消息）</td>
+<td>要自动广播到所有ZooKeeper服务器的字节序列。传递到提案中并已达成共识的消息。</td>
+</tr>
+</tbody>
+</table>
+<p>ZooKeeper保证消息的总顺序，也保证提案的总顺序。</p>
+<p>ZooKeeper使用ZooKeeper <strong>事务ID（zxid）公开总排序</strong>
+提出提案时，所有提案都将盖上zxid，并准确反映总排序。</p>
+<p>提案将发送到所有ZooKeeper服务器，并在 <strong>法定人数确认提案后提交</strong> 。
+如果投标中包含一条消息，则在提交投标时将传递该消息。
+确认表示服务器已将建议记录到 <strong>持久性存储中</strong> 。</p>
+<p>我们的法定人数要求任何一对法定人数必须至少有一个共同的服务器。</p>
+<p>我们通过要求所有仲裁均具有大小 <strong>（n / 2 + 1）</strong> ，其中n是组成ZooKeeper服务的服务器数量。</p>
+<p><strong>zxid有两个部分：</strong></p>
+<ul>
+<li><strong>时期</strong></li>
+<li><strong>计数器</strong></li>
+</ul>
+<p>在我们的实现中，zxid是一个64位数字。</p>
+<ul>
+<li><strong>高阶32位用于纪元</strong></li>
+<li><strong>低阶32位用于计数器</strong></li>
+</ul>
+<p>由于zxid由两部分组成，因此zxid既可以表示为数字，也可以表示为整数对（epoch，count）。
+纪元数代表领导层的变化。 <strong>每次新领导人上台时，都会有自己的时代号</strong> 。
+我们有一个简单的算法为提案分配唯一的zxid：组长只需增加zxid即可为每个提案获得唯一的zxid。
+领导者激活将确保只有一个领导者使用给定的纪元，因此我们的简单算法可确保每个提案都将具有唯一的ID。</p>
+<h2 id="zookeeper消息传递包括两个阶段"><strong>ZooKeeper消息传递包括两个阶段</strong></h2>
+<ul>
+<li><strong>领导者激活</strong>：在这个阶段，领导者建立了正确的系统状态，并准备开始提出建议。</li>
+<li><strong>主动消息传递</strong>：在此阶段，领导者接受消息以提议和协调消息传递。</li>
+</ul>
+<p>选举领导者后，会将一台服务器指定为领导者，并开始等待关注者进行连接。
+其余服务器将尝试连接到领导者。</p>
+<p>领导者将通过发送追随者丢失的任何提案来与追随者同步，或者如果追随者缺少太多提议，则会将状态的完整快照发送给追随者。</p>
+<p>在一个 <strong>极端的情况</strong> 下，具有领导者看不到的提案的追随者到达。
+提案按顺序显示，因此的提案的zxid高于领导者看到的zxid。
+跟随者一定是在领导人选举后到达的，否则，跟随者将被视为领导者，因为它具有较高的zxid。
+由于必须通过一定数量的服务器来查看已提交的提案，并且看不到选举组长的服务器法定数量，因此尚未提交的建议，因此可以将其丢弃。
+当跟随者连接到领导者时，领导者将告诉跟随者放弃。</p>
+<p><strong>激活消息</strong>：</p>
+<p>领导者激活完成了所有繁重的工作。领导加冕后，他就可以开始提出建议了。
+只要他仍然是领导者，就不会有其他领导者出现，因为没有其他领导者能够获得一定数量的追随者。
+如果确实出现了新的领导者，则意味着该领导者失去了法定人数，并且该新领导者将清除激活她的领导者过程中留下的任何混乱情况。</p>
+<p>ZooKeeper <strong>消息传递</strong> 的操作 <strong>类似于经典的两阶段提交</strong> 。</p>
+<p>所有通信通道均为FIFO，因此所有操作均按顺序进行。具体而言，遵守以下操作限制：</p>
+<p>领导者使用相同的顺序将提案发送给所有关注者。此外，该顺序遵循已接收请求的顺序。因为我们使用 <strong>FIFO通道</strong> ，所以这意味着关注者还会按顺序接收投标。
+关注者按照收到消息的顺序处理消息。这意味着，由于具有FIFO通道，消息将按顺序被ACK，并且领导者将按顺序从跟随者接收ACK。这也意味着，如果m已将消息写入非易失性存储，则之前提案的所有消息都已写入非易失性存储。
+一旦有一定数量的关注者确认了消息，领导者就会向所有关注者发出COMMIT。由于消息是按顺序确认的，因此领导者将按照跟随者的顺序发送COMMIT。
+COMMIT按顺序处理。提交提案后，关注者会发送提案消息。</p>
+<p><strong>一致性保证</strong>
+ZooKeeper的一致性保证介于 <strong>顺序一致性</strong> 和 <strong>线性化</strong> 之间。在本节中，我们将说明ZooKeeper提供的确切一致性保证。</p>
+<ul>
+<li>ZooKeeper中的 <strong>写操作是可线性化的</strong> 换句话说，write在客户端发出请求和接收到相应响应之间的某个时间点，每个元素似乎都自动生效。这意味着ZooKeeper中所有客户端执行的写入可以按照尊重这些写入的实时顺序的方式进行完全排序。但是，仅声明写操作可线性化是没有意义的，除非我们也谈到读操作。</li>
+<li>ZooKeeper中的 <strong>读取操作无法线性化</strong> 因为它们可以返回可能过时的数据。这是因为readZooKeeper中的a不是法定操作，并且服务器将立即响应执行a的客户端read。ZooKeeper之所以这样做，是因为在读取用例时，它会优先考虑性能而不是一致性。但是，ZooKeeper中的读取顺序上是一致的，因为read操作似乎会以某种顺序顺序生效，从而进一步尊重每个客户端操作的顺序。解决此问题的常见模式是在发行sync之前发行read。这也并不能严格保证了最新的数据，因为syncIS目前还没有达到法定人数的操作。为了说明这一点，请考虑一个场景，其中两个服务器同时认为它们是领导者，如果TCP连接超时小于，则可能会发生这种情况syncLimit * tickTime。请注意，这在实践中不太可能发生，但在讨论严格的理论保证时仍应牢记。在这种情况下，sync“领导者”可能会将过时的数据提供给，从而使后面的内容read也过时。如果write在a之前执行了实际的定额运算（例如a ），则可以提供更好的线性化保证read。</li>
+</ul>
+<p>总体而言，ZooKeeper的一致性保证是通过有序的顺序一致性或OSC(U)确切地说是精确的概念来捕获的，该概念介于顺序一致性和线性化之间。</p>
+<p><strong>法定人数</strong>
+原子广播和领导者选举使用法定概念来保证系统的一致视图。默认情况下，ZooKeeper使用多数仲裁，这意味着在这些协议之一中进行的每次投票都需要多数投票。一个示例是确认领导者提议：领导者只有在收到来自法定服务器数量的确认后才能进行提交。</p>
+<p>如果我们从多数使用中提取出我们真正需要的属性，那么我们只需要保证用于通过投票（例如，确认领导提议）来验证操作的过程组在至少一台服务器中成对相交。使用多数保证了这种性质。但是，还有其他一些不同于多数的构造仲裁的方法。例如，我们可以为服务器的投票分配权重，并说某些服务器的投票更为重要。要获得法定人数，我们需要获得足够的选票，以使所有选票的权重之和大于所有权重之和的一半。</p>
+<p>一种使用权重并且在广域部署（同一位置）中有用的不同构造是一种分层构造。通过这种构造，我们将服务器分成不相交的组，并为进程分配权重。为了形成法定人数，我们必须从大多数组G中获得足够的服务器，这样对于G中的每个组g，来自g的票数之和要大于g权重之和的一半。有趣的是，这种构造可以实现较小的仲裁。例如，如果我们有9台服务器，则将它们分成3组，并为每台服务器分配权重1，那么我们就可以形成大小为4的仲裁。请注意，进程的两个子集构成了每个进程的多数。大多数组中的每个服务器都必须具有非空交集。</p>
+<p>借助ZooKeeper，我们为用户提供了配置服务器以使用多数仲裁，权重或组层次结构的能力。</p>
+<h2 id="常见问题处理"><strong>常见问题处理</strong></h2>
+<ul>
+<li>我应该如何处理CONNECTION_LOSS错误？</li>
+<li>我应该如何处理SESSION_EXPIRED？</li>
+<li>有没有一种简便的方法可以使会话过期以进行测试？</li>
+<li>为什么NodeChildrenChanged和NodeDataChanged监视事件不返回有关更改的更多信息？</li>
+<li>升级ZooKeeper的选项过程是什么？</li>
+<li>我如何确定ZooKeeper集成体（集群）的大小？</li>
+<li>我可以在负载均衡器后面运行集成集群吗？</li>
+<li>群集关闭时ZK会话会发生什么情况？
+<a href="https://cwiki.apache.org/confluence/display/ZOOKEEPER/FAQ">https://cwiki.apache.org/confluence/display/ZOOKEEPER/FAQ</a></li>
+</ul>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

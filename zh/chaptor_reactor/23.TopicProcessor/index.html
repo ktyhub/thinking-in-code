@@ -1,0 +1,205 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>TopicProcessor深度解析：多订阅者场景下的高效数据分发机制 — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chaptor_reactor/23.TopicProcessor/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chaptor_reactor/23.TopicProcessor"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chaptor_reactor/23.TopicProcessor/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chaptor_reactor/23.TopicProcessor"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="TopicProcessor深度解析：多订阅者场景下的高效数据分发机制 — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chaptor_reactor/23.TopicProcessor/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chaptor_reactor/23.TopicProcessor/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>chaptor_reactor</h3> <ul> <li> <a href="/zh/chaptor_reactor/1-Flux" class="lv0" title="Reactor源码解析：Flux.subscribe方法详解"> Reactor源码解析：Flux.subscribe方法详解 </a> </li><li> <a href="/zh/chaptor_reactor/2-Flux.push" class="lv0" title="2-Flux.push"> 2-Flux.push </a> </li><li> <a href="/zh/chaptor_reactor/3-Flux.handle" class="lv0" title="3-Flux.handle"> 3-Flux.handle </a> </li><li> <a href="/zh/chaptor_reactor/4-Momo" class="lv0" title="Mono"> Mono </a> </li><li> <a href="/zh/chaptor_reactor/5-BaseSubscriber" class="lv0" title="5-BaseSubscriber"> 5-BaseSubscriber </a> </li><li> <a href="/zh/chaptor_reactor/6-Scheduler" class="lv0" title="Reactor 3 调度器深度解析：异步编程的核心引擎"> Reactor 3 调度器深度解析：异步编程的核心引擎 </a> </li><li> <a href="/zh/chaptor_reactor/7-Schedulers.elastic" class="lv0" title="7-Schedulers.elastic"> 7-Schedulers.elastic </a> </li><li> <a href="/zh/chaptor_reactor/8-Flux.pushlishOn" class="lv0" title="深入理解Reactor中的publishOn操作符"> 深入理解Reactor中的publishOn操作符 </a> </li><li> <a href="/zh/chaptor_reactor/9-Flux.subscribeOn" class="lv0" title="深入理解Reactor中的subscribeOn操作符"> 深入理解Reactor中的subscribeOn操作符 </a> </li><li> <a href="/zh/chaptor_reactor/10-Flux.parallel" class="lv0" title="深入理解Reactor并行流：Flux.parallel &#38; Flowable.parallel"> 深入理解Reactor并行流：Flux.parallel &amp; Flowable.parallel </a> </li><li> <a href="/zh/chaptor_reactor/11-ParallelFlux.runOn" class="lv0" title="深入解析ParallelFlux.runOn的调度实现机制"> 深入解析ParallelFlux.runOn的调度实现机制 </a> </li><li> <a href="/zh/chaptor_reactor/12-Filter" class="lv0" title="12-Filter"> 12-Filter </a> </li><li> <a href="/zh/chaptor_reactor/13-transform" class="lv0" title="13-transform"> 13-transform </a> </li><li> <a href="/zh/chaptor_reactor/14-​​buffer​​_window​​_groupBy" class="lv0" title="14-​​buffer​​_window​​_groupBy"> 14-​​buffer​​_window​​_groupBy </a> </li><li> <a href="/zh/chaptor_reactor/15-merge_mergeSequential" class="lv0" title="15-merge_mergeSequential"> 15-merge_mergeSequential </a> </li><li> <a href="/zh/chaptor_reactor/16-flatMap_flatMapSequential" class="lv0" title="16-flatMap_flatMapSequential"> 16-flatMap_flatMapSequential </a> </li><li> <a href="/zh/chaptor_reactor/17-concatMap" class="lv0" title="concatMap操作符深度解析：原理、源码与实战"> concatMap操作符深度解析：原理、源码与实战 </a> </li><li> <a href="/zh/chaptor_reactor/18-combineLatest" class="lv0" title="CombineLatest操作符深度解析：原理、源码与实战应用"> CombineLatest操作符深度解析：原理、源码与实战应用 </a> </li><li> <a href="/zh/chaptor_reactor/19-UnicastProcessor" class="lv0" title="UnicastProcessor深度解析：单订阅者处理器的工作原理与实践"> UnicastProcessor深度解析：单订阅者处理器的工作原理与实践 </a> </li><li> <a href="/zh/chaptor_reactor/20-DirectProcessor" class="lv0" title="DirectProcessor深度解析：无背压处理器的工作原理与实践"> DirectProcessor深度解析：无背压处理器的工作原理与实践 </a> </li><li> <a href="/zh/chaptor_reactor/21-EmitterProcessor" class="lv0" title="EmitterProcessor深度解析：多订阅者背压处理器的实现原理与实战指南"> EmitterProcessor深度解析：多订阅者背压处理器的实现原理与实战指南 </a> </li><li> <a href="/zh/chaptor_reactor/22-ReplayProcessor" class="lv0" title="ReplayProcessor深度解析：缓存重放机制与实现原理"> ReplayProcessor深度解析：缓存重放机制与实现原理 </a> </li><li> <a href="/zh/chaptor_reactor/23.TopicProcessor" class="lv0" aria-current="page" title="TopicProcessor深度解析：多订阅者场景下的高效数据分发机制"> TopicProcessor深度解析：多订阅者场景下的高效数据分发机制 </a> </li><li> <a href="/zh/chaptor_reactor/24-Context" class="lv0" title="24-Context"> 24-Context </a> </li><li> <a href="/zh/chaptor_reactor/Flux" class="lv0" title="Flux"> Flux </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chaptor_reactor">chaptor_reactor</a><span class="sep">/</span><span>TopicProcessor深度解析：多订阅者场景下的高效数据分发机制</span> </nav> <div class="prose">  <h1 id="topicprocessor深度解析多订阅者场景下的高效数据分发机制">TopicProcessor深度解析：多订阅者场景下的高效数据分发机制</h1>
+<h2 id="一核心概念与设计目标">一、核心概念与设计目标</h2>
+<p>TopicProcessor是Reactor中专门处理<strong>多订阅者场景</strong>的Processor实现，具有以下核心特性：</p>
+<ol>
+<li><strong>主题化消费</strong>：允许不同订阅者按主题过滤数据</li>
+<li><strong>多线程生产</strong>：支持上游生产者在多个线程中并发发送数据</li>
+<li><strong>精准消费控制</strong>：每个订阅者独立维护消费进度</li>
+<li><strong>环形队列存储</strong>：基于环形缓冲区实现高效数据暂存</li>
+</ol>
+<p>典型应用场景：</p>
+<ul>
+<li>多租户日志收集系统</li>
+<li>实时监控仪表盘</li>
+<li>分布式消息总线</li>
+</ul>
+<hr>
+<h2 id="二内部原理与架构设计">二、内部原理与架构设计</h2>
+<h3 id="1-核心组件交互模型">1. 核心组件交互模型</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">graph TD</span></span>
+<span class="line"><span style="color:#24292E">    A[上游生产者] --> B[TopicProcessor]</span></span>
+<span class="line"><span style="color:#24292E">    B --> C[环形队列]</span></span>
+<span class="line"><span style="color:#24292E">    B --> D[订阅者1]</span></span>
+<span class="line"><span style="color:#24292E">    B --> E[订阅者2]</span></span>
+<span class="line"><span style="color:#24292E">    C --> D</span></span>
+<span class="line"><span style="color:#24292E">    C --> E</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">graph TD</span></span>
+<span class="line"><span style="color:#24292E">    A[上游生产者] --> B[TopicProcessor]</span></span>
+<span class="line"><span style="color:#24292E">    B --> C[环形队列]</span></span>
+<span class="line"><span style="color:#24292E">    B --> D[订阅者1]</span></span>
+<span class="line"><span style="color:#24292E">    B --> E[订阅者2]</span></span>
+<span class="line"><span style="color:#24292E">    C --> D</span></span>
+<span class="line"><span style="color:#24292E">    C --> E</span></span></code></pre>
+<h3 id="2-关键数据结构">2. 关键数据结构</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 环形队列核心结构</span></span>
+<span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> RingBuffer&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> ringBuffer;</span></span>
+<span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> AtomicInteger cursor </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> AtomicInteger</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> final</span><span style="color:#24292E"> CopyOnWriteArrayList&#x3C;</span><span style="color:#D73A49">Subscription</span><span style="color:#24292E">> subscriptions </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> CopyOnWriteArrayList&#x3C;>();</span></span></code></pre>
+<h3 id="3-线程安全机制">3. 线程安全机制</h3>
+<ul>
+<li>使用<strong>CAS操作</strong>保证cursor更新的原子性</li>
+<li>通过<strong>CopyOnWriteArrayList</strong>管理订阅者列表</li>
+<li>环形队列采用<strong>无锁并发设计</strong></li>
+</ul>
+<hr>
+<h2 id="三关键源码解析">三、关键源码解析</h2>
+<h3 id="1-数据生产流程">1. 数据生产流程</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// onNext方法实现</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> onNext</span><span style="color:#24292E">(T t) {</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (t </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6F42C1">        onError</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> NullPointerException</span><span style="color:#24292E">(</span><span style="color:#032F62">"onNext called with null"</span><span style="color:#24292E">));</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 将元素写入环形队列</span></span>
+<span class="line"><span style="color:#D73A49">    long</span><span style="color:#24292E"> sequence </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ringBuffer.</span><span style="color:#6F42C1">next</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        ringBuffer.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(sequence).</span><span style="color:#6F42C1">setValue</span><span style="color:#24292E">(t);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        ringBuffer.</span><span style="color:#6F42C1">publish</span><span style="color:#24292E">(sequence);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 通知所有订阅者消费</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (Subscription s </span><span style="color:#D73A49">:</span><span style="color:#24292E"> subscriptions) {</span></span>
+<span class="line"><span style="color:#24292E">        s.</span><span style="color:#6F42C1">request</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="2-订阅管理机制">2. 订阅管理机制</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// subscribe方法实现</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> subscribe</span><span style="color:#24292E">(Subscriber</span><span style="color:#D73A49">&#x3C;?</span><span style="color:#005CC5"> super</span><span style="color:#24292E"> T</span><span style="color:#D73A49">></span><span style="color:#24292E"> subscriber) {</span></span>
+<span class="line"><span style="color:#24292E">    Subscription subscription </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> TopicSubscription</span><span style="color:#24292E">(subscriber, ringBuffer);</span></span>
+<span class="line"><span style="color:#24292E">    subscriptions.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(subscription);</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 初始化订阅者消费位置</span></span>
+<span class="line"><span style="color:#24292E">    subscription.</span><span style="color:#6F42C1">setInitialCursor</span><span style="color:#24292E">(cursor.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#24292E">    subscriber.</span><span style="color:#6F42C1">onSubscribe</span><span style="color:#24292E">(subscription);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h3 id="3-消费进度控制">3. 消费进度控制</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// TopicSubscription核心逻辑</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> onNext</span><span style="color:#24292E">(T item) {</span></span>
+<span class="line"><span style="color:#D73A49">    long</span><span style="color:#24292E"> expectedCursor </span><span style="color:#D73A49">=</span><span style="color:#24292E"> cursor.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (expectedCursor </span><span style="color:#D73A49">>=</span><span style="color:#24292E"> item.</span><span style="color:#6F42C1">getSequence</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 已处理过该数据</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 更新本地消费位置</span></span>
+<span class="line"><span style="color:#24292E">    cursor.</span><span style="color:#6F42C1">compareAndSet</span><span style="color:#24292E">(expectedCursor, item.</span><span style="color:#6F42C1">getSequence</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">    actual.</span><span style="color:#6F42C1">onNext</span><span style="color:#24292E">(item.</span><span style="color:#6F42C1">getValue</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<hr>
+<h2 id="四性能对比与使用建议">四、性能对比与使用建议</h2>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>环形队列模式</th>
+<th>阻塞队列模式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内存占用</td>
+<td>固定大小（可配置）</td>
+<td>动态扩展</td>
+</tr>
+<tr>
+<td>吞吐量</td>
+<td>10M+ ops/s</td>
+<td>1M-2M ops/s</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>高并发实时场景</td>
+<td>低延迟批处理场景</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最佳实践：</strong></p>
+<ul>
+<li>缓冲区大小建议设置为预估峰值流量的2-3倍</li>
+<li>使用<code>share(true)</code>启用订阅共享机制</li>
+<li>优先采用自定义主题过滤器</li>
+</ul>
+<hr>
+<h2 id="五实战演示分布式日志聚合系统">五、实战演示：分布式日志聚合系统</h2>
+<h3 id="1-需求场景">1. 需求场景</h3>
+<p>构建一个支持多节点日志聚合的消费系统，要求：</p>
+<ul>
+<li>每个节点独立处理日志</li>
+<li>保证日志顺序性</li>
+<li>支持动态扩展节点</li>
+</ul>
+<h3 id="2-实现代码">2. 实现代码</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 日志生产者</span></span>
+<span class="line"><span style="color:#24292E">Flux.</span><span style="color:#6F42C1">range</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">, </span><span style="color:#005CC5">10000</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">map</span><span style="color:#24292E">(i </span><span style="color:#D73A49">-></span><span style="color:#032F62"> "LogEntry-"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> i)</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">publishOn</span><span style="color:#24292E">(Schedulers.</span><span style="color:#6F42C1">parallel</span><span style="color:#24292E">())</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">(topicProcessor);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 订阅者1（过滤ERROR日志）</span></span>
+<span class="line"><span style="color:#24292E">topicProcessor</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">filter</span><span style="color:#24292E">(log </span><span style="color:#D73A49">-></span><span style="color:#24292E"> log.</span><span style="color:#6F42C1">contains</span><span style="color:#24292E">(</span><span style="color:#032F62">"ERROR"</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">(System.out</span><span style="color:#D73A49">::</span><span style="color:#24292E">println);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 订阅者2（统计日志数量）</span></span>
+<span class="line"><span style="color:#24292E">topicProcessor</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">buffer</span><span style="color:#24292E">(Duration.</span><span style="color:#6F42C1">ofSeconds</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">(batch </span><span style="color:#D73A49">-></span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#24292E">        System.out.</span><span style="color:#6F42C1">println</span><span style="color:#24292E">(</span><span style="color:#032F62">"Received "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> batch.</span><span style="color:#6F42C1">size</span><span style="color:#24292E">() </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " logs"</span><span style="color:#24292E">));</span></span></code></pre>
+<h3 id="3-执行结果">3. 执行结果</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>LogEntry-500</span></span>
+<span class="line"><span>LogEntry-1200</span></span>
+<span class="line"><span>...</span></span>
+<span class="line"><span>Received 150 logs</span></span>
+<span class="line"><span>Received 160 logs</span></span></code></pre>
+<hr>
+<h2 id="六调试与监控技巧">六、调试与监控技巧</h2>
+<h3 id="1-缓存状态观测">1. 缓存状态观测</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">topicProcessor.</span><span style="color:#6F42C1">doOnNext</span><span style="color:#24292E">(item </span><span style="color:#D73A49">-></span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#24292E">    System.out.</span><span style="color:#6F42C1">println</span><span style="color:#24292E">(</span><span style="color:#032F62">"Buffer occupancy: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> item.</span><span style="color:#6F42C1">getSequence</span><span style="color:#24292E">()))</span></span>
+<span class="line"><span style="color:#24292E">.</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">();</span></span></code></pre>
+<h3 id="2-性能瓶颈定位">2. 性能瓶颈定位</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">topicProcessor</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">transform</span><span style="color:#24292E">(event </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">        long</span><span style="color:#24292E"> start </span><span style="color:#D73A49">=</span><span style="color:#24292E"> System.</span><span style="color:#6F42C1">nanoTime</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> event;</span></span>
+<span class="line"><span style="color:#24292E">    })</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">doOnNext</span><span style="color:#24292E">(event </span><span style="color:#D73A49">-></span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#24292E">        System.out.</span><span style="color:#6F42C1">println</span><span style="color:#24292E">(</span><span style="color:#032F62">"Processing latency: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#24292E">            (System.</span><span style="color:#6F42C1">nanoTime</span><span style="color:#24292E">() </span><span style="color:#D73A49">-</span><span style="color:#24292E"> start) </span><span style="color:#D73A49">+</span><span style="color:#032F62"> " ns"</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#24292E">    .</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">();</span></span></code></pre>
+<hr>
+<h2 id="七总结与进阶思考">七、总结与进阶思考</h2>
+<p>TopicProcessor通过<strong>环形队列+CAS</strong>的组合设计，在保证线程安全的同时实现了高效的并发数据分发。其核心价值在于：</p>
+<ul>
+<li><strong>解耦生产与消费</strong>：允许异步非阻塞的数据处理</li>
+<li><strong>精准消费控制</strong>：每个订阅者独立维护消费进度</li>
+<li><strong>灵活扩展能力</strong>：支持动态增减订阅节点</li>
+</ul>
+<p><strong>进阶方向：</strong></p>
+<ol>
+<li>实现基于时间窗口的自动清理机制</li>
+<li>添加数据持久化支持</li>
+<li>结合背压机制优化高并发场景</li>
+</ol>
+<p>通过掌握TopicProcessor的底层原理，开发者可以构建出具备<strong>高吞吐、低延迟、高可用</strong>特性的响应式数据处理系统。</p>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

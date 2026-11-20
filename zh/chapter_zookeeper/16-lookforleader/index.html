@@ -1,0 +1,894 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**QuorumPeer主循环** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_zookeeper/16-lookforleader/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_zookeeper/16-lookforleader"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_zookeeper/16-lookforleader/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_zookeeper/16-lookforleader"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**QuorumPeer主循环** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_zookeeper/16-lookforleader/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_zookeeper/16-lookforleader/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>zookeeper</h3> <ul> <li> <a href="/zh/chapter_zookeeper/1-introduce" class="lv0" title="**Zookeeper的设计**"> **Zookeeper的设计** </a> </li><li> <a href="/zh/chapter_zookeeper/2-implement" class="lv0" title="**Zookeeper的实现**"> **Zookeeper的实现** </a> </li><li> <a href="/zh/chapter_zookeeper/3-install" class="lv0" title="**Zookeeper安装配置**"> **Zookeeper安装配置** </a> </li><li> <a href="/zh/chapter_zookeeper/4-client" class="lv0" title="客户端的入门使用"> 客户端的入门使用 </a> </li><li> <a href="/zh/chapter_zookeeper/5-produce-and-consumer" class="lv0" title="**教你如何用Zookeeper开发锁与生产者消费者?**"> **教你如何用Zookeeper开发锁与生产者消费者?** </a> </li><li> <a href="/zh/chapter_zookeeper/6-watch" class="lv0" title="**Watch监听通知机制简介**"> **Watch监听通知机制简介** </a> </li><li> <a href="/zh/chapter_zookeeper/7-start-source" class="lv0" title="**服务器启动流程入个门**"> **服务器启动流程入个门** </a> </li><li> <a href="/zh/chapter_zookeeper/8-config" class="lv0" title="**配置信息是如何加载到内存空间的**"> **配置信息是如何加载到内存空间的** </a> </li><li> <a href="/zh/chapter_zookeeper/9-clear-log-start" class="lv0" title="**日志清理定时任务的启动**"> **日志清理定时任务的启动** </a> </li><li> <a href="/zh/chapter_zookeeper/10-init-main" class="lv0" title="**使用配置信息启动运行入口**"> **使用配置信息启动运行入口** </a> </li><li> <a href="/zh/chapter_zookeeper/11-reactor" class="lv0" title="**ServerCnxnFactory 服务器连接工厂对象的创建与属性初始化**"> **ServerCnxnFactory 服务器连接工厂对象的创建与属性初始化** </a> </li><li> <a href="/zh/chapter_zookeeper/12-quorumpeer-init" class="lv0" title="**管理协议的法定人对象QuorumPeer创建与初始化**"> **管理协议的法定人对象QuorumPeer创建与初始化** </a> </li><li> <a href="/zh/chapter_zookeeper/13-loaddatabase" class="lv0" title="**法定人对象QuorumPeer启动之加载磁盘快照与事务日志**"> **法定人对象QuorumPeer启动之加载磁盘快照与事务日志** </a> </li><li> <a href="/zh/chapter_zookeeper/14-reactor-io" class="lv0" title="**启服务端网络监听连接NIOServerCnxnFactory**"> **启服务端网络监听连接NIOServerCnxnFactory** </a> </li><li> <a href="/zh/chapter_zookeeper/15-election" class="lv0" title="**选举算法的准备等待选举**"> **选举算法的准备等待选举** </a> </li><li> <a href="/zh/chapter_zookeeper/16-lookforleader" class="lv0" aria-current="page" title="**QuorumPeer主循环**"> **QuorumPeer主循环** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_zookeeper">zookeeper</a><span class="sep">/</span><span>**QuorumPeer主循环**</span> </nav> <div class="prose">  <h1 id="quorumpeer主循环"><strong>QuorumPeer主循环</strong></h1>
+<h2 id="主循环简介"><strong>主循环简介</strong></h2>
+<p>QuorumPeer 类型是ZookeeperThread的子类型是一个线程类型,在QuorumPeer 中通过super.start()方法启动线程
+在线程中根据集群的状态来决定是否需要参与投票,加入集群
+这里先贴一下线程运行的完整代码:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> run</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">//设置当前线程名称    </span></span>
+<span class="line"><span style="color:#6F42C1">updateThreadName</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Starting quorum peer"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">//注册jmxBean</span></span>
+<span class="line"><span style="color:#24292E">        jmxQuorumBean </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> QuorumBean</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        MBeanRegistry.</span><span style="color:#6F42C1">getInstance</span><span style="color:#24292E">().</span><span style="color:#6F42C1">register</span><span style="color:#24292E">(jmxQuorumBean, </span><span style="color:#005CC5">null</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (QuorumServer s </span><span style="color:#D73A49">:</span><span style="color:#6F42C1"> getView</span><span style="color:#24292E">().</span><span style="color:#6F42C1">values</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">            ZKMBeanInfo p;</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#24292E"> s.id) {</span></span>
+<span class="line"><span style="color:#24292E">                p </span><span style="color:#D73A49">=</span><span style="color:#24292E"> jmxLocalPeerBean </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> LocalPeerBean</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                    MBeanRegistry.</span><span style="color:#6F42C1">getInstance</span><span style="color:#24292E">().</span><span style="color:#6F42C1">register</span><span style="color:#24292E">(p, jmxQuorumBean);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Failed to register with JMX"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                    jmxLocalPeerBean </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                RemotePeerBean rBean </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> RemotePeerBean</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, s);</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                    MBeanRegistry.</span><span style="color:#6F42C1">getInstance</span><span style="color:#24292E">().</span><span style="color:#6F42C1">register</span><span style="color:#24292E">(rBean, jmxQuorumBean);</span></span>
+<span class="line"><span style="color:#24292E">                    jmxRemotePeerBean.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(s.id, rBean);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Failed to register with JMX"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Failed to register with JMX"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">        jmxQuorumBean </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">        /*</span></span>
+<span class="line"><span style="color:#6A737D">         * Main loop	</span></span>
+<span class="line"><span style="color:#6A737D">         */</span></span>
+<span class="line"><span style="color:#D73A49">        while</span><span style="color:#24292E"> (running) {</span></span>
+<span class="line"><span style="color:#6A737D">//当前服务器一共有四种状态LOOKING,FOLLOWING,LEADING,OBSERVING</span></span>
+<span class="line"><span style="color:#D73A49">            switch</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">getPeerState</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">            case</span><span style="color:#24292E"> LOOKING</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#24292E">                LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"LOOKING"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                ServerMetrics.</span><span style="color:#6F42C1">getMetrics</span><span style="color:#24292E">().LOOKING_COUNT.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (Boolean.</span><span style="color:#6F42C1">getBoolean</span><span style="color:#24292E">(</span><span style="color:#032F62">"readonlymode.enabled"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Attempting to start ReadOnlyZooKeeperServer"</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                    // Create read-only server but don't start it immediately</span></span>
+<span class="line"><span style="color:#D73A49">                    final</span><span style="color:#24292E"> ReadOnlyZooKeeperServer roZk </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ReadOnlyZooKeeperServer</span><span style="color:#24292E">(logFactory, </span><span style="color:#005CC5">this</span><span style="color:#24292E">, </span><span style="color:#005CC5">this</span><span style="color:#24292E">.zkDb);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                    // Instead of starting roZk immediately, wait some grace</span></span>
+<span class="line"><span style="color:#6A737D">                    // period before we decide we're partitioned.</span></span>
+<span class="line"><span style="color:#6A737D">                    //</span></span>
+<span class="line"><span style="color:#6A737D">                    // Thread is used here because otherwise it would require</span></span>
+<span class="line"><span style="color:#6A737D">                    // changes in each of election strategy classes which is</span></span>
+<span class="line"><span style="color:#6A737D">                    // unnecessary code coupling.</span></span>
+<span class="line"><span style="color:#24292E">                    Thread roZkMgr </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Thread</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">                        public</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> run</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">                            try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                                // lower-bound grace period to 2 secs</span></span>
+<span class="line"><span style="color:#6F42C1">                                sleep</span><span style="color:#24292E">(Math.</span><span style="color:#6F42C1">max</span><span style="color:#24292E">(</span><span style="color:#005CC5">2000</span><span style="color:#24292E">, tickTime));</span></span>
+<span class="line"><span style="color:#D73A49">                                if</span><span style="color:#24292E"> (ServerState.LOOKING.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getPeerState</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#24292E">                                    roZk.</span><span style="color:#6F42C1">startup</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                                }</span></span>
+<span class="line"><span style="color:#24292E">                            } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (InterruptedException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                                LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Interrupted while attempting to start ReadOnlyZooKeeperServer, not started"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                            } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                                LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"FAILED to start ReadOnlyZooKeeperServer"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                            }</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                    };</span></span>
+<span class="line"><span style="color:#D73A49">                    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                        roZkMgr.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6F42C1">                        reconfigFlagClear</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> (shuttingDownLE) {</span></span>
+<span class="line"><span style="color:#24292E">                            shuttingDownLE </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> false</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6F42C1">                            startLeaderElection</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#6F42C1">                        setCurrentVote</span><span style="color:#24292E">(</span><span style="color:#6F42C1">makeLEStrategy</span><span style="color:#24292E">().</span><span style="color:#6F42C1">lookForLeader</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Unexpected exception"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#6F42C1">                        setPeerState</span><span style="color:#24292E">(ServerState.LOOKING);</span></span>
+<span class="line"><span style="color:#24292E">                    } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">                        // If the thread is in the the grace period, interrupt</span></span>
+<span class="line"><span style="color:#6A737D">                        // to come out of waiting.</span></span>
+<span class="line"><span style="color:#24292E">                        roZkMgr.</span><span style="color:#6F42C1">interrupt</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                        roZk.</span><span style="color:#6F42C1">shutdown</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6F42C1">                        reconfigFlagClear</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">//是否需要重新创建新的投票对象,重新创建选举算法	</span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> (shuttingDownLE) {</span></span>
+<span class="line"><span style="color:#24292E">                            shuttingDownLE </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> false</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6F42C1">                            startLeaderElection</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">先看lookForLeader方法</span><span style="color:#D73A49">:</span><span style="color:#24292E">开始新一轮的leader选举。每当我们的 QuorumPeer 将其状态更改为 LOOKING 时，就会调用此方法，并向所有其他对等方发送通知。</span></span>
+<span class="line"><span style="color:#24292E">setCurrentVote为当前投票结果</span></span>
+<span class="line"><span style="color:#6F42C1">                        setCurrentVote</span><span style="color:#24292E">(</span><span style="color:#6F42C1">makeLEStrategy</span><span style="color:#24292E">().</span><span style="color:#6F42C1">lookForLeader</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Unexpected exception"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#6F42C1">                        setPeerState</span><span style="color:#24292E">(ServerState.LOOKING);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#D73A49">                break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">            case</span><span style="color:#24292E"> OBSERVING</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"OBSERVING"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6F42C1">                    setObserver</span><span style="color:#24292E">(</span><span style="color:#6F42C1">makeObserver</span><span style="color:#24292E">(logFactory));</span></span>
+<span class="line"><span style="color:#24292E">                    observer.</span><span style="color:#6F42C1">observeLeader</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Unexpected exception"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                    observer.</span><span style="color:#6F42C1">shutdown</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6F42C1">                    setObserver</span><span style="color:#24292E">(</span><span style="color:#005CC5">null</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6F42C1">                    updateServerState</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                    // Add delay jitter before we switch to LOOKING</span></span>
+<span class="line"><span style="color:#6A737D">                    // state to reduce the load of ObserverMaster</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">isRunning</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                        Observer.</span><span style="color:#6F42C1">waitForObserverElectionDelay</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#D73A49">                break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">            case</span><span style="color:#24292E"> FOLLOWING</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"FOLLOWING"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6F42C1">                    setFollower</span><span style="color:#24292E">(</span><span style="color:#6F42C1">makeFollower</span><span style="color:#24292E">(logFactory));</span></span>
+<span class="line"><span style="color:#24292E">                    follower.</span><span style="color:#6F42C1">followLeader</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Unexpected exception"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                    follower.</span><span style="color:#6F42C1">shutdown</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6F42C1">                    setFollower</span><span style="color:#24292E">(</span><span style="color:#005CC5">null</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6F42C1">                    updateServerState</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#D73A49">                break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">            case</span><span style="color:#24292E"> LEADING</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#24292E">                LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"LEADING"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">                try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6F42C1">                    setLeader</span><span style="color:#24292E">(</span><span style="color:#6F42C1">makeLeader</span><span style="color:#24292E">(logFactory));</span></span>
+<span class="line"><span style="color:#24292E">                    leader.</span><span style="color:#6F42C1">lead</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6F42C1">                    setLeader</span><span style="color:#24292E">(</span><span style="color:#005CC5">null</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Unexpected exception"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (leader </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                        leader.</span><span style="color:#6F42C1">shutdown</span><span style="color:#24292E">(</span><span style="color:#032F62">"Forcing shutdown"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6F42C1">                        setLeader</span><span style="color:#24292E">(</span><span style="color:#005CC5">null</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#6F42C1">                    updateServerState</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#D73A49">                break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"QuorumPeer main thread exited"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        MBeanRegistry instance </span><span style="color:#D73A49">=</span><span style="color:#24292E"> MBeanRegistry.</span><span style="color:#6F42C1">getInstance</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        instance.</span><span style="color:#6F42C1">unregister</span><span style="color:#24292E">(jmxQuorumBean);</span></span>
+<span class="line"><span style="color:#24292E">        instance.</span><span style="color:#6F42C1">unregister</span><span style="color:#24292E">(jmxLocalPeerBean);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (RemotePeerBean remotePeerBean </span><span style="color:#D73A49">:</span><span style="color:#24292E"> jmxRemotePeerBean.</span><span style="color:#6F42C1">values</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">            instance.</span><span style="color:#6F42C1">unregister</span><span style="color:#24292E">(remotePeerBean);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        jmxQuorumBean </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        jmxLocalPeerBean </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        jmxRemotePeerBean </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>集群节点状态 QuorumPeer#ServerState 枚举</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LOOKING</td>
+<td>寻找leader状态。当服务器处于该状态时，它会认为当- 前集群中没有leader，因此需要进入leader选举状态。</td>
+</tr>
+<tr>
+<td>FOLLOWING</td>
+<td>跟随者状态。表明当前服务器角色是 follower</td>
+</tr>
+<tr>
+<td>LEADING</td>
+<td>领导者状态。表明当前服务器角色是 leader</td>
+</tr>
+<tr>
+<td>OBSERVING</td>
+<td>观察者状态。表明当前服务器角色是 observer。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="looking状态逻辑"><strong>LOOKING状态逻辑</strong></h2>
+<p>当处于LOOKING状态时我们看下核心逻辑:</p>
+<p><code>startLeaderElection();</code></p>
+<p>开始选举我们前面了解过在启动QuorumPeer之前就执行过一次创建选举算法和启动选举交互线程
+再继续看发起投票代码:</p>
+<p><code>setCurrentVote(makeLEStrategy().lookForLeader());</code></p>
+<p>获取投票策略makeLEStrategy这个就是我们前面创建的FastLeaderElection对象
+接下来看下lookForLeader选主过程:
+选主投票原文:</p>
+<p><a href="https://www.cnblogs.com/wuzhenzhao/p/9983231.html">https://www.cnblogs.com/wuzhenzhao/p/9983231.html</a></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#24292E"> Vote </span><span style="color:#6F42C1">lookForLeader</span><span style="color:#24292E">() throws InterruptedException {</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">//注册MBean</span></span>
+<span class="line"><span style="color:#24292E">        self.jmxLeaderElectionBean </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> LeaderElectionBean</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        MBeanRegistry.</span><span style="color:#6F42C1">getInstance</span><span style="color:#24292E">().</span><span style="color:#6F42C1">register</span><span style="color:#24292E">(self.jmxLeaderElectionBean, self.jmxLocalPeerBean);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Failed to register with JMX"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">        self.jmxLeaderElectionBean </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    self.start_fle </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Time.</span><span style="color:#6F42C1">currentElapsedTime</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">        /*</span></span>
+<span class="line"><span style="color:#6A737D">         * The votes from the current leader election are stored in recvset. In other words, a vote v is in recvset</span></span>
+<span class="line"><span style="color:#6A737D">         * if v.electionEpoch == logicalclock. The current participant uses recvset to deduce on whether a majority</span></span>
+<span class="line"><span style="color:#6A737D">         * of participants has voted for it.</span></span>
+<span class="line"><span style="color:#6A737D">当前领导人选举的选票存储在 recvset 中。换句话说，如果 v.electionEpoch == logicalclock，则投票 v 在 recvset 中。当前参与者使用 recvset 来推断是否大多数参与者都投票支持它。</span></span>
+<span class="line"><span style="color:#6A737D">         */</span></span>
+<span class="line"><span style="color:#6A737D">//收到的投票</span></span>
+<span class="line"><span style="color:#24292E">        Map&#x3C;</span><span style="color:#D73A49">Long</span><span style="color:#24292E">, </span><span style="color:#D73A49">Vote</span><span style="color:#24292E">> recvset </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> HashMap&#x3C;</span><span style="color:#D73A49">Long</span><span style="color:#24292E">, </span><span style="color:#D73A49">Vote</span><span style="color:#24292E">>();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        /*</span></span>
+<span class="line"><span style="color:#6A737D">         * The votes from previous leader elections, as well as the votes from the current leader election are</span></span>
+<span class="line"><span style="color:#6A737D">         * stored in outofelection. Note that notifications in a LOOKING state are not stored in outofelection.</span></span>
+<span class="line"><span style="color:#6A737D">         * Only FOLLOWING or LEADING notifications are stored in outofelection. The current participant could use</span></span>
+<span class="line"><span style="color:#6A737D">         * outofelection to learn which participant is the leader if it arrives late (i.e., higher logicalclock than</span></span>
+<span class="line"><span style="color:#6A737D">         * the electionEpoch of the received notifications) in a leader election.</span></span>
+<span class="line"><span style="color:#6A737D">之前领导人选举的选票，以及当前领导人选举的选票都存储在 outofelection 中。请注意，处于 LOOKING 状态的通知不会存储在 outofelection 中。只有 FOLLOWING 或 LEADING 通知存储在 outofelection 中。当前参与者可以使用 outofelection 来了解如果它迟到（即比逻辑时钟更高的逻辑时钟）哪个参与者是领导者  收到通知的选举纪元）在领导选举中。</span></span>
+<span class="line"><span style="color:#6A737D">         */</span></span>
+<span class="line"><span style="color:#6A737D">//存储选举结果</span></span>
+<span class="line"><span style="color:#24292E">        Map&#x3C;</span><span style="color:#D73A49">Long</span><span style="color:#24292E">, </span><span style="color:#D73A49">Vote</span><span style="color:#24292E">> outofelection </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> HashMap&#x3C;</span><span style="color:#D73A49">Long</span><span style="color:#24292E">, </span><span style="color:#D73A49">Vote</span><span style="color:#24292E">>();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        int</span><span style="color:#24292E"> notTimeout </span><span style="color:#D73A49">=</span><span style="color:#24292E"> minNotificationInterval;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        synchronized</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">//更新逻辑时钟，用来判断是否在同一轮选举周期</span></span>
+<span class="line"><span style="color:#24292E">            logicalclock.</span><span style="color:#6F42C1">incrementAndGet</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">//初始化选票数据：这里其实就是把当前节点的myid，zxid，epoch更新到本地的成员属性 </span></span>
+<span class="line"><span style="color:#6F42C1">            updateProposal</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getInitId</span><span style="color:#24292E">(), </span><span style="color:#6F42C1">getInitLastLoggedZxid</span><span style="color:#24292E">(), </span><span style="color:#6F42C1">getPeerEpoch</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">            "New election. My id = {}, proposed zxid=0x{}"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">            self.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">(),</span></span>
+<span class="line"><span style="color:#24292E">            Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(proposedZxid));</span></span>
+<span class="line"><span style="color:#6A737D">//异步发送选举消息 先投自己一票        </span></span>
+<span class="line"><span style="color:#6F42C1">sendNotifications</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        SyncedLearnerTracker voteSet;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        /*</span></span>
+<span class="line"><span style="color:#6A737D">         * Loop in which we exchange notifications until we find a leader</span></span>
+<span class="line"><span style="color:#6A737D">         */</span></span>
+<span class="line"><span style="color:#6A737D"> //不断循环，根据投票信息进行leader选举</span></span>
+<span class="line"><span style="color:#D73A49">        while</span><span style="color:#24292E"> ((self.</span><span style="color:#6F42C1">getPeerState</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#24292E"> ServerState.LOOKING) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">stop)) {</span></span>
+<span class="line"><span style="color:#6A737D">            /*</span></span>
+<span class="line"><span style="color:#6A737D">             * Remove next notification from queue, times out after 2 times</span></span>
+<span class="line"><span style="color:#6A737D">             * the termination time</span></span>
+<span class="line"><span style="color:#6A737D">             */</span></span>
+<span class="line"><span style="color:#6A737D">//从recvqueue中获取消息，也就是说recvqueue中存储了集群中其他节点的投票信息</span></span>
+<span class="line"><span style="color:#24292E">            Notification n </span><span style="color:#D73A49">=</span><span style="color:#24292E"> recvqueue.</span><span style="color:#6F42C1">poll</span><span style="color:#24292E">(notTimeout, TimeUnit.MILLISECONDS);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            /*</span></span>
+<span class="line"><span style="color:#6A737D">             * Sends more notifications if haven't received enough.</span></span>
+<span class="line"><span style="color:#6A737D">             * Otherwise processes new notification.</span></span>
+<span class="line"><span style="color:#6A737D">             */</span></span>
+<span class="line"><span style="color:#6A737D">// 如果没有获取到足够的通知久一直发送自己的选票，也就是持续进行选举</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (n </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (manager.</span><span style="color:#6F42C1">haveDelivered</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">//判断发送队列是否有数据，如果发送队列为空，再发一次自己的选票</span></span>
+<span class="line"><span style="color:#6F42C1">                    sendNotifications</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">// 消息没发出去，可能其他集群没启动 继续尝试连接</span></span>
+<span class="line"><span style="color:#24292E">                    manager.</span><span style="color:#6F42C1">connectAll</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                /*</span></span>
+<span class="line"><span style="color:#6A737D">                 * Exponential backoff</span></span>
+<span class="line"><span style="color:#6A737D">                 */</span></span>
+<span class="line"><span style="color:#6A737D">// 延长超时时间 </span></span>
+<span class="line"><span style="color:#D73A49">                int</span><span style="color:#24292E"> tmpTimeOut </span><span style="color:#D73A49">=</span><span style="color:#24292E"> notTimeout </span><span style="color:#D73A49">*</span><span style="color:#005CC5"> 2</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                notTimeout </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Math.</span><span style="color:#6F42C1">min</span><span style="color:#24292E">(tmpTimeOut, maxNotificationInterval);</span></span>
+<span class="line"><span style="color:#24292E">                LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Notification time out: {} ms"</span><span style="color:#24292E">, notTimeout);</span></span>
+<span class="line"><span style="color:#6A737D">// 收到投票消息 查看是否属于本集群内的消息</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">validVoter</span><span style="color:#24292E">(n.sid) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#6F42C1"> validVoter</span><span style="color:#24292E">(n.leader)) {</span></span>
+<span class="line"><span style="color:#6A737D">                /*</span></span>
+<span class="line"><span style="color:#6A737D">                 * Only proceed if the vote comes from a replica in the current or next</span></span>
+<span class="line"><span style="color:#6A737D">                 * voting view for a replica in the current or next voting view.</span></span>
+<span class="line"><span style="color:#6A737D">                 */</span></span>
+<span class="line"><span style="color:#6A737D">//判断接收到的投票者的状态，默认是LOOKING状态,说明当前发起投票的服务器也是在找leader</span></span>
+<span class="line"><span style="color:#D73A49">                switch</span><span style="color:#24292E"> (n.state) {</span></span>
+<span class="line"><span style="color:#D73A49">                case</span><span style="color:#24292E"> LOOKING</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#6A737D">//忽略zxid=-1的通知</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">getInitLastLoggedZxid</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#D73A49"> -</span><span style="color:#005CC5">1</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                        LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Ignoring notification as our zxid is -1"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">                        break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (n.zxid </span><span style="color:#D73A49">==</span><span style="color:#D73A49"> -</span><span style="color:#005CC5">1</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                        LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Ignoring notification from member with -1 zxid {}"</span><span style="color:#24292E">, n.sid);</span></span>
+<span class="line"><span style="color:#D73A49">                        break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#6A737D">                    // If notification > current, replace and send messages out</span></span>
+<span class="line"><span style="color:#6A737D">  // 如果收到的投票的逻辑时钟大于当前的节点的逻辑时钟，那么会更新本机的logicallock</span></span>
+<span class="line"><span style="color:#6A737D">　　　 // 判断epoch 是否大于 logicalclock ，如是，则是新一轮选举</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (n.electionEpoch </span><span style="color:#D73A49">></span><span style="color:#24292E"> logicalclock.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">// 更新本地logicalclock</span></span>
+<span class="line"><span style="color:#24292E">                        logicalclock.</span><span style="color:#6F42C1">set</span><span style="color:#24292E">(n.electionEpoch);</span></span>
+<span class="line"><span style="color:#6A737D">// 清空接受队列</span></span>
+<span class="line"><span style="color:#24292E">                        recvset.</span><span style="color:#6F42C1">clear</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">//接收到的投票和当前节点的信息进行比较，比较的顺序epoch、zxid、myid,如果返 回true，则更新当前节点的票据（sid,zxid,epoch）,那么下次再发起投票的时候，就不再是选自己了</span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">totalOrderPredicate</span><span style="color:#24292E">(n.leader, n.zxid, n.peerEpoch, </span><span style="color:#6F42C1">getInitId</span><span style="color:#24292E">(), </span><span style="color:#6F42C1">getInitLastLoggedZxid</span><span style="color:#24292E">(), </span><span style="color:#6F42C1">getPeerEpoch</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#6F42C1">                            updateProposal</span><span style="color:#24292E">(n.leader, n.zxid, n.peerEpoch);</span></span>
+<span class="line"><span style="color:#24292E">                        } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">//否则，表示自己的票据是最新的，则更新自己的票据</span></span>
+<span class="line"><span style="color:#6F42C1">                            updateProposal</span><span style="color:#24292E">(</span><span style="color:#6F42C1">getInitId</span><span style="color:#24292E">(), </span><span style="color:#6F42C1">getInitLastLoggedZxid</span><span style="color:#24292E">(), </span><span style="color:#6F42C1">getPeerEpoch</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#6A737D">// 继续广播票据，让其他节点知道我现在的投票</span></span>
+<span class="line"><span style="color:#6F42C1">                        sendNotifications</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                    } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (n.electionEpoch </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> logicalclock.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">//如果是epoch小于当前  忽略</span></span>
+<span class="line"><span style="color:#24292E">                            LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">                                "Notification election epoch is smaller than logicalclock. n.electionEpoch = 0x{}, logicalclock=0x{}"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">                                Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(n.electionEpoch),</span></span>
+<span class="line"><span style="color:#24292E">                                Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(logicalclock.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#D73A49">                        break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                    } </span><span style="color:#D73A49">else</span><span style="color:#D73A49"> if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">totalOrderPredicate</span><span style="color:#24292E">(n.leader, n.zxid, n.peerEpoch, proposedLeader, proposedZxid, proposedEpoch)) {</span></span>
+<span class="line"><span style="color:#6A737D"> //这个判断表示收到的票据的epoch是相同的，那么按照epoch、zxid、myid顺序进 行比较比较成功以后，把对方的票据信息更新到自己的节点</span></span>
+<span class="line"><span style="color:#6F42C1">                        updateProposal</span><span style="color:#24292E">(n.leader, n.zxid, n.peerEpoch);</span></span>
+<span class="line"><span style="color:#6F42C1">                        sendNotifications</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">                        "Adding vote: from={}, proposed leader={}, proposed zxid=0x{}, proposed election epoch=0x{}"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">                        n.sid,</span></span>
+<span class="line"><span style="color:#24292E">                        n.leader,</span></span>
+<span class="line"><span style="color:#24292E">                        Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(n.zxid),</span></span>
+<span class="line"><span style="color:#24292E">                        Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(n.electionEpoch));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                    // don't care about the version if it's in LOOKING state</span></span>
+<span class="line"><span style="color:#6A737D">//将收到的投票信息放入投票的集合 recvset 中, 用来作为最终的 "过半原则" 判断</span></span>
+<span class="line"><span style="color:#24292E">                    recvset.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(n.sid, </span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> Vote</span><span style="color:#24292E">(n.leader, n.zxid, n.electionEpoch, n.peerEpoch));</span></span>
+<span class="line"><span style="color:#6A737D">//获取集群内的所有投票信息 //给定一组投票，返回用于决定是否有足够的凭证宣布选举回合结束。</span></span>
+<span class="line"><span style="color:#24292E">                    voteSet </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getVoteTracker</span><span style="color:#24292E">(recvset, </span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> Vote</span><span style="color:#24292E">(proposedLeader, proposedZxid, logicalclock.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(), proposedEpoch));</span></span>
+<span class="line"><span style="color:#6A737D">//是否收到所有的投票确认</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (voteSet.</span><span style="color:#6F42C1">hasAllQuorums</span><span style="color:#24292E">()) {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                        // Verify if there is any change in the proposed leader</span></span>
+<span class="line"><span style="color:#6A737D">// 在超时时间内等待投票</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                        while</span><span style="color:#24292E"> ((n </span><span style="color:#D73A49">=</span><span style="color:#24292E"> recvqueue.</span><span style="color:#6F42C1">poll</span><span style="color:#24292E">(finalizeWait, TimeUnit.MILLISECONDS)) </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                            if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">totalOrderPredicate</span><span style="color:#24292E">(n.leader, n.zxid, n.peerEpoch, proposedLeader, proposedZxid, proposedEpoch)) {</span><span style="color:#6A737D">//是否收到所有的投票确认</span></span>
+<span class="line"><span style="color:#24292E">                                recvqueue.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(n);</span></span>
+<span class="line"><span style="color:#D73A49">                                break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                            }</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                        /*</span></span>
+<span class="line"><span style="color:#6A737D">                         * This predicate is true once we don't read any new</span></span>
+<span class="line"><span style="color:#6A737D">                         * relevant message from the reception queue</span></span>
+<span class="line"><span style="color:#6A737D">                         *///超时时间(200ms)内未收到新的投票，则投票结束</span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> (n </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">//设置当前当前节点的状态（判断leader节点是不是我自己，如果是，直接更新 当前节点的state为LEADING）</span></span>
+<span class="line"><span style="color:#6A737D">                                //否则，根据当前节点的特性进行判断，决定是FOLLOWING还是OBSE </span></span>
+<span class="line"><span style="color:#6A737D">                                //判断当前服务在投票结束后 的服务状态</span></span>
+<span class="line"><span style="color:#6F42C1">                            setPeerState</span><span style="color:#24292E">(proposedLeader, voteSet);</span></span>
+<span class="line"><span style="color:#24292E">                            Vote endVote </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Vote</span><span style="color:#24292E">(proposedLeader, proposedZxid, logicalclock.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(), proposedEpoch);</span></span>
+<span class="line"><span style="color:#6F42C1">                            leaveInstance</span><span style="color:#24292E">(endVote);</span></span>
+<span class="line"><span style="color:#6A737D">//返回并发送leanding状态的投票</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                            return</span><span style="color:#24292E"> endVote;</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#D73A49">                    break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">                case</span><span style="color:#24292E"> OBSERVING</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Notification from observer: {}"</span><span style="color:#24292E">, n.sid);</span></span>
+<span class="line"><span style="color:#D73A49">                    break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">                case</span><span style="color:#24292E"> FOLLOWING</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#D73A49">                case</span><span style="color:#24292E"> LEADING</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#6A737D">                    /*</span></span>
+<span class="line"><span style="color:#6A737D">                     * Consider all notifications from the same epoch</span></span>
+<span class="line"><span style="color:#6A737D">                     * together.</span></span>
+<span class="line"><span style="color:#6A737D">                     */</span></span>
+<span class="line"><span style="color:#D73A49"> *</span><span style="color:#6A737D">///如果收到的票据的节点状态已经是LEADING或者FOLLOWING（接收的投票信 息已经有leader选举出了） </span></span>
+<span class="line"><span style="color:#6A737D">                          //判断收到的票据的epoch和当前节点是否在同一个周期（接收到消息选出了leader跟本 机是在一个选举时代）</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (n.electionEpoch </span><span style="color:#D73A49">==</span><span style="color:#24292E"> logicalclock.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">// 判断 epoch 是否相同</span></span>
+<span class="line"><span style="color:#24292E">                        recvset.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(n.sid, </span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> Vote</span><span style="color:#24292E">(n.leader, n.zxid, n.electionEpoch, n.peerEpoch, n.state));</span></span>
+<span class="line"><span style="color:#6A737D">//获取收到的投票信息，由于判断是否可以结束投票</span></span>
+<span class="line"><span style="color:#24292E">                        voteSet </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getVoteTracker</span><span style="color:#24292E">(recvset, </span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> Vote</span><span style="color:#24292E">(n.version, n.leader, n.zxid, n.electionEpoch, n.peerEpoch, n.state));</span></span>
+<span class="line"><span style="color:#6A737D">//判断是否收到所有的投票，并且判断当前节点是否是leader，如果是，则设置状态并返回</span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> (voteSet.</span><span style="color:#6F42C1">hasAllQuorums</span><span style="color:#24292E">() </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#6F42C1"> checkLeader</span><span style="color:#24292E">(recvset, n.leader, n.electionEpoch)) {</span></span>
+<span class="line"><span style="color:#6F42C1">                            setPeerState</span><span style="color:#24292E">(n.leader, voteSet);</span></span>
+<span class="line"><span style="color:#24292E">                            Vote endVote </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Vote</span><span style="color:#24292E">(n.leader, n.zxid, n.electionEpoch, n.peerEpoch);</span></span>
+<span class="line"><span style="color:#6F42C1">                            leaveInstance</span><span style="color:#24292E">(endVote);</span></span>
+<span class="line"><span style="color:#D73A49">                            return</span><span style="color:#24292E"> endVote;</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                    /*</span></span>
+<span class="line"><span style="color:#6A737D">                     * Before joining an established ensemble, verify that</span></span>
+<span class="line"><span style="color:#6A737D">                     * a majority are following the same leader.</span></span>
+<span class="line"><span style="color:#6A737D">                     *</span></span>
+<span class="line"><span style="color:#6A737D">                     * Note that the outofelection map also stores votes from the current leader election.</span></span>
+<span class="line"><span style="color:#6A737D">                     * See ZOOKEEPER-1732 for more information.</span></span>
+<span class="line"><span style="color:#6A737D">                     */</span></span>
+<span class="line"><span style="color:#6A737D">//把收到的票据，保存到outofelection集合中</span></span>
+<span class="line"><span style="color:#24292E">                    outofelection.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(n.sid, </span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> Vote</span><span style="color:#24292E">(n.version, n.leader, n.zxid, n.electionEpoch, n.peerEpoch, n.state));</span></span>
+<span class="line"><span style="color:#6A737D">  //收集票据并保存，用来判断投票结束</span></span>
+<span class="line"><span style="color:#24292E">                    voteSet </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getVoteTracker</span><span style="color:#24292E">(outofelection, </span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> Vote</span><span style="color:#24292E">(n.version, n.leader, n.zxid, n.electionEpoch, n.peerEpoch, n.state));</span></span>
+<span class="line"><span style="color:#6A737D">      //如果为true，则返回leader的投票信息</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (voteSet.</span><span style="color:#6F42C1">hasAllQuorums</span><span style="color:#24292E">() </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#6F42C1"> checkLeader</span><span style="color:#24292E">(outofelection, n.leader, n.electionEpoch)) {</span></span>
+<span class="line"><span style="color:#D73A49">                        synchronized</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                            logicalclock.</span><span style="color:#6F42C1">set</span><span style="color:#24292E">(n.electionEpoch);</span></span>
+<span class="line"><span style="color:#6F42C1">                            setPeerState</span><span style="color:#24292E">(n.leader, voteSet);</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                        Vote endVote </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Vote</span><span style="color:#24292E">(n.leader, n.zxid, n.electionEpoch, n.peerEpoch);</span></span>
+<span class="line"><span style="color:#6F42C1">                        leaveInstance</span><span style="color:#24292E">(endVote);</span></span>
+<span class="line"><span style="color:#D73A49">                        return</span><span style="color:#24292E"> endVote;</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#D73A49">                    break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">                default:</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Notification state unrecognized: {} (n.state), {}(n.sid)"</span><span style="color:#24292E">, n.state, n.sid);</span></span>
+<span class="line"><span style="color:#D73A49">                    break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#6F42C1">validVoter</span><span style="color:#24292E">(n.leader)) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Ignoring notification for non-cluster member sid {} from sid {}"</span><span style="color:#24292E">, n.leader, n.sid);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#6F42C1">validVoter</span><span style="color:#24292E">(n.sid)) {</span></span>
+<span class="line"><span style="color:#24292E">                    LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Ignoring notification for sid {} from non-quorum member sid {}"</span><span style="color:#24292E">, n.leader, n.sid);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (self.jmxLeaderElectionBean </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                MBeanRegistry.</span><span style="color:#6F42C1">getInstance</span><span style="color:#24292E">().</span><span style="color:#6F42C1">unregister</span><span style="color:#24292E">(self.jmxLeaderElectionBean);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Failed to unregister with JMX"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        self.jmxLeaderElectionBean </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"Number of connection processing threads: {}"</span><span style="color:#24292E">, manager.</span><span style="color:#6F42C1">getConnectionThreadCount</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">protected</span><span style="color:#D73A49"> boolean</span><span style="color:#6F42C1"> totalOrderPredicate</span><span style="color:#24292E">(</span><span style="color:#D73A49">long</span><span style="color:#24292E"> newId, </span><span style="color:#D73A49">long</span><span style="color:#24292E"> newZxid, </span><span style="color:#D73A49">long</span><span style="color:#24292E"> newEpoch, </span><span style="color:#D73A49">long</span><span style="color:#24292E"> curId, </span><span style="color:#D73A49">long</span><span style="color:#24292E"> curZxid, </span><span style="color:#D73A49">long</span><span style="color:#24292E"> curEpoch) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(</span><span style="color:#032F62">"id: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> newId </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ", proposed id: "</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> curId </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ", zxid: 0x"</span><span style="color:#D73A49"> +</span></span>
+<span class="line"><span style="color:#24292E">                Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(newZxid) </span><span style="color:#D73A49">+</span><span style="color:#032F62"> ", proposed zxid: 0x"</span><span style="color:#D73A49"> +</span><span style="color:#24292E"> Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(curZxid));</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getQuorumVerifier</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getWeight</span><span style="color:#24292E">(newId) </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">){</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#005CC5"> false</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">　　　　/*如果以下三种情况之一成立，则返回true:</span></span>
+<span class="line"><span style="color:#6A737D">　　　　* 1-选票中epoch更高</span></span>
+<span class="line"><span style="color:#6A737D">　　　　* 2-选票中epoch与当前epoch相同，但新zxid更高</span></span>
+<span class="line"><span style="color:#6A737D">　　　　* 3-选票中epoch与当前epoch相同，新zxid与当前zxid相同服务器id更高。</span></span>
+<span class="line"><span style="color:#6A737D">　　　　*/</span></span>
+<span class="line"><span style="color:#6A737D">        //这里判断规则很明显，先比较epoch 如果相等比较 zxid 继续想等继续比较 myid 大的为leader</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> ((newEpoch </span><span style="color:#D73A49">></span><span style="color:#24292E"> curEpoch) </span><span style="color:#D73A49">||</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#24292E">                ((newEpoch </span><span style="color:#D73A49">==</span><span style="color:#24292E"> curEpoch) </span><span style="color:#D73A49">&#x26;&#x26;</span></span>
+<span class="line"><span style="color:#24292E">                ((newZxid </span><span style="color:#D73A49">></span><span style="color:#24292E"> curZxid) </span><span style="color:#D73A49">||</span><span style="color:#24292E"> ((newZxid </span><span style="color:#D73A49">==</span><span style="color:#24292E"> curZxid) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> (newId </span><span style="color:#D73A49">></span><span style="color:#24292E"> curId)))));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">protected</span><span style="color:#D73A49"> boolean</span><span style="color:#6F42C1"> termPredicate</span><span style="color:#24292E">(HashMap</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">Long, Vote</span><span style="color:#D73A49">></span><span style="color:#24292E"> votes,Vote vote) {</span></span>
+<span class="line"><span style="color:#24292E">        HashSet&#x3C;</span><span style="color:#D73A49">Long</span><span style="color:#24292E">> set </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> HashSet&#x3C;</span><span style="color:#D73A49">Long</span><span style="color:#24292E">>();</span></span>
+<span class="line"><span style="color:#6A737D">        /*</span></span>
+<span class="line"><span style="color:#6A737D">         * First make the views consistent. Sometimes peers will have</span></span>
+<span class="line"><span style="color:#6A737D">         * different zxids for a server depending on timing.</span></span>
+<span class="line"><span style="color:#6A737D">         */</span></span>
+<span class="line"><span style="color:#6A737D">        // 遍历接收到的集合  把符合当前投票的 放入 Set</span></span>
+<span class="line"><span style="color:#D73A49">        for</span><span style="color:#24292E"> (Map.Entry&#x3C;</span><span style="color:#D73A49">Long</span><span style="color:#24292E">,</span><span style="color:#D73A49">Vote</span><span style="color:#24292E">> entry </span><span style="color:#D73A49">:</span><span style="color:#24292E"> votes.</span><span style="color:#6F42C1">entrySet</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (vote.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(entry.</span><span style="color:#6F42C1">getValue</span><span style="color:#24292E">())){</span></span>
+<span class="line"><span style="color:#24292E">                set.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(entry.</span><span style="color:#6F42C1">getKey</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">        // 统计票据，看是否过半</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getQuorumVerifier</span><span style="color:#24292E">().</span><span style="color:#6F42C1">containsQuorum</span><span style="color:#24292E">(set);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p><img src="/img/chapter_zookeeper/16-lookleader-1.png" alt="16-lookleader-1.png">
+<img src="/img/chapter_zookeeper/16-lookleader-2.png" alt="16-lookleader-2.png"></p>
+<h2 id="observing状态逻辑"><strong>OBSERVING状态逻辑</strong></h2>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">case</span><span style="color:#24292E"> OBSERVING</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"OBSERVING"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">//创建observer对象</span></span>
+<span class="line"><span style="color:#6F42C1">        setObserver</span><span style="color:#24292E">(</span><span style="color:#6F42C1">makeObserver</span><span style="color:#24292E">(logFactory));</span></span>
+<span class="line"><span style="color:#6A737D">//连接leader</span></span>
+<span class="line"><span style="color:#24292E">        observer.</span><span style="color:#6F42C1">observeLeader</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Unexpected exception"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        observer.</span><span style="color:#6F42C1">shutdown</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6F42C1">        setObserver</span><span style="color:#24292E">(</span><span style="color:#005CC5">null</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6F42C1">        updateServerState</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // Add delay jitter before we switch to LOOKING</span></span>
+<span class="line"><span style="color:#6A737D">        // state to reduce the load of ObserverMaster</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">isRunning</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">            Observer.</span><span style="color:#6F42C1">waitForObserverElectionDelay</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>首先创建调用makeObserver方法Observer对象
+<code>setObserver(makeObserver(logFactory));</code></p>
+<p>观察者是不参与原子广播协议的对等点。 相反，他们会被领导者告知成功的提案。 因此，观察者自然地充当发布提案流的中继点，并可以减轻追随者的一些连接负载。 观察员可以提交提案，但不投票接受。 有关此功能的讨论，请参阅 ZOOKEEPER-368。</p>
+<p>Observer和Follower都继承了Learner
+接下来Observer开始连接leader</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">observer.</span><span style="color:#6F42C1">observeLeader</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">https</span><span style="color:#D73A49">:</span><span style="color:#6A737D">//blog.csdn.net/liereli/article/details/108022874</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">void</span><span style="color:#6F42C1"> observeLeader</span><span style="color:#24292E">() throws Exception {</span></span>
+<span class="line"><span style="color:#24292E">    zk.</span><span style="color:#6F42C1">registerJMX</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> ObserverBean</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, zk), self.jmxLocalPeerBean);</span></span>
+<span class="line"><span style="color:#D73A49">    long</span><span style="color:#24292E"> connectTime </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">    boolean</span><span style="color:#24292E"> completedSync </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> false</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">	//设置zab状态,为DISCOVERY</span></span>
+<span class="line"><span style="color:#24292E">        self.</span><span style="color:#6F42C1">setZabState</span><span style="color:#24292E">(QuorumPeer.ZabState.DISCOVERY);</span></span>
+<span class="line"><span style="color:#6A737D">//	返回我们认为是领导者的节点的地址。根据当前投票信息</span></span>
+<span class="line"><span style="color:#24292E">        QuorumServer master </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> findLearnerMaster</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">//与 findLearnerMaster 找到的 LearnerMaster 建立连接。 Followers 只连接到 Leaders，Observers 可以连接到任何活跃的 LearnerMaster。 重试直到 initLimit 时间已过或已进行 5 次尝试。	</span></span>
+<span class="line"><span style="color:#6F42C1">            connectToLeader</span><span style="color:#24292E">(master.addr, master.hostname);</span></span>
+<span class="line"><span style="color:#24292E">            connectTime </span><span style="color:#D73A49">=</span><span style="color:#24292E"> System.</span><span style="color:#6F42C1">currentTimeMillis</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">	//一旦连接到领导者 ，执行握手协议以建立跟随/观察连接</span></span>
+<span class="line"><span style="color:#D73A49">            long</span><span style="color:#24292E"> newLeaderZxid </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> registerWithLeader</span><span style="color:#24292E">(Leader.OBSERVERINFO);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (self.</span><span style="color:#6F42C1">isReconfigStateChange</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Exception</span><span style="color:#24292E">(</span><span style="color:#032F62">"learned about role change"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">            self.</span><span style="color:#6F42C1">setLeaderAddressAndId</span><span style="color:#24292E">(master.addr, master.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">            self.</span><span style="color:#6F42C1">setZabState</span><span style="color:#24292E">(QuorumPeer.ZabState.SYNCHRONIZATION);</span></span>
+<span class="line"><span style="color:#6A737D">//最后，将我们的历史与领导者（如果是跟随者）或学习者主（如果是观察者）同步。集群启动的磁盘数据恢复、leader -> follower数据同步、leader重新选举之后的数据同步</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">            syncWithLeader</span><span style="color:#24292E">(newLeaderZxid);</span></span>
+<span class="line"><span style="color:#24292E">            self.</span><span style="color:#6F42C1">setZabState</span><span style="color:#24292E">(QuorumPeer.ZabState.BROADCAST);</span></span>
+<span class="line"><span style="color:#24292E">            completedSync </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> true</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            QuorumPacket qp </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> QuorumPacket</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">            while</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">isRunning</span><span style="color:#24292E">() </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> nextLearnerMaster.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">//读取数据包</span></span>
+<span class="line"><span style="color:#6F42C1">                readPacket</span><span style="color:#24292E">(qp);</span></span>
+<span class="line"><span style="color:#6A737D">//处理数据包</span></span>
+<span class="line"><span style="color:#6F42C1">                processPacket</span><span style="color:#24292E">(qp);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Exception when observing the leader"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#6F42C1">            closeSocket</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            // clear pending revalidations</span></span>
+<span class="line"><span style="color:#24292E">            pendingRevalidations.</span><span style="color:#6F42C1">clear</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        currentLearnerMaster </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        zk.</span><span style="color:#6F42C1">unregisterJMX</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (connectTime </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            long</span><span style="color:#24292E"> connectionDuration </span><span style="color:#D73A49">=</span><span style="color:#24292E"> System.</span><span style="color:#6F42C1">currentTimeMillis</span><span style="color:#24292E">() </span><span style="color:#D73A49">-</span><span style="color:#24292E"> connectTime;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">                "Disconnected from leader (with address: {}). Was connected for {}ms. Sync state: {}"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">                leaderAddr,</span></span>
+<span class="line"><span style="color:#24292E">                connectionDuration,</span></span>
+<span class="line"><span style="color:#24292E">                completedSync);</span></span>
+<span class="line"><span style="color:#24292E">            messageTracker.</span><span style="color:#6F42C1">dumpToLog</span><span style="color:#24292E">(leaderAddr.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="following状态逻辑"><strong><strong>FOLLOWING状态逻辑</strong></strong></h2>
+<p>选主完成following切换到following状态</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">case</span><span style="color:#24292E"> FOLLOWING</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"FOLLOWING"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">//创建follower对象</span></span>
+<span class="line"><span style="color:#6F42C1">        setFollower</span><span style="color:#24292E">(</span><span style="color:#6F42C1">makeFollower</span><span style="color:#24292E">(logFactory));</span></span>
+<span class="line"><span style="color:#6A737D">//连接leader</span></span>
+<span class="line"><span style="color:#24292E">        follower.</span><span style="color:#6F42C1">followLeader</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Unexpected exception"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        follower.</span><span style="color:#6F42C1">shutdown</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6F42C1">        setFollower</span><span style="color:#24292E">(</span><span style="color:#005CC5">null</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6F42C1">        updateServerState</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    break</span><span style="color:#24292E">;</span></span></code></pre>
+<p>followLeader方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">void</span><span style="color:#6F42C1"> followLeader</span><span style="color:#24292E">() throws InterruptedException {</span></span>
+<span class="line"><span style="color:#24292E">    self.end_fle </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Time.</span><span style="color:#6F42C1">currentElapsedTime</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">    long</span><span style="color:#24292E"> electionTimeTaken </span><span style="color:#D73A49">=</span><span style="color:#24292E"> self.end_fle </span><span style="color:#D73A49">-</span><span style="color:#24292E"> self.start_fle;</span></span>
+<span class="line"><span style="color:#24292E">    self.</span><span style="color:#6F42C1">setElectionTimeTaken</span><span style="color:#24292E">(electionTimeTaken);</span></span>
+<span class="line"><span style="color:#24292E">    ServerMetrics.</span><span style="color:#6F42C1">getMetrics</span><span style="color:#24292E">().ELECTION_TIME.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(electionTimeTaken);</span></span>
+<span class="line"><span style="color:#24292E">    LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"FOLLOWING - LEADER ELECTION TOOK - {} {}"</span><span style="color:#24292E">, electionTimeTaken, QuorumPeer.FLE_TIME_UNIT);</span></span>
+<span class="line"><span style="color:#24292E">    self.start_fle </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    self.end_fle </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    fzk.</span><span style="color:#6F42C1">registerJMX</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> FollowerBean</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, zk), self.jmxLocalPeerBean);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    long</span><span style="color:#24292E"> connectionTime </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">    boolean</span><span style="color:#24292E"> completedSync </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> false</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        self.</span><span style="color:#6F42C1">setZabState</span><span style="color:#24292E">(QuorumPeer.ZabState.DISCOVERY);</span></span>
+<span class="line"><span style="color:#6A737D">//	返回我们认为是领导者的节点的地址。根据当前投票信息</span></span>
+<span class="line"><span style="color:#24292E">        QuorumServer leaderServer </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> findLeader</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">//与 findLearnerMaster 找到的 LearnerMaster 建立连接。 Followers 只连接到 Leaders，Observers 可以连接到任何活跃的 LearnerMaster。 重试直到 initLimit 时间已过或已进行 5 次尝试。	</span></span>
+<span class="line"><span style="color:#6F42C1">            connectToLeader</span><span style="color:#24292E">(leaderServer.addr, leaderServer.hostname);</span></span>
+<span class="line"><span style="color:#24292E">            connectionTime </span><span style="color:#D73A49">=</span><span style="color:#24292E"> System.</span><span style="color:#6F42C1">currentTimeMillis</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">            long</span><span style="color:#24292E"> newEpochZxid </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> registerWithLeader</span><span style="color:#24292E">(Leader.FOLLOWERINFO);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (self.</span><span style="color:#6F42C1">isReconfigStateChange</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> Exception</span><span style="color:#24292E">(</span><span style="color:#032F62">"learned about role change"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">            //check to see if the leader zxid is lower than ours</span></span>
+<span class="line"><span style="color:#6A737D">            //this should never happen but is just a safety check</span></span>
+<span class="line"><span style="color:#D73A49">            long</span><span style="color:#24292E"> newEpoch </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ZxidUtils.</span><span style="color:#6F42C1">getEpochFromZxid</span><span style="color:#24292E">(newEpochZxid);</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (newEpoch </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getAcceptedEpoch</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                LOG.</span><span style="color:#6F42C1">error</span><span style="color:#24292E">(</span><span style="color:#032F62">"Proposed leader epoch "</span></span>
+<span class="line"><span style="color:#D73A49">                          +</span><span style="color:#24292E"> ZxidUtils.</span><span style="color:#6F42C1">zxidToString</span><span style="color:#24292E">(newEpochZxid)</span></span>
+<span class="line"><span style="color:#D73A49">                          +</span><span style="color:#032F62"> " is less than our accepted epoch "</span></span>
+<span class="line"><span style="color:#D73A49">                          +</span><span style="color:#24292E"> ZxidUtils.</span><span style="color:#6F42C1">zxidToString</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getAcceptedEpoch</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IOException</span><span style="color:#24292E">(</span><span style="color:#032F62">"Error: Epoch of leader is lower"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#D73A49">            long</span><span style="color:#24292E"> startTime </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Time.</span><span style="color:#6F42C1">currentElapsedTime</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">            try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                self.</span><span style="color:#6F42C1">setLeaderAddressAndId</span><span style="color:#24292E">(leaderServer.addr, leaderServer.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                self.</span><span style="color:#6F42C1">setZabState</span><span style="color:#24292E">(QuorumPeer.ZabState.SYNCHRONIZATION);</span></span>
+<span class="line"><span style="color:#6F42C1">                syncWithLeader</span><span style="color:#24292E">(newEpochZxid);</span></span>
+<span class="line"><span style="color:#24292E">                self.</span><span style="color:#6F42C1">setZabState</span><span style="color:#24292E">(QuorumPeer.ZabState.BROADCAST);</span></span>
+<span class="line"><span style="color:#24292E">                completedSync </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> true</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">                long</span><span style="color:#24292E"> syncTime </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Time.</span><span style="color:#6F42C1">currentElapsedTime</span><span style="color:#24292E">() </span><span style="color:#D73A49">-</span><span style="color:#24292E"> startTime;</span></span>
+<span class="line"><span style="color:#24292E">                ServerMetrics.</span><span style="color:#6F42C1">getMetrics</span><span style="color:#24292E">().FOLLOWER_SYNC_TIME.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(syncTime);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (self.</span><span style="color:#6F42C1">getObserverMasterPort</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">                LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"Starting ObserverMaster"</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">                om </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> ObserverMaster</span><span style="color:#24292E">(self, fzk, self.</span><span style="color:#6F42C1">getObserverMasterPort</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                om.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">else</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                om </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#6A737D">            // create a reusable packet to reduce gc impact</span></span>
+<span class="line"><span style="color:#24292E">            QuorumPacket qp </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> QuorumPacket</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">            while</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">isRunning</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6F42C1">                readPacket</span><span style="color:#24292E">(qp);</span></span>
+<span class="line"><span style="color:#6F42C1">                processPacket</span><span style="color:#24292E">(qp);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Exception when following the leader"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#6F42C1">            closeSocket</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">            // clear pending revalidations</span></span>
+<span class="line"><span style="color:#24292E">            pendingRevalidations.</span><span style="color:#6F42C1">clear</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (om </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            om.</span><span style="color:#6F42C1">stop</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">        zk.</span><span style="color:#6F42C1">unregisterJMX</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (connectionTime </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            long</span><span style="color:#24292E"> connectionDuration </span><span style="color:#D73A49">=</span><span style="color:#24292E"> System.</span><span style="color:#6F42C1">currentTimeMillis</span><span style="color:#24292E">() </span><span style="color:#D73A49">-</span><span style="color:#24292E"> connectionTime;</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span></span>
+<span class="line"><span style="color:#032F62">                "Disconnected from leader (with address: {}). Was connected for {}ms. Sync state: {}"</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#24292E">                leaderAddr,</span></span>
+<span class="line"><span style="color:#24292E">                connectionDuration,</span></span>
+<span class="line"><span style="color:#24292E">                completedSync);</span></span>
+<span class="line"><span style="color:#24292E">            messageTracker.</span><span style="color:#6F42C1">dumpToLog</span><span style="color:#24292E">(leaderAddr.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="165-leading状态逻辑">16.5 LEADING状态逻辑</h2>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">case</span><span style="color:#24292E"> LEADING</span><span style="color:#D73A49">:</span></span>
+<span class="line"><span style="color:#24292E">    LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"LEADING"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">//创建leader对象,leader对象创建时候会监听端口</span></span>
+<span class="line"><span style="color:#6F42C1">        setLeader</span><span style="color:#24292E">(</span><span style="color:#6F42C1">makeLeader</span><span style="color:#24292E">(logFactory));</span></span>
+<span class="line"><span style="color:#24292E">        leader.</span><span style="color:#6F42C1">lead</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6F42C1">        setLeader</span><span style="color:#24292E">(</span><span style="color:#005CC5">null</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Unexpected exception"</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (leader </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            leader.</span><span style="color:#6F42C1">shutdown</span><span style="color:#24292E">(</span><span style="color:#032F62">"Forcing shutdown"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6F42C1">            setLeader</span><span style="color:#24292E">(</span><span style="color:#005CC5">null</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6F42C1">        updateServerState</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>lead方法</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">void</span><span style="color:#6F42C1"> lead</span><span style="color:#24292E">() throws IOException, InterruptedException {</span></span>
+<span class="line"><span style="color:#24292E">    self.end_fle </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Time.</span><span style="color:#6F42C1">currentElapsedTime</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">    long</span><span style="color:#24292E"> electionTimeTaken </span><span style="color:#D73A49">=</span><span style="color:#24292E"> self.end_fle </span><span style="color:#D73A49">-</span><span style="color:#24292E"> self.start_fle;</span></span>
+<span class="line"><span style="color:#24292E">    self.</span><span style="color:#6F42C1">setElectionTimeTaken</span><span style="color:#24292E">(electionTimeTaken);</span></span>
+<span class="line"><span style="color:#24292E">    ServerMetrics.</span><span style="color:#6F42C1">getMetrics</span><span style="color:#24292E">().ELECTION_TIME.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(electionTimeTaken);</span></span>
+<span class="line"><span style="color:#24292E">    LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"LEADING - LEADER ELECTION TOOK - {} {}"</span><span style="color:#24292E">, electionTimeTaken, QuorumPeer.FLE_TIME_UNIT);</span></span>
+<span class="line"><span style="color:#24292E">    self.start_fle </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    self.end_fle </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    zk.</span><span style="color:#6F42C1">registerJMX</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> LeaderBean</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, zk), self.jmxLocalPeerBean);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        self.</span><span style="color:#6F42C1">setZabState</span><span style="color:#24292E">(QuorumPeer.ZabState.DISCOVERY);</span></span>
+<span class="line"><span style="color:#24292E">        self.tick.</span><span style="color:#6F42C1">set</span><span style="color:#24292E">(</span><span style="color:#005CC5">0</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">//加载磁盘中的数据</span></span>
+<span class="line"><span style="color:#24292E">        zk.</span><span style="color:#6F42C1">loadData</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        leaderStateSummary </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> StateSummary</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getCurrentEpoch</span><span style="color:#24292E">(), zk.</span><span style="color:#6F42C1">getLastProcessedZxid</span><span style="color:#24292E">());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // Start thread that waits for connection requests from</span></span>
+<span class="line"><span style="color:#6A737D">        // new followers. leader启动服务端口和线程用来接收followers的连接和数据传输</span></span>
+<span class="line"><span style="color:#24292E">        cnxAcceptor </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> LearnerCnxAcceptor</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        cnxAcceptor.</span><span style="color:#6F42C1">start</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">//阻塞等待计算新的 epoch 值，并设置 zxid</span></span>
+<span class="line"><span style="color:#D73A49">        long</span><span style="color:#24292E"> epoch </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getEpochToPropose</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">(), self.</span><span style="color:#6F42C1">getAcceptedEpoch</span><span style="color:#24292E">());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        zk.</span><span style="color:#6F42C1">setZxid</span><span style="color:#24292E">(ZxidUtils.</span><span style="color:#6F42C1">makeZxid</span><span style="color:#24292E">(epoch, </span><span style="color:#005CC5">0</span><span style="color:#24292E">));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        synchronized</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            lastProposed </span><span style="color:#D73A49">=</span><span style="color:#24292E"> zk.</span><span style="color:#6F42C1">getZxid</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        newLeaderProposal.packet </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> QuorumPacket</span><span style="color:#24292E">(NEWLEADER, zk.</span><span style="color:#6F42C1">getZxid</span><span style="color:#24292E">(), </span><span style="color:#005CC5">null</span><span style="color:#24292E">, </span><span style="color:#005CC5">null</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> ((newLeaderProposal.packet.</span><span style="color:#6F42C1">getZxid</span><span style="color:#24292E">() </span><span style="color:#D73A49">&#x26;</span><span style="color:#005CC5"> 0xffffffffL</span><span style="color:#24292E">) </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">            LOG.</span><span style="color:#6F42C1">info</span><span style="color:#24292E">(</span><span style="color:#032F62">"NEWLEADER proposal has Zxid of {}"</span><span style="color:#24292E">, Long.</span><span style="color:#6F42C1">toHexString</span><span style="color:#24292E">(newLeaderProposal.packet.</span><span style="color:#6F42C1">getZxid</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        QuorumVerifier lastSeenQV </span><span style="color:#D73A49">=</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getLastSeenQuorumVerifier</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">        QuorumVerifier curQV </span><span style="color:#D73A49">=</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getQuorumVerifier</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (curQV.</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#D73A49"> &#x26;&#x26;</span><span style="color:#24292E"> curQV.</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">() </span><span style="color:#D73A49">==</span><span style="color:#24292E"> lastSeenQV.</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">             </span></span>
+<span class="line"><span style="color:#D73A49">            try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">                LOG.</span><span style="color:#6F42C1">debug</span><span style="color:#24292E">(String.</span><span style="color:#6F42C1">format</span><span style="color:#24292E">(</span><span style="color:#032F62">"set lastSeenQuorumVerifier to currentQuorumVerifier (%s)"</span><span style="color:#24292E">, curQV.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">()));</span></span>
+<span class="line"><span style="color:#24292E">                QuorumVerifier newQV </span><span style="color:#D73A49">=</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">configFromString</span><span style="color:#24292E">(curQV.</span><span style="color:#6F42C1">toString</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                newQV.</span><span style="color:#6F42C1">setVersion</span><span style="color:#24292E">(zk.</span><span style="color:#6F42C1">getZxid</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                self.</span><span style="color:#6F42C1">setLastSeenQuorumVerifier</span><span style="color:#24292E">(newQV, </span><span style="color:#005CC5">true</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Exception </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                throw</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> IOException</span><span style="color:#24292E">(e);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        newLeaderProposal.</span><span style="color:#6F42C1">addQuorumVerifier</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getQuorumVerifier</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (self.</span><span style="color:#6F42C1">getLastSeenQuorumVerifier</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getQuorumVerifier</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">            newLeaderProposal.</span><span style="color:#6F42C1">addQuorumVerifier</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getLastSeenQuorumVerifier</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // We have to get at least a majority of servers in sync with</span></span>
+<span class="line"><span style="color:#6A737D">        // us. We do this by waiting for the NEWLEADER packet to get</span></span>
+<span class="line"><span style="color:#6A737D">        // acknowledged</span></span>
+<span class="line"><span style="color:#6A737D">//阻塞等待接收过半的 follower 节点发送的 ACKEPOCH 信息； 此时说明已经确定了本轮选举后 epoch 值</span></span>
+<span class="line"><span style="color:#6F42C1">        waitForEpochAck</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">(), leaderStateSummary);</span></span>
+<span class="line"><span style="color:#24292E">        self.</span><span style="color:#6F42C1">setCurrentEpoch</span><span style="color:#24292E">(epoch);</span></span>
+<span class="line"><span style="color:#24292E">        self.</span><span style="color:#6F42C1">setLeaderAddressAndId</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getQuorumAddress</span><span style="color:#24292E">(), self.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        self.</span><span style="color:#6F42C1">setZabState</span><span style="color:#24292E">(QuorumPeer.ZabState.SYNCHRONIZATION);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">// 阻塞等待 超过半数的节点 follower 发送了 NEWLEADER ACK 信息；此时说明过半的 follower 节点已经完成数据同步</span></span>
+<span class="line"><span style="color:#6F42C1">            waitForNewLeaderAck</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">(), zk.</span><span style="color:#6F42C1">getZxid</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (InterruptedException </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6F42C1">            shutdown</span><span style="color:#24292E">(</span><span style="color:#032F62">"Waiting for a quorum of followers, only synced with sids: [ "</span></span>
+<span class="line"><span style="color:#D73A49">                     +</span><span style="color:#24292E"> newLeaderProposal.</span><span style="color:#6F42C1">ackSetsToString</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#D73A49">                     +</span><span style="color:#032F62"> " ]"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            HashSet&#x3C;</span><span style="color:#D73A49">Long</span><span style="color:#24292E">> followerSet </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> HashSet&#x3C;</span><span style="color:#D73A49">Long</span><span style="color:#24292E">>();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">            for</span><span style="color:#24292E"> (LearnerHandler f </span><span style="color:#D73A49">:</span><span style="color:#6F42C1"> getLearners</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (self.</span><span style="color:#6F42C1">getQuorumVerifier</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getVotingMembers</span><span style="color:#24292E">().</span><span style="color:#6F42C1">containsKey</span><span style="color:#24292E">(f.</span><span style="color:#6F42C1">getSid</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#24292E">                    followerSet.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(f.</span><span style="color:#6F42C1">getSid</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#D73A49">            boolean</span><span style="color:#24292E"> initTicksShouldBeIncreased </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> true</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">            for</span><span style="color:#24292E"> (Proposal.QuorumVerifierAcksetPair qvAckset </span><span style="color:#D73A49">:</span><span style="color:#24292E"> newLeaderProposal.qvAcksetPairs) {</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">qvAckset.</span><span style="color:#6F42C1">getQuorumVerifier</span><span style="color:#24292E">().</span><span style="color:#6F42C1">containsQuorum</span><span style="color:#24292E">(followerSet)) {</span></span>
+<span class="line"><span style="color:#24292E">                    initTicksShouldBeIncreased </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> false</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">                    break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#24292E"> (initTicksShouldBeIncreased) {</span></span>
+<span class="line"><span style="color:#24292E">                LOG.</span><span style="color:#6F42C1">warn</span><span style="color:#24292E">(</span><span style="color:#032F62">"Enough followers present. Perhaps the initTicks need to be increased."</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#6A737D">//启动 zk server，此时集群可以对外正式提供服务</span></span>
+<span class="line"><span style="color:#6F42C1">        startZkServer</span><span style="color:#24292E">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">         </span></span>
+<span class="line"><span style="color:#24292E">        String initialZxid </span><span style="color:#D73A49">=</span><span style="color:#24292E"> System.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"zookeeper.testingonly.initialZxid"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (initialZxid </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            long</span><span style="color:#24292E"> zxid </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Long.</span><span style="color:#6F42C1">parseLong</span><span style="color:#24292E">(initialZxid);</span></span>
+<span class="line"><span style="color:#24292E">            zk.</span><span style="color:#6F42C1">setZxid</span><span style="color:#24292E">((zk.</span><span style="color:#6F42C1">getZxid</span><span style="color:#24292E">() </span><span style="color:#D73A49">&#x26;</span><span style="color:#005CC5"> 0xffffffff00000000L</span><span style="color:#24292E">) </span><span style="color:#D73A49">|</span><span style="color:#24292E"> zxid);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">System.</span><span style="color:#6F42C1">getProperty</span><span style="color:#24292E">(</span><span style="color:#032F62">"zookeeper.leaderServes"</span><span style="color:#24292E">, </span><span style="color:#032F62">"yes"</span><span style="color:#24292E">).</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(</span><span style="color:#032F62">"no"</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#24292E">            self.</span><span style="color:#6F42C1">setZooKeeperServer</span><span style="color:#24292E">(zk);</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">        self.</span><span style="color:#6F42C1">setZabState</span><span style="color:#24292E">(QuorumPeer.ZabState.BROADCAST);</span></span>
+<span class="line"><span style="color:#24292E">        self.adminServer.</span><span style="color:#6F42C1">setZooKeeperServer</span><span style="color:#24292E">(zk);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // We ping twice a tick, so we only update the tick every other</span></span>
+<span class="line"><span style="color:#6A737D">        // iteration</span></span>
+<span class="line"><span style="color:#D73A49">        boolean</span><span style="color:#24292E"> tickSkip </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> true</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6A737D">        // If not null then shutdown this leader</span></span>
+<span class="line"><span style="color:#24292E">        String shutdownMessage </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">        while</span><span style="color:#24292E"> (</span><span style="color:#005CC5">true</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">            synchronized</span><span style="color:#24292E"> (</span><span style="color:#005CC5">this</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">                long</span><span style="color:#24292E"> start </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Time.</span><span style="color:#6F42C1">currentElapsedTime</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                long</span><span style="color:#24292E"> cur </span><span style="color:#D73A49">=</span><span style="color:#24292E"> start;</span></span>
+<span class="line"><span style="color:#D73A49">                long</span><span style="color:#24292E"> end </span><span style="color:#D73A49">=</span><span style="color:#24292E"> start </span><span style="color:#D73A49">+</span><span style="color:#24292E"> self.tickTime </span><span style="color:#D73A49">/</span><span style="color:#005CC5"> 2</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">                while</span><span style="color:#24292E"> (cur </span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> end) {</span></span>
+<span class="line"><span style="color:#6F42C1">                    wait</span><span style="color:#24292E">(end </span><span style="color:#D73A49">-</span><span style="color:#24292E"> cur);</span></span>
+<span class="line"><span style="color:#24292E">                    cur </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Time.</span><span style="color:#6F42C1">currentElapsedTime</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">tickSkip) {</span></span>
+<span class="line"><span style="color:#24292E">                    self.tick.</span><span style="color:#6F42C1">incrementAndGet</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                // We use an instance of SyncedLearnerTracker to</span></span>
+<span class="line"><span style="color:#6A737D">                // track synced learners to make sure we still have a</span></span>
+<span class="line"><span style="color:#6A737D">                // quorum of current (and potentially next pending) view.</span></span>
+<span class="line"><span style="color:#24292E">                SyncedLearnerTracker syncedAckSet </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> SyncedLearnerTracker</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                syncedAckSet.</span><span style="color:#6F42C1">addQuorumVerifier</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getQuorumVerifier</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (self.</span><span style="color:#6F42C1">getLastSeenQuorumVerifier</span><span style="color:#24292E">() </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span></span>
+<span class="line"><span style="color:#D73A49">                    &#x26;&#x26;</span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getLastSeenQuorumVerifier</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">() </span><span style="color:#D73A49">></span><span style="color:#24292E"> self.</span><span style="color:#6F42C1">getQuorumVerifier</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getVersion</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                    syncedAckSet.</span><span style="color:#6F42C1">addQuorumVerifier</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getLastSeenQuorumVerifier</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">                syncedAckSet.</span><span style="color:#6F42C1">addAck</span><span style="color:#24292E">(self.</span><span style="color:#6F42C1">getId</span><span style="color:#24292E">());</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                for</span><span style="color:#24292E"> (LearnerHandler f </span><span style="color:#D73A49">:</span><span style="color:#6F42C1"> getLearners</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E"> (f.</span><span style="color:#6F42C1">synced</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                        syncedAckSet.</span><span style="color:#6F42C1">addAck</span><span style="color:#24292E">(f.</span><span style="color:#6F42C1">getSid</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                // check leader running status</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#005CC5">this</span><span style="color:#24292E">.</span><span style="color:#6F42C1">isRunning</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">                    // set shutdown flag</span></span>
+<span class="line"><span style="color:#24292E">                    shutdownMessage </span><span style="color:#D73A49">=</span><span style="color:#032F62"> "Unexpected internal error"</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">                    break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">tickSkip </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#24292E">syncedAckSet.</span><span style="color:#6F42C1">hasAllQuorums</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">                    // Lost quorum of last committed and/or last proposed</span></span>
+<span class="line"><span style="color:#6A737D">                    // config, set shutdown flag</span></span>
+<span class="line"><span style="color:#24292E">                    shutdownMessage </span><span style="color:#D73A49">=</span><span style="color:#032F62"> "Not sufficient followers synced, only synced with sids: [ "</span></span>
+<span class="line"><span style="color:#D73A49">                                      +</span><span style="color:#24292E"> syncedAckSet.</span><span style="color:#6F42C1">ackSetsToString</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#D73A49">                                      +</span><span style="color:#032F62"> " ]"</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#D73A49">                    break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">                tickSkip </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> !</span><span style="color:#24292E">tickSkip;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#D73A49">            for</span><span style="color:#24292E"> (LearnerHandler f </span><span style="color:#D73A49">:</span><span style="color:#6F42C1"> getLearners</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#24292E">                f.</span><span style="color:#6F42C1">ping</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (shutdownMessage </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6F42C1">            shutdown</span><span style="color:#24292E">(shutdownMessage);</span></span>
+<span class="line"><span style="color:#6A737D">            // leader goes in looking state</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">finally</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#24292E">        zk.</span><span style="color:#6F42C1">unregisterJMX</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

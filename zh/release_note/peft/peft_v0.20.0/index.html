@@ -1,0 +1,293 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>peft v0.20.0 — STAGS NextStack</title><meta name="description" content="This release adds no less than nine new PEFT methods and puts a lot of work into the surrounding infrastructure, for example adding a new image generation benchmark for the method comparison suite and greatly improving…"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/release_note/peft/peft_v0.20.0/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/releases/peft/0.20.0"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/release_note/peft/peft_v0.20.0/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/releases/peft/0.20.0"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="article"><meta property="og:title" content="peft v0.20.0 — STAGS NextStack"><meta property="og:description" content="This release adds no less than nine new PEFT methods and puts a lot of work into the surrounding infrastructure, for example adding a new image generation benchmark for the method comparison suite and greatly improving…"><meta property="og:url" content="https://www.stags.cn/zh/release_note/peft/peft_v0.20.0/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"},{"@type":"TechArticle","@id":"https://www.stags.cn/zh/release_note/peft/peft_v0.20.0/#article","headline":"peft v0.20.0 release notes","datePublished":"2026-07-28","inLanguage":"zh-CN","isPartOf":{"@id":"https://www.stags.cn/#website"},"about":{"@type":"SoftwareSourceCode","codeRepository":"https://github.com/huggingface/peft"}}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css">
+<style>.ad-slot[data-astro-cid-fgwukgf6]{margin:var(--s10) 0 0;padding-top:var(--s5);border-top:1px solid var(--line)}.ad-slot-label[data-astro-cid-fgwukgf6]{margin-bottom:var(--s3);font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4)}.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{display:block;min-height:100px}@media(min-width:640px){.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{min-height:250px}}
+</style></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases/peft/0.20.0/" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/release_note/peft/peft_v0.20.0/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases/peft/0.20.0/" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases/peft/0.20.0/" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases/peft/0.20.0/" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases/peft/0.20.0/" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases/peft/0.20.0/" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap"> <div class="detail"> <article> <header class="detail-hd"> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/zh/">首页</a> <span class="sep">/</span> <a href="/zh/releases">版本发布</a> <span class="sep">/</span> <a href="/zh/releases/peft">peft</a> </nav> <h1 class="detail-title"> <span class="p">peft</span> v0.20.0 </h1> <div class="detail-meta"> <span class="chip chip--minor">小版本</span> <span><span class="k">发布时间</span>2026年7月28日</span>  <span class="sep" aria-hidden="true"></span> <a href="https://github.com/huggingface/peft" target="_blank" rel="noopener"> <span class="k">来源</span>huggingface/peft </a>   <span class="sep" aria-hidden="true"></span> <a href="/releases/peft/0.20.0"> 英文原文 </a>  <span class="sep" aria-hidden="true"></span> <button class="btn btn--ghost btn--sm" type="button" data-copy="https://www.stags.cn/zh/release_note/peft/peft_v0.20.0/">复制链接</button> </div> </header> <div class="prose" style="margin-top:var(--s8)">   <h1 id="peft-v0200">peft v0.20.0</h1>
+<h1 id="亮点">亮点</h1>
+<img width="1250" height="560" alt="peft-v0 20 0" src="https://github.com/user-attachments/assets/6194fae9-f3c3-48ca-b43b-40c774bfe6eb">
+<p>该版本添加了至少九种新的 PEFT 方法，并对周围的基础设施进行了大量工作，例如为方法比较套件添加了新的图像生成基准，并极大地改进了文档结构。</p>
+<h2 id="新方法">新方法</h2>
+<h3 id="希拉">希拉</h3>
+<p>@hqsiswiliam 在 PEFT (#2668) 中添加了 <a href="https://openreview.net/forum?id=TwJrTz9cRS">“HiRA：大型语言模型的参数高效 Hadamard 高阶自适应”</a>。 HiRA 不是将低阶乘积 <code>BA</code> 添加到基本重量中，而是将其按元素（Hadamard 乘积）与冻结的基本重量相乘。由于基本权重本身是满秩的，因此生成的更新不再被限制为低秩，而可训练参数计数与 LoRA 相同。</p>
+<h3 id="格洛拉">格洛拉</h3>
+<p>@not-lain 在#3098 中贡献了 GLoRA：<a href="https://arxiv.org/abs/2306.07967">“One-for-All：用于参数高效微调的通用 LoRA”</a>。它是一种灵活的 PEFT 方法，通过可配置的权重、激活和偏差自适应来扩展 LoRA，提供更丰富的微调，而无需额外的推理成本。当您需要每层灵活性或比普通 LoRA 更强的适应性时，请使用它。对于非线性层（例如 Conv/Embedding）或当标准 LoRA 已经足够并且简单性很重要时，请跳过它。</p>
+<h3 id="贝夫特">贝夫特</h3>
+<p>@whubaichuan 在#3195 中添加了<a href="https://arxiv.org/abs/2509.15974v2">“BEFT：语言模型的偏置高效微调”</a>。 BEFT 建立在这样的观察之上：仅微调偏差项在低数据情况下就可以具有竞争力，但更进一步：它不是训练<em>所有</em>偏差，而是默认针对价值预测，因为作者发现这是最有效的。这使得可训练参数数量减少到总参数的大约 0.01%。</p>
+<h3 id="蒙特克洛拉">蒙特克洛拉</h3>
+<p>@victor7246 在 #2943 中集成了 MonteCLoRA，<a href="https://openreview.net/forum?id=2HFmicB8kh">“通过低阶适应的贝叶斯重新参数化对 LLM 进行鲁棒且高效的微调”</a>。众所周知，LoRA 对学习率和批量大小等超参数很敏感。这个新的 LoRA 变体通过将低秩参数视为分布而不是点估计来解决这个问题，并使用蒙特卡罗估计来获得低方差后验估计。这应该会使训练明显更加稳健，而代价只是_O(rank)_个额外参数。</p>
+<h3 id="维罗拉">维罗拉</h3>
+<p>@roymiles 在 #3159 中添加了 VeLoRA：<a href="https://arxiv.org/abs/2405.17991">“使用 Rank-1 子代币投影进行内存高效训练”</a>。与大多数 PEFT 方法不同，这种 LoRA 变体的目标是激活内存而不是参数计数：中间激活被分成子令牌，并使用固定的 1 级投影进行压缩，然后缓存用于反向传播，然后在反向传播期间进行重建。从概念上讲，它类似于梯度检查点，具有较低的内存节省但运行速度更快。</p>
+<h3 id="uni-lora">Uni-LoRA</h3>
+<p>@KaiyangLi1992 在 #3257 中贡献了 Uni-LoRA：<a href="https://arxiv.org/abs/2506.00799">“一个向量就是你所需要的”</a>。该论文表明，VeRA 和 VB-LoRA 等参数高效的 LoRA 变体都可以被描述为将完整的 LoRA 参数空间投影到更小的子空间，仅在投影的选择上有所不同。 Uni-LoRA 在整个模型中使用单个全局投影，而不是逐层投影，这允许跨层参数共享，因此参数数量非常低。</p>
+<h3 id="弗洛德">弗洛德</h3>
+<p>@Bane-Elvin 在 #3270 中添加了 FRoD，<a href="https://arxiv.org/abs/2512.23485">“通过旋转度进行全阶高效微调以实现快速收敛”</a>。它不像 LoRA 那样添加低秩增量，而是使用共享旋转子空间和稀疏可训练系数来重建选定的权重。当快速收敛和更高的满秩容量上限很重要时，它特别有用，并且其大的稀疏旋转子空间也可能有希望用于模型合并。主要的权衡是昂贵的联合分解初始化和比 LoRA 稍慢的前向/后向传递，因此对于一次性单任务微调来说可能不太有吸引力。</p>
+<h3 id="米卡">米卡</h3>
+<p>@sr-networks 在 #3260 中贡献了 MiCA，<a href="https://arxiv.org/abs/2604.01694">“MiCA 比 LoRA 学习更多知识并进行全面微调”</a>。 MiCA 是一种 LoRA 变体，它从基本权重的 SVD 初始化 <code>B</code>，采用属于<em>最小</em>奇异值的左奇异向量，然后仅训练 <code>A</code>。这个想法是，适应这些未充分利用的方向比适应主导子空间更有效地整合新知识，并且对现有能力的干扰更少。</p>
+<h3 id="敏捷">敏捷</h3>
+<p>@MAXNORM8650 在 #3342 中添加了 DEFT，<a href="https://arxiv.org/abs/2509.22793">“文本到图像模型的分解高效微调”</a>。这种 PEFT 方法将权重更新分为两个学习的低秩部分：一个删除冻结权重子空间的投影，以及一个在其位置注入新内容的低秩更新。使用 DEFT 从一些图像个性化文本到图像模型，同时保留基本模型的指令跟踪/可编辑性，并最大限度地减少遗忘。如果您不需要保留基本模型的其他功能（普通的附加适配器更简单）或对于 Linear/Conv1D 之外的层，那么它不太合适。作为 DEFT 的特例，还支持 <a href="https://arxiv.org/abs/2406.05641">PaRa 方法</a>。</p>
+<h2 id="增强功能">增强功能</h2>
+<h3 id="自动-lora-目标选择">自动 LoRA 目标选择</h3>
+<p>@oswaldoludwig 基于 <a href="https://arxiv.org/abs/2506.16289">“条件数作为神经单元信息编码的尺度不变代理”</a> 在 #3106 中添加了 <code>KappaTuneSelector</code>。 PR 添加了一个新函数 <code>find_kappa_target_modules</code>，它可以根据基本权重矩阵的条件数自动识别哪些模块最适合作为目标。这消除了在配置 LoRA 或其他 PEFT 方法时选择 <code>target_modules</code> 的一些猜测。</p>
+<h3 id="更广泛的量化支持">更广泛的量化支持</h3>
+<p>#3117 添加了对 BOFT、MiSS 和 VeRA 的通用量化支持，#3321 对 SHiRA 做了同样的事情。以前，量化支持必须按方法和后端实现；现在有更多方法可与开箱即用的常见量化后端配合使用。请注意，因此，VeRA 现在使用通用量化后端，而不是之前的位和字节量化后端。如果您因此遇到问题，请告诉我们。</p>
+<h3 id="带有-target_parameters-的多个适配器">带有 <code>target_parameters</code> 的多个适配器</h3>
+<p><code>target_parameters</code> 允许直接定位 <code>nn.Parameter</code>（对于将专家打包到单个参数中的 MoE 模型很有用），现在支持添加和加载多个适配器 (#3350)。</p>
+<h3 id="conv2d-的-adalora">Conv2d 的 AdaLoRA</h3>
+<p>@Anai-Guo 在 #3196 中添加了 <code>SVDConv2d</code>，因此 AdaLoRA 现在可以定位 <code>torch.nn.Conv2d</code> 层。</p>
+<h3 id="文档重组">文档重组</h3>
+<p><a href="https://huggingface.co/docs/peft/index">PEFT 文档</a> 在 #3300 和 #3325 中进行了重新组织，既然 PEFT 支持如此多的方法，这应该会使导航变得更加容易。每种 PEFT 方法还概述了其在 PEFT 基准中的表现。此版本中许多贡献者还对文档进行了长尾改进，感谢所有参与这些工作的人。</p>
+<h2 id="变化">变化</h2>
+<h3 id="autogptq-弃用">AutoGPTQ 弃用</h3>
+<p>在上一版本中切换为 <a href="https://github.com/ModelCloud/GPTQModel">GPT-QModel</a> 作为后端之后，由于@Qubitium，AutoGPTQ 现已正式弃用 (#3190)。</p>
+<h2 id="基准测试">基准测试</h2>
+<h3 id="图像生成基准">图像生成基准</h3>
+<p>方法比较套件现在有图像生成基准（#3082）。这补充了现有的 MetaMathQA 基准，并允许在完全不同的任务上比较 PEFT 方法。这让我们更全面地了解不同 PEFT 方法的功能。要检查结果，请访问<a href="https://huggingface.co/spaces/peft-internal-testing/PEFT-method-comparison">Gradio Space</a>，然后在左上角选择任务“image-gen”。</p>
+<img width="925" height="631" alt="2026-07-28 15-48-53 的屏幕截图" src="https://github.com/user-attachments/assets/e6260b44-9b83-45b7-bd6c-d15bd429e006">
+<p><em>查看图像生成基准测试的结果</em></p>
+<h3 id="元数学qa">元数学QA</h3>
+<p>自上一个版本以来，我们还对 <a href="https://github.com/huggingface/peft/method_comparison/MetaMathQA">MetaMathQA 基准</a> 进行了多项改进。您应该在<a href="https://huggingface.co/spaces/peft-internal-testing/PEFT-method-comparison">Gradio Space</a>中查看更新的结果。在社区的帮助下，我们现在涵盖了更广泛的实验。此外，我们发现了遗忘指标中的一个错误——新的数字现在准确地反映了微调保留了基本模型的原始知识的程度。</p>
+<h3 id="peft-商店">PEFT 商店</h3>
+<p>#3317 添加了一个新的 <a href="https://huggingface.co/spaces/peft-internal-testing/PEFT-shop">Gradio Space</a>，其目标是使比较不同的 PEFT 方法变得非常容易，不仅在性能方面而且在功能方面（例如，是否支持量化）。访问此空间，了解哪种 PEFT 方法最适合您的使用案例。</p>
+<img width="1013" height="697" alt="2026-07-28 15-30-21 的屏幕截图" src="https://github.com/user-attachments/assets/bd9ad132-a44f-4a2f-b28d-e499c9a5eaea">
+<p><em>浏览 PEFT 商店，寻找适合您的用例的最佳 PEFT 方法</em></p>
+<h2 id="所有更改">所有更改</h2>
+<ul>
+<li>杂务：在 <a href="https://github.com/huggingface/peft/pull/3162">https://github.com/huggingface/peft/pull/3162</a> 中为 @rtrompier 的 PR 上传工作流程凹凸文档生成器 SHA</li>
+<li>@githubnemo 在 <a href="https://github.com/huggingface/peft/pull/3160">https://github.com/huggingface/peft/pull/3160</a> 中对新方法的基准测试结果</li>
+<li>修复：使用 hasattr 保护 UPCAST_DTYPES 查找，以支持 @Anai-Guo 在 <a href="https://github.com/huggingface/peft/pull/3161">https://github.com/huggingface/peft/pull/3161</a> 中的旧版 PyTorch</li>
+<li>@BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3156">https://github.com/huggingface/peft/pull/3156</a> 中发布后，将版本提升到 0.19.1.dev0</li>
+<li>ENH：<a href="https://github.com/huggingface/peft/pull/3157">https://github.com/huggingface/peft/pull/3157</a> 中 @BenjaminBossan 在 MetaMath 中设置梯度检查点的选项</li>
+<li>MetaMathQA：<a href="https://github.com/huggingface/peft/pull/3163">https://github.com/huggingface/peft/pull/3163</a> 中@githubnemo 训练后将检查点上传到存储桶</li>
+<li>修复如何在 <a href="https://github.com/huggingface/peft/pull/3165">https://github.com/huggingface/peft/pull/3165</a> 中换入/换出由 @BenjaminBossan 转置的功能</li>
+<li>在 AutoPeftModel 中实现导入允许列表，通过 <a href="https://github.com/huggingface/peft/pull/3090">https://github.com/huggingface/peft/pull/3090</a> 中的 @githubnemo 限制 megatron 中的访问</li>
+<li>重构层初始化：@BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3047">https://github.com/huggingface/peft/pull/3047</a> 中继续 PR 2960</li>
+<li>通过 <a href="https://github.com/huggingface/peft/pull/3174">https://github.com/huggingface/peft/pull/3174</a> 中的 @Chessing234 修复 SVDQuantLinear <strong>repr</strong> 嵌套在前向而不是类上</li>
+<li>解决 #2944：ensure_weight_tying 尊重配置 + @Adya-Prasad 在 <a href="https://github.com/huggingface/peft/pull/3171">https://github.com/huggingface/peft/pull/3171</a> 中改进的测试</li>
+<li>修复 Clip 模块结构，因为变压器 > 5.5 由@BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3179">https://github.com/huggingface/peft/pull/3179</a> 中</li>
+<li>@BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3178">https://github.com/huggingface/peft/pull/3178</a> 中发布后，将版本提升到 0.19.2.dev0</li>
+<li>由 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3180">https://github.com/huggingface/peft/pull/3180</a> 中修复 TinyLoRA 非决定论</li>
+<li>修复 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3187">https://github.com/huggingface/peft/pull/3187</a> 中层初始化重构后的 VeRA 和 OFT 错误</li>
+<li>修复扩散器故障的 test_hotswapping_compiled_model_xxx 案例…作者：<a href="https://github.com/huggingface/peft/pull/3183">https://github.com/huggingface/peft/pull/3183</a> 中的 @sywangyi</li>
+<li>CI 修复了 Docker 中的 GPTQmodel 安装，由 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3188">https://github.com/huggingface/peft/pull/3188</a> 中构建</li>
+<li>修复 @ved1beta 在 <a href="https://github.com/huggingface/peft/pull/3199">https://github.com/huggingface/peft/pull/3199</a> 中的 module_to_save 中仅限 aux4 kwargs 的模块</li>
+<li>杂务：通过 @rtrompier 在 <a href="https://github.com/huggingface/peft/pull/3198">https://github.com/huggingface/peft/pull/3198</a> 中为主文档构建工作流程凹凸文档构建器 SHA</li>
+<li>通过 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3189">https://github.com/huggingface/peft/pull/3189</a> 中修复了位和字节的 PVeRA 前向实现</li>
+<li>在 <a href="https://github.com/huggingface/peft/pull/3190">https://github.com/huggingface/peft/pull/3190</a> 中更新 GPT-QModel 参考并通过 @Qubitium 弃用 AutoGPTQ</li>
+<li>通过 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3197">https://github.com/huggingface/peft/pull/3197</a> 中修复变形金刚重量转换回归</li>
+<li>将生成器添加到 PVeRA 重新参数化函数中。作者：@leofillioux，<a href="https://github.com/huggingface/peft/pull/3200">https://github.com/huggingface/peft/pull/3200</a></li>
+<li>在 <a href="https://github.com/huggingface/peft/pull/3195">https://github.com/huggingface/peft/pull/3195</a> 中添加 BEFT 作为新的 PEFT 方法 @whubaichuan</li>
+<li>feat(adalora): 在 <a href="https://github.com/huggingface/peft/pull/3196">https://github.com/huggingface/peft/pull/3196</a> 中添加 SVDConv2d 以支持 torch.nn.Conv2d 目标模块 @Anai-Guo</li>
+<li>@Joluck 在 <a href="https://github.com/huggingface/peft/pull/3194">https://github.com/huggingface/peft/pull/3194</a> 中更新 MiSS</li>
+<li><a href="https://github.com/huggingface/peft/pull/3206">https://github.com/huggingface/peft/pull/3206</a> 中 @dependabot[bot] 在 ci-actions 组中将操作/缓存从 5.0.4 提升到 5.0.5</li>
+<li>通过 @dependabot[bot] 在 <a href="https://github.com/huggingface/peft/pull/3207">https://github.com/huggingface/peft/pull/3207</a> 中通过 7 项更新来冲击第三方操作组</li>
+<li>修复@BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3205">https://github.com/huggingface/peft/pull/3205</a> 中对 Gemma 4 进行前缀调整时出现的错误</li>
+<li>修复 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3215">https://github.com/huggingface/peft/pull/3215</a> 中使用小型 Gemma 4 模型进行更快的测试</li>
+<li>通过 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3212">https://github.com/huggingface/peft/pull/3212</a> 中修复状态字典注入和重量转换</li>
+<li>修复：在 _ConvNd.unmerge 中使用 torch.div 进行偏置（原为 torch.mul），由 <a href="https://github.com/huggingface/peft/pull/3216">https://github.com/huggingface/peft/pull/3216</a> 中的 @Chessing234 执行</li>
+<li>Pull 请求：通过 @hqsiswiliam 在 <a href="https://github.com/huggingface/peft/pull/2668">https://github.com/huggingface/peft/pull/2668</a> 中将 HiRA 集成添加到 PEFT 库中</li>
+<li>添加 KappaTuneSelector：<a href="https://github.com/huggingface/peft/pull/3106">https://github.com/huggingface/peft/pull/3106</a> 中 @oswaldoludwig 基于条件数的自动 LoRA 目标选择</li>
+<li>实施 VeLoRA 并添加测试。作者：@roymiles 在 <a href="https://github.com/huggingface/peft/pull/3159">https://github.com/huggingface/peft/pull/3159</a></li>
+<li>在<a href="https://github.com/huggingface/peft/pull/3144%E4%B8%AD@RudrenduPaul%E4%B8%BAmerge_utils%E5%92%8C%E5%85%B6%E4%BB%96%E6%A8%A1%E5%9D%97%E4%B8%AD%E7%9A%84%E5%AE%9E%E7%94%A8%E5%87%BD%E6%95%B0%E6%B7%BB%E5%8A%A0%E7%B1%BB%E5%9E%8B%E6%8F%90%E7%A4%BA">https://github.com/huggingface/peft/pull/3144中@RudrenduPaul为merge_utils和其他模块中的实用函数添加类型提示</a></li>
+<li>修复<a href="https://github.com/huggingface/peft/pull/3218%E4%B8%AD@kaixuanliu%E7%9A%84beft%E7%A4%BA%E4%BE%8B%E6%95%B0%E6%8D%AE%E9%9B%86%E7%89%88%E6%9C%AC%E7%9A%84%E5%85%BC%E5%AE%B9%E9%97%AE%E9%A2%98">https://github.com/huggingface/peft/pull/3218中@kaixuanliu的beft示例数据集版本的兼容问题</a></li>
+<li>通过 @kaixuanliu 在 <a href="https://github.com/huggingface/peft/pull/3226">https://github.com/huggingface/peft/pull/3226</a> 中完善 <code>test_lora_seq2seq_lm_multi_gpu_inference</code> 的测试用例</li>
+<li>修复<a href="https://github.com/huggingface/peft/pull/3228%E4%B8%AD@kaixuanliu%E9%92%88%E5%AF%B9%E5%A4%9A%E8%AE%BE%E5%A4%87%E5%9C%BA%E6%99%AF%E7%9A%84CI%E9%94%99%E8%AF%AF">https://github.com/huggingface/peft/pull/3228中@kaixuanliu针对多设备场景的CI错误</a></li>
+<li>通过 @kaixuanliu 在 <a href="https://github.com/huggingface/peft/pull/3225">https://github.com/huggingface/peft/pull/3225</a> 中完善 test_causal_lm_training_multi_accelerator 测试用例</li>
+<li>杂务：@BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3202">https://github.com/huggingface/peft/pull/3202</a> 中升级围脖 0.15.12</li>
+<li>DOC 改进 LoHa 文档，包括概述、何时使用和快速入门示例……作者为 <a href="https://github.com/huggingface/peft/pull/3224">https://github.com/huggingface/peft/pull/3224</a> 中的 @Dhruv-1710
+*修复（xlora）：<a href="https://github.com/huggingface/peft/pull/3235%E4%B8%AD@vip892766gma%E5%9C%A8%E9%80%82%E9%85%8D%E5%99%A8%E8%AD%A6%E5%91%8A%E6%B6%88%E6%81%AF%E4%B8%AD%E9%87%8D%E5%A4%8D%E2%80%9Cfor%E2%80%9D">https://github.com/huggingface/peft/pull/3235中@vip892766gma在适配器警告消息中重复“for”</a></li>
+<li>文档：通过 @vedantnavle13 在 <a href="https://github.com/huggingface/peft/pull/3231">https://github.com/huggingface/peft/pull/3231</a> 中的实践指导和 LLM 示例改进 MiSS 文档</li>
+<li>CI 从 <a href="https://github.com/huggingface/peft/pull/3248">https://github.com/huggingface/peft/pull/3248</a> 中 @BenjaminBossan 的 Docker 文件中删除变压器引擎</li>
+<li>由 <a href="https://github.com/huggingface/peft/pull/2943">https://github.com/huggingface/peft/pull/2943</a> 中的 @victor7246 将 MonteCLoRA（接受 TMLR 2025）集成到 PEFT 中</li>
+<li>将 /examples/hra_dreambooth 中的扩散器从 0.34.0 提升到 0.38.0，由 @dependabot[bot] 在 <a href="https://github.com/huggingface/peft/pull/3250">https://github.com/huggingface/peft/pull/3250</a> 中实现</li>
+<li>杂务：在 import_utils 和 <a href="https://github.com/huggingface/peft/pull/3245">https://github.com/huggingface/peft/pull/3245</a> 中的 @lphuc2250gma 中添加缺少的返回类型注释</li>
+<li>TST 删除 <a href="https://github.com/huggingface/peft/pull/3242">https://github.com/huggingface/peft/pull/3242</a> 中 @BenjaminBossan 对 trust_remote_code 的不必要使用</li>
+<li>修复编译热插拔的准备模型需要 <a href="https://github.com/huggingface/peft/pull/3241">https://github.com/huggingface/peft/pull/3241</a> 中@BenjaminBossan 的 grad</li>
+<li>DOC 修复 <a href="https://github.com/huggingface/peft/pull/3249">https://github.com/huggingface/peft/pull/3249</a> 中 @blipbyte 的 helpers.py 文档字符串示例中的错误导入</li>
+<li>修复变形金刚重量转换，撤消 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3262">https://github.com/huggingface/peft/pull/3262</a> 中的不正确的键重命名</li>
+<li>[BUG 修复] 调谐器/lora/eva：在 <a href="https://github.com/huggingface/peft/pull/3247">https://github.com/huggingface/peft/pull/3247</a> 中使用 ‘in’ 而不是 @Dev-X25874 的 dict 的 hasattr 修复标签面罩防护</li>
+<li>杂务：在 <a href="https://github.com/huggingface/peft/pull/3272">https://github.com/huggingface/peft/pull/3272</a> 中添加 @lphuc2250gma 缺少的返回类型注释</li>
+<li>TST 正确解析 <a href="https://github.com/huggingface/peft/pull/3263">https://github.com/huggingface/peft/pull/3263</a> 中 @BenjaminBossan 的 GLUE 数据集</li>
+<li>SEC 在 <a href="https://github.com/huggingface/peft/pull/3273">https://github.com/huggingface/peft/pull/3273</a> 中通过@BenjaminBossan 为 Dependabot 添加 7 天冷却时间</li>
+<li>DOC 修复 <a href="https://github.com/huggingface/peft/pull/3254">https://github.com/huggingface/peft/pull/3254</a> 中 @blipbyte 的调谐器 model.py 文件中损坏的文档字符串示例</li>
+<li>通过 <a href="https://github.com/huggingface/peft/pull/3276">https://github.com/huggingface/peft/pull/3276</a> 中@dependabot[bot] 的 4 项更新来冲击第三方操作组</li>
+<li>修复(tuners/lora/torchao): 让 get_apply_tensor_subclass 成为可选 (#3223) by @Anai-Guo in <a href="https://github.com/huggingface/peft/pull/3234">https://github.com/huggingface/peft/pull/3234</a></li>
+<li>修复 <a href="https://github.com/huggingface/peft/pull/3230">https://github.com/huggingface/peft/pull/3230</a> 中 @BenjaminBossan 的变形金刚重量转换 PEFT 模型前缀</li>
+<li>通过 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3284">https://github.com/huggingface/peft/pull/3284</a> 中修复 rename_source_key 中的 Transformers 参数名称</li>
+<li>DOC 修复 <a href="https://github.com/huggingface/peft/pull/3286">https://github.com/huggingface/peft/pull/3286</a> 中 @javierdejesusda 的调谐器配置文档字符串中不正确的类引用</li>
+<li>避免 TP helper 导入非 TP 分布式 LoRA 负载，由 <a href="https://github.com/huggingface/peft/pull/3261">https://github.com/huggingface/peft/pull/3261</a> 中的 @jiqing-feng 提供</li>
+<li>在 <a href="https://github.com/huggingface/peft/pull/3277">https://github.com/huggingface/peft/pull/3277</a> 中添加 @githubnemo 的 BEFT 和 HiRA 结果</li>
+<li>在 <a href="https://github.com/huggingface/peft/pull/3256">https://github.com/huggingface/peft/pull/3256</a> 中添加 @anrohanro 的 PVeRA 排名消融基准实验</li>
+<li>实验方法比较#2310：adya-Prasad 在<a href="https://github.com/huggingface/peft/pull/3301">https://github.com/huggingface/peft/pull/3301</a> 中的adaptation_prompt</li>
+<li>在<a href="https://github.com/huggingface/peft/pull/3296%E4%B8%AD%E6%B7%BB%E5%8A%A0@eSVeeF%E7%9A%84%E8%A7%A3%E8%80%A6%E6%9D%83%E9%87%8D%E8%A1%B0%E5%87%8F%E4%B8%80%E6%AD%A5%E6%9B%B4%E6%96%B0%E6%B5%8B%E8%AF%95">https://github.com/huggingface/peft/pull/3296中添加@eSVeeF的解耦权重衰减一步更新测试</a></li>
+<li>@BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3082">https://github.com/huggingface/peft/pull/3082</a> 中的图像生成基准</li>
+<li>@BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3117">https://github.com/huggingface/peft/pull/3117</a> 中对 BOFT、MiSS、VeRA 的通用量化支持</li>
+<li>CI GPU 运行：由于 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3253">https://github.com/huggingface/peft/pull/3253</a> 中的 pcre，从 Docker 文件中删除 gptmodel</li>
+<li>DOC 修复 <a href="https://github.com/huggingface/peft/pull/3281">https://github.com/huggingface/peft/pull/3281</a> 中@BenjaminBossan 文档字符串中错误的函数名称</li>
+<li>修复当其他适配器部分匹配 <a href="https://github.com/huggingface/peft/pull/3282">https://github.com/huggingface/peft/pull/3282</a> 中 @BenjaminBossan 的名称时保存适配器</li>
+<li>TST 回归测试由 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3285">https://github.com/huggingface/peft/pull/3285</a> 中懒惰地下载回归工件</li>
+<li>CHORE 在 <a href="https://github.com/huggingface/peft/pull/3288">https://github.com/huggingface/peft/pull/3288</a> 中添加 @BenjaminBossan 的编码代理说明</li>
+<li>修复 TST 失败的 HiRA 和 EETQ GPU 测试。作者：@BenjaminBossan，<a href="https://github.com/huggingface/peft/pull/3287">https://github.com/huggingface/peft/pull/3287</a></li>
+<li><a href="https://github.com/huggingface/peft/pull/3303">https://github.com/huggingface/peft/pull/3303</a> 中@githubnemo 的独立、可嵌入方法比较空间</li>
+<li>修复@BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3308">https://github.com/huggingface/peft/pull/3308</a> 中的图像基准数据集错误的提示顺序</li>
+<li>修复 <a href="https://github.com/huggingface/peft/pull/3312">https://github.com/huggingface/peft/pull/3312</a> 中 @githubnemo 的应用程序部署 CI 问题</li>
+<li>方法比较：@BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3313">https://github.com/huggingface/peft/pull/3313</a> 中生成图像的结果</li>
+<li>方法比较：<a href="https://github.com/huggingface/peft/pull/3314">https://github.com/huggingface/peft/pull/3314</a> 中 @BenjaminBossan 的图像生成基准评估脚本</li>
+<li>修复 <a href="https://github.com/huggingface/peft/pull/3316">https://github.com/huggingface/peft/pull/3316</a> 中 @githubnemo 的应用程序部署 CI 问题</li>
+<li>方法比较：图像基准测试显示了 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3309">https://github.com/huggingface/peft/pull/3309</a> 中的示例图像</li>
+<li>修复了<a href="https://github.com/huggingface/peft/pull/3318%E4%B8%AD@MichalMraz%E5%9C%A8MoE%E6%A8%A1%E5%9E%8B%E4%B8%AD%E5%8C%B9%E9%85%8D%E9%94%99%E8%AF%AF%E7%B4%A2%E5%BC%95%E7%9A%84layers_to_transform">https://github.com/huggingface/peft/pull/3318中@MichalMraz在MoE模型中匹配错误索引的layers_to_transform</a></li>
+<li>@githubnemo 在 <a href="https://github.com/huggingface/peft/pull/3300">https://github.com/huggingface/peft/pull/3300</a> 中重新构建文档</li>
+<li>文档：修复 <a href="https://github.com/huggingface/peft/pull/3326">https://github.com/huggingface/peft/pull/3326</a> 中 @DaoyuanLi2816 的 OFTConfig 文档字符串（参数、具体）中的拼写错误</li>
+<li>通过 <a href="https://github.com/huggingface/peft/pull/3310">https://github.com/huggingface/peft/pull/3310</a> 中的 @AshNicolus 使 slice_pca SVD 具有确定性，修复 AdaMSS 保存/加载复制</li>
+<li>文档：使API参考在<a href="https://github.com/huggingface/peft/pull/3325%E4%B8%AD%E7%94%B1@githubnemo%E6%8E%92%E5%BA%8F%E5%92%8C%E6%8A%98%E5%8F%A0">https://github.com/huggingface/peft/pull/3325中由@githubnemo排序和折叠</a></li>
+<li>FEAT 在 <a href="https://github.com/huggingface/peft/pull/3317">https://github.com/huggingface/peft/pull/3317</a> 添加 @BenjaminBossan 的 PEFT 商店 Gradio 空间</li>
+<li>修复 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3332">https://github.com/huggingface/peft/pull/3332</a> 中的 PEFT Shop 部署工作流程错误</li>
+<li>修复 <a href="https://github.com/huggingface/peft/pull/3334">https://github.com/huggingface/peft/pull/3334</a> 中 @BenjaminBossan 的 PEFT Shop 部署工作流程错误 2</li>
+<li>修复 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3335">https://github.com/huggingface/peft/pull/3335</a> 中提取 PEFT 商店应用程序描述的问题</li>
+<li>文档：通过 @DaoyuanLi2816 在 <a href="https://github.com/huggingface/peft/pull/3319">https://github.com/huggingface/peft/pull/3319</a> 中同步 PEFT 配置文档字符串及其字段</li>
+<li>MetaMathQA：<a href="https://github.com/huggingface/peft/pull/3337">https://github.com/huggingface/peft/pull/3337</a> 中的 @githubnemo 针对 IA3 的优化配置</li>
+<li>修复 <a href="https://github.com/huggingface/peft/pull/3328">https://github.com/huggingface/peft/pull/3328</a> 中 @DaoyuanLi2816 的文档字符串、注释和文档中的拼写错误</li>
+<li>在 <a href="https://github.com/huggingface/peft/pull/3270">https://github.com/huggingface/peft/pull/3270</a> 中添加@Bane-Elvin 的功能/添加 frod</li>
+<li>重构：@eSVeeF 在 <a href="https://github.com/huggingface/peft/pull/3336">https://github.com/huggingface/peft/pull/3336</a> 中对 peft_model 中的重复数据删除提示学习 kwarg 调整</li>
+<li>文档：通过<a href="https://github.com/huggingface/peft/pull/3343%E4%B8%AD%E7%9A%84@githubnemo%E6%BE%84%E6%B8%85subtract_mutated_init">https://github.com/huggingface/peft/pull/3343中的@githubnemo澄清subtract_mutated_init</a></li>
+<li>DOC 修复了 <a href="https://github.com/huggingface/peft/pull/3291">https://github.com/huggingface/peft/pull/3291</a> 中 @javierdejesusda 的 hira 和 ln_tuning 模型文档字符串中不正确的 LoRA 引用</li>
+<li>修复 <a href="https://github.com/huggingface/peft/pull/3302">https://github.com/huggingface/peft/pull/3302</a> 中 @BenjaminBossan 在根模块上定位 nn.Parameter 时的错误</li>
+<li>DOC：通过<a href="https://github.com/huggingface/peft/pull/3271%E4%B8%AD%E7%9A%84@kratos0718%E4%BF%AE%E5%A4%8Dset_requires_grad%E6%96%87%E6%A1%A3%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E7%9A%84adapter_names%E5%8F%82%E6%95%B0%E5%90%8D%E7%A7%B0">https://github.com/huggingface/peft/pull/3271中的@kratos0718修复set_requires_grad文档字符串中的adapter_names参数名称</a></li>
+<li>TST 在 <a href="https://github.com/huggingface/peft/pull/3304">https://github.com/huggingface/peft/pull/3304</a> 中添加@BenjaminBossan 对热插拔目标 LoRA 参数的测试
+*云母由<a href="https://github.com/huggingface/peft/pull/3260%E4%B8%AD%E7%9A%84@sr-networks%E6%8F%90%E4%BE%9B">https://github.com/huggingface/peft/pull/3260中的@sr-networks提供</a></li>
+<li>TST 在 <a href="https://github.com/huggingface/peft/pull/3361">https://github.com/huggingface/peft/pull/3361</a> 中扩展 @BenjaminBossan 的多个主动适配器测试</li>
+<li>修复：增加 FRoD init_weights=False std 以防止 @peft-jambot 在 <a href="https://github.com/huggingface/peft/pull/3353">https://github.com/huggingface/peft/pull/3353</a> 中进行片状测试</li>
+<li>CI 测试：在 <a href="https://github.com/huggingface/peft/pull/3339">https://github.com/huggingface/peft/pull/3339</a> 中扩展 @BenjaminBossan 忽略的路径</li>
+<li>如果 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3351">https://github.com/huggingface/peft/pull/3351</a> 中未找到内核，则 CI 跳过 EETQ 测试</li>
+<li>在 <a href="https://github.com/huggingface/peft/pull/3341">https://github.com/huggingface/peft/pull/3341</a> 中添加 @spideyashith 的图像生成基准 DoRA 实验</li>
+<li>在 <a href="https://github.com/huggingface/peft/pull/3364">https://github.com/huggingface/peft/pull/3364</a> 中通过 @DaoyuanLi2816 在 MultiheadAttention 和 VBLoRA 增量权重中修复 CPU 上的 bf16 适配器到 fp32 的 Upcast bf16 适配器</li>
+<li>修复混合：<a href="https://github.com/huggingface/peft/pull/3366">https://github.com/huggingface/peft/pull/3366</a> 中的 @DaoyuanLi2816 对所有兼容的调音器（不仅仅是 lora_only）尊重偏差=’<prefix>_only’</prefix></li>
+<li>将函数文档字符串与<a href="https://github.com/huggingface/peft/pull/3329%E4%B8%AD%E7%9A%84@DaoyuanLi2816%E7%9A%84%E7%AD%BE%E5%90%8D%E5%90%8C%E6%AD%A5">https://github.com/huggingface/peft/pull/3329中的@DaoyuanLi2816的签名同步</a></li>
+<li>TST 在 <a href="https://github.com/huggingface/peft/pull/3362">https://github.com/huggingface/peft/pull/3362</a> 中添加 @eSVeeF 专用的 BD-LoRA 数学正确性测试套件（后续 #2895）</li>
+<li>修复<a href="https://github.com/huggingface/peft/pull/3365%E4%B8%AD@DaoyuanLi2816%E5%9C%A8CPTConfig%E5%92%8CRandLoraConfig%E4%B8%AD%E8%B0%83%E7%94%A8super().__post_init__()">https://github.com/huggingface/peft/pull/3365中@DaoyuanLi2816在CPTConfig和RandLoraConfig中调用super().__post_init__()</a></li>
+<li>在<a href="https://github.com/huggingface/peft/pull/3098%E4%B8%AD%E6%B7%BB%E5%8A%A0@not-lain%E7%9A%84%E6%A0%BC%E6%B4%9B%E6%8B%89">https://github.com/huggingface/peft/pull/3098中添加@not-lain的格洛拉</a></li>
+<li>通过 @KaiyangLi1992 在 <a href="https://github.com/huggingface/peft/pull/3257">https://github.com/huggingface/peft/pull/3257</a> 中将 UniLora 调谐器添加到 PEFT</li>
+<li>修复从 <a href="https://github.com/huggingface/peft/pull/3279">https://github.com/huggingface/peft/pull/3279</a> 中的 @SHAI-Akshay-Tripathi 的 peft.<strong>all</strong> 中删除重复的 VBLoRAConfig 条目</li>
+<li>通过 @dependabot[bot] 在 <a href="https://github.com/huggingface/peft/pull/3374">https://github.com/huggingface/peft/pull/3374</a> 中进行 4 次更新来冲击 ci-actions 组</li>
+<li>DOC 修复了 <a href="https://github.com/huggingface/peft/pull/3331">https://github.com/huggingface/peft/pull/3331</a> 中@BenjaminBossan 的 LoRA-GA“使用提示”小节</li>
+<li>FEAT 在 <a href="https://github.com/huggingface/peft/pull/3342">https://github.com/huggingface/peft/pull/3342</a> 中添加 @MAXNORM8650 的 DEFT（分解高效微调 (NeurIPS’25)）</li>
+<li>ENH 在 <a href="https://github.com/huggingface/peft/pull/3350">https://github.com/huggingface/peft/pull/3350</a> 中使用 @BenjaminBossan 的 target_parameters 时允许多个适配器</li>
+<li>文档：通过 @SanjayMuthuswamy 在 <a href="https://github.com/huggingface/peft/pull/3386">https://github.com/huggingface/peft/pull/3386</a> 中改进 VeRA 概念解释和参数缩放</li>
+<li>文档：修复 <a href="https://github.com/huggingface/peft/pull/3392">https://github.com/huggingface/peft/pull/3392</a> 中 @lxcxjxhx 的自述文件示例中缺少的 torch 导入和变量名称</li>
+<li>CI Pin 内核版本由 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3377">https://github.com/huggingface/peft/pull/3377</a> 中提供</li>
+<li>修复 <a href="https://github.com/huggingface/peft/pull/3232">https://github.com/huggingface/peft/pull/3232</a> 中 @1fanwang 解决 MoE 配置转换中的正则表达式 target_modules</li>
+<li>@mishig25 在 <a href="https://github.com/huggingface/peft/pull/3393">https://github.com/huggingface/peft/pull/3393</a> 中使文档构建速度更快</li>
+<li>TST 跳过失败的扩散器测试，直到 v0.40.0 由 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3394">https://github.com/huggingface/peft/pull/3394</a> 中</li>
+<li>修复（utils）：在 @umutonuryasar 在 <a href="https://github.com/huggingface/peft/pull/3293">https://github.com/huggingface/peft/pull/3293</a> 中的 prepare_model_for_kbit_training 中 fp16→fp32 转换后调用empty_cache()</li>
+<li>通过 @A1c0r-Z 在 <a href="https://github.com/huggingface/peft/pull/3289">https://github.com/huggingface/peft/pull/3289</a> 中为 nemotron_h 混合 Mamba-MoE 模型添加默认 target_modules</li>
+<li>CI 修复了 Windows 在 <a href="https://github.com/huggingface/peft/pull/3399">https://github.com/huggingface/peft/pull/3399</a> 中加载稳定扩散模型时出现的错误（@BenjaminBossan）</li>
+<li>壮举：@isha822 在 <a href="https://github.com/huggingface/peft/pull/3219">https://github.com/huggingface/peft/pull/3219</a> 中基于注册表调度线性层中的resolve_lora_variant</li>
+<li>修复：删除 LoRA get_delta_weight 中的无效代码，并通过 <a href="https://github.com/huggingface/peft/pull/3396">https://github.com/huggingface/peft/pull/3396</a> 中的 @lxcxjxhx 修复不安全的合并数据类型不一致问题</li>
+<li>修复 <a href="https://github.com/huggingface/peft/pull/3398">https://github.com/huggingface/peft/pull/3398</a> 中 @DaoyuanLi2816 的示例、测试和文档中的拼写错误</li>
+<li>DOC Expand 贡献安装指南，包含 @Strongich 在 <a href="https://github.com/huggingface/peft/pull/3406">https://github.com/huggingface/peft/pull/3406</a> 中的 fork 和设置步骤</li>
+<li>修复注册每个适配器容器，以便delete_adapter通过<a href="https://github.com/huggingface/peft/pull/3376%E4%B8%AD%E7%9A%84@DaoyuanLi2816%E5%88%A0%E9%99%A4%E5%AE%83%E4%BB%AC%EF%BC%88unilora%E3%80%81fourierft%E3%80%81psoft%EF%BC%89">https://github.com/huggingface/peft/pull/3376中的@DaoyuanLi2816删除它们（unilora、fourierft、psoft）</a></li>
+<li>修复 <a href="https://github.com/huggingface/peft/pull/3410">https://github.com/huggingface/peft/pull/3410</a> 中 @DaoyuanLi2816 的 autocast_adapter_dtype=False 的 fp16/bf16 适配器上的 reduce_intruder_dimension 崩溃问题</li>
+<li>修复 GLoRA safe_merge 在 <a href="https://github.com/huggingface/peft/pull/3411">https://github.com/huggingface/peft/pull/3411</a> 中 @DaoyuanLi2816 的 isfinite 检查之前改变基础层的问题</li>
+<li>修复 <a href="https://github.com/huggingface/peft/pull/3418">https://github.com/huggingface/peft/pull/3418</a> 中@kaixuanliu bnb 反量化的设备不匹配问题</li>
+<li>@githubnemo 在 <a href="https://github.com/huggingface/peft/pull/3322">https://github.com/huggingface/peft/pull/3322</a> 中对应用程序嵌入进行了小幅改进</li>
+<li>改进 IA3 文档：在 <a href="https://github.com/huggingface/peft/pull/3417">https://github.com/huggingface/peft/pull/3417</a> 中添加使用指南、模块选择技巧和 @DresdenGman 的 LoRA 比较</li>
+<li>修复了 <a href="https://github.com/huggingface/peft/pull/3419">https://github.com/huggingface/peft/pull/3419</a> 中 @BenjaminBossan 在 MetaMathQA 中忘记度量的错误</li>
+<li>由 @githubnemo 在 <a href="https://github.com/huggingface/peft/pull/3432">https://github.com/huggingface/peft/pull/3432</a> 中创建 SECURITY.md</li>
+<li>通过 @githubnemo 在 <a href="https://github.com/huggingface/peft/pull/3445">https://github.com/huggingface/peft/pull/3445</a> 中更新 MetaMAthQA 结果</li>
+<li>修复：<a href="https://github.com/huggingface/peft/pull/3454">https://github.com/huggingface/peft/pull/3454</a> 中 @hanu-14 的自述文件中将 http:// 升级为 https://</li>
+<li>CI：通过 <a href="https://github.com/huggingface/peft/pull/3375">https://github.com/huggingface/peft/pull/3375</a> 中的 @dependabot[bot] 进行 7 次更新，将第三方操作组跨越 1 个目录</li>
+<li>当 @c-tonneslan 在 <a href="https://github.com/huggingface/peft/pull/3255">https://github.com/huggingface/peft/pull/3255</a> 中未安装 gptqmodel 时，从 is_gptqmodel_available 返回 False</li>
+<li>方法对比：修复@BenjaminBossan在<a href="https://github.com/huggingface/peft/pull/3463%E4%B8%AD%E7%9A%84%E9%80%82%E9%85%8D%E6%8F%90%E7%A4%BA%E5%AE%9E%E9%AA%8C">https://github.com/huggingface/peft/pull/3463中的适配提示实验</a></li>
+<li>修复：在 <a href="https://github.com/huggingface/peft/pull/3462">https://github.com/huggingface/peft/pull/3462</a> 中将 bare except 替换为 @lxcxjxhx 的 except Exception</li>
+<li>修复 BdLoraConfig.nblocks 默认为元组而不是 <a href="https://github.com/huggingface/peft/pull/3456">https://github.com/huggingface/peft/pull/3456</a> 中 @Osamaali313 的 int</li>
+<li>ENH：当 <a href="https://github.com/huggingface/peft/pull/3415">https://github.com/huggingface/peft/pull/3415</a> 中的@immu4989 的基本模型参数位于元设备上时，在 get_peft_model 中发出警告</li>
+<li>在 <a href="https://github.com/huggingface/peft/pull/3464">https://github.com/huggingface/peft/pull/3464</a> 中 @eduanmoldeep 跟踪 method_comparison 基准测试结果中的 git 脏状态 (#3384)</li>
+<li>通过 @DaoyuanLi2816 在 <a href="https://github.com/huggingface/peft/pull/3434">https://github.com/huggingface/peft/pull/3434</a> 中修复不支持层上的 UnboundLocalError 导致 DeLoRA 崩溃</li>
+<li>修复 HiRA ConvNd 层，组 > 1 向前崩溃，而不仅仅是由 @DaoyuanLi2816 在 <a href="https://github.com/huggingface/peft/pull/3430">https://github.com/huggingface/peft/pull/3430</a> 中合并</li>
+<li>修复 @DaoyuanLi2816 在 <a href="https://github.com/huggingface/peft/pull/3422">https://github.com/huggingface/peft/pull/3422</a> 中添加重叠适配器时 TinyLoRA Weight_tying 损坏的问题</li>
+<li>修复 DEFT 的缓存合并因子：精度损失和设备陈旧，作者：<a href="https://github.com/huggingface/peft/pull/3412">https://github.com/huggingface/peft/pull/3412</a> 中的 @DaoyuanLi2816</li>
+<li>通过 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3381">https://github.com/huggingface/peft/pull/3381</a> 中修复 MiSS 与某些量化后端的 bat init 错误</li>
+<li>由 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3388">https://github.com/huggingface/peft/pull/3388</a> 中发布 0.20.0</li>
+<li>通过 @githubnemo 在 <a href="https://github.com/huggingface/peft/pull/3466">https://github.com/huggingface/peft/pull/3466</a> 中更新 AdaptionPrompt 结果</li>
+<li>在<a href="https://github.com/huggingface/peft/pull/3321%E4%B8%AD%E6%B7%BB%E5%8A%A0@githubnemo%E5%AF%B9SHiRA%E7%9A%84%E9%87%8F%E5%8C%96%E6%94%AF%E6%8C%81">https://github.com/huggingface/peft/pull/3321中添加@githubnemo对SHiRA的量化支持</a></li>
+<li>通过 @DaoyuanLi2816 在 <a href="https://github.com/huggingface/peft/pull/3440">https://github.com/huggingface/peft/pull/3440</a> 中修复 LoHa 和 LoKr 中的分组卷积</li>
+<li>修复：<a href="https://github.com/huggingface/peft/pull/3315">https://github.com/huggingface/peft/pull/3315</a> 中 @eSVeeF 尊重优化器中特定于层的 LoRA-FA 缩放</li>
+<li>通过 <a href="https://github.com/huggingface/peft/pull/3427">https://github.com/huggingface/peft/pull/3427</a> 中的 @eSVeeF 修复了用于热交换的分组 Conv2d LoRA 排名填充 (#3416)</li>
+<li>通过 @peft-jambot 在 <a href="https://github.com/huggingface/peft/pull/3471">https://github.com/huggingface/peft/pull/3471</a> 中修复 Gemma4 前缀调整与 per_layer_config</li>
+<li>AI：根据@BenjaminBossan在<a href="https://github.com/huggingface/peft/pull/3459%E7%9A%84%E6%9C%80%E6%96%B0%E7%BB%8F%E9%AA%8C%E6%9B%B4%E6%96%B0%E8%B4%A1%E7%8C%AE%E6%8C%87%E5%8D%97">https://github.com/huggingface/peft/pull/3459的最新经验更新贡献指南</a></li>
+<li>CI 仅在 @BenjaminBossan 在 <a href="https://github.com/huggingface/peft/pull/3469">https://github.com/huggingface/peft/pull/3469</a> 中的一次运行中启用测试覆盖率</li>
+<li>通过 @DaoyuanLi2816 在 <a href="https://github.com/huggingface/peft/pull/3438">https://github.com/huggingface/peft/pull/3438</a> 中验证 GraLoRA、AdaLoRA、WaveFT 和 AdaMSS 配置</li>
+<li>AutoPeftModel 中的前向修订和标记由 @DaoyuanLi2816 在 <a href="https://github.com/huggingface/peft/pull/3442">https://github.com/huggingface/peft/pull/3442</a> 中加载</li>
+<li>在<a href="https://github.com/huggingface/peft/pull/3000%E4%B8%AD%E6%B7%BB%E5%8A%A0@Isalia20%E8%8E%B7%E5%8F%96%E5%9F%BA%E6%9C%AC%E6%A8%A1%E5%9E%8B%E7%8A%B6%E6%80%81%E5%AD%97%E5%85%B8">https://github.com/huggingface/peft/pull/3000中添加@Isalia20获取基本模型状态字典</a></li>
+<li>@githubnemo 在 <a href="https://github.com/huggingface/peft/pull/3483">https://github.com/huggingface/peft/pull/3483</a> 中的新 PEFT 方法的 Imagegen 结果</li>
+</ul>
+<h2 id="新贡献者">新贡献者</h2>
+<ul>
+<li>@rtrompier 在 <a href="https://github.com/huggingface/peft/pull/3162">https://github.com/huggingface/peft/pull/3162</a> 中做出了第一个贡献</li>
+<li>@Anai-Guo 在 <a href="https://github.com/huggingface/peft/pull/3161">https://github.com/huggingface/peft/pull/3161</a> 中做出了第一个贡献</li>
+<li>@Adya-Prasad 在 <a href="https://github.com/huggingface/peft/pull/3171">https://github.com/huggingface/peft/pull/3171</a> 中做出了第一个贡献</li>
+<li>@whubaichuan 在 <a href="https://github.com/huggingface/peft/pull/3195">https://github.com/huggingface/peft/pull/3195</a> 中做出了第一个贡献</li>
+<li>@hqsiswiliam 在 <a href="https://github.com/huggingface/peft/pull/2668">https://github.com/huggingface/peft/pull/2668</a> 中做出了第一个贡献</li>
+<li>@oswaldoludwig 在 <a href="https://github.com/huggingface/peft/pull/3106">https://github.com/huggingface/peft/pull/3106</a> 中做出了第一个贡献</li>
+<li>@roymiles 在 <a href="https://github.com/huggingface/peft/pull/3159">https://github.com/huggingface/peft/pull/3159</a> 中做出了第一个贡献</li>
+<li>@RudrenduPaul 在 <a href="https://github.com/huggingface/peft/pull/3144">https://github.com/huggingface/peft/pull/3144</a> 中做出了第一个贡献</li>
+<li>@Dhruv-1710 在 <a href="https://github.com/huggingface/peft/pull/3224">https://github.com/huggingface/peft/pull/3224</a> 中做出了第一个贡献</li>
+<li>@vip892766gma 在 <a href="https://github.com/huggingface/peft/pull/3235">https://github.com/huggingface/peft/pull/3235</a> 中做出了第一个贡献</li>
+<li>@vedantnavle13 在 <a href="https://github.com/huggingface/peft/pull/3231">https://github.com/huggingface/peft/pull/3231</a> 中做出了第一个贡献</li>
+<li>@victor7246 在 <a href="https://github.com/huggingface/peft/pull/2943">https://github.com/huggingface/peft/pull/2943</a> 中做出了第一个贡献</li>
+<li>@lphuc2250gma 在 <a href="https://github.com/huggingface/peft/pull/3245">https://github.com/huggingface/peft/pull/3245</a> 中做出了第一个贡献</li>
+<li>@blipbyte 在 <a href="https://github.com/huggingface/peft/pull/3249">https://github.com/huggingface/peft/pull/3249</a> 中做出了第一个贡献</li>
+<li>@Dev-X25874 在 <a href="https://github.com/huggingface/peft/pull/3247">https://github.com/huggingface/peft/pull/3247</a> 中做出了第一个贡献</li>
+<li>@javierdejesusda 在 <a href="https://github.com/huggingface/peft/pull/3286">https://github.com/huggingface/peft/pull/3286</a> 中做出了第一个贡献</li>
+<li>@anrohanro 在 <a href="https://github.com/huggingface/peft/pull/3256">https://github.com/huggingface/peft/pull/3256</a> 中做出了第一个贡献</li>
+<li>@eSVeeF 在 <a href="https://github.com/huggingface/peft/pull/3296">https://github.com/huggingface/peft/pull/3296</a> 中做出了第一个贡献</li>
+<li>@MichalMraz 在 <a href="https://github.com/huggingface/peft/pull/3318">https://github.com/huggingface/peft/pull/3318</a> 中做出了第一个贡献</li>
+<li>@DaoyuanLi2816 在 <a href="https://github.com/huggingface/peft/pull/3326">https://github.com/huggingface/peft/pull/3326</a> 中做出了第一个贡献</li>
+<li>@AshNicolus 在 <a href="https://github.com/huggingface/peft/pull/3310">https://github.com/huggingface/peft/pull/3310</a> 中做出了第一个贡献</li>
+<li>@Bane-Elvin 在 <a href="https://github.com/huggingface/peft/pull/3270">https://github.com/huggingface/peft/pull/3270</a> 中做出了第一个贡献</li>
+<li>@kratos0718 在 <a href="https://github.com/huggingface/peft/pull/3271">https://github.com/huggingface/peft/pull/3271</a> 中做出了第一个贡献</li>
+<li>@sr-networks 在 <a href="https://github.com/huggingface/peft/pull/3260">https://github.com/huggingface/peft/pull/3260</a> 中做出了第一个贡献</li>
+<li>@peft-jambot 在 <a href="https://github.com/huggingface/peft/pull/3353">https://github.com/huggingface/peft/pull/3353</a> 中做出了第一个贡献</li>
+<li>@spideyashith 在 <a href="https://github.com/huggingface/peft/pull/3341">https://github.com/huggingface/peft/pull/3341</a> 中做出了第一个贡献</li>
+<li>@not-lain 在 <a href="https://github.com/huggingface/peft/pull/3098">https://github.com/huggingface/peft/pull/3098</a> 中做出了第一个贡献</li>
+<li>@KaiyangLi1992 在 <a href="https://github.com/huggingface/peft/pull/3257">https://github.com/huggingface/peft/pull/3257</a> 中做出了第一个贡献</li>
+<li>@SHAI-Akshay-Tripathi 在 <a href="https://github.com/huggingface/peft/pull/3279">https://github.com/huggingface/peft/pull/3279</a> 中做出了第一个贡献</li>
+<li>@MAXNORM8650 在 <a href="https://github.com/huggingface/peft/pull/3342">https://github.com/huggingface/peft/pull/3342</a> 中做出了第一个贡献</li>
+<li>@SanjayMuthuswamy 在 <a href="https://github.com/huggingface/peft/pull/3386">https://github.com/huggingface/peft/pull/3386</a> 中做出了第一个贡献</li>
+<li>@lxcxjxhx 在 <a href="https://github.com/huggingface/peft/pull/3392">https://github.com/huggingface/peft/pull/3392</a> 中做出了第一个贡献</li>
+<li>@1fanwang 在 <a href="https://github.com/huggingface/peft/pull/3232">https://github.com/huggingface/peft/pull/3232</a> 中做出了第一个贡献</li>
+<li>@umutonuryasar 在 <a href="https://github.com/huggingface/peft/pull/3293">https://github.com/huggingface/peft/pull/3293</a> 中做出了第一个贡献</li>
+<li>@A1c0r-Z 在 <a href="https://github.com/huggingface/peft/pull/3289">https://github.com/huggingface/peft/pull/3289</a> 中做出了第一个贡献</li>
+<li>@isha822 在 <a href="https://github.com/huggingface/peft/pull/3219">https://github.com/huggingface/peft/pull/3219</a> 中做出了第一个贡献</li>
+<li>@Strongich 在 <a href="https://github.com/huggingface/peft/pull/3406">https://github.com/huggingface/peft/pull/3406</a> 中做出了第一个贡献</li>
+<li>@DresdenGman 在 <a href="https://github.com/huggingface/peft/pull/3417">https://github.com/huggingface/peft/pull/3417</a> 中做出了第一个贡献</li>
+<li>@hanu-14 在 <a href="https://github.com/huggingface/peft/pull/3454">https://github.com/huggingface/peft/pull/3454</a> 中做出了第一个贡献</li>
+<li>@c-tonneslan 在 <a href="https://github.com/huggingface/peft/pull/3255">https://github.com/huggingface/peft/pull/3255</a> 中做出了第一个贡献</li>
+<li>@Osamaali313 在 <a href="https://github.com/huggingface/peft/pull/3456">https://github.com/huggingface/peft/pull/3456</a> 中做出了第一个贡献</li>
+<li>@immu4989 在 <a href="https://github.com/huggingface/peft/pull/3415">https://github.com/huggingface/peft/pull/3415</a> 中做出了第一个贡献</li>
+<li>@eduanmoldeep 在 <a href="https://github.com/huggingface/peft/pull/3464">https://github.com/huggingface/peft/pull/3464</a> 中做出了第一个贡献</li>
+</ul>
+<p><strong>完整 Changelog</strong>：<a href="https://github.com/huggingface/peft/compare/v0.19.0...v0.20.0">https://github.com/huggingface/peft/compare/v0.19.0…v0.20.0</a></p>
+<hr>
+<blockquote>
+<p>📦 仓库：<a href="https://github.com/huggingface/peft">huggingface/peft</a> · 🏷️ 版本：<code>v0.20.0</code> · 📅 发布：2026-07-28 · <a href="https://github.com/huggingface/peft/releases/tag/v0.20.0">查看英文原版 Release</a></p>
+</blockquote>
+<p><em>本文由 NextStack 自动翻译，内容以官方英文原文为准。</em></p>   </div> <p class="muted" style="margin-top:var(--s8);font-size:12.5px;border-top:1px solid var(--line);padding-top:var(--s4)"> Release Note 由上游项目发布，本站仅索引镜像，版权归原作者所有。 </p> <nav class="pager" aria-label="Release navigation"> <a href="/zh/release_note/peft/peft_v0.21.0"> <span class="k">← 下一个</span> <span class="t">v0.21.0</span> </a> <a href="/zh/release_note/peft/peft_0.19.1"> <span class="k">上一个 →</span> <span class="t">v0.19.1</span> </a> </nav> <aside class="ad-slot" aria-label="广告" data-astro-cid-fgwukgf6><div class="ad-slot-label" data-astro-cid-fgwukgf6>广告</div><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4184355057086168" data-ad-slot="9133765584" data-ad-format="auto" data-full-width-responsive="true" data-astro-cid-fgwukgf6></ins><script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script></aside> </article> <aside class="rail"> <div class="rail-card"> <div class="rail-title">Source</div> <ul class="rail-list"> <li> <a href="https://github.com/huggingface/peft/releases/tag/v0.20.0" target="_blank" rel="noopener"> <span>GitHub 原文</span> <span class="d">↗</span> </a> </li> <li> <a href="https://github.com/huggingface/peft" target="_blank" rel="noopener"> <span>huggingface/peft</span> <span class="d">↗</span> </a> </li> </ul> </div> <div class="rail-card rail-toc"> <div class="rail-title">本页目录</div> <nav> <a href="#新方法" class>新方法</a><a href="#希拉" class="lv3">希拉</a><a href="#格洛拉" class="lv3">格洛拉</a><a href="#贝夫特" class="lv3">贝夫特</a><a href="#蒙特克洛拉" class="lv3">蒙特克洛拉</a><a href="#维罗拉" class="lv3">维罗拉</a><a href="#uni-lora" class="lv3">Uni-LoRA</a><a href="#弗洛德" class="lv3">弗洛德</a><a href="#米卡" class="lv3">米卡</a><a href="#敏捷" class="lv3">敏捷</a><a href="#增强功能" class>增强功能</a><a href="#自动-lora-目标选择" class="lv3">自动 LoRA 目标选择</a><a href="#更广泛的量化支持" class="lv3">更广泛的量化支持</a><a href="#带有-target_parameters-的多个适配器" class="lv3">带有 target_parameters 的多个适配器</a><a href="#conv2d-的-adalora" class="lv3">Conv2d 的 AdaLoRA</a><a href="#文档重组" class="lv3">文档重组</a><a href="#变化" class>变化</a><a href="#autogptq-弃用" class="lv3">AutoGPTQ 弃用</a><a href="#基准测试" class>基准测试</a><a href="#图像生成基准" class="lv3">图像生成基准</a><a href="#元数学qa" class="lv3">元数学QA</a><a href="#peft-商店" class="lv3">PEFT 商店</a><a href="#所有更改" class>所有更改</a><a href="#新贡献者" class>新贡献者</a> </nav> </div> <div class="rail-card"> <div class="rail-title">版本历史</div> <ul class="rail-list"> <li> <a href="/zh/release_note/peft/peft_0.21.3"> <span class="v">v0.21.3</span> <span class="d">26-11-13</span> </a> </li><li> <a href="/zh/release_note/peft/peft_0.21.2"> <span class="v">v0.21.2</span> <span class="d">26-10-01</span> </a> </li><li> <a href="/zh/release_note/peft/peft_0.21.1"> <span class="v">v0.21.1</span> <span class="d">26-09-29</span> </a> </li><li> <a href="/zh/release_note/peft/peft_v0.21.0"> <span class="v">v0.21.0</span> <span class="d">26-09-15</span> </a> </li><li> <a href="/zh/release_note/peft/peft_v0.20.0" aria-current="true"> <span class="v">v0.20.0</span> <span class="d">26-07-28</span> </a> </li><li> <a href="/zh/release_note/peft/peft_0.19.1"> <span class="v">v0.19.1</span> <span class="d">26-04-16</span> </a> </li><li> <a href="/zh/release_note/peft/peft_v0.19.0"> <span class="v">v0.19.0</span> <span class="d">26-04-14</span> </a> </li><li> <a href="/zh/release_note/peft/peft_v0.18.1"> <span class="v">v0.18.1</span> <span class="d">26-01-09</span> </a> </li> </ul> <a href="/zh/releases/peft" class="mono" style="display:inline-block;margin-top:var(--s3);font-size:11.5px;color:var(--ink-3)"> 查看全部 11 条 →
+</a> </div> </aside> </div> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

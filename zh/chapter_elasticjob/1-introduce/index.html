@@ -1,0 +1,212 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**分布式弹性调度系统的简介** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_elasticjob/1-introduce/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_elasticjob/1-introduce"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_elasticjob/1-introduce/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_elasticjob/1-introduce"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**分布式弹性调度系统的简介** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_elasticjob/1-introduce/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_elasticjob/1-introduce/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>elasticjob</h3> <ul> <li> <a href="/zh/chapter_elasticjob/1-introduce" class="lv0" aria-current="page" title="**分布式弹性调度系统的简介**"> **分布式弹性调度系统的简介** </a> </li><li> <a href="/zh/chapter_elasticjob/2-reg" class="lv0" title="**注册中心的设计原理**"> **注册中心的设计原理** </a> </li><li> <a href="/zh/chapter_elasticjob/3-job-config" class="lv0" title="**Builder建造者设计模式构造复杂的作业配置**"> **Builder建造者设计模式构造复杂的作业配置** </a> </li><li> <a href="/zh/chapter_elasticjob/4-job-template" class="lv0" title="**调度作业模版类型设计**"> **调度作业模版类型设计** </a> </li><li> <a href="/zh/chapter_elasticjob/5-job-config-storage" class="lv0" title="**调度作业的配置是如何在分布式场景下存储的？**"> **调度作业的配置是如何在分布式场景下存储的？** </a> </li><li> <a href="/zh/chapter_elasticjob/6-job-registry" class="lv0" title="**线程安全的单例模式设计全局作业注册表JobRegistry**"> **线程安全的单例模式设计全局作业注册表JobRegistry** </a> </li><li> <a href="/zh/chapter_elasticjob/7-quartz" class="lv0" title="**使用Quartz为每个作业创建单机执行的调度器对象**"> **使用Quartz为每个作业创建单机执行的调度器对象** </a> </li><li> <a href="/zh/chapter_elasticjob/8-job-life" class="lv0" title="调度作业启动时的生命周期"> 调度作业启动时的生命周期 </a> </li><li> <a href="/zh/chapter_elasticjob/9-listener" class="lv0" title="**调度作业的监听器大全**"> **调度作业的监听器大全** </a> </li><li> <a href="/zh/chapter_elasticjob/10-leader-latch" class="lv0" title="**基于Zookeeper的分布式锁实现 选举 作业主节点**"> **基于Zookeeper的分布式锁实现 选举 作业主节点** </a> </li><li> <a href="/zh/chapter_elasticjob/11-server-instance" class="lv0" title="**调度作业的服务器IP和进程信息的持久化是如何设计的?**"> **调度作业的服务器IP和进程信息的持久化是如何设计的?** </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_elasticjob">elasticjob</a><span class="sep">/</span><span>**分布式弹性调度系统的简介**</span> </nav> <div class="prose">  <h1 id="分布式弹性调度系统的简介"><strong>分布式弹性调度系统的简介</strong></h1>
+<h1 id="简介">简介</h1>
+<p>Elastic-Job是由当当网基于Quartz 二次开发之后的分布式调度解决方案，是一个分布式调度解决方案，由 2 个相互独立的子项目 ElasticJob-Lite 和 ElasticJob-Cloud 组成。</p>
+<ul>
+<li><strong>ElasticJob-Lite：</strong> 定位为轻量级无中心化解决方案，使用jar的形式提供分布式任务的协调服务。</li>
+<li><strong>ElasticJob-Cloud：</strong> 使用 Mesos 的解决方案，额外提供资源治理、应用分发以及进程隔离等服务。</li>
+</ul>
+<p>Elastic-Job 的各个产品使用统一的作业 API，开发者仅需要一次开发，即可随意部署。</p>
+<p>Elastic-Job开发在 <strong>停滞数年后</strong> ，2020年，Elastic-Job 携首个 <strong>Apache</strong> 版本 3.0.0-alpha 回归！2020年6月，经过<strong>Apache ShardingSphere社区</strong>投票，接纳Elastic-Job为其子项目。</p>
+<p>目前ElasticJob的四个子项目已经正式迁入Apache仓库。并更名为Shardingsphere-Elasticjob。</p>
+<p>对于功能强大的分布式调度系统Elastic-Job很多优秀的分布式设计思想值得学习，接下来本系列文章会针对Elastic-Job版本2.1.5的核心源码与原理进行分析讲解。</p>
+<h2 id="分布式弹性调度系统特征"><strong>分布式弹性调度系统特征</strong></h2>
+<p><img src="/img/chapter_elasticjob/1-1.png" alt="">
+<strong>（1） 弹性调度</strong></p>
+<ul>
+<li>支持任务在分布式场景下的分片和高可用。</li>
+<li>能够水平扩展任务的吞吐量和执行效率。</li>
+<li>任务处理能力随资源配备弹性伸缩。</li>
+</ul>
+<p><strong>（2）资源分配</strong></p>
+<ul>
+<li>在适合的时间将适合的资源分配给任务并使其生效。</li>
+<li>相同任务聚合至相同的执行器统一处理。</li>
+<li>动态调配追加资源至新分配的任务 。</li>
+</ul>
+<p><strong>（3）作业治理</strong></p>
+<ul>
+<li>失效转移执行。</li>
+<li>错过执行作业重新触发。</li>
+<li>自诊断并修复分布式不稳定造成的问题。</li>
+<li>支持并行调度。</li>
+<li>作业调度。</li>
+<li>幂等执行。</li>
+</ul>
+<p><strong>（4）作业依赖（2.x 目前未实现功能TODO，迁移后的项目后期会实现）</strong></p>
+<ul>
+<li>基于有向无环图（DAG）的作业间依赖。</li>
+<li>基于有向无环图（DAG）的作业分片间依赖。</li>
+</ul>
+<p><strong>（5）作业开放生态</strong></p>
+<ul>
+<li>可扩展的作业类型统一接口。</li>
+<li>丰富的作业类型库，如数据流、脚本、HTTP、文件、大数据等</li>
+<li>易于对接业务作业，能够与 Spring 依赖注入无缝整合。</li>
+</ul>
+<p><strong>（6）可视化管控端</strong></p>
+<ul>
+<li>作业管控端。</li>
+<li>作业执行历史数据追踪。</li>
+<li>注册中心管理。</li>
+<li>作业编排管理。</li>
+</ul>
+<h2 id="使用java代码创建第一个调度例子">使用Java代码创建第一个调度例子</h2>
+<h3 id="导入maven包">导入Maven包</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="xml"><code><span class="line"><span style="color:#24292E">&#x3C;</span><span style="color:#22863A">dependency</span><span style="color:#24292E">></span></span>
+<span class="line"><span style="color:#24292E">  &#x3C;</span><span style="color:#22863A">groupId</span><span style="color:#24292E">>com.dangdang&#x3C;/</span><span style="color:#22863A">groupId</span><span style="color:#24292E">></span></span>
+<span class="line"><span style="color:#24292E"> &#x3C;</span><span style="color:#22863A">artifactId</span><span style="color:#24292E">>elastic-job-lite-core&#x3C;/</span><span style="color:#22863A">artifactId</span><span style="color:#24292E">></span></span>
+<span class="line"><span style="color:#24292E"> &#x3C;</span><span style="color:#22863A">version</span><span style="color:#24292E">>2.1.5&#x3C;/</span><span style="color:#22863A">version</span><span style="color:#24292E">></span></span>
+<span class="line"><span style="color:#24292E">&#x3C;/</span><span style="color:#22863A">dependency</span><span style="color:#24292E">></span></span></code></pre>
+<h3 id="手动启动一个简单的调度例子">手动启动一个简单的调度例子</h3>
+<ul>
+<li>实现作业接口，重写作业执行方法，编写作业执行业务逻辑。</li>
+<li>Zookeeper注册中心的配置与初始化。</li>
+<li>作业属性的配置初始化。</li>
+<li>作业调度器对象的创建与初始化。</li>
+<li>触发作业。</li>
+</ul>
+<p>具体流程如下图所示：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#24292E">graph TB</span></span>
+<span class="line"><span style="color:#24292E">    A[开始]  --> B[初始化\n注册中心]</span></span>
+<span class="line"><span style="color:#24292E">    B --> C[初始化\n作业配置]</span></span>
+<span class="line"><span style="color:#24292E">    C --> D[初始化\n作业调度器]</span></span>
+<span class="line"><span style="color:#24292E">    D --> E[启动作业\n调度器]</span></span>
+<span class="line"><span style="color:#24292E">    E --> F[触发作业]</span></span>
+<span class="line"><span style="color:#24292E">    F --> G[结束]</span></span></code></pre>
+<p>图2.1 ElasticJob作业初始化过程</p>
+<h3 id="示例代码"><strong>示例代码</strong></h3>
+<ul>
+<li>实现一个简单定时任务</li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>public class JavaSimpleJob implements SimpleJob {</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span> @Override</span></span>
+<span class="line"><span> public void execute(final ShardingContext shardingContext) {</span></span>
+<span class="line"><span>  System.out.println("Hello Job”);</span></span>
+<span class="line"><span> }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<ul>
+<li>初始化一个定时任务</li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>public class JobDemo {</span></span>
+<span class="line"><span>    public static void main(String[] args) {</span></span>
+<span class="line"><span>        //注册中心地址</span></span>
+<span class="line"><span>        String serverList = "127.0.0.1:2181";</span></span>
+<span class="line"><span>        //调度作业注册中心命名空间名字</span></span>
+<span class="line"><span>        String namespace = "elastic-job-lite-demo";</span></span>
+<span class="line"><span>        //作业执行的cron表达式</span></span>
+<span class="line"><span>        String cron = "* * * * * ?";</span></span>
+<span class="line"><span>        //作业进行分片执行的分片总数</span></span>
+<span class="line"><span>        int shardingTotalCount = 3;</span></span>
+<span class="line"><span>        //分片项参数</span></span>
+<span class="line"><span>        String shardingItemParameters = "0=Beijing,1=Shanghai,2=Guangzhou";</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        //Zookeeper初始化</span></span>
+<span class="line"><span>        //创建zookeeper配置对象</span></span>
+<span class="line"><span>        ZookeeperConfiguration zookeeperConfiguration = new ZookeeperConfiguration(serverList, namespace);</span></span>
+<span class="line"><span>        //创建协调注册中心对象</span></span>
+<span class="line"><span>        CoordinatorRegistryCenter zookeeperRegistryCenter = new ZookeeperRegistryCenter(zookeeperConfiguration);</span></span>
+<span class="line"><span>        //初始化注册中心</span></span>
+<span class="line"><span>        zookeeperRegistryCenter.init();</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        //作业初始化</span></span>
+<span class="line"><span>        //这里是定义JOB的名字</span></span>
+<span class="line"><span>        String jobName = "JavaSimpleJob";</span></span>
+<span class="line"><span>        //创建作业核心配置的建造者builder类型</span></span>
+<span class="line"><span>        JobCoreConfiguration.Builder javaCoreConfigurationBuilder =</span></span>
+<span class="line"><span>                JobCoreConfiguration.newBuilder(jobName, cron, shardingTotalCount);</span></span>
+<span class="line"><span>        //根据builder构建核心配置</span></span>
+<span class="line"><span>        JobCoreConfiguration jobCoreConfiguration = javaCoreConfigurationBuilder.shardingItemParameters(shardingItemParameters).build();</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        //getCanonicalName 返回包名+类名字，这里是作业执行类的信息</span></span>
+<span class="line"><span>        String canonicalName = JavaSimpleJob.class.getCanonicalName();</span></span>
+<span class="line"><span>        //根据核心配置和作业执行类创建作业类型配置</span></span>
+<span class="line"><span>        JobTypeConfiguration jobTypeConfiguration = new SimpleJobConfiguration(jobCoreConfiguration, canonicalName);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        //根据作业类型配置初始化轻量级作业配置</span></span>
+<span class="line"><span>        LiteJobConfiguration liteJobConfiguration = LiteJobConfiguration.newBuilder(jobTypeConfiguration).build();</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        //作业调度器初始化</span></span>
+<span class="line"><span>        JobScheduler jobScheduler = new JobScheduler(zookeeperRegistryCenter, liteJobConfiguration);</span></span>
+<span class="line"><span>        jobScheduler.init();</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>首先确保zookeeper服务已经启动，然后直接运行main方法即可。</p>
+<h2 id="使用spring配置一个作业"><strong>使用Spring配置一个作业</strong></h2>
+<h3 id="导入maven包-1"><strong>导入Maven包</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="xml"><code><span class="line"><span style="color:#24292E">&#x3C;</span><span style="color:#22863A">dependency</span><span style="color:#24292E">></span></span>
+<span class="line"><span style="color:#24292E"> &#x3C;</span><span style="color:#22863A">groupId</span><span style="color:#24292E">>com.dangdang&#x3C;/</span><span style="color:#22863A">groupId</span><span style="color:#24292E">></span></span>
+<span class="line"><span style="color:#24292E"> &#x3C;</span><span style="color:#22863A">artifactId</span><span style="color:#24292E">>elastic-job-lite-spring&#x3C;/</span><span style="color:#22863A">artifactId</span><span style="color:#24292E">></span></span>
+<span class="line"><span style="color:#24292E"> &#x3C;</span><span style="color:#22863A">version</span><span style="color:#24292E">>2.1.5&#x3C;/</span><span style="color:#22863A">version</span><span style="color:#24292E">></span></span>
+<span class="line"><span style="color:#24292E">&#x3C;/</span><span style="color:#22863A">dependency</span><span style="color:#24292E">></span></span></code></pre>
+<h3 id="配置spring文件"><strong>配置Spring文件</strong></h3>
+<ul>
+<li>配置注册中心对象</li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="xml"><code><span class="line"><span style="color:#24292E">&#x3C;</span><span style="color:#22863A">reg:zookeeper</span><span style="color:#6F42C1"> id</span><span style="color:#24292E">=</span><span style="color:#032F62">"regCenter"</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">               server-lists</span><span style="color:#24292E">=</span><span style="color:#032F62">"${serverLists}"</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">               namespace</span><span style="color:#24292E">=</span><span style="color:#032F62">"${namespace}"</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">               base-sleep-time-milliseconds</span><span style="color:#24292E">=</span><span style="color:#032F62">"${baseSleepTimeMilliseconds}"</span><span style="color:#24292E">             </span></span>
+<span class="line"><span style="color:#6F42C1">               max-sleep-time-milliseconds</span><span style="color:#24292E">=</span><span style="color:#032F62">"${maxSleepTimeMilliseconds}"</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">               max-retries</span><span style="color:#24292E">=</span><span style="color:#032F62">"${maxRetries}"</span><span style="color:#24292E">/></span></span></code></pre>
+<ul>
+<li>配置作业对象</li>
+</ul>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="xml"><code><span class="line"><span style="color:#24292E">&#x3C;</span><span style="color:#22863A">job:simple</span><span style="color:#6F42C1"> id</span><span style="color:#24292E">=</span><span style="color:#032F62">"${simple.id}"</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">            class</span><span style="color:#24292E">=</span><span style="color:#032F62">"${simple.class}"</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">            registry-center-ref</span><span style="color:#24292E">=</span><span style="color:#032F62">"regCenter"</span></span>
+<span class="line"><span style="color:#6F42C1">            sharding-total-count</span><span style="color:#24292E">=</span><span style="color:#032F62">"${simple.shardingTotalCount}"</span></span>
+<span class="line"><span style="color:#6F42C1">            cron</span><span style="color:#24292E">=</span><span style="color:#032F62">"${simple.cron}"</span><span style="color:#24292E">  </span></span>
+<span class="line"><span style="color:#6F42C1">            sharding-item-parameters</span><span style="color:#24292E">=</span><span style="color:#032F62">"${simple.shardingItemParameters}"</span></span>
+<span class="line"><span style="color:#6F42C1">            monitor-execution</span><span style="color:#24292E">=</span><span style="color:#032F62">"${simple.monitorExecution}"</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">            monitor-port</span><span style="color:#24292E">=</span><span style="color:#032F62">"${simple.monitorPort}"</span></span>
+<span class="line"><span style="color:#6F42C1">            failover</span><span style="color:#24292E">=</span><span style="color:#032F62">"${simple.failover}"</span></span>
+<span class="line"><span style="color:#6F42C1">            description</span><span style="color:#24292E">=</span><span style="color:#032F62">"${simple.description}"</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">            disabled</span><span style="color:#24292E">=</span><span style="color:#032F62">"${simple.disabled}"</span></span>
+<span class="line"><span style="color:#6F42C1">            overwrite</span><span style="color:#24292E">=</span><span style="color:#032F62">"${simple.overwrite}"</span><span style="color:#24292E"> /></span></span></code></pre>
+<p>本实例只展示来我们配置Spring时候需要铁添加的配置，如果想要完整跑一个项目可以参考官方源码的elastic-job-example示例文件。</p>
+<p>参考网站：</p>
+<ul>
+<li>
+<p>版本2.1.5源码：</p>
+<ul>
+<li><a href="https://gitee.com/elasticjob/elastic-job/tree/2.1.5/">https://gitee.com/elasticjob/elastic-job/tree/2.1.5/</a></li>
+</ul>
+</li>
+<li>
+<p>例子源码地址：</p>
+<ul>
+<li><a href="https://gitee.com/elasticjob/elastic-job/tree/2.1.5/elastic-job-example">https://gitee.com/elasticjob/elastic-job/tree/2.1.5/elastic-job-example</a></li>
+</ul>
+</li>
+<li>
+<p>最新版本源码：</p>
+<ul>
+<li><a href="https://github.com/apache/shardingsphere-elasticjob">https://github.com/apache/shardingsphere-elasticjob</a></li>
+</ul>
+</li>
+<li>
+<p>官方网站：</p>
+<ul>
+<li><a href="http://shardingsphere.apache.org/elasticjob">http://shardingsphere.apache.org/elasticjob/</a></li>
+</ul>
+</li>
+</ul>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

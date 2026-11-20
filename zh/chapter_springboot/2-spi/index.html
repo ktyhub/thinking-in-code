@@ -1,0 +1,378 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>**SpringApplication的run方法启动应用程序源码初探** — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chapter_springboot/2-spi/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chapter_springboot/2-spi"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chapter_springboot/2-spi/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chapter_springboot/2-spi"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="**SpringApplication的run方法启动应用程序源码初探** — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chapter_springboot/2-spi/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chapter_springboot/2-spi/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>springboot</h3> <ul> <li> <a href="/zh/chapter_springboot/1-sample" class="lv0" title="**从一个Demo入手**"> **从一个Demo入手** </a> </li><li> <a href="/zh/chapter_springboot/2-spi" class="lv0" aria-current="page" title="**SpringApplication的run方法启动应用程序源码初探**"> **SpringApplication的run方法启动应用程序源码初探** </a> </li><li> <a href="/zh/chapter_springboot/3-run" class="lv0" title="**SpringApplication的run启动方法的全生命周期函数源码**"> **SpringApplication的run启动方法的全生命周期函数源码** </a> </li><li> <a href="/zh/chapter_springboot/4-environment" class="lv0" title="**配置信息加载全解析-(开发自己的配置中心必备功能)**"> **配置信息加载全解析-(开发自己的配置中心必备功能)** </a> </li><li> <a href="/zh/chapter_springboot/5-application-context-init" class="lv0" title="**SpringBoot容器的创建**"> **SpringBoot容器的创建** </a> </li><li> <a href="/zh/chapter_springboot/6-reader-scanner" class="lv0" title="6-reader-scanner"> 6-reader-scanner </a> </li><li> <a href="/zh/chapter_springboot/spring-flux" class="lv0" title="Spring WebFlux中的Flux全面解析"> Spring WebFlux中的Flux全面解析 </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chapter_springboot">springboot</a><span class="sep">/</span><span>**SpringApplication的run方法启动应用程序源码初探**</span> </nav> <div class="prose">  <h1 id="springapplication的run方法启动应用程序源码初探"><strong>SpringApplication的run方法启动应用程序源码初探</strong></h1>
+<h2 id="springapplication简介"><strong>SpringApplication简介</strong></h2>
+<p>该类可 <strong>用于从Java主服务器引导</strong> 和 <strong>启动Spring应用程序方法</strong> 。默认情况下，类将执行以下 <strong>步骤</strong> 来启动应用程序：</p>
+<ul>
+<li><strong>创建</strong> 一个适当的 <strong>ApplicationContext实例</strong> （取决于您的类路径）。</li>
+<li>注册CommandLinePropertySource以将命令行参数传递给 Spring属性 。</li>
+<li><strong>刷新应用程序上下文</strong> ，加载所有单例bean 。</li>
+<li>触发任何 CommandLineRunner Bean 。</li>
+</ul>
+<p><strong>如何使用SpringApplication类型呢：</strong>
+在大多数情况下，可以调用静态run方法启动应用程序</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Configuration</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">EnableAutoConfiguration</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> MyApplication</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> main</span><span style="color:#24292E">(</span><span style="color:#D73A49">String</span><span style="color:#24292E">[] </span><span style="color:#E36209">args</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">		SpringApplication.</span><span style="color:#6F42C1">run</span><span style="color:#24292E">(MyApplication.class, args);</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>在这种情况下在SpringApplication类中run方法的实现如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> static</span><span style="color:#24292E"> ConfigurableApplicationContext </span><span style="color:#6F42C1">run</span><span style="color:#24292E">(Class</span><span style="color:#D73A49">&#x3C;?></span><span style="color:#24292E">[] primarySources, </span><span style="color:#D73A49">String</span><span style="color:#24292E">[] args) {</span></span>
+<span class="line"><span style="color:#D73A49">	return</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> SpringApplication</span><span style="color:#24292E">(primarySources).</span><span style="color:#6F42C1">run</span><span style="color:#24292E">(args);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>当前我们也可以不使用静态方法来帮助我们创建SpringApplication 对象，手动创建对象启动如下：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Configuration</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">EnableAutoConfiguration</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> MyApplication</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> main</span><span style="color:#24292E">(</span><span style="color:#D73A49">String</span><span style="color:#24292E">[] </span><span style="color:#E36209">args</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">		SpringApplication application </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> SpringApplication</span><span style="color:#24292E">(MyApplication.class);</span></span>
+<span class="line"><span style="color:#24292E">application.</span><span style="color:#6F42C1">run</span><span style="color:#24292E">(args)</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="springapplication对象的创建与运行方法调用"><strong>SpringApplication对象的创建与运行方法调用</strong></h2>
+<p>上一个博客中我们使用官网的代码生成器为我们生成了一个</p>
+<p>简单应用程序如下代码所示:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">SpringBootApplication</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> DemoApplication</span><span style="color:#24292E"> {</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">	public</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> main</span><span style="color:#24292E">(</span><span style="color:#D73A49">String</span><span style="color:#24292E">[] </span><span style="color:#E36209">args</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">		SpringApplication.</span><span style="color:#6F42C1">run</span><span style="color:#24292E">(DemoApplication.class, args);</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>接下来我们来看,如果代码是如何来启动应用程序的:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">SpringApplication.</span><span style="color:#6F42C1">run</span><span style="color:#24292E">(DemoApplication.class, args);</span></span></code></pre>
+<p>打开SpringApplication类型的的run方法的源码如下所示:
+这个方法是个 <strong>静态辅助方法</strong> ，为了 <strong>方便我们启动程序</strong> 提供的,帮助我们 <strong>转换下参数</strong> ,可用于使用默认设置从指定源运行SpringApplication。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> public</span><span style="color:#D73A49"> static</span><span style="color:#24292E"> ConfigurableApplicationContext </span><span style="color:#6F42C1">run</span><span style="color:#24292E">(Class</span><span style="color:#D73A49">&#x3C;?></span><span style="color:#24292E"> primarySource, String... args) {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#6F42C1"> run</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#D73A49"> Class</span><span style="color:#24292E">[]{primarySource}, args);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>继续看SpringApplication类型中重载的run方法:
+这个方法也是个 <strong>静态辅助方法</strong> ，用于 <strong>帮助创建一个SpringApplication对象</strong> 来启动应用</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> static</span><span style="color:#24292E"> ConfigurableApplicationContext </span><span style="color:#6F42C1">run</span><span style="color:#24292E">(Class</span><span style="color:#D73A49">&#x3C;?></span><span style="color:#24292E">[] primarySources, </span><span style="color:#D73A49">String</span><span style="color:#24292E">[] args) {</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E"> (</span><span style="color:#D73A49">new</span><span style="color:#6F42C1"> SpringApplication</span><span style="color:#24292E">(primarySources)).</span><span style="color:#6F42C1">run</span><span style="color:#24292E">(args);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>这里创建了一个SpringApplication对象然后不再调用这个类方法(静态方法)run,转而创建对象之后调用实例方法(非静态方法)run,不过在看这个run之前我们先看下SpringApplication对象的创建:</p>
+<p>应用程序上下文将从指定的主源加载Bean。实例（可以在运行调用之前自定义字符串…）。</p>
+<p>SpringApplication的构造器:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49"> public</span><span style="color:#6F42C1"> SpringApplication</span><span style="color:#24292E">(Class</span><span style="color:#D73A49">&#x3C;?></span><span style="color:#24292E">... primarySources) {</span></span>
+<span class="line"><span style="color:#005CC5">        this</span><span style="color:#24292E">((ResourceLoader)</span><span style="color:#005CC5">null</span><span style="color:#24292E">, primarySources);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span></code></pre>
+<p>继续看SpringApplication重载的构造器 ,一共有两个参数一个是资源加载器,一个是主要资源类型参数,第一个参数为空,第二个参数是我们的启动类型DemoApplication.class,这个构造器的具体作用就写在描述里面吧:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">SuppressWarnings</span><span style="color:#24292E">({ </span><span style="color:#032F62">"unchecked"</span><span style="color:#24292E">, </span><span style="color:#032F62">"rawtypes"</span><span style="color:#24292E"> })</span></span>
+<span class="line"><span style="color:#D73A49">	public</span><span style="color:#6F42C1"> SpringApplication</span><span style="color:#24292E">(ResourceLoader resourceLoader, Class</span><span style="color:#D73A49">&#x3C;?></span><span style="color:#24292E">... primarySources) {</span></span>
+<span class="line"><span style="color:#6A737D">		//为资源加载器赋值 ,我们这个Demo参数为空</span></span>
+<span class="line"><span style="color:#005CC5">		this</span><span style="color:#24292E">.resourceLoader </span><span style="color:#D73A49">=</span><span style="color:#24292E"> resourceLoader;</span></span>
+<span class="line"><span style="color:#6A737D">		//主配置资源为空则报错 我们这个参数为DemoApplication.class</span></span>
+<span class="line"><span style="color:#24292E">		Assert.</span><span style="color:#6F42C1">notNull</span><span style="color:#24292E">(primarySources, </span><span style="color:#032F62">"PrimarySources must not be null"</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">		//赋值给成员变量primarySources</span></span>
+<span class="line"><span style="color:#005CC5">		this</span><span style="color:#24292E">.primarySources </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> LinkedHashSet&#x3C;>(Arrays.</span><span style="color:#6F42C1">asList</span><span style="color:#24292E">(primarySources));</span></span>
+<span class="line"><span style="color:#6A737D">		//检查应用程序类型</span></span>
+<span class="line"><span style="color:#005CC5">		this</span><span style="color:#24292E">.webApplicationType </span><span style="color:#D73A49">=</span><span style="color:#24292E"> WebApplicationType.</span><span style="color:#6F42C1">deduceFromClasspath</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">		//应用程序启动初始化器</span></span>
+<span class="line"><span style="color:#005CC5">		this</span><span style="color:#24292E">.bootstrapRegistryInitializers </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>(</span></span>
+<span class="line"><span style="color:#6F42C1">			getSpringFactoriesInstances</span><span style="color:#24292E">(BootstrapRegistryInitializer.class));</span></span>
+<span class="line"><span style="color:#6F42C1">		setInitializers</span><span style="color:#24292E">((Collection) </span><span style="color:#6F42C1">getSpringFactoriesInstances</span><span style="color:#24292E">(ApplicationContextInitializer.class));</span></span>
+<span class="line"><span style="color:#6F42C1">		setListeners</span><span style="color:#24292E">((Collection) </span><span style="color:#6F42C1">getSpringFactoriesInstances</span><span style="color:#24292E">(ApplicationListener.class));</span></span>
+<span class="line"><span style="color:#6A737D">		//检查主应用程序</span></span>
+<span class="line"><span style="color:#005CC5">		this</span><span style="color:#24292E">.mainApplicationClass </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> deduceMainApplicationClass</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span></code></pre>
+<h3 id="推断当前web应用类型"><strong>推断当前WEB应用类型</strong></h3>
+<p>在了解Web类型推断之前我们先来看下Spring为我们提供来哪些Web类型，系统使用WebApplicationType 枚举类型来表示，目前一共提供了三种Web程序类型如下：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NONE</td>
+<td>应用程序不应作为web应用程序运行，也不应启动嵌入式web服务器。</td>
+</tr>
+<tr>
+<td>SERVLET</td>
+<td>应用程序应作为基于servlet的web应用程序运行，并应启动嵌入式servlet web服务器。</td>
+</tr>
+<tr>
+<td>REACTIVE</td>
+<td>应用程序应该作为反应式web应用程序运行，并且应该启动嵌入式反应式web服务器。</td>
+</tr>
+</tbody>
+</table>
+<p>目前版本的SpringBoot应用程序只支持3种默认的Web类型，在我们项目开发中并不会去明确配置当我们的Web程序类型，那SpringBoot是如何推断呢，解析来我们就来看下推断Web程序应用类型的实现原理。</p>
+<p>WebApplicationType枚举类型中的推断方法deduceFromClasspath</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">static</span><span style="color:#24292E"> WebApplicationType </span><span style="color:#6F42C1">deduceFromClasspath</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">		//REACTIVE项目推断依据:</span></span>
+<span class="line"><span style="color:#6A737D">		//类型存在:org.springframework.web.reactive.DispatcherHandler</span></span>
+<span class="line"><span style="color:#6A737D">		//并且不存在类型:org.springframework.web.servlet.DispatcherServlet</span></span>
+<span class="line"><span style="color:#6A737D">		//并且不存在类型:org.glassfish.jersey.servlet.ServletContainer</span></span>
+<span class="line"><span style="color:#D73A49">		if</span><span style="color:#24292E"> (ClassUtils.</span><span style="color:#6F42C1">isPresent</span><span style="color:#24292E">(WEBFLUX_INDICATOR_CLASS, </span><span style="color:#005CC5">null</span><span style="color:#24292E">) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#24292E">ClassUtils.</span><span style="color:#6F42C1">isPresent</span><span style="color:#24292E">(WEBMVC_INDICATOR_CLASS, </span><span style="color:#005CC5">null</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">				&#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#24292E">ClassUtils.</span><span style="color:#6F42C1">isPresent</span><span style="color:#24292E">(JERSEY_INDICATOR_CLASS, </span><span style="color:#005CC5">null</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#D73A49">			return</span><span style="color:#24292E"> WebApplicationType.REACTIVE;</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#6A737D">		//非WEB程序推断依据:</span></span>
+<span class="line"><span style="color:#6A737D">		//遍历所有的web相关类型如果都不存在则为非WEB项目</span></span>
+<span class="line"><span style="color:#6A737D">		//类型包含:javax.servlet.Servlet</span></span>
+<span class="line"><span style="color:#6A737D">		//org.springframework.web.context.ConfigurableWebApplicationContext</span></span>
+<span class="line"><span style="color:#D73A49">		for</span><span style="color:#24292E"> (String className </span><span style="color:#D73A49">:</span><span style="color:#24292E"> SERVLET_INDICATOR_CLASSES) {</span></span>
+<span class="line"><span style="color:#D73A49">			if</span><span style="color:#24292E"> (</span><span style="color:#D73A49">!</span><span style="color:#24292E">ClassUtils.</span><span style="color:#6F42C1">isPresent</span><span style="color:#24292E">(className, </span><span style="color:#005CC5">null</span><span style="color:#24292E">)) {</span></span>
+<span class="line"><span style="color:#D73A49">				return</span><span style="color:#24292E"> WebApplicationType.NONE;</span></span>
+<span class="line"><span style="color:#24292E">			}</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#6A737D">		//如果不是REACTIVE类型 也不是非WEB环境那就是SERVLET的WEB项目</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#24292E"> WebApplicationType.SERVLET;</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span></code></pre>
+<p>通过源码我们可以了解到推断方法主要使用ClassUtils.isPresent来判断Web应用程序类型， 推断过程中优先判断是否为反应式应用程序，然后根据Servlet判断是否为非Web应用类型，最后则默认为Servlet应用类型</p>
+<h3 id="springboot中的类spi扩展配置文件扫描"><strong>SpringBoot中的类SPI扩展配置文件扫描</strong></h3>
+<p>前面构造器中我们看到了这么一行代码,这个代码相对复杂一些,用于加载Spring扩展配置的</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6F42C1">getSpringFactoriesInstances</span><span style="color:#24292E">(ApplicationContextInitializer.class)</span></span></code></pre>
+<p>在Spring中也有一种类似与Java SPI的<strong>加载机制</strong> 。它在 <strong>META-INF/spring.factories</strong>文件中配置接口的实现类名称，然后在 <strong>程序中读取这些配置文件并实例化</strong> 。这种自定义的SPI机制<strong>是Spring Boot Starter实现的基础</strong> 。
+在SpringBoot的自动装配过程中，最终会加载META-INF/spring.factories文件，而<strong>加载的过程</strong>是由<strong>SpringFactoriesLoader加载</strong> 的。从<strong>CLASSPATH下的每个Jar包中</strong>搜寻<strong>所有META-INF/spring.factories配置文件</strong> ，然后将解析properties文件，找到指定名称的配置后返回。需要注意的是，其实这里不仅仅是会去classpath路径下查找，会扫描所有路径下的Jar包，只不过这个文件只会在classpath下的jar包中。</p>
+<p>根据Bootstrapper，ApplicationContextInitializer，ApplicationListener获取对应类型的工厂实现类并初始化给成员变量：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">//初始器注册表初始化 BootstrapRegistryInitializer</span></span>
+<span class="line"><span style="color:#005CC5">this</span><span style="color:#24292E">.bootstrapRegistryInitializers </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>(</span></span>
+<span class="line"><span style="color:#6F42C1">				getSpringFactoriesInstances</span><span style="color:#24292E">(BootstrapRegistryInitializer.class));</span></span>
+<span class="line"><span style="color:#24292E">				</span></span>
+<span class="line"><span style="color:#6A737D">				//应用程序上下文初始化器 初始化 ApplicationContextInitializer</span></span>
+<span class="line"><span style="color:#6F42C1">		setInitializers</span><span style="color:#24292E">((Collection) </span><span style="color:#6F42C1">getSpringFactoriesInstances</span><span style="color:#24292E">(ApplicationContextInitializer.class));</span></span>
+<span class="line"><span style="color:#6A737D">		//应用程序监听器 初始化 ApplicationListener</span></span>
+<span class="line"><span style="color:#6F42C1">		setListeners</span><span style="color:#24292E">((Collection) </span><span style="color:#6F42C1">getSpringFactoriesInstances</span><span style="color:#24292E">(ApplicationListener.class));</span></span></code></pre>
+<p>上面代码一共有3个对象的初始化
+先来了解这三个类型的作用:
+<strong>BootstrapRegistryInitializer</strong>
+在Spring Boot 中有两种上下文，一种是 bootstrap，另一种是 application。是 bootstrap用于应用程序上下文的引导阶段bootstrap 是应用程序的父上下文，加载优先于 application。
+bootstrap 主要用于从额外的资源来加载配置信息，还可以在本地外部配置文件中解密属性。</p>
+<p><strong>ApplicationContextInitializer</strong>
+ApplicationContextInitializer 是在spring容器刷新之前执行的一个回调函数。它的作用是向springboot容器中注册属性</p>
+<p><strong>ApplicationListener</strong>
+ApplicationContext事件机制是观察者设计模式的实现，通过ApplicationEvent类和ApplicationListener接口，可以实现ApplicationContext事件处理。
+如果容器中有一个ApplicationListener Bean，每当ApplicationContext发布ApplicationEvent时，ApplicationListener Bean将自动被触发。这种事件机制都必须需要程序显示的触发。</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Collection</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> getSpringFactoriesInstances</span><span style="color:#24292E">(Class</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> type) {</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#6F42C1"> getSpringFactoriesInstances</span><span style="color:#24292E">(type, </span><span style="color:#D73A49">new</span><span style="color:#24292E"> Class&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">>[] {});</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Collection</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> getSpringFactoriesInstances</span><span style="color:#24292E">(Class</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> type, Class</span><span style="color:#D73A49">&#x3C;?></span><span style="color:#24292E">[] parameterTypes, Object... args) {</span></span>
+<span class="line"><span style="color:#6A737D">		//获取类加载器,优先使用resourceLoader对象的类加载器,如果resourceLoader前面没有赋值则使用当前线程的类加载器</span></span>
+<span class="line"><span style="color:#24292E">		ClassLoader classLoader </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> getClassLoader</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">		// Use names and ensure unique to protect against duplicates</span></span>
+<span class="line"><span style="color:#6A737D">		//使用Spring工厂加载器SpringFactoriesLoader加载指定类型比如BootstrapRegistryInitializer.class的所有工厂名字</span></span>
+<span class="line"><span style="color:#24292E">		Set&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">> names </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> LinkedHashSet&#x3C;>(SpringFactoriesLoader.</span><span style="color:#6F42C1">loadFactoryNames</span><span style="color:#24292E">(type, classLoader));</span></span>
+<span class="line"><span style="color:#6A737D">		//根据扫描到的工厂类型,这个names集合里面存储的是一个扩展类型的全路径 包名+类名,  这一步先通过Class.forName加载类型 再通过反射newInstance创建工厂实例对象</span></span>
+<span class="line"><span style="color:#24292E">		List&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> instances </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> createSpringFactoriesInstances</span><span style="color:#24292E">(type, parameterTypes, classLoader, args, names);</span></span>
+<span class="line"><span style="color:#6A737D">		//工厂对象根据order属性排序</span></span>
+<span class="line"><span style="color:#6A737D">		//了解过Spring的Order ,javax.annotation.Priority,PriorityOrdered就会了解这个代码,这个代码就是对这些扩展实例进行排序我们控制扩展的执行顺序,Order值越低优先级越高</span></span>
+<span class="line"><span style="color:#24292E">		AnnotationAwareOrderComparator.</span><span style="color:#6F42C1">sort</span><span style="color:#24292E">(instances);</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#24292E"> instances;</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span></code></pre>
+<p>SpringFactoriesLoader的loadFactoryNames</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> static</span><span style="color:#24292E"> List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">String</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> loadFactoryNames</span><span style="color:#24292E">(Class</span><span style="color:#D73A49">&#x3C;?></span><span style="color:#24292E"> factoryType, @</span><span style="color:#D73A49">Nullable</span><span style="color:#24292E"> ClassLoader classLoader) {</span></span>
+<span class="line"><span style="color:#6A737D">		//如果类加载器为空则用当前类型SpringFactoriesLoader的类加载器</span></span>
+<span class="line"><span style="color:#24292E">		ClassLoader classLoaderToUse </span><span style="color:#D73A49">=</span><span style="color:#24292E"> classLoader;</span></span>
+<span class="line"><span style="color:#D73A49">		if</span><span style="color:#24292E"> (classLoaderToUse </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">			classLoaderToUse </span><span style="color:#D73A49">=</span><span style="color:#24292E"> SpringFactoriesLoader.class.</span><span style="color:#6F42C1">getClassLoader</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#24292E">		String factoryTypeName </span><span style="color:#D73A49">=</span><span style="color:#24292E"> factoryType.</span><span style="color:#6F42C1">getName</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">		//开始加载所有的扩展文件,然后找到当前工厂类型的所有扩展文件名字</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#6F42C1"> loadSpringFactories</span><span style="color:#24292E">(classLoaderToUse).</span><span style="color:#6F42C1">getOrDefault</span><span style="color:#24292E">(factoryTypeName, Collections.</span><span style="color:#6F42C1">emptyList</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span></code></pre>
+<p>SpringFactoriesLoader的loadSpringFactories
+扫描所有的依赖文件</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#D73A49"> static</span><span style="color:#24292E"> Map</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">String, List</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">String</span><span style="color:#D73A49">>></span><span style="color:#6F42C1"> loadSpringFactories</span><span style="color:#24292E">(ClassLoader classLoader) {</span></span>
+<span class="line"><span style="color:#6A737D">		//缓存中存在则直接返回</span></span>
+<span class="line"><span style="color:#24292E">		Map&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">, List&#x3C;</span><span style="color:#D73A49">String</span><span style="color:#24292E">>> result </span><span style="color:#D73A49">=</span><span style="color:#24292E"> cache.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">(classLoader);</span></span>
+<span class="line"><span style="color:#D73A49">		if</span><span style="color:#24292E"> (result </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#D73A49">			return</span><span style="color:#24292E"> result;</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">		result </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> HashMap&#x3C;>();</span></span>
+<span class="line"><span style="color:#D73A49">		try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">			//扫描所有的spring工厂文件,文件名字:META-INF/spring.factories,文件内容可以参考后面贴出来的样例</span></span>
+<span class="line"><span style="color:#24292E">			Enumeration&#x3C;</span><span style="color:#D73A49">URL</span><span style="color:#24292E">> urls </span><span style="color:#D73A49">=</span><span style="color:#24292E"> classLoader.</span><span style="color:#6F42C1">getResources</span><span style="color:#24292E">(FACTORIES_RESOURCE_LOCATION);</span></span>
+<span class="line"><span style="color:#6A737D">			//遍历这些拉取到的文件 可能存在在每个jar中</span></span>
+<span class="line"><span style="color:#D73A49">			while</span><span style="color:#24292E"> (urls.</span><span style="color:#6F42C1">hasMoreElements</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">				//url对象转UrlResource对象</span></span>
+<span class="line"><span style="color:#24292E">				URL url </span><span style="color:#D73A49">=</span><span style="color:#24292E"> urls.</span><span style="color:#6F42C1">nextElement</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">				UrlResource resource </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> UrlResource</span><span style="color:#24292E">(url);</span></span>
+<span class="line"><span style="color:#6A737D">				//借助Spring的属性加载工具PropertiesLoaderUtils加载资源文件转换为Properties类型对象</span></span>
+<span class="line"><span style="color:#24292E">				Properties properties </span><span style="color:#D73A49">=</span><span style="color:#24292E"> PropertiesLoaderUtils.</span><span style="color:#6F42C1">loadProperties</span><span style="color:#24292E">(resource);</span></span>
+<span class="line"><span style="color:#6A737D">				//遍历文件内容,将文件中的key value存入result中</span></span>
+<span class="line"><span style="color:#D73A49">				for</span><span style="color:#24292E"> (Map.Entry&#x3C;</span><span style="color:#D73A49">?</span><span style="color:#24292E">, </span><span style="color:#D73A49">?</span><span style="color:#24292E">> entry </span><span style="color:#D73A49">:</span><span style="color:#24292E"> properties.</span><span style="color:#6F42C1">entrySet</span><span style="color:#24292E">()) {</span></span>
+<span class="line"><span style="color:#6A737D">				//工厂类型名字就是META-INF/spring.factories文件中等号前面的类型名字比如:后面贴的样例文件中等号前面的org.springframework.boot.logging.LoggingSystemFactory</span></span>
+<span class="line"><span style="color:#24292E">					String factoryTypeName </span><span style="color:#D73A49">=</span><span style="color:#24292E"> ((String) entry.</span><span style="color:#6F42C1">getKey</span><span style="color:#24292E">()).</span><span style="color:#6F42C1">trim</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">					//同一个工厂类型可以有多个工厂实现,工厂实现的话可以用逗号隔开</span></span>
+<span class="line"><span style="color:#D73A49">					String</span><span style="color:#24292E">[] factoryImplementationNames </span><span style="color:#D73A49">=</span></span>
+<span class="line"><span style="color:#24292E">							StringUtils.</span><span style="color:#6F42C1">commaDelimitedListToStringArray</span><span style="color:#24292E">((String) entry.</span><span style="color:#6F42C1">getValue</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#6A737D">							//遍历这些工厂实现,key为工厂类型,value为实现集合列表存入result集合中</span></span>
+<span class="line"><span style="color:#D73A49">					for</span><span style="color:#24292E"> (String factoryImplementationName </span><span style="color:#D73A49">:</span><span style="color:#24292E"> factoryImplementationNames) {</span></span>
+<span class="line"><span style="color:#24292E">						result.</span><span style="color:#6F42C1">computeIfAbsent</span><span style="color:#24292E">(factoryTypeName, key </span><span style="color:#D73A49">-></span><span style="color:#D73A49"> new</span><span style="color:#24292E"> ArrayList&#x3C;>())</span></span>
+<span class="line"><span style="color:#24292E">								.</span><span style="color:#6F42C1">add</span><span style="color:#24292E">(factoryImplementationName.</span><span style="color:#6F42C1">trim</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">					}</span></span>
+<span class="line"><span style="color:#24292E">				}</span></span>
+<span class="line"><span style="color:#24292E">			}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">			// 用包含唯一元素的不可修改列表替换所有列表</span></span>
+<span class="line"><span style="color:#24292E">			result.</span><span style="color:#6F42C1">replaceAll</span><span style="color:#24292E">((factoryType, implementations) </span><span style="color:#D73A49">-></span><span style="color:#24292E"> implementations.</span><span style="color:#6F42C1">stream</span><span style="color:#24292E">().</span><span style="color:#6F42C1">distinct</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">					.</span><span style="color:#6F42C1">collect</span><span style="color:#24292E">(Collectors.</span><span style="color:#6F42C1">collectingAndThen</span><span style="color:#24292E">(Collectors.</span><span style="color:#6F42C1">toList</span><span style="color:#24292E">(), Collections</span><span style="color:#D73A49">::</span><span style="color:#24292E">unmodifiableList)));</span></span>
+<span class="line"><span style="color:#6A737D">			 //存入缓存</span></span>
+<span class="line"><span style="color:#24292E">			cache.</span><span style="color:#6F42C1">put</span><span style="color:#24292E">(classLoader, result);</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span></code></pre>
+<p>spring-boot 子模块提供的META-INF/spring.factories工厂文件参考</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E"># Logging Systems</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.logging.LoggingSystemFactory</span><span style="color:#D73A49">=</span><span style="color:#24292E">\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.logging.logback.LogbackLoggingSystem.Factory,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.logging.log4j2.Log4J2LoggingSystem.Factory,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.logging.java.JavaLoggingSystem.Factory</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"># PropertySource Loaders</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.env.PropertySourceLoader</span><span style="color:#D73A49">=</span><span style="color:#24292E">\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.env.PropertiesPropertySourceLoader,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.env.YamlPropertySourceLoader</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"># ConfigData Location Resolvers</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.config.ConfigDataLocationResolver</span><span style="color:#D73A49">=</span><span style="color:#24292E">\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.config.ConfigTreeConfigDataLocationResolver,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.config.StandardConfigDataLocationResolver</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"># ConfigData Loaders</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.config.ConfigDataLoader</span><span style="color:#D73A49">=</span><span style="color:#24292E">\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.config.ConfigTreeConfigDataLoader,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.config.StandardConfigDataLoader</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"># Run Listeners</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.SpringApplicationRunListener</span><span style="color:#D73A49">=</span><span style="color:#24292E">\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.event.EventPublishingRunListener</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"># Error Reporters</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.SpringBootExceptionReporter</span><span style="color:#D73A49">=</span><span style="color:#24292E">\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.FailureAnalyzers</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"># Application Context Initializers</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.context.ApplicationContextInitializer</span><span style="color:#D73A49">=</span><span style="color:#24292E">\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.ConfigurationWarningsApplicationContextInitializer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.ContextIdApplicationContextInitializer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.config.DelegatingApplicationContextInitializer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.rsocket.context.RSocketPortInfoApplicationContextInitializer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.web.context.ServerPortInfoApplicationContextInitializer</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"># Application Listeners</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.context.ApplicationListener</span><span style="color:#D73A49">=</span><span style="color:#24292E">\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.ClearCachesApplicationListener,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.builder.ParentContextCloserApplicationListener,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.FileEncodingApplicationListener,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.config.AnsiOutputApplicationListener,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.config.DelegatingApplicationListener,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.logging.LoggingApplicationListener,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.env.EnvironmentPostProcessorApplicationListener</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"># Environment Post Processors</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.env.EnvironmentPostProcessor</span><span style="color:#D73A49">=</span><span style="color:#24292E">\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.cloud.CloudFoundryVcapEnvironmentPostProcessor,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.config.ConfigDataEnvironmentPostProcessor,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.env.RandomValuePropertySourceEnvironmentPostProcessor,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.env.SpringApplicationJsonEnvironmentPostProcessor,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.env.SystemEnvironmentPropertySourceEnvironmentPostProcessor,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.reactor.DebugAgentEnvironmentPostProcessor</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"># Failure Analyzers</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.FailureAnalyzer</span><span style="color:#D73A49">=</span><span style="color:#24292E">\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.config.ConfigDataNotFoundFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.properties.IncompatibleConfigurationFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.properties.NotConstructorBoundInjectionFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.analyzer.BeanCurrentlyInCreationFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.analyzer.BeanDefinitionOverrideFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.analyzer.BeanNotOfRequiredTypeFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.analyzer.BindFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.analyzer.BindValidationFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.analyzer.UnboundConfigurationPropertyFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.analyzer.MutuallyExclusiveConfigurationPropertiesFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.analyzer.NoSuchMethodFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.analyzer.NoUniqueBeanDefinitionFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.analyzer.PortInUseFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.analyzer.ValidationExceptionFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.analyzer.InvalidConfigurationPropertyNameFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.analyzer.InvalidConfigurationPropertyValueFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.analyzer.PatternParseFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.liquibase.LiquibaseChangelogMissingFailureAnalyzer,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.web.embedded.tomcat.ConnectorStartFailureAnalyzer</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"># Failure Analysis Reporters</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.FailureAnalysisReporter</span><span style="color:#D73A49">=</span><span style="color:#24292E">\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"># Database Initializer Detectors</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.sql.init.dependency.DatabaseInitializerDetector</span><span style="color:#D73A49">=</span><span style="color:#24292E">\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.flyway.FlywayDatabaseInitializerDetector,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.jdbc.AbstractDataSourceInitializerDatabaseInitializerDetector,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.jdbc.init.DataSourceScriptDatabaseInitializerDetector,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.liquibase.LiquibaseDatabaseInitializerDetector,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.orm.jpa.JpaDatabaseInitializerDetector,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.r2dbc.init.R2dbcScriptDatabaseInitializerDetector</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E"># Depends On Database Initialization Detectors</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitializationDetector</span><span style="color:#D73A49">=</span><span style="color:#24292E">\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.sql.init.dependency.AnnotationDependsOnDatabaseInitializationDetector,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.jdbc.SpringJdbcDependsOnDatabaseInitializationDetector,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.jooq.JooqDependsOnDatabaseInitializationDetector,\</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.orm.jpa.JpaDependsOnDatabaseInitializationDetector</span></span>
+<span class="line"></span></code></pre>
+<h3 id="223-检查主类型">2.2.3 检查主类型</h3>
+<p>deduceMainApplicationClass
+这个代码非常有意思,通过我们的处理异常时候的异常堆栈类型来获取方法调用栈,然后遍历这个栈中元素,获取到方法名字如果存在main方法的则为main方法所在应用启动类,然后去加载这个类型</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">private</span><span style="color:#24292E"> Class</span><span style="color:#D73A49">&#x3C;?></span><span style="color:#6F42C1"> deduceMainApplicationClass</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#D73A49">		try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">			//是获取运行时堆栈信息</span></span>
+<span class="line"><span style="color:#D73A49">			StackTraceElement</span><span style="color:#24292E">[] stackTrace </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> RuntimeException</span><span style="color:#24292E">().</span><span style="color:#6F42C1">getStackTrace</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">			//遍历集合如果这个方法名字是main方法则加载这个类型</span></span>
+<span class="line"><span style="color:#D73A49">			for</span><span style="color:#24292E"> (StackTraceElement stackTraceElement </span><span style="color:#D73A49">:</span><span style="color:#24292E"> stackTrace) {</span></span>
+<span class="line"><span style="color:#D73A49">				if</span><span style="color:#24292E"> (</span><span style="color:#032F62">"main"</span><span style="color:#24292E">.</span><span style="color:#6F42C1">equals</span><span style="color:#24292E">(stackTraceElement.</span><span style="color:#6F42C1">getMethodName</span><span style="color:#24292E">())) {</span></span>
+<span class="line"><span style="color:#D73A49">					return</span><span style="color:#24292E"> Class.</span><span style="color:#6F42C1">forName</span><span style="color:#24292E">(stackTraceElement.</span><span style="color:#6F42C1">getClassName</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">				}</span></span>
+<span class="line"><span style="color:#24292E">			}</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#D73A49">		catch</span><span style="color:#24292E"> (ClassNotFoundException </span><span style="color:#E36209">ex</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">			// Swallow and continue</span></span>
+<span class="line"><span style="color:#24292E">		}</span></span>
+<span class="line"><span style="color:#D73A49">		return</span><span style="color:#005CC5"> null</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">	}</span></span></code></pre>
+<p>根据刚刚的扩展类型这里我来列举下ApplicationContextInitializer类型的当前版本默认的所有扩展类型:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">//将委托给上下文中指定的其他初始值设定项的ApplicationContextInitializer。初始化器。类环境属性。</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.config.DelegatingApplicationContextInitializer</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">//ApplicationContextInitializer，用于在ConfigurationClassPostProcessor和Spring Boot之间创建共享的CachingMetadataReaderFactory。</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.autoconfigure.SharedMetadataReaderFactoryContextInitializer</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">//ApplicationContextInitializer，用于设置Spring应用上下文ID。应用name属性用于创建ID。如果未设置该属性，则使用应用程序。</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.ContextIdApplicationContextInitializer</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.ConfigurationWarningsApplicationContextInitializer</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.rsocket.context.RSocketPortInfoApplicationContextInitializer</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.web.context.ServerPortInfoApplicationContextInitializer</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener</span></span></code></pre>
+<p>ApplicationListener类型的所有扩展如下:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">org.springframework.boot.env.EnvironmentPostProcessorApplicationListener</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.config.AnsiOutputApplicationListener</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.logging.LoggingApplicationListener</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.autoconfigure.BackgroundPreinitializer</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.config.DelegatingApplicationListener</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.builder.ParentContextCloserApplicationListener</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.ClearCachesApplicationListener</span></span>
+<span class="line"><span style="color:#24292E">org.springframework.boot.context.FileEncodingApplicationListener</span></span></code></pre>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

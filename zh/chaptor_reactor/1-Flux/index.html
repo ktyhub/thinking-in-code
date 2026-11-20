@@ -1,0 +1,456 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Reactor源码解析：Flux.subscribe方法详解 — STAGS NextStack</title><meta name="description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/chaptor_reactor/1-Flux/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/chaptor_reactor/1-Flux"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/chaptor_reactor/1-Flux/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/chaptor_reactor/1-Flux"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="website"><meta property="og:title" content="Reactor源码解析：Flux.subscribe方法详解 — STAGS NextStack"><meta property="og:description" content="STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。"><meta property="og:url" content="https://www.stags.cn/zh/chaptor_reactor/1-Flux/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css"></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/chaptor_reactor/1-Flux/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap doc-shell"> <aside class="doc-side"> <h3>chaptor_reactor</h3> <ul> <li> <a href="/zh/chaptor_reactor/1-Flux" class="lv0" aria-current="page" title="Reactor源码解析：Flux.subscribe方法详解"> Reactor源码解析：Flux.subscribe方法详解 </a> </li><li> <a href="/zh/chaptor_reactor/2-Flux.push" class="lv0" title="2-Flux.push"> 2-Flux.push </a> </li><li> <a href="/zh/chaptor_reactor/3-Flux.handle" class="lv0" title="3-Flux.handle"> 3-Flux.handle </a> </li><li> <a href="/zh/chaptor_reactor/4-Momo" class="lv0" title="Mono"> Mono </a> </li><li> <a href="/zh/chaptor_reactor/5-BaseSubscriber" class="lv0" title="5-BaseSubscriber"> 5-BaseSubscriber </a> </li><li> <a href="/zh/chaptor_reactor/6-Scheduler" class="lv0" title="Reactor 3 调度器深度解析：异步编程的核心引擎"> Reactor 3 调度器深度解析：异步编程的核心引擎 </a> </li><li> <a href="/zh/chaptor_reactor/7-Schedulers.elastic" class="lv0" title="7-Schedulers.elastic"> 7-Schedulers.elastic </a> </li><li> <a href="/zh/chaptor_reactor/8-Flux.pushlishOn" class="lv0" title="深入理解Reactor中的publishOn操作符"> 深入理解Reactor中的publishOn操作符 </a> </li><li> <a href="/zh/chaptor_reactor/9-Flux.subscribeOn" class="lv0" title="深入理解Reactor中的subscribeOn操作符"> 深入理解Reactor中的subscribeOn操作符 </a> </li><li> <a href="/zh/chaptor_reactor/10-Flux.parallel" class="lv0" title="深入理解Reactor并行流：Flux.parallel &#38; Flowable.parallel"> 深入理解Reactor并行流：Flux.parallel &amp; Flowable.parallel </a> </li><li> <a href="/zh/chaptor_reactor/11-ParallelFlux.runOn" class="lv0" title="深入解析ParallelFlux.runOn的调度实现机制"> 深入解析ParallelFlux.runOn的调度实现机制 </a> </li><li> <a href="/zh/chaptor_reactor/12-Filter" class="lv0" title="12-Filter"> 12-Filter </a> </li><li> <a href="/zh/chaptor_reactor/13-transform" class="lv0" title="13-transform"> 13-transform </a> </li><li> <a href="/zh/chaptor_reactor/14-​​buffer​​_window​​_groupBy" class="lv0" title="14-​​buffer​​_window​​_groupBy"> 14-​​buffer​​_window​​_groupBy </a> </li><li> <a href="/zh/chaptor_reactor/15-merge_mergeSequential" class="lv0" title="15-merge_mergeSequential"> 15-merge_mergeSequential </a> </li><li> <a href="/zh/chaptor_reactor/16-flatMap_flatMapSequential" class="lv0" title="16-flatMap_flatMapSequential"> 16-flatMap_flatMapSequential </a> </li><li> <a href="/zh/chaptor_reactor/17-concatMap" class="lv0" title="concatMap操作符深度解析：原理、源码与实战"> concatMap操作符深度解析：原理、源码与实战 </a> </li><li> <a href="/zh/chaptor_reactor/18-combineLatest" class="lv0" title="CombineLatest操作符深度解析：原理、源码与实战应用"> CombineLatest操作符深度解析：原理、源码与实战应用 </a> </li><li> <a href="/zh/chaptor_reactor/19-UnicastProcessor" class="lv0" title="UnicastProcessor深度解析：单订阅者处理器的工作原理与实践"> UnicastProcessor深度解析：单订阅者处理器的工作原理与实践 </a> </li><li> <a href="/zh/chaptor_reactor/20-DirectProcessor" class="lv0" title="DirectProcessor深度解析：无背压处理器的工作原理与实践"> DirectProcessor深度解析：无背压处理器的工作原理与实践 </a> </li><li> <a href="/zh/chaptor_reactor/21-EmitterProcessor" class="lv0" title="EmitterProcessor深度解析：多订阅者背压处理器的实现原理与实战指南"> EmitterProcessor深度解析：多订阅者背压处理器的实现原理与实战指南 </a> </li><li> <a href="/zh/chaptor_reactor/22-ReplayProcessor" class="lv0" title="ReplayProcessor深度解析：缓存重放机制与实现原理"> ReplayProcessor深度解析：缓存重放机制与实现原理 </a> </li><li> <a href="/zh/chaptor_reactor/23.TopicProcessor" class="lv0" title="TopicProcessor深度解析：多订阅者场景下的高效数据分发机制"> TopicProcessor深度解析：多订阅者场景下的高效数据分发机制 </a> </li><li> <a href="/zh/chaptor_reactor/24-Context" class="lv0" title="24-Context"> 24-Context </a> </li><li> <a href="/zh/chaptor_reactor/Flux" class="lv0" title="Flux"> Flux </a> </li> </ul> <h3>导航</h3> <ul> <li><a href="/zh/chapters/">全部章节</a></li> <li><a href="/zh/releases/">版本发布</a></li> <li><a href="/">英文站</a></li> </ul> </aside> <article> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/">首页</a><span class="sep">/</span><a href="/zh/chaptor_reactor">chaptor_reactor</a><span class="sep">/</span><span>Reactor源码解析：Flux.subscribe方法详解</span> </nav> <div class="prose">  <h1 id="reactor源码解析fluxsubscribe方法详解">Reactor源码解析：Flux.subscribe方法详解</h1>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// subscribe方法：响应式流的核心方法，连接发布者与订阅者</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> subscribe</span><span style="color:#24292E">(Subscriber</span><span style="color:#D73A49">&#x3C;?</span><span style="color:#005CC5"> super</span><span style="color:#24292E"> T</span><span style="color:#D73A49">></span><span style="color:#24292E"> actual) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 获取最终的发布者，处理装配点追踪（用于异常堆栈跟踪和调试）</span></span>
+<span class="line"><span style="color:#24292E">    CorePublisher publisher </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Operators.</span><span style="color:#6F42C1">onLastAssembly</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 将普通Subscriber转换为CoreSubscriber，以支持Reactor的上下文传播机制</span></span>
+<span class="line"><span style="color:#24292E">    CoreSubscriber subscriber </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Operators.</span><span style="color:#6F42C1">toCoreSubscriber</span><span style="color:#24292E">(actual);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 融合(Fusion)机制处理：特定条件下需要抑制融合优化</span></span>
+<span class="line"><span style="color:#6A737D">    // 当订阅者支持队列融合但发布者链中出现融合中断时，应用SuppressFuseable以确保行为一致性</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (subscriber </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> Fuseable.QueueSubscription </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#005CC5"> this</span><span style="color:#D73A49"> !=</span><span style="color:#24292E"> publisher </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#005CC5"> this</span><span style="color:#D73A49"> instanceof</span><span style="color:#24292E"> Fuseable </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#24292E">(publisher </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> Fuseable)) {</span></span>
+<span class="line"><span style="color:#24292E">        subscriber </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> FluxHide.SuppressFuseableSubscriber&#x3C;>(subscriber);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">        // 操作符链优化：这是Reactor性能的关键所在</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (publisher </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> OptimizableOperator) {</span></span>
+<span class="line"><span style="color:#24292E">            OptimizableOperator operator </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (OptimizableOperator) publisher;</span></span>
+<span class="line"><span style="color:#D73A49">            while</span><span style="color:#24292E"> (</span><span style="color:#005CC5">true</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">                // 让每个操作符有机会处理订阅者或返回包装后的订阅者</span></span>
+<span class="line"><span style="color:#24292E">                subscriber </span><span style="color:#D73A49">=</span><span style="color:#24292E"> operator.</span><span style="color:#6F42C1">subscribeOrReturn</span><span style="color:#24292E">(subscriber);</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (subscriber </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">                    // 返回null表示"我会自己处理订阅"，直接返回不再继续处理</span></span>
+<span class="line"><span style="color:#D73A49">                    return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                // 获取下一个可优化的操作符源</span></span>
+<span class="line"><span style="color:#24292E">                OptimizableOperator newSource </span><span style="color:#D73A49">=</span><span style="color:#24292E"> operator.</span><span style="color:#6F42C1">nextOptimizableSource</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (newSource </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">                    // 如果没有下一个可优化的源，获取最终源并退出循环</span></span>
+<span class="line"><span style="color:#24292E">                    publisher </span><span style="color:#D73A49">=</span><span style="color:#24292E"> operator.</span><span style="color:#6F42C1">source</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                    break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#24292E">                operator </span><span style="color:#D73A49">=</span><span style="color:#24292E"> newSource;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // 确保上下文在非内部发布者的情况下正确传播到订阅者</span></span>
+<span class="line"><span style="color:#24292E">        subscriber </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Operators.</span><span style="color:#6F42C1">restoreContextOnSubscriberIfPublisherNonInternal</span><span style="color:#24292E">(publisher, subscriber);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // 执行实际订阅操作，将订阅者连接到发布者</span></span>
+<span class="line"><span style="color:#24292E">        publisher.</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">(subscriber);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 处理订阅过程中的异常，报告给订阅者</span></span>
+<span class="line"><span style="color:#24292E">        Operators.</span><span style="color:#6F42C1">reportThrowInSubscribe</span><span style="color:#24292E">(subscriber, e);</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="方法执行流程详解">方法执行流程详解</h2>
+<p>这个<code>subscribe()</code>方法是Reactor核心的订阅入口，它处理了多项关键机制，保证了响应式流的正确执行：</p>
+<ol>
+<li>
+<p><strong>装配点追踪</strong>：通过<code>onLastAssembly</code>捕获操作符链的创建位置，用于调试</p>
+</li>
+<li>
+<p><strong>订阅者转换</strong>：确保订阅者支持Reactor特有的上下文机制</p>
+</li>
+<li>
+<p><strong>融合优化控制</strong>：Reactor的融合机制允许操作符共享内部队列，减少数据拷贝和提高性能，但在特定情况下需要抑制融合以保证正确性</p>
+</li>
+<li>
+<p><strong>操作符链优化</strong>：</p>
+<ul>
+<li>循环遍历操作符链，从下游向上游处理</li>
+<li>每个操作符都可以包装订阅者，添加自己的处理逻辑</li>
+<li>操作符可以直接返回null表示自行处理订阅</li>
+<li>最终找到真正的源发布者</li>
+</ul>
+</li>
+<li>
+<p><strong>上下文传播</strong>：确保订阅者的上下文信息正确传播</p>
+</li>
+<li>
+<p><strong>异常处理</strong>：捕获并正确报告订阅过程中的异常</p>
+</li>
+</ol>
+<p>通过这些机制的协同工作，Reactor实现了高效、灵活且可靠的响应式流处理。</p>
+<h1 id="reactor-核心源码解析subscribe-方法详解">Reactor 核心源码解析：subscribe 方法详解</h1>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// subscribe 方法：实现 CorePublisher 接口的核心方法，负责将订阅者连接到发布者，启动响应式数据流</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">SuppressWarnings</span><span style="color:#24292E">(</span><span style="color:#032F62">"unchecked"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> subscribe</span><span style="color:#24292E">(Subscriber</span><span style="color:#D73A49">&#x3C;?</span><span style="color:#005CC5"> super</span><span style="color:#24292E"> T</span><span style="color:#D73A49">></span><span style="color:#24292E"> actual) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 获取最终装配的发布者，支持操作符链追踪（Debug 模式下可获取完整的调用栈），实现 hook 机制</span></span>
+<span class="line"><span style="color:#24292E">    CorePublisher publisher </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Operators.</span><span style="color:#6F42C1">onLastAssembly</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 将普通 Subscriber 转换为 CoreSubscriber，确保支持 Reactor 特有的上下文传播机制</span></span>
+<span class="line"><span style="color:#24292E">    CoreSubscriber subscriber </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Operators.</span><span style="color:#6F42C1">toCoreSubscriber</span><span style="color:#24292E">(actual);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 融合(Fusion)优化处理：</span></span>
+<span class="line"><span style="color:#6A737D">    // 当出现融合不兼容的情况时（订阅者支持融合但发布者链中断了融合），</span></span>
+<span class="line"><span style="color:#6A737D">    // 通过 SuppressFuseableSubscriber 包装器禁用融合特性，确保行为一致性</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (subscriber </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> Fuseable.QueueSubscription </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#005CC5"> this</span><span style="color:#D73A49"> !=</span><span style="color:#24292E"> publisher</span></span>
+<span class="line"><span style="color:#D73A49">            &#x26;&#x26;</span><span style="color:#005CC5"> this</span><span style="color:#D73A49"> instanceof</span><span style="color:#24292E"> Fuseable </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#D73A49"> !</span><span style="color:#24292E">(publisher </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> Fuseable)) {</span></span>
+<span class="line"><span style="color:#24292E">        subscriber </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> FluxHide.SuppressFuseableSubscriber&#x3C;>(subscriber);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#6A737D">        // 操作符链优化：针对 OptimizableOperator 类型的发布者进行特殊处理</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> (publisher </span><span style="color:#D73A49">instanceof</span><span style="color:#24292E"> OptimizableOperator) {</span></span>
+<span class="line"><span style="color:#24292E">            OptimizableOperator operator </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (OptimizableOperator) publisher;</span></span>
+<span class="line"><span style="color:#D73A49">            while</span><span style="color:#24292E"> (</span><span style="color:#005CC5">true</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">                // 让当前操作符有机会对订阅者进行包装或者直接处理订阅</span></span>
+<span class="line"><span style="color:#24292E">                subscriber </span><span style="color:#D73A49">=</span><span style="color:#24292E"> operator.</span><span style="color:#6F42C1">subscribeOrReturn</span><span style="color:#24292E">(subscriber);</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (subscriber </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">                    // 返回 null 表示操作符已自行处理了订阅，无需继续处理</span></span>
+<span class="line"><span style="color:#D73A49">                    return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">                // 获取下一个可优化的操作符源</span></span>
+<span class="line"><span style="color:#24292E">                OptimizableOperator newSource </span><span style="color:#D73A49">=</span><span style="color:#24292E"> operator.</span><span style="color:#6F42C1">nextOptimizableSource</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E"> (newSource </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">                    // 没有更多可优化操作符，获取原始源发布者并结束循环</span></span>
+<span class="line"><span style="color:#24292E">                    publisher </span><span style="color:#D73A49">=</span><span style="color:#24292E"> operator.</span><span style="color:#6F42C1">source</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">                    break</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#6A737D">                // 继续处理下一个操作符</span></span>
+<span class="line"><span style="color:#24292E">                operator </span><span style="color:#D73A49">=</span><span style="color:#24292E"> newSource;</span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#24292E">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // 确保上下文在非内部发布者的情况下正确传播到订阅者</span></span>
+<span class="line"><span style="color:#24292E">        subscriber </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Operators.</span><span style="color:#6F42C1">restoreContextOnSubscriberIfPublisherNonInternal</span><span style="color:#24292E">(publisher, subscriber);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">        // 执行实际订阅操作，将订阅者连接到最终的发布者</span></span>
+<span class="line"><span style="color:#24292E">        publisher.</span><span style="color:#6F42C1">subscribe</span><span style="color:#24292E">(subscriber);</span></span>
+<span class="line"><span style="color:#24292E">    } </span><span style="color:#D73A49">catch</span><span style="color:#24292E"> (Throwable </span><span style="color:#E36209">e</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 处理订阅过程中的异常，通过 reportThrowInSubscribe 方法向订阅者报告错误</span></span>
+<span class="line"><span style="color:#24292E">        Operators.</span><span style="color:#6F42C1">reportThrowInSubscribe</span><span style="color:#24292E">(subscriber, e);</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="方法执行流程">方法执行流程</h2>
+<p>这个方法实现了 Reactor 响应式流的核心订阅逻辑，包含几个关键步骤：</p>
+<ol>
+<li>
+<p><strong>装配点追踪</strong>：通过 <code>onLastAssembly</code> 获取最终发布者，支持调试和操作符链追踪</p>
+</li>
+<li>
+<p><strong>订阅者规范化</strong>：将标准 Reactive Streams 的 Subscriber 转换为支持上下文的 CoreSubscriber</p>
+</li>
+<li>
+<p><strong>融合优化处理</strong>：在特定条件下禁用融合特性，确保操作符行为一致性</p>
+</li>
+<li>
+<p><strong>操作符链优化</strong>：</p>
+<ul>
+<li>从下游向上游遍历操作符链</li>
+<li>每个操作符都可以包装订阅者或自行处理订阅</li>
+<li>最终找到真正的源发布者</li>
+</ul>
+</li>
+<li>
+<p><strong>上下文传播</strong>：确保上下文信息在订阅链中正确传播</p>
+</li>
+<li>
+<p><strong>异常处理</strong>：安全捕获并正确报告订阅过程中的异常</p>
+</li>
+</ol>
+<p>通过这些精心设计的机制，Reactor 实现了高效的操作符组合、上下文传播和异常处理，为响应式编程提供了强大的基础设施。</p>
+<h1 id="reactor源码分析fluxcreate-方法详解">Reactor源码分析：Flux.create 方法详解</h1>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D"> * 创建一个可编程的Flux，通过提供的FluxSink接口以命令式风格生成响应式流</span></span>
+<span class="line"><span style="color:#6A737D"> * 允许在多线程环境中安全地发射元素，错误和完成信号</span></span>
+<span class="line"><span style="color:#6A737D"> *</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> &#x3C;T></span><span style="color:#6A737D"> 流中元素的类型</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> emitter</span><span style="color:#6A737D"> 消费者函数，接收FluxSink实例以生成数据流</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@return</span><span style="color:#6A737D"> 返回新建的Flux实例，默认使用BUFFER溢出策略</span></span>
+<span class="line"><span style="color:#6A737D"> */</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Flux</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> create</span><span style="color:#24292E">(Consumer</span><span style="color:#D73A49">&#x3C;?</span><span style="color:#005CC5"> super</span><span style="color:#24292E"> FluxSink</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">>></span><span style="color:#24292E"> emitter) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 调用重载方法，默认使用BUFFER溢出策略</span></span>
+<span class="line"><span style="color:#6A737D">    // BUFFER策略在下游消费者处理速度不及时时会缓存所有元素</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#6F42C1"> create</span><span style="color:#24292E">(emitter, OverflowStrategy.BUFFER);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D"> * 创建一个可编程的Flux，通过提供的FluxSink接口以命令式风格生成响应式流</span></span>
+<span class="line"><span style="color:#6A737D"> * 支持指定背压溢出策略，控制生产者与消费者速率不匹配时的行为</span></span>
+<span class="line"><span style="color:#6A737D"> *</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> &#x3C;T></span><span style="color:#6A737D"> 流中元素的类型</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> emitter</span><span style="color:#6A737D"> 消费者函数，接收FluxSink实例以生成数据流</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> backpressure</span><span style="color:#6A737D"> 背压处理策略，定义生产速率超过消费速率时的行为</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@return</span><span style="color:#6A737D"> 返回新建的Flux实例</span></span>
+<span class="line"><span style="color:#6A737D"> */</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Flux</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> create</span><span style="color:#24292E">(Consumer</span><span style="color:#D73A49">&#x3C;?</span><span style="color:#005CC5"> super</span><span style="color:#24292E"> FluxSink</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">>></span><span style="color:#24292E"> emitter,</span></span>
+<span class="line"><span style="color:#24292E">                                 OverflowStrategy backpressure) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 创建FluxCreate实例，传入emitter函数、背压策略和PUSH_ONLY创建模式</span></span>
+<span class="line"><span style="color:#6A737D">    // PUSH_ONLY模式下不会使用SerializedSink包装器，适合单线程场景</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#6F42C1"> onAssembly</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#24292E"> FluxCreate&#x3C;>(emitter, backpressure, CreateMode.PUSH_ONLY));</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D"> * 创建一个可编程的Flux，支持多线程并发访问，自动进行同步处理</span></span>
+<span class="line"><span style="color:#6A737D"> * 与create方法类似，但增加了序列化保护，确保多线程安全</span></span>
+<span class="line"><span style="color:#6A737D"> *</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> &#x3C;T></span><span style="color:#6A737D"> 流中元素的类型</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> emitter</span><span style="color:#6A737D"> 消费者函数，接收FluxSink实例以生成数据流</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@return</span><span style="color:#6A737D"> 返回新建的Flux实例，使用SerializedSink确保线程安全</span></span>
+<span class="line"><span style="color:#6A737D"> */</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Flux</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> push</span><span style="color:#24292E">(Consumer</span><span style="color:#D73A49">&#x3C;?</span><span style="color:#005CC5"> super</span><span style="color:#24292E"> FluxSink</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">>></span><span style="color:#24292E"> emitter) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 使用BUFFER溢出策略和PUSH_PULL创建模式</span></span>
+<span class="line"><span style="color:#6A737D">    // PUSH_PULL模式会使用SerializedSink包装器，保证多线程访问安全性</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#6F42C1"> onAssembly</span><span style="color:#24292E">(</span><span style="color:#D73A49">new</span><span style="color:#24292E"> FluxCreate&#x3C;>(emitter, OverflowStrategy.BUFFER, CreateMode.PUSH_PULL));</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">/**</span></span>
+<span class="line"><span style="color:#6A737D"> * 对Flux应用装配点跟踪，捕获操作符调用栈信息，用于异常追踪和调试</span></span>
+<span class="line"><span style="color:#6A737D"> * 是Reactor中所有操作符工厂方法的最后一步，支持钩子系统的功能扩展</span></span>
+<span class="line"><span style="color:#6A737D"> *</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> &#x3C;T></span><span style="color:#6A737D"> 流中元素的类型</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@param</span><span style="color:#E36209"> source</span><span style="color:#6A737D"> 原始的Publisher源</span></span>
+<span class="line"><span style="color:#6A737D"> * </span><span style="color:#D73A49">@return</span><span style="color:#6A737D"> 经过钩子处理的Publisher，保留了构建栈信息</span></span>
+<span class="line"><span style="color:#6A737D"> */</span></span>
+<span class="line"><span style="color:#D73A49">protected</span><span style="color:#D73A49"> static</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> Flux</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#6F42C1"> onAssembly</span><span style="color:#24292E">(Flux</span><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E">T</span><span style="color:#D73A49">></span><span style="color:#24292E"> source) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 使用Hooks系统记录操作符的装配点(构建位置)，便于调试</span></span>
+<span class="line"><span style="color:#6A737D">    // 支持通过Hooks.onOperatorDebug()启用调试模式，记录完整的装配栈</span></span>
+<span class="line"><span style="color:#24292E">    Function&#x3C;</span><span style="color:#D73A49">Publisher</span><span style="color:#24292E">, </span><span style="color:#D73A49">Publisher</span><span style="color:#24292E">> hook </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Hooks.onEachOperatorHook;</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (hook </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> null</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 应用全局钩子函数，可用于监控、调试或修改操作符行为</span></span>
+<span class="line"><span style="color:#24292E">        source </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Operators.</span><span style="color:#6F42C1">toFlux</span><span style="color:#24292E">(hook.</span><span style="color:#6F42C1">apply</span><span style="color:#24292E">(source));</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> (Hooks.GLOBAL_TRACE) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 当开启全局跟踪时，捕获操作符的创建栈，便于定位问题</span></span>
+<span class="line"><span style="color:#24292E">        AssemblySnapshot stacktrace </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> AssemblySnapshot</span><span style="color:#24292E">(</span><span style="color:#005CC5">null</span><span style="color:#24292E">, Traces.callSiteSupplierFactory.</span><span style="color:#6F42C1">get</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">        source </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#24292E"> FluxOnAssembly&#x3C;>(source, stacktrace);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> source;</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="fluxcreate-方法工作原理">Flux.create 方法工作原理</h2>
+<p>Flux.create 方法是 Reactor 库中最灵活的创建操作符之一，它允许开发者以命令式编程风格创建响应式流。该方法的主要优势在于：</p>
+<ol>
+<li>
+<p><strong>桥接命令式与响应式编程模型</strong>：通过 FluxSink 接口，允许将现有的命令式 API（如回调、监听器）转换为响应式流。</p>
+</li>
+<li>
+<p><strong>背压控制</strong>：提供多种溢出策略（BUFFER、DROP、ERROR、LATEST、IGNORE）处理生产者和消费者速率不匹配的情况。</p>
+</li>
+<li>
+<p><strong>多线程安全性</strong>：根据不同的 CreateMode，可以选择是否自动同步对 FluxSink 的调用，确保线程安全。</p>
+</li>
+<li>
+<p><strong>资源管理</strong>：支持通过 onDispose 和 onCancel 注册清理回调，确保资源正确释放。</p>
+</li>
+</ol>
+<p>create 方法的实现依赖于 FluxCreate 类，该类会根据所选的溢出策略创建不同的 Sink 实现（如 BufferAsyncSink、DropAsyncSink
+等），每种实现对应不同的背压处理行为。</p>
+<p>最后，每个由 create 方法创建的 Flux 都会通过 onAssembly 方法进行处理，这是 Reactor
+中的关键机制，支持操作符追踪、调试和钩子系统。这使得开发者可以更容易地调试和监控响应式流的运行状态。</p>
+<h1 id="reactor-flux的背压机制详解">Reactor Flux的背压机制详解</h1>
+<p>背压(Backpressure)是响应式编程中的核心概念，用于解决生产者与消费者处理数据速率不匹配的问题。在Reactor框架中，Flux通过精心设计的背压机制确保系统稳定性和资源合理利用。</p>
+<h2 id="什么是背压">什么是背压？</h2>
+<p>背压是一种反馈机制，允许消费者告知生产者其能够处理数据的速率，从而避免消费者被过多数据压垮。当消费者处理速度跟不上生产者发送数据的速度时，背压机制会发挥作用。</p>
+<h2 id="flux中的背压实现">Flux中的背压实现</h2>
+<p>从源码中可以看出，Flux通过<code>request(n)</code>方法实现背压，消费者通过该方法向上游请求特定数量的数据元素：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">@</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> void</span><span style="color:#6F42C1"> request</span><span style="color:#24292E">(</span><span style="color:#D73A49">long</span><span style="color:#24292E"> n) {</span></span>
+<span class="line"><span style="color:#D73A49">   if</span><span style="color:#24292E"> (Operators.</span><span style="color:#6F42C1">validate</span><span style="color:#24292E">(n)) {</span></span>
+<span class="line"><span style="color:#D73A49">      long</span><span style="color:#24292E"> s </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> addCap</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, n);</span></span>
+<span class="line"><span style="color:#6A737D">      // ...处理请求逻辑</span></span>
+<span class="line"><span style="color:#6F42C1">      onRequestedFromDownstream</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">   }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="flux的背压策略">Flux的背压策略</h2>
+<p>Flux提供了多种背压策略，在<code>FluxCreate</code>中通过<code>OverflowStrategy</code>枚举定义：</p>
+<h3 id="1-buffer-缓存策略">1. BUFFER (缓存策略)</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">static</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> BufferAsyncSink</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> </span><span style="color:#D73A49">extends</span><span style="color:#6F42C1"> BaseSink</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> {</span></span>
+<span class="line"><span style="color:#D73A49">   final</span><span style="color:#24292E"> Queue&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> queue;</span></span>
+<span class="line"><span style="color:#6A737D">   // ...</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>当消费者处理不及时时，BUFFER策略会将过多的数据项存储在无界队列中，等待消费者处理。这可能导致内存问题，但不会丢失数据。</p>
+<h3 id="2-drop-丢弃策略">2. DROP (丢弃策略)</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">static</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> DropAsyncSink</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> </span><span style="color:#D73A49">extends</span><span style="color:#6F42C1"> NoOverflowBaseAsyncSink</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> {</span></span>
+<span class="line"><span style="color:#24292E">   @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">   void</span><span style="color:#6F42C1"> onOverflow</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6A737D">      // nothing to do</span></span>
+<span class="line"><span style="color:#24292E">   }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>当消费者处理不及时时，DROP策略会简单地丢弃新到达的数据项，直到消费者可以再次处理数据。</p>
+<h3 id="3-error-错误策略">3. ERROR (错误策略)</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">static</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> ErrorAsyncSink</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> </span><span style="color:#D73A49">extends</span><span style="color:#6F42C1"> NoOverflowBaseAsyncSink</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> {</span></span>
+<span class="line"><span style="color:#24292E">   @</span><span style="color:#D73A49">Override</span></span>
+<span class="line"><span style="color:#D73A49">   void</span><span style="color:#6F42C1"> onOverflow</span><span style="color:#24292E">() {</span></span>
+<span class="line"><span style="color:#6F42C1">      error</span><span style="color:#24292E">(Exceptions.</span><span style="color:#6F42C1">failWithOverflow</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">   }</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>当背压发生时，ERROR策略会以异常终止整个流处理。</p>
+<h3 id="4-latest-保留最新策略">4. LATEST (保留最新策略)</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">static</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> LatestAsyncSink</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> </span><span style="color:#D73A49">extends</span><span style="color:#6F42C1"> BaseSink</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> {</span></span>
+<span class="line"><span style="color:#D73A49">   final</span><span style="color:#24292E"> AtomicReference&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> queue;</span></span>
+<span class="line"><span style="color:#6A737D">   // ...</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>LATEST策略仅保留最新的数据项，丢弃之前的未处理项。这确保消费者总是处理最新数据，适用于只关心最新状态的场景。</p>
+<h3 id="5-ignore-忽略策略">5. IGNORE (忽略策略)</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">static</span><span style="color:#D73A49"> final</span><span style="color:#D73A49"> class</span><span style="color:#6F42C1"> IgnoreSink</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> </span><span style="color:#D73A49">extends</span><span style="color:#6F42C1"> BaseSink</span><span style="color:#24292E">&#x3C;</span><span style="color:#D73A49">T</span><span style="color:#24292E">> {</span></span>
+<span class="line"><span style="color:#6A737D">   // ...忽略背压控制，继续发送数据</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<p>IGNORE策略完全忽略背压信号，无论消费者处理能力如何都持续发送数据。</p>
+<h2 id="使用示例">使用示例</h2>
+<p>下面是使用不同背压策略的Flux.create示例：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#6A737D">// 使用BUFFER策略</span></span>
+<span class="line"><span style="color:#24292E">Flux&#x3C;</span><span style="color:#D73A49">Integer</span><span style="color:#24292E">> bufferExample </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">create</span><span style="color:#24292E">(sink </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (</span><span style="color:#D73A49">int</span><span style="color:#24292E"> i </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">; i </span><span style="color:#D73A49">&#x3C;</span><span style="color:#005CC5"> 1000</span><span style="color:#24292E">; i</span><span style="color:#D73A49">++</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        sink.</span><span style="color:#6F42C1">next</span><span style="color:#24292E">(i);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    sink.</span><span style="color:#6F42C1">complete</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">}, FluxSink.OverflowStrategy.BUFFER);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用DROP策略</span></span>
+<span class="line"><span style="color:#24292E">Flux&#x3C;</span><span style="color:#D73A49">Integer</span><span style="color:#24292E">> dropExample </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">create</span><span style="color:#24292E">(sink </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (</span><span style="color:#D73A49">int</span><span style="color:#24292E"> i </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">; i </span><span style="color:#D73A49">&#x3C;</span><span style="color:#005CC5"> 1000</span><span style="color:#24292E">; i</span><span style="color:#D73A49">++</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        sink.</span><span style="color:#6F42C1">next</span><span style="color:#24292E">(i);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    sink.</span><span style="color:#6F42C1">complete</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">}, FluxSink.OverflowStrategy.DROP);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 使用ERROR策略</span></span>
+<span class="line"><span style="color:#24292E">Flux&#x3C;</span><span style="color:#D73A49">Integer</span><span style="color:#24292E">> errorExample </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Flux.</span><span style="color:#6F42C1">create</span><span style="color:#24292E">(sink </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> (</span><span style="color:#D73A49">int</span><span style="color:#24292E"> i </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">; i </span><span style="color:#D73A49">&#x3C;</span><span style="color:#005CC5"> 1000</span><span style="color:#24292E">; i</span><span style="color:#D73A49">++</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#24292E">        sink.</span><span style="color:#6F42C1">next</span><span style="color:#24292E">(i);</span></span>
+<span class="line"><span style="color:#24292E">    }</span></span>
+<span class="line"><span style="color:#24292E">    sink.</span><span style="color:#6F42C1">complete</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">}, FluxSink.OverflowStrategy.ERROR);</span></span></code></pre>
+<h2 id="如何选择合适的背压策略">如何选择合适的背压策略</h2>
+<ul>
+<li><strong>BUFFER</strong>: 当所有数据都必须处理且内存足够时</li>
+<li><strong>DROP</strong>: 允许丢弃部分数据，只关心处理新数据</li>
+<li><strong>LATEST</strong>: 只关心最新状态，如UI更新</li>
+<li><strong>ERROR</strong>: 严格要求背压，不能容忍任何数据堆积</li>
+<li><strong>IGNORE</strong>: 确定消费者可以快速处理或已有其他机制控制流量</li>
+</ul>
+<h2 id="源码解析">源码解析</h2>
+<p>从源码可以看出，<code>FluxCreate</code>实现了背压的核心逻辑：</p>
+<ol>
+<li><code>BaseSink</code>维护了请求计数，通过<code>REQUESTED</code>字段跟踪</li>
+<li>不同的<code>Sink</code>实现针对各种背压策略提供具体行为</li>
+<li><code>drain()</code>方法控制数据流动，确保只发送请求的数据量</li>
+</ol>
+<p>例如在<code>BufferAsyncSink</code>中，数据通过队列缓存，并在循环中根据请求量进行控制：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#D73A49">long</span><span style="color:#24292E"> r </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> requestedFromDownstream</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">long</span><span style="color:#24292E"> e </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0L</span><span style="color:#24292E">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">while</span><span style="color:#24292E"> (e </span><span style="color:#D73A49">!=</span><span style="color:#24292E"> r) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 发送数据逻辑</span></span>
+<span class="line"><span style="color:#24292E">    e</span><span style="color:#D73A49">++</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">if</span><span style="color:#24292E"> (e </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">) {</span></span>
+<span class="line"><span style="color:#6F42C1">    produced</span><span style="color:#24292E">(</span><span style="color:#005CC5">this</span><span style="color:#24292E">, e);</span></span>
+<span class="line"><span style="color:#24292E">}</span></span></code></pre>
+<h2 id="总结">总结</h2>
+<p>Reactor Flux的背压机制是保障响应式应用稳定性的关键特性，通过合理选择背压策略，可以有效平衡生产者和消费者的处理能力差异。不同策略各有优缺点，应根据实际业务场景选择合适的实现方式。</p>
+<p>深入理解背压机制不仅有助于正确使用Reactor框架，也能帮助开发者设计更为健壮的响应式系统。</p>
+<h1 id="reactor-3-中的-generate-方法总结">Reactor 3 中的 <code>generate</code> 方法总结</h1>
+<h2 id="核心功能与设计目的">核心功能与设计目的</h2>
+<p><code>generate</code> 是 Reactor 中用于动态生成 <strong>同步或异步数据流</strong> 的核心方法，其设计目标是通过函数式编程模式实现<strong>响应式数据源的灵活构建</strong>。该方法允许开发者通过一个返回 <code>Publisher</code> 的函数来逐个生成元素，并自动处理背压（Backpressure）机制，确保生产与消费速率的动态平衡。</p>
+<h2 id="核心实现原理">核心实现原理</h2>
+<h3 id="1-同步生成模式">1. <strong>同步生成模式</strong></h3>
+<p>当使用 <code>generate(Supplier&#x3C;Publisher&#x3C;T>>)</code> 时：</p>
+<ul>
+<li><strong>同步阻塞</strong>：每次调用 <code>next()</code> 方法时，会阻塞当前线程直到新元素生成。</li>
+<li><strong>适用场景</strong>：适用于元素生成无需异步等待的场景（如遍历集合、计算序列）。</li>
+<li><strong>背压处理</strong>：通过 <code>QueueSubscription</code> 机制自动调节请求量，避免生产者过载。</li>
+</ul>
+<h3 id="2-异步生成模式">2. <strong>异步生成模式</strong></h3>
+<p>当使用 <code>generate(Supplier&#x3C;DeferredResult&#x3C;Publisher&#x3C;T>>>)</code> 时：</p>
+<ul>
+<li><strong>非阻塞生产</strong>：通过 <code>DeferredResult</code> 实现异步任务提交，生产者线程可快速返回。</li>
+<li><strong>适用场景</strong>：适用于需要异步等待的场景（如 I/O 操作、耗时计算）。</li>
+<li><strong>上下文传播</strong>：通过 <code>Context</code> 对象传递请求上下文（如线程信息、事务状态）。</li>
+</ul>
+<h2 id="关键方法与参数">关键方法与参数</h2>
+<table>
+<thead>
+<tr>
+<th align="left">方法签名</th>
+<th align="left">说明</th>
+<th align="left">特殊处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>generate(Supplier&#x3C;Publisher&#x3C;T>>)</code></td>
+<td align="left">同步生成，直接调用 <code>next()</code></td>
+<td align="left">自动包装为 <code>Flux</code></td>
+</tr>
+<tr>
+<td align="left"><code>generate(Supplier&#x3C;DeferredResult&#x3C;Publisher&#x3C;T>>>)</code></td>
+<td align="left">异步生成，支持延迟结果</td>
+<td align="left">需手动处理异常和上下文</td>
+</tr>
+</tbody>
+</table>
+<h2 id="与-fluxcreate-的对比">与 <code>Flux.create</code> 的对比</h2>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>特性</strong></th>
+<th align="left"><code>generate</code></th>
+<th align="left"><code>Flux.create</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><strong>生成模式</strong></td>
+<td align="left">支持同步/异步混合模式</td>
+<td align="left">仅支持同步阻塞模式</td>
+</tr>
+<tr>
+<td align="left"><strong>背压控制</strong></td>
+<td align="left">自动适配请求速率</td>
+<td align="left">需手动调用 <code>request()</code></td>
+</tr>
+<tr>
+<td align="left"><strong>灵活性</strong></td>
+<td align="left">更适合复杂数据流生成</td>
+<td align="left">简单静态数据源创建</td>
+</tr>
+</tbody>
+</table>
+<h2 id="典型使用场景">典型使用场景</h2>
+<h3 id="1-动态序列生成">1. <strong>动态序列生成</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">Flux.</span><span style="color:#6F42C1">range</span><span style="color:#24292E">(</span><span style="color:#005CC5">1</span><span style="color:#24292E">, </span><span style="color:#005CC5">10</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">     .</span><span style="color:#6F42C1">generate</span><span style="color:#24292E">(() </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">         int</span><span style="color:#24292E"> next </span><span style="color:#D73A49">=</span><span style="color:#24292E"> current </span><span style="color:#D73A49">+</span><span style="color:#005CC5"> 1</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">         current </span><span style="color:#D73A49">=</span><span style="color:#24292E"> next;</span></span>
+<span class="line"><span style="color:#D73A49">         return</span><span style="color:#24292E"> Mono.</span><span style="color:#6F42C1">just</span><span style="color:#24292E">(next);</span></span>
+<span class="line"><span style="color:#24292E">     });</span></span></code></pre>
+<h3 id="2-异步数据获取">2. <strong>异步数据获取</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">Flux.</span><span style="color:#6F42C1">generate</span><span style="color:#24292E">(() </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> asyncService.</span><span style="color:#6F42C1">fetchData</span><span style="color:#24292E">() </span><span style="color:#6A737D">// 异步调用</span></span>
+<span class="line"><span style="color:#24292E">        .</span><span style="color:#6F42C1">subscribeOn</span><span style="color:#24292E">(Schedulers.</span><span style="color:#6F42C1">elastic</span><span style="color:#24292E">());</span></span>
+<span class="line"><span style="color:#24292E">});</span></span></code></pre>
+<h3 id="3-状态依赖生成">3. <strong>状态依赖生成</strong></h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="java"><code><span class="line"><span style="color:#24292E">AtomicInteger state </span><span style="color:#D73A49">=</span><span style="color:#D73A49"> new</span><span style="color:#6F42C1"> AtomicInteger</span><span style="color:#24292E">(</span><span style="color:#005CC5">0</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">Flux.</span><span style="color:#6F42C1">generate</span><span style="color:#24292E">(() </span><span style="color:#D73A49">-></span><span style="color:#24292E"> {</span></span>
+<span class="line"><span style="color:#D73A49">    int</span><span style="color:#24292E"> currentState </span><span style="color:#D73A49">=</span><span style="color:#24292E"> state.</span><span style="color:#6F42C1">getAndIncrement</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> Mono.</span><span style="color:#6F42C1">just</span><span style="color:#24292E">(currentState);</span></span>
+<span class="line"><span style="color:#24292E">});</span></span></code></pre>  </div> </article> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>

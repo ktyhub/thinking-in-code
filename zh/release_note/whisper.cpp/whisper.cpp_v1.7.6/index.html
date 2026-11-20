@@ -1,0 +1,846 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>whisper.cpp v1.7.6 — STAGS NextStack</title><meta name="description" content="Add initial VAD support - feedback welcome and appreciated · Metal FA improvements"><meta name="keywords" content="开源项目版本发布, Release Note, 更新日志聚合, 破坏性变更, 弃用提醒, Kafka 版本, Spring Boot 版本, Kubernetes 版本"><meta name="generator" content="Astro v5.18.2"><link rel="canonical" href="https://www.stags.cn/zh/release_note/whisper.cpp/whisper.cpp_v1.7.6/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="STAGS NextStack — releases" href="/zh/releases.xml"><link rel="alternate" hreflang="en" href="https://www.stags.cn/releases/whisper.cpp/1.7.6"><link rel="alternate" hreflang="zh-Hans" href="https://www.stags.cn/zh/release_note/whisper.cpp/whisper.cpp_v1.7.6/"><link rel="alternate" hreflang="x-default" href="https://www.stags.cn/releases/whisper.cpp/1.7.6"><meta property="og:site_name" content="STAGS"><meta property="og:type" content="article"><meta property="og:title" content="whisper.cpp v1.7.6 — STAGS NextStack"><meta property="og:description" content="Add initial VAD support - feedback welcome and appreciated · Metal FA improvements"><meta property="og:url" content="https://www.stags.cn/zh/release_note/whisper.cpp/whisper.cpp_v1.7.6/"><meta property="og:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><meta property="og:locale" content="zh_CN"><meta property="og:locale:alternate" content="en_US"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:locale:alternate" content="de_DE"><meta property="og:locale:alternate" content="fr_FR"><meta property="og:locale:alternate" content="es_ES"><meta property="og:locale:alternate" content="pt_BR"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="https://www.stags.cn/img/stags-tracker-icon.png"><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.stags.cn/#website","name":"STAGS","url":"https://www.stags.cn/","inLanguage":"zh-CN","description":"STAGS 索引基础设施与 AI 开源项目的 Release Note：破坏性变更、弃用与迁移说明，汇成一个英文优先的信息流。","publisher":{"@id":"https://www.stags.cn/#org"}},{"@type":"Organization","@id":"https://www.stags.cn/#org","name":"STAGS","alternateName":"NextStack","url":"https://www.stags.cn/"},{"@type":"TechArticle","@id":"https://www.stags.cn/zh/release_note/whisper.cpp/whisper.cpp_v1.7.6/#article","headline":"whisper.cpp v1.7.6 release notes","datePublished":"2025-06-25","inLanguage":"zh-CN","isPartOf":{"@id":"https://www.stags.cn/#website"},"about":{"@type":"SoftwareSourceCode","codeRepository":"https://github.com/ggml-org/whisper.cpp"}}]}</script><!-- 第三方脚本的连接预热：这两个域名几乎每页都要连，
+         提前建连能省掉 DNS + TCP + TLS 一个往返（移动网络 100~300ms）。
+         AdSense 只在开关打开时预热——关掉广告后连这个域名都没必要。 --><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://pagead2.googlesyndication.com"><!-- Google AdSense：站点所有权校验与广告投放共用同一段脚本，全站只加载一次。
+         未创建广告单元时页面上不渲染任何广告容器，站点保持干净。
+         fetchpriority=low：它不参与首屏渲染，不该跟正文抢带宽。 --><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4184355057086168" crossorigin="anonymous" fetchpriority="low"></script><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-RFRF1TVRMP" fetchpriority="low"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag("js", new Date());
+      gtag("config", "G-RFRF1TVRMP");
+    </script><!-- 百度统计（国内流量统计）。官方标准片段，is:inline 原样输出，
+         hm.js 动态插到首个 script 前，异步不阻塞首屏渲染。 --><script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?299e5b4e65b86ed16879bdcbe70531d6";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script><link rel="stylesheet" href="/assets/index.oyFk6CsS.css">
+<style>.ad-slot[data-astro-cid-fgwukgf6]{margin:var(--s10) 0 0;padding-top:var(--s5);border-top:1px solid var(--line)}.ad-slot-label[data-astro-cid-fgwukgf6]{margin-bottom:var(--s3);font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-4)}.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{display:block;min-height:100px}@media(min-width:640px){.ad-slot[data-astro-cid-fgwukgf6] ins.adsbygoogle{min-height:250px}}
+</style></head> <body> <a class="skip" href="#main">跳到正文</a> <header class="hdr" data-header> <div class="wrap hdr-inner"> <a href="/zh/" class="brand" aria-label="STAGS NextStack — 开源项目版本发布情报"> <span class="brand-mark" aria-hidden="true">S</span> <span class="brand-main">STAGS</span> <span class="brand-sub" aria-hidden="true">NextStack</span> </a> <nav class="nav" aria-label="Primary"> <a href="/zh/releases">版本发布</a><a href="/zh/projects">项目</a><a href="/zh/topics">专题</a><a href="/zh/compare">对比</a><a href="/zh/method">方法</a> </nav> <div class="hdr-tools"> <button class="searchbtn" type="button" data-search-open aria-label="搜索版本"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <span class="lbl">搜索</span> <span class="kbd">⌘K</span> </button> <details class="langmenu" data-langmenu> <summary class="langmenu-btn" aria-label="语言"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"> <circle cx="12" cy="12" r="9"></circle> <path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"></path> </svg> <span class="langmenu-cur">中</span> <svg class="langmenu-chev" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m2 4 4 4 4-4"></path></svg> </summary> <div class="langmenu-panel" role="group" aria-label="语言"> <p class="langmenu-head">语言</p> <a class="langmenu-item" href="/releases/whisper.cpp/1.7.6/" hreflang="en" lang="en" data-on="false"> <span class="langmenu-label">English</span> <span class="langmenu-code">EN</span> </a><a class="langmenu-item" href="/zh/release_note/whisper.cpp/whisper.cpp_v1.7.6/" hreflang="zh-Hans" lang="zh-CN" aria-current="true" data-on="true"> <span class="langmenu-label">中文</span> <span class="langmenu-code">中</span> </a><a class="langmenu-item" href="/ja/releases/whisper.cpp/1.7.6/" hreflang="ja" lang="ja" data-on="false"> <span class="langmenu-label">日本語</span> <span class="langmenu-code">日</span> </a><a class="langmenu-item" href="/de/releases/whisper.cpp/1.7.6/" hreflang="de" lang="de" data-on="false"> <span class="langmenu-label">Deutsch</span> <span class="langmenu-code">DE</span> </a><a class="langmenu-item" href="/fr/releases/whisper.cpp/1.7.6/" hreflang="fr" lang="fr" data-on="false"> <span class="langmenu-label">Français</span> <span class="langmenu-code">FR</span> </a><a class="langmenu-item" href="/es/releases/whisper.cpp/1.7.6/" hreflang="es" lang="es" data-on="false"> <span class="langmenu-label">Español</span> <span class="langmenu-code">ES</span> </a><a class="langmenu-item" href="/pt/releases/whisper.cpp/1.7.6/" hreflang="pt-BR" lang="pt-BR" data-on="false"> <span class="langmenu-label">Português</span> <span class="langmenu-code">PT</span> </a> </div> </details> <a class="iconlink" href="/releases.xml" aria-label="RSS"> <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"> <path d="M2 12.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM2 7.5a6.5 6.5 0 0 1 6.5 6.5h-2A4.5 4.5 0 0 0 2 9.5v-2ZM2 2.5A11.5 11.5 0 0 1 13.5 14h-2A9.5 9.5 0 0 0 2 4.5v-2Z"></path> </svg> </a> </div> </div> </header> <main id="main">  <div class="wrap"> <div class="detail"> <article> <header class="detail-hd"> <nav class="crumbs" aria-label="Breadcrumb"> <a href="/zh/">首页</a> <span class="sep">/</span> <a href="/zh/releases">版本发布</a> <span class="sep">/</span> <a href="/zh/releases/whisper.cpp">whisper.cpp</a> </nav> <h1 class="detail-title"> <span class="p">whisper.cpp</span> v1.7.6 </h1> <div class="detail-meta"> <span class="chip chip--patch">修订</span> <span><span class="k">发布时间</span>2025年6月25日</span>  <span class="sep" aria-hidden="true"></span> <a href="https://github.com/ggml-org/whisper.cpp" target="_blank" rel="noopener"> <span class="k">来源</span>ggml-org/whisper.cpp </a>   <span class="sep" aria-hidden="true"></span> <a href="/releases/whisper.cpp/1.7.6"> 英文原文 </a>  <span class="sep" aria-hidden="true"></span> <button class="btn btn--ghost btn--sm" type="button" data-copy="https://www.stags.cn/zh/release_note/whisper.cpp/whisper.cpp_v1.7.6/">复制链接</button> </div> </header> <div class="prose" style="margin-top:var(--s8)">   <h1 id="whispercpp-v176">whisper.cpp v1.7.6</h1>
+<h2 id="概述">概述</h2>
+<ul>
+<li>添加初始 VAD 支持 - 欢迎并赞赏反馈</li>
+<li>金属 FA 改进</li>
+</ul>
+<h2 id="m2-超">M2 超</h2>
+<p><strong>闪光灯注意开启：</strong></p>
+<table>
+<thead>
+<tr>
+<th>中央处理器</th>
+<th>配置</th>
+<th>型号</th>
+<th>钍</th>
+<th>FA</th>
+<th>恩科。</th>
+<th>十二月</th>
+<th>Bch5</th>
+<th>聚丙烯</th>
+<th>提交</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>微小</td>
+<td>1</td>
+<td>1</td>
+<td>7.72</td>
+<td>1.05</td>
+<td>0.32</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>小q5_0</td>
+<td>1</td>
+<td>1</td>
+<td>8.20</td>
+<td>0.98</td>
+<td>0.31</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>小-q5_1</td>
+<td>1</td>
+<td>1</td>
+<td>8.13</td>
+<td>0.99</td>
+<td>0.31</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>小q8_0</td>
+<td>1</td>
+<td>1</td>
+<td>7.96</td>
+<td>0.93</td>
+<td>0.30</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>基地</td>
+<td>1</td>
+<td>1</td>
+<td>13.52</td>
+<td>1.39</td>
+<td>0.35</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>基础-q5_0</td>
+<td>1</td>
+<td>1</td>
+<td>14.88</td>
+<td>1.31</td>
+<td>0.34</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>基础-q5_1</td>
+<td>1</td>
+<td>1</td>
+<td>14.76</td>
+<td>1.33</td>
+<td>0.34</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>基础-q8_0</td>
+<td>1</td>
+<td>1</td>
+<td>14.04</td>
+<td>1.28</td>
+<td>0.34</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>小</td>
+<td>1</td>
+<td>1</td>
+<td>38.78</td>
+<td>2.72</td>
+<td>0.67</td>
+<td>0.04</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>小q5_0</td>
+<td>1</td>
+<td>1</td>
+<td>44.01</td>
+<td>2.64</td>
+<td>0.69</td>
+<td>0.05</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>小q5_1</td>
+<td>1</td>
+<td>1</td>
+<td>44.02</td>
+<td>2.66</td>
+<td>0.69</td>
+<td>0.05</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>小q8_0</td>
+<td>1</td>
+<td>1</td>
+<td>40.79</td>
+<td>2.49</td>
+<td>0.67</td>
+<td>0.05</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>中等</td>
+<td>1</td>
+<td>1</td>
+<td>104.48</td>
+<td>5.57</td>
+<td>1.61</td>
+<td>0.10</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>中q5_0</td>
+<td>1</td>
+<td>1</td>
+<td>122.24</td>
+<td>5.00</td>
+<td>1.58</td>
+<td>0.12</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>中q5_1</td>
+<td>1</td>
+<td>1</td>
+<td>121.99</td>
+<td>5.02</td>
+<td>1.59</td>
+<td>0.12</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>中q8_0</td>
+<td>1</td>
+<td>1</td>
+<td>111.68</td>
+<td>4.99</td>
+<td>1.52</td>
+<td>0.11</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>中盘</td>
+<td>1</td>
+<td>1</td>
+<td>93.23</td>
+<td>0.87</td>
+<td>0.21</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>大v2</td>
+<td>1</td>
+<td>1</td>
+<td>189.82</td>
+<td>8.36</td>
+<td>2.35</td>
+<td>0.19</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>大-v2-q5_0</td>
+<td>1</td>
+<td>1</td>
+<td>225.73</td>
+<td>7.34</td>
+<td>2.40</td>
+<td>0.22</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>大-v2-q5_1</td>
+<td>1</td>
+<td>1</td>
+<td>225.88</td>
+<td>7.60</td>
+<td>2.40</td>
+<td>0.22</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>大-v2-q8_0</td>
+<td>1</td>
+<td>1</td>
+<td>203.55</td>
+<td>7.32</td>
+<td>2.26</td>
+<td>0.20</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>大型 v2-dis</td>
+<td>1</td>
+<td>1</td>
+<td>168.20</td>
+<td>0.98</td>
+<td>0.24</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>大型 V3 涡轮增压</td>
+<td>1</td>
+<td>1</td>
+<td>170.22</td>
+<td>1.46</td>
+<td>0.37</td>
+<td>0.03</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>大-v3-turbo-q5_0</td>
+<td>1</td>
+<td>1</td>
+<td>201.88</td>
+<td>1.27</td>
+<td>0.38</td>
+<td>0.04</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>大-v3-turbo-q8_0</td>
+<td>1</td>
+<td>1</td>
+<td>182.37</td>
+<td>1.24</td>
+<td>0.36</td>
+<td>0.03</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td><strong>闪光灯提醒关闭：</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>中央处理器</th>
+<th>配置</th>
+<th>型号</th>
+<th>钍</th>
+<th>FA</th>
+<th>恩科。</th>
+<th>十二月</th>
+<th>Bch5</th>
+<th>聚丙烯</th>
+<th>提交</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>微小</td>
+<td>1</td>
+<td>0</td>
+<td>10.15</td>
+<td>1.20</td>
+<td>0.36</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>小q5_0</td>
+<td>1</td>
+<td>0</td>
+<td>10.21</td>
+<td>1.15</td>
+<td>0.39</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>小-q5_1</td>
+<td>1</td>
+<td>0</td>
+<td>9.26</td>
+<td>1.15</td>
+<td>0.38</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>小q8_0</td>
+<td>1</td>
+<td>0</td>
+<td>9.00</td>
+<td>1.12</td>
+<td>0.37</td>
+<td>0.01</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>基地</td>
+<td>1</td>
+<td>0</td>
+<td>15.77</td>
+<td>1.73</td>
+<td>0.45</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>基础-q5_0</td>
+<td>1</td>
+<td>0</td>
+<td>16.90</td>
+<td>1.63</td>
+<td>0.44</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>基础-q5_1</td>
+<td>1</td>
+<td>0</td>
+<td>16.93</td>
+<td>1.64</td>
+<td>0.44</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>基础-q8_0</td>
+<td>1</td>
+<td>0</td>
+<td>16.13</td>
+<td>1.63</td>
+<td>0.43</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>小</td>
+<td>1</td>
+<td>0</td>
+<td>45.15</td>
+<td>3.45</td>
+<td>0.92</td>
+<td>0.05</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>小q5_0</td>
+<td>1</td>
+<td>0</td>
+<td>50.63</td>
+<td>3.36</td>
+<td>0.94</td>
+<td>0.06</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>小q5_1</td>
+<td>1</td>
+<td>0</td>
+<td>50.56</td>
+<td>3.36</td>
+<td>0.94</td>
+<td>0.06</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>小q8_0</td>
+<td>1</td>
+<td>0</td>
+<td>47.52</td>
+<td>3.20</td>
+<td>0.92</td>
+<td>0.05</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>中等</td>
+<td>1</td>
+<td>0</td>
+<td>122.55</td>
+<td>7.38</td>
+<td>1.95</td>
+<td>0.12</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>中q5_0</td>
+<td>1</td>
+<td>0</td>
+<td>140.61</td>
+<td>6.73</td>
+<td>2.02</td>
+<td>0.14</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>中q5_1</td>
+<td>1</td>
+<td>0</td>
+<td>140.48</td>
+<td>6.76</td>
+<td>2.04</td>
+<td>0.14</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>中q8_0</td>
+<td>1</td>
+<td>0</td>
+<td>131.00</td>
+<td>6.57</td>
+<td>1.96</td>
+<td>0.13</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>中盘</td>
+<td>1</td>
+<td>0</td>
+<td>110.85</td>
+<td>1.00</td>
+<td>0.24</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>大v2</td>
+<td>1</td>
+<td>0</td>
+<td>222.28</td>
+<td>10.96</td>
+<td>3.03</td>
+<td>0.21</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>大-v2-q5_0</td>
+<td>1</td>
+<td>0</td>
+<td>258.64</td>
+<td>9.79</td>
+<td>3.04</td>
+<td>0.25</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>大-v2-q5_1</td>
+<td>1</td>
+<td>0</td>
+<td>258.32</td>
+<td>9.87</td>
+<td>3.05</td>
+<td>0.24</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>大-v2-q8_0</td>
+<td>1</td>
+<td>0</td>
+<td>236.55</td>
+<td>9.61</td>
+<td>2.87</td>
+<td>0.23</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>大型 v2-dis</td>
+<td>1</td>
+<td>0</td>
+<td>199.84</td>
+<td>1.14</td>
+<td>0.27</td>
+<td>0.02</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>大型 V3 涡轮增压</td>
+<td>1</td>
+<td>0</td>
+<td>201.52</td>
+<td>1.77</td>
+<td>0.45</td>
+<td>0.03</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>大-v3-turbo-q5_0</td>
+<td>1</td>
+<td>0</td>
+<td>233.14</td>
+<td>1.56</td>
+<td>0.47</td>
+<td>0.04</td>
+<td>dc8dda60</td>
+</tr>
+<tr>
+<td>M2超</td>
+<td>金属</td>
+<td>大-v3-turbo-q8_0</td>
+<td>1</td>
+<td>0</td>
+<td>214.23</td>
+<td>1.53</td>
+<td>0.44</td>
+<td>0.04</td>
+<td>dc8dda60</td>
+</tr>
+</tbody>
+</table>
+<h2 id="发生了什么变化">发生了什么变化</h2>
+<ul>
+<li>文档：将 xcframework 部分添加到 <a href="https://github.com/ggml-org/whisper.cpp/pull/2997">https://github.com/ggml-org/whisper.cpp/pull/2997</a> 中的 @danbev 的 README.md [无 ci]</li>
+<li>同步：ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/2992">https://github.com/ggml-org/whisper.cpp/pull/2992</a></li>
+<li>Whisper.wasm ：修复 <a href="https://github.com/ggml-org/whisper.cpp/pull/3000">https://github.com/ggml-org/whisper.cpp/pull/3000</a> 中 @danbev 的未知语言问题
+*示例：更新server.py以匹配<a href="https://github.com/ggml-org/whisper.cpp/pull/3004%E4%B8%AD@danbev%E7%9A%84github%E9%A1%B5%E9%9D%A2%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%5B%E6%97%A0ci">https://github.com/ggml-org/whisper.cpp/pull/3004中@danbev的github页面应用程序[无ci</a>]</li>
+<li>重命名：ggerganov -> ggml-org by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3005">https://github.com/ggml-org/whisper.cpp/pull/3005</a></li>
+<li>耳语：修复@fujimotos 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3002">https://github.com/ggml-org/whisper.cpp/pull/3002</a> 中的“bench-all 在较大模型上输出无效结果”</li>
+<li>测试：将脚本添加到<a href="https://github.com/ggml-org/whisper.cpp/pull/2999%E4%B8%AD@fujimotos%E5%9C%A8LibriSpeech%E8%AF%AD%E6%96%99%E5%BA%93%E4%B8%8A%E7%9A%84%E5%9F%BA%E5%87%86%E8%80%B3%E8%AF%AD.cpp%E4%B8%AD">https://github.com/ggml-org/whisper.cpp/pull/2999中@fujimotos在LibriSpeech语料库上的基准耳语.cpp中</a></li>
+<li>ruby : 通过 @KitaitiMakoto 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3007">https://github.com/ggml-org/whisper.cpp/pull/3007</a> 中更改 Ruby gemspec 中的主页 URI</li>
+<li>修复 <a href="https://github.com/ggml-org/whisper.cpp/pull/3006">https://github.com/ggml-org/whisper.cpp/pull/3006</a> 中 @gregsadetsky 的自述文件中模型的死链接</li>
+<li>由 @Olli 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3016">https://github.com/ggml-org/whisper.cpp/pull/3016</a> 中更新 uri.rb</li>
+<li>通过 @Olli 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3022">https://github.com/ggml-org/whisper.cpp/pull/3022</a> 中更新 ruby_whisper_params.c</li>
+<li>xcf ：使用 @danbev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3021">https://github.com/ggml-org/whisper.cpp/pull/3021</a> 中检查 Visionos 构建版本</li>
+<li>由 @ekaitz-zarraga 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3024">https://github.com/ggml-org/whisper.cpp/pull/3024</a> 中修复 README.md</li>
+<li>文档：记录如何在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3029">https://github.com/ggml-org/whisper.cpp/pull/3029</a> 中使用 @fujimotos 的“WHISPER_FFMPEG”构建选项</li>
+<li>耳语：<a href="https://github.com/ggml-org/whisper.cpp/pull/3028">https://github.com/ggml-org/whisper.cpp/pull/3028</a> 中@ggerganov 将 delta_min 从 1000ms 减少到 100ms</li>
+<li>支持 max_context api for addon.node by @buxuku in <a href="https://github.com/ggml-org/whisper.cpp/pull/3025">https://github.com/ggml-org/whisper.cpp/pull/3025</a></li>
+<li>更新 README.md 以记录 <a href="https://github.com/ggml-org/whisper.cpp/pull/3031">https://github.com/ggml-org/whisper.cpp/pull/3031</a> 中@jeffklassen 更新的 NVIDIA GPU</li>
+<li>ruby：在<a href="https://github.com/ggml-org/whisper.cpp/pull/3043%E4%B8%AD@KitaitiMakoto%E7%9A%84%E6%9E%84%E5%BB%BA%E8%BF%87%E7%A8%8B%E4%B8%AD%E4%BD%BF%E7%94%A8CMake">https://github.com/ggml-org/whisper.cpp/pull/3043中@KitaitiMakoto的构建过程中使用CMake</a></li>
+<li>示例：通过 @fujimotos 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3038">https://github.com/ggml-org/whisper.cpp/pull/3038</a> 中向 ffmpeg-transcode.cpp 添加 FFmpeg v7.0 支持</li>
+<li>壮举：通过 @sachaarbonel 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3045">https://github.com/ggml-org/whisper.cpp/pull/3045</a> 中向服务器添加无上下文选项</li>
+<li>ruby : 通过 @KitaitiMakoto 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3056">https://github.com/ggml-org/whisper.cpp/pull/3056</a> 中使用构建选项安装 Ruby 绑定</li>
+<li>示例：将 HEAPU8 添加到 @danbev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3062">https://github.com/ggml-org/whisper.cpp/pull/3062</a> 中导出的运行时方法</li>
+<li>ci : 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3064">https://github.com/ggml-org/whisper.cpp/pull/3064</a> 中 @danbev 禁用 build.yml 中的 freeBSD 作业</li>
+<li>coreml : 在<a href="https://github.com/ggml-org/whisper.cpp/pull/3060%E4%B8%AD%E9%80%9A%E8%BF%87@danbev%E8%BD%AC%E6%8D%A2%E6%97%B6%E8%AE%BE%E7%BD%AEconvert_to">https://github.com/ggml-org/whisper.cpp/pull/3060中通过@danbev转换时设置convert_to</a> =“mlprogram”</li>
+<li>同步：ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3071">https://github.com/ggml-org/whisper.cpp/pull/3071</a></li>
+<li>ci : 通过 @danbev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3070">https://github.com/ggml-org/whisper.cpp/pull/3070</a> 中启用绑定 java 作业</li>
+<li>ruby : 通过 @KitaitiMakoto 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3076">https://github.com/ggml-org/whisper.cpp/pull/3076</a> 添加编码器开始回调相关方法</li>
+<li>修复 <a href="https://github.com/ggml-org/whisper.cpp/pull/3073">https://github.com/ggml-org/whisper.cpp/pull/3073</a> 中@Podre-Henrique 已弃用的 FFmpeg 函数</li>
+<li>添加摩尔线程GPU支持并更新<a href="https://github.com/ggml-org/whisper.cpp/pull/3069%E4%B8%AD@yeahdongcn%E4%B8%BAMUSA%E6%9E%84%E5%BB%BA%E7%9A%84GitHub%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B">https://github.com/ggml-org/whisper.cpp/pull/3069中@yeahdongcn为MUSA构建的GitHub工作流程</a></li>
+<li>ci : 禁用 @danbev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3086">https://github.com/ggml-org/whisper.cpp/pull/3086</a> 中发布 java 绑定 [无 ci]</li>
+<li>talk-llama : 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3084">https://github.com/ggml-org/whisper.cpp/pull/3084</a> 中同步 llama.cpp by @ggerganov</li>
+<li>耳语：删除 <a href="https://github.com/ggml-org/whisper.cpp/pull/3085">https://github.com/ggml-org/whisper.cpp/pull/3085</a> 中 @danbev 的空 .gitmodules 文件 [无 ci]</li>
+<li>壮举：向 <a href="https://github.com/ggml-org/whisper.cpp/pull/3044">https://github.com/ggml-org/whisper.cpp/pull/3044</a> 中@sachaarbonel 的服务器示例公开语言检测概率</li>
+<li>耳语：修复 @danbev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3087">https://github.com/ggml-org/whisper.cpp/pull/3087</a> 中的语法高级堆栈警告</li>
+<li>ggml : 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3075">https://github.com/ggml-org/whisper.cpp/pull/3075</a> 中抑制 @danbev 的 Windows 编译器警告</li>
+<li>make : 通过 @ggerganov 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3100">https://github.com/ggml-org/whisper.cpp/pull/3100</a> 中修复样本 glob 模式</li>
+<li>ruby：忽略<a href="https://github.com/ggml-org/whisper.cpp/pull/3106%E4%B8%AD@danbev%E5%9C%A8test_log_suppress%E4%B8%AD%E7%9A%84%E2%80%9C%E4%B8%8B%E8%BD%BD%E2%80%9D%E8%BE%93%E5%87%BA">https://github.com/ggml-org/whisper.cpp/pull/3106中@danbev在test_log_suppress中的“下载”输出</a></li>
+<li>服务器：添加 —no-gpu 选项以打印 @danbev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3098">https://github.com/ggml-org/whisper.cpp/pull/3098</a> 中的使用情况输出</li>
+<li>耳语：添加检查@danbev在<a href="https://github.com/ggml-org/whisper.cpp/pull/3103%E4%B8%AD%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8%E7%9B%AE%E6%A0%87%E5%90%8D%E7%A7%B0">https://github.com/ggml-org/whisper.cpp/pull/3103中是否存在目标名称</a></li>
+<li>同步：ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3108">https://github.com/ggml-org/whisper.cpp/pull/3108</a></li>
+<li>ruby : 通过 @KitaitiMakoto 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3109">https://github.com/ggml-org/whisper.cpp/pull/3109</a> 中完善 HTTP 缓存功能</li>
+<li>feat(server): 将 httplib.h 升级到 <a href="https://github.com/ggml-org/whisper.cpp/pull/3101">https://github.com/ggml-org/whisper.cpp/pull/3101</a> 中的 @sachaarbonel 版本 0.20.0</li>
+<li>@JaredTweed 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3097">https://github.com/ggml-org/whisper.cpp/pull/3097</a> 中删除了 stdc++fs</li>
+<li>文档 : 通过 @antimatter96 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3102">https://github.com/ggml-org/whisper.cpp/pull/3102</a> 中更新 cli 文档</li>
+<li>cli ：支持“-”作为标准输出，如 <a href="https://github.com/ggml-org/whisper.cpp/pull/3050">https://github.com/ggml-org/whisper.cpp/pull/3050</a> 中 @danielzgtg 的标准输入</li>
+<li>feat(server)：通过 <a href="https://github.com/ggml-org/whisper.cpp/pull/3112">https://github.com/ggml-org/whisper.cpp/pull/3112</a> 中的 @sachaarbonel 改进 HTTP 连接中止处理</li>
+<li>耳语：删除 <a href="https://github.com/ggml-org/whisper.cpp/pull/3090">https://github.com/ggml-org/whisper.cpp/pull/3090</a> 中@danbev 的 MSVC 警告杂注</li>
+<li>ci : 将 zip 扩展名添加到 <a href="https://github.com/ggml-org/whisper.cpp/pull/3120">https://github.com/ggml-org/whisper.cpp/pull/3120</a> 中的 @danbev 的 xcframework 工件名称中</li>
+<li>ci : zip windows 工件，由 @danbev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3124">https://github.com/ggml-org/whisper.cpp/pull/3124</a> 中发布上传</li>
+<li>同步：ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3125">https://github.com/ggml-org/whisper.cpp/pull/3125</a></li>
+<li>ci : 添加绑定-java jar 工件以由 @danbev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3126">https://github.com/ggml-org/whisper.cpp/pull/3126</a> 中发布</li>
+<li>同步：ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3127">https://github.com/ggml-org/whisper.cpp/pull/3127</a>
+*stream.wasm：将HEAPU8添加到<a href="https://github.com/ggml-org/whisper.cpp/pull/3130%E4%B8%AD@danbev%E5%AF%BC%E5%87%BA%E7%9A%84%E8%BF%90%E8%A1%8C%E6%97%B6%E6%96%B9%E6%B3%95%E4%B8%AD">https://github.com/ggml-org/whisper.cpp/pull/3130中@danbev导出的运行时方法中</a></li>
+<li>耳语：在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3131">https://github.com/ggml-org/whisper.cpp/pull/3131</a> 中弃用 @danbev 的 WHISPER_CCACHE CMake 选项</li>
+<li>wasm : 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3133">https://github.com/ggml-org/whisper.cpp/pull/3133</a> 中添加 @danbev 关于worker.js 文件生成的注释 [无 ci]</li>
+<li>示例：将 HEAPU8 添加到 @enesgrahovac 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3134">https://github.com/ggml-org/whisper.cpp/pull/3134</a> 中导出的所有运行时方法</li>
+<li>ruby : 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3132">https://github.com/ggml-org/whisper.cpp/pull/3132</a> 中 @danbev 本地省略 test_build_options</li>
+<li>ruby：仅当 <a href="https://github.com/ggml-org/whisper.cpp/pull/3136">https://github.com/ggml-org/whisper.cpp/pull/3136</a> 中 @KitaitiMakoto 指定的环境变量时才测试额外的构建选项</li>
+<li>示例：更新 <a href="https://github.com/ggml-org/whisper.cpp/pull/3140">https://github.com/ggml-org/whisper.cpp/pull/3140</a> 中 @danbev 的 Paul Tol 配色方案 [no ci] 的链接</li>
+<li>更新自述文件以在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3138">https://github.com/ggml-org/whisper.cpp/pull/3138</a> 中推荐 @peardox 与 Python 相同的 Openvino 工具</li>
+<li>cli : 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3141">https://github.com/ggml-org/whisper.cpp/pull/3141</a> 中打印 @danbev 的 —print-colors 的配色方案信息</li>
+<li>文档：修复 <a href="https://github.com/ggml-org/whisper.cpp/pull/3142">https://github.com/ggml-org/whisper.cpp/pull/3142</a> 中 @danbev 的 -owts 标记拼写错误卡拉 OK 部分 [no ci]</li>
+<li>耳语 : 删除 <a href="https://github.com/ggml-org/whisper.cpp/pull/3143">https://github.com/ggml-org/whisper.cpp/pull/3143</a> 中 @danbev 的虚拟提交评论 [no ci]</li>
+<li>vad ：在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3065">https://github.com/ggml-org/whisper.cpp/pull/3065</a> 中添加 @danbev 的初始语音活动检测 (VAD) 支持</li>
+<li>文档：通过 <a href="https://github.com/ggml-org/whisper.cpp/pull/2569">https://github.com/ggml-org/whisper.cpp/pull/2569</a> 中的 @tomer-schles 更新 README.md 以获取 objc 应用程序</li>
+<li>vad ：删除 cli.cpp 中 @danbev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3145">https://github.com/ggml-org/whisper.cpp/pull/3145</a> 中的 —vad 选项的简写形式</li>
+<li>示例：在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3147">https://github.com/ggml-org/whisper.cpp/pull/3147</a> 中添加 @danbev 的 VAD 语音片段示例</li>
+<li>同步：ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3148">https://github.com/ggml-org/whisper.cpp/pull/3148</a></li>
+<li>服务器：在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3152">https://github.com/ggml-org/whisper.cpp/pull/3152</a> 中添加 @danbev 输出的 —flash-attn 使用情况</li>
+<li>vad ：在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3149">https://github.com/ggml-org/whisper.cpp/pull/3149</a> 中添加@danbev 的下载 vad 模型脚本</li>
+<li>示例：在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3150">https://github.com/ggml-org/whisper.cpp/pull/3150</a> 中通过 @danbev 将 —print-confidence 选项添加到 cli</li>
+<li>耳语 : 将 build_*/ 添加到 .gitignore [no ci] by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3157">https://github.com/ggml-org/whisper.cpp/pull/3157</a></li>
+<li>vad : 在<a href="https://github.com/ggml-org/whisper.cpp/pull/3156%E4%B8%AD@danbev%E5%B0%86VAD%E4%B8%8A%E4%B8%8B%E6%96%87%E5%AD%98%E5%82%A8%E5%9C%A8whisper_state%E4%B8%AD">https://github.com/ggml-org/whisper.cpp/pull/3156中@danbev将VAD上下文存储在whisper_state中</a></li>
+<li>vad ：如果 @danbev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3158">https://github.com/ggml-org/whisper.cpp/pull/3158</a> 中没有检测到 vad 段，则提前返回</li>
+<li>示例：添加 vad-speech-segments 以赢得警告 [no ci] by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3170">https://github.com/ggml-org/whisper.cpp/pull/3170</a></li>
+<li>同步：ggml 由 @ggerganov 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3171">https://github.com/ggml-org/whisper.cpp/pull/3171</a> 中</li>
+<li>ruby : 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3172">https://github.com/ggml-org/whisper.cpp/pull/3172</a> 中通过 @danbev 将 GGML_SYCL_DNN 选项添加到 ruby 绑定</li>
+<li>修复 CMakeLists.txt 以处理 <a href="https://github.com/ggml-org/whisper.cpp/pull/3163">https://github.com/ggml-org/whisper.cpp/pull/3163</a> 中 @jugal-sheth 发出的已弃用的 GPU 警告</li>
+<li>耳语 : 删除 <a href="https://github.com/ggml-org/whisper.cpp/pull/3178">https://github.com/ggml-org/whisper.cpp/pull/3178</a> 中 @danbev 的冗余分配</li>
+<li>文档：修复 <a href="https://github.com/ggml-org/whisper.cpp/pull/3179">https://github.com/ggml-org/whisper.cpp/pull/3179</a> 中@alpaim 的自述文件中非常小的拼写错误</li>
+<li>文档：在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3180">https://github.com/ggml-org/whisper.cpp/pull/3180</a> 中添加 @danbev 的 VAD 模型下载说明 [无 ci]</li>
+<li>feat(server): 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3175">https://github.com/ggml-org/whisper.cpp/pull/3175</a> 中添加 @sachaarbonel 的 k6 负载测试脚本</li>
+<li>ci : 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3177">https://github.com/ggml-org/whisper.cpp/pull/3177</a> 中使用 @danbev 的动态 libopenblas.dll 来实现 window-blas</li>
+<li>文档：修复 <a href="https://github.com/ggml-org/whisper.cpp/pull/3186">https://github.com/ggml-org/whisper.cpp/pull/3186</a> 中 @KitaitiMakoto 的自述文件中的 VAD 部分标题级别</li>
+<li>瑞典元音变音的快速修复 + 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3187">https://github.com/ggml-org/whisper.cpp/pull/3187</a> 中 @matteng1 公开 talk-llama.cpp 中的模型推理设置
+*节点：启用no_prints以抑制@danbev在<a href="https://github.com/ggml-org/whisper.cpp/pull/3189%E4%B8%AD%E7%9A%84%E6%89%80%E6%9C%89%E8%BE%93%E5%87%BA">https://github.com/ggml-org/whisper.cpp/pull/3189中的所有输出</a></li>
+<li>文档：将 README_sycl.md 转换为 utf8 格式 [no ci] by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3191">https://github.com/ggml-org/whisper.cpp/pull/3191</a></li>
+<li>同步：ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3193">https://github.com/ggml-org/whisper.cpp/pull/3193</a></li>
+<li>ci ：更新 Windows 工件上传步骤（@danbev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3192">https://github.com/ggml-org/whisper.cpp/pull/3192</a> 中）</li>
+<li>测试：在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3185">https://github.com/ggml-org/whisper.cpp/pull/3185</a> 中添加 @fujimotos 的长格式音频新基准测试</li>
+<li>在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3195">https://github.com/ggml-org/whisper.cpp/pull/3195</a> 中使用 @peardox 的 GGML_BACKEND_DL 时安装共享库</li>
+<li>ruby : 添加 VAD 支持，通过 @KitaitiMakoto 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3197">https://github.com/ggml-org/whisper.cpp/pull/3197</a> 迁移到 Ruby 的较新 API</li>
+<li>耳语 : 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3196">https://github.com/ggml-org/whisper.cpp/pull/3196</a> 中删除 @danbev 的 Whisper_load_backends 函数</li>
+<li>同步：ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3202">https://github.com/ggml-org/whisper.cpp/pull/3202</a></li>
+<li>ggml ：修复 @danielzgtg 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3203">https://github.com/ggml-org/whisper.cpp/pull/3203</a> 中回溯破坏 Windows 构建的问题</li>
+<li>ruby：在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3206">https://github.com/ggml-org/whisper.cpp/pull/3206</a> 中处理 @KitaitiMakoto 安装时的构建选项</li>
+<li>vad ：在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3173">https://github.com/ggml-org/whisper.cpp/pull/3173</a> 中重新访问 @danbev 的时间戳对齐/映射</li>
+<li>ruby：在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3214">https://github.com/ggml-org/whisper.cpp/pull/3214</a> 中添加 @KitaitiMakoto 的 Core ML 支持</li>
+<li>同步：ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3215">https://github.com/ggml-org/whisper.cpp/pull/3215</a></li>
+<li>节点：在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3190">https://github.com/ggml-org/whisper.cpp/pull/3190</a> 中添加 @danbev 的语言检测支持</li>
+<li>ci : 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3220">https://github.com/ggml-org/whisper.cpp/pull/3220</a> 中使用 @danbev 提供的 Ubuntu 软件包的Mirrors.kernel.org</li>
+<li>musa: <a href="https://github.com/ggml-org/whisper.cpp/pull/3217%E4%B8%AD@yeahdongcn%E6%AD%A3%E7%A1%AE%E7%9A%84MUSA">https://github.com/ggml-org/whisper.cpp/pull/3217中@yeahdongcn正确的MUSA</a> SDK rc4.0.1下载地址
+*修复：在<a href="https://github.com/ggml-org/whisper.cpp/pull/3201%E4%B8%AD@Jo4sDev%E5%9C%A8fullTranscribeWithTime%E4%B8%AD%E5%BA%94%E7%94%A8whisperParams">https://github.com/ggml-org/whisper.cpp/pull/3201中@Jo4sDev在fullTranscribeWithTime中应用whisperParams</a></li>
+<li>ci : 通过 @danbev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3221">https://github.com/ggml-org/whisper.cpp/pull/3221</a> 中添加 ports.ubuntu.com（ARM 包）的镜像</li>
+<li>ruby : 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3222">https://github.com/ggml-org/whisper.cpp/pull/3222</a> 中添加 @KitaitiMakoto 的并行转录支持</li>
+<li>devops：在<a href="https://github.com/ggml-org/whisper.cpp/pull/3229%E4%B8%AD%E6%B7%BB%E5%8A%A0@kwaa%E7%9A%84%E4%B8%BBintel">https://github.com/ggml-org/whisper.cpp/pull/3229中添加@kwaa的主intel</a> docker文件</li>
+<li>ci(docker)：由 @kwaa 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3231">https://github.com/ggml-org/whisper.cpp/pull/3231</a> 中构建并发布主英特尔映像</li>
+<li>ruby : @KitaitiMakoto 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3237">https://github.com/ggml-org/whisper.cpp/pull/3237</a> 中的输出格式</li>
+<li>同步：@ggerganov 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3239">https://github.com/ggml-org/whisper.cpp/pull/3239</a> 中的 tweet.cpp</li>
+<li>ruby：在<a href="https://github.com/ggml-org/whisper.cpp/pull/3241%E4%B8%AD%E6%B7%BB%E5%8A%A0@danbev%E5%AF%B9%E4%BE%9D%E8%B5%96%E9%A1%B9%E4%B8%AD%E5%BA%93%E5%90%8D%E7%A7%B0%E7%9A%84%E6%B8%85%E7%90%86">https://github.com/ggml-org/whisper.cpp/pull/3241中添加@danbev对依赖项中库名称的清理</a></li>
+<li>ci ：通过 <a href="https://github.com/ggml-org/whisper.cpp/pull/3242">https://github.com/ggml-org/whisper.cpp/pull/3242</a> 中的 @danbev 将 Windows 运行程序更新到 Windows-2022</li>
+<li>ruby：通过 @danbev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3245">https://github.com/ggml-org/whisper.cpp/pull/3245</a> 中为 ext 目录添加 .gitignore 条目</li>
+<li>cli ：修复 <a href="https://github.com/ggml-org/whisper.cpp/pull/3247">https://github.com/ggml-org/whisper.cpp/pull/3247</a> 中 @danbev 的 vad 选项 [no ci] 的短名称冲突</li>
+<li>服务器：在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3246">https://github.com/ggml-org/whisper.cpp/pull/3246</a> 中添加 @danbev 的语音活动检测 (VAD) 支持</li>
+<li>耳语：修复 <a href="https://github.com/ggml-org/whisper.cpp/pull/3230">https://github.com/ggml-org/whisper.cpp/pull/3230</a> 中 @danbev 跳过的音频片段的 VAD 处理</li>
+<li>feat(server)：优雅关闭、原子服务器状态和运行状况端点 @sachaarbonel 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3243">https://github.com/ggml-org/whisper.cpp/pull/3243</a> 中的改进</li>
+<li>让人们通过 <a href="https://github.com/ggml-org/whisper.cpp/pull/3251">https://github.com/ggml-org/whisper.cpp/pull/3251</a> 中的 @w1redch4d 使用第二个参数来选择想要与 yt-wsp.sh 一起使用的模型</li>
+<li>示例：<a href="https://github.com/ggml-org/whisper.cpp/pull/3261">https://github.com/ggml-org/whisper.cpp/pull/3261</a> 中@danbev 将服务器的 C++ 标准设置为 C++17</li>
+<li>耳语 : 如果 vad_samples 为空，则清除 result_all，@danbev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3262">https://github.com/ggml-org/whisper.cpp/pull/3262</a> 中</li>
+<li>同步：<a href="https://github.com/ggml-org/whisper.cpp/pull/3264">https://github.com/ggml-org/whisper.cpp/pull/3264</a> 中 @ggerganov 的 ggml</li>
+<li>示例：在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3266">https://github.com/ggml-org/whisper.cpp/pull/3266</a> 中 @danbev 在 read_audio_data 中添加立体声到单声道转换</li>
+<li>cmake : 修复 @ggerganov 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3265">https://github.com/ggml-org/whisper.cpp/pull/3265</a> 中的 Android 构建</li>
+<li>android : 更新 CMakeLists.txt 以使用 FetchContent for ggml by @danbev in <a href="https://github.com/ggml-org/whisper.cpp/pull/3268">https://github.com/ggml-org/whisper.cpp/pull/3268</a></li>
+<li>同步：ggml by @ggerganov in <a href="https://github.com/ggml-org/whisper.cpp/pull/3272">https://github.com/ggml-org/whisper.cpp/pull/3272</a></li>
+<li>ruby : 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3270">https://github.com/ggml-org/whisper.cpp/pull/3270</a> 中由 @KitaitiMakoto 构建时明确指定 Apple 框架</li>
+<li>ci : 将 apt-get clean 添加到 <a href="https://github.com/ggml-org/whisper.cpp/pull/3275">https://github.com/ggml-org/whisper.cpp/pull/3275</a> 中 @danbev 的 musa Docker 文件</li>
+<li><code>whisper-command</code>：通过<a href="https://github.com/ggml-org/whisper.cpp/pull/3273%E4%B8%AD%E7%9A%84@aaron-ang%E5%B0%86%E5%91%BD%E4%BB%A4%E5%86%99%E5%85%A5%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6">https://github.com/ggml-org/whisper.cpp/pull/3273中的@aaron-ang将命令写入文本文件</a></li>
+<li>杂务：在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3276">https://github.com/ggml-org/whisper.cpp/pull/3276</a> 中添加@mochiya98 的 OpenVINO 支持的 .gitignore 条目</li>
+<li>ci : 通过 @danbev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3277">https://github.com/ggml-org/whisper.cpp/pull/3277</a> 中减小 musa 图像大小</li>
+<li>@glaszig 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3255">https://github.com/ggml-org/whisper.cpp/pull/3255</a> 中将 CoreML 功能反向移植到 macos &#x3C; 14</li>
+<li>壮举：通过 @Jo4sDev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3281">https://github.com/ggml-org/whisper.cpp/pull/3281</a> 中更新 java 示例</li>
+<li>ci : 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3282">https://github.com/ggml-org/whisper.cpp/pull/3282</a> 中启用 @danbev 构建的 main-cuda</li>
+<li>流 : 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3283">https://github.com/ggml-org/whisper.cpp/pull/3283</a> 中添加 @danbev 对 whisper_context 的 nullptr 检查</li>
+</ul>
+<h2 id="新贡献者">新贡献者</h2>
+<ul>
+<li>@fujimotos 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3002">https://github.com/ggml-org/whisper.cpp/pull/3002</a> 中做出了第一个贡献</li>
+<li>@gregsadetsky 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3006">https://github.com/ggml-org/whisper.cpp/pull/3006</a> 中做出了第一个贡献</li>
+<li>@Olli 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3016">https://github.com/ggml-org/whisper.cpp/pull/3016</a> 中做出了第一个贡献</li>
+<li>@ekaitz-zarraga 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3024">https://github.com/ggml-org/whisper.cpp/pull/3024</a> 中做出了第一个贡献</li>
+<li>@jeffklassen 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3031">https://github.com/ggml-org/whisper.cpp/pull/3031</a> 中做出了第一个贡献</li>
+<li>@Podre-Henrique 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3073">https://github.com/ggml-org/whisper.cpp/pull/3073</a> 中做出了第一个贡献</li>
+<li>@yeahdongcn 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3069">https://github.com/ggml-org/whisper.cpp/pull/3069</a> 中做出了第一个贡献</li>
+<li>@JaredTweed 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3097">https://github.com/ggml-org/whisper.cpp/pull/3097</a> 中做出了第一个贡献</li>
+<li>@antimatter96 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3102">https://github.com/ggml-org/whisper.cpp/pull/3102</a> 中做出了第一个贡献</li>
+<li>@danielzgtg 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3050">https://github.com/ggml-org/whisper.cpp/pull/3050</a> 中做出了第一个贡献</li>
+<li>@enesgrahovac 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3134">https://github.com/ggml-org/whisper.cpp/pull/3134</a> 中做出了第一个贡献</li>
+<li>@peardox 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3138">https://github.com/ggml-org/whisper.cpp/pull/3138</a> 中做出了第一个贡献</li>
+<li>@tomer-schles 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/2569">https://github.com/ggml-org/whisper.cpp/pull/2569</a> 中做出了第一个贡献</li>
+<li>@jugal-sheth 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3163">https://github.com/ggml-org/whisper.cpp/pull/3163</a> 中做出了第一个贡献</li>
+<li>@alpaim 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3179">https://github.com/ggml-org/whisper.cpp/pull/3179</a> 中做出了第一个贡献</li>
+<li>@matteng1 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3187">https://github.com/ggml-org/whisper.cpp/pull/3187</a> 中做出了第一个贡献</li>
+<li>@Jo4sDev 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3201">https://github.com/ggml-org/whisper.cpp/pull/3201</a> 中做出了第一个贡献</li>
+<li>@kwaa 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3229">https://github.com/ggml-org/whisper.cpp/pull/3229</a> 中做出了第一个贡献</li>
+<li>@w1redch4d 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3251">https://github.com/ggml-org/whisper.cpp/pull/3251</a> 中做出了第一个贡献</li>
+<li>@aaron-ang 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3273">https://github.com/ggml-org/whisper.cpp/pull/3273</a> 中做出了第一个贡献</li>
+<li>@mochiya98 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3276">https://github.com/ggml-org/whisper.cpp/pull/3276</a> 中做出了第一个贡献</li>
+<li>@glaszig 在 <a href="https://github.com/ggml-org/whisper.cpp/pull/3255">https://github.com/ggml-org/whisper.cpp/pull/3255</a> 中做出了第一个贡献</li>
+</ul>
+<p><strong>完整 Changelog</strong>：<a href="https://github.com/ggml-org/whisper.cpp/compare/v1.7.5...v1.7.6">https://github.com/ggml-org/whisper.cpp/compare/v1.7.5…v1.7.6</a></p>
+<hr>
+<blockquote>
+<p>📦 仓库：<a href="https://github.com/ggml-org/whisper.cpp">ggml-org/whisper.cpp</a> · 🏷️ 版本：<code>v1.7.6</code> · 📅 发布：2025-06-25 · <a href="https://github.com/ggml-org/whisper.cpp/releases/tag/v1.7.6">查看英文原版 Release</a></p>
+</blockquote>
+<p><em>本文由 NextStack 自动翻译，内容以官方英文原文为准。</em></p>   </div> <p class="muted" style="margin-top:var(--s8);font-size:12.5px;border-top:1px solid var(--line);padding-top:var(--s4)"> Release Note 由上游项目发布，本站仅索引镜像，版权归原作者所有。 </p> <nav class="pager" aria-label="Release navigation"> <a href="/zh/release_note/whisper.cpp/whisper.cpp_v1.8.0"> <span class="k">← 下一个</span> <span class="t">v1.8.0</span> </a> <a href="/zh/release_note/whisper.cpp/whisper.cpp_v1.7.5"> <span class="k">上一个 →</span> <span class="t">v1.7.5</span> </a> </nav> <aside class="ad-slot" aria-label="广告" data-astro-cid-fgwukgf6><div class="ad-slot-label" data-astro-cid-fgwukgf6>广告</div><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-4184355057086168" data-ad-slot="9133765584" data-ad-format="auto" data-full-width-responsive="true" data-astro-cid-fgwukgf6></ins><script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script></aside> </article> <aside class="rail"> <div class="rail-card"> <div class="rail-title">Source</div> <ul class="rail-list"> <li> <a href="https://github.com/ggml-org/whisper.cpp/releases/tag/v1.7.6" target="_blank" rel="noopener"> <span>GitHub 原文</span> <span class="d">↗</span> </a> </li> <li> <a href="https://github.com/ggml-org/whisper.cpp" target="_blank" rel="noopener"> <span>ggml-org/whisper.cpp</span> <span class="d">↗</span> </a> </li> </ul> </div> <div class="rail-card rail-toc"> <div class="rail-title">本页目录</div> <nav> <a href="#概述" class>概述</a><a href="#m2-超" class>M2 超</a><a href="#发生了什么变化" class>发生了什么变化</a><a href="#新贡献者" class>新贡献者</a> </nav> </div> <div class="rail-card"> <div class="rail-title">版本历史</div> <ul class="rail-list"> <li> <a href="/zh/release_note/whisper.cpp/whisper.cpp_1.9.5"> <span class="v">v1.9.5</span> <span class="d">26-10-06</span> </a> </li><li> <a href="/zh/release_note/whisper.cpp/whisper.cpp_1.9.4"> <span class="v">v1.9.4</span> <span class="d">26-09-11</span> </a> </li><li> <a href="/zh/release_note/whisper.cpp/whisper.cpp_1.9.2"> <span class="v">v1.9.2</span> <span class="d">26-08-04</span> </a> </li><li> <a href="/zh/release_note/whisper.cpp/whisper.cpp_v1.9.1"> <span class="v">v1.9.1</span> <span class="d">26-06-19</span> </a> </li><li> <a href="/zh/release_note/whisper.cpp/whisper.cpp_v1.9.0"> <span class="v">v1.9.0</span> <span class="d">26-06-17</span> </a> </li><li> <a href="/zh/release_note/whisper.cpp/whisper.cpp_v1.8.7"> <span class="v">v1.8.7</span> <span class="d">26-06-16</span> </a> </li><li> <a href="/zh/release_note/whisper.cpp/whisper.cpp_v1.8.6"> <span class="v">v1.8.6</span> <span class="d">26-06-02</span> </a> </li><li> <a href="/zh/release_note/whisper.cpp/whisper.cpp_v1.8.5"> <span class="v">v1.8.5</span> <span class="d">26-05-29</span> </a> </li> </ul> <a href="/zh/releases/whisper.cpp" class="mono" style="display:inline-block;margin-top:var(--s3);font-size:11.5px;color:var(--ink-3)"> 查看全部 15 条 →
+</a> </div> </aside> </div> </div>  </main> <footer class="site-footer"> <div class="wrap"> <div class="footer-grid"> <div class="footer-brand"> <a href="/zh/" class="brand" aria-label="STAGS NextStack"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-main">STAGS</span><span class="brand-sub" aria-hidden="true">NextStack</span></a> <p>开源项目版本发布情报，每日更新。</p> </div> <div class="footer-col"> <h3>追踪</h3> <ul> <li><a href="/zh/releases">版本发布</a></li> <li><a href="/zh/projects">项目</a></li> <li><a href="/zh/releases.xml">RSS 订阅</a></li> </ul> </div> <div class="footer-col"> <h3>归档</h3> <ul> <li><a href="/zh/release_note" hreflang="zh-Hans">中文归档</a></li> <li><a href="/zh/chapters/" hreflang="zh-Hans">技术笔记</a></li> <li><a href="/zh/downloads/">Stags Tracker</a></li> </ul> </div> <div class="footer-col"> <h3>关于</h3> <ul> <li><a href="/zh/method">方法</a></li> <li><a href="/zh/privacy">隐私政策</a></li> <li><a href="/releases.xml">RSS</a></li> <li><a href="/sitemap-index.xml">Sitemap</a></li> </ul> </div> </div> <div class="footer-btm"> <span>© 2026 STAGS</span> <span>Release Note 版权归上游项目所有。</span> </div> </div> </footer> <!-- 搜索面板 --> <div class="palette-bg" data-palette-bg data-open="false"> <div class="palette" role="dialog" aria-modal="true" aria-label="搜索版本"> <div class="palette-in"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="color:var(--ink-4);flex:none"> <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path> </svg> <input type="search" data-palette-input placeholder="搜索发布记录、项目、版本号…" autocomplete="off" spellcheck="false"> <span class="kbd">esc</span> </div> <ul class="palette-res" data-palette-res></ul> <div class="palette-ft"> <span>↑↓ 选择</span> <span>↵ 打开</span> <span style="margin-left:auto" data-palette-count></span> </div> </div> </div> <script type="module" src="/assets/Shell.astro_astro_type_script_index_0_lang.TriUs4m8.js"></script> </body> </html>
